@@ -213,7 +213,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     # will have "# comment" as a separate expression
 
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
+
     # Indentation increases by 1 for:
     #  - { } blocks that span multiple lines
     #  - ( ), [ ], or [[ ]] calls that span multiple lines
@@ -292,8 +292,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         type = "style",
         message = lint_messages,
         line = unname(source_expression$file_lines[bad_lines]),
-        # TODO(AshesITR) when updating supported R version to R >= 4.1:
-        # replace by ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
+        # TODO(#2467): Use ranges = apply(lint_ranges, 1L, list, simplify = FALSE).
         ranges = lapply(
           seq_along(bad_lines),
           function(i) {

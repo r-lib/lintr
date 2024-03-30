@@ -102,8 +102,8 @@ test_that("condition_message_linter blocks simple disallowed usages", {
       )
     "),
     list(
-      list(message = rex::rex("Don't use paste to build stop strings.")),
-      list(message = rex::rex("Don't use paste to build warning strings"))
+      list(message = rex::rex("Don't use paste to build stop strings."), line_number = 3L),
+      list(message = rex::rex("Don't use paste to build warning strings"), line_number = 4L)
     ),
     condition_message_linter()
   )

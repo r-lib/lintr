@@ -95,18 +95,6 @@ print.lints <- function(x, ...) {
     } else if (in_github_actions()) {
       github_actions_log_lints(x, project_dir = github_annotation_project_dir)
     } else {
-      if (in_ci() && settings$comment_bot) {
-        info <- ci_build_info()
-
-        lint_output <- trim_output(
-          paste0(
-            collapse = "\n",
-            capture.output(invisible(lapply(x, markdown, info, ...)))
-          )
-        )
-
-        github_comment(lint_output, info, ...)
-      }
       lapply(x, print, ...)
     }
 

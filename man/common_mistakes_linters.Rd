@@ -22,5 +22,6 @@ The following linters are tagged with 'common_mistakes':
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{sprintf_linter}}}
 \item{\code{\link{unused_import_linter}}}
+\item{\code{\link{vector_logic_linter}}}
 }
 }

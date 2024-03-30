@@ -93,8 +93,12 @@ test_that("Multi-byte character truncated by parser is ignored", {
   skip_if_not_utf8_locale()
   # \U2013 is the Unicode character 'en dash', which is
   # almost identical to a minus sign in monospaced fonts.
-  with_content_to_parse("y <- x \U2013 42", {
-    expect_identical(error$message, "unexpected input")
+  content <- "y <- x \U2013 42"
+  # message is like '<text>:1:8: unexpected invalid token\n1: ...'
+  with_content_to_parse(content, {
+    base_msg <- conditionMessage(tryCatch(str2lang(content), error = identity))
+    # Just ensure that the captured message is a substring of the parser error, #2527
+    expect_true(grepl(error$message, base_msg, fixed = TRUE, useBytes = TRUE))
     expect_identical(error$column_number, 8L)
   })
 })
@@ -218,7 +222,10 @@ test_that("returned data structure is complete", {
 
   for (i in seq_along(lines)) {
     expr <- exprs$expressions[[i]]
-    expect_named(expr, c("filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content"))
+    expect_named(expr, c(
+      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "xml_find_function_calls",
+      "content"
+    ))
     expect_identical(expr$filename, temp_file)
     expect_identical(expr$line, i)
     expect_identical(expr$column, 1L)
@@ -229,7 +236,8 @@ test_that("returned data structure is complete", {
   }
   full_expr <- exprs$expressions[[length(lines) + 1L]]
   expect_named(full_expr, c(
-    "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "terminal_newline"
+    "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "xml_find_function_calls",
+    "terminal_newline"
   ))
   expect_identical(full_expr$filename, temp_file)
   expect_identical(full_expr$file_lines, lines_with_attr)
@@ -243,6 +251,48 @@ test_that("returned data structure is complete", {
 
   expect_null(exprs$error)
   expect_identical(exprs$lines, lines_with_attr)
+})
+
+test_that("xml_find_function_calls works as intended", {
+  lines <- c("foo()", "bar()", "foo()", "{ foo(); foo(); bar() }")
+  temp_file <- withr::local_tempfile(lines = lines)
+
+  exprs <- get_source_expressions(temp_file)
+
+  expect_length(exprs$expressions[[1L]]$xml_find_function_calls("foo"), 1L)
+  expect_length(exprs$expressions[[1L]]$xml_find_function_calls("bar"), 0L)
+  expect_identical(
+    exprs$expressions[[1L]]$xml_find_function_calls("foo"),
+    xml_find_all(exprs$expressions[[1L]]$xml_parsed_content, "//SYMBOL_FUNCTION_CALL[text() = 'foo']")
+  )
+
+  expect_length(exprs$expressions[[2L]]$xml_find_function_calls("foo"), 0L)
+  expect_length(exprs$expressions[[2L]]$xml_find_function_calls("bar"), 1L)
+
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls("foo"), 2L)
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls("bar"), 1L)
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar")), 3L)
+
+  # file-level source expression contains all function calls
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("foo"), 4L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("bar"), 2L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")), 6L)
+
+  # Also check order is retained:
+  expect_identical(
+    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")),
+    xml_find_all(exprs$expressions[[5L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL")
+  )
+
+  # Check naming and full cache
+  expect_identical(
+    exprs$expressions[[5L]]$xml_find_function_calls(NULL),
+    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar"))
+  )
+  expect_named(
+    exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar"), keep_names = TRUE),
+    c("foo", "foo", "bar")
+  )
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
@@ -371,10 +421,18 @@ patrick::with_parameters_test_that(
       linter <- eval(call(linter))
     }
     expression <- expressions[[expression_idx]]
-    expect_no_warning({
-      lints <- linter(expression)
-    })
-    expect_length(lints, 0L)
+    is_valid_linter_level <-
+      (is_linter_level(linter, "expression") && is_lint_level(expression, "expression")) ||
+      (is_linter_level(linter, "file") && is_lint_level(expression, "file"))
+    if (is_valid_linter_level) {
+      expect_no_warning({
+        lints <- linter(expression)
+      })
+      expect_length(lints, 0L)
+    } else {
+      # suppress "empty test" skips
+      expect_true(TRUE)
+    }
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,

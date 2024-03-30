@@ -8,21 +8,7 @@ addin_lint <- function() {
     return("Current source has no path. Please save before continue")
   }
 
-  config_file <- (get("find_config", asNamespace("lintr")))(filename$path)
-  if (length(config_file) == 0L) {
-    config_linters <- NULL
-  } else {
-    config <- read.dcf(config_file, all = TRUE)
-    config_linters <- config[["linters"]]
-  }
-  linters <- if (length(config_linters) == 0L) {
-    message("No configuration found. Using default linters.")
-    default_linters
-  } else {
-    eval(parse(text = config_linters))
-  }
-
-  lintr::lint(filename$path, linters = linters)
+  lint(filename$path)
 }
 
 addin_lint_package <- function() {
@@ -30,10 +16,13 @@ addin_lint_package <- function() {
     stop("'rstudioapi' is required for add-ins.", call. = FALSE)
   }
   project <- rstudioapi::getActiveProject()
-  project_path <- if (is.null(project)) getwd() else project
+  if (is.null(project)) {
+    message("No project found, passing current directory")
+    project_path <- getwd()
+  } else {
+    project_path <- project
+  }
 
-  if (is.null(project)) message("No project found, passing current directory")
-
-  lintr::lint_package(project_path)
+  lint_package(project_path)
 }
 # nocov end

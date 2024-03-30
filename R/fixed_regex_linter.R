@@ -76,12 +76,12 @@
 #' @export
 fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # regular expression pattern is the first argument
-  pos_1_regex_funs <- xp_text_in_table(c(
+  pos_1_regex_funs <- c(
     "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
-  ))
+  )
 
   # regular expression pattern is the second argument
-  pos_2_regex_funs <- xp_text_in_table(c(
+  pos_2_regex_funs <- c(
     # base functions.
     "strsplit",
     # data.table functions.
@@ -95,7 +95,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     "str_remove", "str_remove_all", "str_replace", "str_replace_all",
     "str_split", "str_starts", "str_subset",
     "str_view", "str_view_all", "str_which"
-  ))
+  )
 
   pipes <- setdiff(magrittr_pipes, c("%$%", "%T>%"))
   in_pipe_cond <- glue("
@@ -105,9 +105,8 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
 
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
-  xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
-    /parent::expr[
+  pos_1_xpath <- glue("
+    parent::expr[
       not(following-sibling::SYMBOL_SUB[
         (text() = 'fixed' or text() = 'ignore.case')
         and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
@@ -124,9 +123,9 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
         and preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
       )
     ]
-  |
-  //SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
-    /parent::expr[
+  ")
+  pos_2_xpath <- glue("
+    parent::expr[
       not(following-sibling::SYMBOL_SUB[
         text() = 'fixed'
         and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
@@ -140,30 +139,34 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    patterns <- xml_find_all(xml, xpath)
+    pos_1_calls <- source_expression$xml_find_function_calls(pos_1_regex_funs)
+    pos_2_calls <- source_expression$xml_find_function_calls(pos_2_regex_funs)
+    patterns <- combine_nodesets(
+      xml_find_all(pos_1_calls, pos_1_xpath),
+      xml_find_all(pos_2_calls, pos_2_xpath)
+    )
     pattern_strings <- get_r_string(patterns)
-    is_static <- is_not_regex(pattern_strings, allow_unescaped)
 
-    fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
-    call_name <- xml_find_chr(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
+    is_static <- is_not_regex(pattern_strings, allow_unescaped)
+    patterns <- patterns[is_static]
+    pattern_strings <- pattern_strings[is_static]
+
+    fixed_equivalent <- encodeString(get_fixed_string(pattern_strings), quote = '"', justify = "none")
+    call_name <- xml_find_chr(patterns, "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
-    replacement <- ifelse(
+    replacement_suggestion <- ifelse(
       is_stringr,
-      sprintf("stringr::fixed(%s)", fixed_equivalent),
-      fixed_equivalent
+      sprintf("stringr::fixed(%s) as the pattern", fixed_equivalent),
+      sprintf("%s with fixed = TRUE", fixed_equivalent)
     )
     msg <- paste(
-      "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which",
-      "is faster to compute. Here, you can use",
-      replacement, ifelse(is_stringr, "as the pattern.", "with fixed = TRUE.")
+      "Use", replacement_suggestion, "here. This regular expression is static, i.e.,",
+      "its matches can be expressed as a fixed substring expression, which is faster to compute."
     )
 
     xml_nodes_to_lints(
-      patterns[is_static],
+      patterns,
       source_expression = source_expression,
       lint_message = msg,
       type = "warning"
