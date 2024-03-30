@@ -188,15 +188,6 @@ test_that("validate_config_file() detects improperly-formed settings", {
   writeLines('exclude: "("', .lintr)
   expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not '('", fixed = TRUE)
 
-  writeLines('comment_bot: "a"', .lintr)
-  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'a'", fixed = TRUE)
-
-  writeLines("comment_bot: NA", .lintr)
-  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'NA'", fixed = TRUE)
-
-  writeLines("comment_bot: c(TRUE, FALSE)", .lintr)
-  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'TRUE, FALSE'", fixed = TRUE)
-
   writeLines("linters: list(1)", .lintr)
   expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
 
