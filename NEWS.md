@@ -14,7 +14,7 @@
 * Adjusted various lint messages for consistency in readability (#1330, @MichaelChirico). In general, we favor lint messages to be phrased like "Action, reason" to but the "what" piece of the message front-and-center. This may be a breaking change for code that tests the specific phrasing of lints.
 * `extraction_operator_linter()` is deprecated. Although switching from `$` to `[[` has some robustness benefits for package code, it can lead to non-idiomatic code in many contexts (e.g. R6 classes, Shiny applications, etc.) (#2409, @IndrajeetPatil). To enable the detection of the `$` operator for extraction through partial matching, use `options(warnPartialMatchDollar = TRUE)`.
 * `unnecessary_nested_if_linter()` is deprecated and subsumed into the new/more general `unnecessary_nesting_linter()`.
-* Drop support for posting GitHub comments from inside Travis, Wercker, and Jenkins CI tools (spurred by #2148, @MichaelChirico). We rely on GitHub Actions for linting in CI, and don't see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.
+* Drop support for posting GitHub comments from inside GitHub comment bot, Travis, Wercker, and Jenkins CI tools (spurred by #2148, @MichaelChirico). We rely on GitHub Actions for linting in CI, and don't see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.
 
 ## Bug fixes
 
