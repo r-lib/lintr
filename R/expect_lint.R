@@ -41,10 +41,12 @@
 #' @export
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
-    stop( # nocov start
-      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
-      call. = FALSE
-    ) # nocov end
+    # nocov start
+    cli_abort(c(
+      i = "{.fun expect_lint} is designed to work within the {.pkg testthat} testing framework.",
+      x = "{.pkg testthat} is not installed."
+    ))
+    # nocov end
   }
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
@@ -127,7 +129,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 #' Test that the package is lint free
 #'
 #' This function is a thin wrapper around lint_package that simply tests there are no
-#' lints in the package.  It can be used to ensure that your tests fail if the package
+#' lints in the package. It can be used to ensure that your tests fail if the package
 #' contains lints.
 #'
 #' @param ... arguments passed to [lint_package()]

@@ -237,7 +237,10 @@ lint_package <- function(path = ".", ...,
                          parse_settings = TRUE,
                          show_progress = NULL) {
   if (length(path) > 1L) {
-    stop("Only linting one package at a time is supported.", call. = FALSE)
+    cli_abort(c(
+      x = "Only linting one package at a time is supported.",
+      i = "Instead, {.val {length(path)}} package paths were provided."
+    ))
   }
   pkg_path <- find_package(path)
 
