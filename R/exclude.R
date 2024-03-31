@@ -129,7 +129,10 @@ parse_exclusions <- function(file,
     if (length(starts) != length(ends)) {
       starts_msg <- line_info(starts, type = "start")
       ends_msg <- line_info(ends, type = "end")
-      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!", call. = FALSE)
+      cli_abort(c(
+        i = "Equal number of line starts and ends expected for exclusion from linting.",
+        x = "{.file {file}} has {starts_msg}, but only {ends_msg}."
+      ))
     }
 
     for (i in seq_along(starts)) {
@@ -246,7 +249,6 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   x <- as.list(x)
   unnamed <- !nzchar(names2(x))
   if (any(unnamed)) {
-    # must be character vectors of length 1
     bad <- vapply(
       seq_along(x),
       function(i) {
@@ -254,14 +256,13 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
       },
       logical(1L)
     )
+    bad_idx <- which(bad) # nolint: object_usage_linter.
 
     if (any(bad)) {
-      stop(
-        "Full file exclusions must be character vectors of length 1. items: ",
-        toString(which(bad)),
-        " are not!",
-        call. = FALSE
-      )
+      cli_abort(c(
+        i = "Full file exclusions must be character vectors of length 1.",
+        x = "Items at following indexes are not: {.val {bad_idx}}."
+      ))
     }
     # Normalize unnamed entries to list(<filename> = list(Inf), ...)
     names(x)[unnamed] <- x[unnamed]
@@ -274,14 +275,13 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     # must be integer or numeric vectors
     are_numeric <- vapply(x, is.numeric, logical(1L))
     bad <- full_line_exclusions & !are_numeric
+    bad_idx <- which(bad) # nolint: object_usage_linter.
 
     if (any(bad)) {
-      stop(
-        "Full line exclusions must be numeric or integer vectors. items: ",
-        toString(which(bad)),
-        " are not!",
-        call. = FALSE
-      )
+      cli_abort(c(
+        i = "Full line exclusions must be numeric or integer vectors.",
+        x = "Items at following indexes are not: {.val {bad_idx}}."
+      ))
     }
 
     # Normalize list(<filename> = c(<lines>)) to

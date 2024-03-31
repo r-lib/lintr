@@ -28,6 +28,7 @@
 
 ## New and improved features
 
+* All user-facing messages are now prepared using the [`{cli}`](https://github.com/r-lib/cli) package (#2418, @IndrajeetPatil).
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
 * `library_call_linter()` is extended
   + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
