@@ -28,6 +28,7 @@ jobs:
         config:
           - {os: macOS-latest,   r: 'release'}
 
+          - {os: windows-latest, r: 'next'}
           - {os: windows-latest, r: 'release'}
           # Use 3.6 to trigger usage of RTools35
           - {os: windows-latest, r: '3.6'}
@@ -72,7 +73,6 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      # `{patrick}` imports `{purrr}`, and so needs to be ignored on R < 3.5
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
