@@ -34,7 +34,7 @@ jobs:
           # use 4.1 to check with rtools40's older compiler
           - {os: windows-latest, r: '4.1'}
 
-          # Use older ubuntu to maximise backward compatibility
+          - {os: ubuntu-latest,  r: 'next'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'en_US'}
           - {os: ubuntu-latest,  r: 'release', http-user-agent: 'release', locale: 'zh_CN'}
