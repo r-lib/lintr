@@ -403,17 +403,20 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   }
 
   if (length(line) != 1L || !is.character(line)) {
-    stop("`line` must be a string.", call. = FALSE)
+    cli_abort("{.arg line} must be a string.", call. = FALSE)
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
-    stop(sprintf(
-      "`column_number` must be an integer between 0 and nchar(line) + 1 (%d). It was %s.",
-      max_col, column_number
-    ), call. = FALSE)
+    cli_abort(c(
+      i = "{.arg column_number} must be an integer between {.val {0}} and {.code nchar(line) + 1} ({.val {max_col}})",
+      x = "Instead, it was {.val {column_number}}."
+    ))
   }
   if (!is_number(line_number) || line_number < 1L) {
-    stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number), call. = FALSE)
+    cli_abort(c(
+      i = "{.arg line_number} must be a positive integer.",
+      x = "Instead, it was {.val {line_number}}."
+    ))
   }
   check_ranges(ranges, max_col)
 
@@ -448,7 +451,10 @@ check_ranges <- function(ranges, max_col) {
     return()
   }
   if (!is.list(ranges)) {
-    stop("`ranges` must be NULL or a list.", call. = FALSE)
+    cli_abort(c(
+      i = "{.arg ranges} must be {.code NULL} or a {.cls list}.",
+      x = "Instead, it was {.cls {class(ranges)}}."
+    ))
   }
 
   for (range in ranges) {
