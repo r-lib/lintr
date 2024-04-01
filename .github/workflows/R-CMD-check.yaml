@@ -34,7 +34,6 @@ jobs:
           # use 4.1 to check with rtools40's older compiler
           - {os: windows-latest, r: '4.1'}
 
-          # Use older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'en_US'}
           - {os: ubuntu-latest,  r: 'release', http-user-agent: 'release', locale: 'zh_CN'}
@@ -72,7 +71,6 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      # `{patrick}` imports `{purrr}`, and so needs to be ignored on R < 3.5
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
