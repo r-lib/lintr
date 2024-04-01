@@ -32,7 +32,7 @@
 #' @export
 modify_defaults <- function(defaults, ...) {
   if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    stop("`defaults` must be a named list.", call. = FALSE)
+    cli_abort("{.arg defaults} must be a named list.")
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -91,7 +91,7 @@ modify_defaults <- function(defaults, ...) {
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
-    stop("`tags` must be a character vector, or NULL.", call. = FALSE)
+    cli_abort("{.arg tags} must be a character vector, or {.code NULL}.")
   }
   tagged_linters <- list()
 
@@ -209,10 +209,11 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
     error = function(e) {
-      stop(
-        "Could not create linter with ", package, "::", linter_name, "(): ", conditionMessage(e),
-        call. = FALSE
-      )
+      fun_name <- paste0(package, "::", linter_name) # nolint: object_name_linter
+      cli_abort(c(
+        i = "Could not create linter with {.fun fun_name}.",
+        x = conditionMessage(e)
+      ))
     }
   )
   # Otherwise, all linters would be called "linter_factory".
