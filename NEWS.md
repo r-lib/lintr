@@ -49,6 +49,7 @@
 * `todo_comment_linter()` has a new argument `except_regex` for setting _valid_ TODO comments, e.g. for forcing TODO comments to be linked to GitHub issues like `TODO(#154)` (#2047, @MichaelChirico).
 * `vector_logic_linter()` is extended to recognize incorrect usage of scalar operators `&&` and `||` inside subsetting expressions like `dplyr::filter(x, A && B)` (#2166, @MichaelChirico).
 * `any_is_na_linter()` is extended to catch the unusual usage `NA %in% x` (#2113, @MichaelChirico).
+* `make_linter_from_xpath()` errors up front when `lint_message` is missing (instead of delaying this error until the linter is used, @MichaelChirico).
 
 ### New linters
 
