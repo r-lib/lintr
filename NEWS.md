@@ -50,6 +50,7 @@
 * `todo_comment_linter()` has a new argument `except_regex` for setting _valid_ TODO comments, e.g. for forcing TODO comments to be linked to GitHub issues like `TODO(#154)` (#2047, @MichaelChirico).
 * `vector_logic_linter()` is extended to recognize incorrect usage of scalar operators `&&` and `||` inside subsetting expressions like `dplyr::filter(x, A && B)` (#2166, @MichaelChirico).
 * `any_is_na_linter()` is extended to catch the unusual usage `NA %in% x` (#2113, @MichaelChirico).
+* `make_linter_from_xpath()` errors up front when `lint_message` is missing (instead of delaying this error until the linter is used, #2541, @MichaelChirico).
 
 ### New linters
 
@@ -71,6 +72,10 @@
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
 * `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
 * `object_overwrite_linter()` for discouraging re-use of upstream package exports as local variables (#2344, #2346 and part of #884, @MichaelChirico and @AshesITR).
+
+### Lint accuracy fixes: removing false positives
+
+* `object_name_linter()` and `object_length_linter()` ignore {rlang} name injection like `x |> mutate("{new_name}" := foo(col))` (#1926, @MichaelChirico). No checking is applied in such cases. {data.table} in-place assignments like `DT[, "sPoNGeBob" := "friend"]` are still eligible for lints.
 
 # lintr 3.1.2
 

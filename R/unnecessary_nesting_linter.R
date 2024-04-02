@@ -197,7 +197,7 @@ unnecessary_nesting_linter <- function(
     collapse = " | "
   )
 
-  unnecessary_else_brace_xpath <-  "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
+  unnecessary_else_brace_xpath <- "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

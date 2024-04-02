@@ -203,7 +203,7 @@ object_name_xpath <- local({
   xp_assignment_target_fmt <- paste0(
     "not(parent::expr[OP-DOLLAR or OP-AT])",
     "and %1$s::expr[",
-    " following-sibling::LEFT_ASSIGN",
+    " following-sibling::LEFT_ASSIGN%2$s",
     " or preceding-sibling::RIGHT_ASSIGN",
     " or following-sibling::EQ_ASSIGN",
     "]",
@@ -213,9 +213,15 @@ object_name_xpath <- local({
     "])"
   )
 
+  # strings on LHS of := are only checked if they look like data.table usage DT[, "a" := ...]
+  dt_walrus_cond <- "[
+    text() != ':='
+    or parent::expr/preceding-sibling::OP-LEFT-BRACKET
+  ]"
+
   glue("
-  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor')} ]
-  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent')} ]
+  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]
+  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent', dt_walrus_cond)} ]
   |  //SYMBOL_FORMALS
   ")
 })

@@ -278,3 +278,11 @@ test_that("capture groups in style are fine", {
   expect_lint("a <- 1\nab <- 2", NULL, object_name_linter(regexes = c(capture = "^(a)")))
   expect_lint("ab <- 1\nabc <- 2", NULL, object_name_linter(regexes = c(capture = "^(a)(b)")))
 })
+
+test_that("rlang name injection is handled", {
+  linter <- object_name_linter()
+
+  expect_lint('tibble("{name}" := 2)', NULL, linter)
+  expect_lint('x %>% mutate("{name}" := 2)', NULL, linter)
+  expect_lint('DT[, "{name}" := 2]', "style should match snake_case", linter)
+})
