@@ -116,9 +116,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     assignments <- xml_find_all(xml, object_name_xpath)
 
     # Retrieve assigned name
-    nms <- strip_names(
-      xml_text(assignments)
-    )
+    nms <- strip_names(xml_text(assignments))
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change
     pkg <- find_package(source_expression$filename)
