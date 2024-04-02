@@ -159,8 +159,7 @@ validate_config_file <- function(config, config_file, defaults) {
     )
   }
 
-  validate_regex(
-    config,
+  validate_regex(config,
     c("exclude", "exclude_next", "exclude_start", "exclude_end", "exclude_linter", "exclude_linter_sep")
   )
   validate_character_string(config, c("encoding", "cache_directory", "comment_token"))
