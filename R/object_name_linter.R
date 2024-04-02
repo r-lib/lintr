@@ -116,7 +116,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     assignments <- xml_find_all(xml, object_name_xpath)
 
     # Retrieve assigned name
-    nms <- nms <- strip_names(
+    nms <- strip_names(
       xml_text(assignments)
     )
 
