@@ -107,7 +107,7 @@ lint(
 }
 \seealso{
 \itemize{
-\item \code{\link[=cyclocomp_linter]{cyclocomp_linter()}} for another linter that penalizes overly complexcode.
+\item \code{\link[=cyclocomp_linter]{cyclocomp_linter()}} for another linter that penalizes overly complex code.
 \item \link{linters} for a complete list of linters available in lintr.
 }
 }
