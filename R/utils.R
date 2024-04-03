@@ -167,7 +167,7 @@ reset_lang <- function(old_lang) {
 #' @export
 Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
-    stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
+    cli_abort("{.arg fun} must be a function taking exactly one argument.")
   }
   linter_level <- match.arg(linter_level)
   force(name)

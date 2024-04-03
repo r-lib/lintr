@@ -459,18 +459,19 @@ check_ranges <- function(ranges, max_col) {
 
   for (range in ranges) {
     if (!is_number(range, 2L)) {
-      stop("`ranges` must only contain length 2 integer vectors without NAs.", call. = FALSE)
+      cli_abort("{.arg ranges} must only contain length 2 integer vectors without {.code NA}s.")
     } else if (!is_valid_range(range, max_col)) {
-      stop(sprintf(
-        "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
-      ), call. = FALSE)
+      cli_abort(c(
+        x = "Invalid range specified.",
+        i = "All entries in {.arg ranges} must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 ({.val {max_col}})."
+      ))
     }
   }
 }
 
 rstudio_source_markers <- function(lints) {
   if (!requireNamespace("rstudioapi", quietly = TRUE)) {
-    stop("'rstudioapi' is required for rstudio_source_markers().", call. = FALSE) # nocov
+    cli_abort("{.pkg rstudioapi} is required for {.fn rstudio_source_markers}.") # nocov
   }
 
   # package path will be NULL unless it is a relative path
@@ -563,14 +564,14 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("'jsonlite' is required to produce SARIF reports, please install to continue.", call. = FALSE) # nocov
+    cli_abort("{.pkg jsonlite} is required to produce SARIF reports. Please install to continue.") # nocov
   }
 
   # package path will be `NULL` unless it is a relative path
   package_path <- attr(lints, "path")
 
   if (is.null(package_path)) {
-    stop("Package path needs to be a relative path.", call. = FALSE)
+    cli_abort("Package path needs to be a relative path.")
   }
 
   # setup template

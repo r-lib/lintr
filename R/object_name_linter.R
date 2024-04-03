@@ -92,7 +92,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
   }
   if (length(regexes) > 0L) {
     if (!is.character(regexes)) {
-      stop("`regexes` must be a character vector.", call. = FALSE)
+      cli_abort("{.arg regexes} must be a {.cls character} vector.")
     }
     rx_names <- names2(regexes)
     missing_name <- !nzchar(rx_names)
@@ -102,7 +102,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     style_list <- c(style_list, as.list(regexes))
   }
   if (length(style_list) == 0L) {
-    stop("At least one style must be specified using `styles` or `regexes`.", call. = FALSE)
+    cli_abort("At least one style must be specified using {.arg styles} or {.arg regexes}.")
   }
 
   lint_message <- paste0(

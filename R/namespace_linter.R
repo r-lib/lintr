@@ -84,11 +84,10 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 
     # nocov start
     if (any(failed_namespace)) {
-      stop(
-        "Failed to retrieve namespaces for one or more of the packages used with `::` or `:::`. ",
-        "Please report the issue at https://github.com/r-lib/lintr/issues.",
-        call. = FALSE
-      )
+      cli_abort(c(
+        x = "Failed to retrieve namespaces for one or more of the packages used with `::` or `:::`. ",
+        i = "Please report the issue at {.url https://github.com/r-lib/lintr/issues}."
+      ))
     }
     # nocov end
 
