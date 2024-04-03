@@ -91,7 +91,7 @@
 #'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
 #' @seealso
-#'  - [cyclocomp_linter()] for another linter that penalizes overly complexcode.
+#'  - [cyclocomp_linter()] for another linter that penalizes overly complex code.
 #'  - [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_nesting_linter <- function(
