@@ -81,7 +81,7 @@ test_that("it gives informative errors if the config file contains errors", {
   withr::local_dir(withr::local_tempdir())
 
   writeLines("a <- 1", "aaa.R")
-  expect_error(lint_dir(), "Error from config setting 'linters'", fixed = TRUE)
+  expect_error(lint_dir(), "Error from config setting `linters`", fixed = TRUE)
 })
 
 test_that("rot utility works as intended", {

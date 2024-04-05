@@ -98,7 +98,10 @@ read_config_file <- function(config_file) {
   if (endsWith(config_file, ".R")) {
     load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
-      stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
+      cli_abort(c(
+        i = "Malformed config file, ensure it is valid R syntax.",
+        x = conditionMessage(e)
+      ))
     }
   } else {
     load_config <- function(file) {
@@ -107,26 +110,27 @@ read_config_file <- function(config_file) {
         parsed_setting <- tryCatch(
           str2lang(dcf_values[[setting]]),
           error = function(e) {
-            stop("Malformed config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+            cli_abort(c(
+              i = "Malformed config setting {.field {setting}}:",
+              x = conditionMessage(e)
+            ))
           }
         )
         setting_value <- withCallingHandlers(
           tryCatch(
             eval(parsed_setting),
             error = function(e) {
-              stop(
-                "Error from config setting '", setting, "' in '", format(conditionCall(e)), "':\n",
-                "    ", conditionMessage(e),
-                call. = FALSE
-              )
+              cli_abort(c(
+                "Error from config setting {.code {setting}} in {.code {format(conditionCall(e))}}:",
+                conditionMessage(e)
+              ))
             }
           ),
           warning = function(w) {
-            warning(
-              "Warning from config setting '", setting, "' in '", format(conditionCall(w)), "':\n",
-              "    ", conditionMessage(w),
-              call. = FALSE
-            )
+            cli_warn(c(
+              "Warning from config setting {.code {setting}} in {.code {format(conditionCall(w))}}:",
+              conditionMessage(w)
+            ))
             invokeRestart("muffleWarning")
           }
         )
