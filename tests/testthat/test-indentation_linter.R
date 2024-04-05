@@ -875,7 +875,7 @@ test_that("lint metadata works for 0-space case", {
     FALSE
     }
     "),
-    list(ranges = list(1:2)),
+    list(ranges = list(1L:2L)),
     indentation_linter()
   )
 })
