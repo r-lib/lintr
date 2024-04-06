@@ -189,7 +189,10 @@ validate_keys <- function(config, keys, test, what) {
       next
     }
     if (!test(val)) {
-      stop("Setting '", key, "' should be ", what, ", not '", toString(val), "'.", call. = FALSE)
+      cli_abort(c(
+        i = "Setting {.code {key}} should be {.strong {what}}.",
+        x = "Instead, it is {.val {toString(val)}}."
+      ))
     }
   }
 }

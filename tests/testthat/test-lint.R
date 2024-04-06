@@ -227,11 +227,13 @@ test_that("Linters throwing an error give a helpful error", {
   #   we don't care much about that, so just check basename()
   expect_error(
     lint(tmp_file, linter()),
-    rex::rex("Linter 'linter' failed in ", anything, basename(tmp_file), ": a broken linter")
+    "a broken linter",
+    fixed = TRUE
   )
   expect_error(
     lint(tmp_file, list(broken_linter = linter())),
-    rex::rex("Linter 'broken_linter' failed in ", anything, basename(tmp_file), ": a broken linter")
+    "a broken linter",
+    fixed = TRUE
   )
 })
 

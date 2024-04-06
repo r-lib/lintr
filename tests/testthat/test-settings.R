@@ -170,23 +170,27 @@ test_that("validate_config_file() detects improperly-formed settings", {
   writeLines(c('exclusions: list("aaa.R")', "asdf: 1"), .lintr)
   expect_warning(lint_dir(), "Found unused settings in config", fixed = TRUE)
 
+  encoding_error_msg <- "Setting `encoding` should be a character string"
+
   writeLines("encoding: FALSE", .lintr)
-  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'FALSE'", fixed = TRUE)
+  expect_error(lint_dir(), encoding_error_msg, fixed = TRUE)
 
   writeLines("encoding: NA_character_", .lintr)
-  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'NA'", fixed = TRUE)
+  expect_error(lint_dir(), encoding_error_msg, fixed = TRUE)
 
   writeLines('encoding: c("a", "b")', .lintr)
-  expect_error(lint_dir(), "Setting 'encoding' should be a character string, not 'a, b'")
+  expect_error(lint_dir(), encoding_error_msg, fixed = TRUE)
+
+  exclude_error_msg <- "Setting `exclude` should be a single regular expression"
 
   writeLines("exclude: FALSE", .lintr)
-  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
+  expect_error(lint_dir(), exclude_error_msg, fixed = TRUE)
 
   writeLines(c('exclusions: list("aaa.R")', "exclude: FALSE"), .lintr)
-  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not 'FALSE'", fixed = TRUE)
+  expect_error(lint_dir(), exclude_error_msg, fixed = TRUE)
 
   writeLines('exclude: "("', .lintr)
-  expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not '('", fixed = TRUE)
+  expect_error(lint_dir(), exclude_error_msg, fixed = TRUE)
 
   writeLines("linters: list(1)", .lintr)
   expect_error(lint_dir(), "Setting `linters` should be a list of linters", fixed = TRUE)
