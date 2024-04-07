@@ -94,6 +94,8 @@
 <code>.lintr</code> config validation correctly accepts regular expressions which only compile under <code>perl = TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2375" class="external-link">#2375</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). These have always been valid (since <code><a href="https://rdrr.io/pkg/rex/man/re_matches.html" class="external-link">rex::re_matches()</a></code>, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used <code>perl = FALSE</code>.</li>
 <li>
 <code>.lintr</code> configs set by option <code>lintr.linter_file</code> or environment variable <code>R_LINTR_LINTER_FILE</code> can point to subdirectories (<a href="https://github.com/r-lib/lintr/issues/2512" class="external-link">#2512</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> returns <code>ranges[1L]==1L</code> when the offending line has 0 spaces (<a href="https://github.com/r-lib/lintr/issues/2550" class="external-link">#2550</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-to-default-linters-development-version">Changes to default linters<a class="anchor" aria-label="anchor" href="#changes-to-default-linters-development-version"></a></h3>
