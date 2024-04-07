@@ -49,13 +49,13 @@
 #' @export
 available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "deprecated") {
   if (!is.character(packages)) {
-    cli_abort("{.arg packages} must be a character vector.")
+    cli_abort("{.arg packages} must be a {.cls character} vector.")
   }
   if (!is.null(tags) && !is.character(tags)) {
-    cli_abort("{.arg tags} must be a character vector.")
+    cli_abort("{.arg tags} must be a {.cls character} vector.")
   }
   if (!is.null(exclude_tags) && !is.character(exclude_tags)) {
-    cli_abort("{.arg exclude_tags} must be a character vector.")
+    cli_abort("{.arg exclude_tags} must be a {.cls character} vector.")
   }
 
   # any tags specified explicitly will not be excluded (#1959)

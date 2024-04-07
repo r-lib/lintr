@@ -156,5 +156,5 @@ test_that("it doesn't produce invalid lints", {
 })
 
 test_that("erroneous input errors", {
-  expect_error(xml_nodes_to_lints(1L), "Expected an xml_nodeset", fixed = TRUE)
+  expect_error(xml_nodes_to_lints(1L), "Expected an <xml_nodeset>", fixed = TRUE)
 })

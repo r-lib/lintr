@@ -91,7 +91,7 @@ modify_defaults <- function(defaults, ...) {
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
-    cli_abort("{.arg tags} must be a character vector, or {.code NULL}.")
+    cli_abort("{.arg tags} must be a {.cls character} vector, or {.code NULL}.")
   }
   tagged_linters <- list()
 

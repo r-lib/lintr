@@ -65,7 +65,7 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
 
   if (allow_compound && allow_trailing) {
     cli_abort(c(
-      x = "At least one of {.arg allow_compound} or {.arg allow_trailing} must be FALSE.",
+      x = "At least one of {.arg allow_compound} or {.arg allow_trailing} must be `FALSE`.",
       i = "No lints can be generated otherwise."
     ))
   } else if (allow_compound && !allow_trailing) {

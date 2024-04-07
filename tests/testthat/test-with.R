@@ -5,7 +5,7 @@ test_that("modify_defaults produces error with missing or incorrect defaults", {
 })
 
 test_that("linters_with_tags produces error with incorrect tags", {
-  expect_error(linters_with_tags(1L:4L), "`tags` must be a character vector, or `NULL`.", fixed = TRUE)
+  expect_error(linters_with_tags(1L:4L), "`tags` must be a <character> vector, or `NULL`.", fixed = TRUE)
 })
 
 test_that("linters_with_defaults works as expected with unnamed args", {
