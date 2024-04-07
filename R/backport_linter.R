@@ -94,9 +94,9 @@ normalize_r_version <- function(r_version) {
     if (!r_version %in% version_names) {
       # This can only trip if e.g. oldrel-99 is requested
       cli_abort(c(
-        "{.var r_version} is not valid:",
-        i = "It must be a version number or one of {toString(sQuote(version_names))}",
-        x = "You entered {toString(sQuote(r_version))} instead"
+        "{.arg r_version} is not valid:",
+        i = "It must be a version number or one of {toString(sQuote(version_names))}.",
+        x = "You entered {toString(sQuote(r_version))} instead."
       ))
     }
     requested_version <- minor_versions[match(r_version, table = version_names)]
@@ -109,12 +109,12 @@ normalize_r_version <- function(r_version) {
   } else if (is.character(r_version)) {
     r_version <- R_system_version(r_version, strict = TRUE)
   } else if (!inherits(r_version, "R_system_version")) {
-    cli_abort("{.var r_version} must be an R version number, returned by {.fun R_system_version}, or a string.")
+    cli_abort("{.arg r_version} must be an R version number, returned by {.fun R_system_version}, or a string.")
   }
   if (r_version < "3.0.0") {
     cli_warn(c(
       x = "Depending on an R version older than {.val 3.0.0} is not recommended.",
-      i = "Resetting {.var r_version} to {.val 3.0.0}."
+      i = "Resetting {.arg r_version} to {.val 3.0.0}."
     ))
     r_version <- R_system_version("3.0.0")
   }
