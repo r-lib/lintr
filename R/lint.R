@@ -466,7 +466,7 @@ check_ranges <- function(ranges, max_col) {
     } else if (!is_valid_range(range, max_col)) {
       cli_abort(c(
         x = "Invalid range specified.",
-        i = "All entries in {.arg ranges} must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 ({.val {max_col}})."
+        i = "Argument {.arg ranges} must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 ({.val {max_col}})."
       ))
     }
   }

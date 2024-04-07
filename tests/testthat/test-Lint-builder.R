@@ -27,7 +27,7 @@ test_that("Lint() errors on invalid input", {
   )
   expect_error(
     Lint("dummy.R", line = dummy_line, ranges = list(c(1L, 2L), c(1L, 5L))),
-    "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (4).",
+    "Argument `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (4).",
     fixed = TRUE
   )
 })
