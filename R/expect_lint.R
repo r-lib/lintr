@@ -110,7 +110,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           if (!is.logical(ok)) {
             cli_abort(c(
               x = "Invalid regex result. Did you mistakenly have a capture group in the regex?",
-              i = "Be sure to escape parenthesis with `[]`"
+              i = "Be sure to escape parenthesis with `[]`."
             ))
           }
           testthat::expect(ok, msg)

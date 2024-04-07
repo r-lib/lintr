@@ -131,7 +131,7 @@ parse_exclusions <- function(file,
       ends_msg <- line_info(ends, type = "end") # nolint: object_usage_linter.
       cli_abort(c(
         i = "Equal number of line starts and ends expected for exclusion from linting.",
-        x = "{.file {file}} has {starts_msg}, but only {ends_msg}."
+        x = "{.file {file}} has {.strong {starts_msg}}, but only {.strong {ends_msg}}."
       ))
     }
 
@@ -260,7 +260,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
 
     if (any(bad)) {
       cli_abort(c(
-        i = "Full file exclusions must be character vectors of length 1.",
+        i = "Full file exclusions must be {.cls character} vectors of length 1.",
         x = "Items at following indexes are not: {.val {bad_idx}}."
       ))
     }
@@ -279,7 +279,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
 
     if (any(bad)) {
       cli_abort(c(
-        i = "Full line exclusions must be numeric or integer vectors.",
+        i = "Full line exclusions must be {.cls numeric} or {.cls integer} vectors.",
         x = "Items at following indexes are not: {.val {bad_idx}}."
       ))
     }

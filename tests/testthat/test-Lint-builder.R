@@ -17,12 +17,12 @@ test_that("Lint() errors on invalid input", {
   )
   expect_error(
     Lint("dummy.R", ranges = list(1L)),
-    "`ranges` must only contain length 2 integer vectors without `NA`s.",
+    "`ranges` must only contain <integer> vectors of length 2 without `NA`s.",
     fixed = TRUE
   )
   expect_error(
     Lint("dummy.R", ranges = list(c(1L, NA_integer_))),
-    "`ranges` must only contain length 2 integer vectors without `NA`s.",
+    "`ranges` must only contain <integer> vectors of length 2 without `NA`s.",
     fixed = TRUE
   )
   expect_error(

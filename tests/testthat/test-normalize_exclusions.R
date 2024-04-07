@@ -143,11 +143,11 @@ test_that("it normalizes file paths, removing non-existing files", {
 })
 
 test_that("it errors for invalid specifications", {
-  msg_full_files <- "Full file exclusions must be character vectors of length 1."
+  msg_full_files <- "Full file exclusions must be <character> vectors of length 1."
   expect_error(lintr:::normalize_exclusions(2L), msg_full_files)
   expect_error(lintr:::normalize_exclusions(list("a.R", 2L)), msg_full_files)
   expect_error(lintr:::normalize_exclusions(list(a.R = Inf, 2L)), msg_full_files)
 
-  msg_full_lines <- "Full line exclusions must be numeric or integer vectors."
+  msg_full_lines <- "Full line exclusions must be <numeric> or <integer> vectors."
   expect_error(lintr:::normalize_exclusions(list(a.R = "Inf")), msg_full_lines)
 })

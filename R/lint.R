@@ -462,7 +462,7 @@ check_ranges <- function(ranges, max_col) {
 
   for (range in ranges) {
     if (!is_number(range, 2L)) {
-      cli_abort("{.arg ranges} must only contain length 2 integer vectors without {.code NA}s.")
+      cli_abort("{.arg ranges} must only contain {.cls integer} vectors of length 2 without {.code NA}s.")
     } else if (!is_valid_range(range, max_col)) {
       cli_abort(c(
         x = "Invalid range specified.",
