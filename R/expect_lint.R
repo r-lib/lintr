@@ -90,10 +90,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
         itr <<- itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
-            stop(sprintf(
-              "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
-              itr, field, toString(lint_fields)
-            ), call. = FALSE)
+            cli_abort(c(
+              x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+              i = "Valid fields are: {.field {toString(lint_fields)}}."
+            ))
           }
           check <- check[[field]]
           value <- lint[[field]]

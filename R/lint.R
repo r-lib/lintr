@@ -340,10 +340,10 @@ validate_linter_object <- function(linter, name) {
     return(linter)
   }
   if (!is.function(linter)) {
-    stop(gettextf(
-      "Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
-      name, typeof(linter), class(linter)[[1L]]
-    ), call. = FALSE)
+    cli_abort(c(
+      i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
+      x = "Instead, it is of class {.cls {class(linter)[[1L]]}}."
+    ))
   }
   if (is_linter_factory(linter)) {
     what <- "Passing linters as variables"

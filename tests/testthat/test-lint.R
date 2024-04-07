@@ -216,27 +216,21 @@ test_that("old compatibility usage errors", {
 
   expect_error(
     lint("a <- 1\n", linters = "equals_na_linter"),
-    regexp = rex::rex("Expected '", anything, "' to be a function of class 'linter'")
+    regexp = "Expected `linters()` to be a function of class <linter>",
+    fixed = TRUE
   )
 })
 
 test_that("Linters throwing an error give a helpful error", {
   tmp_file <- withr::local_tempfile(lines = "a <- 1")
-  linter <- function() Linter(function(source_expression) stop("a broken linter", call. = FALSE))
+  lintr_error_msg <- "a broken linter"
+  linter <- function() Linter(function(source_expression) stop(lintr_error_msg, call. = FALSE))
   # NB: Some systems/setups may use e.g. symlinked files when creating under tempfile();
   #   we don't care much about that, so just check basename()
-  expect_error(
-    lint(tmp_file, linter()),
-    "a broken linter",
-    fixed = TRUE
-  )
-  expect_error(
-    lint(tmp_file, list(broken_linter = linter())),
-    "a broken linter",
-    fixed = TRUE
-  )
+  expect_error(lint(tmp_file, linter()), lintr_error_msg, fixed = TRUE)
+  expect_error(lint(tmp_file, list(broken_linter = linter())), lintr_error_msg, fixed = TRUE)
 })
 
 test_that("typo in argument name gives helpful error", {
-  expect_error(lint("xxx", litners = identity), "Found unknown arguments in [.][.][.].*[?]lint ")
+  expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: litners")
 })

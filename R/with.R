@@ -101,12 +101,11 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
     available <- available_linters(packages = package, tags = tags, exclude_tags = exclude_tags)
     if (nrow(available) > 0L) {
       if (!all(available$linter %in% ns_exports)) {
-        missing_linters <- setdiff(available$linter, ns_exports)
-        stop(
-          "Linters ", glue_collapse(sQuote(missing_linters), sep = ", ", last = " and "),
-          " advertised by `available_linters()` but not exported by package ", package, ".",
-          call. = FALSE
-        )
+        missing_linters <- setdiff(available$linter, ns_exports) # nolint: object_usage_linter.
+        cli_abort(c(
+          i = "Linters {.fn {missing_linters}} are advertised by {.fn available_linters}.",
+          x = "But these linters are not exported by package {.pkg {package}}."
+        ))
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
       linters <- Map(

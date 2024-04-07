@@ -34,7 +34,8 @@ test_that("linters_with_tags() verifies the output of available_linters()", {
   )
   expect_error(
     linters_with_tags(NULL),
-    "'fake_linter' and 'very_fake_linter'"
+    "Linters `fake_linter()` and `very_fake_linter()` are advertised by `available_linters()`",
+    fixed = TRUE
   )
 })
 
