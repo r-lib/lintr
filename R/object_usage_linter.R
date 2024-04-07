@@ -210,9 +210,10 @@ parse_check_usage <- function(expression,
   is_missing <- is.na(res$message)
   if (any(is_missing)) {
     # TODO(#2474): Remove this.
+    missing_msg <- vals[is_missing][[1L]] # nolint: object_usage_linter.
     cli_warn(c(
-      i = "Possible bug in lintr: Couldn't parse usage message {sQuote(vals[is_missing][[1L]])}.",
-      x = "Ignoring {.val {sum(is_missing)}} usage warnings. Please report an issue at {.url https://github.com/r-lib/lintr/issues}."
+      x = "Couldn't parse usage message {sQuote(missing_msg)}. Ignoring {.val {sum(is_missing)}} usage warnings.",
+      i = "Please report a possible bug at {.url https://github.com/r-lib/lintr/issues}."
     ))
   }
   # nocov end
