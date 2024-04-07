@@ -232,5 +232,5 @@ test_that("Linters throwing an error give a helpful error", {
 })
 
 test_that("typo in argument name gives helpful error", {
-  expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: litners")
+  expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: `litners`")
 })

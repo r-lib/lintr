@@ -100,7 +100,7 @@ test_that("lint_dir works with specific linters without specifying other argumen
 })
 
 test_that("typo in argument name gives helpful error", {
-  expect_error(lint_dir(litners = identity), "Found unknown arguments in `...`: litners")
+  expect_error(lint_dir(litners = identity), "Found unknown arguments in `...`: `litners`")
 })
 
 test_that("linting empty directory passes", {
