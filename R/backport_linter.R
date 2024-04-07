@@ -95,8 +95,8 @@ normalize_r_version <- function(r_version) {
       # This can only trip if e.g. oldrel-99 is requested
       cli_abort(c(
         "{.arg r_version} is not valid:",
-        i = "It must be a version number or one of {toString(sQuote(version_names))}.",
-        x = "You entered {toString(sQuote(r_version))} instead."
+        i = "It must be a version number or one of {sQuote(version_names)}.",
+        x = "You entered {sQuote(r_version)} instead."
       ))
     }
     requested_version <- minor_versions[match(r_version, table = version_names)]

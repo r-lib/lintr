@@ -150,7 +150,7 @@ test_that("it throws an error if start and end are unpaired", {
     a
     test
   "))
-  expect_error(lintr:::parse_exclusions(t1), "but only")
+  expect_error(lintr:::parse_exclusions(t1), "and")
 
 
   t2 <- withr::local_tempfile(lines = trim_some("
@@ -159,5 +159,5 @@ test_that("it throws an error if start and end are unpaired", {
     a  #TeSt_NoLiNt_EnD
     test
   "))
-  expect_error(lintr:::parse_exclusions(t2), "but only")
+  expect_error(lintr:::parse_exclusions(t2), "and")
 })

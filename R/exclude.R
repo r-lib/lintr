@@ -131,7 +131,7 @@ parse_exclusions <- function(file,
       ends_msg <- line_info(ends, type = "end") # nolint: object_usage_linter.
       cli_abort(c(
         i = "Equal number of line starts and ends expected for exclusion from linting.",
-        x = "{.file {file}} has {.strong {starts_msg}}, but only {.strong {ends_msg}}."
+        x = "{.file {file}} has {.strong {starts_msg}} and {.strong {ends_msg}}."
       ))
     }
 
