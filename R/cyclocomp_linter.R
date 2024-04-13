@@ -2,10 +2,10 @@
 #'
 #' Check for overly complicated expressions. See [cyclocomp::cyclocomp()].
 #'
-#' @param complexity_limit Maximum cyclomatic complexity, default 15. Expressions more complex
+#' @param complexity_limit Maximum cyclomatic complexity, default `15`. Expressions more complex
 #' than this are linted. See [cyclocomp::cyclocomp()].
 #'
-#' @examples
+#' @examplesIf requireNamespace("cyclocomp", quietly = TRUE)
 #' # will produce lints
 #' lint(
 #'   text = "if (TRUE) 1 else 2",
