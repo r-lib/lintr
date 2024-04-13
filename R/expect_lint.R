@@ -42,10 +42,7 @@
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     # nocov start
-    cli_abort(c(
-      i = "{.fun expect_lint} is designed to work within the {.pkg testthat} testing framework.",
-      x = "{.pkg testthat} is not installed."
-    ))
+    cli_abort("{.fun expect_lint} is designed to work within the {.pkg testthat} testing framework, which is not installed.")
     # nocov end
   }
   old_lang <- set_lang(language)
@@ -110,7 +107,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           if (!is.logical(ok)) {
             cli_abort(c(
               x = "Invalid regex result. Did you mistakenly have a capture group in the regex?",
-              i = "Be sure to escape parenthesis with `[]`."
+              i = "Be sure to escape parentheses with `[]`."
             ))
           }
           testthat::expect(ok, msg)

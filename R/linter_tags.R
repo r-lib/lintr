@@ -118,7 +118,7 @@ validate_linter_db <- function(available, package) {
   # Otherwise, fallback to an empty data frame.
   if (!all(c("linter", "tags") %in% colnames(available))) {
     cli_warn(c(
-      i = "{.file linters.csv} must contain the columns {.str linter} and {.str tags}.",
+      i = "{.file linters.csv} must contain the columns {.val {c('linter', 'tags')}}.",
       x = "Package {.pkg package} is missing {.str {setdiff(c('linter', 'tags'), names(available))}}."
     ))
     return(FALSE)

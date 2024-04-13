@@ -18,7 +18,7 @@ addin_lint_package <- function() {
   }
   project <- rstudioapi::getActiveProject()
   if (is.null(project)) {
-    cli_inform("No configuration found. Using default linters.")
+    cli_inform("No project found, passing current directory.")
     project_path <- getwd()
   } else {
     project_path <- project
