@@ -1,12 +1,105 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* Various things marked deprecated since {lintr} 3.0.0 have been fully deprecated. They will be completely removed in the subsequent release.
+   + `source_file=` argument to `ids_with_token()` and `with_id()`.
+   + Passing linters by name or as non-`"linter"`-classed functions.
+   + `linter=` argument of `Lint()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`..
+   + `with_defaults()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+   + Helper `with_defaults()`.
+* `all_linters()` has signature `all_linters(..., packages)` rather than `all_linters(packages, ...)` (#2332, @MichaelChirico). This forces `packages=` to be supplied by name and will break users who rely on supplying `packages=` positionally, of which we found none searching GitHub.
+* Adjusted various lint messages for consistency in readability (#1330, @MichaelChirico). In general, we favor lint messages to be phrased like "Action, reason" to but the "what" piece of the message front-and-center. This may be a breaking change for code that tests the specific phrasing of lints.
+* `extraction_operator_linter()` is deprecated. Although switching from `$` to `[[` has some robustness benefits for package code, it can lead to non-idiomatic code in many contexts (e.g. R6 classes, Shiny applications, etc.) (#2409, @IndrajeetPatil). To enable the detection of the `$` operator for extraction through partial matching, use `options(warnPartialMatchDollar = TRUE)`.
+* `unnecessary_nested_if_linter()` is deprecated and subsumed into the new/more general `unnecessary_nesting_linter()`.
+* Drop support for posting GitHub comments from inside GitHub comment bot, Travis, Wercker, and Jenkins CI tools (spurred by #2148, @MichaelChirico). We rely on GitHub Actions for linting in CI, and don't see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.
+
+## Bug fixes
+
+* `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
+* `.lintr` config validation correctly accepts regular expressions which only compile under `perl = TRUE` (#2375, @MichaelChirico). These have always been valid (since `rex::re_matches()`, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
+* `.lintr` configs set by option `lintr.linter_file` or environment variable `R_LINTR_LINTER_FILE` can point to subdirectories (#2512, @MichaelChirico).
+* `indentation_linter()` returns `ranges[1L]==1L` when the offending line has 0 spaces (#2550, @MichaelChirico).
+
+## Changes to default linters
+
+* New default linter `return_linter()` for the style guide rule that terminal returns should be left implicit (#1100, #2343, #2354, and #2356, @MEO265 and @MichaelChirico).
+
 ## New and improved features
 
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
+* `library_call_linter()` is extended
+  + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
+  + to discourage many consecutive calls to `suppressMessages()` or `suppressPackageStartupMessages()` (part of #884, @MichaelChirico).
+* `return_linter()` also has arguments for fine-tuning which functions get linted:
+  + `return_style` (`"implicit"` by default) which checks that all functions confirm to the specified return style of `"implicit"` or `"explicit"` (#2271 and part of #884, @MichaelChirico, @AshesITR and @MEO265).
+  + `allow_implicit_else` (default `TRUE`) which, when `FALSE`, checks that all terminal `if` statements are paired with a corresponding `else` statement (part of #884, @MichaelChirico).
+  + `return_functions` to customize which functions are equivalent to `return()` as "exit" clauses, e.g. `rlang::abort()` can be considered in addition to the default functions like `stop()` and `q()` from base (#2271 and part of #884, @MichaelChirico and @MEO265).
+  + `except` to customize which functions are ignored entirely (i.e., whether they have a return of the specified style is not checked; #2271 and part of #884, @MichaelChirico and @MEO265). Namespace hooks like `.onAttach()` and `.onLoad()` are always ignored.
+  + `except_regex`, the same purpose as `except=`, but filters functions by pattern. This is motivated by {RUnit}, where test suites are based on unit test functions matched by pattern, e.g. `^Test`, and where explicit return may be awkward (#2335, @MichaelChirico).
+* `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
+* `backport_linter()` is slightly faster by moving expensive computations outside the linting function (#2339, #2348, @AshesITR and @MichaelChirico).
+* `Linter()` has a new argument `linter_level` (default `NA`). This is used by `lint()` to more efficiently check for expression levels than the idiom `if (!is_lint_level(...)) { return(list()) }` (#2351, @AshesITR).
+* `string_boundary_linter()` recognizes regular expression calls like `grepl("^abc$", x)` that can be replaced by using `==` instead (#1613, @MichaelChirico).
+* `unreachable_code_linter()` has an argument `allow_comment_regex` for customizing which "terminal" comments to exclude (#2327, @MichaelChirico). `# nolint end` comments are always excluded, as are {covr} exclusions (e.g. `# nocov end`) by default.
+* `format()` and `print()` methods for `lint` and `lints` classes get a new option `width` to control the printing width of lint messages (#1884, @MichaelChirico). The default is controlled by a new option `lintr.format_width`; if unset, no wrapping occurs (matching earlier behavior).
+* `implicit_assignment_linter()` gets a custom message for the case of using `(` to induce printing like `(x <- foo())`; use an explicit call to `print()` for clarity (#2257, @MichaelChirico).
+* New function node caching for big efficiency gains to most linters (e.g. overall `lint_package()` improvement of 14-27% and core linting improvement up to 30%; #2357, @AshesITR). Most linters are written around function usage, and XPath performance searching for many functions is poor. The new `xml_find_function_calls()` entry in the `get_source_expressions()` output caches all function call nodes instead. See the vignette on creating linters for more details on how to use it.
+* `todo_comment_linter()` has a new argument `except_regex` for setting _valid_ TODO comments, e.g. for forcing TODO comments to be linked to GitHub issues like `TODO(#154)` (#2047, @MichaelChirico).
+* `vector_logic_linter()` is extended to recognize incorrect usage of scalar operators `&&` and `||` inside subsetting expressions like `dplyr::filter(x, A && B)` (#2166, @MichaelChirico).
+* `any_is_na_linter()` is extended to catch the unusual usage `NA %in% x` (#2113, @MichaelChirico).
+* `make_linter_from_xpath()` errors up front when `lint_message` is missing (instead of delaying this error until the linter is used, #2541, @MichaelChirico).
+
+### New linters
+
+* `condition_call_linter()` for ensuring consistent use of `call.` in `warning()` and `stop()`. The default `call. = FALSE` follows the tidyverse guidance of not displaying the call (#2226, @Bisaloo)
+* `sample_int_linter()` for encouraging `sample.int(n, ...)` over equivalents like `sample(1:n, ...)` (part of #884, @MichaelChirico).
+* `stopifnot_all_linter()` discourages tests with `all()` like `stopifnot(all(x > 0))`; `stopifnot()` runs `all()` itself, and uses a better error message (part of #884, @MichaelChirico).
+* `comparison_negation_linter()` for discouraging negated comparisons when a direct negation is preferable, e.g. `!(x == y)` could be `x != y` (part of #884, @MichaelChirico).
+* `nzchar_linter()` for encouraging `nzchar()` to test for empty strings, e.g. `nchar(x) > 0` can be `nzchar(x)` (part of #884, @MichaelChirico).
+* `terminal_close_linter()` for discouraging using `close()` to end functions (part of #884, @MichaelChirico). Such usages are not robust to errors, where `close()` will not be run as intended. Put `close()` in an `on.exit()` hook, or use {withr} to manage connections with proper cleanup.
+* `rep_len_linter()` for encouraging use of `rep_len()` directly instead of `rep(x, length.out = n)` (part of #884, @MichaelChirico).
+* `which_grepl_linter()` for discouraging `which(grepl(ptn, x))` in favor of directly using `grep(ptn, x)` (part of #884, @MichaelChirico).
+* `list_comparison_linter()` for discouraging comparisons on the output of `lapply()`, e.g. `lapply(x, sum) > 10` (part of #884, @MichaelChirico).
+* `print_linter()` for discouraging usage of `print()` on string literals like `print("Reached here")` or `print(paste("Found", nrow(DF), "rows."))` (#1894, @MichaelChirico).
+* `unnecessary_nesting_linter()` for discouraging overly-nested code where an early return or eliminated sub-expression (inside '{') is preferable (#2317, #2334 and part of #884, @MichaelChirico).
+* `consecutive_mutate_linter()` for encouraging consecutive calls to `dplyr::mutate()` to be combined (part of #884, @MichaelChirico).
+* `if_switch_linter()` for encouraging `switch()` over repeated `if`/`else` tests (#2322 and part of #884, @MichaelChirico).
+* `nested_pipe_linter()` for discouraging pipes within pipes, e.g. `df1 %>% inner_join(df2 %>% select(a, b))` (part of #884, @MichaelChirico).
+* `nrow_subset_linter()` for discouraging usage like `nrow(subset(x, conditions))` in favor of something like `with(x, sum(conditions))` which doesn't require a full subset of `x` (#2313, #2314 and part of #884, @MichaelChirico).
+* `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
+* `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
+* `object_overwrite_linter()` for discouraging re-use of upstream package exports as local variables (#2344, #2346 and part of #884, @MichaelChirico and @AshesITR).
+
+### Lint accuracy fixes: removing false positives
+
+* `object_name_linter()` and `object_length_linter()` ignore {rlang} name injection like `x |> mutate("{new_name}" := foo(col))` (#1926, @MichaelChirico). No checking is applied in such cases. {data.table} in-place assignments like `DT[, "sPoNGeBob" := "friend"]` are still eligible for lints.
+
+# lintr 3.1.2
+
+## New and improved features
 
 ### Lint accuracy fixes: removing false positives
 
 * `unreachable_code_linter()` ignores reachable code in inline functions like `function(x) if (x > 2) stop() else x` (#2259, @MEO265).
+* `unnecessary_lambda_linter()`
+  + ignores extractions with explicit returns like `lapply(l, function(x) foo(x)$bar)` (#2258, @MichaelChirico).
+  + ignores calls on the RHS of operators like `lapply(l, function(x) "a" %in% names(x))` (#2310, @MichaelChirico).
+* `vector_logic_linter()` recognizes some cases where bitwise `&`/`|` are used correctly (#1453, @MichaelChirico).
+* `expect_comparison_linter()` ignores faulty usage like `expect_true(x, y > z)` (#2083, @MichaelChirico). Note that `y > z` is being passed to the `info=` argument, so this is likely a mistake.
+* `consecutive_assertion_linter()` ignores cases where a second assertion follows an intervening assignment with `=` (#2444, @MichaelChirico).
+
+### Lint accuracy fixes: removing false negatives
+
+* `missing_argument_linter()` catches all missing arguments in calls with several, e.g. `foo(,,)` gives 3 lints instead of 2 (#2399, @MichaelChirico).
+* `duplicate_argument_linter()` no longer misses cases with duplicate arguments where a comment comes between the argument name and `=` (#2402, @MichaelChirico).
+
+## Notes
+
+* Fixed a test assuming a specific parser error message that recently changed in r-devel (#2527, @IndrajeetPatil).
+* @MichaelChirico has taken over CRAN maintainer duties for the package. Many thanks to @jimhester for more than 10 years and 15 releases wearing that hat!!
 
 # lintr 3.1.1
 
@@ -14,7 +107,7 @@
 
 * `infix_spaces_linter()` distinguishes `<-`, `:=`, `<<-` and `->`, `->>`, i.e. `infix_spaces_linter(exclude_operators = "->")` will no longer exclude `->>` (#2115, @MichaelChirico). This change is breaking for users relying on manually-supplied `exclude_operators` containing `"<-"` to also exclude `:=` and `<<-`. The fix is to manually supply `":="` and `"<<-"` as well. We don't expect this change to affect many users, the fix is simple, and the new behavior is much more transparent, so we are including this breakage in a minor release.
 * Removed `find_line()` and `find_column()` entries from `get_source_expressions()` expression-level objects. These have been marked deprecated since version 3.0.0. No users were found on GitHub.
-* There is experimental support for writing config in plain R scripts (as opposed to DCF files; #1210, @MichaelChirico). The script is run in a new environment and variables matching settings (`?default_settings`) are copied over. In particular, this removes the need to write R code in a DCF-friendly way, and allows normal R syntax highlighting in the saved file. We may eventually deprecate the DCF approach in favor of this one; user feedback is welcome on strong preferences for either approach, or for a different approach like YAML. Generally you should be able to convert your existing `.lintr` file to an equivalent R config by replacing the `:` key-value separators with assignments (`<-`). By default, such a config is searched for in a file named '.lintr.R'. This is a mildly breaking change if you happened to be keeping a file '.lintr.R' around since that file is given precedence over '.lintr'.
+* There is experimental support for writing config in plain R scripts (as opposed to DCF files; #1210, @MichaelChirico). The script is run in a new environment and variables matching settings (`?default_settings`) are copied over. In particular, this removes the need to write R code in a DCF-friendly way, and allows normal R syntax highlighting in the saved file. We may eventually deprecate the DCF approach in favor of this one; user feedback is welcome on strong preferences for either approach, or for a different approach like YAML. Generally you should be able to convert your existing `.lintr` file to an equivalent R config by replacing the `:` key-value separators with assignments (`<-`). By default, such a config is searched for in a file named `.lintr.R`. This is a mildly breaking change if you happened to be keeping a file `.lintr.R` around since that file is given precedence over `.lintr`.
   + We also validate config files up-front make it clearer when invalid configs are present (#2195, @MichaelChirico). There is a warning for "invalid" settings, i.e., settings not part of `?default_settings`. We think this is more likely to affect users declaring settings in R, since any variable defined in the config that's not a setting must be removed to make it clearer which variables are settings vs. ancillary.
 
 ## Bug fixes

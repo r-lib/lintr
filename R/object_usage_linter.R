@@ -52,11 +52,7 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
     | descendant::LEFT_ASSIGN[text() = ':=']
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
 
     declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
@@ -91,8 +87,6 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
         skip_with = skip_with
       )
 
-      # TODO handle assignment functions properly
-      # e.g. `not_existing<-`(a, b)
       res$name <- re_substitutes(res$name, rex("<-"), "")
 
       lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
@@ -213,16 +207,17 @@ parse_check_usage <- function(expression,
   )
 
   # nocov start
-  missing <- is.na(res$message)
-  if (any(missing)) {
-    # TODO (AshesITR): Remove this in the future, if no bugs arise from this safeguard
+  is_missing <- is.na(res$message)
+  if (any(is_missing)) {
+    # TODO(#2474): Remove this.
     warning(
-      "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[missing][[1L]]), ". ",
-      "Ignoring ", sum(missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues."
+      "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[is_missing][[1L]]), ". ",
+      "Ignoring ", sum(is_missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues.",
+      call. = FALSE
     )
   }
   # nocov end
-  res <- res[!missing, ]
+  res <- res[!is_missing, ]
 
   res$line1 <- ifelse(
     nzchar(res$line1),

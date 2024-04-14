@@ -78,6 +78,12 @@ package_hooks_linter <- function() {
   # lints here will hit the function <expr>,
   #   this path returns to the corresponding namespace hook's name
   ns_calls <- xp_text_in_table(c(".onLoad", ".onAttach", ".onDetach", ".Last.lib"))
+
+  # usually any given package will have one or maybe two files defining namespace hooks.
+  #   given the number of checks, then, it's prudent to check first if any such hook is defined,
+  #   exiting early if not.
+  any_hook_xpath <- glue("(//FUNCTION | //OP-LAMBDA)/parent::expr/preceding-sibling::expr/SYMBOL[{ns_calls}]")
+
   hook_xpath <- sprintf("string(./ancestor::expr/expr/SYMBOL[%s])", ns_calls)
 
   load_arg_name_xpath <- "
@@ -120,12 +126,13 @@ package_hooks_linter <- function() {
     ]
   "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
+  Linter(linter_level = "file", function(source_expression) {
+    xml <- source_expression$full_xml_parsed_content
+
+    any_hook <- xml_find_first(xml, any_hook_xpath)
+    if (is.na(any_hook)) {
       return(list())
     }
-
-    xml <- source_expression$xml_parsed_content
 
     # inherits: source_expression, bad_call_xpaths
     bad_msg_call_lints <- function(xml, hook) {
@@ -183,13 +190,13 @@ package_hooks_linter <- function() {
     unload_arg_name_lints <-
       xml_nodes_to_lints(unload_arg_name_expr, source_expression, unload_arg_name_message, type = "warning")
 
-    return(c(
+    c(
       onload_bad_msg_call_lints,
       onattach_bad_msg_call_lints,
       load_arg_name_lints,
       library_require_lints,
       bad_unload_call_lints,
       unload_arg_name_lints
-    ))
+    )
   })
 }

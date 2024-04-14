@@ -1,54 +1,58 @@
 test_that("ifelse_censor_linter skips allowed usages", {
-  expect_lint("ifelse(x == 2, x, y)", NULL, ifelse_censor_linter())
-  expect_lint("ifelse(x > 2, x, y)", NULL, ifelse_censor_linter())
+  linter <- ifelse_censor_linter()
+
+  expect_lint("ifelse(x == 2, x, y)", NULL, linter)
+  expect_lint("ifelse(x > 2, x, y)", NULL, linter)
 })
 
 test_that("ifelse_censor_linter blocks simple disallowed usages", {
+  linter <- ifelse_censor_linter()
+
   expect_lint(
     "ifelse(x < 0, 0, x)",
     rex::rex("pmax(x, y) is preferable to ifelse(x < y, y, x)"),
-    ifelse_censor_linter()
+    linter
   )
 
   # other equivalents to base::ifelse()
   expect_lint(
     "if_else(x < 0, 0, x)",
     rex::rex("pmax(x, y) is preferable to if_else(x < y, y, x)"),
-    ifelse_censor_linter()
+    linter
   )
   expect_lint(
     "fifelse(x < 0, 0, x)",
     rex::rex("pmax(x, y) is preferable to fifelse(x < y, y, x)"),
-    ifelse_censor_linter()
+    linter
   )
 
   # other equivalents for censoring
   expect_lint(
     "ifelse(x <= 0, 0, x)",
     rex::rex("pmax(x, y) is preferable to ifelse(x <= y, y, x)"),
-    ifelse_censor_linter()
+    linter
   )
   expect_lint(
     "ifelse(x > 0, x, 0)",
     rex::rex("pmax(x, y) is preferable to ifelse(x > y, x, y)"),
-    ifelse_censor_linter()
+    linter
   )
   expect_lint(
     "ifelse(x >= 0, x, 0)",
     rex::rex("pmax(x, y) is preferable to ifelse(x >= y, x, y)"),
-    ifelse_censor_linter()
+    linter
   )
 
   # pairwise min/max (similar to censoring)
   expect_lint(
     "ifelse(x < y, x, y)",
     rex::rex("pmin(x, y) is preferable to ifelse(x < y, x, y)"),
-    ifelse_censor_linter()
+    linter
   )
   expect_lint(
     "ifelse(x >= y, y, x)",
     rex::rex("pmin(x, y) is preferable to ifelse(x >= y, y, x)"),
-    ifelse_censor_linter()
+    linter
   )
 
   # more complicated expression still matches
@@ -60,9 +64,20 @@ test_that("ifelse_censor_linter blocks simple disallowed usages", {
   expect_lint(
     lines,
     rex::rex("pmin(x, y) is preferable to ifelse(x > y, y, x)"),
-    ifelse_censor_linter()
+    linter
   )
 })
 
-# TODO(michaelchirico): how easy would it be to strip parens when considering lint?
-#   e.g. ifelse(x < (kMaxIndex - 1), x, kMaxIndex - 1)
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      ifelse(x >= y, y, x)
+      ifelse(x >= 0, x, 0)
+    }"),
+    list(
+      list("pmin", line_number = 2L),
+      list("pmax", line_number = 3L)
+    ),
+    ifelse_censor_linter()
+  )
+})

@@ -49,11 +49,10 @@
 #' @export
 expect_comparison_linter <- function() {
   # != doesn't have a clean replacement
-  comparator_nodes <- setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
+  comparator_nodes <- setdiff(infix_metadata$xml_tag[infix_metadata$comparator], "NE")
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-    /parent::expr
-    /following-sibling::expr[ {xp_or(comparator_nodes)} ]
+  parent::expr
+    /following-sibling::expr[1][ {xp_or(comparator_nodes)} ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info'])]
   ")
 
@@ -63,14 +62,9 @@ expect_comparison_linter <- function() {
     `==` = "expect_identical"
   )
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls("expect_true")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     comparator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")
     expectation <- comparator_expectation_map[comparator]

@@ -52,11 +52,7 @@ spaces_inside_linter <- function() {
   //OP-RIGHT-BRACKET[{right_xpath_condition}]
   | //OP-RIGHT-PAREN[{right_xpath_condition} and not(preceding-sibling::*[1][self::EQ_SUB])]")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
     left_expr <- xml_find_all(xml, left_xpath)

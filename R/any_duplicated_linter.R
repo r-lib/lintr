@@ -35,8 +35,7 @@
 #' @export
 any_duplicated_linter <- function() {
   any_duplicated_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'any']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
     /parent::expr[
       count(expr) = 2
@@ -85,14 +84,11 @@ any_duplicated_linter <- function() {
 
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    xml_calls <- source_expression$xml_find_function_calls("any")
 
-    any_duplicated_expr <- xml_find_all(xml, any_duplicated_xpath)
+    any_duplicated_expr <- xml_find_all(xml_calls, any_duplicated_xpath)
     any_duplicated_lints <- xml_nodes_to_lints(
       any_duplicated_expr,
       source_expression = source_expression,
@@ -113,6 +109,6 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    return(c(any_duplicated_lints, length_unique_lints))
+    c(any_duplicated_lints, length_unique_lints)
   })
 }

@@ -33,3 +33,19 @@ test_that("for_loop_index_linter blocks simple disallowed usages", {
   # arbitrary nesting
   expect_lint("for (x in foo(bar(y, baz(2, x)))) {}", lint_msg, linter)
 })
+
+test_that("lints vectorize", {
+  lint_msg <- "Don't re-use any sequence symbols as the index symbol in a for loop"
+
+  expect_lint(
+    trim_some("{
+      for (x in x) {}
+      for (y in y) {}
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    for_loop_index_linter()
+  )
+})

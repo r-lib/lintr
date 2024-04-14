@@ -44,7 +44,10 @@
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
   if (is.null(names(op)) || !all(nzchar(names(op))) || length(op) == 0L) {
-    stop("'op' should be a non-empty named character vector; use missing elements to indicate default messages.")
+    stop(
+      "'op' should be a non-empty named character vector; use missing elements to indicate default messages.",
+      call. = FALSE
+    )
   }
   # infix must be handled individually below; non-assignment `=` are always OK
   operator_nodes <- infix_metadata$xml_tag_exact[
@@ -58,22 +61,18 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
   }
 
   if (length(operator_nodes) == 0L) {
-    stop("Did not recognize any valid operators in request for: ", toString(names(op)))
+    stop("Did not recognize any valid operators in request for: ", toString(names(op)), call. = FALSE)
   }
 
   xpath <- paste(paste0("//", operator_nodes), collapse = " | ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     bad_op <- xml_find_all(xml, xpath)
 
     operator <- xml_text(bad_op)
-    lint_message <- sprintf("Operator `%s` is undesirable.", operator)
+    lint_message <- sprintf("Avoid undesirable operator `%s`.", operator)
     alternative <- op[operator]
     has_alternative <- !is.na(alternative)
     lint_message[has_alternative] <- paste(lint_message[has_alternative], alternative[has_alternative])

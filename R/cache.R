@@ -55,7 +55,8 @@ load_cache <- function(file, path = NULL) {
       error = function(e) {
         warning(
           "Could not load cache file '", file, "':\n",
-          conditionMessage(e)
+          conditionMessage(e),
+          call. = FALSE
         )
       }
     )
@@ -127,9 +128,8 @@ retrieve_lint <- function(cache, expr, linter, lines) {
     )
     if (is.na(new_line_number)) {
       return(NULL)
-    } else {
-      lints[[i]]$line_number <- new_line_number
     }
+    lints[[i]]$line_number <- new_line_number
   }
   cache_lint(cache, expr, linter, lints)
   lints

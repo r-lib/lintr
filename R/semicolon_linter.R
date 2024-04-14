@@ -60,11 +60,14 @@
 #' - <https://style.tidyverse.org/syntax.html#semicolons>
 #' @export
 semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
-  msg_trailing <- "Trailing semicolons are not needed."
-  msg_compound <- "Compound semicolons are discouraged. Replace them by a newline."
+  msg_trailing <- "Remove trailing semicolons."
+  msg_compound <- "Replace compound semicolons by a newline."
 
   if (allow_compound && allow_trailing) {
-    stop("At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.")
+    stop(
+      "At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.",
+      call. = FALSE
+    )
   } else if (allow_compound && !allow_trailing) {
     # lint only trailing
     xpath <- "//OP-SEMICOLON[not(@line1 = following-sibling::*[1]/@line1)]"
@@ -82,12 +85,9 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
   }
   compound_xpath <- "self::*[@line1 = following-sibling::*[1]/@line1]"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+
     bad_exprs <- xml_find_all(xml, xpath)
     if (need_detection) {
       is_trailing <- is.na(xml_find_first(bad_exprs, compound_xpath))

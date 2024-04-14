@@ -46,11 +46,11 @@
 #' @export
 literal_coercion_linter <- function() {
   rlang_coercers <- c("lgl", "int", "dbl", "chr")
-  coercers <- xp_text_in_table(c(
+  coercers <- c(
     # base coercers
     paste0("as.", c("logical", "integer", "numeric", "double", "character")),
     rlang_coercers
-  ))
+  )
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
@@ -65,22 +65,16 @@ literal_coercion_linter <- function() {
     )
   "
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {coercers} ]
-    /parent::expr
+  parent::expr
     /parent::expr[
       count(expr) = 2
       and expr[2][ {not_extraction_or_scientific} ]
     ]
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls(coercers)
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     coercer <- xp_call_name(bad_expr)
     # tiptoe around the fact that we don't require {rlang}
@@ -104,9 +98,7 @@ literal_coercion_linter <- function() {
         coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])
       }
       # the linter logic & rlang requirement should ensure that it's safe to run eval() here
-      # TODO(michaelchirico): this recommends '1' to replace as.numeric(1), where our
-      #   own implicit_integer_linter(), if active, would require this to be 1.0. Should
-      #   we recommend this instead, or offer it as an alternative?
+      # TODO(#2473): Avoid a recommendation like '1' that clashes with implicit_integer_linter().
       literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
       lint_message <- sprintf(
         "Use %s instead of %s, i.e., use literals directly where possible, instead of coercion.",

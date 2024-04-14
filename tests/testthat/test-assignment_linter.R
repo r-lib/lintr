@@ -27,14 +27,17 @@ test_that("assignment_linter blocks disallowed usages", {
 })
 
 test_that("arguments handle <<- and ->/->> correctly", {
-  expect_lint("1 -> blah", rex::rex("Use <-, not ->, for assignment."), assignment_linter())
-  expect_lint("1 ->> blah", rex::rex("->> can have hard-to-predict behavior;"), assignment_linter())
+  linter <- assignment_linter()
+  lint_msg_right <- rex::rex("Replace ->> by assigning to a specific environment")
+
+  expect_lint("1 -> blah", rex::rex("Use <-, not ->, for assignment."), linter)
+  expect_lint("1 ->> blah", lint_msg_right, linter)
 
   # <<- is only blocked optionally
-  expect_lint("1 <<- blah", NULL, assignment_linter())
+  expect_lint("1 <<- blah", NULL, linter)
   expect_lint(
     "1 <<- blah",
-    rex::rex("<<- can have hard-to-predict behavior;"),
+    rex::rex("Replace <<- by assigning to a specific environment"),
     assignment_linter(allow_cascading_assign = FALSE)
   )
 
@@ -44,7 +47,7 @@ test_that("arguments handle <<- and ->/->> correctly", {
   # blocked under cascading assign but not under right assign --> blocked
   expect_lint(
     "1 ->> blah",
-    rex::rex("->> can have hard-to-predict behavior;"),
+    lint_msg_right,
     assignment_linter(allow_cascading_assign = FALSE, allow_right_assign = TRUE)
   )
 })
@@ -66,7 +69,7 @@ test_that("arguments handle trailing assignment operators correctly", {
   )
   expect_lint(
     "x <<-\ny",
-    rex::rex("<<- can have hard-to-predict behavior"),
+    rex::rex("Replace <<- by assigning to a specific environment"),
     assignment_linter(allow_trailing = FALSE, allow_cascading_assign = FALSE)
   )
 
@@ -174,12 +177,17 @@ test_that("%<>% throws a lint", {
 
 test_that("multiple lints throw correct messages", {
   expect_lint(
-    "{ x <<- 1; y ->> 2; z -> 3; x %<>% as.character() }",
+    trim_some("{
+      x <<- 1
+      y ->> 2
+      z -> 3
+      x %<>% as.character()
+    }"),
     list(
-      list(message = "<<- can have hard-to-predict behavior"),
-      list(message = "->> can have hard-to-predict behavior"),
-      list(message = "Use <-, not ->"),
-      list(message = "Avoid the assignment pipe %<>%")
+      list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
+      list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
+      list(message = "Use <-, not ->", line_number = 4L),
+      list(message = "Avoid the assignment pipe %<>%", line_number = 5L)
     ),
     assignment_linter(allow_cascading_assign = FALSE)
   )

@@ -188,15 +188,6 @@ test_that("validate_config_file() detects improperly-formed settings", {
   writeLines('exclude: "("', .lintr)
   expect_error(lint_dir(), "Setting 'exclude' should be a single regular expression, not '('", fixed = TRUE)
 
-  writeLines('comment_bot: "a"', .lintr)
-  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'a'", fixed = TRUE)
-
-  writeLines("comment_bot: NA", .lintr)
-  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'NA'", fixed = TRUE)
-
-  writeLines("comment_bot: c(TRUE, FALSE)", .lintr)
-  expect_error(lint_dir(), "Setting 'comment_bot' should be TRUE or FALSE, not 'TRUE, FALSE'", fixed = TRUE)
-
   writeLines("linters: list(1)", .lintr)
   expect_error(lint_dir(), "Setting 'linters' should be a list of linters", fixed = TRUE)
 
@@ -272,4 +263,29 @@ test_that("read_config_file() bubbles up warnings helpfully, without erroring (#
 
   writeLines("a <- 1", "aaa.R")
   expect_warning(lint_dir(), "Warning from config setting 'linters'.*Resetting 'r_version' to 3.0.0")
+})
+
+test_that("perl-only regular expressions are accepted in config", {
+  .lintr <- withr::local_tempfile(lines = 'exclude: "# (?<=a)b"')
+  withr::local_options(lintr.linter_file = .lintr)
+  withr::local_dir(withr::local_tempdir())
+
+  writeLines("a <- 1", "aaa.R")
+  expect_silent(lint("aaa.R"))
+})
+
+test_that("settings can be put in a sub-directory", {
+  withr::local_dir(withr::local_tempdir())
+
+  dir.create(".settings")
+  .lintr <- ".settings/.lintr.R"
+  writeLines("linters <- list(line_length_linter(10))", .lintr)
+
+  dir.create("R")
+  writeLines("abcdefghijklmnopqrstuvwxyz=1", "R/a.R")
+
+  writeLines(c("Package: foo", "Version: 0.1"), "DESCRIPTION")
+
+  withr::local_options(lintr.linter_file = .lintr)
+  expect_length(lint_package(), 1L)
 })

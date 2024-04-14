@@ -347,11 +347,11 @@ test_that("implicit_assignment_linter works as expected with pipes and walrus op
 })
 
 test_that("parenthetical assignments are caught", {
-  linter <- implicit_assignment_linter()
-  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
-
-  expect_lint("(x <- 1:10)", lint_message, linter)
-  expect_lint("if (A && (B <- foo())) { }", lint_message, linter)
+  expect_lint(
+    "if (A && (B <- foo())) { }",
+    rex::rex("Avoid implicit assignments in function calls."),
+    implicit_assignment_linter()
+  )
 })
 
 test_that("allow_lazy lets lazy assignments through", {
@@ -439,7 +439,6 @@ test_that("allow_scoped skips scoped assignments", {
   )
 
   # outside of branching, doesn't matter
-  expect_lint("(idx <- foo()); bar()", lint_message, linter)
   expect_lint("foo(idx <- bar()); baz()", lint_message, linter)
   expect_lint("foo(x, idx <- bar()); baz()", lint_message, linter)
 })
@@ -474,6 +473,27 @@ test_that("interaction of allow_lazy and allow_scoped", {
       print(format(idx)) # NB: bad code! idx may not exist.
     "),
     NULL,
+    linter
+  )
+})
+
+test_that("call-less '(' mentions avoiding implicit printing", {
+  linter <- implicit_assignment_linter()
+  implicit_msg <- rex::rex("Avoid implicit assignments in function calls.")
+  print_msg <- rex::rex("Call print() explicitly instead of relying on implicit printing behavior via '('.")
+
+  expect_lint("(a <- foo())", print_msg, linter)
+
+  # only for top-level assignments; withAutoprint() ignored
+  expect_lint("for (xi in x) (z <- foo(xi))", implicit_msg, linter)
+
+  # mixed messages
+  expect_lint(
+    trim_some("
+      (a <- foo())
+      bar(z <- baz(a))
+    "),
+    list(print_msg, implicit_msg),
     linter
   )
 })

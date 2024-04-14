@@ -96,7 +96,7 @@ test_that("linter accepts vector of styles", {
   linter <- object_name_linter(styles = c("camelCase", "dotted.case"))
 
   expect_lint(
-    c("var.one <- 1", "varTwo <- 2", "var_three <- 3"),
+    "var.one <- 1\nvarTwo <- 2\nvar_three <- 3",
     list(message = lint_msg, line_number = 3L, column_number = 1L),
     linter
   )
@@ -272,4 +272,17 @@ test_that("function shorthand also lints", {
   skip_if_not_r_version("4.1.0")
 
   expect_lint("aBc <- \\() NULL", "function name style", object_name_linter())
+})
+
+test_that("capture groups in style are fine", {
+  expect_lint("a <- 1\nab <- 2", NULL, object_name_linter(regexes = c(capture = "^(a)")))
+  expect_lint("ab <- 1\nabc <- 2", NULL, object_name_linter(regexes = c(capture = "^(a)(b)")))
+})
+
+test_that("rlang name injection is handled", {
+  linter <- object_name_linter()
+
+  expect_lint('tibble("{name}" := 2)', NULL, linter)
+  expect_lint('x %>% mutate("{name}" := 2)', NULL, linter)
+  expect_lint('DT[, "{name}" := 2]', "style should match snake_case", linter)
 })

@@ -16,9 +16,9 @@ The following linters are tagged with 'style':
 \item{\code{\link{brace_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
+\item{\code{\link{condition_call_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
-\item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{function_argument_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{implicit_assignment_linter}}}
@@ -32,6 +32,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_usage_linter}}}
+\item{\code{\link{one_call_pipe_linter}}}
 \item{\code{\link{package_hooks_linter}}}
 \item{\code{\link{paren_body_linter}}}
 \item{\code{\link{pipe_call_linter}}}
@@ -39,6 +40,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{pipe_continuation_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{repeat_linter}}}
+\item{\code{\link{return_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{spaces_inside_linter}}}
 \item{\code{\link{spaces_left_parentheses_linter}}}

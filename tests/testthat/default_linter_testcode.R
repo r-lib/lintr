@@ -7,6 +7,11 @@
 # paren_brace
 f = function (x,y = 1){}
 
+# return_linter
+g <- function(x) {
+  return(x + 1)
+}
+
 # commented_code
 # some <- commented("out code")
 

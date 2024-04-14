@@ -7,6 +7,24 @@
 #' `scalar %in% vector` is OK, because the alternative (`any(vector == scalar)`)
 #'   is more circuitous & potentially less clear.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "x %in% 1L",
+#'   linters = scalar_in_linter()
+#' )
+#'
+#' lint(
+#'   text = "x %chin% 'a'",
+#'   linters = scalar_in_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "x %in% 1:10",
+#'   linters = scalar_in_linter()
+#' )
+#'
 #' @evalRd rd_tags("scalar_in_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -19,11 +37,7 @@ scalar_in_linter <- function() {
     /parent::expr
   "
 
-  return(Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, xpath)
@@ -37,5 +51,5 @@ scalar_in_linter <- function() {
       lint_message = lint_msg,
       type = "warning"
     )
-  }))
+  })
 }

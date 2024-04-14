@@ -22,11 +22,15 @@ test_that("linters_with_defaults warns on unused NULLs", {
 })
 
 test_that("linters_with_tags() verifies the output of available_linters()", {
-  skip_if_not_installed("mockery")
-  mockery::stub(
-    linters_with_tags,
-    "available_linters",
-    data.frame(linter = c("fake_linter", "very_fake_linter"), package = "lintr", tags = "", stringsAsFactors = FALSE)
+  local_mocked_bindings(
+    available_linters = function(...) {
+      data.frame(
+        linter = c("fake_linter", "very_fake_linter"),
+        package = "lintr",
+        tags = "",
+        stringsAsFactors = FALSE
+      )
+    }
   )
   expect_error(
     linters_with_tags(NULL),
@@ -68,25 +72,11 @@ test_that("can instantiate all linters without arguments", {
   expect_length(really_all_linters, nrow(available_linters(exclude_tags = NULL)))
 })
 
-test_that("with_defaults is supported with a deprecation warning", {
-  defaults <- linters_with_defaults()
-  expect_warning(
-    {
-      old_defaults <- with_defaults()
-    },
+test_that("with_defaults is fully deprecated", {
+  expect_error(
+    with_defaults(),
     rex::rex("Use linters_with_defaults or modify_defaults instead.")
   )
-  expect_identical(defaults, old_defaults)
-
-  # linters_with_defaults only accepts `defaults = list()` to start from blank
-  defaults <- linters_with_defaults(defaults = list(), whitespace_linter())
-  expect_warning(
-    {
-      old_defaults <- with_defaults(default = NULL, whitespace_linter())
-    },
-    rex::rex("Use linters_with_defaults or modify_defaults instead.")
-  )
-  expect_identical(defaults, old_defaults)
 })
 
 test_that("modify_defaults works", {

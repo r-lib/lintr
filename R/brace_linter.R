@@ -74,7 +74,7 @@ brace_linter <- function(allow_single_line = FALSE) {
     )")
   ))
 
-  # TODO (AshesITR): if c_style_braces is TRUE, invert the preceding-sibling condition
+  # TODO(#1103): if c_style_braces is TRUE, invert the preceding-sibling condition
   xp_open_curly <- glue("//OP-LEFT-BRACE[
     { xp_cond_open }
     and (
@@ -109,7 +109,7 @@ brace_linter <- function(allow_single_line = FALSE) {
     )"
   ))
 
-  # TODO (AshesITR): if c_style_braces is TRUE, skip the not(ELSE) condition
+  # TODO(#1103): if c_style_braces is TRUE, skip the not(ELSE) condition
   xp_closed_curly <- glue("//OP-RIGHT-BRACE[
     { xp_cond_closed }
     and (
@@ -121,7 +121,7 @@ brace_linter <- function(allow_single_line = FALSE) {
   xp_else_closed_curly <- "preceding-sibling::IF/following-sibling::expr[2]/OP-RIGHT-BRACE"
   # need to (?) repeat previous_curly_path since != will return true if there is
   #   no such node. ditto for approach with not(@line1 = ...).
-  # TODO (AshesITR): if c_style_braces is TRUE, this needs to be @line2 + 1
+  # TODO(#1103): if c_style_braces is TRUE, this needs to be @line2 + 1
   xp_else_same_line <- glue("//ELSE[{xp_else_closed_curly} and @line1 != {xp_else_closed_curly}/@line2]")
 
   xp_function_brace <- "(//FUNCTION | //OP-LAMBDA)/parent::expr[@line1 != @line2 and not(expr[OP-LEFT-BRACE])]"
@@ -146,12 +146,9 @@ brace_linter <- function(allow_single_line = FALSE) {
   ]
   "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+
     lints <- list()
 
     lints <- c(
@@ -197,7 +194,7 @@ brace_linter <- function(allow_single_line = FALSE) {
       xml_nodes_to_lints(
         xml_find_all(xml, xp_function_brace),
         source_expression = source_expression,
-        lint_message = "Any function spanning multiple lines should use curly braces."
+        lint_message = "Use curly braces for any function spanning multiple lines."
       )
     )
 

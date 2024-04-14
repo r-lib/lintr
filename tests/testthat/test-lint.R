@@ -105,7 +105,12 @@ test_that("lint() results do not depend on the position of the .lintr", {
 })
 
 test_that("lint uses linter names", {
-  expect_lint("a = 2", list(linter = "bla"), linters = list(bla = assignment_linter()), parse_settings = FALSE)
+  expect_lint(
+    "a = 2",
+    list(linter = "bla"),
+    linters = list(bla = assignment_linter()),
+    parse_settings = FALSE
+  )
 })
 
 test_that("lint() results from file or text should be consistent", {
@@ -150,8 +155,8 @@ test_that("exclusions work with custom linter names", {
   )
 })
 
-test_that("compatibility warnings work", {
-  expect_warning(
+test_that("old compatibility usage errors", {
+  expect_error(
     expect_lint(
       "a == NA",
       "Use is.na",
@@ -161,7 +166,7 @@ test_that("compatibility warnings work", {
     fixed = TRUE
   )
 
-  expect_warning(
+  expect_error(
     expect_lint(
       "a = 42",
       "Use <-",
@@ -172,7 +177,7 @@ test_that("compatibility warnings work", {
   )
 
   # Also within `linters_with_defaults()` (#1725)
-  expect_warning(
+  expect_error(
     expect_lint(
       "a = 42",
       "Use <-",
@@ -182,7 +187,7 @@ test_that("compatibility warnings work", {
     fixed = TRUE
   )
 
-  expect_warning(
+  expect_error(
     expect_lint(
       "a == NA",
       "Use is.na",
@@ -193,7 +198,7 @@ test_that("compatibility warnings work", {
   )
 
   # Trigger compatibility in auto_names()
-  expect_warning(
+  expect_error(
     expect_lint(
       "a == NA",
       "Use is.na",
@@ -204,12 +209,8 @@ test_that("compatibility warnings work", {
   )
 
   expect_error(
-    expect_warning(
-      lint("a <- 1\n", linters = function(two, arguments) NULL),
-      regexp = "The use of linters of class 'function'",
-      fixed = TRUE
-    ),
-    regexp = "`fun` must be a function taking exactly one argument",
+    lint("a <- 1\n", linters = function(two, arguments) NULL),
+    regexp = "The use of linters of class 'function'",
     fixed = TRUE
   )
 
@@ -219,17 +220,9 @@ test_that("compatibility warnings work", {
   )
 })
 
-test_that("Deprecated positional usage of cache= errors", {
-  expect_error(
-    lint("a = 2\n", FALSE, linters = assignment_linter()),
-    "'cache' is no longer available as a positional argument",
-    fixed = TRUE
-  )
-})
-
 test_that("Linters throwing an error give a helpful error", {
   tmp_file <- withr::local_tempfile(lines = "a <- 1")
-  linter <- function() Linter(function(source_expression) stop("a broken linter"))
+  linter <- function() Linter(function(source_expression) stop("a broken linter", call. = FALSE))
   # NB: Some systems/setups may use e.g. symlinked files when creating under tempfile();
   #   we don't care much about that, so just check basename()
   expect_error(
