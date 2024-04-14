@@ -293,3 +293,7 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
     i = "Check for typos and see ?{ref_help} for valid arguments."
   ))
 }
+
+cli_abort_internal <- function(...) {
+  cli_abort(..., .internal = TRUE)
+}
