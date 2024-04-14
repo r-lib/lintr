@@ -42,7 +42,9 @@
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     # nocov start
-    cli_abort("{.fun expect_lint} is designed to work within the {.pkg testthat} testing framework, which is not installed.")
+    cli_abort(
+      "{.fun expect_lint} is designed to work within the {.pkg testthat} testing framework, which is not installed."
+    )
     # nocov end
   }
   old_lang <- set_lang(language)
