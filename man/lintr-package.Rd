@@ -13,13 +13,13 @@ Supports on the fly checking of R code edited with Emacs, Vim, and Sublime Text.
 \code{\link[=lint]{lint()}}, \code{\link[=lint_package]{lint_package()}}, \code{\link[=lint_dir]{lint_dir()}}, \link{linters}
 }
 \author{
-\strong{Maintainer}: Jim Hester \email{james.f.hester@gmail.com}
+\strong{Maintainer}: Michael Chirico \email{michaelchirico4@gmail.com}
 
 Authors:
 \itemize{
+  \item Jim Hester
   \item Florent Angly (fangly)
   \item Russ Hyde
-  \item Michael Chirico
   \item Kun Ren
   \item Alexander Rosenstock (AshesITR)
   \item Indrajeet Patil \email{patilindrajeet.science@gmail.com} (\href{https://orcid.org/0000-0003-1995-6531}{ORCID}) (@patilindrajeets)

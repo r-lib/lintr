@@ -75,7 +75,7 @@ find_config <- function(filename) {
   # may exist in subsequent directories are ignored
   file_locations <- c(
     # Local (incl. parent) directories
-    find_local_config(path, basename(linter_file)),
+    find_local_config(path, linter_file),
     # User directory
     # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
     file.path(Sys.getenv("HOME", unset = "~"), linter_file),

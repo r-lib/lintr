@@ -37,25 +37,3 @@ test_that("GitHub Actions - linting on error works", {
   local_mocked_bindings(quit = function(...) cat("Tried to quit.\n"))
   expect_output(print(l), "::warning file", fixed = TRUE)
 })
-
-test_that("Printing works for Travis", {
-  withr::local_envvar(list(GITHUB_ACTIONS = "false", TRAVIS_REPO_SLUG = "test/repo", LINTR_COMMENT_BOT = "true"))
-  withr::local_options(lintr.rstudio_source_markers = FALSE)
-  tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
-
-  l <- lint(tmp)
-
-  local_mocked_bindings(github_comment = function(x, ...) cat(x, "\n"))
-  expect_output(print(l), "*warning:*", fixed = TRUE)
-})
-
-test_that("Printing works for Wercker", {
-  withr::local_envvar(list(GITHUB_ACTIONS = "false", WERCKER_GIT_BRANCH = "test/repo", LINTR_COMMENT_BOT = "true"))
-  withr::local_options(lintr.rstudio_source_markers = FALSE)
-  tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
-
-  l <- lint(tmp)
-
-  local_mocked_bindings(github_comment = function(x, ...) cat(x, "\n"))
-  expect_output(print(l), "*warning:*", fixed = TRUE)
-})

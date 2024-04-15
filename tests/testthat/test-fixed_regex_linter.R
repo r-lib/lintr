@@ -287,51 +287,67 @@ robust_non_printable_unicode <- function() {
 }
 
 # styler: off
-patrick::with_parameters_test_that("fixed replacements are correct", {
-  skip_if(
-    regex_expr %in% c("abc\\U{A0DEF}ghi", "[\\U1d4d7]", "[\\U{1D4D7}]", "\\u{A0}\\U{0001d4d7}") &&
-      .Platform$OS.type == "windows" &&
-      !hasName(R.Version(), "crt"),
-    message = "UTF-8 support is required"
+local({
+  .cases <- tibble::tribble(
+    ~.test_name,            ~regex_expr,            ~fixed_expr,
+    "[.]",                  "[.]",                  ".",
+    '[\\\"]',               '[\\\"]',               '\\"',
+    "[]]",                  "[]]",                  "]",
+    "\\\\.",                "\\\\.",                ".",
+    "\\\\:",                "\\\\:",                ":",
+    "\\\\<",                "\\\\<",                "<",
+    "\\\\$",                "\\\\$",                "$",
+    "[\\1]",                "[\\1]",                "\\001",
+    "\\1",                  "\\1",                  "\\001",
+    "[\\12]",               "[\\12]",               "\\n",
+    "[\\123]",              "[\\123]",              "S",
+    "a[*]b",                "a[*]b",                "a*b",
+    "abcdefg",              "abcdefg",              "abcdefg",
+    "abc\\U{A0DEF}ghi",     "abc\\U{A0DEF}ghi",     robust_non_printable_unicode(),
+    "a-z",                  "a-z",                  "a-z",
+    "[\\n]",                "[\\n]",                "\\n",
+    "\\n",                  "\n",                   "\\n",
+    "[\\u01]",              "[\\u01]",              "\\001",
+    "[\\u012]",             "[\\u012]",             "\\022",
+    "[\\u0123]",            "[\\u0123]",            "\u0123",
+    "[\\u{1}]",             "[\\u{1}]",             "\\001",
+    "[\\U1d4d7]",           "[\\U1d4d7]",           "\U1D4D7",
+    "[\\U{1D4D7}]",         "[\\U{1D4D7}]",         "\U1D4D7",
+    "[\\U8]",               "[\\U8]",               "\\b",
+    "\\u{A0}",              "\\u{A0}",              "\uA0",
+    "\\u{A0}\\U{0001d4d7}", "\\u{A0}\\U{0001d4d7}", "\uA0\U1D4D7",
+    "[\\uF]",               "[\\uF]",               "\\017",
+    "[\\U{F7D5}]",          "[\\U{F7D5}]",          "\UF7D5",
+    "[\\x32]",              "[\\x32]",              "2",
+    "[\\xa]",               "[\\xa]",               "\\n"
   )
-  expect_lint(
-    sprintf("grepl('%s', x)", regex_expr),
-    rex::rex(sprintf('Use "%s" with fixed = TRUE', fixed_expr)),
-    fixed_regex_linter()
+  if (.Platform$OS.type == "windows" && !hasName(R.Version(), "crt")) {
+    skip_cases <- c(
+      # These require UTF-8 support
+      "abc\\U{A0DEF}ghi", "[\\U1d4d7]", "[\\U{1D4D7}]", "\\u{A0}\\U{0001d4d7}",
+      # R version-specific difference in output message on Windows (probably r80051)
+      if (getRversion() == "4.0.4") "[\\U{F7D5}]"
+    )
+  } else {
+    skip_cases <- character()
+  }
+  patrick::with_parameters_test_that(
+    "fixed replacements are correct",
+    {
+      # TODO(google/patrick#19): handle this more cleanly by skipping up-front
+      skip_if(
+        regex_expr %in% skip_cases,
+        sprintf("regex '%s' is not supported on this system", regex_expr)
+      )
+      expect_lint(
+        sprintf("grepl('%s', x)", regex_expr),
+        rex::rex(sprintf('Use "%s" with fixed = TRUE', fixed_expr)),
+        fixed_regex_linter()
+      )
+    },
+    .cases = .cases
   )
-}, .cases = tibble::tribble(
-  ~.test_name,            ~regex_expr,            ~fixed_expr,
-  "[.]",                  "[.]",                  ".",
-  '[\\\"]',               '[\\\"]',               '\\"',
-  "[]]",                  "[]]",                  "]",
-  "\\\\.",                "\\\\.",                ".",
-  "\\\\:",                "\\\\:",                ":",
-  "\\\\<",                "\\\\<",                "<",
-  "\\\\$",                "\\\\$",                "$",
-  "[\\1]",                "[\\1]",                "\\001",
-  "\\1",                  "\\1",                  "\\001",
-  "[\\12]",               "[\\12]",               "\\n",
-  "[\\123]",              "[\\123]",              "S",
-  "a[*]b",                "a[*]b",                "a*b",
-  "abcdefg",              "abcdefg",              "abcdefg",
-  "abc\\U{A0DEF}ghi",     "abc\\U{A0DEF}ghi",     robust_non_printable_unicode(),
-  "a-z",                  "a-z",                  "a-z",
-  "[\\n]",                "[\\n]",                "\\n",
-  "\\n",                  "\n",                   "\\n",
-  "[\\u01]",              "[\\u01]",              "\\001",
-  "[\\u012]",             "[\\u012]",             "\\022",
-  "[\\u0123]",            "[\\u0123]",            "\u0123",
-  "[\\u{1}]",             "[\\u{1}]",             "\\001",
-  "[\\U1d4d7]",           "[\\U1d4d7]",           "\U1D4D7",
-  "[\\U{1D4D7}]",         "[\\U{1D4D7}]",         "\U1D4D7",
-  "[\\U8]",               "[\\U8]",               "\\b",
-  "\\u{A0}",              "\\u{A0}",              "\uA0",
-  "\\u{A0}\\U{0001d4d7}", "\\u{A0}\\U{0001d4d7}", "\uA0\U1D4D7",
-  "[\\uF]",               "[\\uF]",               "\\017",
-  "[\\U{F7D5}]",          "[\\U{F7D5}]",          "\UF7D5",
-  "[\\x32]",              "[\\x32]",              "2",
-  "[\\xa]",               "[\\xa]",               "\\n"
-))
+})
 # styler: on
 
 test_that("'unescaped' regex can optionally be skipped", {
