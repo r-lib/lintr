@@ -242,6 +242,8 @@ test_that("paste0(collapse=...) is caught", {
 
   expect_lint("paste(x, collapse = '')", NULL, linter)
   expect_lint("paste0(a, b, collapse = '')", NULL, linter)
+  # pass-through can pass any number of arguments
+  expect_lint("paste0(..., collapse = '')", NULL, linter)
   expect_lint("paste0(x, collapse = '')", lint_msg, linter)
   expect_lint("paste0(x, collapse = 'xxx')", lint_msg, linter)
   expect_lint("paste0(foo(x, y, z), collapse = '')", lint_msg, linter)

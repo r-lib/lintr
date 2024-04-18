@@ -172,6 +172,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
     /parent::expr[
       SYMBOL_SUB[text() = 'collapse']
       and count(expr) = 3
+      and not(expr/SYMBOL[text() = '...'])
     ]
   "
 
