@@ -57,7 +57,7 @@
 #'   text = 'paste0("http://site.com/", path)',
 #'   linters = paste_linter(allow_file_path = "never")
 #' )
-#' 
+#'
 #' lint(
 #'   text = 'paste0(x, collapse = "")',
 #'   linters = paste_linter()
@@ -103,7 +103,7 @@
 #'   text = 'paste0("http://site.com/", path)',
 #'   linters = paste_linter()
 #' )
-#' 
+#'
 #' lint(
 #'   text = 'paste(x, collapse = "")',
 #'   linters = paste_linter()
