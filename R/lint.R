@@ -89,8 +89,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
           error = function(cond) {
             cli_abort(c(
-              i = "Linter {.fn linter} failed in {.file {filename}}:",
-              x = conditionMessage(cond)
+              "Linter {.fn linter} failed in {.file {filename}}:",
+              conditionMessage(cond)
             ))
           }
         )

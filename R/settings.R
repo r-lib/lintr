@@ -99,8 +99,8 @@ read_config_file <- function(config_file) {
     load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
       cli_abort(c(
-        i = "Malformed config file, ensure it is valid R syntax.",
-        x = conditionMessage(e)
+        "Malformed config file, ensure it is valid R syntax.",
+        conditionMessage(e)
       ))
     }
   } else {
@@ -111,8 +111,8 @@ read_config_file <- function(config_file) {
           str2lang(dcf_values[[setting]]),
           error = function(e) {
             cli_abort(c(
-              i = "Malformed config setting {.field {setting}}:",
-              x = conditionMessage(e)
+              "Malformed config setting {.field {setting}}:",
+              conditionMessage(e)
             ))
           }
         )

@@ -91,7 +91,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           if (!field %in% lint_fields) {
             cli_abort(c(
               x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
-              i = "Valid fields are: {.field {toString(lint_fields)}}."
+              i = "Valid fields are: {.field {lint_fields}}."
             ))
           }
           check <- check[[field]]
@@ -109,7 +109,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           if (!is.logical(ok)) {
             cli_abort(c(
               x = "Invalid regex result. Did you mistakenly have a capture group in the regex?",
-              i = "Be sure to escape parentheses with `[]`."
+              i = "You can match parentheses with a character class, i.e. inside `[]`."
             ))
           }
           testthat::expect(ok, msg)
