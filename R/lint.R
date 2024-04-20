@@ -342,7 +342,7 @@ validate_linter_object <- function(linter, name) {
   if (!is.function(linter)) {
     cli_abort(c(
       i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
-      x = "Instead, it is of class {.cls {class(linter)[[1L]]}}."
+      x = "Instead, it is {.obj_type_friendly {linter}}."
     ))
   }
   if (is_linter_factory(linter)) {
