@@ -83,10 +83,10 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
   )
   is_valid_expr <- is_node(expr) || is_nodeset(expr)
   if (!is_valid_expr) {
-    cli_abort(c(
-      i = "Expected an {.cls xml_nodeset} or an {.cls xml_node}.",
-      x = "Instead, {.arg expr} is object of class: {.cls {class(expr)}}"
-    ))
+    cli_abort(
+      "{.arg expr} must be an {.cls xml_nodeset} or an {.cls xml_node}, \\
+        not {.obj_type_friendly {expr}}."
+    )
   }
 
   if (is.null(condition)) {
