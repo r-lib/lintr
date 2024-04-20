@@ -46,7 +46,7 @@ modify_defaults <- function(defaults, ...) {
     bad_nms <- setdiff(nms[to_null], names(defaults))
     is_are <- if (length(bad_nms) > 1L) "are" else "is" # nolint: object_usage_linter.
     cli_warn(c(
-      i = "Trying to remove {.field {sQuote(bad_nms)}}, which {is_are} not in {.arg defaults}."
+      i = "Trying to remove {.field {bad_nms}}, which {is_are} not in {.arg defaults}."
     ))
   }
 
