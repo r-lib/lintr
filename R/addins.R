@@ -6,7 +6,7 @@ addin_lint <- function() {
   filename <- rstudioapi::getSourceEditorContext()
   if (filename$path == "") {
     cli_warn("Current source has no path. Please save before continuing.")
-    return(list())
+    return(flatten_lints(list()))
   }
 
   lint(filename$path)
