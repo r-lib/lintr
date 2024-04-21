@@ -14,13 +14,14 @@
 * Adjusted various lint messages for consistency in readability (#1330, @MichaelChirico). In general, we favor lint messages to be phrased like "Action, reason" to but the "what" piece of the message front-and-center. This may be a breaking change for code that tests the specific phrasing of lints.
 * `extraction_operator_linter()` is deprecated. Although switching from `$` to `[[` has some robustness benefits for package code, it can lead to non-idiomatic code in many contexts (e.g. R6 classes, Shiny applications, etc.) (#2409, @IndrajeetPatil). To enable the detection of the `$` operator for extraction through partial matching, use `options(warnPartialMatchDollar = TRUE)`.
 * `unnecessary_nested_if_linter()` is deprecated and subsumed into the new/more general `unnecessary_nesting_linter()`.
-* Drop support for posting GitHub comments from inside Travis, Wercker, and Jenkins CI tools (spurred by #2148, @MichaelChirico). We rely on GitHub Actions for linting in CI, and don't see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.
+* Drop support for posting GitHub comments from inside GitHub comment bot, Travis, Wercker, and Jenkins CI tools (spurred by #2148, @MichaelChirico). We rely on GitHub Actions for linting in CI, and don't see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.
 
 ## Bug fixes
 
 * `object_name_linter()` no longer errors when user-supplied `regexes=` have capture groups (#2188, @MichaelChirico).
 * `.lintr` config validation correctly accepts regular expressions which only compile under `perl = TRUE` (#2375, @MichaelChirico). These have always been valid (since `rex::re_matches()`, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
 * `.lintr` configs set by option `lintr.linter_file` or environment variable `R_LINTR_LINTER_FILE` can point to subdirectories (#2512, @MichaelChirico).
+* `indentation_linter()` returns `ranges[1L]==1L` when the offending line has 0 spaces (#2550, @MichaelChirico).
 
 ## Changes to default linters
 
@@ -49,6 +50,7 @@
 * `todo_comment_linter()` has a new argument `except_regex` for setting _valid_ TODO comments, e.g. for forcing TODO comments to be linked to GitHub issues like `TODO(#154)` (#2047, @MichaelChirico).
 * `vector_logic_linter()` is extended to recognize incorrect usage of scalar operators `&&` and `||` inside subsetting expressions like `dplyr::filter(x, A && B)` (#2166, @MichaelChirico).
 * `any_is_na_linter()` is extended to catch the unusual usage `NA %in% x` (#2113, @MichaelChirico).
+* `make_linter_from_xpath()` errors up front when `lint_message` is missing (instead of delaying this error until the linter is used, #2541, @MichaelChirico).
 
 ### New linters
 
@@ -70,6 +72,10 @@
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
 * `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
 * `object_overwrite_linter()` for discouraging re-use of upstream package exports as local variables (#2344, #2346 and part of #884, @MichaelChirico and @AshesITR).
+
+### Lint accuracy fixes: removing false positives
+
+* `object_name_linter()` and `object_length_linter()` ignore {rlang} name injection like `x |> mutate("{new_name}" := foo(col))` (#1926, @MichaelChirico). No checking is applied in such cases. {data.table} in-place assignments like `DT[, "sPoNGeBob" := "friend"]` are still eligible for lints.
 
 # lintr 3.1.2
 
