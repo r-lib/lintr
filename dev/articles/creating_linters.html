@@ -98,7 +98,7 @@ maintainers</h4>
 <p>This vignette describes the steps necessary to create a new
 linter.</p>
 <p>See the last section for some details specific to writing new linters
-for <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a>.</p>
+for <a href="https://lintr.r-lib.org">lintr</a>.</p>
 <p>A good example of a simple linter is the
 <code>pipe_call_linter</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -300,8 +300,8 @@ example, <code>seq_linter</code>.</p>
 </h2>
 <p>(NB: this section uses the <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> which has
 simpler examples than <code><a href="../reference/pipe_continuation_linter.html">pipe_continuation_linter()</a></code>.)</p>
-<p><a href="https://github.com/r-lib/lintr" class="external-link">lintr</a> works best inside the <a href="https://testthat.r-lib.org" class="external-link">testthat</a>
-unit testing framework, in particular, <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a> exports
+<p><a href="https://lintr.r-lib.org">lintr</a> works best inside the <a href="https://testthat.r-lib.org" class="external-link">testthat</a>
+unit testing framework, in particular, <a href="https://lintr.r-lib.org">lintr</a> exports
 <code><a href="../reference/expect_lint.html">lintr::expect_lint()</a></code> which is designed as a companion to
 other testthat expectations.</p>
 <p>You can define tests inside separate <code>test_that</code> calls.
@@ -355,7 +355,7 @@ lints if needed, e.g.</p>
 <div class="section level2">
 <h2 id="other-utilities-for-writing-custom-linters">Other utilities for writing custom linters<a class="anchor" aria-label="anchor" href="#other-utilities-for-writing-custom-linters"></a>
 </h2>
-<p>Besides <code><a href="../reference/is_lint_level.html">is_lint_level()</a></code>, <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a> also
+<p>Besides <code><a href="../reference/is_lint_level.html">is_lint_level()</a></code>, <a href="https://lintr.r-lib.org">lintr</a> also
 exports some other helpers generally useful for writing custom linters;
 these are used a lot in the internals of our own helpers, and so they’ve
 been tested and demonstrated their utility already.</p>
@@ -400,7 +400,7 @@ use
 <h3 id="more-details-about-writing-tests-for-new-lintr-linters">More details about writing tests for new <code>{lintr}</code>
 linters<a class="anchor" aria-label="anchor" href="#more-details-about-writing-tests-for-new-lintr-linters"></a>
 </h3>
-<p>The <a href="https://github.com/r-lib/lintr" class="external-link">lintr</a> package uses <a href="https://github.com/r-lib/testthat" class="external-link">testthat</a> for testing. You
+<p>The <a href="https://lintr.r-lib.org">lintr</a> package uses <a href="https://github.com/r-lib/testthat" class="external-link">testthat</a> for testing. You
 can run all of the currently available tests using
 <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>. If you want to run only the tests in a
 given file use the <code>filter</code> argument to

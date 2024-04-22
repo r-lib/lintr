@@ -538,7 +538,7 @@ customize them further:</p>
 </h4>
 <p>The default lintr configuration includes only linters relevant to the
 tidyverse style guide, but there are many other linters available in
-<a href="https://github.com/r-lib/lintr" class="external-link">lintr</a>. You can see a list of all available linters
+<a href="https://lintr.r-lib.org">lintr</a>. You can see a list of all available linters
 using</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="../reference/all_linters.html">all_linters</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -618,7 +618,7 @@ writing out <code><a href="../reference/assignment_linter.html">assignment_linte
 <p>Beware that in such cases, a simple <code><a href="https://rdrr.io/r/base/get.html" class="external-link">get()</a></code> is not
 enough:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/lintr" class="external-link">lintr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lintr.r-lib.org">lintr</a></span><span class="op">)</span></span>
 <span><span class="va">linter_name</span> <span class="op">&lt;-</span> <span class="st">"assignment_linter"</span></span>
 <span></span>
 <span><span class="va">show_lint</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">l</span><span class="op">)</span> <span class="op">{</span></span>
