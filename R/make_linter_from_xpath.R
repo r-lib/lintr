@@ -19,7 +19,8 @@ make_linter_from_xpath <- function(xpath,
   level <- match.arg(level)
 
   stopifnot(
-    "xpath should be a character string" = is.character(xpath) && length(xpath) == 1L && !is.na(xpath)
+    "xpath should be a character string" = is.character(xpath) && length(xpath) == 1L && !is.na(xpath),
+    "lint_message is required" = !missing(lint_message)
   )
 
   xml_key <- if (level == "expression") "xml_parsed_content" else "full_xml_parsed_content"
@@ -55,7 +56,8 @@ make_linter_from_function_xpath <- function(function_names,
 
   stopifnot(
     "function_names should be a character vector" = is.character(function_names) && length(function_names) > 0L,
-    "xpath should be a character string" = is.character(xpath) && length(xpath) == 1L && !is.na(xpath)
+    "xpath should be a character string" = is.character(xpath) && length(xpath) == 1L && !is.na(xpath),
+    "lint_message is required" = !missing(lint_message)
   )
 
   function() {

@@ -257,7 +257,6 @@ rd_undesirable_operators <- function() {
 #'  - `exclusions`: a list of exclusions, see [exclude()] for a complete description of valid values.
 #'  - `cache_directory`: location of cache directory
 #'  - `comment_token`: a GitHub token character
-#'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
 #'  - `error_on_lint`: decides if error should be produced when any lints are found
 #'
 #' There are no settings without defaults, i.e., this list describes every valid setting.
@@ -328,7 +327,6 @@ settings <- new.env(parent = emptyenv())
       ),
       54L - 13L
     ),
-    comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   ))
 

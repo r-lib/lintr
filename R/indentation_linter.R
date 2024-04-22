@@ -276,9 +276,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       )
       lint_lines <- unname(as.integer(names(source_expression$file_lines)[bad_lines]))
       lint_ranges <- cbind(
-        pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
+        # when indent_levels==0, need to start ranges at column 1.
+        pmax(
+          pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
+          1L
+        ),
         # If the expected indent is larger than the current line width, the lint range would become invalid.
-        # Therefor, limit range end to end of line.
+        # Therefore, limit range end to end of line.
         pmin(
           pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines]),
           nchar(source_expression$file_lines[bad_lines]) + 1L

@@ -1,12 +1,12 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 3.1.1.9000
+Version: 3.1.2.9000
 Authors@R: c(
-    person("Jim", "Hester", , "james.f.hester@gmail.com", role = c("aut", "cre")),
+    person("Jim", "Hester", , role = "aut"),
     person("Florent", "Angly", role = "aut",
            comment = "fangly"),
     person("Russ", "Hyde", role = "aut"),
-    person("Michael", "Chirico", role = "aut"),
+    person("Michael", "Chirico", email = "michaelchirico4@gmail.com", role = c("aut", "cre")),
     person("Kun", "Ren", role = "aut"),
     person("Alexander", "Rosenstock", role = "aut",
            comment = "AshesITR"),
@@ -18,7 +18,7 @@ Description: Checks adherence to a given style, syntax errors and possible
     'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text', 'Atom' and 'Visual
     Studio Code'.
 License: MIT + file LICENSE
-URL: https://github.com/r-lib/lintr, https://lintr.r-lib.org
+URL: https://lintr.r-lib.org, https://github.com/r-lib/lintr
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
     R (>= 3.6)

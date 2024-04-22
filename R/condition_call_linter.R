@@ -4,7 +4,7 @@
 #' recommendation of the tidyverse design guide regarding displaying error
 #' calls.
 #'
-#' @param display_call Logical specifying expected behaviour regarding `call.`
+#' @param display_call Logical specifying expected behavior regarding `call.`
 #' argument in conditions.
 #'   - `NA` forces providing `call. =` but ignores its value (this can be used in
 #'     cases where you expect a mix of `call. = FALSE` and `call. = TRUE`)
