@@ -34,6 +34,7 @@ rx_static_token <- local({
 rx_unescaped_regex <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), end))
 rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
 rx_first_static_token <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
+rx_escapable_tokens <- "^${}().*+?|[]\\<>=:;/_-!@#%&,~"
 
 #' Determine whether a regex pattern actually uses regex patterns
 #'
@@ -95,19 +96,17 @@ get_fixed_string <- function(static_regex) {
 #'
 #' @noRd
 get_token_replacement <- function(token_content, token_type) {
-  if (token_type == "trivial_char_group") {
+  if (token_type == "trivial_char_group") { # otherwise, char_escape
     token_content <- substr(token_content, start = 2L, stop = nchar(token_content) - 1L)
     if (startsWith(token_content, "\\")) { # escape within trivial char group
       get_token_replacement(token_content, "char_escape")
     } else {
       token_content
     }
-  } else { # char_escape token
-    if (re_matches(token_content, rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
-      substr(token_content, start = 2L, stop = nchar(token_content))
-    } else {
-      eval(parse(text = paste0('"', token_content, '"')))
-    }
+  } else if (re_matches(token_content, rex("\\", one_of(rx_escapable_tokens)))) {
+    substr(token_content, start = 2L, stop = nchar(token_content))
+  } else {
+    eval(parse(text = paste0('"', token_content, '"')))
   }
 }
 
@@ -204,7 +203,7 @@ object_name_xpath <- local({
   xp_assignment_target_fmt <- paste0(
     "not(parent::expr[OP-DOLLAR or OP-AT])",
     "and %1$s::expr[",
-    " following-sibling::LEFT_ASSIGN",
+    " following-sibling::LEFT_ASSIGN%2$s",
     " or preceding-sibling::RIGHT_ASSIGN",
     " or following-sibling::EQ_ASSIGN",
     "]",
@@ -214,9 +213,15 @@ object_name_xpath <- local({
     "])"
   )
 
+  # strings on LHS of := are only checked if they look like data.table usage DT[, "a" := ...]
+  dt_walrus_cond <- "[
+    text() != ':='
+    or parent::expr/preceding-sibling::OP-LEFT-BRACKET
+  ]"
+
   glue("
-  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor')} ]
-  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent')} ]
+  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]
+  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent', dt_walrus_cond)} ]
   |  //SYMBOL_FORMALS
   ")
 })
@@ -243,18 +248,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
   if (!isTRUE(interpret_glue)) {
     return(character())
   }
-  # TODO support more glue functions
-  # Package glue:
-  #  - glue_sql
-  #  - glue_safe
-  #  - glue_col
-  #  - glue_data
-  #  - glue_data_sql
-  #  - glue_data_safe
-  #  - glue_data_col
-  #
-  # Package stringr:
-  #  - str_interp
+  # TODO(#2448): support more glue functions
   # NB: position() > 1 because position=1 is <expr><SYMBOL_FUNCTION_CALL>
   glue_call_xpath <- "
     descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']
@@ -268,7 +262,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 
   glued_symbols <- new.env(parent = emptyenv())
   for (glue_call in glue_calls) {
-    # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
+    # TODO(#2475): Drop tryCatch().
     parsed_call <-
       tryCatch(xml2lang(glue_call), error = unexpected_glue_parse_error, warning = unexpected_glue_parse_error)
     parsed_call[[".envir"]] <- glued_symbols
@@ -309,3 +303,22 @@ purrr_mappers <- c(
   "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr", "map_vec",
   "map_df", "map_dfr", "map_dfc"
 )
+
+# see ?".onLoad", ?Startup, and ?quit.
+#   All of .onLoad, .onAttach, and .onUnload are used in base packages,
+#   and should be caught in is_base_function; they're included here for completeness / stability
+#   (they don't strictly _have_ to be defined in base, so could in principle be removed).
+#   .Last.sys and .First.sys are part of base itself, so aren't included here.
+special_funs <- c(
+  ".onLoad",
+  ".onAttach",
+  ".onUnload",
+  ".onDetach",
+  ".Last.lib",
+  ".First",
+  ".Last"
+)
+
+is_special_function <- function(x) {
+  x %in% special_funs
+}

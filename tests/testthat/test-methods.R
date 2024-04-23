@@ -98,8 +98,6 @@ test_that("print.lint works", {
 })
 
 test_that("print.lint works for inline data, even in RStudio", {
-  skip_if_not_installed("mockery")
-
   l <- lint("x = 1\n")
 
   # Make sure lints print to console.
@@ -114,7 +112,11 @@ test_that("print.lint works for inline data, even in RStudio", {
     expect_output(print(l), "not =")
   )
 
-  mockery::stub(print.lints, "rstudioapi::hasFun", function(...) FALSE)
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    hasFun = function(...) FALSE,
+    .package = "rstudioapi"
+  )
   withr::with_options(
     list(lintr.rstudio_source_markers = TRUE),
     expect_output(print(l), "not =")
@@ -170,6 +172,22 @@ local({
   lints <- lint(text = "a", linters = test_linter())
   lint <- lints[[1L]]
 
+  widths <- c(10L, 20L, 40L, 80L)
+  test_names <- paste0(": width = ", widths)
+
+  patrick::with_parameters_test_that(
+    "print.lint, print.lints support optional message wrapping",
+    {
+      expect_snapshot(print(lints, width = width))
+
+      withr::with_options(c(lintr.format_width = width), {
+        expect_snapshot(print(lints))
+      })
+    },
+    .test_name = test_names,
+    width = widths
+  )
+
   wrapped_strings <- c(
     "[test_linter]\n    The\n    quick\n    brown\n    fox\n    jumps\n    over\n    the\n    lazy\n    dog.",
     "[test_linter]\n    The quick brown\n    fox jumps over\n    the lazy dog.",
@@ -178,22 +196,18 @@ local({
   )
 
   patrick::with_parameters_test_that(
-    "format.lint, format.lints, print.lint, print.lints support optional message wrapping",
+    "format.lint, format.lints support optional message wrapping",
     {
       expect_match(format(lint, width = width), wrapped_string, fixed = TRUE)
       expect_match(format(lints, width = width), wrapped_string, fixed = TRUE)
-      expect_output(print(lint, width = width), wrapped_string, fixed = TRUE)
-      expect_output(print(lints, width = width), wrapped_string, fixed = TRUE)
 
       withr::with_options(c(lintr.format_width = width), {
         expect_match(format(lint), wrapped_string, fixed = TRUE)
         expect_match(format(lints), wrapped_string, fixed = TRUE)
-        expect_output(print(lint), wrapped_string, fixed = TRUE)
-        expect_output(print(lints), wrapped_string, fixed = TRUE)
       })
     },
-    .test_name = c(10L, 20L, 40L, 80L),
-    width = c(10L, 20L, 40L, 80L),
+    .test_name = test_names,
+    width = widths,
     wrapped_string = wrapped_strings
   )
 })

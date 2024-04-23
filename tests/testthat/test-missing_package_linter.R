@@ -1,6 +1,5 @@
 test_that("missing_package_linter skips allowed usages", {
   linter <- missing_package_linter()
-  lint_msg <- list(message = rex::rex("Package 'statts' is not installed."))
 
   expect_lint("library(stats)", NULL, linter)
   expect_lint('library("stats")', NULL, linter)
@@ -16,7 +15,7 @@ test_that("missing_package_linter skips allowed usages", {
 
 test_that("missing_package_linter blocks disallowed usages", {
   linter <- missing_package_linter()
-  lint_msg <- list(message = rex::rex("Package 'statts' is not installed."))
+  lint_msg <- rex::rex("Package 'statts' is not installed.")
 
   expect_lint("require(statts)", lint_msg, linter)
   expect_lint("library(statts, quietly = TRUE)", lint_msg, linter)
@@ -29,20 +28,24 @@ test_that("missing_package_linter blocks disallowed usages", {
       library(utils)
       library(statts)
     "),
-    list(line = "library(statts)"),
+    list(lint_msg, line_number = 2L, line = "library(statts)"),
     linter
   )
 })
 
 test_that("loadNamespace and requireNamespace allow plain symbols", {
-  expect_lint("loadNamespace(mypkg)", NULL, missing_package_linter())
-  expect_lint("requireNamespace(mypkg)", NULL, missing_package_linter())
+  linter <- missing_package_linter()
+
+  expect_lint("loadNamespace(mypkg)", NULL, linter)
+  expect_lint("requireNamespace(mypkg)", NULL, linter)
 })
 
 test_that("character.only=TRUE case is handled", {
-  expect_lint("library(statts, character.only = TRUE)", NULL, missing_package_linter())
-  expect_lint("require(statts, character.only = TRUE)", NULL, missing_package_linter())
-  expect_lint('library("stats", character.only = TRUE)', NULL, missing_package_linter())
+  linter <- missing_package_linter()
+
+  expect_lint("library(statts, character.only = TRUE)", NULL, linter)
+  expect_lint("require(statts, character.only = TRUE)", NULL, linter)
+  expect_lint('library("stats", character.only = TRUE)', NULL, linter)
 
   expect_lint(
     'library("statts", character.only = TRUE)',

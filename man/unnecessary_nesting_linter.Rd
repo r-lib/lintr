@@ -4,7 +4,13 @@
 \alias{unnecessary_nesting_linter}
 \title{Block instances of unnecessary nesting}
 \usage{
-unnecessary_nesting_linter(allow_assignment = TRUE)
+unnecessary_nesting_linter(
+  allow_assignment = TRUE,
+  allow_functions = c("switch", "try", "tryCatch", "withCallingHandlers", "quote",
+    "expression", "bquote", "substitute", "with_parameters_test_that", "reactive",
+    "observe", "observeEvent", "renderCachedPlot", "renderDataTable", "renderImage",
+    "renderPlot", "renderPrint", "renderTable", "renderText", "renderUI")
+)
 }
 \arguments{
 \item{allow_assignment}{Logical, default \code{TRUE}, in which case
@@ -13,6 +19,13 @@ if \code{FALSE}, all braced expressions with only one child expression are linte
 The \code{TRUE} case facilitates interaction with \code{\link[=implicit_assignment_linter]{implicit_assignment_linter()}}
 for certain cases where an implicit assignment is necessary, so a braced
 assignment is used to further distinguish the assignment. See examples.}
+
+\item{allow_functions}{Character vector of functions which always allow
+one-child braced expressions. \code{testthat::test_that()} is always allowed because
+testthat requires a braced expression in its \code{code} argument. The other defaults
+similarly compute on expressions in a way which is worth highlighting by
+em-bracing them, even if there is only one expression, while \code{\link[=switch]{switch()}} is allowed
+for its use as a control flow analogous to \code{if}/\verb{else}.}
 }
 \description{
 Excessive nesting harms readability. Use helper functions or early returns
@@ -41,6 +54,17 @@ lint(
   linters = unnecessary_nesting_linter(allow_assignment = FALSE)
 )
 
+writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
+lint(
+  text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
+  linters = unnecessary_nesting_linter()
+)
+
+lint(
+  text = "my_quote({x})",
+  linters = unnecessary_nesting_linter()
+)
+
 # okay
 code <- "if (A) {\n  stop('A is bad because a.')\n} else {\n  stop('!A is bad too.')\n}"
 writeLines(code)
@@ -63,13 +87,30 @@ lint(
   linters = unnecessary_nesting_linter()
 )
 
+writeLines("if (x && y) { \n  return(1L) \n}")
+lint(
+  text = "if (x && y) { \n  return(1L) \n}",
+  linters = unnecessary_nesting_linter()
+)
+
+writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
+lint(
+  text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
+  linters = unnecessary_nesting_linter()
+)
+
+lint(
+  text = "my_quote({x})",
+  linters = unnecessary_nesting_linter(allow_functions = "my_quote")
+)
+
 }
 \seealso{
 \itemize{
-\item \code{\link[=cyclocomp_linter]{cyclocomp_linter()}} for another linter that penalizes overly complexcode.
+\item \code{\link[=cyclocomp_linter]{cyclocomp_linter()}} for another linter that penalizes overly complex code.
 \item \link{linters} for a complete list of linters available in lintr.
 }
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=readability_linters]{readability}
 }

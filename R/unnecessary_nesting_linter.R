@@ -9,6 +9,12 @@
 #'   The `TRUE` case facilitates interaction with [implicit_assignment_linter()]
 #'   for certain cases where an implicit assignment is necessary, so a braced
 #'   assignment is used to further distinguish the assignment. See examples.
+#' @param allow_functions Character vector of functions which always allow
+#'   one-child braced expressions. `testthat::test_that()` is always allowed because
+#'   testthat requires a braced expression in its `code` argument. The other defaults
+#'   similarly compute on expressions in a way which is worth highlighting by
+#'   em-bracing them, even if there is only one expression, while [switch()] is allowed
+#'   for its use as a control flow analogous to `if`/`else`.
 #'
 #' @examples
 #' # will produce lints
@@ -33,6 +39,17 @@
 #'   linters = unnecessary_nesting_linter(allow_assignment = FALSE)
 #' )
 #'
+#' writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
+#' lint(
+#'   text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' lint(
+#'   text = "my_quote({x})",
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
 #' # okay
 #' code <- "if (A) {\n  stop('A is bad because a.')\n} else {\n  stop('!A is bad too.')\n}"
 #' writeLines(code)
@@ -55,12 +72,39 @@
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
+#' writeLines("if (x && y) { \n  return(1L) \n}")
+#' lint(
+#'   text = "if (x && y) { \n  return(1L) \n}",
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
+#' lint(
+#'   text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' lint(
+#'   text = "my_quote({x})",
+#'   linters = unnecessary_nesting_linter(allow_functions = "my_quote")
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
 #' @seealso
-#'  - [cyclocomp_linter()] for another linter that penalizes overly complexcode.
+#'  - [cyclocomp_linter()] for another linter that penalizes overly complex code.
 #'  - [linters] for a complete list of linters available in lintr.
 #' @export
-unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
+unnecessary_nesting_linter <- function(
+    allow_assignment = TRUE,
+    allow_functions = c(
+      "switch",
+      "try", "tryCatch", "withCallingHandlers",
+      "quote", "expression", "bquote", "substitute",
+      "with_parameters_test_that",
+      "reactive", "observe", "observeEvent",
+      "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
+      "renderPrint", "renderTable", "renderText", "renderUI"
+    )) {
   exit_calls <- c("stop", "return", "abort", "quit", "q")
   exit_call_expr <- glue("
     expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]]
@@ -127,6 +171,7 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
         or self::IF
         or self::WHILE
         or self::REPEAT
+        or self::expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(c('test_that', allow_functions)) }]
         or self::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'foreach']
         or self::OP-TILDE
         or self::LEFT_ASSIGN[text() = ':=']
@@ -141,9 +186,21 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
     ]
   ")
 
+  unnecessary_nested_if_xpath <- paste0(
+    "//IF/parent::expr[not(ELSE)]/OP-RIGHT-PAREN/",
+    c(
+      # catch if (cond) if (other_cond) { ... }
+      "following-sibling::expr[IF and not(ELSE)]",
+      # catch if (cond) { if (other_cond) { ... } }
+      "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]/expr[IF and not(ELSE)]"
+    ),
+    collapse = " | "
+  )
+
+  unnecessary_else_brace_xpath <- "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     if_else_exit_expr <- xml_find_all(xml, if_else_exit_xpath)
     if_else_exit_lints <- xml_nodes_to_lints(
@@ -166,6 +223,25 @@ unnecessary_nesting_linter <- function(allow_assignment = TRUE) {
       type = "warning"
     )
 
-    c(if_else_exit_lints, unnecessary_brace_lints)
+    unnecessary_nested_if_expr <- xml_find_all(xml, unnecessary_nested_if_xpath)
+    unnecessary_nested_if_lints <- xml_nodes_to_lints(
+      unnecessary_nested_if_expr,
+      source_expression = source_expression,
+      lint_message = paste(
+        "Don't use nested `if` statements, where a single `if` with the combined conditional expression will do.",
+        "For example, instead of `if (x) { if (y) { ... }}`, use `if (x && y) { ... }`."
+      ),
+      type = "warning"
+    )
+
+    unnecessary_else_brace_expr <- xml_find_all(xml, unnecessary_else_brace_xpath)
+    unnecessary_else_brace_lints <- xml_nodes_to_lints(
+      unnecessary_else_brace_expr,
+      source_expression = source_expression,
+      lint_message = "Simplify this condition by using 'else if' instead of 'else { if.",
+      type = "warning"
+    )
+
+    c(if_else_exit_lints, unnecessary_brace_lints, unnecessary_nested_if_lints, unnecessary_else_brace_lints)
   })
 }

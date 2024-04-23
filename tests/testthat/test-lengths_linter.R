@@ -43,3 +43,19 @@ test_that("lengths_linter blocks simple disallowed usages with pipes", {
   expect_lint("x |> map_int(length)", lint_msg, linter)
   expect_lint("x %>% map_int(length)", lint_msg, linter)
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Use lengths() to find the length of each element in a list.")
+
+  expect_lint(
+    trim_some("{
+      sapply(x, length)
+      map_int(x, length)
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    lengths_linter()
+  )
+})

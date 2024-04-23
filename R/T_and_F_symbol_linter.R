@@ -1,6 +1,7 @@
 #' `T` and `F` symbol linter
 #'
-#' Avoid the symbols `T` and `F`, and use `TRUE` and `FALSE` instead.
+#' Although they can be synonyms, avoid the symbols `T` and `F`, and use `TRUE` and `FALSE`, respectively, instead.
+#' `T` and `F` are not reserved keywords and can be assigned to any other values.
 #'
 #' @examples
 #' # will produce lints
@@ -45,7 +46,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+
     bad_usage <- xml_find_all(xml, usage_xpath)
     bad_assignment <- xml_find_all(xml, assignment_xpath)
 

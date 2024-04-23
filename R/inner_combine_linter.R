@@ -36,10 +36,7 @@ inner_combine_linter <- function() {
     "sqrt", "abs"
   )
 
-  # TODO(michaelchirico): the need to spell out specific arguments is pretty brittle,
-  #   but writing the xpath for the alternative case was proving too tricky.
-  #   It's messy enough as is -- it may make sense to take another pass at
-  #   writing the xpath from scratch to see if it can't be simplified.
+  # TODO(#2468): Try and make this XPath less brittle/more extensible.
 
   # See ?as.Date, ?as.POSIXct. tryFormats is not explicitly in any default
   #   POSIXct method, but it is in as.Date.character and as.POSIXlt.character --
@@ -77,17 +74,14 @@ inner_combine_linter <- function() {
     lubridate_args_cond
   )
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'c']
-    /parent::expr[count(following-sibling::expr) > 1]
+  parent::expr[count(following-sibling::expr) > 1]
     /following-sibling::expr[1][ {c_expr_cond} ]
     /parent::expr
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls("c")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr, depth = 2L)
     lint_message <- paste(

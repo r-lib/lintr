@@ -26,4 +26,7 @@ test_that("input validation works", {
   expect_error(make_linter_from_xpath(letters), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(NA_character_), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(character()), err_msg, fixed = TRUE)
+
+  err_msg <- if (getRversion() < "4.0.0") "!missing(lint_message)" else "lint_message is required"
+  expect_error(make_linter_from_xpath(""), err_msg, fixed = TRUE)
 })

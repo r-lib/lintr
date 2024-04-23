@@ -89,9 +89,25 @@ patrick::with_parameters_test_that(
     "present/absent arg (POSIXct)",   "c(as.POSIXct(x, format = '%y'), as.POSIXct(y))",
     "mismatched arg (log)",           "c(log(x, base = 4), log(y, base = 5))",
     "present/absent arg (log)",       "c(log(x, base = 4), log(y))"
-    # TODO(michaelchirico): fix the code so these edge cases are covered
+    # TODO(#2486): Reactivate these.
     # "unknown Date method argument",    "c(as.Date(x, zoo = zzz), as.Date(y, zoo = zzz))",
     # "known+unknown Date argument", "c(as.Date(x, format = '%y', zoo = zzz), as.Date(y, format = '%y', zoo = zzz))",
     # "unknown POSIXct method argument", "c(as.POSIXct(x, zoo = zzz), as.POSIXct(y, zoo = zzz))",
   )
 )
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Combine inputs to vectorized functions first")
+
+  expect_lint(
+    trim_some("{
+      c(sin(x), sin(y))
+      c(log(x), log(y))
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    inner_combine_linter()
+  )
+})

@@ -102,22 +102,25 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     )
   }
 
+  implicit_message <- paste(
+    "Avoid implicit assignments in function calls.",
+    "For example, instead of `if (x <- 1L) { ... }`, write `x <- 1L; if (x) { ... }`."
+  )
+
+  print_message <- "Call print() explicitly instead of relying on implicit printing behavior via '('."
+
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
-    lint_message <- paste(
-      "Avoid implicit assignments in function calls.",
-      "For example, instead of `if (x <- 1L) { ... }`, write `x <- 1L; if (x) { ... }`."
-    )
+    print_only <- !is.na(xml_find_first(bad_expr, "parent::expr[parent::exprlist and *[1][self::OP-LEFT-PAREN]]"))
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = lint_message,
+      lint_message = ifelse(print_only, print_message, implicit_message),
       type = "warning"
     )
   })

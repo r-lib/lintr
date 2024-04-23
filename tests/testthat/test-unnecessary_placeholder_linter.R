@@ -37,3 +37,19 @@ patrick::with_parameters_test_that(
   .test_name = names(pipes),
   pipe = pipes
 )
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Don't use the placeholder (`.`) when it's not needed")
+
+  expect_lint(
+    trim_some("{
+      x %>% foo(.)
+      y %T>% bar(.)
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    unnecessary_placeholder_linter()
+  )
+})

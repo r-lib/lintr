@@ -112,7 +112,6 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     assignments <- xml_find_all(xml, object_name_xpath)
 
@@ -173,25 +172,6 @@ check_style <- function(nms, style, generics = character()) {
     conforming[!conforming][is_special] <- TRUE
   }
   conforming
-}
-
-# see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().
-#   All of .onLoad, .onAttach, and .onUnload are used in base packages,
-#   and should be caught in is_base_function; they're included here for completeness / stability
-#   (they don't strictly _have_ to be defined in base, so could in principle be removed).
-#   .Last.sys and .First.sys are part of base itself, so aren't included here.
-special_funs <- c(
-  ".onLoad",
-  ".onAttach",
-  ".onUnload",
-  ".onDetach",
-  ".Last.lib",
-  ".First",
-  ".Last"
-)
-
-is_special_function <- function(x) {
-  x %in% special_funs
 }
 
 loweralnum <- rex(one_of(lower, digit))

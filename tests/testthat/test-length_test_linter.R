@@ -30,3 +30,17 @@ local({
     .test_name = names(ops)
   )
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      length(x == y)
+      length(y == z)
+    }"),
+    list(
+      list(rex::rex("length(x) == y"), line_number = 2L),
+      list(rex::rex("length(y) == z"), line_number = 3L)
+    ),
+    length_test_linter()
+  )
+})

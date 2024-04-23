@@ -41,7 +41,6 @@
 namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     ns_nodes <- xml_find_all(xml, "//NS_GET | //NS_GET_INT")
 
@@ -157,7 +156,7 @@ build_ns_get_int_lints <- function(packages, symbols, symbol_nodes, namespaces, 
     symbol_nodes[exported],
     source_expression = source_expression,
     lint_message =
-      sprintf("'%1$s' is exported from {%2$s}. Use %2$s::%1$s instead.", symbols[exported], packages[exported]),
+      sprintf("Don't use `:::` to access %s, which is exported from %s.", symbols[exported], packages[exported]),
     type = "warning"
   )
 

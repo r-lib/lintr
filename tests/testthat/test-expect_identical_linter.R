@@ -50,3 +50,19 @@ test_that("expect_identical_linter skips 3e cases needing expect_equal", {
 test_that("expect_identical_linter skips calls using ...", {
   expect_lint("expect_equal(x, y, ...)", NULL, expect_identical_linter())
 })
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
+
+  expect_lint(
+    trim_some("{
+      expect_equal(x, 1)
+      expect_true(identical(x, y))
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    expect_identical_linter()
+  )
+})

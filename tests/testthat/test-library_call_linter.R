@@ -233,6 +233,8 @@ test_that("skips allowed usages of library()/character.only=TRUE", {
 
 test_that("blocks disallowed usages of strings in library()/require()", {
   linter <- library_call_linter()
+  char_only_msg <- rex::rex("Use symbols in library calls", anything, "character.only")
+  direct_stub <- "Call library() directly, not vectorized with "
 
   expect_lint(
     'library("data.table")',
@@ -240,41 +242,40 @@ test_that("blocks disallowed usages of strings in library()/require()", {
     linter
   )
 
-  expect_lint(
-    'library("data.table", character.only = TRUE)',
-    rex::rex("Use symbols in library calls", anything, "character.only"),
-    linter
-  )
-
-  expect_lint(
-    'suppressWarnings(library("data.table", character.only = TRUE))',
-    rex::rex("Use symbols in library calls", anything, "character.only"),
-    linter
-  )
+  expect_lint('library("data.table", character.only = TRUE)', char_only_msg, linter)
+  expect_lint('suppressWarnings(library("data.table", character.only = TRUE))', char_only_msg, linter)
 
   expect_lint(
     "do.call(library, list(data.table))",
-    rex::rex("Call library() directly, not vectorized with do.call()"),
+    rex::rex(direct_stub, "do.call()"),
     linter
   )
-
   expect_lint(
     'do.call("library", list(data.table))',
-    rex::rex("Call library() directly, not vectorized with do.call()"),
+    rex::rex(direct_stub, "do.call()"),
     linter
   )
-
   expect_lint(
     'lapply("data.table", library, character.only = TRUE)',
-    rex::rex("Call library() directly, not vectorized with lapply()"),
+    rex::rex(direct_stub, "lapply()"),
     linter
   )
-
   expect_lint(
     'purr::map("data.table", library, character.only = TRUE)',
-    rex::rex("Call library() directly, not vectorized with map()"),
+    rex::rex(direct_stub, "map()"),
     linter
   )
+})
+
+test_that("character.only=TRUE is caught in *apply functions passed as strings", {
+  linter <- library_call_linter()
+  lib_msg <- rex::rex("Call library() directly, not vectorized with sapply()")
+  req_msg <- rex::rex("Call require() directly, not vectorized with sapply()")
+
+  expect_lint("sapply(pkgs, 'library', character.only = TRUE)", lib_msg, linter)
+  expect_lint('sapply(pkgs, "library", character.only = TRUE)', lib_msg, linter)
+  expect_lint("sapply(pkgs, 'require', character.only = TRUE)", req_msg, linter)
+  expect_lint('sapply(pkgs, "require", character.only = TRUE)', req_msg, linter)
 })
 
 test_that("character.only=TRUE is caught with multiple-line source", {
@@ -330,20 +331,26 @@ patrick::with_parameters_test_that(
     expect_lint(sprintf("%1$s(x); y; %1$s(z)", call), NULL, linter)
 
     # inline or potentially with gaps don't matter
-    lines <- c(
-      sprintf("%s(x)", call),
-      "y",
-      "",
-      "stopifnot(z)"
+    expect_lint(
+      trim_some(glue::glue("
+        {call}(x)
+        y
+
+        stopifnot(z)
+      ")),
+      NULL,
+      linter
     )
-    expect_lint(lines, NULL, linter)
 
     # only suppressing calls with library()
-    lines_consecutive <- c(
-      sprintf("%s(x)", call),
-      sprintf("%s(y)", call)
+    expect_lint(
+      trim_some(glue::glue("
+        {call}(x)
+        {call}(y)
+      ")),
+      NULL,
+      linter
     )
-    expect_lint(lines_consecutive, NULL, linter)
   },
   .test_name = c("suppressMessages", "suppressPackageStartupMessages"),
   call = c("suppressMessages", "suppressPackageStartupMessages")
@@ -358,25 +365,34 @@ patrick::with_parameters_test_that(
     # one test of inline usage
     expect_lint(sprintf("%1$s(library(x)); %1$s(library(y))", call), message, linter)
 
-    lines_gap <- c(
-      sprintf("%s(library(x))", call),
-      "",
-      sprintf("%s(library(y))", call)
-    )
-    expect_lint(lines_gap, message, linter)
+    expect_lint(
+      trim_some(glue::glue("
+        {call}(library(x))
 
-    lines_consecutive <- c(
-      sprintf("%s(require(x))", call),
-      sprintf("%s(require(y))", call)
+        {call}(library(y))
+      ")),
+      message,
+      linter
     )
-    expect_lint(lines_consecutive, message, linter)
 
-    lines_comment <- c(
-      sprintf("%s(library(x))", call),
-      "# a comment on y",
-      sprintf("%s(library(y))", call)
+    expect_lint(
+      trim_some(glue::glue("
+        {call}(require(x))
+        {call}(require(y))
+      ")),
+      message,
+      linter
     )
-    expect_lint(lines_comment, message, linter)
+
+    expect_lint(
+      trim_some(glue::glue("
+        {call}(library(x))
+        # a comment on y
+        {call}(library(y))
+      ")),
+      message,
+      linter
+    )
   },
   .test_name = c("suppressMessages", "suppressPackageStartupMessages"),
   call = c("suppressMessages", "suppressPackageStartupMessages")
