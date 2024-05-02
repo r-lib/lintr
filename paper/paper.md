@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2023-12-06"
+date: "2024-05-02"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -8,7 +8,7 @@ authors:
     orcid: ~
   - name: Michael Chirico
     affiliation: 2
-    orcid: ~
+    orcid: 0000-0003-0787-087X
   - name: Alexander Rosenstock
     affiliation: 3
     orcid: ~
@@ -36,28 +36,28 @@ link-citations: yes
 
 # Statement of Need
 
-R is an interpreted, dynamically typed programming language [@base2023].
+R is an interpreted, dynamically-typed programming language [@base2023].
 It is a popular choice for statistical analysis and visualization, and
 is used by a wide range of researchers and data scientists. The
 `{lintr}` package is an open-source R package that provides static code
 analysis to check for a variety of common problems related to
-readability, efficiency, consistency, style, etc. In particular, it
-enforces the tidyverse style guide [@Wickham2023]. It is designed to be
-easy to use and integrate into existing workflows, and can be used as
-part of an automated build or continuous integration process. `{lintr}`
-also integrates with a number of popular IDEs and text editors, such as
-RStudio and Visual Studio Code, making it convenient for users to run
-`{lintr}` checks on their code as they work.
+readability, efficiency, consistency, style, etc. In particular, by
+default it enforces the tidyverse style guide [@Wickham2023]. It is
+designed to be easy to use and integrate into existing workflows, and
+can be used as part of an automated build or continuous integration
+process. `{lintr}` also integrates with a number of popular IDEs and
+text editors, such as RStudio and Visual Studio Code, making it
+convenient for users to run `{lintr}` checks on their code as they work.
 
 # Features
 
-As of this writing, `{lintr}` offers 115 linters.
+As of this writing, `{lintr}` offers 113 linters.
 
 ``` r
 library(lintr)
 
 length(all_linters())
-#> [1] 115
+#> [1] 113
 ```
 
 Naturally, we can't discuss all of them here. To see details about all
@@ -75,7 +75,7 @@ suggest alternatives that follow best practices.
 For example, expressions like `ifelse(x, TRUE, FALSE)` and
 `ifelse(x, FALSE, TRUE)` are redundant; just `x` or `!x` suffice in R
 code where logical vectors are a core data structure. The
-`redundant_ifelse_linter()` linter detects such problematic usages.
+`redundant_ifelse_linter()` linter detects such discouraged usages.
 
 ``` r
 lint(
@@ -97,7 +97,7 @@ code efficiency by avoiding common inefficient patterns.
 
 For example, the `any_is_na_linter()` linter detects usages of
 `any(is.na(x))` and suggests `anyNA(x)` as a more efficient alternative
-to detect presence *any* of missing values.
+to detect presence of *any* missing values.
 
 ``` r
 lint(
@@ -184,11 +184,11 @@ lint(
 
 -   **Common mistakes**
 
-One category of linters help you detect some common mistakes statically
+One category of linters helps you detect some common mistakes statically
 and provide early feedback.
 
 For example, duplicate arguments in function calls can sometimes cause
-errors:
+run-time errors:
 
 ``` r
 mean(x = 1:5, x = 2:3)
@@ -202,13 +202,13 @@ lint(
   text = "mean(x = 1:5, x = 2:3)",
   linters = duplicate_argument_linter()
 )
-#> <text>:1:15: warning: [duplicate_argument_linter] Duplicate
-#>     arguments in function call.
+#> <text>:1:15: warning: [duplicate_argument_linter] Avoid
+#>     duplicate arguments in function calls.
 #> mean(x = 1:5, x = 2:3)
 #>               ^
 ```
 
-Even for cases where there will not be a run-time error, this linter
+Even for cases where duplicate arguments are not an error, this linter
 explicitly discourages duplicate arguments.
 
 ``` r
@@ -216,14 +216,14 @@ lint(
   text = "list(x = TRUE, x = FALSE)",
   linters = duplicate_argument_linter()
 )
-#> <text>:1:16: warning: [duplicate_argument_linter] Duplicate
-#>     arguments in function call.
+#> <text>:1:16: warning: [duplicate_argument_linter] Avoid
+#>     duplicate arguments in function calls.
 #> list(x = TRUE, x = FALSE)
 #>                ^
 ```
 
-This is because duplicate-named objects can be hard to work with
-programmatically and should typically be avoided.
+This is because objects with duplicated names objects can be hard to
+work with programmatically and should typically be avoided.
 
 ``` r
 l <- list(x = TRUE, x = FALSE)
@@ -246,7 +246,8 @@ highlighting potential issues, `{lintr}` can help users write code that
 is easier to understand and work with. This is especially important for
 larger projects or teams, where multiple contributors may be working on
 the same codebase and it is important to ensure that code is easy to
-follow and understand.
+follow and understand, particularly when frequently switching context
+among code primarily authored by different people.
 
 `{lintr}` is designed for extensibility by allowing users to easily
 create custom linting rules, enabling flexible and tailored code
@@ -263,7 +264,7 @@ Finally, `{lintr}` has had a large and active user community since its
 birth in 2014 which has contributed to its rapid development,
 maintenance, and adoption. At the time of writing, `{lintr}` is in a
 mature and stable state and therefore provides a reliable API that is
-unlikely to feature any breaking changes.
+unlikely to feature fundamental breaking changes.
 
 # Conclusion
 
