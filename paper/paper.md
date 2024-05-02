@@ -227,8 +227,15 @@ work with programmatically and should typically be avoided.
 
 ``` r
 l <- list(x = TRUE, x = FALSE)
-l[["x"]]
+l["x"]
+#> $x
 #> [1] TRUE
+l[names(l) == "x"]
+#> $x
+#> [1] TRUE
+#> 
+#> $x
+#> [1] FALSE
 ```
 
 # Benefits of using `{lintr}`
