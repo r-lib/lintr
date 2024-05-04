@@ -145,6 +145,8 @@
 <code><a href="../reference/any_is_na_linter.html">any_is_na_linter()</a></code> is extended to catch the unusual usage <code>NA %in% x</code> (<a href="https://github.com/r-lib/lintr/issues/2113" class="external-link">#2113</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/make_linter_from_xpath.html">make_linter_from_xpath()</a></code> errors up front when <code>lint_message</code> is missing (instead of delaying this error until the linter is used, <a href="https://github.com/r-lib/lintr/issues/2541" class="external-link">#2541</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/paste_linter.html">paste_linter()</a></code> is extended to recommend using <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> instead of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> for simply aggregating a character vector with <code>collapse=</code>, i.e., when <code>sep=</code> is irrelevant (<a href="https://github.com/r-lib/lintr/issues/1108" class="external-link">#1108</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
@@ -776,7 +778,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>
 <code><a href="../reference/expect_type_linter.html">expect_type_linter()</a></code> Require usage of <code>expect_type(x, t)</code> over <code>expect_equal(typeof(x), t)</code> and similar.</li>
 <li>
-<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> Require <code>fixed = TRUE</code> or <code><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">stringr::fixed()</a></code> for regular expressions that can be expressed statically, e.g. <code>strsplit(x, "[.]")</code> can be <code>strsplit(x, ".", fixed = TRUE)</code>.
+<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> Require <code>fixed = TRUE</code> or <code>stringr::fixed()</code> for regular expressions that can be expressed statically, e.g. <code>strsplit(x, "[.]")</code> can be <code>strsplit(x, ".", fixed = TRUE)</code>.
 <ul><li>Added parameter <code>allow_grepl</code> (default <code>FALSE</code>) to toggle whether <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code> usages should be linted. These might be treated separately because <code>grepl("^x", NA)</code> is <code>FALSE</code>; the <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith()</a></code> equivalent to get <code>FALSE</code> for missing input is clunkier, but more explicit: <code>!is.na(x) &amp; startsWith(x, string)</code> (<a href="https://github.com/r-lib/lintr/issues/1376" class="external-link">#1376</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></li>
 <li>

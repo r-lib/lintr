@@ -87,7 +87,7 @@
                         <h4 data-toc-skip class="author">lintr
 maintainers</h4>
             
-            <h4 data-toc-skip class="date">2024-04-22</h4>
+            <h4 data-toc-skip class="date">2024-05-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/HEAD/vignettes/creating_linters.Rmd" class="external-link"><code>vignettes/creating_linters.Rmd</code></a></small>
       <div class="d-none name"><code>creating_linters.Rmd</code></div>
@@ -402,9 +402,9 @@ linters<a class="anchor" aria-label="anchor" href="#more-details-about-writing-t
 </h3>
 <p>The <a href="https://lintr.r-lib.org">lintr</a> package uses <a href="https://github.com/r-lib/testthat" class="external-link">testthat</a> for testing. You
 can run all of the currently available tests using
-<code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>. If you want to run only the tests in a
+<code>devtools::test()</code>. If you want to run only the tests in a
 given file use the <code>filter</code> argument to
-<code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>.</p>
+<code>devtools::test()</code>.</p>
 <p>Linter tests should be put in the <a href="https://github.com/r-lib/lintr/tree/main/tests/testthat" class="external-link">tests/testthat/</a>
 folder. The test filename should be the linter name prefixed by
 <code>test-</code>, e.g.
