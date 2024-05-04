@@ -97,9 +97,14 @@ literal_coercion_linter <- function() {
         needs_prefix <- is_rlang_coercer & !startsWith(coercion_str, "rlang::")
         coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])
       }
-      # the linter logic & rlang requirement should ensure that it's safe to run eval() here
+      # the linter logic & rlang requirement should ensure that it's safe to run eval() here;
+      #   suppressWarnings() is for cases like 'as.integer("a")' which have an NA result, #2566.
       # TODO(#2473): Avoid a recommendation like '1' that clashes with implicit_integer_linter().
-      literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
+      literal_equivalent_str <- vapply(
+        str2expression(coercion_str),
+        function(expr) deparse1(suppressWarnings(eval(expr))),
+        character(1L)
+      )
       lint_message <- sprintf(
         "Use %s instead of %s, i.e., use literals directly where possible, instead of coercion.",
         literal_equivalent_str, report_str
