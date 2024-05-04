@@ -666,7 +666,7 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 }
 
 fill_with <- function(character = " ", length = 1L) {
-  paste0(collapse = "", rep.int(character, length))
+  paste(collapse = "", rep.int(character, length))
 }
 
 has_positional_logical <- function(dots) {
