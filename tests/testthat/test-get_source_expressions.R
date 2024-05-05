@@ -414,12 +414,13 @@ param_df$.test_name <- with(param_df, sprintf("%s on expression %d", linter, exp
 patrick::with_parameters_test_that(
   "linters pass with xml_missing() content",
   {
-    skip_if_not_installed("cyclocomp")
-
     if (linter == "backport_linter") {
       # otherwise we test the trivial linter (#2339)
       linter <- backport_linter(r_version = "3.6.0")
     } else {
+      if (linter == "cyclocomp_linter") {
+        skip_if_not_installed("cyclocomp")
+      }
       linter <- eval(call(linter))
     }
     expression <- expressions[[expression_idx]]

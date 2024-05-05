@@ -8,10 +8,10 @@ cyclocomp_linter(complexity_limit = 15L)
 }
 \arguments{
 \item{complexity_limit}{Maximum cyclomatic complexity, default \code{15}. Expressions more complex
-than this are linted. See \code{\link[cyclocomp:cyclocomp]{cyclocomp::cyclocomp()}}.}
+than this are linted.}
 }
 \description{
-Check for overly complicated expressions. See \code{\link[cyclocomp:cyclocomp]{cyclocomp::cyclocomp()}}.
+Check for overly complicated expressions. See \code{\link[=cyclocomp]{cyclocomp()}} function from \code{{cyclocomp}}.
 }
 \examples{
 \dontshow{if (requireNamespace("cyclocomp", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

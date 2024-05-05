@@ -1,9 +1,9 @@
 #' Cyclomatic complexity linter
 #'
-#' Check for overly complicated expressions. See [cyclocomp::cyclocomp()].
+#' Check for overly complicated expressions. See [cyclocomp()] function from `{cyclocomp}`.
 #'
 #' @param complexity_limit Maximum cyclomatic complexity, default `15`. Expressions more complex
-#' than this are linted. See [cyclocomp::cyclocomp()].
+#' than this are linted.
 #'
 #' @examplesIf requireNamespace("cyclocomp", quietly = TRUE)
 #' # will produce lints
