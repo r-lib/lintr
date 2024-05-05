@@ -11,7 +11,7 @@ cyclocomp_linter(complexity_limit = 15L)
 than this are linted.}
 }
 \description{
-Check for overly complicated expressions. See \code{\link[=cyclocomp]{cyclocomp()}} function from \code{{cyclocomp}}.
+Check for overly complicated expressions. See \code{cyclocomp()} function from \code{{cyclocomp}}.
 }
 \examples{
 \dontshow{if (requireNamespace("cyclocomp", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
