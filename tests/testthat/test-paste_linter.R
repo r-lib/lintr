@@ -249,6 +249,16 @@ test_that("paste0(collapse=...) is caught", {
   expect_lint("paste0(foo(x, y, z), collapse = '')", lint_msg, linter)
 })
 
+test_that("paste0(collapse=...) is caught in pipes", {
+  linter <- paste_linter()
+  lint_msg <- rex::rex("Use paste(), not paste0(), to collapse a character vector when sep= is not used.")
+
+  expect_lint('x %>% paste0(y, collapse = "")', NULL, linter)
+  expect_lint('x %>% paste0(collapse = "")', lint_msg, linter)
+  skip_if_not_r_version("4.1.0")
+  expect_lint('x |> paste0(collapse = "")', lint_msg, linter)
+})
+
 test_that("paste0(collapse=...) cases interacting with other rules are handled", {
   linter <- paste_linter()
   lint_msg <- rex::rex("Use paste(), not paste0(), to collapse a character vector when sep= is not used.")
