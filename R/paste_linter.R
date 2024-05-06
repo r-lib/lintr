@@ -171,7 +171,8 @@ paste_linter <- function(allow_empty_sep = FALSE,
   parent::expr
     /parent::expr[
       SYMBOL_SUB[text() = 'collapse']
-      and count(expr) = 3 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
+      and count(expr) =
+        3 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
       and not(expr/SYMBOL[text() = '...'])
     ]
   ")
