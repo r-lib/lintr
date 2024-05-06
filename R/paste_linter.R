@@ -167,14 +167,15 @@ paste_linter <- function(allow_empty_sep = FALSE,
   empty_paste_note <-
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
 
-  paste0_collapse_xpath <- "
+  paste0_collapse_xpath <- glue::glue("
   parent::expr
     /parent::expr[
       SYMBOL_SUB[text() = 'collapse']
-      and count(expr) = 3
+      and count(expr) =
+        3 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
       and not(expr/SYMBOL[text() = '...'])
     ]
-  "
+  ")
 
   Linter(linter_level = "expression", function(source_expression) {
     paste_calls <- source_expression$xml_find_function_calls("paste")
