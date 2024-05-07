@@ -58,6 +58,11 @@
 #'   linters = paste_linter(allow_file_path = "never")
 #' )
 #'
+#' lint(
+#'   text = 'paste0(x, collapse = "")',
+#'   linters = paste_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = 'paste0("a", "b")',
@@ -96,6 +101,11 @@
 #'
 #' lint(
 #'   text = 'paste0("http://site.com/", path)',
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = 'paste(x, collapse = "")',
 #'   linters = paste_linter()
 #' )
 #'
@@ -156,6 +166,16 @@ paste_linter <- function(allow_empty_sep = FALSE,
 
   empty_paste_note <-
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
+
+  paste0_collapse_xpath <- glue::glue("
+  parent::expr
+    /parent::expr[
+      SYMBOL_SUB[text() = 'collapse']
+      and count(expr) =
+        3 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
+      and not(expr/SYMBOL[text() = '...'])
+    ]
+  ")
 
   Linter(linter_level = "expression", function(source_expression) {
     paste_calls <- source_expression$xml_find_function_calls("paste")
@@ -219,6 +239,14 @@ paste_linter <- function(allow_empty_sep = FALSE,
       type = "warning"
     )
 
+    paste0_collapse_expr <- xml_find_all(paste0_calls, paste0_collapse_xpath)
+    paste0_collapse_lints <- xml_nodes_to_lints(
+      paste0_collapse_expr,
+      source_expression = source_expression,
+      lint_message = "Use paste(), not paste0(), to collapse a character vector when sep= is not used.",
+      type = "warning"
+    )
+
     if (check_file_paths) {
       paste_sep_slash_expr <- paste_sep_expr[paste_sep_value == "/"]
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
@@ -248,7 +276,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       ))
     }
 
-    c(optional_lints, paste0_sep_lints, paste_strrep_lints)
+    c(optional_lints, paste0_sep_lints, paste_strrep_lints, paste0_collapse_lints)
   })
 }
 

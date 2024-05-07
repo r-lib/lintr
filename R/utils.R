@@ -111,7 +111,7 @@ get_content <- function(lines, info) {
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
-  paste0(collapse = "\n", lines)
+  paste(lines, collapse = "\n")
 }
 
 logical_env <- function(x) {
