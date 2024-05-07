@@ -114,7 +114,7 @@ lint(
 )
 ```
 
-The more readable alternative here uses `!=`:
+Note also the complicated operator precedence. The more readable alternative here uses `!=`:
 
 ```{r comparison_negation_linter_without_lint}
 lint(
