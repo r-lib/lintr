@@ -228,6 +228,14 @@ l[names(l) == "x"]
 #> [1] FALSE
 ```
 
+# Extensibility
+
+`{lintr}` is designed for extensibility by allowing users to easily
+create custom linting rules. By leveraging functions like
+`lintr::make_linter_from_xpath()`, users can tailor linters to match
+their project-specific coding standards, and not merely adhere to the
+tidyverse style guidelines.
+
 # Benefits of using `{lintr}`
 
 There are several benefits to using `{lintr}` to analyze and improve R
@@ -245,20 +253,6 @@ larger projects or teams, where multiple contributors may be working on
 the same codebase and it is important to ensure that code is easy to
 follow and understand, particularly when frequently switching context
 among code primarily authored by different people.
-
-`{lintr}` is designed for extensibility by allowing users to easily
-create custom linting rules, enabling flexible and tailored code
-analysis to suit specific coding conventions, style guides, and project
-requirements. For example, although tidyverse style guide prefers
-snake_case for identifiers, if a project's conventions require it, the
-relevant linter can be customized to support it:
-
-``` r
-lint(
-  text = "my.var <- 1L",
-  linters = object_name_linter(styles = "dotted.case")
-)
-```
 
 It can also be a useful tool for teaching and learning R. By providing
 feedback on code style and potential issues, it can help users learn
