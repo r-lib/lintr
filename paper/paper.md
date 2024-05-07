@@ -90,6 +90,13 @@ lint(
 #> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
 
+``` r
+lint(
+  text = "x >= 2.5",
+  linters = redundant_ifelse_linter()
+)
+```
+
 -   **Efficiency**
 
 Sometimes the users might not be aware of a more efficient way offered
@@ -144,7 +151,8 @@ lint(
 #> ^~~~~~~
 ```
 
-The more readable alternative here uses `!=`:
+Note also the complicated operator precedence. The more readable
+alternative here uses `!=`:
 
 ``` r
 lint(
@@ -171,6 +179,13 @@ lint(
 #>     function name style should match snake_case or symbols.
 #> MyVar <- 1L
 #> ^~~~~
+```
+
+``` r
+lint(
+  text = "my_var <- 1L",
+  linters = object_name_linter()
+)
 ```
 
 -   **Common mistakes**
@@ -247,8 +262,8 @@ lint(
 ```
 
 -   Create new linters (by leveraging functions like
-    `lintr::make_linter_from_xpath()`) tailored to match
-    project-specific coding standards.
+    `lintr::make_linter_from_xpath()`) tailored to match project- or
+    organization-specific coding standards.
 
 # Benefits of using `{lintr}`
 

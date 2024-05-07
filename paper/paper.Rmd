@@ -72,9 +72,16 @@ We will showcase one linter for each kind of common problem found in R code.
 
 For example, expressions like `ifelse(x, TRUE, FALSE)` and `ifelse(x, FALSE, TRUE)` are redundant; just `x` or `!x` suffice in R code where logical vectors are a core data structure. The `redundant_ifelse_linter()` linter detects such discouraged usages.
 
-```{r redundant_ifelse_linter}
+```{r redundant_ifelse_linter_with_lint}
 lint(
   text = "ifelse(x >= 2.5, TRUE, FALSE)",
+  linters = redundant_ifelse_linter()
+)
+```
+
+```{r redundant_ifelse_linter_without_lint}
+lint(
+  text = "x >= 2.5",
   linters = redundant_ifelse_linter()
 )
 ```
@@ -129,9 +136,16 @@ lint(
 
 For example, the style guide recommends using snake_case for identifiers:
 
-```{r object_name_linter}
+```{r object_name_linter_with_lint}
 lint(
   text = "MyVar <- 1L",
+  linters = object_name_linter()
+)
+```
+
+```{r object_name_linter_without_lint}
+lint(
+  text = "my_var <- 1L",
   linters = object_name_linter()
 )
 ```
