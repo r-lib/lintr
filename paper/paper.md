@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-05-02"
+date: "2024-05-07"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -172,16 +172,6 @@ lint(
 #> ^~~~~
 ```
 
-But, as with other linters in this category, the linter can be
-customized for any other style guide:
-
-``` r
-lint(
-  text = "my.var <- 1L",
-  linters = object_name_linter(styles = "dotted.case")
-)
-```
-
 -   **Common mistakes**
 
 One category of linters helps you detect some common mistakes statically
@@ -259,7 +249,16 @@ among code primarily authored by different people.
 `{lintr}` is designed for extensibility by allowing users to easily
 create custom linting rules, enabling flexible and tailored code
 analysis to suit specific coding conventions, style guides, and project
-requirements.
+requirements. For example, although tidyverse style guide prefers
+snake_case for identifiers, if a project's conventions require it, the
+relevant linter can be customized to support it:
+
+``` r
+lint(
+  text = "my.var <- 1L",
+  linters = object_name_linter(styles = "dotted.case")
+)
+```
 
 It can also be a useful tool for teaching and learning R. By providing
 feedback on code style and potential issues, it can help users learn
@@ -275,10 +274,10 @@ unlikely to feature fundamental breaking changes.
 
 # Conclusion
 
-In conclusion, `{lintr}` is a valuable tool for R users to help improve
-the quality and reliability of their code. Its static code analysis
-capabilities, combined with its flexibility and ease of use, make it
-relevant and valuable for a wide range of applications.
+`{lintr}` is a valuable tool for R users to help improve the quality and
+reliability of their code. Its static code analysis capabilities,
+combined with its flexibility and ease of use, make it relevant and
+valuable for a wide range of applications.
 
 # Licensing and Availability
 
@@ -298,9 +297,9 @@ institutions of the authors.
 
 # Acknowledgments
 
-The `{lintr}` would not be possible without the immense work of the
-[R-core team](https://www.r-project.org/contributors.html) who maintain
-the R language and we are deeply indebted to them. We are also grateful
-to all contributors to the `{lintr}` package.
+`{lintr}` would not be possible without the immense work of the [R-core
+team](https://www.r-project.org/contributors.html) who maintain the R
+language and we are deeply indebted to them. We are also grateful to all
+contributors to `{lintr}`.
 
 # References {#references .unnumbered}
