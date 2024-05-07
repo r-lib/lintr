@@ -186,7 +186,7 @@ There are two main ways to customize it:
   )
   ```
 
-  - Create new linters (by leveraging functions like `lintr::make_linter_from_xpath()`) tailored to match project-specific coding standards.
+  - Create new linters (by leveraging functions like `lintr::make_linter_from_xpath()`) tailored to match project- or organization-specific coding standards.
 
 # Benefits of using `{lintr}`
 
