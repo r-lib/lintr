@@ -10,7 +10,6 @@ f = function (x,y = 1){}
 # commented_code
 # some <- commented("out code")
 
-# cyclocomp
 # equals_na
 # infix_spaces
 # line_length
