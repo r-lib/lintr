@@ -1,13 +1,12 @@
 #' Block usage like x %in% "a"
 #'
 #' `vector %in% set` is appropriate for matching a vector to a set, but if
-#'   that set has size 1, `==` is more appropriate. `%chin%` from `{data.table}`
-#'   is matched as well.
+#'   that set has size 1, `==` is more appropriate.
 #'
 #' `scalar %in% vector` is OK, because the alternative (`any(vector == scalar)`)
 #'   is more circuitous & potentially less clear.
 #'
-#' @param add_in_operators Character vector of additional functions that behave like the %in% operator
+#' @param in_operators Character vector of additional functions that behave like the `%in%` operator
 #'
 #' @examples
 #' # will produce lints
@@ -18,7 +17,7 @@
 #'
 #' lint(
 #'   text = "x %chin% 'a'",
-#'   linters = scalar_in_linter()
+#'   linters = scalar_in_linter(in_operators = "%chin%")
 #' )
 #'
 #' # okay
@@ -30,13 +29,11 @@
 #' @evalRd rd_tags("scalar_in_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-scalar_in_linter <- function(add_in_operators = "%chin%") {
+scalar_in_linter <- function(in_operators = NULL) {
   # TODO(#2085): Extend to include other cases where the RHS is clearly a scalar
   # NB: all of logical, integer, double, hex, complex are parsed as NUM_CONST
-  special <- paste(paste0("text() = '", c("%in%", add_in_operators), "'"), collapse = " or ")
-
-  xpath <- paste0("
-  //SPECIAL[", special, "]
+  xpath <- glue("
+  //SPECIAL[{xp_text_in_table(c('%in%', {in_operators}))}]
     /following-sibling::expr[NUM_CONST[not(starts-with(text(), 'NA'))] or STR_CONST]
     /parent::expr
   ")
@@ -46,13 +43,19 @@ scalar_in_linter <- function(add_in_operators = "%chin%") {
 
     bad_expr <- xml_find_all(xml, xpath)
     in_op <- xml_find_chr(bad_expr, "string(SPECIAL)")
-    lint_msg <-
-      paste0("Use == to match length-1 scalars, not ", in_op, ". Note that == preserves NA where ", in_op, " does not.")
+    msg <- ifelse(
+      in_op == "%in%",
+      "Use == to match length-1 scalars instead of %in%. Note that == preserves NA where %in% does not.",
+      glue(
+        "{in_op} behaves similar to %in%. ",
+        "Use operators like == to match length-1 scalars instead of operators like %in%."
+      )
+    )
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = lint_msg,
+      lint_message = msg,
       type = "warning"
     )
   })

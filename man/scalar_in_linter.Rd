@@ -4,15 +4,14 @@
 \alias{scalar_in_linter}
 \title{Block usage like x \%in\% "a"}
 \usage{
-scalar_in_linter(add_in_operators = "\%chin\%")
+scalar_in_linter(in_operators = NULL)
 }
 \arguments{
-\item{add_in_operators}{Character vector of additional functions that behave like the \%in\% operator}
+\item{in_operators}{Character vector of additional functions that behave like the \code{\%in\%} operator}
 }
 \description{
 \code{vector \%in\% set} is appropriate for matching a vector to a set, but if
-that set has size 1, \code{==} is more appropriate. \verb{\%chin\%} from \code{{data.table}}
-is matched as well.
+that set has size 1, \code{==} is more appropriate.
 }
 \details{
 \code{scalar \%in\% vector} is OK, because the alternative (\code{any(vector == scalar)})
@@ -27,7 +26,7 @@ lint(
 
 lint(
   text = "x \%chin\% 'a'",
-  linters = scalar_in_linter()
+  linters = scalar_in_linter(in_operators = "\%chin\%")
 )
 
 # okay
