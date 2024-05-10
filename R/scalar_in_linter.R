@@ -7,6 +7,8 @@
 #' `scalar %in% vector` is OK, because the alternative (`any(vector == scalar)`)
 #'   is more circuitous & potentially less clear.
 #'
+#' @param add_in_operators Character vector of additional functions that behave like the %in% operator
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -28,14 +30,16 @@
 #' @evalRd rd_tags("scalar_in_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-scalar_in_linter <- function() {
+scalar_in_linter <- function(add_in_operators = "%chin%") {
   # TODO(#2085): Extend to include other cases where the RHS is clearly a scalar
   # NB: all of logical, integer, double, hex, complex are parsed as NUM_CONST
-  xpath <- "
-  //SPECIAL[text() = '%in%' or text() = '%chin%']
+  special <- paste(paste0("text() = '", c("%in%", add_in_operators), "'"), collapse = " or ")
+
+  xpath <- paste0("
+  //SPECIAL[", special, "]
     /following-sibling::expr[NUM_CONST[not(starts-with(text(), 'NA'))] or STR_CONST]
     /parent::expr
-  "
+  ")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

@@ -4,7 +4,10 @@
 \alias{scalar_in_linter}
 \title{Block usage like x \%in\% "a"}
 \usage{
-scalar_in_linter()
+scalar_in_linter(add_in_operators = "\%chin\%")
+}
+\arguments{
+\item{add_in_operators}{Character vector of additional functions that behave like the \%in\% operator}
 }
 \description{
 \code{vector \%in\% set} is appropriate for matching a vector to a set, but if
@@ -38,5 +41,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }
