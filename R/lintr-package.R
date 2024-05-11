@@ -9,7 +9,6 @@
 
 ## lintr namespace: start
 #' @importFrom cli cli_inform cli_abort cli_warn
-#' @importFrom cyclocomp cyclocomp
 #' @importFrom glue glue glue_collapse
 #' @importFrom rex rex regex re_matches re_substitutes character_class
 #' @importFrom stats na.omit

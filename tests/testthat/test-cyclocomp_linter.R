@@ -1,4 +1,6 @@
 test_that("returns the correct linting", {
+  skip_if_not_installed("cyclocomp")
+
   cc_linter_1 <- cyclocomp_linter(1L)
   cc_linter_2 <- cyclocomp_linter(2L)
   lint_msg <- rex::rex("Reduce the cyclomatic complexity of this function")

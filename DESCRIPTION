@@ -26,7 +26,6 @@ Imports:
     backports (>= 1.1.7),
     cli,
     codetools,
-    cyclocomp,
     digest,
     glue,
     knitr,
@@ -37,6 +36,7 @@ Imports:
     xmlparsedata (>= 1.0.5)
 Suggests:
     bookdown,
+    cyclocomp,
     jsonlite,
     patrick (>= 0.2.0),
     rlang,

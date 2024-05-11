@@ -17,7 +17,6 @@ default_linters <- modify_defaults(
   brace_linter(),
   commas_linter(),
   commented_code_linter(),
-  cyclocomp_linter(),
   equals_na_linter(),
   function_left_parentheses_linter(),
   indentation_linter(),
