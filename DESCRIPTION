@@ -25,7 +25,6 @@ Depends:
 Imports:
     backports (>= 1.1.7),
     codetools,
-    cyclocomp,
     digest,
     glue,
     knitr,
@@ -37,6 +36,7 @@ Imports:
 Suggests:
     bookdown,
     cli,
+    cyclocomp,
     jsonlite,
     patrick (>= 0.2.0),
     rlang,

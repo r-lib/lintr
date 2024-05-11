@@ -15,7 +15,6 @@ g <- function(x) {
 # commented_code
 # some <- commented("out code")
 
-# cyclocomp
 # equals_na
 # brace_linter
 # indentation
