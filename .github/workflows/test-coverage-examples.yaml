@@ -65,7 +65,7 @@ jobs:
           threshold <- 90
           cli::cli_rule()
           if (percent_coverage < threshold) {
-            cli::cli_abort(c("Code coverage using examples ({percent_coverage}%) is below the required threshold ({threshold}%)."))
+            cli::cli_abort("Code coverage using examples ({percent_coverage}%) is below the required threshold ({threshold}%).")
           } else {
             cli::cli_alert_success("Code coverage using examples ({percent_coverage}%) is above the required threshold ({threshold}%).")
           }
