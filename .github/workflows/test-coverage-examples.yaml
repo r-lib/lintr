@@ -37,6 +37,7 @@ jobs:
             "R/deprecated.R",
             "R/extract.R",
             "R/ids_with_token.R",
+            "R/lint.R",
             "R/lintr-deprecated.R",
             "R/namespace.R",
             "R/methods.R",
