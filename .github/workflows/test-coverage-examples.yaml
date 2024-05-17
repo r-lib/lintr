@@ -39,6 +39,7 @@ jobs:
             "R/actions.R",
             "R/cache.R",
             "R/deprecated.R",
+            "R/exclude.R",
             "R/extract.R",
             "R/ids_with_token.R",
             "R/lintr-deprecated.R",
