@@ -36,6 +36,7 @@ jobs:
             "R/cache.R",
             "R/deprecated.R",
             "R/extract.R",
+            "R/lintr-deprecated.R",
             "R/namespace.R",
             "R/methods.R",
             "R/settings.R",
