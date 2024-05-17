@@ -61,8 +61,7 @@ expect_identical_linter <- function() {
   #     where a numeric constant indicates inexact testing is preferable
   #   - skip calls using dots (`...`); see tests
   expect_equal_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal']
-    /parent::expr[not(
+  parent::expr[not(
       following-sibling::EQ_SUB
       or following-sibling::expr[
         expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
@@ -74,21 +73,18 @@ expect_identical_linter <- function() {
     /parent::expr
   "
   expect_true_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-    /parent::expr
+  parent::expr
     /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
     /parent::expr
   "
-  xpath <- paste(expect_equal_xpath, "|", expect_true_xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    expect_equal_calls <- source_expression$xml_find_function_calls("expect_equal")
+    expect_true_calls <- source_expression$xml_find_function_calls("expect_true")
+    bad_expr <- c(
+      xml_find_all(expect_equal_calls, expect_equal_xpath),
+      xml_find_all(expect_true_calls, expect_true_xpath)
+    )
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,

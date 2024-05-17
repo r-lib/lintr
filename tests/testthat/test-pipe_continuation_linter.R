@@ -1,6 +1,6 @@
 test_that("pipe-continuation correctly handles stand-alone expressions", {
   linter <- pipe_continuation_linter()
-  lint_msg <- rex::rex("`%>%` should always have a space before it and a new line after it,")
+  lint_msg <- rex::rex("Put a space before `%>%` and a new line after it,")
 
   # Expressions without pipes are ignored
   expect_lint("blah", NULL, linter)
@@ -41,7 +41,7 @@ test_that("pipe-continuation correctly handles stand-alone expressions", {
 
 test_that("pipe-continuation linter correctly handles nesting", {
   linter <- pipe_continuation_linter()
-  lint_msg <- rex::rex("`%>%` should always have a space before it and a new line after it,")
+  lint_msg <- rex::rex("Put a space before `%>%` and a new line after it,")
 
   expect_lint(
     trim_some("
@@ -81,8 +81,8 @@ test_that("pipe-continuation linter handles native pipe", {
   skip_if_not_r_version("4.1.0")
 
   linter <- pipe_continuation_linter()
-  lint_msg_native <- rex::rex("`|>` should always have a space before it and a new line after it,")
-  lint_msg_magrittr <- rex::rex("`%>%` should always have a space before it and a new line after it,")
+  lint_msg_native <- rex::rex("Put a space before `|>` and a new line after it,")
+  lint_msg_magrittr <- rex::rex("Put a space before `%>%` and a new line after it,")
 
   expect_lint("foo |> bar() |> baz()", NULL, linter)
   expect_lint(
@@ -181,10 +181,29 @@ local({
   )
   patrick::with_parameters_test_that(
     "valid nesting is handled",
+    # nolint next: unnecessary_nesting_linter. TODO(#2334): Remove this nolint.
     {
       expect_lint(code_string, NULL, linter)
     },
     .test_name = valid_code,
     code_string = valid_code
+  )
+})
+
+local({
+  linter <- pipe_continuation_linter()
+  pipes <- pipes()
+  cases <- expand.grid(pipe1 = pipes, pipe2 = pipes, stringsAsFactors = FALSE)
+  cases <- within(cases, {
+    .test_name <- sprintf("(%s, %s)", pipe1, pipe2)
+  })
+  patrick::with_parameters_test_that(
+    "Various pipes are linted correctly",
+    expect_lint(
+      sprintf("a %s b() %s\n  c()", pipe1, pipe2),
+      rex::rex(sprintf("Put a space before `%s` and a new line after it", pipe2)),
+      linter
+    ),
+    .cases = cases
   )
 })

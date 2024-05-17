@@ -36,10 +36,7 @@ inner_combine_linter <- function() {
     "sqrt", "abs"
   )
 
-  # TODO(michaelchirico): the need to spell out specific arguments is pretty brittle,
-  #   but writing the xpath for the alternative case was proving too tricky.
-  #   It's messy enough as is -- it may make sense to take another pass at
-  #   writing the xpath from scratch to see if it can't be simplified.
+  # TODO(#2468): Try and make this XPath less brittle/more extensible.
 
   # See ?as.Date, ?as.POSIXct. tryFormats is not explicitly in any default
   #   POSIXct method, but it is in as.Date.character and as.POSIXlt.character --
@@ -76,21 +73,15 @@ inner_combine_linter <- function() {
     log_args_cond,
     lubridate_args_cond
   )
-  xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'c']
-    /parent::expr
+  xpath <- glue("
+  parent::expr[count(following-sibling::expr) > 1]
     /following-sibling::expr[1][ {c_expr_cond} ]
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls("c")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr, depth = 2L)
     lint_message <- paste(
@@ -112,7 +103,7 @@ arg_match_condition <- function(arg) {
   this_symbol <- sprintf("SYMBOL_SUB[text() = '%s']", arg)
   following_symbol <- sprintf("following-sibling::expr/%s", this_symbol)
   next_expr <- "following-sibling::expr[1]"
-  return(xp_or(
+  xp_or(
     sprintf("not(%s) and not(%s)", this_symbol, following_symbol),
     xp_and(
       this_symbol,
@@ -122,7 +113,7 @@ arg_match_condition <- function(arg) {
         this_symbol, following_symbol, next_expr
       )
     )
-  ))
+  )
 }
 
 build_arg_condition <- function(calls, arguments) {

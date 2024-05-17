@@ -632,6 +632,141 @@ test_that("hanging_indent_stlye works", {
   expect_lint(code_hanging_same_line, NULL, tidy_linter)
   expect_lint(code_hanging_same_line, NULL, hanging_linter)
   expect_lint(code_hanging_same_line, "Indent", non_hanging_linter)
+
+  # regression test for #1898
+  expect_lint(
+    trim_some("
+      outer_fun(inner_fun(x,
+        one_indent = 42L
+      ))
+    "),
+    NULL,
+    tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_fun(inner_fun(x, # this is first arg
+        one_indent = 42L # this is second arg
+      ))
+    "),
+    NULL,
+    tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_fun(inner_fun(
+        x,
+        one_indent = 42L
+      ))
+    "),
+    NULL,
+    tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_fun(
+        inner_fun(
+          x,
+          one_indent = 42L
+        )
+      )
+    "),
+    NULL,
+    tidy_linter
+  )
+})
+
+test_that("assignment_as_infix works", {
+  # test function call restorator and LEFT_ASSIGN suppressor
+  code_infix <- trim_some("
+    ok_code <-
+      var1 +
+      f(
+        var2 +
+          var3
+      ) +
+      var4
+  ")
+
+  # test that innermost ancestor token decides the indentation
+  code_infix_2 <- trim_some("
+    lapply(x,
+      function(e) {
+        temp_var <-
+          e +
+          42
+      }
+    )
+  ")
+
+  # test brace restorator
+  code_infix_3 <- trim_some("
+    ok_code <-
+      if (condition) {
+        a +
+          b
+      } else {
+        c +
+          d
+      } +
+      e
+  ")
+
+  # test EQ_ASSIGN, EQ_SUB and EQ_FORMALS suppressors
+  code_infix_4 <- trim_some("
+    # EQ_ASSIGN
+    ok_code =
+      a +
+      b
+
+    # EQ_SUB
+    f(
+      a =
+        b +
+        c
+    )
+
+    # EQ_FORMALS
+    f <- function(
+      a =
+        b +
+        c
+    ) {
+      NULL
+    }
+  ")
+
+  code_no_infix <- trim_some("
+    ok_code <-
+      var1 +
+        f(
+          var2 +
+            var3
+        ) +
+        var4
+  ")
+
+  tidy_linter <- indentation_linter()
+  no_infix_linter <- indentation_linter(assignment_as_infix = FALSE)
+
+  expect_lint(code_infix, NULL, tidy_linter)
+  expect_lint(code_infix_2, NULL, tidy_linter)
+  expect_lint(code_infix_3, NULL, tidy_linter)
+  expect_lint(code_infix_4, NULL, tidy_linter)
+  expect_lint(code_no_infix, rex::rex("Indentation should be 2 spaces but is 4 spaces."), tidy_linter)
+
+  expect_lint(code_infix, rex::rex("Indentation should be 4 spaces but is 2 spaces."), no_infix_linter)
+  expect_lint(code_infix_2, rex::rex("Indentation should be 8 spaces but is 6 spaces."), no_infix_linter)
+  expect_lint(code_infix_3, rex::rex("Indentation should be 4 spaces but is 2 spaces."), no_infix_linter)
+  expect_lint(code_infix_4, list(
+    list(line_number = 4L, rex::rex("Indentation should be 4 spaces but is 2 spaces.")),
+    list(line_number = 10L, rex::rex("Indentation should be 6 spaces but is 4 spaces.")),
+    list(line_number = 17L, rex::rex("Indentation should be 6 spaces but is 4 spaces."))
+  ), no_infix_linter)
+  expect_lint(code_no_infix, NULL, no_infix_linter)
 })
 
 test_that("consecutive same-level lints are suppressed", {
@@ -669,7 +804,7 @@ test_that("consecutive same-level lints are suppressed", {
 })
 
 test_that("native pipe is supported", {
-  skip_if_not_r_version("4.1")
+  skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
   expect_lint(
@@ -694,4 +829,53 @@ test_that("native pipe is supported", {
 test_that("it doesn't error on invalid code", {
   # Part of #1427
   expect_lint("function() {)", list(linter = "error", message = rex::rex("unexpected ')'")), indentation_linter())
+})
+
+test_that("function shorthand is handled", {
+  skip_if_not_r_version("4.1.0")
+  linter <- indentation_linter()
+
+  expect_lint(
+    trim_some("
+      lapply(1:10, \\(i) {
+        i %% 2
+      })
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(1:10, \\(i) {
+       i %% 2  # indentation is only 1 character
+      })
+    "),
+    "Indentation",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      \\(
+          a = 1L,
+          b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+})
+
+test_that("lint metadata works for 0-space case", {
+  expect_lint(
+    trim_some("
+    if (TRUE) {
+    FALSE
+    }
+    "),
+    list(ranges = list(1L:2L)),
+    indentation_linter()
+  )
 })

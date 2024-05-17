@@ -1,23 +1,24 @@
 #' Block usage of `paste()` and `paste0()` with messaging functions using `...`
 #'
+#' @description
 #' This linter discourages combining condition functions like [stop()] with string concatenation
-#' functions [paste()] and [paste0()]. This is because
+#'   functions [paste()] and [paste0()]. This is because
 #'
 #'  - `stop(paste0(...))` is redundant as it is exactly equivalent to `stop(...)`
 #'  - `stop(paste(...))` is similarly equivalent to `stop(...)` with separators (see examples)
 #'
-#'   The same applies to the other default condition functions as well, i.e., [warning()], [message()],
+#' The same applies to the other default condition functions as well, i.e., [warning()], [message()],
 #'   and [packageStartupMessage()].
 #'
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = 'stop(paste("a string", "another")"',
+#'   text = 'stop(paste("a string", "another"))',
 #'   linters = condition_message_linter()
 #' )
 #'
 #' lint(
-#'   text = 'warning(paste0("a string", " another")',
+#'   text = 'warning(paste0("a string", " another"))',
 #'   linters = condition_message_linter()
 #' )
 #'
@@ -42,8 +43,10 @@
 #' @export
 condition_message_linter <- function() {
   translators <- c("packageStartupMessage", "message", "warning", "stop")
-  xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(translators)} ]
+  xpath <- glue("
+  self::SYMBOL_FUNCTION_CALL[
+    not(preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT)
+  ]
     /parent::expr
     /following-sibling::expr[
       expr[1][SYMBOL_FUNCTION_CALL[text() = 'paste' or text() = 'paste0']]
@@ -52,14 +55,9 @@ condition_message_linter <- function() {
     /parent::expr
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls(translators)
+    bad_expr <- xml_find_all(xml_calls, xpath)
     sep_value <- get_r_string(bad_expr, xpath = "./expr/SYMBOL_SUB[text() = 'sep']/following-sibling::expr/STR_CONST")
 
     bad_expr <- bad_expr[is.na(sep_value) | sep_value %in% c("", " ")]

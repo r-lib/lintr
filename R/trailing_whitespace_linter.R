@@ -41,11 +41,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strings = TRUE) {
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     res <- re_matches(
       source_expression$file_lines,
       rex(blanks, end),
@@ -59,9 +55,9 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strin
     }
 
     if (isTRUE(allow_in_strings) && !is.null(source_expression$full_xml_parsed_content)) {
-      all_str_consts <- xml2::xml_find_all(source_expression$full_xml_parsed_content, "//STR_CONST")
-      start_lines <- as.integer(xml2::xml_attr(all_str_consts, "line1"))
-      end_lines <- as.integer(xml2::xml_attr(all_str_consts, "line2"))
+      all_str_consts <- xml_find_all(source_expression$full_xml_parsed_content, "//STR_CONST")
+      start_lines <- as.integer(xml_attr(all_str_consts, "line1"))
+      end_lines <- as.integer(xml_attr(all_str_consts, "line2"))
 
       is_in_str <- vapply(bad_lines, function(ln) any(start_lines <= ln & ln < end_lines), logical(1L))
       bad_lines <- bad_lines[!is_in_str]
@@ -75,7 +71,7 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strin
           line_number = line,
           column_number = res$start[[line]],
           type = "style",
-          message = "Trailing whitespace is superfluous.",
+          message = "Remove trailing whitespace.",
           line = source_expression$file_lines[[line]],
           ranges = list(c(res$start[[line]], res$end[[line]]))
         )

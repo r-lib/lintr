@@ -7,7 +7,8 @@
 T_and_F_symbol_linter()
 }
 \description{
-Avoid the symbols \code{T} and \code{F}, and use \code{TRUE} and \code{FALSE} instead.
+Although they can be synonyms, avoid the symbols \code{T} and \code{F}, and use \code{TRUE} and \code{FALSE}, respectively, instead.
+\code{T} and \code{F} are not reserved keywords and can be assigned to any other values.
 }
 \examples{
 # will produce lints
@@ -17,7 +18,7 @@ lint(
 )
 
 lint(
-  text = "T = 1.2, F = 2.4",
+  text = "T = 1.2; F = 2.4",
   linters = T_and_F_symbol_linter()
 )
 

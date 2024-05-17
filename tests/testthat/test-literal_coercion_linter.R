@@ -1,8 +1,9 @@
 test_that("literal_coercion_linter skips allowed usages", {
-  linter <- line_length_linter()
+  linter <- literal_coercion_linter()
 
   # naive xpath includes the "_f0" here as a literal
   expect_lint('as.numeric(x$"_f0")', NULL, linter)
+  expect_lint('as.numeric(x@"_f0")', NULL, linter)
   # only examine the first method for as.<type> methods
   expect_lint("as.character(as.Date(x), '%Y%m%d')", NULL, linter)
 
@@ -22,7 +23,7 @@ test_that("literal_coercion_linter skips allowed usages", {
 })
 
 test_that("literal_coercion_linter skips allowed rlang usages", {
-  linter <- line_length_linter()
+  linter <- literal_coercion_linter()
 
   expect_lint("int(1, 2.0, 3)", NULL, linter)
   expect_lint("chr('e', 'ab', 'xyz')", NULL, linter)
@@ -37,6 +38,18 @@ test_that("literal_coercion_linter skips allowed rlang usages", {
 
 test_that("literal_coercion_linter skips quoted keyword arguments", {
   expect_lint("as.numeric(foo('a' = 1))", NULL, literal_coercion_linter())
+})
+
+test_that("no warnings surfaced by running coercion", {
+  linter <- literal_coercion_linter()
+
+  expect_no_warning(
+    expect_lint("as.integer('a')", "Use NA_integer_", linter)
+  )
+
+  expect_no_warning(
+    expect_lint("as.integer(2147483648)", "Use NA_integer_", linter)
+  )
 })
 
 skip_if_not_installed("tibble")
@@ -69,10 +82,13 @@ patrick::with_parameters_test_that(
 skip_if_not_installed("rlang")
 test_that("multiple lints return custom messages", {
   expect_lint(
-    "c(as.integer(1), lgl(1L))",
+    trim_some("{
+      as.integer(1)
+      lgl(1L)
+    }"),
     list(
-      rex::rex("Use 1L instead of as.integer(1)"),
-      rex::rex("Use TRUE instead of lgl(1L)")
+      list(rex::rex("Use 1L instead of as.integer(1)"), line_number = 2L),
+      list(rex::rex("Use TRUE instead of lgl(1L)"), line_number = 3L)
     ),
     literal_coercion_linter()
   )

@@ -25,16 +25,16 @@
 #' expect_lint("a", NULL, trailing_blank_lines_linter())
 #'
 #' # one expected lint
-#' expect_lint("a\n", "superfluous", trailing_blank_lines_linter())
-#' expect_lint("a\n", list(message = "superfluous", line_number = 2), trailing_blank_lines_linter())
+#' expect_lint("a\n", "trailing blank", trailing_blank_lines_linter())
+#' expect_lint("a\n", list(message = "trailing blank", line_number = 2), trailing_blank_lines_linter())
 #'
 #' # several expected lints
-#' expect_lint("a\n\n", list("superfluous", "superfluous"), trailing_blank_lines_linter())
+#' expect_lint("a\n\n", list("trailing blank", "trailing blank"), trailing_blank_lines_linter())
 #' expect_lint(
 #'   "a\n\n",
 #'   list(
-#'     list(message = "superfluous", line_number = 2),
-#'     list(message = "superfluous", line_number = 3)
+#'     list(message = "trailing blank", line_number = 2),
+#'     list(message = "trailing blank", line_number = 3)
 #'   ),
 #'   trailing_blank_lines_linter()
 #' )
@@ -42,7 +42,8 @@
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     stop( # nocov start
-      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed."
+      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
+      call. = FALSE
     ) # nocov end
   }
   old_lang <- set_lang(language)
@@ -50,17 +51,17 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   if (is.null(file)) {
     file <- tempfile()
-    con <- base::file(file, encoding = "UTF-8")
     on.exit(unlink(file), add = TRUE)
-    withr::with_connection(
-      list(con = con),
+    local({
+      con <- base::file(file, encoding = "UTF-8")
+      on.exit(close(con))
       writeLines(content, con = con, sep = "\n")
-    )
+    })
   }
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
-  lint_str <- if (n_lints) paste0(c("", lints), collapse = "\n") else ""
+  lint_str <- if (n_lints) paste(c("", lints), collapse = "\n") else ""
 
   wrong_number_fmt <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
@@ -90,7 +91,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             stop(sprintf(
               "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
               itr, field, toString(lint_fields)
-            ))
+            ), call. = FALSE)
           }
           check <- check[[field]]
           value <- lint[[field]]
@@ -99,19 +100,19 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             itr, field, deparse(value), deparse(check)
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
-          exp <- if (field == "message") {
+          ok <- if (field == "message") {
             re_matches(value, check)
           } else {
             isTRUE(all.equal(value, check))
           }
-          if (!is.logical(exp)) {
+          if (!is.logical(ok)) {
             stop(
               "Invalid regex result, did you mistakenly have a capture group in the regex? ",
               "Be sure to escape parenthesis with `[]`",
               call. = FALSE
             )
           }
-          testthat::expect(exp, msg)
+          testthat::expect(ok, msg)
         })
       },
       lints,

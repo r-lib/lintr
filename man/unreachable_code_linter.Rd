@@ -4,17 +4,49 @@
 \alias{unreachable_code_linter}
 \title{Block unreachable code and comments following return statements}
 \usage{
-unreachable_code_linter()
+unreachable_code_linter(
+  allow_comment_regex = getOption("covr.exclude_end", "# nocov end")
+)
+}
+\arguments{
+\item{allow_comment_regex}{Character vector of regular expressions which identify
+comments to exclude when finding unreachable terminal comments. By default, this
+includes the default "skip region" end marker for \code{{covr}}
+(option "covr.exclude_end", or \code{"# nocov end"} if unset).
+The end marker for \code{{lintr}} (\code{settings$exclude_end}) is always included.
+Note that the regexes should include the initial comment character \verb{#}.}
 }
 \description{
-Code after a top-level \code{\link[=return]{return()}} or \code{\link[=stop]{stop()}} can't be reached; typically
-this is vestigial code left after refactoring or sandboxing code, which is
-fine for exploration, but shouldn't ultimately be checked in. Comments
+Code after e.g. a \code{\link[=return]{return()}} or \code{\link[=stop]{stop()}}
+or in deterministically false conditional loops like \verb{if (FALSE)} can't be reached;
+typically this is vestigial code left after refactoring or sandboxing code, which
+is fine for exploration, but shouldn't ultimately be checked in. Comments
 meant for posterity should be placed \emph{before} the final \code{return()}.
 }
 \examples{
 # will produce lints
 code_lines <- "f <- function() {\n  return(1 + 1)\n  2 + 2\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "if (FALSE) {\n 2 + 2\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "while (FALSE) {\n 2 + 2\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "f <- function() {\n  return(1)\n  # end skip\n}"
 writeLines(code_lines)
 lint(
   text = code_lines,
@@ -29,10 +61,31 @@ lint(
   linters = unreachable_code_linter()
 )
 
+code_lines <- "if (foo) {\n 2 + 2\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "while (foo) {\n 2 + 2\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter()
+)
+
+code_lines <- "f <- function() {\n  return(1)\n  # end skip\n}"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = unreachable_code_linter(allow_comment_regex = "# end skip")
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=readability_linters]{readability}
 }

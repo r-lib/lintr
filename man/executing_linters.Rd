@@ -6,7 +6,8 @@
 \description{
 Linters that evaluate parts of the linted code, such as loading referenced packages.
 These linters should not be used with untrusted code, and may need dependencies of the linted package or project to
-be available in order to function correctly.
+be available in order to function correctly. For package authors, note that this includes loading the package itself,
+e.g. with \code{pkgload::load_all()} or installing and attaching the package.
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
@@ -17,6 +18,7 @@ The following linters are tagged with 'executing':
 \item{\code{\link{namespace_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
+\item{\code{\link{object_overwrite_linter}}}
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{unused_import_linter}}}
 }

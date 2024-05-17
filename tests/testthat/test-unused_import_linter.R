@@ -1,5 +1,6 @@
 test_that("unused_import_linter lints as expected", {
   linter <- unused_import_linter()
+
   expect_lint("library(dplyr)\ntibble(a = 1)", NULL, linter)
   # SYMBOL_FUNCTION_CALL usage is detected
   expect_lint("library(tidyverse)\ntibble(a = 1)", NULL, linter)
@@ -17,7 +18,7 @@ test_that("unused_import_linter lints as expected", {
   expect_lint("library(dplyr, character.only = TRUE)\n1 + 1", NULL, linter)
 
   lint_msg <- rex::rex("Package 'dplyr' is attached but never used")
-  msg_ns <- rex::rex("Package 'dplyr' is only used by namespace")
+  msg_ns <- rex::rex("Don't attach package 'dplyr', which is only used by namespace.")
 
   expect_lint("library(dplyr)\n1 + 1", lint_msg, linter)
   expect_lint("require(dplyr)\n1 + 1", lint_msg, linter)
@@ -41,8 +42,8 @@ test_that("unused_import_linter handles message vectorization", {
       xmlparsedata::xml_parse_data(parse(text = 'a'))
     "),
     list(
-      rex::rex("Package 'crayon' is attached but never used."),
-      rex::rex("Package 'xmlparsedata' is only used by namespace")
+      list(rex::rex("Package 'crayon' is attached but never used."), line_number = 1L),
+      list(rex::rex("Don't attach package 'xmlparsedata', which is only used by namespace"), line_number = 2L)
     ),
     unused_import_linter()
   )
@@ -58,4 +59,17 @@ test_that("unused_import_linter lints packages with exports like pkg::pkg", {
     rex::rex("Package 'glue' is attached but never used."),
     unused_import_linter()
   )
+})
+
+test_that("glue usages are seen", {
+  lint_msg <- rex::rex("Package 'xmlparsedata' is attached but never used.")
+
+  lines <- trim_some("
+    library(glue)
+    library(xmlparsedata)
+
+    glue('{ xml_parse_data() }')
+  ")
+  expect_lint(lines, NULL, unused_import_linter())
+  expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
 })

@@ -17,34 +17,36 @@ A \code{list} with three components:
 \describe{
 \item{expressions}{a \code{list} of
 \code{n+1} objects. The first \code{n} elements correspond to each expression in
-\code{filename}, and consist of a list of 9 elements:
+\code{filename}, and consist of a list of 8 elements:
 \itemize{
-\item{\code{filename} (\code{character})}
-\item{\code{line} (\code{integer}) the line in \code{filename} where this expression begins}
-\item{\code{column} (\code{integer}) the column in \code{filename} where this expression begins}
+\item{\code{filename} (\code{character}) the name of the file.}
+\item{\code{line} (\code{integer}) the line in the file where this expression begins.}
+\item{\code{column} (\code{integer}) the column in the file where this expression begins.}
 \item{\code{lines} (named \code{character}) vector of all lines spanned by this
-expression, named with the line number corresponding to \code{filename}}
-\item{\code{parsed_content} (\code{data.frame}) as given by \code{\link[utils:getParseData]{utils::getParseData()}} for this expression}
-\item{\code{xml_parsed_content} (\code{xml_document}) the XML parse tree of this
-expression as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}}
-\item{\code{content} (\code{character}) the same as \code{lines} as a single string (not split across lines)}
-\item{(\strong{Deprecated}) \code{find_line} (\code{function}) a function for returning lines in this expression}
-\item{(\strong{Deprecated}) \code{find_column} (\code{function}) a similar function for columns}
+expression, named with the corresponding line numbers.}
+\item{\code{parsed_content} (\code{data.frame}) as given by \code{\link[utils:getParseData]{utils::getParseData()}} for this expression.}
+\item{\code{xml_parsed_content} (\code{xml_document}) the XML parse tree of this expression as given by
+\code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}.}
+\item{\code{content} (\code{character}) the same as \code{lines} as a single string (not split across lines).}
+\item{\code{xml_find_function_calls(function_names)} (\code{function}) a function that returns all \code{SYMBOL_FUNCTION_CALL}
+XML nodes from \code{xml_parsed_content} with specified function names.}
 }
 
 The final element of \code{expressions} is a list corresponding to the full file
-consisting of 6 elements:
+consisting of 7 elements:
 \itemize{
-\item{\code{filename} (\code{character})}
-\item{\code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file}
+\item{\code{filename} (\code{character}) the name of this file.}
+\item{\code{file_lines} (\code{character}) the \code{\link[=readLines]{readLines()}} output for this file.}
 \item{\code{content} (\code{character}) for .R files, the same as \code{file_lines};
-for .Rmd or .qmd scripts, this is the extracted R source code (as text)}
+for .Rmd or .qmd scripts, this is the extracted R source code (as text).}
 \item{\code{full_parsed_content} (\code{data.frame}) as given by
-\code{\link[utils:getParseData]{utils::getParseData()}} for the full content}
+\code{\link[utils:getParseData]{utils::getParseData()}} for the full content.}
 \item{\code{full_xml_parsed_content} (\code{xml_document}) the XML parse tree of all
-expressions as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}}
+expressions as given by \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}}.}
 \item{\code{terminal_newline} (\code{logical}) records whether \code{filename} has a terminal
-newline (as determined by \code{\link[=readLines]{readLines()}} producing a corresponding warning)}
+newline (as determined by \code{\link[=readLines]{readLines()}} producing a corresponding warning).}
+\item{\code{xml_find_function_calls(function_names)} (\code{function}) a function that returns all \code{SYMBOL_FUNCTION_CALL}
+XML nodes from \code{full_xml_parsed_content} with specified function names.}
 }
 }
 \item{error}{A \code{Lint} object describing any parsing error.}
@@ -65,8 +67,8 @@ This setting is found by taking the first valid result from the following locati
 }
 }
 \examples{
-\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+tmp <- tempfile()
+writeLines(c("x <- 1", "y <- x + 1"), tmp)
 get_source_expressions(tmp)
-\dontshow{\}) # examplesIf}
+unlink(tmp)
 }

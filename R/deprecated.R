@@ -5,18 +5,16 @@
 #' @noRd
 NULL
 
-lintr_deprecated <- function(old, new = NULL, version = NULL,
-                             type = "Function") {
+lintr_deprecated <- function(what, alternative = NULL, version = NULL,
+                             type = "Function", signal = c("warning", "stop")) {
+  signal <- match.arg(signal)
+  signal <- match.fun(signal)
   msg <- c(
-    c(type, " ", old, " was deprecated"),
-    if (length(version) > 0L) {
-      c(" in lintr version ", version)
-    },
+    c(type, " ", what, " was deprecated"),
+    if (length(version) > 0L) c(" in lintr version ", version),
     ". ",
-    if (length(new) > 0L) {
-      c("Use ", new, " instead.")
-    }
+    if (length(alternative) > 0L) c("Use ", alternative, " instead.")
   )
-  msg <- paste0(msg, collapse = "")
-  warning(msg, call. = FALSE, domain = NA)
+  msg <- paste(msg, collapse = "")
+  signal(msg, call. = FALSE, domain = NA)
 }

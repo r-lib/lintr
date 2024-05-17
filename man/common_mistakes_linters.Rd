@@ -14,10 +14,14 @@ The following linters are tagged with 'common_mistakes':
 \itemize{
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{equals_na_linter}}}
+\item{\code{\link{length_test_linter}}}
+\item{\code{\link{list_comparison_linter}}}
 \item{\code{\link{missing_argument_linter}}}
 \item{\code{\link{missing_package_linter}}}
+\item{\code{\link{pipe_return_linter}}}
 \item{\code{\link{redundant_equals_linter}}}
 \item{\code{\link{sprintf_linter}}}
 \item{\code{\link{unused_import_linter}}}
+\item{\code{\link{vector_logic_linter}}}
 }
 }

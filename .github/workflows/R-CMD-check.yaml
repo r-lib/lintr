@@ -12,6 +12,10 @@ on:
 
 name: R-CMD-check
 
+concurrency:
+  group: ${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -30,16 +34,15 @@ jobs:
           # use 4.1 to check with rtools40's older compiler
           - {os: windows-latest, r: '4.1'}
 
-          # Use older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'en_US'}
-          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release', locale: 'zh_CN'}
+          - {os: ubuntu-latest,  r: 'release', http-user-agent: 'release', locale: 'zh_CN'}
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-latest,  r: 'oldrel-1'}
           - {os: ubuntu-latest,  r: 'oldrel-2'}
           - {os: ubuntu-latest,  r: 'oldrel-3'}
           - {os: ubuntu-latest,  r: 'oldrel-4'}
-          - {os: ubuntu-latest,  r: '3.4'}
+          - {os: ubuntu-latest,  r: '3.6'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +61,7 @@ jobs:
           sudo locale-gen zh_CN
           echo "LC_ALL=zh_CN" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -68,14 +71,10 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      # `{patrick}` imports `{purrr}`, and so needs to be ignored on R < 3.5
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
             any::rcmdcheck
-            bookdown=?ignore-before-r=3.5.0
-            patrick=?ignore-before-r=3.5.0
-            purrr=?ignore-before-r=3.5.0
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2

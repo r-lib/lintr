@@ -43,31 +43,36 @@
 #' @evalRd rd_tags("function_argument_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
-#' - <https://design.tidyverse.org/args-data-details.html>
+#' - <https://design.tidyverse.org/required-no-defaults.html>
 #' @export
 function_argument_linter <- function() {
-  xpath <- paste(collapse = " | ", glue::glue("
-  //{c('FUNCTION', 'OP-LAMBDA')}
+  xpath <- "
+  (//FUNCTION | //OP-LAMBDA)
     /following-sibling::EQ_FORMALS[1]
     /following-sibling::SYMBOL_FORMALS[
       text() != '...'
       and not(following-sibling::*[not(self::COMMENT)][1][self::EQ_FORMALS])
     ]
-  "))
+  "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
+  used_in_missing_xpath <- "
+    text() = following-sibling::expr[last()]//expr[expr/SYMBOL_FUNCTION_CALL[text() = 'missing']]/expr[2]/SYMBOL/text()
+  "
 
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
+
+    uses_missing <- xml_find_lgl(bad_expr, used_in_missing_xpath)
+
+    missing_note <-
+      ifelse(uses_missing, " Consider setting the default to NULL and using is.null() instead of using missing()", "")
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = "Arguments without defaults should come before arguments with defaults.",
+      lint_message = paste0("Arguments without defaults should come before arguments with defaults.", missing_note),
       type = "style"
     )
   })

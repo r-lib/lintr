@@ -5,26 +5,15 @@
 #'
 #' These functions have been deprecated from lintr.
 #'
-#' - `open_curly_linter()` and `closed_curly_linter()` check that open and closed curly braces
-#'   are on their own line unless they follow an else, a comma, or a closing bracket.
-#'   Deprecated in favor of `brace_linter()`.
+#' - `open_curly_linter()` (use [brace_linter()])
+#' - `closed_curly_linter()` (use `brace_linter()`)
+#' - `paren_brace_linter()` (use `brace_linter()`)
+#' - `semicolon_terminator_linter()` (use [semicolon_linter()])
 #'
-#' - `paren_brace_linter()` checks that there is a space between right parentheses and an opening
-#'    curly brace. E.g., `function(){}` doesn't have a space, while `function() {}` does.
-#'    Deprecated in favor of `brace_linter()`.
-#'
-#' - `semicolon_terminator_linter()` checks that no semicolons terminate expressions.
-#'    Deprecated in favor of `semicolon_linter()`.
-#'
-#' @param allow_single_line if `TRUE`, allow an open and closed curly pair on the same line.
-#' @param semicolon A character vector defining which semicolons to report:
-#' \describe{
-#'   \item{compound}{Semicolons that separate two statements on the same line.}
-#'   \item{trailing}{Semicolons following the last statement on the line.}
-#' }
+#' @param allow_single_line,semicolon Irrelevant parameters to defunct linters.
 #'
 #' @seealso [linters] for a complete list of linters available in lintr.
-#' @evalRd rd_tags("closed_curly_linter")
+#' @evalRd rd_tags("single_quotes_linter")
 #' @keywords internal
 NULL
 
@@ -32,133 +21,39 @@ NULL
 #' @rdname lintr-deprecated
 #' @export
 closed_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated("closed_curly_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
-  xp_cond_closed <- xp_and(c(
-    # matching { is on same line
-    if (isTRUE(allow_single_line)) {
-      "(@line1 != preceding-sibling::OP-LEFT-BRACE/@line1)"
-    },
-    # immediately followed by ",", "]" or ")"
-    "not(
-      @line1 = ancestor::expr/following-sibling::*[1][
-        self::OP-COMMA or self::OP-RIGHT-BRACKET or self::OP-RIGHT-PAREN
-      ]/@line1
-    )",
-    # double curly
-    "not(
-      (@line1 = parent::expr/following-sibling::OP-RIGHT-BRACE/@line1) or
-      (@line1 = preceding-sibling::expr/OP-RIGHT-BRACE/@line1)
-    )"
-  ))
-
-  xpath <- glue::glue("//OP-RIGHT-BRACE[
-    { xp_cond_closed } and (
-      (@line1 = preceding-sibling::*[1]/@line2) or
-      (@line1 = parent::expr/following-sibling::*[1][not(self::ELSE)]/@line1)
-    )
-  ]")
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml_nodes_to_lints(
-      xml2::xml_find_all(source_expression$xml_parsed_content, xpath),
-      source_expression = source_expression,
-      lint_message = "Closing curly-braces should always be on their own line, unless they are followed by an else."
-    )
-  })
+  lintr_deprecated(
+    what = "closed_curly_linter",
+    alternative = "brace_linter",
+    version = "3.0.0",
+    type = "Linter",
+    signal = "stop"
+  )
 }
 
 #' Open curly linter
 #' @rdname lintr-deprecated
 #' @export
 open_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated("open_curly_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
-
-  xpath_before <- "//OP-LEFT-BRACE[
-    not(following-sibling::expr[1][OP-LEFT-BRACE])
-    and not(parent::expr/preceding-sibling::*[1][OP-LEFT-BRACE])
-    and @line1 != parent::expr/preceding-sibling::*[1][not(self::ELSE)]/@line2
-  ]"
-  if (allow_single_line) {
-    xpath_after <- "//OP-LEFT-BRACE[
-      not(following-sibling::expr[1][OP-LEFT-BRACE])
-      and not(parent::expr/preceding-sibling::OP-LEFT-BRACE)
-      and not(@line2 = following-sibling::OP-RIGHT-BRACE/@line1)
-      and @line2 = following-sibling::expr[position() = 1 and not(OP-LEFT-BRACE)]/@line1
-    ]"
-    message_after <- paste(
-      "Opening curly braces should always be followed by a new line",
-      "unless the paired closing brace is on the same line."
-    )
-  } else {
-    xpath_after <- "//OP-LEFT-BRACE[
-      not(following-sibling::expr[1][OP-LEFT-BRACE])
-      and not(parent::expr/preceding-sibling::OP-LEFT-BRACE)
-      and @line2 = following-sibling::expr[1]/@line1
-    ]"
-    message_after <- "Opening curly braces should always be followed by a new line."
-  }
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    expr_before <- xml2::xml_find_all(xml, xpath_before)
-    lints_before <- xml_nodes_to_lints(
-      expr_before,
-      source_expression = source_expression,
-      lint_message = "Opening curly braces should never go on their own line.",
-      type = "style"
-    )
-
-    expr_after <- xml2::xml_find_all(xml, xpath_after)
-    lints_after <- xml_nodes_to_lints(
-      expr_after,
-      source_expression = source_expression,
-      lint_message = message_after,
-      type = "style"
-    )
-
-    return(c(lints_before, lints_after))
-  })
+  lintr_deprecated(
+    what = "open_curly_linter",
+    alternative = "brace_linter",
+    version = "3.0.0",
+    type = "Linter",
+    signal = "stop"
+  )
 }
 
 #' Parentheses before brace linter
 #' @rdname lintr-deprecated
 #' @export
 paren_brace_linter <- function() {
-  lintr_deprecated("paren_brace_linter", new = "brace_linter", version = "3.0.0", type = "Linter")
-
-  xpath <- paste(
-    "//OP-LEFT-BRACE[",
-    "@line1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@line1",
-    "and",
-    "@col1 = parent::expr/preceding-sibling::OP-RIGHT-PAREN/@col1 + 1",
-    "]"
+  lintr_deprecated(
+    what = "paren_brace_linter",
+    alternative = "brace_linter",
+    version = "3.0.0",
+    type = "Linter",
+    signal = "stop"
   )
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    match_exprs <- xml2::xml_find_all(xml, xpath)
-
-    xml_nodes_to_lints(
-      match_exprs,
-      source_expression = source_expression,
-      lint_message = "There should be a space between right parenthesis and an opening curly brace.",
-      type = "style"
-    )
-  })
 }
 
 #' Semicolon linter
@@ -166,15 +61,12 @@ paren_brace_linter <- function() {
 #' @export
 semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
   lintr_deprecated(
-    old = "semicolon_terminator_linter",
-    new = "semicolon_linter",
+    what = "semicolon_terminator_linter",
+    alternative = "semicolon_linter",
     version = "3.0.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-  semicolon <- match.arg(semicolon, several.ok = TRUE)
-  allow_compound <- !"compound" %in% semicolon
-  allow_trailing <- !"trailing" %in% semicolon
-  semicolon_linter(allow_compound, allow_trailing)
 }
 
 #' Unnecessary concatenation linter
@@ -182,8 +74,8 @@ semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
 #' @export
 unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
   lintr_deprecated(
-    old = "unneeded_concatenation_linter",
-    new = "unnecessary_concatenation_linter",
+    what = "unneeded_concatenation_linter",
+    alternative = "unnecessary_concatenation_linter",
     version = "3.1.0",
     type = "Linter"
   )
@@ -195,21 +87,115 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
   unnecessary_concatenation_linter(allow_single_expression = allow_single_expression)
 }
 
-#' @keywords internal
-#' @noRd
-find_line_fun <- function(content, newline_locs) {
-  function(line_number) {
-    lintr_deprecated("find_line_fun", new = "XPath logic and xml_nodes_to_lints()", version = "3.0.0")
-    which(newline_locs >= line_number)[1L] - 1L
-  }
+#' Single quotes linter
+#' @rdname lintr-deprecated
+#' @export
+single_quotes_linter <- function() {
+  lintr_deprecated(
+    what = "single_quotes_linter",
+    alternative = "quotes_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+  quotes_linter()
 }
 
-#' @keywords internal
-#' @noRd
-find_column_fun <- function(content, newline_locs) {
-  function(line_number) {
-    lintr_deprecated("find_column_fun", new = "XPath logic and xml_nodes_to_lints()", version = "3.0.0")
-    matched_line_number <- which(newline_locs >= line_number)[1L] - 1L
-    line_number - newline_locs[matched_line_number]
-  }
+#' Consecutive stopifnot linter
+#' @rdname lintr-deprecated
+#' @export
+consecutive_stopifnot_linter <- function() {
+  lintr_deprecated(
+    what = "consecutive_stopifnot_linter",
+    alternative = "consecutive_assertion_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+  consecutive_assertion_linter()
+}
+
+#' No tabs linter
+#' @rdname lintr-deprecated
+#' @export
+no_tab_linter <- function() {
+  lintr_deprecated(
+    what = "no_tab_linter",
+    alternative = "whitespace_linter",
+    version = "3.1.0",
+    type = "Linter"
+  )
+  whitespace_linter()
+}
+
+#' Extraction operator linter
+#' @rdname lintr-deprecated
+#' @export
+extraction_operator_linter <- function() {
+  lintr_deprecated(
+    what = "extraction_operator_linter",
+    version = "3.2.0",
+    type = "Linter",
+    signal = "warning"
+  )
+
+  constant_nodes_in_brackets <- paste0("self::", c("expr", "OP-PLUS", "NUM_CONST", "STR_CONST"))
+  xpath <- glue("
+  //OP-DOLLAR[not(preceding-sibling::expr[1]/SYMBOL[text() = 'self' or text() = '.self'])]
+  |
+  //OP-LEFT-BRACKET[
+    not(following-sibling::expr[1]/descendant::*[not({xp_or(constant_nodes_in_brackets)})]) and
+    not(following-sibling::OP-COMMA)
+  ]
+  ")
+
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+
+    bad_exprs <- xml_find_all(xml, xpath)
+    msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml_text(bad_exprs))
+
+    xml_nodes_to_lints(
+      bad_exprs,
+      source_expression = source_expression,
+      lint_message = msgs,
+      type = "warning"
+    )
+  })
+}
+
+#' Unnecessary nested if linter
+#' @rdname lintr-deprecated
+#' @export
+unnecessary_nested_if_linter <- function() {
+  lintr_deprecated(
+    what = "unnecessary_nested_if_linter",
+    alternative = "unnecessary_nesting_linter",
+    version = "3.2.0",
+    type = "Linter",
+    signal = "warning"
+  )
+
+  xpath <- paste0(
+    "//IF/parent::expr[not(ELSE)]/OP-RIGHT-PAREN/",
+    c(
+      "following-sibling::expr[IF and not(ELSE)]", # catch if (cond) if (other_cond) { ... }
+      "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]
+         /expr[IF and not(ELSE)]" # catch if (cond) { if (other_cond) { ... } }
+    ),
+    collapse = " | "
+  )
+
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+
+    bad_exprs <- xml_find_all(xml, xpath)
+    xml_nodes_to_lints(
+      bad_exprs,
+      source_expression = source_expression,
+      lint_message = paste(
+        "Don't use nested `if` statements,",
+        "where a single `if` with the combined conditional expression will do.",
+        "For example, instead of `if (x) { if (y) { ... }}`, use `if (x && y) { ... }`."
+      )
+    )
+  })
 }

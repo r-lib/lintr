@@ -99,6 +99,7 @@ test_that("it handles redundant lines", {
 
 test_that("it handles redundant linters", {
   t1 <- list()
+  # nolint next: duplicate_argument_linter.
   t1[[a]] <- list(c(1L, 1L, 1L:10L), my_linter = c(1L, 1L, 1L, 2L), my_linter = 3L)
   res <- list()
   res[[a]] <- list(1L:10L, my_linter = 1L:3L)
@@ -106,6 +107,7 @@ test_that("it handles redundant linters", {
 
   t1 <- list()
   t1[[a]] <- list(c(1L, 1L, 1L:10L), my_linter = c(1L, 1L, 1L, 2L))
+  # nolint next: duplicate_argument_linter.
   t1[[b]] <- list(1L:10L, my_linter = 1L:10L, my_linter = 11L:20L)
   res <- list()
   res[[a]] <- list(1L:10L, my_linter = 1L:2L)
@@ -144,8 +146,8 @@ test_that("it errors for invalid specifications", {
   msg_full_files <- "Full file exclusions must be character vectors of length 1."
   expect_error(lintr:::normalize_exclusions(2L), msg_full_files)
   expect_error(lintr:::normalize_exclusions(list("a.R", 2L)), msg_full_files)
-  expect_error(lintr:::normalize_exclusions(list("a.R" = Inf, 2L)), msg_full_files)
+  expect_error(lintr:::normalize_exclusions(list(a.R = Inf, 2L)), msg_full_files)
 
   msg_full_lines <- "Full line exclusions must be numeric or integer vectors."
-  expect_error(lintr:::normalize_exclusions(list("a.R" = "Inf")), msg_full_lines)
+  expect_error(lintr:::normalize_exclusions(list(a.R = "Inf")), msg_full_lines)
 })

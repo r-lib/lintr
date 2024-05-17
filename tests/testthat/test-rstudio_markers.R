@@ -1,22 +1,20 @@
 test_that("it returns markers which match lints", {
-  skip_if_not_installed("mockery")
-
-  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
-  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
-
-  lint1 <- structure(
-    list(
-      Lint(
-        filename = "test_file",
-        line_number = 1L,
-        column_number = 2L,
-        type = "error",
-        line = "a line",
-        message = "hi"
-      )
-    ),
-    class = "lints"
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    callFun = function(...) list(...),
+    executeCommand = function(...) NULL,
+    .package = "rstudioapi"
   )
+
+  lint1 <- list(Lint(
+    filename = "test_file",
+    line_number = 1L,
+    column_number = 2L,
+    type = "error",
+    line = "a line",
+    message = "hi"
+  ))
+  class(lint1) <- "lints"
   lint1[[1L]]$linter <- "linter_name"
 
   marker1 <- rstudio_source_markers(lint1)
@@ -27,26 +25,24 @@ test_that("it returns markers which match lints", {
   expect_identical(marker1$markers[[1L]]$column, lint1[[1L]]$column_number)
   expect_identical(marker1$markers[[1L]]$message, paste0("[", lint1[[1L]]$linter, "] ", lint1[[1L]]$message))
 
-  lint2 <- structure(
-    list(
-      Lint(
-        filename = "test_file",
-        line_number = 1L,
-        column_number = 2L,
-        type = "error",
-        line = "a line",
-        message = "hi"
-      ),
-      Lint(
-        filename = "test_file2",
-        line_number = 10L,
-        column_number = 1L,
-        type = "warning",
-        message = "test a message"
-      )
+  lint2 <- list(
+    Lint(
+      filename = "test_file",
+      line_number = 1L,
+      column_number = 2L,
+      type = "error",
+      line = "a line",
+      message = "hi"
     ),
-    class = "lints"
+    Lint(
+      filename = "test_file2",
+      line_number = 10L,
+      column_number = 1L,
+      type = "warning",
+      message = "test a message"
+    )
   )
+  class(lint2) <- "lints"
   lint2[[1L]]$linter <- "linter_name"
   lint2[[2L]]$linter <- "linter_name"
   marker2 <- rstudio_source_markers(lint2)
@@ -59,25 +55,23 @@ test_that("it returns markers which match lints", {
 })
 
 test_that("it prepends the package path if it exists", {
-  skip_if_not_installed("mockery")
-
-  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
-  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
-
-  lint3 <- structure(
-    list(
-      Lint(
-        filename = "test_file",
-        line_number = 1L,
-        column_number = 2L,
-        type = "error",
-        line = "a line",
-        message = "hi"
-      )
-    ),
-    class = "lints",
-    path = "test"
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    callFun = function(...) list(...),
+    executeCommand = function(...) NULL,
+    .package = "rstudioapi"
   )
+
+  lint3 <- list(Lint(
+    filename = "test_file",
+    line_number = 1L,
+    column_number = 2L,
+    type = "error",
+    line = "a line",
+    message = "hi"
+  ))
+  class(lint3) <- "lints"
+  attr(lint3, "path") <- "test"
   lint3[[1L]]$linter <- "linter_name"
   marker3 <- rstudio_source_markers(lint3)
   expect_identical(marker3$name, "lintr")
@@ -90,30 +84,31 @@ test_that("it prepends the package path if it exists", {
 })
 
 test_that("it returns an empty list of markers if there are no lints", {
-  skip_if_not_installed("mockery")
-
-  mockery::stub(rstudio_source_markers, "rstudioapi::callFun", function(...) list(...))
-  mockery::stub(rstudio_source_markers, "rstudioapi::executeCommand", function(...) NULL)
-
-  lint4 <- structure(
-    list(),
-    class = "lints"
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    callFun = function(...) list(...),
+    executeCommand = function(...) NULL,
+    .package = "rstudioapi"
   )
+
+  lint4 <- `class<-`(list(), "lints")
   marker4 <- rstudio_source_markers(lint4)
   expect_identical(marker4$name, "lintr")
   expect_identical(marker4$markers, list())
 })
 
 test_that("rstudio_source_markers apply to print within rstudio", {
-  skip_if_not_installed("mockery")
-
   withr::local_options(lintr.rstudio_source_markers = TRUE)
 
   tmp <- withr::local_tempfile(lines = "1:ncol(x)")
   empty <- withr::local_tempfile(lines = character(0L))
 
-  mockery::stub(print.lints, "rstudioapi::hasFun", function(x, ...) TRUE)
-  mockery::stub(print.lints, "rstudio_source_markers", function(x) cat("matched\n"))
+  skip_if_not_installed("rstudioapi")
+  local_mocked_bindings(
+    hasFun = function(...) TRUE,
+    .package = "rstudioapi"
+  )
+  local_mocked_bindings(rstudio_source_markers = function(x) cat("matched\n"))
 
   l <- lint(tmp, seq_linter())
   expect_output(print(l), "matched", fixed = TRUE)

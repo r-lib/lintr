@@ -32,7 +32,7 @@
 #' @export
 modify_defaults <- function(defaults, ...) {
   if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    stop("`defaults` must be a named list.")
+    stop("`defaults` must be a named list.", call. = FALSE)
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -46,8 +46,9 @@ modify_defaults <- function(defaults, ...) {
     bad_nms <- setdiff(nms[to_null], names(defaults))
     is_are <- if (length(bad_nms) > 1L) "are" else "is"
     warning(
-      "Trying to remove ", glue::glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
-      ", which ", is_are, " not in `defaults`."
+      "Trying to remove ", glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
+      ", which ", is_are, " not in `defaults`.",
+      call. = FALSE
     )
   }
 
@@ -92,7 +93,7 @@ modify_defaults <- function(defaults, ...) {
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
-    stop("`tags` must be a character vector, or NULL.")
+    stop("`tags` must be a character vector, or NULL.", call. = FALSE)
   }
   tagged_linters <- list()
 
@@ -104,8 +105,9 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
       if (!all(available$linter %in% ns_exports)) {
         missing_linters <- setdiff(available$linter, ns_exports)
         stop(
-          "Linters ", glue::glue_collapse(sQuote(missing_linters), sep = ", ", last = "and"),
-          " advertised by `available_linters()` but not exported by package ", package, "."
+          "Linters ", glue_collapse(sQuote(missing_linters), sep = ", ", last = " and "),
+          " advertised by `available_linters()` but not exported by package ", package, ".",
+          call. = FALSE
         )
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
@@ -135,7 +137,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #' - [available_linters] to get a data frame of available linters.
 #' - [linters] for a complete list of linters available in lintr.
 #' @export
-all_linters <- function(packages = "lintr", ...) {
+all_linters <- function(..., packages = "lintr") {
   linters_with_tags(tags = NULL, packages = packages, ...)
 }
 
@@ -145,15 +147,17 @@ all_linters <- function(packages = "lintr", ...) {
 #' The result of this function is meant to be passed to the `linters` argument of `lint()`,
 #' or to be put in your configuration file.
 #'
-#' @param defaults,default Default list of linters to modify. Must be named.
+#' @param defaults Default list of linters to modify. Must be named.
 #' @inheritParams linters_with_tags
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
+#' @examples
 #' # When using interactively you will usually pass the result onto `lint` or `lint_package()`
-#' f <- withr::local_tempfile(lines = "my_slightly_long_variable_name <- 2.3", fileext = "R")
-#' lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120)))
+#' f <- tempfile()
+#' writeLines("my_slightly_long_variable_name <- 2.3", f)
+#' lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120L)))
+#' unlink(f)
 #'
 #' # the default linter list with a different line length cutoff
-#' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120))
+#' my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120L))
 #'
 #' # omit the argument name if you are just using different arguments
 #' my_linters <- linters_with_defaults(defaults = my_linters, object_name_linter("camelCase"))
@@ -179,7 +183,8 @@ linters_with_defaults <- function(..., defaults = default_linters) {
   if (missing(defaults) && "default" %in% names(dots)) {
     warning(
       "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
-      "This warning will be removed when with_defaults() is fully deprecated."
+      "This warning will be removed when with_defaults() is fully deprecated.",
+      call. = FALSE
     )
     defaults <- dots$default
     nms <- names2(dots)
@@ -194,13 +199,10 @@ linters_with_defaults <- function(..., defaults = default_linters) {
   modify_defaults(..., defaults = defaults)
 }
 
-#' @rdname linters_with_defaults
+#' @rdname lintr-deprecated
 #' @export
 with_defaults <- function(..., default = default_linters) {
-  lintr_deprecated("with_defaults", "linters_with_defaults or modify_defaults", "3.0.0")
-  # to ease the burden of transition -- default = NULL used to behave like defaults = list() now does
-  if (is.null(default)) default <- list()
-  linters_with_defaults(..., defaults = default)
+  lintr_deprecated("with_defaults", "linters_with_defaults or modify_defaults", "3.0.0", signal = "stop")
 }
 
 #' @keywords internal
@@ -209,7 +211,10 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
     error = function(e) {
-      stop("Could not create linter with ", package, "::", linter_name, "(): ", conditionMessage(e))
+      stop(
+        "Could not create linter with ", package, "::", linter_name, "(): ", conditionMessage(e),
+        call. = FALSE
+      )
     }
   )
   # Otherwise, all linters would be called "linter_factory".
@@ -220,14 +225,14 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
 #' @keywords internal
 #' @noRd
 guess_names <- function(..., missing_index) {
-  args <- as.character(eval(substitute(alist(...)[missing_index])))
+  arguments <- as.character(eval(substitute(alist(...)[missing_index])))
   # foo_linter(x=1) => "foo"
   # var[["foo"]]    => "foo"
   # strip call: foo_linter(x=1) --> foo_linter
   # NB: Very long input might have newlines which are not caught
   #  by . in a perl regex; see #774
-  args <- re_substitutes(args, rex("(", anything), "", options = "s")
+  arguments <- re_substitutes(arguments, rex("(", anything), "", options = "s")
   # strip extractors: pkg::foo_linter, var[["foo_linter"]] --> foo_linter
-  args <- re_substitutes(args, rex(start, anything, '["' %or% "::"), "")
-  re_substitutes(args, rex('"]', anything, end), "")
+  arguments <- re_substitutes(arguments, rex(start, anything, '["' %or% "::"), "")
+  re_substitutes(arguments, rex('"]', anything, end), "")
 }

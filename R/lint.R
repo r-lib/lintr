@@ -3,50 +3,44 @@
 #' * `lint()` lints a single file.
 #' * `lint_dir()` lints all files in a directory.
 #' * `lint_package()` lints all likely locations for R files in a package, i.e.
-#'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, and `demo/`.
+#'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, `demo/`, and `exec/`.
 #'
 #' Read `vignette("lintr")` to learn how to configure which linters are run
 #' by default.
 #' Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
 #' unintelligible error messages from other linters.
 #'
-#' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
-#' The latter (inline data) applies whenever `filename` has a newline character (\\n).
-#' @param linters a named list of linter functions to apply. See [linters] for a full list of default and available
-#' linters.
+#' @param filename Either the filename for a file to lint, or a character string of inline R code for linting.
+#'   The latter (inline data) applies whenever `filename` has a newline character (\\n).
+#' @param linters A named list of linter functions to apply. See [linters] for a full list of default and available
+#'   linters.
 #' @param ... Provide additional arguments to be passed to:
-#' - [exclude()] (in case of `lint()`; e.g. `lints` or `exclusions`)
-#' - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
-#' @param cache given a logical, toggle caching of lint results. If passed a character string, store the cache in this
-#' directory.
-#' @param parse_settings whether to try and parse the settings.
+#'   - [exclude()] (in case of `lint()`; e.g. `lints` or `exclusions`)
+#'   - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
+#' @param cache When logical, toggle caching of lint results. If passed a character string, store the cache in this
+#'   directory.
+#' @param parse_settings Logical, default `TRUE`. Whether to try and parse the [settings][read_settings]. Otherwise,
+#'   the [default_settings()] are used.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-#' linting is being done ad hoc.
+#'   linting is being done ad hoc.
 #'
-#' @aliases lint_file
-# TODO(next release after 3.0.0): remove the alias
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' f <- withr::local_tempfile(lines = "a=1", fileext = "R")
+#' @examples
+#' f <- tempfile()
+#' writeLines("a=1", f)
 #' lint(f)                # linting a file
 #' lint("a = 123\n")      # linting inline-code
 #' lint(text = "a = 123") # linting inline-code
+#' unlink(f)
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
-      "'cache' is no longer available as a positional argument; please supply 'cache' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
-    )
-    cache <- dots[[1L]]
-    dots <- dots[-1L]
-  }
+  # TODO(#2502): Remove this workaround.
+  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
+  check_dots(dot_names, c("exclude", "parse_exclusions"))
 
-  needs_tempfile <- missing(filename) || rex::re_matches(filename, rex::rex(newline))
+  needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
 
@@ -63,7 +57,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   if (isTRUE(parse_settings)) {
     read_settings(filename)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(reset_settings(), add = TRUE)
   }
 
   linters <- define_linters(linters)
@@ -75,15 +69,21 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lint_obj <- define_cache_key(filename, inline_data, lines)
   lints <- retrieve_file(lint_cache, lint_obj, linters)
   if (!is.null(lints)) {
-    # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-    # > exclude(lints, lines = lines, ...)
-    return(do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots)))
+    return(exclude(lints, lines = lines, linter_names = names(linters), ...))
   }
+
+  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
+  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
 
   lints <- list()
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
-      for (linter in names(linters)) {
+      if (is_lint_level(expr, "expression")) {
+        necessary_linters <- expression_linter_names
+      } else {
+        necessary_linters <- file_linter_names
+      }
+      for (linter in necessary_linters) {
         # use withCallingHandlers for friendlier failures on unexpected linter errors
         lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
@@ -102,9 +102,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   cache_file(lint_cache, filename, linters, lints)
   save_cache(lint_cache, filename, cache_path)
 
-  # TODO: once cache= is fully deprecated as 3rd positional argument (see top of body), we can restore the cleaner:
-  # > exclude(lints, lines = lines, ...)
-  res <- do.call(exclude, c(list(lints, lines = lines, linter_names = names(linters)), dots))
+  res <- exclude(lints, lines = lines, linter_names = names(linters), ...)
 
   # simplify filename if inline
   zap_temp_filename(res, needs_tempfile)
@@ -117,6 +115,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
 #' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
+#' @param show_progress Logical controlling whether to show linting progress with a simple text
+#'   progress bar _via_ [utils::txtProgressBar()]. The default behavior is to show progress in
+#'   [interactive()] sessions not running a testthat suite.
 #'
 #' @examples
 #' if (FALSE) {
@@ -136,26 +137,22 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 lint_dir <- function(path = ".", ...,
                      relative_path = TRUE,
                      exclusions = list("renv", "packrat"),
-                     pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"), end),
-                     parse_settings = TRUE) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
-      "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
-    )
-    relative_path <- dots[[1L]]
-    dots <- dots[-1L]
-  }
+                     # TODO(r-lib/rex#85): Re-write in case-sensitive rex()
+                     pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
+                     parse_settings = TRUE,
+                     show_progress = NULL) {
+  # TODO(#2502): Remove this workaround.
+  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
+  check_dots(dot_names, c("lint", "exclude", "parse_exclusions"))
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(reset_settings(), add = TRUE)
 
     exclusions <- c(exclusions, settings$exclusions)
   }
+
+  if (is.null(show_progress)) show_progress <- interactive() && !identical(Sys.getenv("TESTTHAT"), "true")
 
   exclusions <- normalize_exclusions(
     exclusions,
@@ -175,17 +172,25 @@ lint_dir <- function(path = ".", ...,
   # Remove fully ignored files to avoid reading & parsing
   files <- drop_excluded(files, exclusions)
 
+  if (length(files) == 0L) {
+    lints <- list()
+    class(lints) <- "lints"
+    return(lints)
+  }
+
+  pb <- if (isTRUE(show_progress)) {
+    txtProgressBar(max = length(files), style = 3L)
+  }
+
   lints <- flatten_lints(lapply(
     files,
     function(file) {
-      maybe_report_progress()
-      # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
-      # > lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
-      do.call(lint, c(list(file, parse_settings = FALSE, exclusions = exclusions), dots))
+      maybe_report_progress(pb)
+      lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
     }
   ))
 
-  maybe_report_progress(done = TRUE)
+  if (!is.null(pb)) close(pb)
 
   lints <- reorder_lints(lints)
 
@@ -229,32 +234,24 @@ drop_excluded <- function(files, exclusions) {
 lint_package <- function(path = ".", ...,
                          relative_path = TRUE,
                          exclusions = list("R/RcppExports.R"),
-                         parse_settings = TRUE) {
-  # TODO(next release after 3.0.0): remove this deprecated workaround
-  dots <- list(...)
-  if (has_positional_logical(dots)) {
-    warning(
-      "'relative_path' is no longer available as a positional argument; ",
-      "please supply 'relative_path' as a named argument instead. ",
-      "This warning will be upgraded to an error in the next release."
-    )
-    relative_path <- dots[[1L]]
-    dots <- dots[-1L]
-  }
-
+                         parse_settings = TRUE,
+                         show_progress = NULL) {
   if (length(path) > 1L) {
-    stop("Only linting one package at a time is supported.")
+    stop("Only linting one package at a time is supported.", call. = FALSE)
   }
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
-    warning(sprintf("Didn't find any R package searching upwards from '%s'.", normalizePath(path)))
+    warning(
+      sprintf("Didn't find any R package searching upwards from '%s'.", normalizePath(path)),
+      call. = FALSE
+    )
     return(NULL)
   }
 
   if (parse_settings) {
     read_settings(pkg_path)
-    on.exit(clear_settings, add = TRUE)
+    on.exit(reset_settings(), add = TRUE)
   }
 
   exclusions <- normalize_exclusions(
@@ -262,12 +259,13 @@ lint_package <- function(path = ".", ...,
     root = pkg_path
   )
 
-  r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo"))
-  # TODO: once relative_path= is fully deprecated as 2nd positional argument (see top of body), restore the cleaner:
-  # > lints <- lint_dir(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE, ...)
-  lints <- do.call(
-    lint_dir,
-    c(list(r_directories, relative_path = FALSE, exclusions = exclusions, parse_settings = FALSE), dots)
+  r_directories <- file.path(pkg_path, c("R", "tests", "inst", "vignettes", "data-raw", "demo", "exec"))
+  lints <- lint_dir(r_directories,
+    relative_path = FALSE,
+    exclusions = exclusions,
+    parse_settings = FALSE,
+    show_progress = show_progress,
+    ...
   )
 
   if (isTRUE(relative_path)) {
@@ -322,42 +320,38 @@ define_linters <- function(linters = NULL) {
   } else if (is_linter(linters)) {
     linters <- list(linters)
     names(linters) <- attr(linters[[1L]], "name", exact = TRUE)
-  } else if (!is.list(linters)) {
+  } else if (is.list(linters)) {
+    names(linters) <- auto_names(linters)
+  } else {
     name <- deparse(substitute(linters))
     linters <- list(linters)
     names(linters) <- name
-  } else {
-    names(linters) <- auto_names(linters)
   }
   linters
 }
 
 validate_linter_object <- function(linter, name) {
-  if (!is_linter(linter) && is.function(linter)) {
-    if (is_linter_factory(linter)) {
-      old <- "Passing linters as variables"
-      new <- "a call to the linters (see ?linters)"
-      lintr_deprecated(
-        old = old, new = new, version = "3.0.0",
-        type = ""
-      )
-      linter <- linter()
-    } else {
-      old <- "The use of linters of class 'function'"
-      new <- "linters classed as 'linter' (see ?Linter)"
-      lintr_deprecated(
-        old = old, new = new, version = "3.0.0",
-        type = ""
-      )
-      linter <- Linter(linter, name = name)
-    }
-  } else if (!is.function(linter)) {
+  if (is_linter(linter)) {
+    return(linter)
+  }
+  if (!is.function(linter)) {
     stop(gettextf(
       "Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
       name, typeof(linter), class(linter)[[1L]]
-    ))
+    ), call. = FALSE)
   }
-  linter
+  if (is_linter_factory(linter)) {
+    what <- "Passing linters as variables"
+    alternative <- "a call to the linters (see ?linters)"
+  } else {
+    what <- "The use of linters of class 'function'"
+    alternative <- "linters classed as 'linter' (see ?Linter)"
+  }
+  lintr_deprecated(
+    what = what, alternative = alternative, version = "3.0.0",
+    type = "",
+    signal = "stop"
+  )
 }
 
 is_linter_factory <- function(fun) {
@@ -399,24 +393,25 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
                  message = "", line = "", ranges = NULL, linter = "") {
   if (!missing(linter)) {
     lintr_deprecated(
-      old = "Using the `linter` argument of `Lint()`",
+      what = "Using the `linter` argument of `Lint()`",
       version = "3.0.0",
-      type = ""
+      type = "",
+      signal = "stop"
     )
   }
 
   if (length(line) != 1L || !is.character(line)) {
-    stop("`line` must be a string.")
+    stop("`line` must be a string.", call. = FALSE)
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
     stop(sprintf(
       "`column_number` must be an integer between 0 and nchar(line) + 1 (%d). It was %s.",
       max_col, column_number
-    ))
+    ), call. = FALSE)
   }
   if (!is_number(line_number) || line_number < 1L) {
-    stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number))
+    stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number), call. = FALSE)
   }
   check_ranges(ranges, max_col)
 
@@ -451,23 +446,23 @@ check_ranges <- function(ranges, max_col) {
     return()
   }
   if (!is.list(ranges)) {
-    stop("`ranges` must be NULL or a list.")
+    stop("`ranges` must be NULL or a list.", call. = FALSE)
   }
 
   for (range in ranges) {
     if (!is_number(range, 2L)) {
-      stop("`ranges` must only contain length 2 integer vectors without NAs.")
+      stop("`ranges` must only contain length 2 integer vectors without NAs.", call. = FALSE)
     } else if (!is_valid_range(range, max_col)) {
       stop(sprintf(
         "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
-      ))
+      ), call. = FALSE)
     }
   }
 }
 
 rstudio_source_markers <- function(lints) {
   if (!requireNamespace("rstudioapi", quietly = TRUE)) {
-    stop("'rstudioapi' is required for rstudio_source_markers().") # nocov
+    stop("'rstudioapi' is required for rstudio_source_markers().", call. = FALSE) # nocov
   }
 
   # package path will be NULL unless it is a relative path
@@ -560,7 +555,7 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("'jsonlite' is required to produce SARIF reports, please install to continue.")
+    stop("'jsonlite' is required to produce SARIF reports, please install to continue.", call. = FALSE) # nocov
   }
 
   # package path will be `NULL` unless it is a relative path
@@ -572,64 +567,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
 
   # setup template
   sarif <- jsonlite::fromJSON(
-    '{
-      "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
-      "version": "2.1.0",
-      "runs": [
-        {
-          "tool": {
-            "driver": {
-              "name": "lintr",
-              "informationUri": "https://lintr.r-lib.org/",
-              "version": "2.0.1",
-              "rules": [
-                {
-                  "id": "trailing_whitespace_linter",
-                  "fullDescription": {
-                    "text": "Trailing whitespace is superfluous."
-                  },
-                  "defaultConfiguration": {
-                    "level": "note"
-                  }
-                }
-              ]
-            }
-          },
-          "results": [
-            {
-              "ruleId": "trailing_whitespace_linter",
-              "ruleIndex": 0,
-              "message": {
-                "text": "Trailing blank lines are superfluous."
-              },
-              "locations": [
-                {
-                  "physicalLocation": {
-                    "artifactLocation": {
-                      "uri": "TestFileFolder/hello.r",
-                      "uriBaseId": "ROOTPATH"
-                    },
-                    "region": {
-                      "startLine": 2,
-                      "startColumn": 22,
-                      "snippet": {
-                        "text": "print(Hello World!) "
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          ],
-          "columnKind": "utf16CodeUnits",
-          "originalUriBaseIds": {
-            "ROOTPATH": {
-              "uri": "file:///C:/repos/repototest/"
-            }
-          }
-        }
-      ]
-    }',
+    system.file("extdata", "sarif-template.json", package = "lintr"),
     simplifyVector = TRUE,
     simplifyDataFrame = FALSE,
     simplifyMatrix = FALSE
@@ -646,7 +584,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (startsWith(root_path_uri, "/")) {
     root_path_uri <- paste0("file://", root_path_uri)
   } else {
-    root_path_uri <- paste0("file:///", root_path_uri)
+    root_path_uri <- paste0("file:///", root_path_uri) # nocov
   }
 
   if (!endsWith(root_path_uri, "/")) {
@@ -728,7 +666,7 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 }
 
 fill_with <- function(character = " ", length = 1L) {
-  paste0(collapse = "", rep.int(character, length))
+  paste(collapse = "", rep.int(character, length))
 }
 
 has_positional_logical <- function(dots) {
@@ -737,16 +675,11 @@ has_positional_logical <- function(dots) {
     !nzchar(names2(dots)[1L])
 }
 
-maybe_report_progress <- function(done = FALSE) {
-  if (interactive() && !identical(Sys.getenv("TESTTHAT"), "true")) {
-    # nocov start
-    if (done) {
-      message()
-    } else {
-      message(".", appendLF = FALSE)
-    }
-    # nocov end
+maybe_report_progress <- function(pb) {
+  if (is.null(pb)) {
+    return(invisible())
   }
+  setTxtProgressBar(pb, getTxtProgressBar(pb) + 1L)
 }
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
@@ -764,7 +697,7 @@ maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
 get_lines <- function(filename, text) {
   if (!is.null(text)) {
     strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
-  } else if (rex::re_matches(filename, rex::rex(newline))) {
+  } else if (re_matches(filename, rex(newline))) {
     strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
     read_lines(filename)
