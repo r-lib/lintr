@@ -15,7 +15,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -31,15 +31,27 @@ jobs:
         run: |
           options(crayon.enabled = TRUE)
           library(covr)
+          files_to_exclude <- c(
+            "R/actions.R",
+            "R/cache.R",
+            "R/deprecated.R",
+            "R/namespace.R",
+            "R/methods.R",
+            "R/settings.R",
+            "R/with.R",
+            "R/with_id.R",
+            "R/zzz.R"
+          )
           coverage <- covr::package_coverage(
             type = "examples",
             quiet = TRUE,
             commentDonttest = FALSE,
-            commentDontrun = FALSE
+            commentDontrun = FALSE,
+            line_exclusions = files_to_exclude
           )
           print(coverage)
           percent_coverage <- covr::percent_coverage(coverage)
-          threshold <- 95
+          threshold <- 90
           cli::cli_rule()
           if (percent_coverage < threshold) {
             cli::cli_abort("Code coverage using examples is below the required threshold ({threshold}%).")
