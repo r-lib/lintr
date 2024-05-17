@@ -50,7 +50,7 @@ jobs:
             line_exclusions = files_to_exclude
           )
           print(coverage)
-          percent_coverage <- covr::percent_coverage(coverage)
+          percent_coverage <- as.integer(covr::percent_coverage(coverage))
           threshold <- 90
           cli::cli_rule()
           if (percent_coverage < threshold) {
