@@ -6,7 +6,7 @@
 #' `scalar %in% vector` is OK, because the alternative (`any(vector == scalar)`)
 #'   is more circuitous & potentially less clear.
 #'
-#' @param in_operators Character vector of additional functions that behave like the `%in%` operator
+#' @param in_operators Character vector of additional infix operators that behave like the `%in%` operator
 #'
 #' @examples
 #' # will produce lints
@@ -43,19 +43,15 @@ scalar_in_linter <- function(in_operators = NULL) {
 
     bad_expr <- xml_find_all(xml, xpath)
     in_op <- xml_find_chr(bad_expr, "string(SPECIAL)")
-    msg <- ifelse(
-      in_op == "%in%",
-      "Use == to match length-1 scalars instead of %in%. Note that == preserves NA where %in% does not.",
-      glue(
-        "{in_op} behaves similar to %in%. ",
-        "Use operators like == to match length-1 scalars instead of operators like %in%."
-      )
+    lint_msg <- glue(
+      "Use comparison operators (e.g. ==) to match length-1 scalars instead of {in_op}. ",
+      "Note that == preserves NA where %in% does not."
     )
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = msg,
+      lint_message = lint_msg,
       type = "warning"
     )
   })
