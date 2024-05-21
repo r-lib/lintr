@@ -6,7 +6,8 @@
 #' `scalar %in% vector` is OK, because the alternative (`any(vector == scalar)`)
 #'   is more circuitous & potentially less clear.
 #'
-#' @param in_operators Character vector of additional infix operators that behave like the `%in%` operator
+#' @param in_operators Character vector of additional infix operators that behave like the `%in%` operator,
+#'   e.g. `{data.table}`'s `%chin%` operator.
 #'
 #' @examples
 #' # will produce lints
