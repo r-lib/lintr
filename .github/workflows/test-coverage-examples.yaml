@@ -1,10 +1,8 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # Trigger once a month at 10:00 on the first day of every month
+    - cron: "00 10 1 * *"
 
 name: test-coverage-examples
 
