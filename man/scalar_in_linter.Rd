@@ -4,12 +4,15 @@
 \alias{scalar_in_linter}
 \title{Block usage like x \%in\% "a"}
 \usage{
-scalar_in_linter()
+scalar_in_linter(in_operators = NULL)
+}
+\arguments{
+\item{in_operators}{Character vector of additional infix operators that behave like the \code{\%in\%} operator,
+e.g. \code{{data.table}}'s \verb{\%chin\%} operator.}
 }
 \description{
 \code{vector \%in\% set} is appropriate for matching a vector to a set, but if
-that set has size 1, \code{==} is more appropriate. \verb{\%chin\%} from \code{{data.table}}
-is matched as well.
+that set has size 1, \code{==} is more appropriate.
 }
 \details{
 \code{scalar \%in\% vector} is OK, because the alternative (\code{any(vector == scalar)})
@@ -24,7 +27,7 @@ lint(
 
 lint(
   text = "x \%chin\% 'a'",
-  linters = scalar_in_linter()
+  linters = scalar_in_linter(in_operators = "\%chin\%")
 )
 
 # okay
@@ -38,5 +41,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=consistency_linters]{consistency}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=consistency_linters]{consistency}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }

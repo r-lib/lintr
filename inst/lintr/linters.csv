@@ -90,7 +90,7 @@ repeat_linter,style readability
 return_linter,style configurable default
 routine_registration_linter,best_practices efficiency robustness
 sample_int_linter,efficiency readability robustness
-scalar_in_linter,readability consistency best_practices efficiency
+scalar_in_linter,readability consistency best_practices efficiency configurable
 semicolon_linter,style readability default configurable
 semicolon_terminator_linter,defunct
 seq_linter,robustness efficiency consistency best_practices default
