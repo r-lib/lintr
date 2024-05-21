@@ -87,6 +87,8 @@
 <li>Drop support for posting GitHub comments from inside GitHub comment bot, Travis, Wercker, and Jenkins CI tools (spurred by <a href="https://github.com/r-lib/lintr/issues/2148" class="external-link">#2148</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). We rely on GitHub Actions for linting in CI, and don’t see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.</li>
 <li>
 <code><a href="../reference/cyclocomp_linter.html">cyclocomp_linter()</a></code> is no longer part of the default linters (<a href="https://github.com/r-lib/lintr/issues/2555" class="external-link">#2555</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>) because the tidyverse style guide doesn’t contain any guidelines on meeting certain complexity requirements. Note that users with <code><a href="../reference/cyclocomp_linter.html">cyclocomp_linter()</a></code> in their configs may now need to install {cyclocomp} intentionally, in particular in CI/CD pipelines.</li>
+<li>
+<code>scalar_in_linter</code> is now configurable to allow other <code>%in%</code> like operators to be linted. The data.table operator <code>%chin%</code> is no longer linted by default; use <code>in_operators = "%chin%"</code> to continue linting it. (<a href="https://github.com/F-Noelle" class="external-link">@F-Noelle</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
