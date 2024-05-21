@@ -19,7 +19,7 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (63 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (11 linters)}
-\item{\link[=configurable_linters]{configurable} (43 linters)}
+\item{\link[=configurable_linters]{configurable} (44 linters)}
 \item{\link[=consistency_linters]{consistency} (32 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
@@ -123,7 +123,7 @@ The following linters exist:
 \item{\code{\link{return_linter}} (tags: configurable, default, style)}
 \item{\code{\link{routine_registration_linter}} (tags: best_practices, efficiency, robustness)}
 \item{\code{\link{sample_int_linter}} (tags: efficiency, readability, robustness)}
-\item{\code{\link{scalar_in_linter}} (tags: best_practices, consistency, efficiency, readability)}
+\item{\code{\link{scalar_in_linter}} (tags: best_practices, configurable, consistency, efficiency, readability)}
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
 \item{\code{\link{sort_linter}} (tags: best_practices, efficiency, readability)}
