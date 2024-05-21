@@ -7,7 +7,8 @@
 scalar_in_linter(in_operators = NULL)
 }
 \arguments{
-\item{in_operators}{Character vector of additional infix operators that behave like the \code{\%in\%} operator}
+\item{in_operators}{Character vector of additional infix operators that behave like the \code{\%in\%} operator,
+e.g. \code{{data.table}}'s \verb{\%chin\%} operator.}
 }
 \description{
 \code{vector \%in\% set} is appropriate for matching a vector to a set, but if
