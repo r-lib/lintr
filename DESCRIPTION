@@ -18,14 +18,13 @@ Description: Checks adherence to a given style, syntax errors and possible
     'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text', 'Atom' and 'Visual
     Studio Code'.
 License: MIT + file LICENSE
-URL: https://github.com/r-lib/lintr, https://lintr.r-lib.org
+URL: https://lintr.r-lib.org, https://github.com/r-lib/lintr
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
     R (>= 3.6)
 Imports:
     backports (>= 1.1.7),
     codetools,
-    cyclocomp,
     digest,
     glue,
     knitr,
@@ -37,6 +36,7 @@ Imports:
 Suggests:
     bookdown,
     cli,
+    cyclocomp,
     jsonlite,
     patrick (>= 0.2.0),
     rlang,

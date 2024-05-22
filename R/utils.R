@@ -100,7 +100,7 @@ get_content <- function(lines, info) {
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
-  paste0(collapse = "\n", lines)
+  paste(lines, collapse = "\n")
 }
 
 logical_env <- function(x) {
@@ -215,8 +215,8 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #' writeLines("c('a', 'b')", tmp)
 #' expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml))
-#' get_r_string(expr_as_xml, "expr[2]") # "a"
-#' get_r_string(expr_as_xml, "expr[3]") # "b"
+#' get_r_string(expr_as_xml, "expr[2]")
+#' get_r_string(expr_as_xml, "expr[3]")
 #' unlink(tmp)
 #'
 #' # more importantly, extract strings under R>=4 raw strings
@@ -225,8 +225,8 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #' writeLines("c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')", tmp4.0)
 #' expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml4.0))
-#' get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
-#' get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+#' get_r_string(expr_as_xml4.0, "expr[2]")
+#' get_r_string(expr_as_xml4.0, "expr[3]")
 #' unlink(tmp4.0)
 #'
 #' @export

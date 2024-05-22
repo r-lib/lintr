@@ -1,11 +1,11 @@
 #' Cyclomatic complexity linter
 #'
-#' Check for overly complicated expressions. See [cyclocomp::cyclocomp()].
+#' Check for overly complicated expressions. See `cyclocomp()` function from `{cyclocomp}`.
 #'
-#' @param complexity_limit Maximum cyclomatic complexity, default 15. Expressions more complex
-#' than this are linted. See [cyclocomp::cyclocomp()].
+#' @param complexity_limit Maximum cyclomatic complexity, default `15`. Expressions more complex
+#' than this are linted.
 #'
-#' @examples
+#' @examplesIf requireNamespace("cyclocomp", quietly = TRUE)
 #' # will produce lints
 #' lint(
 #'   text = "if (TRUE) 1 else 2",
@@ -23,6 +23,15 @@
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
   Linter(linter_level = "expression", function(source_expression) {
+    # nocov start
+    if (!requireNamespace("cyclocomp", quietly = TRUE)) {
+      cli::cli_abort(c(
+        "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}.",
+        i = "Please install the needed {.pkg cyclocomp} package."
+      ))
+    }
+    # nocov end
+
     complexity <- try_silently(
       cyclocomp::cyclocomp(parse(text = source_expression$content))
     )
