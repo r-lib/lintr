@@ -45,7 +45,7 @@ Suggests:
     testthat (>= 3.2.1),
     tibble,
     tufte,
-    withr (>= 2.5.0)
+    withr (>= 3.0.0)
 Enhances:
     data.table
 VignetteBuilder: 
