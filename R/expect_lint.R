@@ -1,6 +1,7 @@
 #' Lint expectation
 #'
-#' This is an expectation function to test that the lints produced by `lint` satisfy a number of checks.
+#' These are expectation function to test that the lints produced by `lint` satisfy a number of checks. 
+#' `expect_no_lint` is equivalent to `expect_lint` with checks set to NULL.
 #'
 #' @param content a character vector for the file content to be linted, each vector element representing a line of
 #' text.
@@ -23,6 +24,7 @@
 #' @examples
 #' # no expected lint
 #' expect_lint("a", NULL, trailing_blank_lines_linter())
+#' expect_no_lint("a", trailing_blank_lines_linter())
 #'
 #' # one expected lint
 #' expect_lint("a\n", "trailing blank", trailing_blank_lines_linter())
@@ -42,7 +44,8 @@
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     stop( # nocov start
-      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
+      "'expect_lint' and 'expect_no_lint' are designed to work within the 'testthat' testing framework, ",
+      "but 'testthat' is not installed.",
       call. = FALSE
     ) # nocov end
   }
@@ -123,6 +126,11 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   invisible(NULL)
 }
 
+#' @rdname expect_lint
+#' @export
+expect_no_lint <- function(content, ..., file = NULL, language = "en") {
+  expect_lint(content, NULL, ..., file = file, language = language)
+}
 
 #' Test that the package is lint free
 #'
