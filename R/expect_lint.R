@@ -1,6 +1,6 @@
 #' Lint expectation
 #'
-#' These are expectation function to test that the lints produced by `lint` satisfy a number of checks. 
+#' These are expectation function to test that the lints produced by `lint` satisfy a number of checks.
 #' `expect_no_lint` is equivalent to `expect_lint` with checks set to NULL.
 #'
 #' @param content a character vector for the file content to be linted, each vector element representing a line of
