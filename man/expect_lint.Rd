@@ -36,8 +36,11 @@ This makes testing them reproducible on all systems irrespective of their native
 \code{NULL}, invisibly.
 }
 \description{
-These are expectation function to test that the lints produced by \code{lint} satisfy a number of checks.
-\code{expect_no_lint} is equivalent to \code{expect_lint} with checks set to NULL.
+These are expectation functions to test specified linters on sample code in the \code{testthat} testing framework.
+\itemize{
+\item \code{expect_lint} asserts that specified lints are generated.
+\item \code{expect_no_lint} asserts that no lints are generated.
+}
 }
 \examples{
 # no expected lint
