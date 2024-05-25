@@ -224,7 +224,7 @@ test_that("old compatibility usage errors", {
 test_that("Linters throwing an error give a helpful error", {
   tmp_file <- withr::local_tempfile(lines = "a <- 1")
   lintr_error_msg <- "a broken linter"
-  linter <- function() Linter(function(source_expression) stop(lintr_error_msg, call. = FALSE))
+  linter <- function() Linter(function(source_expression) cli_abort(lintr_error_msg))
   # NB: Some systems/setups may use e.g. symlinked files when creating under tempfile();
   #   we don't care much about that, so just check basename()
   expect_error(lint(tmp_file, linter()), lintr_error_msg, fixed = TRUE)
