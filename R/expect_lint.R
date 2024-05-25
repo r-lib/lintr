@@ -23,7 +23,6 @@
 #' @return `NULL`, invisibly.
 #' @examples
 #' # no expected lint
-#' expect_lint("a", NULL, trailing_blank_lines_linter())
 #' expect_no_lint("a", trailing_blank_lines_linter())
 #'
 #' # one expected lint

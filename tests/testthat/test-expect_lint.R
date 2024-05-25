@@ -6,9 +6,6 @@ linter <- assignment_linter()
 lint_msg <- "Use <-, not ="
 
 test_that("no checks", {
-  expect_success(expect_lint("a", NULL, linter))
-  expect_success(expect_lint("a=1", NULL, list()))
-  expect_failure(expect_lint("a=1", NULL, linter))
   expect_success(expect_no_lint("a", linter))
   expect_success(expect_no_lint("a=1", list()))
   expect_failure(expect_no_lint("a=1", linter))
