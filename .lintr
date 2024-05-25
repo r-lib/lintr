@@ -18,7 +18,7 @@ linters: all_linters(
       message = "use cli::cli_inform()",
       warning = "use cli::cli_warn()",
       stop = "use cli::cli_abort()"
-    )),
+    ), symbol_is_undesirable = FALSE),
     undesirable_operator_linter(modify_defaults(
       defaults = default_undesirable_operators,
       `:::` = NULL,

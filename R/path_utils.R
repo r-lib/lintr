@@ -150,7 +150,7 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
             line_number = token[["line1"]],
             column_number = path_start,
             type = "warning",
-            message = message, # nolint: undesirable_function_linter
+            message = message,
             line = source_expression[["lines"]][[as.character(token[["line1"]])]],
             ranges = list(c(path_start, path_end))
           )
