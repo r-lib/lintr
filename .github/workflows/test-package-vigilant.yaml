@@ -22,12 +22,18 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: local::.
+          extra-packages: |
+            local::.
+            any::purrr
 
       - name: Run Tests
         run: |
-          ## --------------------------------------------------------------------
-          options(crayon.enabled = TRUE, warn = 2L)
-          if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "") Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
-          testthat::test_dir("tests")
+          options(crayon.enabled = TRUE)
+          pkgload::load_all()
+          test_script_paths <- testthat::find_test_scripts("tests/testthat")
+          test_with_warning_as_error <- function(...) {
+            withr::local_options(list(warn = 2L))
+            testthat::test_file(...)
+          }
+          purrr::walk(test_script_paths, test_with_warning_as_error)
         shell: Rscript {0}
