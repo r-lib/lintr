@@ -30,6 +30,11 @@
 #'   linters = backport_linter("4.0.0")
 #' )
 #'
+#' lint(
+#'   text = "str2lang(x)",
+#'   linters = backport_linter("3.2.0", except = "str2lang")
+#' )
+#'
 #' @evalRd rd_tags("backport_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export

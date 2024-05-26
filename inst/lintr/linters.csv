@@ -17,7 +17,7 @@ conjunct_test_linter,package_development best_practices readability configurable
 consecutive_assertion_linter,style readability consistency
 consecutive_mutate_linter,consistency readability configurable efficiency
 consecutive_stopifnot_linter,style readability consistency deprecated
-cyclocomp_linter,style readability best_practices default configurable
+cyclocomp_linter,style readability best_practices configurable
 duplicate_argument_linter,correctness common_mistakes configurable
 empty_assignment_linter,readability best_practices
 equals_na_linter,robustness correctness common_mistakes default
@@ -90,7 +90,7 @@ repeat_linter,style readability
 return_linter,style configurable default
 routine_registration_linter,best_practices efficiency robustness
 sample_int_linter,efficiency readability robustness
-scalar_in_linter,readability consistency best_practices efficiency
+scalar_in_linter,readability consistency best_practices efficiency configurable
 semicolon_linter,style readability default configurable
 semicolon_terminator_linter,defunct
 seq_linter,robustness efficiency consistency best_practices default

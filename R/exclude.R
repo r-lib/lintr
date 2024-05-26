@@ -30,6 +30,8 @@
 #'   "   a character vector of files to exclude or a vector of lines to exclude.",
 #'   NULL
 #' )
+#'
+#' @keywords internal
 exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
   if (length(lints) <= 0L) {
     return(lints)
@@ -100,6 +102,7 @@ line_info <- function(line_numbers, type = c("start", "end")) {
 #' @param linter_names Names of active linters.
 #'
 #' @return A possibly named list of excluded lines, possibly for specific linters.
+#' @keywords internal
 parse_exclusions <- function(file,
                              exclude = settings$exclude,
                              exclude_next = settings$exclude_next,
