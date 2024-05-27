@@ -96,10 +96,3 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     ranges = list(c(col1, col2))
   )
 }
-
-is_node <- function(xml) inherits(xml, "xml_node")
-is_nodeset <- function(xml) inherits(xml, "xml_nodeset")
-is_nodeset_like <- function(xml) {
-  is_nodeset(xml) ||
-    (is.list(xml) && all(vapply(xml, is_node, logical(1L))))
-}

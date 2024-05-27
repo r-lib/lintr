@@ -86,17 +86,6 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
-safe_parse_to_xml <- function(parsed_content) {
-  if (is.null(parsed_content)) {
-    return(xml2::xml_missing())
-  }
-  tryCatch(
-    xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)),
-    # use xml_missing so that code doesn't always need to condition on XML existing
-    error = function(e) xml2::xml_missing()
-  )
-}
-
 get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
@@ -226,8 +215,8 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #' writeLines("c('a', 'b')", tmp)
 #' expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml))
-#' get_r_string(expr_as_xml, "expr[2]") # "a"
-#' get_r_string(expr_as_xml, "expr[3]") # "b"
+#' get_r_string(expr_as_xml, "expr[2]")
+#' get_r_string(expr_as_xml, "expr[3]")
 #' unlink(tmp)
 #'
 #' # more importantly, extract strings under R>=4 raw strings
@@ -236,8 +225,8 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #' writeLines("c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')", tmp4.0)
 #' expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml4.0))
-#' get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
-#' get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+#' get_r_string(expr_as_xml4.0, "expr[2]")
+#' get_r_string(expr_as_xml4.0, "expr[3]")
 #' unlink(tmp4.0)
 #'
 #' @export
@@ -255,18 +244,6 @@ get_r_string <- function(s, xpath = NULL) {
   out <- as.character(parse(text = s, keep.source = FALSE))
   is.na(out) <- is.na(s)
   out
-}
-
-#' str2lang, but for xml children.
-#'
-#' [xml2::xml_text()] is deceptively close to obviating this helper, but it collapses
-#'   text across lines. R is _mostly_ whitespace-agnostic, so this only matters in some edge cases,
-#'   in particular when there are comments within an expression (`<expr>` node). See #1919.
-#'
-#' @noRd
-xml2lang <- function(x) {
-  x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
-  str2lang(paste(xml_text(x_strip_comments), collapse = " "))
 }
 
 is_linter <- function(x) inherits(x, "linter")
