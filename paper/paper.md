@@ -1,20 +1,29 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-05-07"
+date: "2024-05-27"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
     affiliation: 1
     orcid: ~
+  - name: Florent Angly
+    affiliation: ~
+    orcid: ~
   - name: Michael Chirico
     affiliation: 2
     orcid: 0000-0003-0787-087X
-  - name: Alexander Rosenstock
-    affiliation: 3
+  - name: Russ Hyde
+    affiliation: 5
+    orcid: ~
+  - name: Ren Kun
+    affiliation: ~
     orcid: ~
   - name: Indrajeet Patil
     orcid: 0000-0003-1995-6531
     affiliation: 4
+  - name: Alexander Rosenstock
+    affiliation: 3
+    orcid: ~
 affiliations:
   - index: 1
     name: Netflix
@@ -24,6 +33,8 @@ affiliations:
     name: Mathematisches Institut der Heinrich-Heine-Universität Düsseldorf
   - index: 4
     name: Preisenergie GmbH, Munich, Germany
+  - index: 5
+    name: Jumping Rivers
 output: 
     md_document:
       variant: "markdown"
@@ -236,6 +247,9 @@ l <- list(x = TRUE, x = FALSE)
 l["x"]
 #> $x
 #> [1] TRUE
+```
+
+``` r
 l[names(l) == "x"]
 #> $x
 #> [1] TRUE

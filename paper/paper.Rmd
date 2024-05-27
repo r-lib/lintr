@@ -6,15 +6,24 @@ authors:
   - name: Jim Hester
     affiliation: 1
     orcid: ~
+  - name: Florent Angly
+    affiliation: ~
+    orcid: ~
   - name: Michael Chirico
     affiliation: 2
     orcid: 0000-0003-0787-087X
-  - name: Alexander Rosenstock
-    affiliation: 3
+  - name: Russ Hyde
+    affiliation: 5
+    orcid: ~
+  - name: Ren Kun
+    affiliation: ~
     orcid: ~
   - name: Indrajeet Patil
     orcid: 0000-0003-1995-6531
     affiliation: 4
+  - name: Alexander Rosenstock
+    affiliation: 3
+    orcid: ~
 affiliations:
   - index: 1
     name: Netflix
@@ -24,6 +33,8 @@ affiliations:
     name: Mathematisches Institut der Heinrich-Heine-Universität Düsseldorf
   - index: 4
     name: Preisenergie GmbH, Munich, Germany
+  - index: 5
+    name: Jumping Rivers
 output: 
     md_document:
       variant: "markdown"
