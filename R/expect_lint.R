@@ -44,8 +44,8 @@
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     # nocov start
-    # nolint next: line_length_linter.
     cli_abort(
+      # nolint next: line_length_linter.
       "{.fun expect_lint} and {.fun expect_no_lint} are designed to work within the {.pkg testthat} testing framework, which is not installed."
     )
     # nocov end
