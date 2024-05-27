@@ -259,12 +259,11 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
       },
       logical(1L)
     )
-    bad_idx <- which(bad) # nolint: object_usage_linter.
 
     if (any(bad)) {
       cli_abort(c(
         i = "Full file exclusions must be {.cls character} vectors of length 1.",
-        x = "Items at following indexes are not: {.val {bad_idx}}."
+        x = "Items at following indexes are not: {.val {which(bad)}}."
       ))
     }
     # Normalize unnamed entries to list(<filename> = list(Inf), ...)
@@ -278,12 +277,11 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     # must be integer or numeric vectors
     are_numeric <- vapply(x, is.numeric, logical(1L))
     bad <- full_line_exclusions & !are_numeric
-    bad_idx <- which(bad) # nolint: object_usage_linter.
 
     if (any(bad)) {
       cli_abort(c(
         i = "Full line exclusions must be {.cls numeric} or {.cls integer} vectors.",
-        x = "Items at following indexes are not: {.val {bad_idx}}."
+        x = "Items at following indexes are not: {.val {which(bad)}}."
       ))
     }
 
