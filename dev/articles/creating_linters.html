@@ -87,7 +87,7 @@
                         <h4 data-toc-skip class="author">lintr
 maintainers</h4>
             
-            <h4 data-toc-skip class="date">2024-05-25</h4>
+            <h4 data-toc-skip class="date">2024-05-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/HEAD/vignettes/creating_linters.Rmd" class="external-link"><code>vignettes/creating_linters.Rmd</code></a></small>
       <div class="d-none name"><code>creating_linters.Rmd</code></div>
@@ -315,7 +315,7 @@ full description of the parameters.</p>
 <li>Linter returns no lints when there is nothing to lint, e.g.</li>
 </ol>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_lint</a></span><span class="op">(</span><span class="st">"blah"</span>, <span class="cn">NULL</span>, <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/expect_lint.html">expect_no_lint</a></span><span class="op">(</span><span class="st">"blah"</span>, <span class="fu"><a href="../reference/assignment_linter.html">assignment_linter</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Linter returns a lint when there is something to lint, e.g.</li>
 </ol>
