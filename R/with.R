@@ -210,7 +210,7 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
     error = function(e) {
       pkg_fn <- paste0(package, "::", linter_name) # nolint: object_name_linter
       cli_abort(c(
-        "Could not create linter with {.fun pkg_fn}.",
+        "Could not create linter with {.fun {package}::{linter_name}}.",
         conditionMessage(e)
       ))
     }

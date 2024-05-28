@@ -263,7 +263,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     if (any(bad)) {
       cli_abort(c(
         i = "Full file exclusions must be {.cls character} vectors of length 1.",
-        x = "Items at following indexes are not: {.val {which(bad)}}."
+        x = "Items at the following indices are not: {.val {which(bad)}}."
       ))
     }
     # Normalize unnamed entries to list(<filename> = list(Inf), ...)
@@ -281,7 +281,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     if (any(bad)) {
       cli_abort(c(
         i = "Full line exclusions must be {.cls numeric} or {.cls integer} vectors.",
-        x = "Items at following indexes are not: {.val {which(bad)}}."
+        x = "Items at the following indices are not: {.val {which(bad)}}."
       ))
     }
 
