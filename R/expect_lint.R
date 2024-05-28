@@ -160,7 +160,7 @@ expect_lint_free <- function(...) {
 require_testthat <- function(name) {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     stop( # nocov start
-      name, "is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
+      name, " is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
       call. = FALSE
     ) # nocov end
   }
