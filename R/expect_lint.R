@@ -64,7 +64,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   wrong_number_fmt <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
     msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
-    return(expect(n_lints %==% 0L, msg))
+    return(testthat::expect(n_lints %==% 0L, msg))
   }
 
   if (!is.list(checks) || !is.null(names(checks))) { # vector or named list
@@ -74,7 +74,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   if (n_lints != length(checks)) {
     msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
-    return(expect(FALSE, msg))
+    return(testthat::expect(FALSE, msg))
   }
 
   local({
@@ -110,7 +110,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
               call. = FALSE
             )
           }
-          expect(ok, msg)
+          testthat::expect(ok, msg)
         })
       },
       lints,
@@ -138,8 +138,8 @@ expect_no_lint <- function(content, ..., file = NULL, language = "en") {
 expect_lint_free <- function(...) {
   require_testthat("expect_lint_free")
 
-  skip_on_cran()
-  skip_on_covr()
+  testthat::skip_on_cran()
+  testthat::skip_on_covr()
 
   lints <- lint_package(...)
   has_lints <- length(lints) > 0L
@@ -148,7 +148,7 @@ expect_lint_free <- function(...) {
   if (has_lints) {
     lint_output <- format(lints)
   }
-  result <- expect(
+  result <- testthat::expect(
     !has_lints,
     paste0("Not lint free\n", lint_output)
   )
