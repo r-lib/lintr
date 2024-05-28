@@ -42,7 +42,7 @@
 #' )
 #' @export
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
-  require_testthat("expect_lint")
+  require_testthat()
 
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
@@ -124,7 +124,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 #' @rdname expect_lint
 #' @export
 expect_no_lint <- function(content, ..., file = NULL, language = "en") {
-  require_testthat("expect_no_lint")
+  require_testthat()
   expect_lint(content, NULL, ..., file = file, language = language)
 }
 
@@ -136,7 +136,7 @@ expect_no_lint <- function(content, ..., file = NULL, language = "en") {
 #' @param ... arguments passed to [lint_package()]
 #' @export
 expect_lint_free <- function(...) {
-  require_testthat("expect_lint_free")
+  require_testthat()
 
   testthat::skip_on_cran()
   testthat::skip_on_covr()
@@ -157,7 +157,7 @@ expect_lint_free <- function(...) {
 }
 
 # Helper function to check if testthat is installed.
-require_testthat <- function(name) {
+require_testthat <- function(name = linter_auto_name(-5L)) {
   if (!requireNamespace("testthat", quietly = TRUE)) {
     stop( # nocov start
       name, " is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
