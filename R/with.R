@@ -43,10 +43,9 @@ modify_defaults <- function(defaults, ...) {
 
   to_null <- vapply(vals, is.null, logical(1L))
   if (!all(nms[to_null] %in% names(defaults))) {
-    bad_nms <- setdiff(nms[to_null], names(defaults))
-    is_are <- if (length(bad_nms) > 1L) "are" else "is" # nolint: object_usage_linter. TODO(#2252).
+    bad_nms <- setdiff(nms[to_null], names(defaults)) # nolint: object_usage_linter. TODO(#2252).
     cli_warn(c(
-      i = "Trying to remove {.field {bad_nms}}, which {is_are} not in {.arg defaults}."
+      i = "Trying to remove {.field {bad_nms}}, which {?is/are} not in {.arg defaults}."
     ))
   }
 
