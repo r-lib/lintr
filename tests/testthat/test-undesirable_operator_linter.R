@@ -76,12 +76,12 @@ test_that("invalid inputs fail correctly", {
 
   expect_error(
     undesirable_operator_linter(c("***" = NA)),
-    "Did not recognize any valid operators in request for: ***",
+    'Did not recognize any valid operators in request for: "***"',
     fixed = TRUE
   )
   expect_error(
     undesirable_operator_linter(c("***" = NA, "///" = NA)),
-    "Did not recognize any valid operators in request for: ***, ///",
+    'Did not recognize any valid operators in request for: "***" and "///"',
     fixed = TRUE
   )
 })
