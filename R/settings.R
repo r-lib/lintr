@@ -164,7 +164,7 @@ validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
     unused_settings <- names(config)[!matched] # nolint: object_usage_linter.
-    cli_warn("Found unused settings in config {.str config_file}: {toString(unused_settings)}")
+    cli_warn("Found unused settings in config {.str config_file}: {.field unused_settings}")
   }
 
   validate_regex(config,
@@ -191,7 +191,7 @@ validate_keys <- function(config, keys, test, what) {
     if (!test(val)) {
       cli_abort(c(
         i = "Setting {.code {key}} should be {.strong {what}}.",
-        x = "Instead, it is {.val {toString(val)}}."
+        x = "Instead, it is {.field {val}}."
       ))
     }
   }
@@ -219,7 +219,7 @@ validate_linters <- function(linters) {
     non_linters <- which(!is_linters) # nolint: object_usage_linter.
     cli_abort(c(
       i = "Setting {.arg linters} should be a list of linters.",
-      x = "Found non-linters at elements: {toString(non_linters)}."
+      x = "Found non-linters at elements: {.str {non_linters}}."
     ))
   }
 }
@@ -234,10 +234,10 @@ validate_exclusions <- function(exclusions) {
   unnamed_is_string <-
     vapply(exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
   if (!all(unnamed_is_string)) {
-    problematic_entries <- toString(which(!has_names)[!unnamed_is_string]) # nolint: object_usage_linter.
+    problematic_entries <- which(!has_names)[!unnamed_is_string] # nolint: object_usage_linter.
     cli_abort(c(
       i = "Unnamed entries of setting {.arg exclusions} should be strings naming files or directories.",
-      x = "Check exclusions: {problematic_entries}."
+      x = "Check exclusions: {.str {problematic_entries}}."
     ))
   }
   for (ii in which(has_names)) validate_named_exclusion(exclusions, ii)
