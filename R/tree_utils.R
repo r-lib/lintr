@@ -11,7 +11,7 @@ generate_top_level_map <- function(pc) {
     i_not_assigned <- which(!tl_parent %in% tl_ids)
     # nocov start
     if (length(i_not_assigned) >= prev_length) {
-      cli_abort("Logical error: unassigned set did not shrink. Check file syntax.")
+      cli_abort_internal("Logical error: unassigned set did not shrink. Check file syntax.")
     }
     # nocov end
   }
