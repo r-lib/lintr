@@ -44,7 +44,7 @@ modify_defaults <- function(defaults, ...) {
   to_null <- vapply(vals, is.null, logical(1L))
   if (!all(nms[to_null] %in% names(defaults))) {
     bad_nms <- setdiff(nms[to_null], names(defaults))
-    is_are <- if (length(bad_nms) > 1L) "are" else "is" # nolint: object_usage_linter.
+    is_are <- if (length(bad_nms) > 1L) "are" else "is" # nolint: object_usage_linter. TODO(#2252).
     cli_warn(c(
       i = "Trying to remove {.field {bad_nms}}, which {is_are} not in {.arg defaults}."
     ))
@@ -101,7 +101,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
     available <- available_linters(packages = package, tags = tags, exclude_tags = exclude_tags)
     if (nrow(available) > 0L) {
       if (!all(available$linter %in% ns_exports)) {
-        missing_linters <- setdiff(available$linter, ns_exports) # nolint: object_usage_linter.
+        missing_linters <- setdiff(available$linter, ns_exports) # nolint: object_usage_linter. TODO(#2252).
         cli_abort(c(
           i = "Linters {.fn {missing_linters}} are advertised by {.fn available_linters}.",
           x = "But these linters are not exported by package {.pkg {package}}."

@@ -130,8 +130,8 @@ parse_exclusions <- function(file,
 
   if (length(starts) > 0L) {
     if (length(starts) != length(ends)) {
-      starts_msg <- line_info(starts, type = "start") # nolint: object_usage_linter.
-      ends_msg <- line_info(ends, type = "end") # nolint: object_usage_linter.
+      starts_msg <- line_info(starts, type = "start") # nolint: object_usage_linter. TODO(#2252).
+      ends_msg <- line_info(ends, type = "end") # nolint: object_usage_linter. TODO(#2252).
       cli_abort(c(
         i = "Equal number of line starts and ends expected for exclusion from linting.",
         x = "{.file {file}} has {.strong {starts_msg}} and {.strong {ends_msg}}."
@@ -206,7 +206,7 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
       idxs <- pmatch(excluded_linters, linter_names, duplicates.ok = TRUE)
       matched <- !is.na(idxs)
       if (!all(matched)) {
-        bad <- excluded_linters[!matched] # nolint: object_usage_linter.
+        bad <- excluded_linters[!matched] # nolint: object_usage_linter. TODO(#2252).
         cli_warn(c(
           x = "Could not find linter{?s} named {.field {bad}} in the list of active linters.",
           i = "Make sure the linter is uniquely identified by the given name or prefix."

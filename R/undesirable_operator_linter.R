@@ -61,7 +61,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
   }
 
   if (length(operator_nodes) == 0L) {
-    cli_abort("Did not recognize any valid operators in request for: {toString(names(op))}")
+    cli_abort("Did not recognize any valid operators in request for: {.str {names(op)}}")
   }
 
   xpath <- paste(paste0("//", operator_nodes), collapse = " | ")

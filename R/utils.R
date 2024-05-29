@@ -264,7 +264,7 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
   if (all(is_valid)) {
     return(invisible())
   }
-  invalid_args <- toString(dot_names[!is_valid]) # nolint: object_usage_linter.
+  invalid_args <- dot_names[!is_valid] # nolint: object_usage_linter. TODO(#2252).
   cli_abort(c(
     x = "Found unknown arguments in `...`: {.arg {invalid_args}}.",
     i = "Check for typos and see ?{ref_help} for valid arguments."
