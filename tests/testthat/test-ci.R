@@ -24,16 +24,20 @@ test_that("GitHub Actions functionality works in a subdirectory", {
   )
 })
 
-test_that("GitHub Actions - error on lint works", {
-  withr::local_envvar(list(GITHUB_ACTIONS = "true", LINTR_ERROR_ON_LINT = "true"))
-  withr::local_options(lintr.rstudio_source_markers = FALSE)
-  tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
+patrick::with_parameters_test_that(
+  "GitHub Actions - error on lint works",
+  {
+    withr::local_envvar(list(GITHUB_ACTIONS = "true", LINTR_ERROR_ON_LINT = env_var_value))
+    withr::local_options(lintr.rstudio_source_markers = FALSE)
+    tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
 
-  l <- lint(tmp)
+    l <- lint(tmp)
 
-  local_mocked_bindings(quit = function(...) cat("Tried to quit.\n"))
-  expect_output(print(l), "::warning file", fixed = TRUE)
-})
+    local_mocked_bindings(quit = function(...) cat("Tried to quit.\n"))
+    expect_output(print(l), "::warning file", fixed = TRUE)
+  },
+  env_var_value = list("T", "true")
+)
 
 patrick::with_parameters_test_that(
   "GitHub Actions - env var for error on lint is converted to logical",
