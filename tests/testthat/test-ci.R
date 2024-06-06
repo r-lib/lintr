@@ -35,7 +35,7 @@ patrick::with_parameters_test_that(
 
     expect_output(print(l), "::warning file", fixed = TRUE)
   },
-  env_var_value = c("", "F", NA),
+  env_var_value = c("", "F", NA)
 )
 
 test_that("GitHub Actions - error on lint works", {
