@@ -42,13 +42,8 @@
 #' )
 #' @export
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
-  if (!requireNamespace("testthat", quietly = TRUE)) {
-    stop( # nocov start
-      "'expect_lint' and 'expect_no_lint' are designed to work within the 'testthat' testing framework, ",
-      "but 'testthat' is not installed.",
-      call. = FALSE
-    ) # nocov end
-  }
+  require_testthat()
+
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
@@ -129,18 +124,20 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 #' @rdname expect_lint
 #' @export
 expect_no_lint <- function(content, ..., file = NULL, language = "en") {
+  require_testthat()
   expect_lint(content, NULL, ..., file = file, language = language)
 }
 
 #' Test that the package is lint free
 #'
-#' This function is a thin wrapper around lint_package that simply tests there are no
-#' lints in the package.  It can be used to ensure that your tests fail if the package
-#' contains lints.
+#' This function is a thin wrapper around lint_package that simply tests there are no lints in the package.
+#' It can be used to ensure that your tests fail if the package contains lints.
 #'
 #' @param ... arguments passed to [lint_package()]
 #' @export
 expect_lint_free <- function(...) {
+  require_testthat()
+
   testthat::skip_on_cran()
   testthat::skip_on_covr()
 
@@ -157,4 +154,14 @@ expect_lint_free <- function(...) {
   )
 
   invisible(result)
+}
+
+# Helper function to check if testthat is installed.
+require_testthat <- function(name = linter_auto_name(-5L)) {
+  if (!requireNamespace("testthat", quietly = TRUE)) {
+    stop( # nocov start
+      name, " is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
+      call. = FALSE
+    ) # nocov end
+  }
 }
