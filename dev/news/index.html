@@ -93,6 +93,8 @@
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
+<code><a href="../reference/expect_identical_linter.html">expect_identical_linter()</a></code> also skips <code>expect_equal()</code> comparison to <em>negative</em> non-integers like <code>-1.034</code> (<a href="https://github.com/r-lib/lintr/issues/2411" class="external-link">#2411</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>). This is a parity fix since <em>positive</em> reals have always been skipped because “high-precision” comparisons are typically done to get tests within <code>tolerance</code>, so <code>expect_identical()</code> is not a great substitution.</li>
+<li>
 <code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> no longer errors when user-supplied <code>regexes=</code> have capture groups (<a href="https://github.com/r-lib/lintr/issues/2188" class="external-link">#2188</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code>.lintr</code> config validation correctly accepts regular expressions which only compile under <code>perl = TRUE</code> (<a href="https://github.com/r-lib/lintr/issues/2375" class="external-link">#2375</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). These have always been valid (since <code><a href="https://rdrr.io/pkg/rex/man/re_matches.html" class="external-link">rex::re_matches()</a></code>, which powers the lint exclusion logic, also uses this setting), but the new up-front validation in v3.1.1 incorrectly used <code>perl = FALSE</code>.</li>
