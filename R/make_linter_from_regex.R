@@ -35,7 +35,7 @@ make_linter_from_regex <- function(regex,
 #' Determine if a regex match is covered by an expression in a source_expression
 #'
 #' @param match The position where a regex match was observed.
-#'   Possible values: `"start"`, `"end"`, and `"line_number"`.
+#'   It must have following entries: `"start"`, `"end"`, and `"line_number"`.
 #' @param source_expression A source_expression.
 #' @param token_type Restrict analysis to tokens of this type, for example,
 #'   with `token_type = "STR_CONST"` you can check that a regex match occurs
