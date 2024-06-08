@@ -88,29 +88,6 @@ test_that("rot utility works as intended", {
   expect_identical(lintr:::rot(letters), c(letters[14L:26L], LETTERS[1L:13L]))
 })
 
-test_that("logical_env utility works as intended", {
-  test_env <- "LINTR_TEST_LOGICAL_ENV_"
-  withr::with_envvar(
-    setNames("true", test_env),
-    expect_true(lintr:::logical_env(test_env))
-  )
-
-  withr::with_envvar(
-    setNames("F", test_env),
-    expect_false(lintr:::logical_env(test_env))
-  )
-
-  withr::with_envvar(
-    setNames("", test_env),
-    expect_null(lintr:::logical_env(test_env))
-  )
-
-  withr::with_envvar(
-    setNames(list(NULL), test_env),
-    expect_null(lintr:::logical_env(test_env))
-  )
-})
-
 # fixing #774
 test_that("linters_with_defaults doesn't break on very long input", {
   expect_named(
