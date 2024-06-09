@@ -34,12 +34,12 @@ make_linter_from_regex <- function(regex,
 
 #' Determine if a regex match is covered by an expression in a source_expression
 #'
-#' @param   match   The position where a regex match was observed.
-#'   match must have entries "start", "end", and "line_number".
-#' @param   source_expression   A source_expression
-#' @param   token_type    Restrict analysis to tokens of this type, for example,
-#'   with token_type = "STR_CONST" you can check that a regex match occurs
-#'   within a string
+#' @param match The position where a regex match was observed.
+#'   It must have the following elements: `"start"`, `"end"`, and `"line_number"`.
+#' @param source_expression A source_expression.
+#' @param token_type Restrict analysis to tokens of this type, for example,
+#'   with `token_type = "STR_CONST"` you can check that a regex match occurs
+#'   within a string.
 #' @noRd
 is_match_covered <- function(match, source_expression, token_type = "STR_CONST") {
   line_number <- match$line_number
