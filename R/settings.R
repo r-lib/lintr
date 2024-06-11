@@ -164,7 +164,7 @@ validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
     unused_settings <- names(config)[!matched] # nolint: object_usage_linter. TODO(#2252).
-    cli_warn("Found unused settings in config {.str config_file}: {.field unused_settings}")
+    cli_warn("Found unused settings in config {.path {config_file}}: {.field unused_settings}")
   }
 
   validate_regex(config,
