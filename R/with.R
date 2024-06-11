@@ -183,10 +183,14 @@ all_linters <- function(..., packages = "lintr") {
 linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {
+    deprecation_advice <-
+      "This warning will be removed when {.fun with_defaults} is fully deprecated."
     cli_warn(c(
-      "Did you mean {.arg defaults}?",
-      x = "{.arg default} is not an argument to {.fun linters_with_defaults}.",
-      i = "This warning will be removed when {.fun with_defaults} is fully deprecated."
+      x = "{.arg default} is not an argument to \\
+           {.help [{.fn linters_with_defaults}](lintr::linters_with_defaults)}.",
+      i = "Did you mean {.arg defaults}?",
+      # make it more subtle
+      cli::col_silver(deprecation_advice)
     ))
     defaults <- dots$default
     nms <- names2(dots)
