@@ -75,6 +75,7 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
+            knitr=?ignore-before-r=4.0.0
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
