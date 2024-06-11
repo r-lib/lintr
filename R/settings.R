@@ -95,7 +95,7 @@ read_config_file <- function(config_file) {
   }
 
   # clickable link for eventual error messages.
-  config_link <- cli::style_hyperlink(
+  config_link <- cli::style_hyperlink( # nolint: object_usage_linter. TODO(#2252).
     cli::col_blue("config"),
     paste0("file://", config_file)
   )
@@ -169,7 +169,7 @@ validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
     unused_settings <- names(config)[!matched] # nolint: object_usage_linter. TODO(#2252).
-    config_link <- cli::style_hyperlink(
+    config_link <- cli::style_hyperlink( # nolint: object_usage_linter. TODO(#2252).
       cli::col_blue("config"),
       url = paste0("file://", config_file)
     )
