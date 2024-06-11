@@ -1,11 +1,11 @@
 test_that("modify_defaults produces error with missing or incorrect defaults", {
-  lint_msg <- "`defaults` must be a named list."
+  lint_msg <- "`defaults` must be a named list"
   expect_error(modify_defaults(), lint_msg, fixed = TRUE)
   expect_error(modify_defaults("assignment_linter"), lint_msg, fixed = TRUE)
 })
 
 test_that("linters_with_tags produces error with incorrect tags", {
-  expect_error(linters_with_tags(1L:4L), "`tags` must be a <character> vector, or `NULL`.", fixed = TRUE)
+  expect_error(linters_with_tags(1L:4L), "`tags` must be a character vector, or `NULL`", fixed = TRUE)
 })
 
 test_that("linters_with_defaults works as expected with unnamed args", {
@@ -34,7 +34,7 @@ test_that("linters_with_tags() verifies the output of available_linters()", {
   )
   expect_error(
     linters_with_tags(NULL),
-    "Linters `fake_linter()` and `very_fake_linter()` are advertised by `available_linters()`",
+    "Can't find linters `fake_linter()` and `very_fake_linter()`",
     fixed = TRUE
   )
 })

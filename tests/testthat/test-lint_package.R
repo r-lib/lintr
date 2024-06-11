@@ -219,7 +219,7 @@ test_that("package using .lintr.R config lints correctly", {
   withr::local_options(lintr.linter_file = "lintr_test_config_extraneous")
   expect_warning(
     expect_length(lint_package(r_config_pkg), 2L),
-    "Found unused settings in config",
+    "Found unused settings in config file",
     fixed = TRUE
   )
 
