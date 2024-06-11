@@ -449,7 +449,7 @@ is_valid_range <- function(range, max_col) {
     range[[2L]] <= max_col
 }
 
-check_ranges <- function(ranges, max_col) {
+check_ranges <- function(ranges, max_col, call = parent.frame()) {
   if (is.null(ranges)) {
     return()
   }
@@ -458,16 +458,19 @@ check_ranges <- function(ranges, max_col) {
       i = "{.arg ranges} must be {.code NULL} or a {.cls list}.",
       x = "Instead, it was {.cls {class(ranges)}}."
     ))
+      call = call
   }
 
   for (range in ranges) {
     if (!is_number(range, 2L)) {
       cli_abort("{.arg ranges} must only contain {.cls integer} vectors of length 2 without {.code NA}s.")
+        call = call
     } else if (!is_valid_range(range, max_col)) {
       cli_abort(c(
         x = "Invalid range specified.",
         i = "Argument {.arg ranges} must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 ({.val {max_col}})."
       ))
+        call = call
     }
   }
 }
