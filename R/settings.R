@@ -94,12 +94,17 @@ read_config_file <- function(config_file) {
     return(NULL)
   }
 
+  # clickable link for eventual error messages.
+  config_link <- cli::style_hyperlink(
+    cli::col_blue("config"),
+    paste0("file://", config_file)
+  )
   config <- new.env()
   if (endsWith(config_file, ".R")) {
     load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
-        "Malformed config file, ensure it is valid R syntax.",
       cli_abort(
+        "Malformed {config_link} file, ensure it is valid R syntax.",
         parent = e
       )
     }
@@ -110,8 +115,8 @@ read_config_file <- function(config_file) {
         parsed_setting <- withCallingHandlers(
           str2lang(dcf_values[[setting]]),
           error = function(e) {
-              "Malformed config setting {.field {setting}}:",
             cli_abort(
+              "Malformed {config_link} setting {.field {setting}}:",
               parent = e
             )
           }
@@ -120,15 +125,15 @@ read_config_file <- function(config_file) {
           tryCatch(
             eval(parsed_setting),
             error = function(e) {
-                "Error from config setting {.code {setting}} in {.code {format(conditionCall(e))}}:",
               cli_abort(
+                "Error from {config_link} setting {.code {setting}} in {.code {format(conditionCall(e))}}:",
                 parent = e
               )
             }
           ),
           warning = function(w) {
-              "Warning from config setting {.code {setting}} in {.code {format(conditionCall(w))}}:",
             cli_warn(
+              "Warning from {config_link} setting {.code {setting}} in {.code {format(conditionCall(w))}}:",
               parent = w
             )
             invokeRestart("muffleWarning")
@@ -138,8 +143,8 @@ read_config_file <- function(config_file) {
       }
     }
     malformed <- function(e) {
-        x = "Malformed config file:",
       cli_abort(
+        "Malformed {config_link} file:",
         parent = e
       )
     }
@@ -150,8 +155,8 @@ read_config_file <- function(config_file) {
       error = malformed
     ),
     warning = function(w) {
-        x = "Warning encountered while loading config:",
       cli::cli_warn(
+        "Warning encountered while loading {config_link}:",
         parent = w
       )
       invokeRestart("muffleWarning")
@@ -164,7 +169,11 @@ validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
     unused_settings <- names(config)[!matched] # nolint: object_usage_linter. TODO(#2252).
-    cli_warn("Found unused settings in config {.path {config_file}}: {.field unused_settings}")
+    config_link <- cli::style_hyperlink(
+      cli::col_blue("config"),
+      url = paste0("file://", config_file)
+    )
+    cli_warn("Found unused settings in {config_link} file: {.field unused_settings}")
   }
 
   validate_regex(config,
