@@ -31,8 +31,12 @@
 #' names(my_undesirable_functions)
 #' @export
 modify_defaults <- function(defaults, ...) {
-  if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    cli_abort("{.arg defaults} must be a named list.")
+  if (missing(defaults)) {
+    cli_abort("{.arg defaults} must be a named list, not absent.")
+  }
+  if (!is.list(defaults) || !all(nzchar(names2(defaults)))) {
+    cli_abort("{.arg defaults} must be a named list, \\
+                not {.obj_type_friendly {defaults}}.")
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -90,7 +94,8 @@ modify_defaults <- function(defaults, ...) {
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
-    cli_abort("{.arg tags} must be a {.cls character} vector, or {.code NULL}.")
+    cli_abort("{.arg tags} must be a character vector, or {.code NULL}, \\
+               not {.obj_type_friendly {tags}}.")
   }
   tagged_linters <- list()
 
@@ -102,8 +107,9 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
       if (!all(available$linter %in% ns_exports)) {
         missing_linters <- setdiff(available$linter, ns_exports) # nolint: object_usage_linter. TODO(#2252).
         cli_abort(c(
-          i = "Linters {.fn {missing_linters}} are advertised by {.fn available_linters}.",
-          x = "But these linters are not exported by package {.pkg {package}}."
+          x = "Can't find linters {.fn {missing_linters}}.",
+          i = "These linters are advertised by {.fn available_linters}, but \\
+               are not exported by package {.pkg {package}}."
         ))
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
