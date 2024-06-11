@@ -98,39 +98,39 @@ read_config_file <- function(config_file) {
   if (endsWith(config_file, ".R")) {
     load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
-      cli_abort(c(
         "Malformed config file, ensure it is valid R syntax.",
-        conditionMessage(e)
-      ))
+      cli_abort(
+        parent = e
+      )
     }
   } else {
     load_config <- function(file) {
       dcf_values <- read.dcf(file, all = TRUE)
       for (setting in names(dcf_values)) {
-        parsed_setting <- tryCatch(
+        parsed_setting <- withCallingHandlers(
           str2lang(dcf_values[[setting]]),
           error = function(e) {
-            cli_abort(c(
               "Malformed config setting {.field {setting}}:",
-              conditionMessage(e)
-            ))
+            cli_abort(
+              parent = e
+            )
           }
         )
         setting_value <- withCallingHandlers(
           tryCatch(
             eval(parsed_setting),
             error = function(e) {
-              cli_abort(c(
                 "Error from config setting {.code {setting}} in {.code {format(conditionCall(e))}}:",
-                conditionMessage(e)
-              ))
+              cli_abort(
+                parent = e
+              )
             }
           ),
           warning = function(w) {
-            cli_warn(c(
               "Warning from config setting {.code {setting}} in {.code {format(conditionCall(w))}}:",
-              conditionMessage(w)
-            ))
+            cli_warn(
+              parent = w
+            )
             invokeRestart("muffleWarning")
           }
         )
@@ -138,10 +138,10 @@ read_config_file <- function(config_file) {
       }
     }
     malformed <- function(e) {
-      cli_abort(c(
         x = "Malformed config file:",
-        i = conditionMessage(e)
-      ))
+      cli_abort(
+        parent = e
+      )
     }
   }
   withCallingHandlers(
@@ -150,10 +150,10 @@ read_config_file <- function(config_file) {
       error = malformed
     ),
     warning = function(w) {
-      cli::cli_warn(c(
         x = "Warning encountered while loading config:",
-        i = conditionMessage(w)
-      ))
+      cli::cli_warn(
+        parent = w
+      )
       invokeRestart("muffleWarning")
     }
   )
