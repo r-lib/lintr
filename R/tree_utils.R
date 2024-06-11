@@ -9,12 +9,11 @@ generate_top_level_map <- function(pc) {
   while ((prev_length <- length(i_not_assigned)) > 0L) { # nolint: implicit_assignment_linter. TODO(#2015): remove this.
     tl_parent[i_not_assigned] <- pc$parent[match(tl_parent[i_not_assigned], pc$id)]
     i_not_assigned <- which(!tl_parent %in% tl_ids)
-    if (length(i_not_assigned) >= prev_length) { # nocov start
-      stop(
-        "Logical error: unassigned set did not shrink. Check file syntax and please report as a lintr bug.",
-        call. = FALSE
-      )
-    } # nocov end
+    # nocov start
+    if (length(i_not_assigned) >= prev_length) {
+      cli_abort_internal("Logical error: unassigned set did not shrink. Check file syntax.")
+    }
+    # nocov end
   }
   tl_parent
 }
