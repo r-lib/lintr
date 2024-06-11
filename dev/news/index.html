@@ -202,6 +202,10 @@
 <code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> and <code><a href="../reference/object_length_linter.html">object_length_linter()</a></code> ignore {rlang} name injection like <code>x |&gt; mutate("{new_name}" := foo(col))</code> (<a href="https://github.com/r-lib/lintr/issues/1926" class="external-link">#1926</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). No checking is applied in such cases. {data.table} in-place assignments like <code>DT[, "sPoNGeBob" := "friend"]</code> are still eligible for lints.</li>
 </ul></div>
 </div>
+<div class="section level3">
+<h3 id="notes-development-version">Notes<a class="anchor" aria-label="anchor" href="#notes-development-version"></a></h3>
+<ul><li>All user-facing messages are now prepared using the <a href="https://cli.r-lib.org" class="external-link">cli</a> package (<a href="https://github.com/r-lib/lintr/issues/2418" class="external-link">#2418</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>). All messages have been reviewed and updated to be more informative and consistent.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.1.2" id="lintr-312">lintr 3.1.2<a class="anchor" aria-label="anchor" href="#lintr-312"></a></h2><p class="text-muted">CRAN release: 2024-03-25</p>
