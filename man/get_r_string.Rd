@@ -27,8 +27,8 @@ tmp <- tempfile()
 writeLines("c('a', 'b')", tmp)
 expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 writeLines(as.character(expr_as_xml))
-get_r_string(expr_as_xml, "expr[2]") # "a"
-get_r_string(expr_as_xml, "expr[3]") # "b"
+get_r_string(expr_as_xml, "expr[2]")
+get_r_string(expr_as_xml, "expr[3]")
 unlink(tmp)
 
 # more importantly, extract strings under R>=4 raw strings
@@ -37,8 +37,8 @@ tmp4.0 <- tempfile()
 writeLines("c(R'(a\\\\b)', R'--[a\\\\\"\'\"\\\\b]--')", tmp4.0)
 expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
 writeLines(as.character(expr_as_xml4.0))
-get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
-get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+get_r_string(expr_as_xml4.0, "expr[2]")
+get_r_string(expr_as_xml4.0, "expr[3]")
 unlink(tmp4.0)
 \dontshow{\}) # examplesIf}
 }

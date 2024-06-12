@@ -5,7 +5,7 @@ test_that("modify_defaults produces error with missing or incorrect defaults", {
 })
 
 test_that("linters_with_tags produces error with incorrect tags", {
-  expect_error(linters_with_tags(1L:4L), "`tags` must be a character vector, or NULL.", fixed = TRUE)
+  expect_error(linters_with_tags(1L:4L), "`tags` must be a <character> vector, or `NULL`.", fixed = TRUE)
 })
 
 test_that("linters_with_defaults works as expected with unnamed args", {
@@ -34,14 +34,14 @@ test_that("linters_with_tags() verifies the output of available_linters()", {
   )
   expect_error(
     linters_with_tags(NULL),
-    "'fake_linter' and 'very_fake_linter'"
+    "Linters `fake_linter()` and `very_fake_linter()` are advertised by `available_linters()`",
+    fixed = TRUE
   )
 })
 
 test_that("all default linters are tagged default", {
   expect_named(linters_with_defaults(), available_linters(tags = "default")$linter)
 
-  skip_if_not_installed("waldo", "0.4.0") # needs waldo#133
   # covr modifies package functions causing differing deparse() results even for identical anonymous functions.
   # This happens because default_linters is generated at build time and thus not modifiable by covr, whereas
   # linters_with_tags() constructs the linters at runtime.
@@ -94,7 +94,7 @@ test_that("linters_with_defaults(default = .) is supported with a deprecation wa
     {
       linters <- linters_with_defaults(default = list(), whitespace_linter())
     },
-    "'default'"
+    "`default` is not an argument"
   )
   expect_named(linters, "whitespace_linter")
 

@@ -66,16 +66,16 @@ local({
 test_that("symbolic expressions are allowed, except by request", {
   linter <- unnecessary_concatenation_linter()
   linter_strict <- unnecessary_concatenation_linter(allow_single_expression = FALSE)
-  message <- rex::rex("Remove unnecessary c() of a constant expression.")
+  lint_msg <- rex::rex("Remove unnecessary c() of a constant expression.")
 
   expect_lint("c(alpha / 2)", NULL, linter)
   expect_lint("c(paste0('.', 1:2))", NULL, linter)
   expect_lint("c(DF[cond > 1, col])", NULL, linter)
 
   # allow_single_expression = FALSE turns both into lints
-  expect_lint("c(alpha / 2)", message, linter_strict)
-  expect_lint("c(paste0('.', 1:2))", message, linter_strict)
-  expect_lint("c(DF[cond > 1, col])", message, linter_strict)
+  expect_lint("c(alpha / 2)", lint_msg, linter_strict)
+  expect_lint("c(paste0('.', 1:2))", lint_msg, linter_strict)
+  expect_lint("c(DF[cond > 1, col])", lint_msg, linter_strict)
 })
 
 test_that("sequences with : are linted whenever a constant is involved", {

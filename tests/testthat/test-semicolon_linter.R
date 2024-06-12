@@ -99,7 +99,7 @@ test_that("Trailing semicolons only", {
 test_that("Compound semicolons only", {
   expect_error(
     lint(text = "a <- 1;", linters = semicolon_linter(allow_trailing = TRUE, allow_compound = TRUE)),
-    "At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.",
+    "At least one of `allow_compound` or `allow_trailing` must be `FALSE`",
     fixed = TRUE
   )
 })

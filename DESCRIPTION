@@ -24,6 +24,7 @@ Depends:
     R (>= 3.6)
 Imports:
     backports (>= 1.1.7),
+    cli (>= 3.4.0),
     codetools,
     digest,
     glue,
@@ -35,7 +36,6 @@ Imports:
     xmlparsedata (>= 1.0.5)
 Suggests:
     bookdown,
-    cli,
     cyclocomp,
     jsonlite,
     patrick (>= 0.2.0),
@@ -202,6 +202,7 @@ Collate:
     'with.R'
     'with_id.R'
     'xml_nodes_to_lints.R'
+    'xml_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
 Language: en-US

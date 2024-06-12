@@ -56,7 +56,7 @@ object_overwrite_linter <- function(
     allow_names = character()) {
   for (package in packages) {
     if (!requireNamespace(package, quietly = TRUE)) {
-      stop("Package '", package, "' is not available.", call. = FALSE)
+      cli_abort("Package {.pkg {package}} is required, but not available.")
     }
   }
   pkg_exports <- lapply(

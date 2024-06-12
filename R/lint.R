@@ -88,7 +88,10 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
         lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
           error = function(cond) {
-            stop("Linter '", linter, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
+            cli_abort(c(
+              "Linter {.fn linter} failed in {.file {filename}}:",
+              conditionMessage(cond)
+            ))
           }
         )
       }
@@ -237,15 +240,17 @@ lint_package <- function(path = ".", ...,
                          parse_settings = TRUE,
                          show_progress = NULL) {
   if (length(path) > 1L) {
-    stop("Only linting one package at a time is supported.", call. = FALSE)
+    cli_abort(c(
+      x = "Only linting one package at a time is supported.",
+      i = "Instead, {.val {length(path)}} package paths were provided."
+    ))
   }
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
-    warning(
-      sprintf("Didn't find any R package searching upwards from '%s'.", normalizePath(path)),
-      call. = FALSE
-    )
+    cli_warn(c(
+      i = "Didn't find any R package searching upwards from {.file {normalizePath(path)}}"
+    ))
     return(NULL)
   }
 
@@ -335,10 +340,10 @@ validate_linter_object <- function(linter, name) {
     return(linter)
   }
   if (!is.function(linter)) {
-    stop(gettextf(
-      "Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
-      name, typeof(linter), class(linter)[[1L]]
-    ), call. = FALSE)
+    cli_abort(c(
+      i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
+      x = "Instead, it is {.obj_type_friendly {linter}}."
+    ))
   }
   if (is_linter_factory(linter)) {
     what <- "Passing linters as variables"
@@ -401,17 +406,20 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   }
 
   if (length(line) != 1L || !is.character(line)) {
-    stop("`line` must be a string.", call. = FALSE)
+    cli_abort("{.arg line} must be a string.", call. = FALSE)
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
-    stop(sprintf(
-      "`column_number` must be an integer between 0 and nchar(line) + 1 (%d). It was %s.",
-      max_col, column_number
-    ), call. = FALSE)
+    cli_abort(c(
+      i = "{.arg column_number} must be an integer between {.val {0}} and {.code nchar(line) + 1} ({.val {max_col}})",
+      x = "Instead, it was {.val {column_number}}."
+    ))
   }
   if (!is_number(line_number) || line_number < 1L) {
-    stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number), call. = FALSE)
+    cli_abort(c(
+      i = "{.arg line_number} must be a positive integer.",
+      x = "Instead, it was {.val {line_number}}."
+    ))
   }
   check_ranges(ranges, max_col)
 
@@ -422,7 +430,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     line_number = as.integer(line_number),
     column_number = as.integer(column_number),
     type = type,
-    message = message,
+    message = message, # nolint: undesirable_function_linter
     line = line,
     ranges = ranges,
     linter = NA_character_
@@ -446,23 +454,27 @@ check_ranges <- function(ranges, max_col) {
     return()
   }
   if (!is.list(ranges)) {
-    stop("`ranges` must be NULL or a list.", call. = FALSE)
+    cli_abort(c(
+      i = "{.arg ranges} must be {.code NULL} or a {.cls list}.",
+      x = "Instead, it was {.cls {class(ranges)}}."
+    ))
   }
 
   for (range in ranges) {
     if (!is_number(range, 2L)) {
-      stop("`ranges` must only contain length 2 integer vectors without NAs.", call. = FALSE)
+      cli_abort("{.arg ranges} must only contain {.cls integer} vectors of length 2 without {.code NA}s.")
     } else if (!is_valid_range(range, max_col)) {
-      stop(sprintf(
-        "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
-      ), call. = FALSE)
+      cli_abort(c(
+        x = "Invalid range specified.",
+        i = "Argument {.arg ranges} must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 ({.val {max_col}})."
+      ))
     }
   }
 }
 
 rstudio_source_markers <- function(lints) {
   if (!requireNamespace("rstudioapi", quietly = TRUE)) {
-    stop("'rstudioapi' is required for rstudio_source_markers().", call. = FALSE) # nocov
+    cli_abort("{.pkg rstudioapi} is required for {.fn rstudio_source_markers}.") # nocov
   }
 
   # package path will be NULL unless it is a relative path
@@ -555,14 +567,14 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("'jsonlite' is required to produce SARIF reports, please install to continue.", call. = FALSE) # nocov
+    cli_abort("{.pkg jsonlite} is required to produce SARIF reports. Please install to continue.") # nocov
   }
 
   # package path will be `NULL` unless it is a relative path
   package_path <- attr(lints, "path")
 
   if (is.null(package_path)) {
-    stop("Package path needs to be a relative path.", call. = FALSE)
+    cli_abort("Package path needs to be a relative path.")
   }
 
   # setup template
