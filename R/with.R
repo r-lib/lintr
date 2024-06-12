@@ -32,11 +32,10 @@
 #' @export
 modify_defaults <- function(defaults, ...) {
   if (missing(defaults)) {
-    cli_abort("{.arg defaults} must be a named list, not absent.")
+    cli_abort("Missing required argument {.arg defaults} should be a named list.")
   }
   if (!is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    cli_abort("{.arg defaults} must be a named list, \\
-                not {.obj_type_friendly {defaults}}.")
+    cli_abort("{.arg defaults} must be a named list, not {.obj_type_friendly {defaults}}.")
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -183,14 +182,12 @@ all_linters <- function(..., packages = "lintr") {
 linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {
-    deprecation_advice <-
-      "This warning will be removed when {.fun with_defaults} is fully deprecated."
     cli_warn(c(
-      x = "{.arg default} is not an argument to \\
+      x = "{.arg default} is not an argument to
            {.help [{.fn linters_with_defaults}](lintr::linters_with_defaults)}.",
       i = "Did you mean {.arg defaults}?",
-      # make it more subtle
-      cli::col_silver(deprecation_advice)
+      # make message more subtle
+      cli::col_silver("This warning will be removed when {.fun with_defaults} is fully deprecated.")
     ))
     defaults <- dots$default
     nms <- names2(dots)
