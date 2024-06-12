@@ -211,7 +211,7 @@ test_that("package using .lintr.R config lints correctly", {
   # config has bad R syntax
   expect_error(
     lint_package(test_path("dummy_packages", "RConfigInvalid")),
-    "Malformed config file, ensure it is valid R syntax",
+    "Malformed config file (lintr_test_config.R), ensure it is valid R syntax",
     fixed = TRUE
   )
 
