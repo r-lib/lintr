@@ -1,14 +1,14 @@
 test_that("input validation for available_linters works as expected", {
-  expect_error(available_linters(1L), "`packages` must be a character vector.")
-  expect_error(available_linters(tags = 1L), "`tags` must be a character vector.")
-  expect_error(available_linters(exclude_tags = 1L), "`exclude_tags` must be a character vector.")
+  expect_error(available_linters(1L), "`packages` must be a <character> vector.")
+  expect_error(available_linters(tags = 1L), "`tags` must be a <character> vector.")
+  expect_error(available_linters(exclude_tags = 1L), "`exclude_tags` must be a <character> vector.")
 })
 
 test_that("validate_linter_db works as expected", {
   df_empty <- data.frame()
   expect_warning(
     lintr:::validate_linter_db(df_empty, "mypkg"),
-    "`linters.csv` must contain the columns 'linter' and 'tags'.",
+    'must contain the columns "linter" and "tags"',
     fixed = TRUE
   )
   expect_false(suppressWarnings(lintr:::validate_linter_db(df_empty, "mypkg")))

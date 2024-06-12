@@ -12,7 +12,7 @@ test_that("xp_call_name works", {
 })
 
 test_that("xp_call_name input validation works", {
-  expect_error(xp_call_name(2L), "Expected an xml_nodeset", fixed = TRUE)
+  expect_error(xp_call_name(2L), "`expr` must be an <xml_nodeset>", fixed = TRUE)
 
   xml <- xml2::read_xml("<a></a>")
   expect_error(xp_call_name(xml, depth = -1L), "depth >= 0", fixed = TRUE)

@@ -217,7 +217,7 @@ The main three aspects to test are:
 1. Linter returns no lints when there is nothing to lint, e.g.
 
 ```r
-expect_lint("blah", NULL, assignment_linter())
+expect_no_lint("blah", assignment_linter())
 ```
 
 2. Linter returns a lint when there is something to lint, e.g.

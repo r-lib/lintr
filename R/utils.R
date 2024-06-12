@@ -156,7 +156,7 @@ reset_lang <- function(old_lang) {
 #' @export
 Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
-    stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
+    cli_abort("{.arg fun} must be a function taking exactly one argument.")
   }
   linter_level <- match.arg(linter_level)
   force(name)
@@ -264,9 +264,13 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
   if (all(is_valid)) {
     return(invisible())
   }
-  stop(
-    "Found unknown arguments in ...: ", toString(dot_names[!is_valid]), ".\n",
-    "Check for typos and see ?", ref_help, " for valid arguments.",
-    call. = FALSE
-  )
+  invalid_args <- dot_names[!is_valid] # nolint: object_usage_linter. TODO(#2252).
+  cli_abort(c(
+    x = "Found unknown arguments in `...`: {.arg {invalid_args}}.",
+    i = "Check for typos and see ?{ref_help} for valid arguments."
+  ))
+}
+
+cli_abort_internal <- function(...) {
+  cli_abort(..., .internal = TRUE)
 }

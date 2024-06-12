@@ -98,7 +98,10 @@ read_config_file <- function(config_file) {
   if (endsWith(config_file, ".R")) {
     load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
-      stop("Malformed config file, ensure it is valid R syntax\n  ", conditionMessage(e), call. = FALSE)
+      cli_abort(c(
+        "Malformed config file, ensure it is valid R syntax.",
+        conditionMessage(e)
+      ))
     }
   } else {
     load_config <- function(file) {
@@ -107,26 +110,27 @@ read_config_file <- function(config_file) {
         parsed_setting <- tryCatch(
           str2lang(dcf_values[[setting]]),
           error = function(e) {
-            stop("Malformed config setting '", setting, "':\n    ", conditionMessage(e), call. = FALSE)
+            cli_abort(c(
+              "Malformed config setting {.field {setting}}:",
+              conditionMessage(e)
+            ))
           }
         )
         setting_value <- withCallingHandlers(
           tryCatch(
             eval(parsed_setting),
             error = function(e) {
-              stop(
-                "Error from config setting '", setting, "' in '", format(conditionCall(e)), "':\n",
-                "    ", conditionMessage(e),
-                call. = FALSE
-              )
+              cli_abort(c(
+                "Error from config setting {.code {setting}} in {.code {format(conditionCall(e))}}:",
+                conditionMessage(e)
+              ))
             }
           ),
           warning = function(w) {
-            warning(
-              "Warning from config setting '", setting, "' in '", format(conditionCall(w)), "':\n",
-              "    ", conditionMessage(w),
-              call. = FALSE
-            )
+            cli_warn(c(
+              "Warning from config setting {.code {setting}} in {.code {format(conditionCall(w))}}:",
+              conditionMessage(w)
+            ))
             invokeRestart("muffleWarning")
           }
         )
@@ -134,7 +138,10 @@ read_config_file <- function(config_file) {
       }
     }
     malformed <- function(e) {
-      stop("Malformed config file:\n  ", conditionMessage(e), call. = FALSE)
+      cli_abort(c(
+        x = "Malformed config file:",
+        i = conditionMessage(e)
+      ))
     }
   }
   withCallingHandlers(
@@ -143,7 +150,10 @@ read_config_file <- function(config_file) {
       error = malformed
     ),
     warning = function(w) {
-      warning("Warning encountered while loading config:\n  ", conditionMessage(w), call. = FALSE)
+      cli::cli_warn(c(
+        x = "Warning encountered while loading config:",
+        i = conditionMessage(w)
+      ))
       invokeRestart("muffleWarning")
     }
   )
@@ -153,10 +163,8 @@ read_config_file <- function(config_file) {
 validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
-    warning(
-      "Found unused settings in config '", config_file, "': ", toString(names(config)[!matched]),
-      call. = FALSE
-    )
+    unused_settings <- names(config)[!matched] # nolint: object_usage_linter. TODO(#2252).
+    cli_warn("Found unused settings in config {.str config_file}: {.field unused_settings}")
   }
 
   validate_regex(config,
@@ -181,7 +189,10 @@ validate_keys <- function(config, keys, test, what) {
       next
     }
     if (!test(val)) {
-      stop("Setting '", key, "' should be ", what, ", not '", toString(val), "'.", call. = FALSE)
+      cli_abort(c(
+        i = "Setting {.code {key}} should be {.strong {what}}.",
+        x = "Instead, it is {.field {val}}."
+      ))
     }
   }
 }
@@ -205,11 +216,11 @@ validate_linters <- function(linters) {
 
   is_linters <- vapply(linters, is_linter, logical(1L))
   if (!all(is_linters)) {
-    stop(
-      "Setting 'linters' should be a list of linters, but found non-linters at elements ",
-      toString(which(!is_linters)), ".",
-      call. = FALSE
-    )
+    non_linters <- which(!is_linters) # nolint: object_usage_linter. TODO(#2252).
+    cli_abort(c(
+      i = "Setting {.arg linters} should be a list of linters.",
+      x = "Found non-linters at elements: {.str {non_linters}}."
+    ))
   }
 }
 
@@ -223,11 +234,11 @@ validate_exclusions <- function(exclusions) {
   unnamed_is_string <-
     vapply(exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
   if (!all(unnamed_is_string)) {
-    stop(
-      "Unnamed entries of setting 'exclusions' should be strings naming files or directories, check entries: ",
-      toString(which(!has_names)[!unnamed_is_string]), ".",
-      call. = FALSE
-    )
+    problematic_entries <- which(!has_names)[!unnamed_is_string] # nolint: object_usage_linter. TODO(#2252).
+    cli_abort(c(
+      i = "Unnamed entries of setting {.arg exclusions} should be strings naming files or directories.",
+      x = "Check exclusions: {.str {problematic_entries}}."
+    ))
   }
   for (ii in which(has_names)) validate_named_exclusion(exclusions, ii)
 }
@@ -240,11 +251,10 @@ validate_named_exclusion <- function(exclusions, idx) {
     valid_entry <- is.numeric(entry) && !anyNA(entry)
   }
   if (!all(valid_entry)) {
-    stop(
-      "Named entries of setting 'exclusions' should designate line numbers for exclusion, ",
-      "check exclusion: ", idx, ".",
-      call. = FALSE
-    )
+    cli_abort(c(
+      i = "Named entries of setting {.arg exclusions} should designate line numbers for exclusion.",
+      x = "Check exclusions: {idx}."
+    ))
   }
 }
 
