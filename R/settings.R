@@ -61,7 +61,7 @@
 #'  ```
 #'
 #' @param filename Source file to be linted.
-read_settings <- function(filename, call = parent.frame()) {
+read_settings <- function(filename) {
   reset_settings()
 
   config_file <- find_config(filename)
@@ -71,7 +71,7 @@ read_settings <- function(filename, call = parent.frame()) {
     default_settings[["encoding"]] <- default_encoding
   }
 
-  config <- read_config_file(config_file, call = call)
+  config <- read_config_file(config_file)
   validate_config_file(config, config_file, default_settings)
 
   for (setting in names(default_settings)) {
