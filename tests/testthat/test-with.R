@@ -2,11 +2,13 @@ test_that("modify_defaults produces error with missing or incorrect defaults", {
   expect_error(
     modify_defaults(),
     "Missing required argument `defaults` should be a named list",
-    fixed = TRUE)
+    fixed = TRUE
+  )
   expect_error(
     modify_defaults("assignment_linter"),
     "`defaults` must be a named list",
-    fixed = TRUE)
+    fixed = TRUE
+  )
 })
 
 test_that("linters_with_tags produces error with incorrect tags", {
