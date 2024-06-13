@@ -221,7 +221,7 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #' # more importantly, extract raw strings correctly
 #' tmp_raw <- tempfile()
 #' writeLines("c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')", tmp_raw)
-#' expr_as_xml_raw <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
+#' expr_as_xml_raw <- get_source_expressions(tmp_raw)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml_raw))
 #' get_r_string(expr_as_xml_raw, "expr[2]")
 #' get_r_string(expr_as_xml_raw, "expr[3]")
