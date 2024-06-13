@@ -410,16 +410,13 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
-    cli_abort(
-      "{.arg column_number} must be an integer between {.val {0}} and {.val {max_col}} ({.code nchar(line) + 1}),
-       not {.obj_type_friendly {column_number}}."
-    )
+    cli_abort("
+      {.arg column_number} must be an integer between {.val {0}} and {.val {max_col}} ({.code nchar(line) + 1}),
+      not {.obj_type_friendly {column_number}}.
+    ")
   }
   if (!is_number(line_number) || line_number < 1L) {
-    cli_abort(
-      "{.arg line_number} must be a positive integer,
-       not {.obj_type_friendly {line_number}}."
-    )
+    cli_abort("{.arg line_number} must be a positive integer, not {.obj_type_friendly {line_number}}.")
   }
   check_ranges(ranges, max_col)
 

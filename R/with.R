@@ -93,8 +93,7 @@ modify_defaults <- function(defaults, ...) {
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
-    cli_abort("{.arg tags} must be a character vector, or {.code NULL}, \\
-               not {.obj_type_friendly {tags}}.")
+    cli_abort("{.arg tags} must be a character vector, or {.code NULL}, not {.obj_type_friendly {tags}}.")
   }
   tagged_linters <- list()
 
@@ -107,8 +106,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
         missing_linters <- setdiff(available$linter, ns_exports) # nolint: object_usage_linter. TODO(#2252).
         cli_abort(c(
           x = "Can't find linters {.fn {missing_linters}}.",
-          i = "These linters are advertised by {.fn available_linters}, but \\
-               are not exported by package {.pkg {package}}."
+          i = "These are advertised by {.fn available_linters}, but are not exported by package {.pkg {package}}."
         ))
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
@@ -183,8 +181,9 @@ linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {
     cli_warn(c(
-      x = "{.arg default} is not an argument to
-           {.help [{.fn linters_with_defaults}](lintr::linters_with_defaults)}.",
+      x = "
+        {.arg default} is not an argument to {.help [{.fn linters_with_defaults}](lintr::linters_with_defaults)}.
+      ",
       i = "Did you mean {.arg defaults}?",
       # make message more subtle
       cli::col_silver("This warning will be removed when {.fun with_defaults} is fully deprecated.")

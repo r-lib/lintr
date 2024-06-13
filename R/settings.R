@@ -89,8 +89,9 @@ read_settings <- function(filename) {
   }
 }
 
+#' @param call Passed to malformed to ensure linear trace.
+#' @noRd
 read_config_file <- function(config_file, call = parent.frame()) {
-  # call is passed to malformed to ensure linear trace.
   if (is.null(config_file)) {
     return(NULL)
   }
