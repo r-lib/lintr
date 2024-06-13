@@ -156,9 +156,11 @@ test_that("lintr help files are up to date", {
   )
 
   # Counts of tags from available_linters()
+  #   NB: as.data.frame.table returns stringsAsFactors=TRUE default in R>4
   db_tag_table <- as.data.frame(
     table(tag = unlist(lintr_db$tags)),
-    responseName = "n_linters"
+    responseName = "n_linters",
+    stringsAsFactors = FALSE
   )
   # In ?linters, entries in the enumeration of tags look like
   #   \item{\link[=${TAG}_linters]{${TAG}} (${N_LINTERS_WITH_TAG} linters)}
