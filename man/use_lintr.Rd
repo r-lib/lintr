@@ -21,7 +21,7 @@ These are suitable for following \href{https://style.tidyverse.org/}{the tidyver
 Path to the generated configuration, invisibly.
 }
 \description{
-Create a minimal lintr config file as a starting point for customization
+Create a minimal lintr config file as a starting point for customization and add it to the .Rbuildignore
 }
 \examples{
 if (FALSE) {
