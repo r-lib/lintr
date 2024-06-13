@@ -32,7 +32,6 @@ get_r_string(expr_as_xml, "expr[3]")
 unlink(tmp)
 
 # more importantly, extract strings under R>=4 raw strings
-\dontshow{if (getRversion() >= "4.0.0") (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 tmp4.0 <- tempfile()
 writeLines("c(R'(a\\\\b)', R'--[a\\\\\"\'\"\\\\b]--')", tmp4.0)
 expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
@@ -40,5 +39,5 @@ writeLines(as.character(expr_as_xml4.0))
 get_r_string(expr_as_xml4.0, "expr[2]")
 get_r_string(expr_as_xml4.0, "expr[3]")
 unlink(tmp4.0)
-\dontshow{\}) # examplesIf}
+
 }
