@@ -24,18 +24,18 @@ safe_get_exports <- function(ns) {
 
   # importFrom directives appear as list(ns, imported_funs)
   if (length(ns) > 1L) {
-    return(data.frame(pkg = ns[[1L]], fun = ns[[2L]], stringsAsFactors = FALSE))
+    return(data.frame(pkg = ns[[1L]], fun = ns[[2L]]))
   }
 
   # relevant only if there are any exported objects
   fun <- getNamespaceExports(ns)
   if (length(fun) > 0L) {
-    data.frame(pkg = ns, fun = fun, stringsAsFactors = FALSE)
+    data.frame(pkg = ns, fun = fun)
   }
 }
 
 empty_namespace_data <- function() {
-  data.frame(pkg = character(), fun = character(), stringsAsFactors = FALSE)
+  data.frame(pkg = character(), fun = character())
 }
 
 # filter namespace_imports() for S3 generics
@@ -64,11 +64,7 @@ exported_s3_generics <- function(path = find_package(".")) {
     return(empty_namespace_data())
   }
 
-  data.frame(
-    pkg = basename(path),
-    fun = unique(namespace_data$S3methods[, 1L]),
-    stringsAsFactors = FALSE
-  )
+  data.frame(pkg = basename(path), fun = unique(namespace_data$S3methods[, 1L]))
 }
 
 is_s3_generic <- function(fun) {

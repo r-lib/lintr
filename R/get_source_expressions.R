@@ -636,8 +636,7 @@ fix_eq_assigns <- function(pc) {
     parent = integer(n_expr),
     token = character(n_expr),
     terminal = logical(n_expr),
-    text = character(n_expr),
-    stringsAsFactors = FALSE
+    text = character(n_expr)
   )
 
   for (i in seq_len(n_expr)) {

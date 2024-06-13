@@ -82,11 +82,7 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
 }
 
 build_available_linters <- function(available, package, tags, exclude_tags) {
-  available_df <- data.frame(
-    linter = available[["linter"]],
-    package,
-    stringsAsFactors = FALSE
-  )
+  available_df <- data.frame(linter = available[["linter"]], package)
   available_df$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
   if (!is.null(tags)) {
     matches_tags <- vapply(available_df$tags, function(linter_tags) any(linter_tags %in% tags), logical(1L))
@@ -108,7 +104,7 @@ build_available_linters <- function(available, package, tags, exclude_tags) {
 #' `data.frame` constructors don't handle zero-row list-columns properly, so supply `tags` afterwards.
 #' @noRd
 empty_linters <- function() {
-  empty_df <- data.frame(linter = character(), package = character(), stringsAsFactors = FALSE)
+  empty_df <- data.frame(linter = character(), package = character())
   empty_df$tags <- list()
   empty_df
 }
