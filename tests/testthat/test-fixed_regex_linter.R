@@ -181,9 +181,9 @@ test_that("one-character character classes with escaped characters are caught", 
   linter <- fixed_regex_linter()
   lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint(R"gsub('[\n]', '', x)}", lint_msg, linter)
-  expect_lint(R"gsub('[\"]', '', x)}", lint_msg, linter)
-  expect_lint(R'gsub("\\<", "x", x, perl = TRUE)}', lint_msg, linter)
+  expect_lint(R"{gsub('[\n]', '', x)}", lint_msg, linter)
+  expect_lint(R"{gsub('[\"]', '', x)}", lint_msg, linter)
+  expect_lint(R'{gsub("\\<", "x", x, perl = TRUE)}', lint_msg, linter)
 
   expect_lint(R"{str_split(x, '[\1]')}", lint_msg, linter)
   expect_lint(R"{str_split(x, '[\12]')}", lint_msg, linter)
