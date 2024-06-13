@@ -109,7 +109,7 @@ test_that("fixed_regex_linter is more exact about distinguishing \\s from \\:", 
   linter <- fixed_regex_linter()
   lint_msg <- rex::rex("This regular expression is static")
 
-  expect_lint(R"{grep('\\s', '', x)]", NULL, linter)
+  expect_lint(R"{grep('\\s', '', x)}", NULL, linter)
   expect_lint(R"{grep('\\:', '', x)}", lint_msg, linter)
 })
 
@@ -232,10 +232,10 @@ test_that("fixed replacements vectorize and recognize str_detect", {
   linter <- fixed_regex_linter()
   # properly vectorized
   expect_lint(
-    trim_some("{
+    trim_some(R"({
       grepl('abcdefg', x)
-      grepl(R'(a[.]\\.b\n)', x)
-    }"),
+      grepl('a[.]\\.b\n', x)
+    })"),
     list(
       list(rex::rex('Use "abcdefg" with fixed = TRUE'), line_number = 2L),
       list(rex::rex('Use "a..b\\n" with fixed = TRUE'), line_number = 3L)
