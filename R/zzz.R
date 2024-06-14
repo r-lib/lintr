@@ -295,9 +295,8 @@ settings <- new.env(parent = emptyenv())
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # R>=4.0.0: deparse1
   # R>=4.1.0: ...names
-  backports::import(pkgname, c("deparse1", "...names"))
+  backports::import(pkgname, "...names")
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
