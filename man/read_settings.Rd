@@ -4,10 +4,12 @@
 \alias{read_settings}
 \title{Read lintr settings}
 \usage{
-read_settings(filename)
+read_settings(filename, call = parent.frame())
 }
 \arguments{
 \item{filename}{Source file to be linted.}
+
+\item{call}{Passed to malformed to ensure linear trace.}
 }
 \description{
 Lintr searches for settings for a given source file in the following order:
