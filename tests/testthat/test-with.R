@@ -1,7 +1,7 @@
 test_that("modify_defaults produces error with missing or incorrect defaults", {
   expect_error(
     modify_defaults(),
-    "Missing required argument `defaults` should be a named list",
+    "`defaults` is a required argument, but is missing",
     fixed = TRUE
   )
   expect_error(

@@ -32,7 +32,7 @@
 #' @export
 modify_defaults <- function(defaults, ...) {
   if (missing(defaults)) {
-    cli_abort("Missing required argument {.arg defaults} should be a named list.")
+    cli_abort("{.arg defaults} is a required argument, but is missing.")
   }
   if (!is.list(defaults) || !all(nzchar(names2(defaults)))) {
     cli_abort("{.arg defaults} must be a named list, not {.obj_type_friendly {defaults}}.")
