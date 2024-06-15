@@ -8,9 +8,7 @@
 #' * contain at least two path elements, with one having at least two characters and
 #' * contain only alphanumeric chars (including UTF-8), spaces, and win32-allowed punctuation
 #'
-#' @examplesIf getRversion() >= "4.0"
-#' # Following examples use raw character constant syntax introduced in R 4.0.
-#'
+#' @examples
 #' # will produce lints
 #' lint(
 #'   text = 'R"--[/blah/file.txt]--"',
