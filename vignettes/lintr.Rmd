@@ -140,10 +140,7 @@ make_string <- function(x) {
   }
 }
 
-defaults_table <- data.frame(
-  default = vapply(default_settings, make_string, character(1L)),
-  stringsAsFactors = FALSE
-)
+defaults_table <- data.frame(default = vapply(default_settings, make_string, character(1L)))
 
 # avoid conflict when loading lintr in echo=TRUE cell below
 rm(default_settings)
@@ -196,8 +193,7 @@ make_setting_string <- function(linter_name) {
 
 defaults_table <- data.frame(
   row.names = names(default_linters),
-  settings = vapply(names(default_linters), make_setting_string, character(1L)),
-  stringsAsFactors = FALSE
+  settings = vapply(names(default_linters), make_setting_string, character(1L))
 )
 
 knitr::kable(defaults_table)
