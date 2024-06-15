@@ -13,11 +13,7 @@ test_that("validate_linter_db works as expected", {
   )
   expect_false(suppressWarnings(lintr:::validate_linter_db(df_empty, "mypkg")))
 
-  df <- data.frame(
-    linter = "absolute_path_linter",
-    tags = "robustness",
-    stringsAsFactors = FALSE
-  )
+  df <- data.frame(linter = "absolute_path_linter", tags = "robustness")
   expect_true(lintr:::validate_linter_db(df, "mypkg"))
 })
 
@@ -160,6 +156,7 @@ test_that("lintr help files are up to date", {
   )
 
   # Counts of tags from available_linters()
+  #   NB: as.data.frame.table returns stringsAsFactors=TRUE default in R>4
   db_tag_table <- as.data.frame(
     table(tag = unlist(lintr_db$tags)),
     responseName = "n_linters",

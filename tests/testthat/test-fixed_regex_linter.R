@@ -68,7 +68,7 @@ patrick::with_parameters_test_that(
       "|", "[", "]", "\\\\", "<", ">", "=", ":", ";", "/",
       "_", "-", "!", "@", "#", "%", "&", "~"
     )
-    data.frame(char = char, .test_name = char, stringsAsFactors = FALSE)
+    data.frame(char = char, .test_name = char)
   })
 )
 

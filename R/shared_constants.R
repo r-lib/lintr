@@ -115,7 +115,7 @@ get_token_replacement <- function(token_content, token_type) {
 #   r_string gives the operator as you would write it in R code.
 
 # styler: off
-infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
+infix_metadata <- data.frame(matrix(byrow = TRUE, ncol = 2L, c(
   "OP-PLUS",         "+",
   "OP-MINUS",        "-",
   "OP-TILDE",        "~",
