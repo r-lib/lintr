@@ -168,9 +168,9 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
 
 rd_auto_link <- function(x) {
   x <- unlist(x)
-  x <- gsub("([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[\\1:\\2]{\\1::\\2()}}", x)
-  x <- gsub("([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\\(\\)", "\\1\\\\code{\\\\link[=\\2]{\\2()}}", x)
-  x <- gsub("`([^`]+)`", "\\\\code{\\1}", x)
+  x <- gsub(R"{([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\(\)}", R"(\\code{\\link[\1:\2]{\1::\2()}})", x)
+  x <- gsub(R"{([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\(\)}", R"(\1\\code{\\link[=\2]{\2()}})", x)
+  x <- gsub("`([^`]+)`", R"(\\code{\1})", x)
   x
 }
 
@@ -181,7 +181,7 @@ rd_undesirable_functions <- function() {
     "The following functions are sometimes regarded as undesirable:",
     "\\itemize{",
     sprintf(
-      "\\item \\code{\\link[=%1$s]{%1$s()}} As an alternative, %2$s.",
+      R"(\item \code{\link[=%1$s]{%1$s()}} As an alternative, %2$s.)",
       names(default_undesirable_functions), alternatives
     ),
     "}"
