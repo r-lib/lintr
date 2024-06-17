@@ -53,10 +53,10 @@ load_cache <- function(file, path = NULL) {
         invokeRestart("muffleWarning")
       },
       error = function(e) {
-        cli_warn(c(
-          x = "Could not load cache file {.file {file}}:",
-          i = conditionMessage(e)
-        ))
+        cli_warn(
+          "Could not load cache file {.file {file}}:",
+          parent = e
+        )
       }
     )
   } # else nothing to do for source file that has no cache

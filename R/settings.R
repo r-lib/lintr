@@ -61,7 +61,8 @@
 #'  ```
 #'
 #' @param filename Source file to be linted.
-read_settings <- function(filename) {
+#' @param call Passed to malformed to ensure linear trace.
+read_settings <- function(filename, call = parent.frame()) {
   reset_settings()
 
   config_file <- find_config(filename)
@@ -71,7 +72,7 @@ read_settings <- function(filename) {
     default_settings[["encoding"]] <- default_encoding
   }
 
-  config <- read_config_file(config_file)
+  config <- read_config_file(config_file, call = call)
   validate_config_file(config, config_file, default_settings)
 
   for (setting in names(default_settings)) {
@@ -89,48 +90,53 @@ read_settings <- function(filename) {
   }
 }
 
-read_config_file <- function(config_file) {
+#' @param call Passed to malformed to ensure linear trace.
+#' @noRd
+read_config_file <- function(config_file, call = parent.frame()) {
   if (is.null(config_file)) {
     return(NULL)
   }
 
+  # clickable link for eventual error messages.
+  malformed_file <- link_config_file(config_file) # nolint: object_usage_linter. TODO(#2252).
   config <- new.env()
   if (endsWith(config_file, ".R")) {
     load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
     malformed <- function(e) {
-      cli_abort(c(
-        "Malformed config file, ensure it is valid R syntax.",
-        conditionMessage(e)
-      ))
+      cli_abort(
+        "Malformed config file ({malformed_file}), ensure it is valid R syntax.",
+        parent = e,
+        call = call
+      )
     }
   } else {
     load_config <- function(file) {
       dcf_values <- read.dcf(file, all = TRUE)
       for (setting in names(dcf_values)) {
-        parsed_setting <- tryCatch(
+        parsed_setting <- withCallingHandlers(
           str2lang(dcf_values[[setting]]),
           error = function(e) {
-            cli_abort(c(
+            cli_abort(
               "Malformed config setting {.field {setting}}:",
-              conditionMessage(e)
-            ))
+              parent = e
+            )
           }
         )
         setting_value <- withCallingHandlers(
           tryCatch(
             eval(parsed_setting),
             error = function(e) {
-              cli_abort(c(
-                "Error from config setting {.code {setting}} in {.code {format(conditionCall(e))}}:",
-                conditionMessage(e)
-              ))
+              cli_abort(
+                "Error from config setting {.code {setting}}.",
+                parent = e
+              )
             }
           ),
           warning = function(w) {
-            cli_warn(c(
-              "Warning from config setting {.code {setting}} in {.code {format(conditionCall(w))}}:",
-              conditionMessage(w)
-            ))
+            cli_warn(
+              "Warning from config setting {.code {setting}}.",
+              parent = w
+            )
             invokeRestart("muffleWarning")
           }
         )
@@ -138,10 +144,11 @@ read_config_file <- function(config_file) {
       }
     }
     malformed <- function(e) {
-      cli_abort(c(
-        x = "Malformed config file:",
-        i = conditionMessage(e)
-      ))
+      cli_abort(
+        "Malformed config file ({malformed_file}):",
+        parent = e,
+        call = call
+      )
     }
   }
   withCallingHandlers(
@@ -150,10 +157,10 @@ read_config_file <- function(config_file) {
       error = malformed
     ),
     warning = function(w) {
-      cli::cli_warn(c(
-        x = "Warning encountered while loading config:",
-        i = conditionMessage(w)
-      ))
+      cli::cli_warn(
+        "Warning encountered while loading config:",
+        parent = w
+      )
       invokeRestart("muffleWarning")
     }
   )
@@ -164,7 +171,8 @@ validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
     unused_settings <- names(config)[!matched] # nolint: object_usage_linter. TODO(#2252).
-    cli_warn("Found unused settings in config {.str config_file}: {.field unused_settings}")
+    config_link <- link_config_file(config_file) # nolint: object_usage_linter. TODO(#2252).
+    cli_warn("Found unused settings in config file ({config_link}): {.field unused_settings}")
   }
 
   validate_regex(config,
@@ -296,4 +304,11 @@ get_encoding_from_dcf <- function(file) {
   }
 
   NULL
+}
+
+link_config_file <- function(path) {
+  cli::style_hyperlink(
+    cli::col_blue(basename(path)),
+    paste0("file://", path)
+  )
 }
