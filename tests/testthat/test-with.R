@@ -31,12 +31,7 @@ test_that("linters_with_defaults warns on unused NULLs", {
 test_that("linters_with_tags() verifies the output of available_linters()", {
   local_mocked_bindings(
     available_linters = function(...) {
-      data.frame(
-        linter = c("fake_linter", "very_fake_linter"),
-        package = "lintr",
-        tags = "",
-        stringsAsFactors = FALSE
-      )
+      data.frame(linter = c("fake_linter", "very_fake_linter"), package = "lintr", tags = "")
     }
   )
   expect_error(

@@ -163,8 +163,7 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # 
     type = vapply(x, `[[`, character(1L), "type"),
     message = vapply(x, `[[`, character(1L), "message"),
     line = vapply(x, `[[`, character(1L), "line"),
-    linter = vapply(x, `[[`, character(1L), "linter"),
-    stringsAsFactors = FALSE
+    linter = vapply(x, `[[`, character(1L), "linter")
   )
 }
 
@@ -198,7 +197,7 @@ summary.lints <- function(object, ...) {
   )
   tbl <- table(filenames, types)
   filenames <- rownames(tbl)
-  res <- as.data.frame.matrix(tbl, stringsAsFactors = FALSE, row.names = NULL)
+  res <- as.data.frame.matrix(tbl, row.names = NULL)
   res$filenames <- filenames %||% character()
   nms <- colnames(res)
   res[order(res$filenames), c("filenames", nms[nms != "filenames"])]
