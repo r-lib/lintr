@@ -88,10 +88,10 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
         lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
           error = function(cond) {
-            cli_abort(c(
+            cli_abort(
               "Linter {.fn linter} failed in {.file {filename}}:",
-              conditionMessage(cond)
-            ))
+              parent = cond
+            )
           }
         )
       }
@@ -410,16 +410,13 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
-    cli_abort(c(
-      i = "{.arg column_number} must be an integer between {.val {0}} and {.code nchar(line) + 1} ({.val {max_col}})",
-      x = "Instead, it was {.val {column_number}}."
-    ))
+    cli_abort("
+      {.arg column_number} must be an integer between {.val {0}} and {.val {max_col}} ({.code nchar(line) + 1}),
+      not {.obj_type_friendly {column_number}}.
+    ")
   }
   if (!is_number(line_number) || line_number < 1L) {
-    cli_abort(c(
-      i = "{.arg line_number} must be a positive integer.",
-      x = "Instead, it was {.val {line_number}}."
-    ))
+    cli_abort("{.arg line_number} must be a positive integer, not {.obj_type_friendly {line_number}}.")
   }
   check_ranges(ranges, max_col)
 
@@ -449,25 +446,28 @@ is_valid_range <- function(range, max_col) {
     range[[2L]] <= max_col
 }
 
-check_ranges <- function(ranges, max_col) {
+check_ranges <- function(ranges, max_col, call = parent.frame()) {
   if (is.null(ranges)) {
     return()
   }
   if (!is.list(ranges)) {
-    cli_abort(c(
-      i = "{.arg ranges} must be {.code NULL} or a {.cls list}.",
-      x = "Instead, it was {.cls {class(ranges)}}."
-    ))
+    cli_abort(
+      "{.arg ranges} must be {.code NULL} or a list, not {.obj_type_friendly {ranges}}.",
+      call = call
+    )
   }
 
   for (range in ranges) {
     if (!is_number(range, 2L)) {
-      cli_abort("{.arg ranges} must only contain {.cls integer} vectors of length 2 without {.code NA}s.")
+      cli_abort(
+        "{.arg ranges} must only contain integer vectors of length 2 without {.code NA}s.",
+        call = call
+      )
     } else if (!is_valid_range(range, max_col)) {
-      cli_abort(c(
-        x = "Invalid range specified.",
-        i = "Argument {.arg ranges} must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 ({.val {max_col}})."
-      ))
+      cli_abort(
+        "{.arg ranges} must satisfy {.val {0}} <= range[1L] <= range[2L] <= {.val {max_col}} (nchar(line) + 1).",
+        call = call
+      )
     }
   }
 }
