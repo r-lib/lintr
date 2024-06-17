@@ -98,10 +98,7 @@ read_config_file <- function(config_file, call = parent.frame()) {
   }
 
   # clickable link for eventual error messages.
-  malformed_file <- cli::style_hyperlink( # nolint: object_usage_linter. TODO(#2252).
-    cli::col_blue(basename(config_file)),
-    paste0("file://", config_file)
-  )
+  malformed_file <- link_config_file(config_file) # nolint: object_usage_linter. TODO(#2252).
   config <- new.env()
   if (endsWith(config_file, ".R")) {
     load_config <- function(file) sys.source(file, config, keep.source = FALSE, keep.parse.data = FALSE)
@@ -174,10 +171,7 @@ validate_config_file <- function(config, config_file, defaults) {
   matched <- names(config) %in% names(defaults)
   if (!all(matched)) {
     unused_settings <- names(config)[!matched] # nolint: object_usage_linter. TODO(#2252).
-    config_link <- cli::style_hyperlink( # nolint: object_usage_linter. TODO(#2252).
-      cli::col_blue(basename(config_file)),
-      url = paste0("file://", config_file)
-    )
+    config_link <- link_config_file(config_file) # nolint: object_usage_linter. TODO(#2252).
     cli_warn("Found unused settings in config file ({config_link}): {.field unused_settings}")
   }
 
@@ -310,4 +304,11 @@ get_encoding_from_dcf <- function(file) {
   }
 
   NULL
+}
+
+link_config_file <- function(path) {
+  cli::style_hyperlink(
+    cli::col_blue(basename(path)),
+    paste0("file://", path)
+  )
 }
