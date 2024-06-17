@@ -86,13 +86,17 @@ default_settings()
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_settings</span><span class="op">(</span><span class="va">filename</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_settings</span><span class="op">(</span><span class="va">filename</span>, call <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>filename</dt>
 <dd><p>Source file to be linted.</p></dd>
+
+
+<dt>call</dt>
+<dd><p>Passed to malformed to ensure linear trace.</p></dd>
 
 </dl></div>
     <div class="section level2">
