@@ -71,7 +71,7 @@ test_that("respects directory exclusions", {
   lints_norm <- lint_dir(the_dir, exclusions = "exclude-me", relative_path = FALSE)
   linted_files <- unique(names(lints_norm))
   expect_length(linted_files, 1L)
-  expect_identical(linted_files, normalizePath(file.path(the_dir, "default_linter_testcode.R"), winslash = "/"))
+  expect_identical(linted_files, normalize_path(file.path(the_dir, "default_linter_testcode.R")))
 })
 
 test_that("respect directory exclusions from settings", {

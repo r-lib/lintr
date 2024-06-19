@@ -52,7 +52,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     close(con)
   }
 
-  filename <- normalizePath(filename, winslash = "/", mustWork = !inline_data) # to ensure a unique file in cache
+  filename <- normalize_path(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
 
   if (isTRUE(parse_settings)) {
@@ -163,16 +163,16 @@ lint_dir <- function(path = ".", ...,
     pattern = pattern
   )
 
-  # normalizePath ensures names(exclusions) and files have the same names for the same files.
+  # normalize_path ensures names(exclusions) and files have the same names for the same files.
+  # It also ensures all paths have forward slash
   # Otherwise on windows, files might incorrectly not be excluded in to_exclude
-  files <- normalizePath(
+  files <- normalize_path(
     dir(
       path,
       pattern = pattern,
       recursive = TRUE,
       full.names = TRUE
-    ),
-    winslash = "/"
+    )
   )
 
   # Remove fully ignored files to avoid reading & parsing
@@ -201,7 +201,7 @@ lint_dir <- function(path = ".", ...,
   lints <- reorder_lints(lints)
 
   if (relative_path) {
-    path <- normalizePath(path, winslash = "/", mustWork = FALSE)
+    path <- normalize_path(path, mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {
@@ -252,7 +252,7 @@ lint_package <- function(path = ".", ...,
 
   if (is.null(pkg_path)) {
     cli_warn(c(
-      i = "Didn't find any R package searching upwards from {.file {normalizePath(path)}}"
+      i = "Didn't find any R package searching upwards from {.file {normalize_path(path)}}"
     ))
     return(NULL)
   }
@@ -277,7 +277,7 @@ lint_package <- function(path = ".", ...,
   )
 
   if (isTRUE(relative_path)) {
-    path <- normalizePath(pkg_path, winslash = "/", mustWork = FALSE)
+    path <- normalize_path(pkg_path, mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {

@@ -6,8 +6,8 @@ test_that("use_lintr works as expected", {
 
   # check that newly created file is in the root directory
   expect_identical(
-    normalizePath(lintr_file, winslash = "/"),
-    file.path(normalizePath(tmp, winslash = "/"), ".lintr")
+    normalize_path(lintr_file),
+    file.path(normalize_path(tmp), ".lintr")
   )
 
   # can't generate if a .lintr already exists
@@ -28,8 +28,8 @@ test_that("use_lintr with type = full also works", {
 
   # check that newly created file is in the root directory
   expect_identical(
-    normalizePath(lintr_file, winslash = "/"),
-    file.path(normalizePath(tmp, winslash = "/"), ".lintr")
+    normalize_path(lintr_file),
+    file.path(normalize_path(tmp), ".lintr")
   )
 
   lints <- lint_dir(tmp)

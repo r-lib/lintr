@@ -292,7 +292,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
 
   paths <- names(x)
   rel_path <- !is_absolute_path(paths)
-  paths[rel_path] <- file.path(root, paths[rel_path], fsep = "/")
+  paths[rel_path] <- file.path(root, paths[rel_path])
 
   is_dir <- dir.exists(paths)
   if (any(is_dir)) {
@@ -307,7 +307,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
           pattern = pattern,
           recursive = TRUE
         )
-        file.path(dir, files, fsep = "/") # non-normalized relative paths
+        file.path(dir, files) # non-normalized relative paths
       }
     ))
 
@@ -323,10 +323,10 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     paths <- names(x)
     # specify relative paths w.r.t. root
     rel_path <- !is_absolute_path(paths)
-    paths[rel_path] <- file.path(root, paths[rel_path], fsep = "/")
+    paths[rel_path] <- file.path(root, paths[rel_path])
     names(x) <- paths
     x <- x[file.exists(paths)] # remove exclusions for non-existing files
-    names(x) <- normalizePath(names(x), winslash = "/") # get full path for remaining files
+    names(x) <- normalize_path(names(x)) # get full path for remaining files
   }
 
   remove_line_duplicates(
