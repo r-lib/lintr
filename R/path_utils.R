@@ -133,6 +133,15 @@ split_path <- function(dirs, prefix) {
   dirs[nzchar(dirs)]
 }
 
+# https://github.com/r-lib/lintr/pull/2613
+normalize_path <- function(path, winslash = "/", mustWork = NA) {
+  normalizePath( # nolint: undesirable_function_linter
+    path = path,
+    winslash = winslash,
+    mustWork = mustWork
+  )
+}
+
 #' @include utils.R
 path_linter_factory <- function(path_function, message, linter, name = linter_auto_name()) {
   force(name)
