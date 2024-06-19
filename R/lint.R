@@ -52,7 +52,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     close(con)
   }
 
-  filename <- normalizePath(filename, mustWork = !inline_data) # to ensure a unique file in cache
+  filename <- normalizePath(filename,  winslash = "/", mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
 
   if (isTRUE(parse_settings)) {
@@ -170,7 +170,9 @@ lint_dir <- function(path = ".", ...,
     pattern = pattern,
     recursive = TRUE,
     full.names = TRUE
-  ))
+    ),
+    winslash = "/"
+  )
 
   # Remove fully ignored files to avoid reading & parsing
   files <- drop_excluded(files, exclusions)
@@ -198,7 +200,7 @@ lint_dir <- function(path = ".", ...,
   lints <- reorder_lints(lints)
 
   if (relative_path) {
-    path <- normalizePath(path, mustWork = FALSE)
+    path <- normalizePath(path, winslash = "/", mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {
@@ -274,7 +276,7 @@ lint_package <- function(path = ".", ...,
   )
 
   if (isTRUE(relative_path)) {
-    path <- normalizePath(pkg_path, mustWork = FALSE)
+    path <- normalizePath(pkg_path, winslash = "/", mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {

@@ -118,7 +118,7 @@ test_that("lint() results from file or text should be consistent", {
   lines <- c("x<-1", "x+1")
   file <- withr::local_tempfile(lines = lines)
   text <- paste(lines, collapse = "\n")
-  file <- normalizePath(file)
+  file <- normalizePath(file, winslash = "/")
 
   lint_from_file <- lint(file, linters = linters)
   lint_from_lines <- lint(linters = linters, text = lines)
