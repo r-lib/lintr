@@ -137,11 +137,8 @@ split_path <- function(dirs, prefix) {
 #' https://github.com/r-lib/lintr/pull/2613
 #' @noRd
 normalize_path <- function(path, mustWork = NA) { # nolint: object_name_linter.
-  normalizePath( # nolint: undesirable_function_linter.
-    path = path,
-    winslash = "/",
-    mustWork = mustWork
-  )
+  # nolint next: undesirable_function_linter.
+  normalizePath(path = path, winslash = "/", mustWork = mustWork)
 }
 
 #' @include utils.R
