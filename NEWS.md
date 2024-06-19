@@ -17,6 +17,7 @@
 * Drop support for posting GitHub comments from inside GitHub comment bot, Travis, Wercker, and Jenkins CI tools (spurred by #2148, @MichaelChirico). We rely on GitHub Actions for linting in CI, and don't see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.
 * `cyclocomp_linter()` is no longer part of the default linters (#2555, @IndrajeetPatil) because the tidyverse style guide doesn't contain any guidelines on meeting certain complexity requirements. Note that users with `cyclocomp_linter()` in their configs may now need to install {cyclocomp} intentionally, in particular in CI/CD pipelines.
 * `scalar_in_linter` is now configurable to allow other `%in%` like operators to be linted. The data.table operator `%chin%` is no longer linted by default; use `in_operators = "%chin%"` to continue linting it. (@F-Noelle)
+* `lint()` and friends now normalizes paths to forward slashes on Windows.
 
 ## Bug fixes
 
