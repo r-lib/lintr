@@ -52,7 +52,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     close(con)
   }
 
-  filename <- normalizePath(filename,  winslash = "/", mustWork = !inline_data) # to ensure a unique file in cache
+  filename <- normalizePath(filename, winslash = "/", mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
 
   if (isTRUE(parse_settings)) {
@@ -165,11 +165,12 @@ lint_dir <- function(path = ".", ...,
 
   # normalizePath ensures names(exclusions) and files have the same names for the same files.
   # Otherwise on windows, files might incorrectly not be excluded in to_exclude
-  files <- normalizePath(dir(
-    path,
-    pattern = pattern,
-    recursive = TRUE,
-    full.names = TRUE
+  files <- normalizePath(
+    dir(
+      path,
+      pattern = pattern,
+      recursive = TRUE,
+      full.names = TRUE
     ),
     winslash = "/"
   )
