@@ -117,12 +117,12 @@ test_that("it has a smart default for encodings", {
   pkg_file <- test_path("dummy_packages", "cp1252", "R", "cp1252.R")
 
   expect_identical(
-    normalizePath(find_rproj_at(find_package(proj_file, allow_rproj = TRUE)), winslash = "/"),
-    normalizePath(test_path("dummy_projects", "project", "project.Rproj"), winslash = "/")
+    normalize_path(find_rproj_at(find_package(proj_file, allow_rproj = TRUE))),
+    normalize_path(test_path("dummy_projects", "project", "project.Rproj"))
   )
   expect_identical(
-    normalizePath(find_package(pkg_file), winslash = "/"),
-    normalizePath(test_path("dummy_packages", "cp1252"), winslash = "/")
+    normalize_path(find_package(pkg_file)),
+    normalize_path(test_path("dummy_packages", "cp1252"))
   )
 
   expect_identical(lintr:::find_default_encoding(proj_file), "ISO8859-1")
