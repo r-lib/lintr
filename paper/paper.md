@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-05-27"
+date: "2024-06-21"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester

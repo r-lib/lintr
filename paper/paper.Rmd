@@ -5,7 +5,7 @@ tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
     affiliation: 1
-    orcid: ~
+    orcid: 0000-0002-2739-7082
   - name: Florent Angly
     affiliation: ~
     orcid: ~
