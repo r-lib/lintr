@@ -123,6 +123,24 @@ test_that("reverse seq is ok", {
   )
 })
 
+test_that("finds potential sequence() replacements", {
+  linter <- seq_linter()
+  lint_msg <- rex::rex("Use sequence()")
+
+  expect_lint(
+    "unlist(lapply(x, seq_len))",
+    lint_msg,
+    linter
+  )
+
+  # Even for prefixed purrr:: calls
+  expect_lint(
+    "unlist(purrr::map(x, seq_len))",
+    lint_msg,
+    linter
+  )
+})
+
 test_that("Message vectorization works for multiple lints", {
   linter <- seq_linter()
 
@@ -170,6 +188,18 @@ test_that("Message vectorization works for multiple lints", {
     list(
       list(rex::rex("seq_len(NROW(...))", anything, "1:NROW(...)"), line_number = 2L),
       list(rex::rex("seq_len(NCOL(...))", anything, "seq(NCOL(...))"), line_number = 3L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("{
+      1:NROW(x)
+      unlist(lapply(y, seq_len))
+    }"),
+    list(
+      list(rex::rex("seq_len(NROW(...))", anything, "1:NROW(...)"), line_number = 2L),
+      list(rex::rex("sequence()"), line_number = 3L)
     ),
     linter
   )
