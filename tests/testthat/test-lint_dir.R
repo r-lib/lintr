@@ -71,7 +71,7 @@ test_that("respects directory exclusions", {
   lints_norm <- lint_dir(the_dir, exclusions = "exclude-me", relative_path = FALSE)
   linted_files <- unique(names(lints_norm))
   expect_length(linted_files, 1L)
-  expect_identical(linted_files, normalizePath(file.path(the_dir, "default_linter_testcode.R")))
+  expect_identical(linted_files, normalize_path(file.path(the_dir, "default_linter_testcode.R")))
 })
 
 test_that("respect directory exclusions from settings", {
@@ -100,7 +100,7 @@ test_that("lint_dir works with specific linters without specifying other argumen
 })
 
 test_that("typo in argument name gives helpful error", {
-  expect_error(lint_dir(litners = identity), "Found unknown arguments in [.][.][.].*[?]lint_dir ")
+  expect_error(lint_dir(litners = identity), "Found unknown arguments in `...`: `litners`")
 })
 
 test_that("linting empty directory passes", {

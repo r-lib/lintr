@@ -23,7 +23,7 @@ test_that("single check", {
   expect_success(expect_lint("a=1", c(message = lint_msg, line_number = 1L), linter))
   expect_failure(expect_lint("a=1", c(line_number = 2L, message = lint_msg), linter))
 
-  expect_error(expect_lint("a=1", c(message = lint_msg, lineXXX = 1L), linter), "invalid field")
+  expect_error(expect_lint("a=1", c(message = lint_msg, lineXXX = 1L), linter), "Check 1 has an invalid field: lineXXX")
 
   expect_failure(expect_lint("foo ()", list(ranges = list(c(2L, 2L))), function_left_parentheses_linter()))
   expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), whitespace_linter()))

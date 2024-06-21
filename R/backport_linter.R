@@ -98,7 +98,11 @@ normalize_r_version <- function(r_version) {
     version_names <- c("devel", "release", paste0("oldrel-", seq_len(length(minor_versions) - 2L)))
     if (!r_version %in% version_names) {
       # This can only trip if e.g. oldrel-99 is requested
-      stop("`r_version` must be a version number or one of ", toString(sQuote(version_names)), call. = FALSE)
+      cli_abort(c(
+        "{.arg r_version} is not valid:",
+        i = "It must be a version number or one of {.str {version_names}}.",
+        x = "You entered {.str {r_version}} instead."
+      ))
     }
     requested_version <- minor_versions[match(r_version, table = version_names)]
     available_patches <- all_versions[startsWith(all_versions, requested_version)]
@@ -110,13 +114,13 @@ normalize_r_version <- function(r_version) {
   } else if (is.character(r_version)) {
     r_version <- R_system_version(r_version, strict = TRUE)
   } else if (!inherits(r_version, "R_system_version")) {
-    stop("`r_version` must be a R version number, returned by R_system_version(), or a string.", call. = FALSE)
+    cli_abort("{.arg r_version} must be an R version number, returned by {.fun R_system_version}, or a string.")
   }
   if (r_version < "3.0.0") {
-    warning(
-      "It is not recommended to depend on an R version older than 3.0.0. Resetting 'r_version' to 3.0.0.",
-      call. = FALSE
-    )
+    cli_warn(c(
+      x = "Depending on an R version older than {.val 3.0.0} is not recommended.",
+      i = "Resetting {.arg r_version} to {.val 3.0.0}."
+    ))
     r_version <- R_system_version("3.0.0")
   }
   r_version

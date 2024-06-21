@@ -43,11 +43,12 @@
 #' @export
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
-    stop( # nocov start
-      "'expect_lint' and 'expect_no_lint' are designed to work within the 'testthat' testing framework, ",
-      "but 'testthat' is not installed.",
-      call. = FALSE
-    ) # nocov end
+    # nocov start
+    cli_abort(
+      # nolint next: line_length_linter.
+      "{.fun expect_lint} and {.fun expect_no_lint} are designed to work within the {.pkg testthat} testing framework, which is not installed."
+    )
+    # nocov end
   }
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
@@ -91,10 +92,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
         itr <<- itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
-            stop(sprintf(
-              "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
-              itr, field, toString(lint_fields)
-            ), call. = FALSE)
+            cli_abort(c(
+              x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+              i = "Valid fields are: {.field {lint_fields}}."
+            ))
           }
           check <- check[[field]]
           value <- lint[[field]]
@@ -109,11 +110,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             isTRUE(all.equal(value, check))
           }
           if (!is.logical(ok)) {
-            stop(
-              "Invalid regex result, did you mistakenly have a capture group in the regex? ",
-              "Be sure to escape parenthesis with `[]`",
-              call. = FALSE
-            )
+            cli_abort(c(
+              x = "Invalid regex result. Did you mistakenly have a capture group in the regex?",
+              i = "You can match parentheses with a character class, i.e. inside `[]`."
+            ))
           }
           testthat::expect(ok, msg)
         })
@@ -135,7 +135,7 @@ expect_no_lint <- function(content, ..., file = NULL, language = "en") {
 #' Test that the package is lint free
 #'
 #' This function is a thin wrapper around lint_package that simply tests there are no
-#' lints in the package.  It can be used to ensure that your tests fail if the package
+#' lints in the package. It can be used to ensure that your tests fail if the package
 #' contains lints.
 #'
 #' @param ... arguments passed to [lint_package()]

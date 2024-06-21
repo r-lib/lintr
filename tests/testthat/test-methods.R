@@ -56,14 +56,13 @@ test_that("as.data.frame.lints", {
   expect_s3_class(df, "data.frame")
 
   exp <- data.frame(
-    filename = rep("dummy.R", 2L),
+    filename = "dummy.R",
     line_number = c(1L, 2L),
     column_number = c(1L, 6L),
     type = c("style", "error"),
     message = c("", "Under no circumstances is the use of foobar allowed."),
     line = c("", "a <- 1"),
-    linter = c(NA_character_, NA_character_), # These are assigned in lint() now.
-    stringsAsFactors = FALSE
+    linter = NA_character_ # These are assigned in lint() now.
   )
 
   expect_identical(df, exp)
