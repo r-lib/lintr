@@ -26,6 +26,11 @@
 #'   linters = seq_linter()
 #' )
 #'
+#' lint(
+#'   text = "unlist(lapply(x, seq_len))",
+#'   linters = seq_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "seq_along(x)",
@@ -39,6 +44,11 @@
 #'
 #' lint(
 #'   text = "dplyr::mutate(x, .id = seq_len(n()))",
+#'   linters = seq_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, seq_len)",
 #'   linters = seq_linter()
 #' )
 #'
@@ -65,6 +75,15 @@ seq_linter <- function() {
       )
     ]
   ")
+
+  map_funcs <-  xp_text_in_table(c("sapply", "lapply", "map"))
+  sequence_xpath <- glue("
+  //SYMBOL_FUNCTION_CALL[ { map_funcs } ]
+    /parent::expr/parent::expr[
+      preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
+      and expr/SYMBOL[text() = 'seq_len']
+    ]"
+  )
 
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1
@@ -113,6 +132,16 @@ seq_linter <- function() {
       )
     )
 
-    xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
+    seq_lints <- xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
+
+    potential_sequence_calls <- xml_find_all(xml, sequence_xpath)
+    sequence_lints <- xml_nodes_to_lints(
+      potential_sequence_calls,
+      source_expression,
+      "Use sequence() to generate a concatenated sequence of seq_len().",
+      type = "warning"
+    )
+
+    c(seq_lints, sequence_lints)
   })
 }
