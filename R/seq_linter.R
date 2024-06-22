@@ -76,10 +76,9 @@ seq_linter <- function() {
     ]
   ")
 
-  map_funcs <-  xp_text_in_table(c("sapply", "lapply", "map"))
+  map_funcs <-  c("sapply", "lapply", "map")
   sequence_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ { map_funcs } ]
-    /parent::expr/parent::expr[
+    parent::expr/parent::expr[
       preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
       and expr/SYMBOL[text() = 'seq_len']
     ]"
@@ -134,7 +133,8 @@ seq_linter <- function() {
 
     seq_lints <- xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
 
-    potential_sequence_calls <- xml_find_all(xml, sequence_xpath)
+    xml_map_calls <- source_expression$xml_find_function_calls(map_funcs)
+    potential_sequence_calls <- xml_find_all(xml_map_calls, sequence_xpath)
     sequence_lints <- xml_nodes_to_lints(
       potential_sequence_calls,
       source_expression,
