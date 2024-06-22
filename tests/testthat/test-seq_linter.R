@@ -133,6 +133,12 @@ test_that("finds potential sequence() replacements", {
     linter
   )
 
+  expect_lint(
+    "unlist(lapply(x, seq))",
+    lint_msg,
+    linter
+  )
+
   # Even for prefixed purrr:: calls
   expect_lint(
     "unlist(purrr::map(x, seq_len))",
