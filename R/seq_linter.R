@@ -78,10 +78,14 @@ seq_linter <- function() {
 
   map_funcs <- c("sapply", "lapply", "map")
   seq_funcs <- xp_text_in_table(c("seq_len", "seq"))
+  # count(expr) = 3 because we only want seq() calls without extra arguments
   sequence_xpath <- glue("
-    parent::expr[following-sibling::expr/SYMBOL[ {seq_funcs} ]]
-    /parent::expr[preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']]"
-  )
+    parent::expr/parent::expr[
+      count(expr) = 3
+      and expr/SYMBOL[ {seq_funcs} ]
+      and preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
+    ]
+  ")
 
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1

@@ -147,6 +147,16 @@ test_that("finds potential sequence() replacements", {
   )
 })
 
+test_that("sequence() is not recommended for complex seq() calls", {
+  linter <- seq_linter()
+
+  expect_lint(
+    "unlist(lapply(x, seq, from = 2))",
+    NULL,
+    linter
+  )
+})
+
 test_that("Message vectorization works for multiple lints", {
   linter <- seq_linter()
 
