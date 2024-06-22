@@ -80,9 +80,7 @@ seq_linter <- function() {
   seq_funcs <- xp_text_in_table(c("seq_len", "seq"))
   sequence_xpath <- glue("
     parent::expr[following-sibling::expr/SYMBOL[ {seq_funcs} ]]
-    /parent::expr/parent::expr[
-      expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
-    ]"
+    /parent::expr[preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']]"
   )
 
   ## The actual order of the nodes is document order
