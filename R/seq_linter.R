@@ -48,7 +48,7 @@
 #' )
 #'
 #' lint(
-#'   text = "sapply(x, seq_len)",
+#'   text = "sequence(x)",
 #'   linters = seq_linter()
 #' )
 #'
