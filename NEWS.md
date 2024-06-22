@@ -32,7 +32,7 @@
 
 ## New and improved features
 
-* `seq_linter()` now includes lints to inform about missed opportunities to use the `sequence()` base R function (#2618, @Bisaloo)
+* `seq_linter()` now includes lints to inform about missed opportunities to use the `sequence()` base R function, e.g. `unlist(lapply(ints, seq))` (#2618, @Bisaloo)
 * More helpful errors for invalid configs (#2253, @MichaelChirico).
 * `library_call_linter()` is extended
   + to encourage all packages to be attached with `library(symbol)`, not `library("symbol", character.only = TRUE)` or "vectorized" approaches looping over package names (part of #884, @MichaelChirico).
