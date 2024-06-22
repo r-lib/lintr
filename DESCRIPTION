@@ -112,6 +112,7 @@ Collate:
     'ifelse_censor_linter.R'
     'implicit_assignment_linter.R'
     'implicit_integer_linter.R'
+    'in_linter.R'
     'indentation_linter.R'
     'infix_spaces_linter.R'
     'inner_combine_linter.R'

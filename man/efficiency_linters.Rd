@@ -19,6 +19,7 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{if_switch_linter}}}
 \item{\code{\link{ifelse_censor_linter}}}
+\item{\code{\link{in_linter}}}
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{length_test_linter}}}
 \item{\code{\link{lengths_linter}}}
