@@ -78,9 +78,9 @@ seq_linter <- function() {
 
   map_funcs <-  c("sapply", "lapply", "map")
   sequence_xpath <- glue("
-    parent::expr/parent::expr[
-      preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
-      and expr/SYMBOL[text() = 'seq_len']
+    parent::expr[following-sibling::expr/SYMBOL[text() = 'seq_len']]
+    /parent::expr/parent::expr[
+      expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
     ]"
   )
 
