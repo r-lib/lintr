@@ -26,6 +26,11 @@
 #'   linters = seq_linter()
 #' )
 #'
+#' lint(
+#'   text = "unlist(lapply(x, seq_len))",
+#'   linters = seq_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "seq_along(x)",
@@ -39,6 +44,11 @@
 #'
 #' lint(
 #'   text = "dplyr::mutate(x, .id = seq_len(n()))",
+#'   linters = seq_linter()
+#' )
+#'
+#' lint(
+#'   text = "sequence(x)",
 #'   linters = seq_linter()
 #' )
 #'
@@ -63,6 +73,17 @@ seq_linter <- function() {
         expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]]]
         or expr[SYMBOL = '.N']
       )
+    ]
+  ")
+
+  map_funcs <- c("sapply", "lapply", "map")
+  seq_funcs <- xp_text_in_table(c("seq_len", "seq"))
+  # count(expr) = 3 because we only want seq() calls without extra arguments
+  sequence_xpath <- glue("
+    parent::expr/parent::expr[
+      count(expr) = 3
+      and expr/SYMBOL[ {seq_funcs} ]
+      and preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
     ]
   ")
 
@@ -113,6 +134,17 @@ seq_linter <- function() {
       )
     )
 
-    xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
+    seq_lints <- xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
+
+    xml_map_calls <- source_expression$xml_find_function_calls(map_funcs)
+    potential_sequence_calls <- xml_find_all(xml_map_calls, sequence_xpath)
+    sequence_lints <- xml_nodes_to_lints(
+      potential_sequence_calls,
+      source_expression,
+      "Use sequence() to generate a concatenated sequence of seq_len().",
+      type = "warning"
+    )
+
+    c(seq_lints, sequence_lints)
   })
 }
