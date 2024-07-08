@@ -1,516 +1,174 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://lintr.r-lib.org/dev/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/SUPPORT.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/articles/continuous-integration.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/articles/creating_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/articles/editors.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/articles/lintr.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/index.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/Linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/T_and_F_symbol_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/absolute_path_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/all_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/any_duplicated_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/any_is_na_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/assignment_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/available_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/backport_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/best_practices_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/boolean_arithmetic_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/brace_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/checkstyle_output.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/class_equals_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/clear_cache.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/commas_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/commented_code_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/common_mistakes_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/comparison_negation_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/condition_call_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/condition_message_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/configurable_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/conjunct_test_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/consecutive_assertion_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/consecutive_mutate_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/consistency_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/correctness_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/cyclocomp_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/default_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/default_settings.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/default_undesirable_functions.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/deprecated_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/duplicate_argument_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/efficiency_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/empty_assignment_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/equals_na_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/exclude.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/executing_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_comparison_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_identical_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_length_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_lint.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_lint_free.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_named_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_not_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_null_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_s3_class_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_s4_class_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_true_false_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/expect_type_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/fixed_regex_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/for_loop_index_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/function_argument_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/function_left_parentheses_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/function_return_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/get_r_string.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/get_source_expressions.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/ids_with_token.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/if_not_else_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/if_switch_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/ifelse_censor_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/implicit_assignment_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/implicit_integer_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/indentation_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/infix_spaces_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/inner_combine_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/is_lint_level.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/is_numeric_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/keyword_quote_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/length_levels_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/length_test_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/lengths_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/library_call_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/line_length_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/lint-s3.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/lint.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/linters_with_defaults.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/linters_with_tags.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/lintr-deprecated.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/lintr-package.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/list_comparison_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/literal_coercion_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/make_linter_from_xpath.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/matrix_apply_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/missing_argument_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/missing_package_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/modify_defaults.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/namespace_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/nested_ifelse_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/nested_pipe_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/nonportable_path_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/normalize_exclusions.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/nrow_subset_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/numeric_leading_zero_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/nzchar_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/object_length_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/object_name_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/object_overwrite_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/object_usage_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/one_call_pipe_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/outer_negation_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/package_development_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/package_hooks_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/paren_body_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/parse_exclusions.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/paste_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/pipe_call_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/pipe_consistency_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/pipe_continuation_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/pipe_return_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/pkg_testthat_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/print_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/quotes_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/read_settings.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/readability_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/redundant_equals_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/redundant_ifelse_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/regex_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/regex_subset_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/rep_len_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/repeat_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/return_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/robustness_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/routine_registration_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/sample_int_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/sarif_output.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/scalar_in_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/semicolon_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/seq_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/sort_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/spaces_inside_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/spaces_left_parentheses_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/sprintf_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/stopifnot_all_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/string_boundary_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/strings_as_factors_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/style_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/system_file_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/terminal_close_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/tidy_design_linters.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/todo_comment_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/trailing_blank_lines_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/trailing_whitespace_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/undesirable_function_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/undesirable_operator_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/unnecessary_concatenation_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/unnecessary_lambda_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/unnecessary_nesting_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/unnecessary_placeholder_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/unreachable_code_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/unused_import_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/use_lintr.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/vector_logic_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/which_grepl_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/whitespace_linter.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/xml_nodes_to_lints.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/xp_call_name.html</loc>
-  </url>
-  <url>
-    <loc>https://lintr.r-lib.org/dev/reference/yoda_test_linter.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://lintr.r-lib.org/dev/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/LICENSE-text.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/SUPPORT.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/articles/continuous-integration.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/articles/creating_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/articles/editors.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/articles/index.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/articles/lintr.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/authors.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/index.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/news/index.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/Linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/T_and_F_symbol_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/absolute_path_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/all_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/any_duplicated_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/any_is_na_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/assignment_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/available_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/backport_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/best_practices_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/boolean_arithmetic_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/brace_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/checkstyle_output.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/class_equals_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/clear_cache.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/commas_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/commented_code_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/common_mistakes_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/comparison_negation_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/condition_call_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/condition_message_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/configurable_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/conjunct_test_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/consecutive_assertion_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/consecutive_mutate_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/consistency_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/correctness_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/cyclocomp_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/default_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/default_settings.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/default_undesirable_functions.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/deprecated_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/duplicate_argument_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/efficiency_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/empty_assignment_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/equals_na_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/exclude.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/executing_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_comparison_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_identical_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_length_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_lint.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_lint_free.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_named_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_not_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_null_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_s3_class_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_s4_class_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_true_false_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/expect_type_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/fixed_regex_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/for_loop_index_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/function_argument_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/function_left_parentheses_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/function_return_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/get_r_string.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/get_source_expressions.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/ids_with_token.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/if_not_else_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/if_switch_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/ifelse_censor_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/implicit_assignment_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/implicit_integer_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/indentation_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/index.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/infix_spaces_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/inner_combine_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/is_lint_level.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/is_numeric_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/keyword_quote_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/length_levels_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/length_test_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/lengths_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/library_call_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/line_length_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/lint-s3.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/lint.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/linters_with_defaults.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/linters_with_tags.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/lintr-deprecated.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/lintr-package.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/list_comparison_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/literal_coercion_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/make_linter_from_xpath.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/matrix_apply_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/missing_argument_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/missing_package_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/modify_defaults.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/namespace_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/nested_ifelse_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/nested_pipe_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/nonportable_path_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/normalize_exclusions.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/nrow_subset_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/numeric_leading_zero_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/nzchar_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/object_length_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/object_name_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/object_overwrite_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/object_usage_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/one_call_pipe_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/outer_negation_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/package_development_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/package_hooks_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/paren_body_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/parse_exclusions.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/paste_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/pipe_call_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/pipe_consistency_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/pipe_continuation_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/pipe_return_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/pkg_testthat_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/print_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/quotes_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/read_settings.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/readability_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/redundant_equals_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/redundant_ifelse_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/regex_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/regex_subset_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/rep_len_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/repeat_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/return_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/robustness_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/routine_registration_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/sample_int_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/sarif_output.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/scalar_in_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/semicolon_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/seq_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/sort_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/spaces_inside_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/spaces_left_parentheses_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/sprintf_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/stopifnot_all_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/string_boundary_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/strings_as_factors_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/style_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/system_file_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/terminal_close_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/tidy_design_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/todo_comment_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/trailing_blank_lines_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/trailing_whitespace_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/undesirable_function_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/undesirable_operator_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/unnecessary_concatenation_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/unnecessary_lambda_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/unnecessary_nesting_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/unnecessary_placeholder_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/unreachable_code_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/unused_import_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/use_lintr.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/vector_logic_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/which_grepl_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/whitespace_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/xml_nodes_to_lints.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/xp_call_name.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/yoda_test_linter.html</loc></url>
 </urlset>
+
