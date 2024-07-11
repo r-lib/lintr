@@ -26,6 +26,10 @@ reference:
     contents:
       - ends_with("linter")
 
+  - title: Groups of linters
+    contents:
+      - ends_with("linters")
+
   - title: Common default configurations
     contents:
       - all_undesirable_functions
@@ -46,7 +50,6 @@ reference:
 
   - title: Meta-tooling
     contents:
-      - ends_with("linters")
       - Lint
       - checkstyle_output
       - sarif_output
