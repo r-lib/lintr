@@ -26,7 +26,7 @@ reference:
     contents:
       - ends_with("linter")
 
-  - title: Grouped linters
+  - title: Groups of linters
     contents:
       - ends_with("linters")
 
