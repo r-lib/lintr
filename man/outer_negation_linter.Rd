@@ -7,7 +7,7 @@
 outer_negation_linter()
 }
 \description{
-\code{any(!x)} is logically equivalent to \code{!any(x)}; ditto for the equivalence of
+\code{any(!x)} is logically equivalent to \code{!all(x)}; ditto for the equivalence of
 \code{all(!x)} and \code{!any(x)}. Negating after aggregation only requires inverting
 one logical value, and is typically more readable.
 }

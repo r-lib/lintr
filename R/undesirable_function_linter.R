@@ -1,7 +1,6 @@
 #' Undesirable function linter
 #'
-#' Report the use of undesirable functions (e.g. [base::return()], [base::options()], or
-#' [base::sapply()]) and suggest an alternative.
+#' Report the use of undesirable functions and suggest an alternative.
 #'
 #' @param fun Named character vector. `names(fun)` correspond to undesirable functions,
 #'   while the values give a description of why the function is undesirable.
@@ -59,10 +58,10 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
   if (is.null(names(fun)) || !all(nzchar(names(fun))) || length(fun) == 0L) {
-    stop(
-      "'fun' should be a non-empty named character vector; use missing elements to indicate default messages.",
-      call. = FALSE
-    )
+    cli_abort(c(
+      x = "{.arg fun} should be a non-empty named character vector.",
+      i = "Use missing elements to indicate default messages."
+    ))
   }
 
   xp_condition <- xp_and(

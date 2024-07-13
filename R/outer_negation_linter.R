@@ -1,6 +1,6 @@
 #' Require usage of `!any(x)` over `all(!x)`, `!all(x)` over `any(!x)`
 #'
-#' `any(!x)` is logically equivalent to `!any(x)`; ditto for the equivalence of
+#' `any(!x)` is logically equivalent to `!all(x)`; ditto for the equivalence of
 #'   `all(!x)` and `!any(x)`. Negating after aggregation only requires inverting
 #'   one logical value, and is typically more readable.
 #'

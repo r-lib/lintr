@@ -1,23 +1,19 @@
 test_that("input validation for available_linters works as expected", {
-  expect_error(available_linters(1L), "`packages` must be a character vector.")
-  expect_error(available_linters(tags = 1L), "`tags` must be a character vector.")
-  expect_error(available_linters(exclude_tags = 1L), "`exclude_tags` must be a character vector.")
+  expect_error(available_linters(1L), "`packages` must be a <character> vector.")
+  expect_error(available_linters(tags = 1L), "`tags` must be a <character> vector.")
+  expect_error(available_linters(exclude_tags = 1L), "`exclude_tags` must be a <character> vector.")
 })
 
 test_that("validate_linter_db works as expected", {
   df_empty <- data.frame()
   expect_warning(
     lintr:::validate_linter_db(df_empty, "mypkg"),
-    "`linters.csv` must contain the columns 'linter' and 'tags'.",
+    'must contain the columns "linter" and "tags"',
     fixed = TRUE
   )
   expect_false(suppressWarnings(lintr:::validate_linter_db(df_empty, "mypkg")))
 
-  df <- data.frame(
-    linter = "absolute_path_linter",
-    tags = "robustness",
-    stringsAsFactors = FALSE
-  )
+  df <- data.frame(linter = "absolute_path_linter", tags = "robustness")
   expect_true(lintr:::validate_linter_db(df, "mypkg"))
 })
 
@@ -160,6 +156,7 @@ test_that("lintr help files are up to date", {
   )
 
   # Counts of tags from available_linters()
+  #   NB: as.data.frame.table returns stringsAsFactors=TRUE default in R>4
   db_tag_table <- as.data.frame(
     table(tag = unlist(lintr_db$tags)),
     responseName = "n_linters",

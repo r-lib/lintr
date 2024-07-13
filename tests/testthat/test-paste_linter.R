@@ -52,12 +52,6 @@ test_that("paste_linter blocks simple disallowed usages for collapse=', '", {
     rex::rex('toString(.) is more expressive than paste(., collapse = ", ")'),
     paste_linter()
   )
-
-  expect_lint(
-    "paste0(foo(x), collapse = ', ')",
-    rex::rex('toString(.) is more expressive than paste(., collapse = ", ")'),
-    paste_linter()
-  )
 })
 
 test_that("paste_linter respects non-default arguments", {
@@ -65,7 +59,6 @@ test_that("paste_linter respects non-default arguments", {
   expect_lint("paste('a', 'b', sep = '')", NULL, paste_linter(allow_empty_sep = TRUE))
 
   expect_lint("paste(collapse = ', ', x)", NULL, paste_linter(allow_to_string = TRUE))
-  expect_lint("paste0(foo(x), collapse = ', ')", NULL, paste_linter(allow_to_string = TRUE))
 })
 
 test_that("paste_linter works for raw strings", {
@@ -107,11 +100,11 @@ test_that("paste_linter skips allowed usages for strrep()", {
 })
 
 test_that("paste_linter blocks simple disallowed usages", {
-  linter <- paste_linter()
-  lint_msg <- rex::rex("strrep(x, times) is better than paste")
-
-  expect_lint("paste0(rep('*', 20L), collapse='')", lint_msg, linter)
-  expect_lint("paste(rep('#', width), collapse='')", lint_msg, linter)
+  expect_lint(
+    "paste(rep('#', width), collapse='')",
+    rex::rex("strrep(x, times) is better than paste"),
+    paste_linter()
+  )
 })
 
 test_that("paste_linter skips allowed usages for file paths", {
@@ -156,9 +149,6 @@ test_that("paste_linter ignores non-path cases with paste0", {
   expect_lint("paste0(x)", NULL, linter)
   expect_lint("paste0('a')", NULL, linter)
   expect_lint("paste0('a', 1)", NULL, linter)
-
-  # paste0(..., collapse=collapse) not directly mapped to file.path
-  expect_lint("paste0(x, collapse = '/')", NULL, linter)
 })
 
 test_that("paste_linter detects paths built with '/' and paste0", {
@@ -244,4 +234,56 @@ test_that("raw strings are detected in file path logic", {
   expect_lint("paste0(x, R'{/abc/}', y)", lint_msg, linter)
   expect_lint("paste(x, y, sep = R'{//}')", NULL, linter)
   expect_lint("paste(x, y, sep = R'{/}')", lint_msg, linter)
+})
+
+test_that("paste0(collapse=...) is caught", {
+  linter <- paste_linter()
+  lint_msg <- rex::rex("Use paste(), not paste0(), to collapse a character vector when sep= is not used.")
+
+  expect_lint("paste(x, collapse = '')", NULL, linter)
+  expect_lint("paste0(a, b, collapse = '')", NULL, linter)
+  # pass-through can pass any number of arguments
+  expect_lint("paste0(..., collapse = '')", NULL, linter)
+  expect_lint("paste0(x, collapse = '')", lint_msg, linter)
+  expect_lint("paste0(x, collapse = 'xxx')", lint_msg, linter)
+  expect_lint("paste0(foo(x, y, z), collapse = '')", lint_msg, linter)
+})
+
+local({
+  linter <- paste_linter()
+  lint_msg <- rex::rex("Use paste(), not paste0(), to collapse a character vector when sep= is not used.")
+  pipes <- pipes()
+
+  patrick::with_parameters_test_that(
+    "paste0(collapse=...) is caught in pipes",
+    {
+      expect_lint(sprintf('x %s paste0(y, collapse = "")', pipe), NULL, linter)
+      expect_lint(sprintf('x %s paste0(collapse = "")', pipe), lint_msg, linter)
+    },
+    pipe = pipes,
+    .test_name = pipes
+  )
+})
+
+test_that("paste0(collapse=...) cases interacting with other rules are handled", {
+  linter <- paste_linter()
+  lint_msg <- rex::rex("Use paste(), not paste0(), to collapse a character vector when sep= is not used.")
+
+  # multiple lints when collapse= happens to be ", "
+  expect_lint(
+    "paste0(foo(x), collapse = ', ')",
+    list(rex::rex('toString(.) is more expressive than paste(., collapse = ", ")'), lint_msg),
+    linter
+  )
+  expect_lint("paste0(foo(x), collapse = ', ')", lint_msg, paste_linter(allow_to_string = TRUE))
+
+  expect_lint(
+    "paste0(rep('*', 20L), collapse='')",
+    list(rex::rex("strrep(x, times) is better than paste"), lint_msg),
+    linter
+  )
+
+  # paste0(..., collapse=collapse) not directly mapped to file.path
+  expect_lint("paste0(x, collapse = '/')", lint_msg, linter)
+  expect_lint("paste0(x, y, collapse = '/')", NULL, linter)
 })

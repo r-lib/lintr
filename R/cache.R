@@ -53,10 +53,9 @@ load_cache <- function(file, path = NULL) {
         invokeRestart("muffleWarning")
       },
       error = function(e) {
-        warning(
-          "Could not load cache file '", file, "':\n",
-          conditionMessage(e),
-          call. = FALSE
+        cli_warn(
+          "Could not load cache file {.file {file}}:",
+          parent = e
         )
       }
     )

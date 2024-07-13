@@ -1,5 +1,5 @@
 test_that("literal_coercion_linter skips allowed usages", {
-  linter <- line_length_linter()
+  linter <- literal_coercion_linter()
 
   # naive xpath includes the "_f0" here as a literal
   expect_lint('as.numeric(x$"_f0")', NULL, linter)
@@ -23,7 +23,7 @@ test_that("literal_coercion_linter skips allowed usages", {
 })
 
 test_that("literal_coercion_linter skips allowed rlang usages", {
-  linter <- line_length_linter()
+  linter <- literal_coercion_linter()
 
   expect_lint("int(1, 2.0, 3)", NULL, linter)
   expect_lint("chr('e', 'ab', 'xyz')", NULL, linter)
@@ -38,6 +38,18 @@ test_that("literal_coercion_linter skips allowed rlang usages", {
 
 test_that("literal_coercion_linter skips quoted keyword arguments", {
   expect_lint("as.numeric(foo('a' = 1))", NULL, literal_coercion_linter())
+})
+
+test_that("no warnings surfaced by running coercion", {
+  linter <- literal_coercion_linter()
+
+  expect_no_warning(
+    expect_lint("as.integer('a')", "Use NA_integer_", linter)
+  )
+
+  expect_no_warning(
+    expect_lint("as.integer(2147483648)", "Use NA_integer_", linter)
+  )
 })
 
 skip_if_not_installed("tibble")

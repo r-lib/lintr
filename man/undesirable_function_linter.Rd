@@ -20,8 +20,7 @@ use \code{\link[=modify_defaults]{modify_defaults()}}.}
 name as a symbol undesirable or not.}
 }
 \description{
-Report the use of undesirable functions (e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
-\code{\link[base:lapply]{base::sapply()}}) and suggest an alternative.
+Report the use of undesirable functions and suggest an alternative.
 }
 \examples{
 # defaults for which functions are considered undesirable

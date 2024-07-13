@@ -31,8 +31,11 @@
 #' names(my_undesirable_functions)
 #' @export
 modify_defaults <- function(defaults, ...) {
-  if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    stop("`defaults` must be a named list.", call. = FALSE)
+  if (missing(defaults)) {
+    cli_abort("{.arg defaults} is a required argument, but is missing.")
+  }
+  if (!is.list(defaults) || !all(nzchar(names2(defaults)))) {
+    cli_abort("{.arg defaults} must be a named list, not {.obj_type_friendly {defaults}}.")
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -43,13 +46,10 @@ modify_defaults <- function(defaults, ...) {
 
   to_null <- vapply(vals, is.null, logical(1L))
   if (!all(nms[to_null] %in% names(defaults))) {
-    bad_nms <- setdiff(nms[to_null], names(defaults))
-    is_are <- if (length(bad_nms) > 1L) "are" else "is"
-    warning(
-      "Trying to remove ", glue_collapse(sQuote(bad_nms), sep = ", ", last = " and "),
-      ", which ", is_are, " not in `defaults`.",
-      call. = FALSE
-    )
+    bad_nms <- setdiff(nms[to_null], names(defaults)) # nolint: object_usage_linter. TODO(#2252).
+    cli_warn(c(
+      i = "Trying to remove {.field {bad_nms}}, which {?is/are} not in {.arg defaults}."
+    ))
   }
 
   is.na(vals) <- nms == vals
@@ -93,7 +93,7 @@ modify_defaults <- function(defaults, ...) {
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
-    stop("`tags` must be a character vector, or NULL.", call. = FALSE)
+    cli_abort("{.arg tags} must be a character vector, or {.code NULL}, not {.obj_type_friendly {tags}}.")
   }
   tagged_linters <- list()
 
@@ -103,12 +103,11 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
     available <- available_linters(packages = package, tags = tags, exclude_tags = exclude_tags)
     if (nrow(available) > 0L) {
       if (!all(available$linter %in% ns_exports)) {
-        missing_linters <- setdiff(available$linter, ns_exports)
-        stop(
-          "Linters ", glue_collapse(sQuote(missing_linters), sep = ", ", last = " and "),
-          " advertised by `available_linters()` but not exported by package ", package, ".",
-          call. = FALSE
-        )
+        missing_linters <- setdiff(available$linter, ns_exports) # nolint: object_usage_linter. TODO(#2252).
+        cli_abort(c(
+          x = "Can't find linters {.fn {missing_linters}}.",
+          i = "These are advertised by {.fn available_linters}, but are not exported by package {.pkg {package}}."
+        ))
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
       linters <- Map(
@@ -181,11 +180,14 @@ all_linters <- function(..., packages = "lintr") {
 linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {
-    warning(
-      "'default' is not an argument to linters_with_defaults(). Did you mean 'defaults'? ",
-      "This warning will be removed when with_defaults() is fully deprecated.",
-      call. = FALSE
-    )
+    cli_warn(c(
+      x = "
+        {.arg default} is not an argument to {.help [{.fn linters_with_defaults}](lintr::linters_with_defaults)}.
+      ",
+      i = "Did you mean {.arg defaults}?",
+      # make message more subtle
+      cli::col_silver("This warning will be removed when {.fun with_defaults} is fully deprecated.")
+    ))
     defaults <- dots$default
     nms <- names2(dots)
     missing_index <- !nzchar(nms, keepNA = TRUE)
@@ -211,9 +213,9 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
     error = function(e) {
-      stop(
-        "Could not create linter with ", package, "::", linter_name, "(): ", conditionMessage(e),
-        call. = FALSE
+      cli_abort(
+        "Could not create linter with {.fun {package}::{linter_name}}.",
+        parent = e
       )
     }
   )

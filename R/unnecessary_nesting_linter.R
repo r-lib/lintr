@@ -91,7 +91,7 @@
 #'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
 #' @seealso
-#'  - [cyclocomp_linter()] for another linter that penalizes overly complexcode.
+#'  - [cyclocomp_linter()] for another linter that penalizes overly complex code.
 #'  - [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_nesting_linter <- function(
@@ -197,7 +197,7 @@ unnecessary_nesting_linter <- function(
     collapse = " | "
   )
 
-  unnecessary_else_brace_xpath <-  "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
+  unnecessary_else_brace_xpath <- "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

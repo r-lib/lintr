@@ -17,7 +17,6 @@ default_linters <- modify_defaults(
   brace_linter(),
   commas_linter(),
   commented_code_linter(),
-  cyclocomp_linter(),
   equals_na_linter(),
   function_left_parentheses_linter(),
   indentation_linter(),
@@ -169,9 +168,9 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
 
 rd_auto_link <- function(x) {
   x <- unlist(x)
-  x <- gsub("([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[\\1:\\2]{\\1::\\2()}}", x)
-  x <- gsub("([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\\(\\)", "\\1\\\\code{\\\\link[=\\2]{\\2()}}", x)
-  x <- gsub("`([^`]+)`", "\\\\code{\\1}", x)
+  x <- gsub(R"{([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\(\)}", R"(\\code{\\link[\1:\2]{\1::\2()}})", x)
+  x <- gsub(R"{([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\(\)}", R"(\1\\code{\\link[=\2]{\2()}})", x)
+  x <- gsub("`([^`]+)`", R"(\\code{\1})", x)
   x
 }
 
@@ -182,7 +181,7 @@ rd_undesirable_functions <- function() {
     "The following functions are sometimes regarded as undesirable:",
     "\\itemize{",
     sprintf(
-      "\\item \\code{\\link[=%1$s]{%1$s()}} As an alternative, %2$s.",
+      R"(\item \code{\link[=%1$s]{%1$s()}} As an alternative, %2$s.)",
       names(default_undesirable_functions), alternatives
     ),
     "}"
@@ -257,7 +256,6 @@ rd_undesirable_operators <- function() {
 #'  - `exclusions`: a list of exclusions, see [exclude()] for a complete description of valid values.
 #'  - `cache_directory`: location of cache directory
 #'  - `comment_token`: a GitHub token character
-#'  - `comment_bot`: decides if lintr comment bot on GitHub can comment on commits
 #'  - `error_on_lint`: decides if error should be produced when any lints are found
 #'
 #' There are no settings without defaults, i.e., this list describes every valid setting.
@@ -297,9 +295,8 @@ settings <- new.env(parent = emptyenv())
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # R>=4.0.0: deparse1
   # R>=4.1.0: ...names
-  backports::import(pkgname, c("deparse1", "...names"))
+  backports::import(pkgname, "...names")
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
@@ -328,7 +325,6 @@ settings <- new.env(parent = emptyenv())
       ),
       54L - 13L
     ),
-    comment_bot = logical_env("LINTR_COMMENT_BOT") %||% TRUE,
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
   ))
 

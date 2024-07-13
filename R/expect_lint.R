@@ -1,6 +1,8 @@
 #' Lint expectation
 #'
-#' This is an expectation function to test that the lints produced by `lint` satisfy a number of checks.
+#' These are expectation functions to test specified linters on sample code in the `testthat` testing framework.
+#' * `expect_lint` asserts that specified lints are generated.
+#' * `expect_no_lint` asserts that no lints are generated.
 #'
 #' @param content a character vector for the file content to be linted, each vector element representing a line of
 #' text.
@@ -22,7 +24,7 @@
 #' @return `NULL`, invisibly.
 #' @examples
 #' # no expected lint
-#' expect_lint("a", NULL, trailing_blank_lines_linter())
+#' expect_no_lint("a", trailing_blank_lines_linter())
 #'
 #' # one expected lint
 #' expect_lint("a\n", "trailing blank", trailing_blank_lines_linter())
@@ -41,10 +43,12 @@
 #' @export
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   if (!requireNamespace("testthat", quietly = TRUE)) {
-    stop( # nocov start
-      "'expect_lint' is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
-      call. = FALSE
-    ) # nocov end
+    # nocov start
+    cli_abort(
+      # nolint next: line_length_linter.
+      "{.fun expect_lint} and {.fun expect_no_lint} are designed to work within the {.pkg testthat} testing framework, which is not installed."
+    )
+    # nocov end
   }
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
@@ -61,7 +65,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
-  lint_str <- if (n_lints) paste0(c("", lints), collapse = "\n") else ""
+  lint_str <- if (n_lints) paste(c("", lints), collapse = "\n") else ""
 
   wrong_number_fmt <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
@@ -88,10 +92,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
         itr <<- itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
-            stop(sprintf(
-              "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
-              itr, field, toString(lint_fields)
-            ), call. = FALSE)
+            cli_abort(c(
+              x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+              i = "Valid fields are: {.field {lint_fields}}."
+            ))
           }
           check <- check[[field]]
           value <- lint[[field]]
@@ -106,11 +110,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
             isTRUE(all.equal(value, check))
           }
           if (!is.logical(ok)) {
-            stop(
-              "Invalid regex result, did you mistakenly have a capture group in the regex? ",
-              "Be sure to escape parenthesis with `[]`",
-              call. = FALSE
-            )
+            cli_abort(c(
+              x = "Invalid regex result. Did you mistakenly have a capture group in the regex?",
+              i = "You can match parentheses with a character class, i.e. inside `[]`."
+            ))
           }
           testthat::expect(ok, msg)
         })
@@ -123,11 +126,16 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   invisible(NULL)
 }
 
+#' @rdname expect_lint
+#' @export
+expect_no_lint <- function(content, ..., file = NULL, language = "en") {
+  expect_lint(content, NULL, ..., file = file, language = language)
+}
 
 #' Test that the package is lint free
 #'
 #' This function is a thin wrapper around lint_package that simply tests there are no
-#' lints in the package.  It can be used to ensure that your tests fail if the package
+#' lints in the package. It can be used to ensure that your tests fail if the package
 #' contains lints.
 #'
 #' @param ... arguments passed to [lint_package()]

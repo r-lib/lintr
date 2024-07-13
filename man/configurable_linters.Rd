@@ -44,6 +44,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{return_linter}}}
+\item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{todo_comment_linter}}}

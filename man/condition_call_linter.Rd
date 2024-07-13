@@ -7,7 +7,7 @@
 condition_call_linter(display_call = FALSE)
 }
 \arguments{
-\item{display_call}{Logical specifying expected behaviour regarding \code{call.}
+\item{display_call}{Logical specifying expected behavior regarding \code{call.}
 argument in conditions.
 \itemize{
 \item \code{NA} forces providing \verb{call. =} but ignores its value (this can be used in

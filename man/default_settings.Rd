@@ -10,7 +10,7 @@
 \alias{.lintr}
 \title{Default lintr settings}
 \format{
-An object of class \code{list} of length 13.
+An object of class \code{list} of length 12.
 }
 \usage{
 default_settings
@@ -26,7 +26,6 @@ The default settings consist of
 \item \code{exclusions}: a list of exclusions, see \code{\link[=exclude]{exclude()}} for a complete description of valid values.
 \item \code{cache_directory}: location of cache directory
 \item \code{comment_token}: a GitHub token character
-\item \code{comment_bot}: decides if lintr comment bot on GitHub can comment on commits
 \item \code{error_on_lint}: decides if error should be produced when any lints are found
 }
 

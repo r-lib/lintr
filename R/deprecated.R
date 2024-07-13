@@ -15,6 +15,6 @@ lintr_deprecated <- function(what, alternative = NULL, version = NULL,
     ". ",
     if (length(alternative) > 0L) c("Use ", alternative, " instead.")
   )
-  msg <- paste0(msg, collapse = "")
+  msg <- paste(msg, collapse = "")
   signal(msg, call. = FALSE, domain = NA)
 }

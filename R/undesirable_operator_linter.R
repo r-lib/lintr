@@ -44,10 +44,10 @@
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
   if (is.null(names(op)) || !all(nzchar(names(op))) || length(op) == 0L) {
-    stop(
-      "'op' should be a non-empty named character vector; use missing elements to indicate default messages.",
-      call. = FALSE
-    )
+    cli_abort(c(
+      x = "{.arg op} should be a non-empty named character vector.",
+      i = "Use missing elements to indicate default messages."
+    ))
   }
   # infix must be handled individually below; non-assignment `=` are always OK
   operator_nodes <- infix_metadata$xml_tag_exact[
@@ -61,7 +61,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
   }
 
   if (length(operator_nodes) == 0L) {
-    stop("Did not recognize any valid operators in request for: ", toString(names(op)), call. = FALSE)
+    cli_abort("Did not recognize any valid operators in request for: {.str {names(op)}}")
   }
 
   xpath <- paste(paste0("//", operator_nodes), collapse = " | ")

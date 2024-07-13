@@ -435,15 +435,16 @@ test_that("it works outside of a package", {
 
 test_that("cache = TRUE workflow works", {
   # Need a test structure with a safe to load .lintr
-  pkg <- "dummy_packages/package"
-  files <- normalizePath(list.files(pkg, recursive = TRUE, full.names = TRUE))
+  withr::local_dir(file.path("dummy_packages", "package"))
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+  files <- normalize_path(list.files(recursive = TRUE, full.names = TRUE))
 
   # Manually clear cache (that function is exported)
   for (f in files) {
     clear_cache(file = f)
   }
-  l1 <- lint_package(pkg, cache = TRUE)
-  l2 <- lint_package(pkg, cache = TRUE)
+  l1 <- lint_package(cache = TRUE)
+  l2 <- lint_package(cache = TRUE)
   expect_identical(l1, l2)
 })
 

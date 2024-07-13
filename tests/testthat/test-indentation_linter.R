@@ -867,3 +867,15 @@ test_that("function shorthand is handled", {
     linter
   )
 })
+
+test_that("lint metadata works for 0-space case", {
+  expect_lint(
+    trim_some("
+    if (TRUE) {
+    FALSE
+    }
+    "),
+    list(ranges = list(1L:2L)),
+    indentation_linter()
+  )
+})

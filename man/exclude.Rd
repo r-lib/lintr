@@ -42,3 +42,4 @@ a character vector of files to exclude or a vector of lines to exclude.
 }
 }
 }
+\keyword{internal}

@@ -42,3 +42,4 @@ A possibly named list of excluded lines, possibly for specific linters.
 \description{
 read a source file and parse all the excluded lines from it
 }
+\keyword{internal}

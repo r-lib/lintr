@@ -418,6 +418,9 @@ patrick::with_parameters_test_that(
       # otherwise we test the trivial linter (#2339)
       linter <- backport_linter(r_version = "3.6.0")
     } else {
+      if (linter == "cyclocomp_linter") {
+        skip_if_not_installed("cyclocomp")
+      }
       linter <- eval(call(linter))
     }
     expression <- expressions[[expression_idx]]

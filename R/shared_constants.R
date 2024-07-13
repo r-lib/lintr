@@ -115,7 +115,7 @@ get_token_replacement <- function(token_content, token_type) {
 #   r_string gives the operator as you would write it in R code.
 
 # styler: off
-infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
+infix_metadata <- data.frame(matrix(byrow = TRUE, ncol = 2L, c(
   "OP-PLUS",         "+",
   "OP-MINUS",        "-",
   "OP-TILDE",        "~",
@@ -203,7 +203,7 @@ object_name_xpath <- local({
   xp_assignment_target_fmt <- paste0(
     "not(parent::expr[OP-DOLLAR or OP-AT])",
     "and %1$s::expr[",
-    " following-sibling::LEFT_ASSIGN",
+    " following-sibling::LEFT_ASSIGN%2$s",
     " or preceding-sibling::RIGHT_ASSIGN",
     " or following-sibling::EQ_ASSIGN",
     "]",
@@ -213,9 +213,15 @@ object_name_xpath <- local({
     "])"
   )
 
+  # strings on LHS of := are only checked if they look like data.table usage DT[, "a" := ...]
+  dt_walrus_cond <- "[
+    text() != ':='
+    or parent::expr/preceding-sibling::OP-LEFT-BRACKET
+  ]"
+
   glue("
-  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor')} ]
-  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent')} ]
+  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]
+  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent', dt_walrus_cond)} ]
   |  //SYMBOL_FORMALS
   ")
 })
@@ -268,14 +274,16 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 }
 
 unexpected_glue_parse_error <- function(cond) {
-  stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond), call. = FALSE) # nocov
+  cli_abort(c(
+    x = "Unexpected failure to parse glue call.",
+    i = "Please report: {conditionMessage(cond)}"
+  )) # nocov
 }
 glue_parse_failure_warning <- function(cond) {
-  warning(
-    "Evaluating glue expression while testing for local variable usage failed: ", conditionMessage(cond),
-    "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
-    call. = FALSE
-  )
+  cli_warn(c(
+    x = "Evaluating glue expression while testing for local variable usage failed: {conditionMessage(cond)}",
+    i = "Please ensure correct glue syntax, e.g., matched delimiters."
+  ))
   NULL
 }
 glue_symbol_extractor <- function(text, envir, data) {
