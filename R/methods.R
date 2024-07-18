@@ -92,7 +92,7 @@ print.lints <- function(x, ...) {
     inline_data <- x[[1L]][["filename"]] == "<text>"
     if (!inline_data && use_rstudio_source_markers) {
       rstudio_source_markers(x)
-    } else if (in_github_actions()) {
+    } else if (in_github_actions() && !in_pkgdown()) {
       github_actions_log_lints(x, project_dir = github_annotation_project_dir)
     } else {
       lapply(x, print, ...)

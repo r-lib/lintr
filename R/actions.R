@@ -2,6 +2,10 @@ in_github_actions <- function() {
   identical(Sys.getenv("GITHUB_ACTIONS"), "true")
 }
 
+in_pkgdown <- function() {
+  identical(Sys.getenv("IN_PKGDOWN"), "true")
+}
+
 # Output logging commands for any lints found
 github_actions_log_lints <- function(lints, project_dir = "") {
   for (x in lints) {
