@@ -52,7 +52,6 @@ patrick::with_parameters_test_that(
   env_var_value = list("", "F", NA, NULL)
 )
 
-
 test_that("GitHub Actions log is skipped in pkgdown websites", {
   withr::local_envvar(list(GITHUB_ACTIONS = "true", IN_PKGDOWN = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
