@@ -101,25 +101,33 @@ more readable form.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (!A) x else y"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_not_else_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=5::file=&lt;text&gt;,line=1,col=5,[if_not_else_linter] Prefer `if (A) x else y` to the less-readable `if (!A) y else x` in a simple if/else statement.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:5: </span><span style="color: #BB00BB;">warning: </span>[if_not_else_linter] <span style="font-weight: bold;">Prefer `if (A) x else y` to the less-readable `if (!A) y else x` in a simple if/else statement.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (!A) x else y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ^~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (!A) x else if (!B) y else z"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_not_else_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=20::file=&lt;text&gt;,line=1,col=20,[if_not_else_linter] Prefer `if (A) x else y` to the less-readable `if (!A) y else x` in a simple if/else statement.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:20: </span><span style="color: #BB00BB;">warning: </span>[if_not_else_linter] <span style="font-weight: bold;">Prefer `if (A) x else y` to the less-readable `if (!A) y else x` in a simple if/else statement.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (!A) x else if (!B) y else z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    ^~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"ifelse(!is_treatment, x, y)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_not_else_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[if_not_else_linter] Prefer `ifelse(A, x, y)` to the less-readable `ifelse(!A, y, x)`.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[if_not_else_linter] <span style="font-weight: bold;">Prefer `ifelse(A, x, y)` to the less-readable `ifelse(!A, y, x)`.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ifelse(!is_treatment, x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (!is.null(x)) x else 2"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_not_else_linter</span><span class="op">(</span>exceptions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=5::file=&lt;text&gt;,line=1,col=5,[if_not_else_linter] Prefer `if (A) x else y` to the less-readable `if (!A) y else x` in a simple if/else statement.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:5: </span><span style="color: #BB00BB;">warning: </span>[if_not_else_linter] <span style="font-weight: bold;">Prefer `if (A) x else y` to the less-readable `if (!A) y else x` in a simple if/else statement.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (!is.null(x)) x else 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ^~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

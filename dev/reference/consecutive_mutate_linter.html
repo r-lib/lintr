@@ -100,7 +100,9 @@ as sophisticated as that in the default <code>dplyr</code>, for example in
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x %&gt;% mutate(a = 1) %&gt;% mutate(b = 2)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">consecutive_mutate_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=25::file=&lt;text&gt;,line=1,col=25,[consecutive_mutate_linter] Unify consecutive calls to mutate().</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:25: </span><span style="color: #BB00BB;">warning: </span>[consecutive_mutate_linter] <span style="font-weight: bold;">Unify consecutive calls to mutate().</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x %&gt;% mutate(a = 1) %&gt;% mutate(b = 2)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         ^~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

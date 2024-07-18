@@ -89,27 +89,39 @@ directly by a closing bracket without a space.</p></dd>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"switch(op , x = foo, y = bar)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">commas_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=10::file=&lt;text&gt;,line=1,col=10,[commas_linter] Remove spaces before a comma.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:10: </span><span style="color: #0000BB;">style: </span>[commas_linter] <span style="font-weight: bold;">Remove spaces before a comma.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> switch(op , x = foo, y = bar)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"mean(x,trim = 0.2,na.rm = TRUE)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">commas_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=8::file=&lt;text&gt;,line=1,col=8,[commas_linter] Put a space after a comma.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=19::file=&lt;text&gt;,line=1,col=19,[commas_linter] Put a space after a comma.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:8: </span><span style="color: #0000BB;">style: </span>[commas_linter] <span style="font-weight: bold;">Put a space after a comma.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mean(x,trim = 0.2,na.rm = TRUE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        ^</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:19: </span><span style="color: #0000BB;">style: </span>[commas_linter] <span style="font-weight: bold;">Put a space after a comma.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mean(x,trim = 0.2,na.rm = TRUE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x[ ,, drop=TRUE]"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">commas_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[commas_linter] Remove spaces before a comma.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=5::file=&lt;text&gt;,line=1,col=5,[commas_linter] Put a space after a comma.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[commas_linter] <span style="font-weight: bold;">Remove spaces before a comma.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x[ ,, drop=TRUE]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:5: </span><span style="color: #0000BB;">style: </span>[commas_linter] <span style="font-weight: bold;">Put a space after a comma.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x[ ,, drop=TRUE]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x[1,]"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">commas_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=5::file=&lt;text&gt;,line=1,col=5,[commas_linter] Put a space after a comma.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:5: </span><span style="color: #0000BB;">style: </span>[commas_linter] <span style="font-weight: bold;">Put a space after a comma.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x[1,]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

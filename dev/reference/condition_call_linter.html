@@ -99,25 +99,33 @@ cases where you expect a mix of <code>call. = FALSE</code> and <code>call. = TRU
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"stop('test')"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">condition_call_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[condition_call_linter] Use stop(., call. = FALSE) not to display the call in an error message.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[condition_call_linter] <span style="font-weight: bold;">Use stop(., call. = FALSE) not to display the call in an error message.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> stop('test')</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"stop('test', call. = TRUE)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">condition_call_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[condition_call_linter] Use stop(., call. = FALSE) not to display the call in an error message.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[condition_call_linter] <span style="font-weight: bold;">Use stop(., call. = FALSE) not to display the call in an error message.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> stop('test', call. = TRUE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"stop('test', call. = FALSE)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">condition_call_linter</span><span class="op">(</span>display_call <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[condition_call_linter] Use stop(.) to display the call in an error message.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[condition_call_linter] <span style="font-weight: bold;">Use stop(.) to display the call in an error message.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> stop('test', call. = FALSE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"stop('this is a', 'test', call. = FALSE)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">condition_call_linter</span><span class="op">(</span>display_call <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[condition_call_linter] Use stop(.) to display the call in an error message.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[condition_call_linter] <span style="font-weight: bold;">Use stop(.) to display the call in an error message.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> stop('this is a', 'test', call. = FALSE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

@@ -83,25 +83,33 @@ arrays, or matrices</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"apply(x, 1, sum)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">matrix_apply_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[matrix_apply_linter] Use rowSums(x) rather than apply(x, 1, sum)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[matrix_apply_linter] <span style="font-weight: bold;">Use rowSums(x) rather than apply(x, 1, sum)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> apply(x, 1, sum)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"apply(x, 2, sum)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">matrix_apply_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[matrix_apply_linter] Use rowSums(colSums(x)) or colSums(x) if x has 2 dimensions rather than apply(x, 2, sum)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[matrix_apply_linter] <span style="font-weight: bold;">Use rowSums(colSums(x)) or colSums(x) if x has 2 dimensions rather than apply(x, 2, sum)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> apply(x, 2, sum)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"apply(x, 2, sum, na.rm = TRUE)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">matrix_apply_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[matrix_apply_linter] Use rowSums(colSums(x, na.rm = TRUE)) or colSums(x, na.rm = TRUE) if x has 2 dimensions rather than apply(x, 2, sum, na.rm = TRUE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[matrix_apply_linter] <span style="font-weight: bold;">Use rowSums(colSums(x, na.rm = TRUE)) or colSums(x, na.rm = TRUE) if x has 2 dimensions rather than apply(x, 2, sum, na.rm = TRUE)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> apply(x, 2, sum, na.rm = TRUE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"apply(x, 2:4, sum)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">matrix_apply_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[matrix_apply_linter] Use rowSums(colSums(x), dims = 3) or colSums(x) if x has 4 dimensions rather than apply(x, 2:4, sum)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[matrix_apply_linter] <span style="font-weight: bold;">Use rowSums(colSums(x), dims = 3) or colSums(x) if x has 4 dimensions rather than apply(x, 2:4, sum)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> apply(x, 2:4, sum)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

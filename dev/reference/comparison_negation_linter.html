@@ -80,13 +80,17 @@ other negations of simple comparisons like <code>!(x &gt; y)</code> and <code>!(
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"!x == 2"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">comparison_negation_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[comparison_negation_linter] Use x != y, not !(x == y).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[comparison_negation_linter] <span style="font-weight: bold;">Use x != y, not !(x == y).</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> !x == 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"!(x &gt; 2)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">comparison_negation_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[comparison_negation_linter] Use x &lt;= y, not !(x &gt; y).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[comparison_negation_linter] <span style="font-weight: bold;">Use x &lt;= y, not !(x &gt; y).</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> !(x &gt; 2)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

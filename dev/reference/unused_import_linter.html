@@ -106,7 +106,9 @@ which are only used in a glue expression.</p></dd>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unused_import_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[unused_import_linter] Package 'dplyr' is attached but never used.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[unused_import_linter] <span style="font-weight: bold;">Package 'dplyr' is attached but never used.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> library(dplyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"library(dplyr)\ndplyr::tibble(a = 1)"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
@@ -116,7 +118,9 @@ which are only used in a glue expression.</p></dd>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unused_import_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[unused_import_linter] Don't attach package 'dplyr', which is only used by namespace. Check that it is installed using loadNamespace() instead.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[unused_import_linter] <span style="font-weight: bold;">Don't attach package 'dplyr', which is only used by namespace. Check that it is installed using loadNamespace() instead.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> library(dplyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"library(dplyr)\ntibble(a = 1)"</span></span></span>

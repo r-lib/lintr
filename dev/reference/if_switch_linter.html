@@ -136,7 +136,9 @@ be evaluated, here up to 3 times).</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[if_switch_linter] Prefer switch() statements over repeated if/else equality tests, e.g., switch(x, a = 1, b = 2) over if (x == "a") 1 else if (x == "b") 2.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[if_switch_linter] <span style="font-weight: bold;">Prefer switch() statements over repeated if/else equality tests, e.g., switch(x, a = 1, b = 2) over if (x == "a") 1 else if (x == "b") 2.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (x == 'a') {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"if (x == 'a') {"</span>,</span></span>
@@ -168,7 +170,9 @@ be evaluated, here up to 3 times).</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[if_switch_linter] Prefer switch() statements over repeated if/else equality tests, e.g., switch(x, a = 1, b = 2) over if (x == "a") 1 else if (x == "b") 2.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[if_switch_linter] <span style="font-weight: bold;">Prefer switch() statements over repeated if/else equality tests, e.g., switch(x, a = 1, b = 2) over if (x == "a") 1 else if (x == "b") 2.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (x == 'a') {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"switch(x,"</span>,</span></span>
@@ -200,7 +204,9 @@ be evaluated, here up to 3 times).</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span>max_branch_lines <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[if_switch_linter] Prefer repeated if/else statements over overly-complicated switch() statements.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[if_switch_linter] <span style="font-weight: bold;">Prefer repeated if/else statements over overly-complicated switch() statements.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> switch(x,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

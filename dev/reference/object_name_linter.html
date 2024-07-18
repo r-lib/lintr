@@ -121,25 +121,33 @@ that it's available in the session where this linter is running.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"my_var &lt;- 1L"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">object_name_linter</span><span class="op">(</span>styles <span class="op">=</span> <span class="st">"CamelCase"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[object_name_linter] Variable and function name style should match CamelCase.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #0000BB;">style: </span>[object_name_linter] <span style="font-weight: bold;">Variable and function name style should match CamelCase.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> my_var &lt;- 1L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"xYz &lt;- 1L"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">object_name_linter</span><span class="op">(</span>styles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UPPERCASE"</span>, <span class="st">"lowercase"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[object_name_linter] Variable and function name style should match UPPERCASE or lowercase.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #0000BB;">style: </span>[object_name_linter] <span style="font-weight: bold;">Variable and function name style should match UPPERCASE or lowercase.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> xYz &lt;- 1L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"MyVar &lt;- 1L"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">object_name_linter</span><span class="op">(</span>styles <span class="op">=</span> <span class="st">"dotted.case"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[object_name_linter] Variable and function name style should match dotted.case.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #0000BB;">style: </span>[object_name_linter] <span style="font-weight: bold;">Variable and function name style should match dotted.case.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> MyVar &lt;- 1L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"asd &lt;- 1L"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">object_name_linter</span><span class="op">(</span>regexes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>my_style <span class="op">=</span> <span class="st">"F$"</span>, <span class="st">"f$"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[object_name_linter] Variable and function name style should match my_style or /f$/.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #0000BB;">style: </span>[object_name_linter] <span style="font-weight: bold;">Variable and function name style should match my_style or /f$/.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> asd &lt;- 1L</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

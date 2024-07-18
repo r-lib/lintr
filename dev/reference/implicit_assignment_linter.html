@@ -106,13 +106,17 @@ within that branch, are skipped.</p></dd>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (x &lt;- 1L) TRUE"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">implicit_assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=5::file=&lt;text&gt;,line=1,col=5,[implicit_assignment_linter] Avoid implicit assignments in function calls. For example, instead of `if (x &lt;- 1L) { ... }`, write `x &lt;- 1L; if (x) { ... }`.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:5: </span><span style="color: #BB00BB;">warning: </span>[implicit_assignment_linter] <span style="font-weight: bold;">Avoid implicit assignments in function calls. For example, instead of `if (x &lt;- 1L) { ... }`, write `x &lt;- 1L; if (x) { ... }`.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (x &lt;- 1L) TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ^~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"mean(x &lt;- 1:4)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">implicit_assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=6::file=&lt;text&gt;,line=1,col=6,[implicit_assignment_linter] Avoid implicit assignments in function calls. For example, instead of `if (x &lt;- 1L) { ... }`, write `x &lt;- 1L; if (x) { ... }`.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:6: </span><span style="color: #BB00BB;">warning: </span>[implicit_assignment_linter] <span style="font-weight: bold;">Avoid implicit assignments in function calls. For example, instead of `if (x &lt;- 1L) { ... }`, write `x &lt;- 1L; if (x) { ... }`.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mean(x &lt;- 1:4)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ^~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">lines</span> <span class="op">&lt;-</span> <span class="st">"x &lt;- 1L\nif (x) TRUE"</span></span></span>

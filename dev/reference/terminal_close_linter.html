@@ -94,7 +94,9 @@ on.exit(close(x)) close to where x is defined and/or opened."><meta name="robots
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">terminal_close_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=4,col=3::file=&lt;text&gt;,line=4,col=3,[terminal_close_linter] Use on.exit(close(x)) to close connections instead of running it as the last call in a function.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:4:3: </span><span style="color: #BB00BB;">warning: </span>[terminal_close_linter] <span style="font-weight: bold;">Use on.exit(close(x)) to close connections instead of running it as the last call in a function.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   close(conn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span></span>

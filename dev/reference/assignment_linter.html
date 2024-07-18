@@ -107,7 +107,9 @@ If <code>FALSE</code>, <code><a href="https://rdrr.io/r/base/assignOps.html" cla
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x = mean(x)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not =, for assignment.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;-, not =, for assignment.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x = mean(x)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"1 -&gt; x\n2 -&gt;&gt; y"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
@@ -117,14 +119,20 @@ If <code>FALSE</code>, <code><a href="https://rdrr.io/r/base/assignOps.html" cla
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Use &lt;-, not -&gt;, for assignment.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[assignment_linter] Replace -&gt;&gt; by assigning to a specific environment (with assign() or &lt;-) to avoid hard-to-predict behavior.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;-, not -&gt;, for assignment.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -&gt; x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:2:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Replace -&gt;&gt; by assigning to a specific environment (with assign() or &lt;-) to avoid hard-to-predict behavior.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -&gt;&gt; y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x %&lt;&gt;% as.character()"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Avoid the assignment pipe %&lt;&gt;%; prefer using &lt;- and %&gt;% separately.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Avoid the assignment pipe %&lt;&gt;%; prefer using &lt;- and %&gt;% separately.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x %&lt;&gt;% as.character()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
@@ -155,7 +163,9 @@ If <code>FALSE</code>, <code><a href="https://rdrr.io/r/base/assignOps.html" cla
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x &lt;&lt;- 1"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span>allow_cascading_assign <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[assignment_linter] Replace &lt;&lt;- by assigning to a specific environment (with assign() or &lt;-) to avoid hard-to-predict behavior.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Replace &lt;&lt;- by assigning to a specific environment (with assign() or &lt;-) to avoid hard-to-predict behavior.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x &lt;&lt;- 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"foo(bar = \n 1)"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> foo(bar = </span>
@@ -164,7 +174,9 @@ If <code>FALSE</code>, <code><a href="https://rdrr.io/r/base/assignOps.html" cla
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"foo(bar = \n 1)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">assignment_linter</span><span class="op">(</span>allow_trailing <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=9::file=&lt;text&gt;,line=1,col=9,[assignment_linter] Assignment = should not be trailing at the end of a line.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:9: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Assignment = should not be trailing at the end of a line.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> foo(bar = </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x %&lt;&gt;% as.character()"</span>,</span></span>

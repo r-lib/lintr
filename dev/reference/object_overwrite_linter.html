@@ -107,7 +107,9 @@ are allowed to collide with exports from <code>packages</code>.</p></dd>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">object_overwrite_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[object_overwrite_linter] 'data' is an exported object from package 'utils'. Avoid re-using such symbols.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:2:3: </span><span style="color: #BB00BB;">warning: </span>[object_overwrite_linter] <span style="font-weight: bold;">'data' is an exported object from package 'utils'. Avoid re-using such symbols.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data &lt;- x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"function(x) {\n  lint &lt;- 'fun'\n  lint\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code</span><span class="op">)</span></span></span>
@@ -119,7 +121,9 @@ are allowed to collide with exports from <code>packages</code>.</p></dd>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">object_overwrite_linter</span><span class="op">(</span>packages <span class="op">=</span> <span class="st">"lintr"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[object_overwrite_linter] 'lint' is an exported object from package 'lintr'. Avoid re-using such symbols.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:2:3: </span><span style="color: #BB00BB;">warning: </span>[object_overwrite_linter] <span style="font-weight: bold;">'lint' is an exported object from package 'lintr'. Avoid re-using such symbols.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   lint &lt;- 'fun'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"function(x) {\n  data('mtcars')\n}"</span></span></span>

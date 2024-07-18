@@ -89,13 +89,17 @@ is to instead set the default for such arguments to <code>NULL</code>.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"function(y = 1, z = 2, x) {}"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">function_argument_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=24::file=&lt;text&gt;,line=1,col=24,[function_argument_linter] Arguments without defaults should come before arguments with defaults.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:24: </span><span style="color: #0000BB;">style: </span>[function_argument_linter] <span style="font-weight: bold;">Arguments without defaults should come before arguments with defaults.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function(y = 1, z = 2, x) {}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"function(x, y, z = 1, ..., w) {}"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">function_argument_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=28::file=&lt;text&gt;,line=1,col=28,[function_argument_linter] Arguments without defaults should come before arguments with defaults.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:28: </span><span style="color: #0000BB;">style: </span>[function_argument_linter] <span style="font-weight: bold;">Arguments without defaults should come before arguments with defaults.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function(x, y, z = 1, ..., w) {}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

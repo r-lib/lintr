@@ -88,7 +88,9 @@
 <span class="r-in"><span>  text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/strrep.html" class="external-link">strrep</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="fl">23L</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">line_length_linter</span><span class="op">(</span>length <span class="op">=</span> <span class="fl">20L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=21::file=&lt;text&gt;,line=1,col=21,[line_length_linter] Lines should not be more than 20 characters. This line is 23 characters.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:21: </span><span style="color: #0000BB;">style: </span>[line_length_linter] <span style="font-weight: bold;">Lines should not be more than 20 characters. This line is 23 characters.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> xxxxxxxxxxxxxxxxxxxxxxx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~~~~~~~~~~~~~~~~~~~~^~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

@@ -83,13 +83,17 @@ assertthat::assert_that() without specifying msg=."><meta name="robots" content=
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"stopifnot(x); stopifnot(y)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">consecutive_assertion_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[consecutive_assertion_linter] Unify consecutive calls to stopifnot().</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[consecutive_assertion_linter] <span style="font-weight: bold;">Unify consecutive calls to stopifnot().</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> stopifnot(x); stopifnot(y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"assert_that(x); assert_that(y)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">consecutive_assertion_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[consecutive_assertion_linter] Unify consecutive calls to assert_that().</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[consecutive_assertion_linter] <span style="font-weight: bold;">Unify consecutive calls to assert_that().</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assert_that(x); assert_that(y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

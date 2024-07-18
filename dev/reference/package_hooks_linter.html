@@ -91,19 +91,25 @@ namespace hooks that will cause <code>R CMD check</code> issues. See Writing R E
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">".onLoad &lt;- function(lib, ...) { }"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">package_hooks_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=12::file=&lt;text&gt;,line=1,col=12,[package_hooks_linter] .onLoad() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:12: </span><span style="color: #BB00BB;">warning: </span>[package_hooks_linter] <span style="font-weight: bold;">.onLoad() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> .onLoad &lt;- function(lib, ...) { }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            ^~~~~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">".onAttach &lt;- function(lib, pkg) { require(foo) }"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">package_hooks_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=35::file=&lt;text&gt;,line=1,col=35,[package_hooks_linter] Don't alter the search() path in .onAttach() by calling require().</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:35: </span><span style="color: #BB00BB;">warning: </span>[package_hooks_linter] <span style="font-weight: bold;">Don't alter the search() path in .onAttach() by calling require().</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> .onAttach &lt;- function(lib, pkg) { require(foo) }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                   ^~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">".onDetach &lt;- function(pkg) { }"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">package_hooks_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=14::file=&lt;text&gt;,line=1,col=14,[package_hooks_linter] .onDetach() should take one argument starting with 'lib'.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:14: </span><span style="color: #BB00BB;">warning: </span>[package_hooks_linter] <span style="font-weight: bold;">.onDetach() should take one argument starting with 'lib'.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> .onDetach &lt;- function(pkg) { }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ^~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

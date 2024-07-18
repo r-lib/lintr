@@ -125,7 +125,9 @@ while <code>except_regex</code> does exclusion by pattern matching with <code><a
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">return_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[return_linter] Use implicit return behavior; explicit return() is not needed.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:2:3: </span><span style="color: #0000BB;">style: </span>[return_linter] <span style="font-weight: bold;">Use implicit return behavior; explicit return() is not needed.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   return(x + 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"function(x) {\n  x + 1\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code</span><span class="op">)</span></span></span>
@@ -136,7 +138,9 @@ while <code>except_regex</code> does exclusion by pattern matching with <code><a
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">return_linter</span><span class="op">(</span>return_style <span class="op">=</span> <span class="st">"explicit"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[return_linter] All functions must have an explicit return().</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:2:3: </span><span style="color: #BB00BB;">warning: </span>[return_linter] <span style="font-weight: bold;">All functions must have an explicit return().</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x + 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"function(x) {\n  if (x &gt; 0) 2\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code</span><span class="op">)</span></span></span>
@@ -147,7 +151,9 @@ while <code>except_regex</code> does exclusion by pattern matching with <code><a
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">return_linter</span><span class="op">(</span>allow_implicit_else <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=2,col=3::file=&lt;text&gt;,line=2,col=3,[return_linter] All functions with terminal if statements must have a corresponding terminal else clause.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:2:3: </span><span style="color: #BB00BB;">warning: </span>[return_linter] <span style="font-weight: bold;">All functions with terminal if statements must have a corresponding terminal else clause.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   if (x &gt; 0) 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="st">"function(x) {\n  x + 1\n}"</span></span></span>

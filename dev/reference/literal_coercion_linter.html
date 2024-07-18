@@ -87,19 +87,25 @@ using the typed version (e.g. <code>NA_real_</code>) instead of a coercion
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"int(1)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">literal_coercion_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[literal_coercion_linter] Use 1L instead of int(1), i.e., use literals directly where possible, instead of coercion.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[literal_coercion_linter] <span style="font-weight: bold;">Use 1L instead of int(1), i.e., use literals directly where possible, instead of coercion.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> int(1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"as.character(NA)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">literal_coercion_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[literal_coercion_linter] Use NA_character_ instead of as.character(NA), i.e., use literals directly where possible, instead of coercion.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[literal_coercion_linter] <span style="font-weight: bold;">Use NA_character_ instead of as.character(NA), i.e., use literals directly where possible, instead of coercion.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> as.character(NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"rlang::lgl(1L)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">literal_coercion_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[literal_coercion_linter] Use TRUE instead of rlang::lgl(1L), i.e., use literals directly where possible, instead of coercion.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[literal_coercion_linter] <span style="font-weight: bold;">Use TRUE instead of rlang::lgl(1L), i.e., use literals directly where possible, instead of coercion.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rlang::lgl(1L)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

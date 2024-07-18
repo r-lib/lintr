@@ -99,7 +99,9 @@ readable.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"lapply(list(1:3, 2:4), function(xi) sum(xi))"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=24::file=&lt;text&gt;,line=1,col=24,[unnecessary_lambda_linter] Pass sum directly as a symbol to lapply() instead of wrapping it in an unnecessary anonymous function. For example, prefer lapply(DF, sum) to lapply(DF, function(x) sum(x)).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:24: </span><span style="color: #BB00BB;">warning: </span>[unnecessary_lambda_linter] <span style="font-weight: bold;">Pass sum directly as a symbol to lapply() instead of wrapping it in an unnecessary anonymous function. For example, prefer lapply(DF, sum) to lapply(DF, function(x) sum(x)).</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lapply(list(1:3, 2:4), function(xi) sum(xi))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        ^~~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"sapply(x, function(xi) xi == 2)"</span>,</span></span>
@@ -110,7 +112,9 @@ readable.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"sapply(x, function(xi) sum(xi) &gt; 0)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_lambda_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=24::file=&lt;text&gt;,line=1,col=24,[unnecessary_lambda_linter] Compare to a constant after calling sapply() to get the full benefits of vectorization. Prefer sapply(x, foo) == 2 over sapply(x, function(xi) foo(xi) == 2, logical(1L)).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:24: </span><span style="color: #BB00BB;">warning: </span>[unnecessary_lambda_linter] <span style="font-weight: bold;">Compare to a constant after calling sapply() to get the full benefits of vectorization. Prefer sapply(x, foo) == 2 over sapply(x, function(xi) foo(xi) == 2, logical(1L)).</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sapply(x, function(xi) sum(xi) &gt; 0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        ^~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

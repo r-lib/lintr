@@ -87,13 +87,17 @@ to read and requires several passes over the vector.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"ifelse(5:1 &lt; pi, 5:1, pi)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">ifelse_censor_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[ifelse_censor_linter] pmin(x, y) is preferable to ifelse(x &lt; y, x, y).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[ifelse_censor_linter] <span style="font-weight: bold;">pmin(x, y) is preferable to ifelse(x &lt; y, x, y).</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ifelse(5:1 &lt; pi, 5:1, pi)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"ifelse(x &gt; 0, x, 0)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">ifelse_censor_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[ifelse_censor_linter] pmax(x, y) is preferable to ifelse(x &gt; y, x, y).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[ifelse_censor_linter] <span style="font-weight: bold;">pmax(x, y) is preferable to ifelse(x &gt; y, x, y).</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ifelse(x &gt; 0, x, 0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

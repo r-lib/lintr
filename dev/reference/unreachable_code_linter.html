@@ -110,7 +110,9 @@ Note that the regexes should include the initial comment character <code>#</code
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unreachable_code_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=3,col=3::file=&lt;text&gt;,line=3,col=3,[unreachable_code_linter] Remove code and comments coming after return() or stop().</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:3:3: </span><span style="color: #BB00BB;">warning: </span>[unreachable_code_linter] <span style="font-weight: bold;">Remove code and comments coming after return() or stop().</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2 + 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"if (FALSE) {\n 2 + 2\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
@@ -121,7 +123,9 @@ Note that the regexes should include the initial comment character <code>#</code
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unreachable_code_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[unreachable_code_linter] Remove code inside a conditional loop with a deterministically false condition.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[unreachable_code_linter] <span style="font-weight: bold;">Remove code inside a conditional loop with a deterministically false condition.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (FALSE) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"while (FALSE) {\n 2 + 2\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
@@ -132,7 +136,9 @@ Note that the regexes should include the initial comment character <code>#</code
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unreachable_code_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=1::file=&lt;text&gt;,line=1,col=1,[unreachable_code_linter] Remove code inside a conditional loop with a deterministically false condition.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[unreachable_code_linter] <span style="font-weight: bold;">Remove code inside a conditional loop with a deterministically false condition.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> while (FALSE) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"f &lt;- function() {\n  return(1)\n  # end skip\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
@@ -144,7 +150,9 @@ Note that the regexes should include the initial comment character <code>#</code
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unreachable_code_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=3,col=3::file=&lt;text&gt;,line=3,col=3,[unreachable_code_linter] Remove code and comments coming after return() or stop().</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:3:3: </span><span style="color: #BB00BB;">warning: </span>[unreachable_code_linter] <span style="font-weight: bold;">Remove code and comments coming after return() or stop().</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   # end skip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~~~~~~~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"f &lt;- function() {\n  return(1 + 1)\n}"</span></span></span>

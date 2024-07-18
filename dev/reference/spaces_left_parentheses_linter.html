@@ -81,7 +81,9 @@
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if(TRUE) x else y"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">spaces_left_parentheses_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=3::file=&lt;text&gt;,line=1,col=3,[spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[spaces_left_parentheses_linter] <span style="font-weight: bold;">Place a space before left parenthesis, except in a function call.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if(TRUE) x else y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>

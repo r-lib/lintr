@@ -101,19 +101,25 @@ assignment outside the condition, so using <code>||</code> is still preferable.<
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (TRUE &amp; FALSE) 1"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">vector_logic_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=10::file=&lt;text&gt;,line=1,col=10,[vector_logic_linter] Use `&amp;&amp;` in conditional expressions.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:10: </span><span style="color: #BB00BB;">warning: </span>[vector_logic_linter] <span style="font-weight: bold;">Use `&amp;&amp;` in conditional expressions.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (TRUE &amp; FALSE) 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (TRUE &amp;&amp; (TRUE | FALSE)) 4"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">vector_logic_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=19::file=&lt;text&gt;,line=1,col=19,[vector_logic_linter] Use `||` in conditional expressions.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:19: </span><span style="color: #BB00BB;">warning: </span>[vector_logic_linter] <span style="font-weight: bold;">Use `||` in conditional expressions.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> if (TRUE &amp;&amp; (TRUE | FALSE)) 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   ^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"filter(x, A &amp;&amp; B)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">vector_logic_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ::warning file=&lt;text&gt;,line=1,col=13::file=&lt;text&gt;,line=1,col=13,[vector_logic_linter] Use `&amp;` in subsetting expressions.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:13: </span><span style="color: #BB00BB;">warning: </span>[vector_logic_linter] <span style="font-weight: bold;">Use `&amp;` in subsetting expressions.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> filter(x, A &amp;&amp; B)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             ^~</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
