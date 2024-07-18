@@ -57,6 +57,6 @@ test_that("GitHub Actions log is skipped in pkgdown websites", {
   withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
 
-  l <- lint(tmp)
+  l <- lint(tmp, linters = seq_linter())
   expect_output(print(l), "warning: [seq_linter]", fixed = TRUE)
 })
