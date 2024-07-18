@@ -1,5 +1,5 @@
 test_that("GitHub Actions functionality works", {
-  withr::local_envvar(list(GITHUB_ACTIONS = "true"))
+  withr::local_envvar(list(GITHUB_ACTIONS = "true", IN_PKGDOWN = "false"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
 
@@ -26,7 +26,7 @@ test_that("GitHub Actions functionality works in a subdirectory", {
 patrick::with_parameters_test_that(
   "GitHub Actions - error on lint works",
   {
-    withr::local_envvar(list(GITHUB_ACTIONS = "true", LINTR_ERROR_ON_LINT = env_var_value))
+    withr::local_envvar(list(GITHUB_ACTIONS = "true", IN_PKGDOWN = "", LINTR_ERROR_ON_LINT = env_var_value))
     withr::local_options(lintr.rstudio_source_markers = FALSE)
     tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
 
@@ -51,3 +51,13 @@ patrick::with_parameters_test_that(
   },
   env_var_value = list("", "F", NA, NULL)
 )
+
+
+test_that("GitHub Actions log is skipped in pkgdown websites", {
+  withr::local_envvar(list(GITHUB_ACTIONS = "true", IN_PKGDOWN = "true"))
+  withr::local_options(lintr.rstudio_source_markers = FALSE)
+  tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
+
+  l <- lint(tmp)
+  expect_output(print(l), "warning: [seq_linter]", fixed = TRUE)
+})
