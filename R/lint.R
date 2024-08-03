@@ -184,9 +184,7 @@ lint_dir <- function(path = ".", ...,
 
   lints <- flatten_lints(lapply(
     cli::cli_progress_along(files, name = "Running linters"),
-    function(idx) {
-      lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
-    }
+    function(idx) lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
   ))
 
   lints <- reorder_lints(lints)
