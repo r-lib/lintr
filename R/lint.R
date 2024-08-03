@@ -182,19 +182,12 @@ lint_dir <- function(path = ".", ...,
     return(lints)
   }
 
-  pb <- if (isTRUE(show_progress)) {
-    txtProgressBar(max = length(files), style = 3L)
-  }
-
   lints <- flatten_lints(lapply(
-    files,
-    function(file) {
-      maybe_report_progress(pb)
-      lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+    cli::cli_progress_along(files, name = "Running linters"),
+    function(idx) {
+      lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
     }
   ))
-
-  if (!is.null(pb)) close(pb)
 
   lints <- reorder_lints(lints)
 
@@ -686,13 +679,6 @@ has_positional_logical <- function(dots) {
   length(dots) > 0L &&
     is.logical(dots[[1L]]) &&
     !nzchar(names2(dots)[1L])
-}
-
-maybe_report_progress <- function(pb) {
-  if (is.null(pb)) {
-    return(invisible())
-  }
-  setTxtProgressBar(pb, getTxtProgressBar(pb) + 1L)
 }
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
