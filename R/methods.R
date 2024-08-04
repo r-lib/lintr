@@ -104,7 +104,7 @@ print.lints <- function(x, ...) {
   }
 
   if (length(x) == 0L) {
-    cli_inform(c("i" = "No lints found."))
+    cli_inform(c(i = "No lints found."))
     # Empty lints: clear RStudio source markers
     if (use_rstudio_source_markers) rstudio_source_markers(x)
   }
