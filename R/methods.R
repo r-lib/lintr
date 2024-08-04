@@ -98,12 +98,15 @@ print.lints <- function(x, ...) {
       lapply(x, print, ...)
     }
 
-    if (isTRUE(settings$error_on_lint)) quit("no", 31L, FALSE) # nocov
-  }
-
-  if (length(x) == 0L) {
-    cli_inform(c("i" = "No lints found."))
-    if (use_rstudio_source_markers) rstudio_source_markers(x) # clear RStudio source markers
+    if (isTRUE(settings$error_on_lint)) {
+      quit("no", 31L, FALSE) # nocov
+    }
+  } else {
+    # Empty lints
+    cli_inform(c(i = "No lints found."))
+    if (use_rstudio_source_markers) {
+      rstudio_source_markers(x) # clear RStudio source markers
+    }
   }
 
   invisible(x)
