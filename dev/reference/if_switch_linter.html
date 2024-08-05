@@ -109,6 +109,7 @@ be evaluated, here up to 3 times).</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (x == 'a') 1 else if (x == 'b') 2 else 3"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"if (x == 'a') {"</span>,</span></span>
@@ -213,12 +214,14 @@ be evaluated, here up to 3 times).</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"switch(x, a = 1, b = 2, 3)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># switch() version not as clear</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"if (x == 'a') 1 else if (x == 'b' &amp; y == 2) 2 else 3"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"if (x == 'a') {"</span>,</span></span>
@@ -246,6 +249,7 @@ be evaluated, here up to 3 times).</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span>max_branch_lines <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"if (x == 'a') {"</span>,</span></span>
@@ -277,6 +281,7 @@ be evaluated, here up to 3 times).</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span>max_branch_expressions <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"switch(x,"</span>,</span></span>
@@ -308,6 +313,7 @@ be evaluated, here up to 3 times).</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">if_switch_linter</span><span class="op">(</span>max_branch_lines <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

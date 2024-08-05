@@ -164,6 +164,7 @@ Note that the regexes should include the initial comment character <code>#</code
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unreachable_code_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"if (foo) {\n 2 + 2\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
@@ -174,6 +175,7 @@ Note that the regexes should include the initial comment character <code>#</code
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unreachable_code_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"while (foo) {\n 2 + 2\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
@@ -184,6 +186,7 @@ Note that the regexes should include the initial comment character <code>#</code
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unreachable_code_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">code_lines</span> <span class="op">&lt;-</span> <span class="st">"f &lt;- function() {\n  return(1)\n  # end skip\n}"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">code_lines</span><span class="op">)</span></span></span>
@@ -195,6 +198,7 @@ Note that the regexes should include the initial comment character <code>#</code
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code_lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unreachable_code_linter</span><span class="op">(</span>allow_comment_regex <span class="op">=</span> <span class="st">"# end skip"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

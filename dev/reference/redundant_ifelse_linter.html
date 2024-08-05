@@ -113,6 +113,7 @@ this should be needed only rarely.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"x &gt;= 2.5"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">redundant_ifelse_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Note that this is just to show the strict equivalent of the example above;</span></span></span>
 <span class="r-in"><span><span class="co"># converting to integer is often unnecessary and the logical vector itself</span></span></span>
@@ -121,11 +122,13 @@ this should be needed only rarely.</p>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"as.integer(x &lt; 2.5)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">redundant_ifelse_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"ifelse(x &lt; 2.5, 1L, 0L)"</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">redundant_ifelse_linter</span><span class="op">(</span>allow10 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -149,6 +149,8 @@
 <code><a href="../reference/paste_linter.html">paste_linter()</a></code> is extended to recommend using <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> instead of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> for simply aggregating a character vector with <code>collapse=</code>, i.e., when <code>sep=</code> is irrelevant (<a href="https://github.com/r-lib/lintr/issues/1108" class="external-link">#1108</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/expect_lint.html">expect_no_lint()</a></code> was added as new function to cover the typical use case of expecting no lint message, akin to the recent {testthat} functions like <code>expect_no_warning()</code> (<a href="https://github.com/r-lib/lintr/issues/2580" class="external-link">#2580</a>, <a href="https://github.com/F-Noelle" class="external-link">@F-Noelle</a>).</li>
+<li>
+<code><a href="../reference/lint.html">lint()</a></code> and friends emit a message if no lints are found (<a href="https://github.com/r-lib/lintr/issues/2643" class="external-link">#2643</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
