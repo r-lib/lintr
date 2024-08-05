@@ -58,6 +58,7 @@
 * `make_linter_from_xpath()` errors up front when `lint_message` is missing (instead of delaying this error until the linter is used, #2541, @MichaelChirico).
 * `paste_linter()` is extended to recommend using `paste()` instead of `paste0()` for simply aggregating a character vector with `collapse=`, i.e., when `sep=` is irrelevant (#1108, @MichaelChirico).
 * `expect_no_lint()` was added as new function to cover the typical use case of expecting no lint message, akin to the recent {testthat} functions like `expect_no_warning()` (#2580, @F-Noelle).
+* `lint()` and friends emit a message if no lints are found (#2643, @IndrajeetPatil).
 
 ### New linters
 
@@ -86,7 +87,7 @@
 
 ## Notes
 
-* All user-facing messages are now prepared using the `{cli}` package (#2418, #2643, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
+* All user-facing messages are now prepared using the `{cli}` package (#2418, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
 * {lintr} now depends on R version 4.0.0. It already does so implicitly due to recursive upstream dependencies requiring this version; we've simply made that dependency explicit and up-front (#2569, @MichaelChirico).
 
 # lintr 3.1.2
