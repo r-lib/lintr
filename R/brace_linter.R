@@ -135,7 +135,7 @@ brace_linter <- function(allow_single_line = FALSE,
   if (function_bodies != "never") {
     xp_cond_function_brace <- switch(
       function_bodies,
-      always = "1",
+      always = "true",
       multi_line = "@line1 != @line2",
       not_inline = "@line1 != expr/@line1"
     )
