@@ -7,7 +7,8 @@
 #' Additionally, it checks for `1:n()` (from `{dplyr}`) and `1:.N` (from `{data.table}`).
 #'
 #' These often cause bugs when the right-hand side is zero.
-#' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
+#' Instead, it is safer to use [base::seq_len()] (to create a sequence of a specified *length*) or
+#'   [base::seq_along()] (to create a sequence *along* an object).
 #'
 #' @examples
 #' # will produce lints
