@@ -11,7 +11,7 @@ format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
   has_hyperlink_support <- cli::ansi_has_hyperlink_support()
   if (has_hyperlink_support) {
     fmt_start <- "{.path "
-    fmt_end <- "} "
+    fmt_end <- "}"
     fmt_f <- cli::format_inline
   } else {
     fmt_start <- ""
