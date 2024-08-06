@@ -8,15 +8,26 @@ format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
   )
   emph <- cli::style_bold
 
+  has_hyperlink_support <- cli::ansi_has_hyperlink_support()
+  if (has_hyperlink_support) {
+    start <- "{.path "
+    end   <- "} "
+    f <- cli::format_inline
   } else {
+    start <- ""
+    end   <- ""
+    f <- paste0
   }
 
   annotated_msg <- paste0(
     emph(
+      f(
+      start,
       x$filename, ":",
       as.character(x$line_number), ":",
-      as.character(x$column_number), ": ",
-      sep = ""
+      as.character(x$column_number),
+      end),
+      ": "
     ),
     color(x$type, ": ", sep = ""),
     "[", x$linter, "] ",
