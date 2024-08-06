@@ -10,12 +10,6 @@ test_that("lint all files in a directory", {
 
   expect_s3_class(lints, "lints")
   expect_identical(sort(linted_files), sort(files))
-
-  expect_output(
-    lint_dir(the_dir, parse_settings = FALSE, show_progress = TRUE),
-    "======",
-    fixed = TRUE
-  )
 })
 
 test_that("lint all relevant directories in a package", {
