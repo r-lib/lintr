@@ -35,6 +35,11 @@ lint(
   linters = seq_linter()
 )
 
+lint(
+  text = "unlist(lapply(x, seq_len))",
+  linters = seq_linter()
+)
+
 # okay
 lint(
   text = "seq_along(x)",
@@ -48,6 +53,11 @@ lint(
 
 lint(
   text = "dplyr::mutate(x, .id = seq_len(n()))",
+  linters = seq_linter()
+)
+
+lint(
+  text = "sequence(x)",
   linters = seq_linter()
 )
 
