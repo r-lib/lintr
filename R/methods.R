@@ -10,23 +10,24 @@ format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
 
   has_hyperlink_support <- cli::ansi_has_hyperlink_support()
   if (has_hyperlink_support) {
-    start <- "{.path "
-    end   <- "} "
-    f <- cli::format_inline
+    fmt_start <- "{.path "
+    fmt_end <- "} "
+    fmt_f <- cli::format_inline
   } else {
-    start <- ""
-    end   <- ""
-    f <- paste0
+    fmt_start <- ""
+    fmt_end <- ""
+    fmt_f <- paste0
   }
 
   annotated_msg <- paste0(
     emph(
-      f(
-      start,
-      x$filename, ":",
-      as.character(x$line_number), ":",
-      as.character(x$column_number),
-      end),
+      fmt_f(
+        fmt_start,
+        x$filename, ":",
+        as.character(x$line_number), ":",
+        as.character(x$column_number),
+        fmt_end
+      ),
       ": "
     ),
     color(x$type, ": ", sep = ""),
