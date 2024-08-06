@@ -1,18 +1,14 @@
 #' @export
 format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
-  if (requireNamespace("cli", quietly = TRUE)) {
-    color <- switch(x$type,
-      warning = cli::col_magenta,
-      error = cli::col_red,
-      style = cli::col_blue,
-      cli::style_bold
-    )
-    emph <- cli::style_bold
+  color <- switch(x$type,
+    warning = cli::col_magenta,
+    error = cli::col_red,
+    style = cli::col_blue,
+    cli::style_bold
+  )
+  emph <- cli::style_bold
+
   } else {
-    # nocov start
-    color <- identity
-    emph <- identity
-    # nocov end
   }
 
   annotated_msg <- paste0(
