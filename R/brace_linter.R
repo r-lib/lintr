@@ -141,7 +141,7 @@ brace_linter <- function(allow_single_line = FALSE,
     )
 
     xp_function_brace <- glue(
-      "(//FUNCTION | //OP-LAMBDA)/parent::expr[{xp_cond_function_brace} and not(expr[OP-LEFT-BRACE])]"
+      "(//FUNCTION | //OP-LAMBDA)/parent::expr[{xp_cond_function_brace} and not(expr/OP-LEFT-BRACE)]"
     )
 
     msg_function_brace <- switch(
