@@ -71,7 +71,8 @@ conjunction with <code><a href="https://rdrr.io/r/base/seq.html" class="external
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Additionally, it checks for <code>1:n()</code> (from <code>{dplyr}</code>) and <code>1:.N</code> (from <code>{data.table}</code>).</p>
 <p>These often cause bugs when the right-hand side is zero.
-It is safer to use <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">base::seq_len()</a></code> or <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">base::seq_along()</a></code> instead.</p>
+Instead, it is safer to use <code><a href="https://rdrr.io/r/base/seq.html" class="external-link">base::seq_len()</a></code> (to create a sequence of a specified <em>length</em>) or
+<code><a href="https://rdrr.io/r/base/seq.html" class="external-link">base::seq_along()</a></code> (to create a sequence <em>along</em> an object).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
