@@ -8,28 +8,9 @@ format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
   )
   emph <- cli::style_bold
 
-  has_hyperlink_support <- cli::ansi_has_hyperlink_support()
-  if (has_hyperlink_support) {
-    fmt_start <- "{.path "
-    fmt_end <- "}"
-    fmt_f <- cli::format_inline
-  } else {
-    fmt_start <- ""
-    fmt_end <- ""
-    fmt_f <- paste0
-  }
-
+  line_ref <- build_line_ref(x)
   annotated_msg <- paste0(
-    emph(
-      fmt_f(
-        fmt_start,
-        x$filename, ":",
-        as.character(x$line_number), ":",
-        as.character(x$column_number),
-        fmt_end
-      ),
-      ": "
-    ),
+    emph(line_ref, ": "),
     color(x$type, ": ", sep = ""),
     "[", x$linter, "] ",
     emph(x$message)
@@ -46,6 +27,22 @@ format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
     highlight_string(x$message, x$column_number, x$ranges),
     "\n"
   )
+}
+
+build_line_ref <- function(x) {
+  line_ref <- paste0(
+    x$filename, ":",
+    as.character(x$line_number), ":",
+    as.character(x$column_number)
+  )
+
+  create_clickable_link <- cli::ansi_has_hyperlink_support()
+  if (create_clickable_link) {
+    line_ref <- paste0("{.path ", line_ref, "}")
+    line_ref <- cli::format_inline(line_ref)
+  }
+
+  line_ref
 }
 
 #' @export
