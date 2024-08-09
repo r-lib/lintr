@@ -36,12 +36,10 @@ build_line_ref <- function(x) {
     as.character(x$column_number)
   )
 
-  create_clickable_link <- cli::ansi_has_hyperlink_support()
-  if (create_clickable_link) {
-    line_ref <- cli::format_inline("{.path {line_ref}}")
+  if (!cli::ansi_has_hyperlink_support()) {
+    return(line_ref)
   }
-
-  line_ref
+  cli::format_inline("{.path {line_ref}}")
 }
 
 #' @export
