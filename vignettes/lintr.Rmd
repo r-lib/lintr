@@ -1,6 +1,5 @@
 ---
 title: "Using lintr"
-author: "Alexander Rosenstock"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using lintr}
