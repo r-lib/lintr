@@ -7,8 +7,8 @@ authors:
     affiliation: 1
     orcid: 0000-0002-2739-7082
   - name: Florent Angly
-    affiliation: ~
-    orcid: ~
+    affiliation: 6
+    orcid: 0000-0002-8999-0738
   - name: Michael Chirico
     affiliation: 2
     orcid: 0000-0003-0787-087X
@@ -16,7 +16,7 @@ authors:
     affiliation: 5
     orcid: ~
   - name: Ren Kun
-    affiliation: ~
+    affiliation: 7
     orcid: ~
   - name: Indrajeet Patil
     orcid: 0000-0003-1995-6531
@@ -35,6 +35,10 @@ affiliations:
     name: Preisenergie GmbH, Munich, Germany
   - index: 5
     name: Jumping Rivers
+  - index: 6
+    name: The University of Queensland
+  - index: 7
+    name: ???
 output: 
     md_document:
       variant: "markdown"

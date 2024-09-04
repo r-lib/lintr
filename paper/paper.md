@@ -1,14 +1,14 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-06-21"
+date: "2024-09-04"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
     affiliation: 1
     orcid: 0000-0002-2739-7082
   - name: Florent Angly
-    affiliation: ~
-    orcid: ~
+    affiliation: 6
+    orcid: 0000-0002-8999-0738
   - name: Michael Chirico
     affiliation: 2
     orcid: 0000-0003-0787-087X
@@ -16,7 +16,7 @@ authors:
     affiliation: 5
     orcid: ~
   - name: Ren Kun
-    affiliation: ~
+    affiliation: 7
     orcid: ~
   - name: Indrajeet Patil
     orcid: 0000-0003-1995-6531
@@ -35,6 +35,10 @@ affiliations:
     name: Preisenergie GmbH, Munich, Germany
   - index: 5
     name: Jumping Rivers
+  - index: 6
+    name: The University of Queensland
+  - index: 7
+    name: ???
 output: 
     md_document:
       variant: "markdown"
@@ -106,6 +110,7 @@ lint(
   text = "x >= 2.5",
   linters = redundant_ifelse_linter()
 )
+#> ℹ No lints found.
 ```
 
 -   **Efficiency**
@@ -138,6 +143,7 @@ lint(
   text = "anyNA(x)",
   linters = any_is_na_linter()
 )
+#> ℹ No lints found.
 ```
 
 -   **Readability**
@@ -170,6 +176,7 @@ lint(
   text = "x != 2",
   linters = comparison_negation_linter()
 )
+#> ℹ No lints found.
 ```
 
 -   **Tidyverse style**
@@ -197,6 +204,7 @@ lint(
   text = "my_var <- 1L",
   linters = object_name_linter()
 )
+#> ℹ No lints found.
 ```
 
 -   **Common mistakes**
@@ -247,9 +255,6 @@ l <- list(x = TRUE, x = FALSE)
 l["x"]
 #> $x
 #> [1] TRUE
-```
-
-``` r
 l[names(l) == "x"]
 #> $x
 #> [1] TRUE
@@ -273,6 +278,7 @@ lint(
   text = "my.var <- 1L",
   linters = object_name_linter(styles = "dotted.case")
 )
+#> ℹ No lints found.
 ```
 
 -   Create new linters (by leveraging functions like
