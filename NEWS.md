@@ -18,8 +18,7 @@
 * `cyclocomp_linter()` is no longer part of the default linters (#2555, @IndrajeetPatil) because the tidyverse style guide doesn't contain any guidelines on meeting certain complexity requirements. Note that users with `cyclocomp_linter()` in their configs may now need to install {cyclocomp} intentionally, in particular in CI/CD pipelines.
 * `scalar_in_linter` is now configurable to allow other `%in%` like operators to be linted. The data.table operator `%chin%` is no longer linted by default; use `in_operators = "%chin%"` to continue linting it. (@F-Noelle)
 * `lint()` and friends now normalize paths to forward slashes on Windows (@olivroy, #2613).
-* Following linters have been removed from efficiency linters (@IndrajeetPatil, #2655):
-  `undesirable_function_linter()`, `undesirable_operator_linter()`, and `list_comparison_linter()`
+* `undesirable_function_linter()`, `undesirable_operator_linter()`, and `list_comparison_linter()` were removed from the tag `efficiency` (@IndrajeetPatil, #2655). If you use `linters_with_tags("efficiency")` to include these linters, you'll need to adjust your config to keep linting your code against them. We did not find any such users on GitHub.
   
 
 ## Bug fixes
