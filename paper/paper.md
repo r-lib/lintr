@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-09-04"
+date: "2024-09-05"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -38,7 +38,7 @@ affiliations:
   - index: 6
     name: The University of Queensland
   - index: 7
-    name: ???
+    name: Unknown
 output: 
     md_document:
       variant: "markdown"
