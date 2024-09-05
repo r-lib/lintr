@@ -81,6 +81,8 @@
 <code>scalar_in_linter</code> is now configurable to allow other <code>%in%</code> like operators to be linted. The data.table operator <code>%chin%</code> is no longer linted by default; use <code>in_operators = "%chin%"</code> to continue linting it. (<a href="https://github.com/F-Noelle" class="external-link">@F-Noelle</a>)</li>
 <li>
 <code><a href="../reference/lint.html">lint()</a></code> and friends now normalize paths to forward slashes on Windows (<a href="https://github.com/olivroy" class="external-link">@olivroy</a>, <a href="https://github.com/r-lib/lintr/issues/2613" class="external-link">#2613</a>).</li>
+<li>
+<code><a href="../reference/undesirable_function_linter.html">undesirable_function_linter()</a></code>, <code><a href="../reference/undesirable_operator_linter.html">undesirable_operator_linter()</a></code>, and <code><a href="../reference/list_comparison_linter.html">list_comparison_linter()</a></code> were removed from the tag <code>efficiency</code> (<a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>, <a href="https://github.com/r-lib/lintr/issues/2655" class="external-link">#2655</a>). If you use <code>linters_with_tags("efficiency")</code> to include these linters, you’ll need to adjust your config to keep linting your code against them. We did not find any such users on GitHub.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>

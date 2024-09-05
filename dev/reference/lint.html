@@ -182,10 +182,10 @@ unintelligible error messages from other linters.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"a=1"</span>, <span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">lint</span><span class="op">(</span><span class="va">f</span><span class="op">)</span>                <span class="co"># linting a file</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/Rtmp6JXqh7/file188251959c33:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;-, not =, for assignment.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/Rtmp1D4fWo/file174e5e238e39:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;-, not =, for assignment.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/Rtmp6JXqh7/file188251959c33:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/Rtmp1D4fWo/file174e5e238e39:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
 <span class="r-in"><span><span class="fu">lint</span><span class="op">(</span><span class="st">"a = 123\n"</span><span class="op">)</span>      <span class="co"># linting inline-code</span></span></span>
