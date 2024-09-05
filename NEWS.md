@@ -84,6 +84,7 @@
 ### Lint accuracy fixes: removing false positives
 
 * `object_name_linter()` and `object_length_linter()` ignore {rlang} name injection like `x |> mutate("{new_name}" := foo(col))` (#1926, @MichaelChirico). No checking is applied in such cases. {data.table} in-place assignments like `DT[, "sPoNGeBob" := "friend"]` are still eligible for lints.
+* `object_usage_linter()` finds global variables assigned with `=` or `->`, which avoids some issues around "undefined global variables" in scripts (#2654, @MichaelChirico).
 
 ## Notes
 
