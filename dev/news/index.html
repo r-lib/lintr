@@ -196,6 +196,8 @@
 <h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
 <ul><li>
 <code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> and <code><a href="../reference/object_length_linter.html">object_length_linter()</a></code> ignore {rlang} name injection like <code>x |&gt; mutate("{new_name}" := foo(col))</code> (<a href="https://github.com/r-lib/lintr/issues/1926" class="external-link">#1926</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). No checking is applied in such cases. {data.table} in-place assignments like <code>DT[, "sPoNGeBob" := "friend"]</code> are still eligible for lints.</li>
+<li>
+<code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> finds global variables assigned with <code>=</code> or <code>-&gt;</code>, which avoids some issues around “undefined global variables” in scripts (<a href="https://github.com/r-lib/lintr/issues/2654" class="external-link">#2654</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
 <div class="section level3">
