@@ -26,6 +26,11 @@ lint(
   linters = redundant_equals_linter()
 )
 
+lint(
+  text = "dt[x == FALSE, y]",
+  linters = redundant_equals_linter()
+)
+
 # okay
 lint(
   text = "if (any(x)) 1",
@@ -34,6 +39,11 @@ lint(
 
 lint(
   text = "if (!all(x)) 0",
+  linters = redundant_equals_linter()
+)
+
+lint(
+  text = "dt[!(x), y]",
   linters = redundant_equals_linter()
 )
 
