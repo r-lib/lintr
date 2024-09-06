@@ -234,3 +234,11 @@ test_that("available_linters gives precedence to included tags", {
     available_linters(tags = "deprecated", exclude_tags = NULL)
   )
 })
+
+test_that("all non-deprecated linters are covered across tags", {
+  tags <- setdiff(available_tags(), "deprecated")
+  tagged_linters <- lapply(tags, function(tag) names(linters_with_tags(tag))) # nolint: undesirable_function_linter.
+  tagged_linters <- unique(unlist(tagged_linters))
+  all_linters <- names(all_linters())
+  expect_identical(sort(tagged_linters), sort(all_linters))
+})
