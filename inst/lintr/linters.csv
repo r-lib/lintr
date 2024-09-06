@@ -93,7 +93,7 @@ sample_int_linter,efficiency readability robustness
 scalar_in_linter,readability consistency best_practices efficiency configurable
 semicolon_linter,style readability default configurable
 semicolon_terminator_linter,defunct
-seq_linter,robustness efficiency consistency best_practices default
+seq_linter,robustness consistency best_practices default
 single_quotes_linter,style consistency readability deprecated
 sort_linter,readability best_practices efficiency
 spaces_inside_linter,style readability default

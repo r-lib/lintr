@@ -24,7 +24,7 @@ The following tags exist:
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
 \item{\link[=deprecated_linters]{deprecated} (6 linters)}
-\item{\link[=efficiency_linters]{efficiency} (29 linters)}
+\item{\link[=efficiency_linters]{efficiency} (28 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
@@ -125,7 +125,7 @@ The following linters exist:
 \item{\code{\link{sample_int_linter}} (tags: efficiency, readability, robustness)}
 \item{\code{\link{scalar_in_linter}} (tags: best_practices, configurable, consistency, efficiency, readability)}
 \item{\code{\link{semicolon_linter}} (tags: configurable, default, readability, style)}
-\item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, efficiency, robustness)}
+\item{\code{\link{seq_linter}} (tags: best_practices, consistency, default, robustness)}
 \item{\code{\link{sort_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{spaces_inside_linter}} (tags: default, readability, style)}
 \item{\code{\link{spaces_left_parentheses_linter}} (tags: default, readability, style)}
