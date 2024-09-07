@@ -235,6 +235,6 @@ test_that("available_linters gives precedence to included tags", {
   )
 })
 
-test_that("all non-deprecated linters are covered across tags", {
+test_that("all linters have at least one tag", {
   expect_true(all(lengths(available_linters()$tags) > 0L))
 })
