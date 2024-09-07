@@ -437,7 +437,7 @@ test_that("cache = TRUE workflow works", {
   # Need a test structure with a safe to load .lintr
   withr::local_dir(file.path("dummy_packages", "package"))
   withr::local_options(lintr.linter_file = "lintr_test_config")
-  files <- normalizePath(list.files(recursive = TRUE, full.names = TRUE))
+  files <- normalize_path(list.files(recursive = TRUE, full.names = TRUE))
 
   # Manually clear cache (that function is exported)
   for (f in files) {

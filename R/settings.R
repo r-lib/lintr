@@ -12,7 +12,7 @@
 #' This file is a DCF file, see [base::read.dcf()] for details.
 #' Here is an example of a `.lintr` file:
 #'
-#'  ```dcf
+#'  ```
 #'  linters: linters_with_defaults(
 #'      any_duplicated_linter(),
 #'      any_is_na_linter(),

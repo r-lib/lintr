@@ -17,6 +17,9 @@
 * Drop support for posting GitHub comments from inside GitHub comment bot, Travis, Wercker, and Jenkins CI tools (spurred by #2148, @MichaelChirico). We rely on GitHub Actions for linting in CI, and don't see any active users relying on these alternatives. We welcome and encourage community contributions to get support for different CI system going again.
 * `cyclocomp_linter()` is no longer part of the default linters (#2555, @IndrajeetPatil) because the tidyverse style guide doesn't contain any guidelines on meeting certain complexity requirements. Note that users with `cyclocomp_linter()` in their configs may now need to install {cyclocomp} intentionally, in particular in CI/CD pipelines.
 * `scalar_in_linter` is now configurable to allow other `%in%` like operators to be linted. The data.table operator `%chin%` is no longer linted by default; use `in_operators = "%chin%"` to continue linting it. (@F-Noelle)
+* `lint()` and friends now normalize paths to forward slashes on Windows (@olivroy, #2613).
+* `undesirable_function_linter()`, `undesirable_operator_linter()`, and `list_comparison_linter()` were removed from the tag `efficiency` (@IndrajeetPatil, #2655). If you use `linters_with_tags("efficiency")` to include these linters, you'll need to adjust your config to keep linting your code against them. We did not find any such users on GitHub.
+  
 
 ## Bug fixes
 
@@ -57,6 +60,7 @@
 * `make_linter_from_xpath()` errors up front when `lint_message` is missing (instead of delaying this error until the linter is used, #2541, @MichaelChirico).
 * `paste_linter()` is extended to recommend using `paste()` instead of `paste0()` for simply aggregating a character vector with `collapse=`, i.e., when `sep=` is irrelevant (#1108, @MichaelChirico).
 * `expect_no_lint()` was added as new function to cover the typical use case of expecting no lint message, akin to the recent {testthat} functions like `expect_no_warning()` (#2580, @F-Noelle).
+* `lint()` and friends emit a message if no lints are found (#2643, @IndrajeetPatil).
 
 ### New linters
 
@@ -82,10 +86,12 @@
 ### Lint accuracy fixes: removing false positives
 
 * `object_name_linter()` and `object_length_linter()` ignore {rlang} name injection like `x |> mutate("{new_name}" := foo(col))` (#1926, @MichaelChirico). No checking is applied in such cases. {data.table} in-place assignments like `DT[, "sPoNGeBob" := "friend"]` are still eligible for lints.
+* `object_usage_linter()` finds global variables assigned with `=` or `->`, which avoids some issues around "undefined global variables" in scripts (#2654, @MichaelChirico).
 
 ## Notes
 
 * All user-facing messages are now prepared using the `{cli}` package (#2418, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
+* File locations in lints and error messages contain clickable hyperlinks to improve code navigation (#2645, #2588, @olivroy).
 * {lintr} now depends on R version 4.0.0. It already does so implicitly due to recursive upstream dependencies requiring this version; we've simply made that dependency explicit and up-front (#2569, @MichaelChirico).
 
 # lintr 3.1.2

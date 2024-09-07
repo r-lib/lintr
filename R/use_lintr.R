@@ -25,7 +25,7 @@
 #'   lintr::lint_dir()
 #' }
 use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
-  config_file <- normalizePath(file.path(path, lintr_option("linter_file")), mustWork = FALSE)
+  config_file <- normalize_path(file.path(path, lintr_option("linter_file")), mustWork = FALSE)
   if (file.exists(config_file)) {
     cli_abort("Found an existing configuration file at {.file {config_file}}.")
   }

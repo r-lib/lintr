@@ -72,7 +72,7 @@ auto_names <- function(x) {
     if (is_linter(x)) {
       attr(x, "name", exact = TRUE)
     } else {
-      paste(deparse(x, 500L), collapse = " ")
+      deparse1(x)
     }
   }
   defaults <- vapply(x[empty], default_name, character(1L), USE.NAMES = FALSE)

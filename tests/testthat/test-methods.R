@@ -96,6 +96,13 @@ test_that("print.lint works", {
   expect_output(print(l), "  1:length(x)", fixed = TRUE)
 })
 
+test_that("print.lint works with empty lints", {
+  withr::local_options(list(lintr.rstudio_source_markers = FALSE))
+  l <- lint(text = "1L")
+
+  expect_message(print(l), "No lints found", fixed = TRUE)
+})
+
 test_that("print.lint works for inline data, even in RStudio", {
   l <- lint("x = 1\n")
 

@@ -8,9 +8,9 @@ a <- withr::local_tempfile()
 b <- withr::local_tempfile()
 c <- withr::local_tempfile(tmpdir = ".")
 file.create(a, b, c)
-a <- normalizePath(a)
-b <- normalizePath(b)
-c <- normalizePath(c)
+a <- normalize_path(a)
+b <- normalize_path(b)
+c <- normalize_path(c)
 
 test_that("it merges two NULL or empty objects as an empty list", {
   expect_identical(lintr:::normalize_exclusions(c(NULL, NULL)), list())
@@ -132,7 +132,7 @@ test_that("it normalizes file paths, removing non-existing files", {
   t3[[c]] <- 5L:15L
   res <- list()
   res[[a]] <- list(1L:10L)
-  res[[normalizePath(c)]] <- list(5L:15L)
+  res[[c]] <- list(5L:15L)
   expect_identical(lintr:::normalize_exclusions(c(t1, t2, t3)), res)
 
   res <- list()

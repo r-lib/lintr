@@ -26,6 +26,11 @@ lint(
   linters = redundant_equals_linter()
 )
 
+lint(
+  text = "dt[is_tall == FALSE, y]",
+  linters = redundant_equals_linter()
+)
+
 # okay
 lint(
   text = "if (any(x)) 1",
@@ -34,6 +39,12 @@ lint(
 
 lint(
   text = "if (!all(x)) 0",
+  linters = redundant_equals_linter()
+)
+
+# in `{data.table}` semantics, `dt[x]` is a join, `dt[(x)]` is a subset
+lint(
+  text = "dt[(!is_tall), y]",
   linters = redundant_equals_linter()
 )
 

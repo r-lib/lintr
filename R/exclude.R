@@ -326,7 +326,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     paths[rel_path] <- file.path(root, paths[rel_path])
     names(x) <- paths
     x <- x[file.exists(paths)] # remove exclusions for non-existing files
-    names(x) <- normalizePath(names(x)) # get full path for remaining files
+    names(x) <- normalize_path(names(x)) # get full path for remaining files
   }
 
   remove_line_duplicates(
