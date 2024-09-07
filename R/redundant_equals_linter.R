@@ -35,6 +35,7 @@
 #'   linters = redundant_equals_linter()
 #' )
 #'
+#' # in data.table semantics, dt[x] is a join, dt[(x)] is a subset
 #' lint(
 #'   text = "dt[!(x), y]",
 #'   linters = redundant_equals_linter()
