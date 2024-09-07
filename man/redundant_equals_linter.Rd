@@ -27,7 +27,7 @@ lint(
 )
 
 lint(
-  text = "dt[x == FALSE, y]",
+  text = "dt[is_tall == FALSE, y]",
   linters = redundant_equals_linter()
 )
 
@@ -42,8 +42,9 @@ lint(
   linters = redundant_equals_linter()
 )
 
+# in `{data.table}` semantics, `dt[x]` is a join, `dt[(x)]` is a subset
 lint(
-  text = "dt[!(x), y]",
+  text = "dt[(!is_tall), y]",
   linters = redundant_equals_linter()
 )
 
