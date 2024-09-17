@@ -60,10 +60,9 @@ bugs, and maintaining a clean codebase, especially in collaborative
 development environments [@enwiki:1218663830]. `{lintr}` is an
 open-source package that provides linters for R programming language,
 which is an interpreted, dynamically-typed programming language
-[@base2023]. It is a popular choice for statistical analysis and
-visualization, and is used by a wide range of researchers and data
-scientists. Therefore, `{lintr}` is a valuable tool for R users to help
-improve the quality and reliability of their code.
+[@base2023], and is used by a wide range of researchers and data
+scientists. `{lintr}` can thus act as a valuable tool for R users to
+help improve the quality and reliability of their code.
 
 # Features
 
