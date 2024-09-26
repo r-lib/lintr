@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-09-17"
+date: "2024-09-26"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -46,23 +46,23 @@ output:
       standalone: true
 bibliography: paper.bib
 csl: apa.csl
-link-citations: yes
+link-citations: true
 ---
 
 # Statement of Need
 
-A linter is a tool that automatically analyzes code to identify
-potential errors, stylistic issues, or deviations from coding standards.
-It helps ensure consistency, readability, and best practices by flagging
-common mistakes, such as syntax errors, unused variables, or improper
+A linter is a tool that analyzes code to identify potential errors,
+stylistic issues, or deviations from coding standards. It helps ensure
+consistency, readability, and best practices by flagging common
+mistakes, such as syntax errors, unused variables, or improper
 formatting. Linters are essential for improving code quality, preventing
 bugs, and maintaining a clean codebase, especially in collaborative
 development environments [@enwiki:1218663830]. `{lintr}` is an
-open-source package that provides linters for R programming language,
-which is an interpreted, dynamically-typed programming language
-[@base2023], and is used by a wide range of researchers and data
-scientists. `{lintr}` can thus act as a valuable tool for R users to
-help improve the quality and reliability of their code.
+open-source package that provides linters for the R programming
+language, which is an interpreted, dynamically-typed programming
+language [@base2023], and is used by a wide range of researchers and
+data scientists. `{lintr}` can thus act as a valuable tool for R users
+to help improve the quality and reliability of their code.
 
 # Features
 
@@ -71,6 +71,9 @@ By default, `{lintr}` enforces the tidyverse style guide
 static code analysis tools in R (like `{codetools}` [@Tierney2024]),
 which are not opinionated and don't enforce any particular style of
 writing code, but, rather, check R code for possible problems.
+Additionally, `{lintr}` doesn't cover linting inline code for
+documentation generation (cf. `{roxylint}` [@Kelkhoff2024] for linting
+`{roxygen2}` comments [@Wickham2024roxy]).
 
 As of this writing, `{lintr}` offers 113 linters.
 
@@ -293,7 +296,8 @@ lint(
 Indeed, `{goodpractice}` [@Padgham2024] bundles a set of custom linters
 that are not part of the default set of `{lintr}` linters, while
 `{flint}` [@Bacher2024] provides a way to fix the lints detected by
-`{lintr}`.
+`{lintr}`. Moreover, `{box.linters}` [@Basa2024] extends `{lintr}` to
+support `{box}` modules [@Rudolph2024].
 
 # Benefits of using `{lintr}`
 
