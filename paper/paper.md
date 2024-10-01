@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-09-29"
+date: "2024-10-01"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -72,9 +72,10 @@ static code analysis tools in R (like `{codetools}` [@Tierney2024]),
 which are not opinionated and don't enforce any particular style of
 writing code, but, rather, check R code for possible problems
 (incidentally, `{lintr}` uses `{codetools}` as a backend for object
-usage linters). Additionally, `{lintr}` doesn't cover linting inline
-code for documentation generation (cf. `{roxylint}` [@Kelkhoff2024] for
-linting `{roxygen2}` comments [@Wickham2024roxy]).
+usage linters). Additionally, `{lintr}` is concerned only with R code,
+so code-adjacent text like inline `{roxygen2}` comments
+[@Wickham2024roxy] will not be covered (cf. `{roxylint}`
+[@Kelkhoff2024]).
 
 As of this writing, `{lintr}` offers 113 linters.
 
