@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-10-01"
+date: "2024-10-02"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -297,10 +297,11 @@ lint(
 
 Indeed, `{goodpractice}` [@Padgham2024] bundles a set of custom linters
 that are not part of the default set of `{lintr}` linters, while
-`{flint}` [@Bacher2024] provides a way to fix the lints detected by
-`{lintr}`. Moreover, `{box.linters}` [@Basa2024] extends `{lintr}` to
-support `{box}` modules [@Rudolph2024], while `{checklist}` includes
-linters as one of the strict checks for R packages [@Onkelinx2024].
+`{box.linters}` [@Basa2024] extends `{lintr}` to support `{box}` modules
+[@Rudolph2024] and `{checklist}` includes linters as one of the strict
+checks for R packages [@Onkelinx2024]. `{flint}` [@Bacher2024] is a
+Rust-backed analogue inspired by `{lintr}` that also provides support
+for fixing lints.
 
 # Benefits of using `{lintr}`
 
