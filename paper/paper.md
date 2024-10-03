@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-10-02"
+date: "2024-10-03"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -120,7 +120,7 @@ lint(
   text = "x >= 2.5",
   linters = redundant_ifelse_linter()
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   **Efficiency**
@@ -153,7 +153,7 @@ lint(
   text = "anyNA(x)",
   linters = any_is_na_linter()
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   **Readability**
@@ -186,7 +186,7 @@ lint(
   text = "x != 2",
   linters = comparison_negation_linter()
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   **Tidyverse style**
@@ -214,7 +214,7 @@ lint(
   text = "my_var <- 1L",
   linters = object_name_linter()
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   **Common mistakes**
@@ -288,7 +288,7 @@ lint(
   text = "my.var <- 1L",
   linters = object_name_linter(styles = "dotted.case")
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   Create new linters (by leveraging functions like
