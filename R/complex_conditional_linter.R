@@ -3,11 +3,49 @@
 #' Detects complex conditional expressions and suggests extracting
 #' them into Boolean functions or variables for improved readability and reusability.
 #'
+#' For example, if you have a conditional expression with more than two logical operands,
+#'
+#' ```
+#' if (looks_like_a_duck(x) &&
+#'     swims_like_a_duck(x) &&
+#'     quacks_like_a_duck(x)) {
+#'     ...
+#' }
+#' ````
+#'
+#' to improve its readability and reusability, you can extract the conditional expression.
+#'
+#' Either into a Boolean function:
+#'
+#' ```
+#' is_duck <- function(x) {
+#'   looks_like_a_duck(x) &&
+#'     swims_like_a_duck(x) &&
+#'     quacks_like_a_duck(x)
+#' }
+#'
+#' if (is_duck(x)) {
+#'   ...
+#' }
+#' ```
+#'
+#' Or into a Boolean variable:
+#'
+#' ```
+#' is_duck <- looks_like_a_duck(x) &&
+#'    swims_like_a_duck(x) &&
+#'    quacks_like_a_duck(x)
+#'
+#' if (is_duck) {
+#'  ...
+#' }
+#' ```
+#'
 #' @param threshold Integer. The maximum number of logical operands (`&&` or `||`)
 #'   allowed in a conditional expression (default: `2L`).
 #'
 #' @examples
-#' # This will produce a lint because there are three logical operands
+#' # will produce lints
 #' code <- "if (a && b && c) { do_something() }"
 #' writeLines(code)
 #' lint(
@@ -15,8 +53,9 @@
 #'   linters = complex_conditional_linter()
 #' )
 #'
-#' # This will not produce a lint because it meets the threshold
-#' code <- "if (a && b) { do_something() }"
+#' # okay
+#' ready_to_do_something <- a && b && c
+#' code <- "if (ready_to_do_something) { do_something() }"
 #' writeLines(code)
 #' lint(
 #'   text = code,
@@ -36,7 +75,7 @@ complex_conditional_linter <- function(threshold = 2L) {
     ]
   ")
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     nodes <- xml2::xml_find_all(xml, xpath)

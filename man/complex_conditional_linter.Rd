@@ -14,8 +14,44 @@ allowed in a conditional expression (default: \code{2L}).}
 Detects complex conditional expressions and suggests extracting
 them into Boolean functions or variables for improved readability and reusability.
 }
+\details{
+For example, if you have a conditional expression with more than two logical operands,
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{if (looks_like_a_duck(x) &&
+    swims_like_a_duck(x) &&
+    quacks_like_a_duck(x)) \{
+    ...
+\}
+}\if{html}{\out{</div>}}
+
+to improve its readability and reusability, you can extract the conditional expression.
+
+Either into a Boolean function:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{is_duck <- function(x) \{
+  looks_like_a_duck(x) &&
+    swims_like_a_duck(x) &&
+    quacks_like_a_duck(x)
+\}
+
+if (is_duck(x)) \{
+  ...
+\}
+}\if{html}{\out{</div>}}
+
+Or into a Boolean variable:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{is_duck <- looks_like_a_duck(x) &&
+   swims_like_a_duck(x) &&
+   quacks_like_a_duck(x)
+
+if (is_duck) \{
+ ...
+\}
+}\if{html}{\out{</div>}}
+}
 \examples{
-# This will produce a lint because there are three logical operands
+# will produce lints
 code <- "if (a && b && c) { do_something() }"
 writeLines(code)
 lint(
@@ -23,8 +59,9 @@ lint(
   linters = complex_conditional_linter()
 )
 
-# This will not produce a lint because it meets the threshold
-code <- "if (a && b) { do_something() }"
+# okay
+ready_to_do_something <- a && b && c
+code <- "if (ready_to_do_something) { do_something() }"
 writeLines(code)
 lint(
   text = code,
