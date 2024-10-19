@@ -238,7 +238,7 @@ unnecessary_nesting_linter <- function(
     unnecessary_else_brace_lints <- xml_nodes_to_lints(
       unnecessary_else_brace_expr,
       source_expression = source_expression,
-      lint_message = "Simplify this condition by using 'else if' instead of 'else { if.",
+      lint_message = "Simplify this condition by using 'else if' instead of 'else { if'.",
       type = "warning"
     )
 

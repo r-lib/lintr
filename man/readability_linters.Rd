@@ -17,6 +17,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{comparison_negation_linter}}}
+\item{\code{\link{complex_conditional_linter}}}
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
 \item{\code{\link{consecutive_mutate_linter}}}
