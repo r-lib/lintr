@@ -29,6 +29,7 @@
 * `.lintr` configs set by option `lintr.linter_file` or environment variable `R_LINTR_LINTER_FILE` can point to subdirectories (#2512, @MichaelChirico).
 * `indentation_linter()` returns `ranges[1L]==1L` when the offending line has 0 spaces (#2550, @MichaelChirico).
 * `literal_coercion_linter()` doesn't surface a warning about NAs during coercion for code like `as.integer("a")` (#2566, @MichaelChirico).
+* `commented_code_linter()` can detect commented out code ending with a pipe (#2671, @jcken95)
 
 ## Changes to default linters
 
