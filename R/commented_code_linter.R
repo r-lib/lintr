@@ -86,6 +86,9 @@ commented_code_linter <- function() {
     # ignore trailing ',' when testing for parsability
     extracted_code <- re_substitutes(extracted_code, rex(",", any_spaces, end), "")
     extracted_code <- re_substitutes(extracted_code, rex(start, any_spaces, ","), "")
+    # ignore a trailing pipe (|>) when testing parsability
+    extracted_code <- re_substitutes(extracted_code, rex("|>", any_spaces, end), "")
+
     is_parsable <- which(vapply(extracted_code, parsable, logical(1L)))
 
     lint_list <- xml_nodes_to_lints(
