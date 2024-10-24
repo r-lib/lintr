@@ -98,6 +98,8 @@
 <code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> returns <code>ranges[1L]==1L</code> when the offending line has 0 spaces (<a href="https://github.com/r-lib/lintr/issues/2550" class="external-link">#2550</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/literal_coercion_linter.html">literal_coercion_linter()</a></code> doesn’t surface a warning about NAs during coercion for code like <code>as.integer("a")</code> (<a href="https://github.com/r-lib/lintr/issues/2566" class="external-link">#2566</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/commented_code_linter.html">commented_code_linter()</a></code> can detect commented code that ends with a pipe (<a href="https://github.com/r-lib/lintr/issues/2671" class="external-link">#2671</a>, <a href="https://github.com/jcken95" class="external-link">@jcken95</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-to-default-linters-development-version">Changes to default linters<a class="anchor" aria-label="anchor" href="#changes-to-default-linters-development-version"></a></h3>
