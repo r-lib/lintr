@@ -104,27 +104,20 @@ test_that("commented_code_linter can detect operators in comments and lint corre
   )
 })
 
-test_that(
-  "commented_code_linter can detect commented code ending with a base pipe",
-  {
-    skip_if_not_r_version("4.1.0")
+test_that("commented_code_linter can detect commented code ending with a base pipe", {
+  skip_if_not_r_version("4.1.0")
 
-    expect_lint(
-      "# f() |>",
-      rex::rex("Remove commented code."),
-      commented_code_linter()
-    )
-  }
-)
+  expect_lint(
+    "# f() |>",
+    rex::rex("Remove commented code."),
+    commented_code_linter()
+  )
+})
 
-
-test_that(
-  "commented_code_linter can detect commented code ending with a {magrittr} pipe",
-  {
-    expect_lint(
-      "# f() %>%",
-      rex::rex("Remove commented code."),
-      commented_code_linter()
-    )
-  }
-)
+test_that("commented_code_linter can detect commented code ending with a {magrittr} pipe", {
+  expect_lint(
+    "# f() %>%",
+    rex::rex("Remove commented code."),
+    commented_code_linter()
+  )
+})
