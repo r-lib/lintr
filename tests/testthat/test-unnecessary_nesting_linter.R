@@ -651,7 +651,7 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
 
 test_that("else that can drop braces is found", {
   linter <- unnecessary_nesting_linter()
-  lint_msg <- rex::rex("Simplify this condition by using 'else if' instead of 'else { if.")
+  lint_msg <- rex::rex("Simplify this condition by using 'else if' instead of 'else { if'.")
 
   expect_lint(
     trim_some("
