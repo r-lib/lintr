@@ -41,8 +41,8 @@
 #' }
 #' ```
 #'
-#' In addition to improving code readability, extracting complex conditional expressions has the added benefit
-#' of introducing a reusable abstraction.
+#' In addition to improving code readability, extracting complex conditional expressions
+#' has the added benefit of introducing a reusable abstraction.
 #'
 #' @param threshold Integer. The maximum number of logical operators (`&&` or `||`)
 #'   allowed in a conditional expression. The default is `1L`, meaning any conditional expression
@@ -70,7 +70,8 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 complex_conditional_linter <- function(threshold = 1L) {
-  stopifnot(is.integer(threshold), length(threshold) == 1L, threshold >= 1L)
+  stopifnot(is.numeric(threshold), length(threshold) == 1L, threshold >= 1L)
+  threshold <- as.integer(threshold)
 
   xpath <- glue::glue("//expr[
     parent::expr[IF or WHILE]
