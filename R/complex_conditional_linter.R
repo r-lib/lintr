@@ -73,10 +73,15 @@ complex_conditional_linter <- function(threshold = 1L) {
   stopifnot(is.integer(threshold), length(threshold) == 1L, threshold >= 1L)
 
   xpath <- glue::glue("//expr[
-    parent::*[IF or WHILE]
+    parent::expr[IF or WHILE]
     and
-    count(descendant-or-self::expr[AND2 or OR2]) > {threshold}
+    preceding-sibling::*[1][self::OP-LEFT-PAREN]
+    and
+    following-sibling::*[1][self::OP-RIGHT-PAREN]
+    and
+    count(descendant-or-self::*[AND2 or OR2]) > {threshold}
   ]")
+
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

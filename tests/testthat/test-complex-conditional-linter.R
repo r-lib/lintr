@@ -84,8 +84,8 @@ test_that("complex_conditional_linter handles nested conditionals", {
       }
     "),
     list(
-      list(message = lint_message, line_number = 2L),
-      list(message = lint_message, line_number = 3L)
+      list(message = lint_message, line_number = 1L),
+      list(message = lint_message, line_number = 2L)
     ),
     linter
   )
