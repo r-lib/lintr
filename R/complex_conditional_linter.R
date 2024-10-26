@@ -58,12 +58,18 @@
 #' )
 #'
 #' # okay
-#' ready_to_do_something <- a && b && c
 #' code <- "if (ready_to_do_something) { do_something() }"
 #' writeLines(code)
 #' lint(
 #'   text = code,
 #'   linters = complex_conditional_linter()
+#' )
+#'
+#' code <- "if (a && b && c) { do_something() }"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = complex_conditional_linter(threshold = 2L)
 #' )
 #'
 #' @evalRd rd_tags("complex_conditional_linter")
