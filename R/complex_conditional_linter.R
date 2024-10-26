@@ -73,9 +73,9 @@ complex_conditional_linter <- function(threshold = 1L) {
   stopifnot(is.integer(threshold), length(threshold) == 1L, threshold >= 1L)
 
   xpath <- glue::glue("//expr[
-    count(descendant-or-self::expr[count(expr) > {threshold} and (AND2 or OR2)]) > 1
+    parent::*[IF or WHILE]
     and
-    not(ancestor::expr[count(descendant-or-self::expr[count(expr) > {threshold} and (AND2 or OR2)]) > 1])
+    count(descendant-or-self::expr[AND2 or OR2]) > {threshold}
   ]")
 
   Linter(linter_level = "expression", function(source_expression) {
