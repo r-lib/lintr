@@ -1,4 +1,4 @@
-test_that("complex_conditional_linter skips simple conditionals", {
+test_that("complex_conditional_linter doesn't lint simple conditionals", {
   linter <- complex_conditional_linter()
 
   expect_lint(
@@ -32,9 +32,9 @@ test_that("complex_conditional_linter skips simple conditionals", {
   )
 })
 
-test_that("complex_conditional_linter finds complex conditions", {
-  linter <- complex_conditional_linter(threshold = 2L)
-  lint_message <- rex::rex("Complex conditional with more than 2 logical operands")
+test_that("complex_conditional_linter finds complex conditions with default threshold", {
+  linter <- complex_conditional_linter()
+  lint_message <- rex::rex("Complex conditional with more than 1 logical operator(s)")
 
   expect_lint(
     trim_some("
@@ -58,10 +58,10 @@ test_that("complex_conditional_linter finds complex conditions", {
 })
 
 test_that("complex_conditional_linter handles nested conditionals", {
-  linter <- complex_conditional_linter(threshold = 2L)
-  lint_message <- rex::rex("Complex conditional with more than 2 logical operands")
+  linter <- complex_conditional_linter()
+  lint_message <- rex::rex("Complex conditional with more than 1 logical operator(s)")
 
-  # Simple outer, complex inner
+  # simple outer, complex inner
   expect_lint(
     trim_some("
       if (x > 0) {
@@ -74,7 +74,7 @@ test_that("complex_conditional_linter handles nested conditionals", {
     linter
   )
 
-  # Multiple complex conditions
+  # multiple complex conditions
   expect_lint(
     trim_some("
       if (x > 0 && y < 10 && z == TRUE) {
@@ -108,14 +108,14 @@ test_that("complex_conditional_linter respects threshold parameter", {
         print('test')
       }
     "),
-    rex::rex("Complex conditional with more than 3 logical operands"),
-    complex_conditional_linter(threshold = 3L)
+    rex::rex("Complex conditional with more than 2 logical operator(s)"),
+    complex_conditional_linter(threshold = 2L)
   )
 })
 
 test_that("complex_conditional_linter handles mixed operators and parentheses", {
   linter <- complex_conditional_linter(threshold = 2L)
-  lint_message <- rex::rex("Complex conditional with more than 2 logical operands")
+  lint_message <- rex::rex("Complex conditional with more than 2 logical operator(s)")
 
   expect_lint(
     trim_some("
@@ -139,7 +139,7 @@ test_that("complex_conditional_linter handles mixed operators and parentheses", 
 })
 
 test_that("complex_conditional_linter skips non-conditional expressions", {
-  linter <- complex_conditional_linter(threshold = 2L)
+  linter <- complex_conditional_linter()
 
   expect_lint(
     trim_some("

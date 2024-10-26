@@ -4,11 +4,12 @@
 \alias{complex_conditional_linter}
 \title{Complex Conditional Expressions Linter}
 \usage{
-complex_conditional_linter(threshold = 2L)
+complex_conditional_linter(threshold = 1L)
 }
 \arguments{
-\item{threshold}{Integer. The maximum number of logical operands (\code{&&} or \code{||})
-allowed in a conditional expression (default: \code{2L}).}
+\item{threshold}{Integer. The maximum number of logical operators (\code{&&} or \code{||})
+allowed in a conditional expression. The default is \code{1L}, meaning any conditional expression
+with more than one logical operator will be flagged.}
 }
 \description{
 Detects complex conditional expressions and suggests extracting
@@ -26,7 +27,7 @@ For example, if you have a conditional expression with more than two logical ope
 
 to improve its readability and reusability, you can extract the conditional expression.
 
-Either into a Boolean function:
+You can either extract it into a Boolean function:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{is_duck <- function(x) \{
   looks_like_a_duck(x) &&
@@ -39,7 +40,7 @@ if (is_duck(x)) \{
 \}
 }\if{html}{\out{</div>}}
 
-Or into a Boolean variable:
+or into a Boolean variable:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{is_duck <- looks_like_a_duck(x) &&
    swims_like_a_duck(x) &&
@@ -49,6 +50,9 @@ if (is_duck) \{
  ...
 \}
 }\if{html}{\out{</div>}}
+
+In addition to improving code readability, extracting complex conditional expressions has the added benefit
+of introducing a reusable abstraction.
 }
 \examples{
 # will produce lints

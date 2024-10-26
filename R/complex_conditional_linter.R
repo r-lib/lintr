@@ -15,7 +15,7 @@
 #'
 #' to improve its readability and reusability, you can extract the conditional expression.
 #'
-#' Either into a Boolean function:
+#' You can either extract it into a Boolean function:
 #'
 #' ```
 #' is_duck <- function(x) {
@@ -29,7 +29,7 @@
 #' }
 #' ```
 #'
-#' Or into a Boolean variable:
+#' or into a Boolean variable:
 #'
 #' ```
 #' is_duck <- looks_like_a_duck(x) &&
@@ -41,8 +41,12 @@
 #' }
 #' ```
 #'
-#' @param threshold Integer. The maximum number of logical operands (`&&` or `||`)
-#'   allowed in a conditional expression (default: `2L`).
+#' In addition to improving code readability, extracting complex conditional expressions has the added benefit
+#' of introducing a reusable abstraction.
+#'
+#' @param threshold Integer. The maximum number of logical operators (`&&` or `||`)
+#'   allowed in a conditional expression. The default is `1L`, meaning any conditional expression
+#'   with more than one logical operator will be flagged.
 #'
 #' @examples
 #' # will produce lints
@@ -65,15 +69,14 @@
 #' @evalRd rd_tags("complex_conditional_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-complex_conditional_linter <- function(threshold = 2L) {
+complex_conditional_linter <- function(threshold = 1L) {
   stopifnot(is.integer(threshold), length(threshold) == 1L, threshold >= 1L)
 
-  xpath <- glue::glue("
-    //IF | //WHILE
-    [
-      count(.//AND | .//OR) > {threshold - 1}
-    ]
-  ")
+  xpath <- glue::glue("//expr[
+    count(descendant-or-self::expr[count(expr) > {threshold} and (AND2 or OR2)]) > 1
+    and
+    not(ancestor::expr[count(descendant-or-self::expr[count(expr) > {threshold} and (AND2 or OR2)]) > 1])
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
@@ -86,7 +89,7 @@ complex_conditional_linter <- function(threshold = 2L) {
       lint_message = paste0(
         "Complex conditional with more than ",
         threshold,
-        " logical operands. Consider extracting into a boolean function or variable for readability and reusability."
+        " logical operator(s). Consider extracting into a boolean function or variable for readability and reusability."
       ),
       type = "warning"
     )
