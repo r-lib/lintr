@@ -147,7 +147,8 @@ return_linter <- function(
     xml <- source_expression$xml_parsed_content
     if (defer_except) {
       assigned_functions <- xml_text(xml_find_all(xml, function_name_xpath))
-      except <- union(except, assigned_functions[re_matches(assigned_functions, except_regex)])
+      except <-
+        union(except, assigned_functions[re_matches_logical(assigned_functions, except_regex)])
       except_xpath <- glue(except_xpath_fmt, except = except)
       body_xpath <- glue(body_xpath_fmt, except_xpath = except_xpath)
     }
