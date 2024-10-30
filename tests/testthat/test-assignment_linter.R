@@ -193,13 +193,79 @@ test_that("multiple lints throw correct messages", {
   )
 })
 
-test_that("= instead of <- can be used for assignment", {
-  linter <- assignment_linter(allow_equal_assign = TRUE)
-  lint_msg <- rex::rex("Use =, not <-, for assignment.")
+# TODO
+# test multiple lints (as in above)
+test_that("= can be used for top-level assignment in addition to <-", {
+  linter <- assignment_linter(allow_explicit_equal_assign = "allowed")
+
+  expect_lint("blah = 1", NULL, linter)
+  expect_lint("blah <- 1", NULL, linter)
+
+  # implicit <- assignmnet is unaffected
+  expect_lint("if (x <- 1L) TRUE", NULL, linter)
+  expect_lint("while (x <- 0L) FALSE", NULL, linter)
+  expect_lint("for (x in y <- 1:10) print(x)", NULL, linter)
+
+  # data.table's left assign := needs to be silent
+  expect_lint("dt[, x := 42]", NULL, linter)
+})
+
+
+test_that("multiple lints throw correct messages when both = and <- is allowed", {
+  expect_lint(
+    trim_some("{
+      x <<- 1
+      y ->> 2
+      z -> 3
+      x %<>% as.character()
+      foo <- 1
+      bar = 2
+    }"),
+    list(
+      list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
+      list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
+      list(message = "Use <-, not ->", line_number = 4L),
+      list(message = "Avoid the assignment pipe %<>%", line_number = 5L)
+    ),
+    assignment_linter(allow_cascading_assign = FALSE, allow_explicit_equal_assign = "allowed")
+  )
+})
+
+
+test_that("= must be used for top-level assignment instead of <-", {
+  linter <- assignment_linter(allow_explicit_equal_assign = "required")
+  lint_msg <- rex::rex("Use =, not <-, for top-level assignment.")
 
   expect_lint("blah = 1", NULL, linter)
   expect_lint("blah <- 1", lint_msg, linter)
 
+  # implicit <- assignmnet is unaffected
+  expect_lint("if (x <- 1L) TRUE", NULL, linter)
+  expect_lint("while (x <- 0L) FALSE", NULL, linter)
+  expect_lint("for (x in y <- 1:10) print(x)", NULL, linter)
+
   # data.table's left assign := needs to be silent
   expect_lint("dt[, x := 42]", NULL, linter)
+})
+
+
+test_that("multiple lints throw correct messages when = is required", {
+  expect_lint(
+    trim_some("{
+      x <<- 1
+      y ->> 2
+      z -> 3
+      x %<>% as.character()
+      foo <- 1
+      bar = 2
+    }"),
+    list(
+      list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
+      list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
+      list(message = "Use <-, not ->", line_number = 4L),
+      list(message = "Avoid the assignment pipe %<>%", line_number = 5L),
+      list(message = "Use =, not <-, for top-level assignment.", line_number = 6L)
+    ),
+    assignment_linter(allow_cascading_assign = FALSE, allow_explicit_equal_assign = "required")
+  )
 })
