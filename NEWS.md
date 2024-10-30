@@ -19,7 +19,6 @@
 * `scalar_in_linter` is now configurable to allow other `%in%` like operators to be linted. The data.table operator `%chin%` is no longer linted by default; use `in_operators = "%chin%"` to continue linting it. (@F-Noelle)
 * `lint()` and friends now normalize paths to forward slashes on Windows (@olivroy, #2613).
 * `undesirable_function_linter()`, `undesirable_operator_linter()`, and `list_comparison_linter()` were removed from the tag `efficiency` (@IndrajeetPatil, #2655). If you use `linters_with_tags("efficiency")` to include these linters, you'll need to adjust your config to keep linting your code against them. We did not find any such users on GitHub.
-  
 
 ## Bug fixes
 
@@ -47,7 +46,7 @@
   + `return_functions` to customize which functions are equivalent to `return()` as "exit" clauses, e.g. `rlang::abort()` can be considered in addition to the default functions like `stop()` and `q()` from base (#2271 and part of #884, @MichaelChirico and @MEO265).
   + `except` to customize which functions are ignored entirely (i.e., whether they have a return of the specified style is not checked; #2271 and part of #884, @MichaelChirico and @MEO265). Namespace hooks like `.onAttach()` and `.onLoad()` are always ignored.
   + `except_regex`, the same purpose as `except=`, but filters functions by pattern. This is motivated by {RUnit}, where test suites are based on unit test functions matched by pattern, e.g. `^Test`, and where explicit return may be awkward (#2335, @MichaelChirico).
-* `unnecessary_lambda_linter` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
+* `unnecessary_lambda_linter()` is extended to encourage vectorized comparisons where possible, e.g. `sapply(x, sum) > 0` instead of `sapply(x, function(x) sum(x) > 0)` (part of #884, @MichaelChirico). Toggle this behavior with argument `allow_comparison`.
 * `backport_linter()` is slightly faster by moving expensive computations outside the linting function (#2339, #2348, @AshesITR and @MichaelChirico).
 * `Linter()` has a new argument `linter_level` (default `NA`). This is used by `lint()` to more efficiently check for expression levels than the idiom `if (!is_lint_level(...)) { return(list()) }` (#2351, @AshesITR).
 * `string_boundary_linter()` recognizes regular expression calls like `grepl("^abc$", x)` that can be replaced by using `==` instead (#1613, @MichaelChirico).
@@ -83,6 +82,7 @@
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
 * `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
 * `object_overwrite_linter()` for discouraging re-use of upstream package exports as local variables (#2344, #2346 and part of #884, @MichaelChirico and @AshesITR).
+* `complex_conditional_linter()` for encouraging refactoring of complex conditional expressions (like `if (x > 0 && y < 0 || z == 0)`) via well-named abstractions (#2676, @IndrajeetPatil).
 
 ### Lint accuracy fixes: removing false positives
 
