@@ -4,12 +4,12 @@
 \alias{complex_conditional_linter}
 \title{Complex Conditional Expressions Linter}
 \usage{
-complex_conditional_linter(threshold = 1L)
+complex_conditional_linter(threshold = 2L)
 }
 \arguments{
 \item{threshold}{Integer. The maximum number of logical operators (\code{&&} or \code{||})
-allowed in a conditional expression. The default is \code{1L}, meaning any conditional expression
-with more than one logical operator will be flagged.}
+allowed in a conditional expression. The default is \code{2L}, meaning any conditional expression
+with more than two logical operators will be flagged.}
 }
 \description{
 Detects complex conditional expressions and suggests extracting

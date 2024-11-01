@@ -32,8 +32,8 @@ test_that("complex_conditional_linter doesn't lint simple conditionals", {
   )
 })
 
-test_that("complex_conditional_linter finds complex conditions with default threshold", {
-  linter <- complex_conditional_linter()
+test_that("complex_conditional_linter lints complex conditionals above set threshold", {
+  linter <- complex_conditional_linter(threshold = 1L)
   lint_message <- rex::rex("Complex conditional with more than 1 logical operator(s)")
 
   expect_lint(
@@ -59,13 +59,13 @@ test_that("complex_conditional_linter finds complex conditions with default thre
 
 test_that("complex_conditional_linter handles nested conditionals", {
   linter <- complex_conditional_linter()
-  lint_message <- rex::rex("Complex conditional with more than 1 logical operator(s)")
+  lint_message <- rex::rex("Complex conditional with more than 2 logical operator(s)")
 
   # simple outer, complex inner
   expect_lint(
     trim_some("
       if (x > 0) {
-        if (a == 1 && b == 2 && c == 3) {
+        if (a == 1 && b == 2 && c == 3 && d == 4) {
           print('nested')
         }
       }
@@ -77,8 +77,8 @@ test_that("complex_conditional_linter handles nested conditionals", {
   # multiple complex conditions
   expect_lint(
     trim_some("
-      if (x > 0 && y < 10 && z == TRUE) {
-        while (a && b && c) {
+      if (x > 0 && y < 10 && z == TRUE && !w) {
+        while (a && b && c || d) {
           print('double complex')
         }
       }
@@ -168,3 +168,23 @@ test_that("complex_conditional_linter skips non-conditional expressions", {
     linter
   )
 })
+
+# styler: off
+invalid_cases <- list(
+  list(name = "character", input = "2",        error = "is.numeric"),
+  list(name = "logical",   input = TRUE,       error = "is.numeric"),
+  list(name = "vector",    input = c(2, 3),    error = "length"),
+  list(name = "empty",     input = numeric(0), error = "length"),
+  list(name = "zero",      input = 0,          error = "threshold >= 1L"),
+  list(name = "negative",  input = -1,         error = "threshold >= 1L"),
+  list(name = "NA",        input = NA_real_,   error = "is.numeric"),
+  list(name = "NaN",       input = NaN,        error = "threshold >= 1L"),
+  list(name = "Inf",       input = Inf,        error = "threshold >= 1L")
+)
+# styler: on
+
+patrick::with_parameters_test_that(
+  "complex_conditional_linter rejects invalid threshold arguments",
+  expect_error(complex_conditional_linter(input), regexp = invalid_cases$error),
+  .cases = invalid_cases
+)

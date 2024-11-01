@@ -45,8 +45,8 @@
 #' has the added benefit of introducing a reusable abstraction.
 #'
 #' @param threshold Integer. The maximum number of logical operators (`&&` or `||`)
-#'   allowed in a conditional expression. The default is `1L`, meaning any conditional expression
-#'   with more than one logical operator will be flagged.
+#'   allowed in a conditional expression. The default is `2L`, meaning any conditional expression
+#'   with more than two logical operators will be flagged.
 #'
 #' @examples
 #' # will produce lints
@@ -75,7 +75,7 @@
 #' @evalRd rd_tags("complex_conditional_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-complex_conditional_linter <- function(threshold = 1L) {
+complex_conditional_linter <- function(threshold = 2L) {
   stopifnot(is.numeric(threshold), length(threshold) == 1L, threshold >= 1L)
   threshold <- as.integer(threshold)
 
