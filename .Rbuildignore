@@ -23,6 +23,7 @@
 ^bench$
 ^tests/testthat/dummy_packages/package/[.]Rbuildignore$
 ^tests/testthat/dummy_packages/cp1252/[.]Rbuildignore$
+testthat-problems[.]rds$
 ^_pkgdown\.yaml$
 ^docs$
 ^pkgdown$
