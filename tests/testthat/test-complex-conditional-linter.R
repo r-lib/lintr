@@ -171,15 +171,15 @@ test_that("complex_conditional_linter skips non-conditional expressions", {
 
 # styler: off
 invalid_cases <- list(
-  list(name = "character", input = "2",        error = "is.numeric"),
-  list(name = "logical",   input = TRUE,       error = "is.numeric"),
-  list(name = "vector",    input = c(2, 3),    error = "length"),
-  list(name = "empty",     input = numeric(0), error = "length"),
-  list(name = "zero",      input = 0,          error = "threshold >= 1L"),
-  list(name = "negative",  input = -1,         error = "threshold >= 1L"),
-  list(name = "NA",        input = NA_real_,   error = "is.numeric"),
-  list(name = "NaN",       input = NaN,        error = "threshold >= 1L"),
-  list(name = "Inf",       input = Inf,        error = "threshold >= 1L")
+  list(name = "character", input = "2",         error = "is.numeric"),
+  list(name = "logical",   input = TRUE,        error = "is.numeric"),
+  list(name = "vector",    input = c(2L, 3L),   error = "length"),
+  list(name = "empty",     input = numeric(0L), error = "length"),
+  list(name = "zero",      input = 0L,          error = "threshold >= 1L"),
+  list(name = "negative",  input = -1L,         error = "threshold >= 1L"),
+  list(name = "NA",        input = NA_real_,    error = "is.numeric"),
+  list(name = "NaN",       input = NaN,         error = "threshold >= 1L"),
+  list(name = "Inf",       input = Inf,         error = "threshold >= 1L")
 )
 # styler: on
 
