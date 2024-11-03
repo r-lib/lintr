@@ -16,6 +16,30 @@ This linter identifies code using \code{which()} with equality comparison to \co
 or \code{max()}, suggesting the use of more efficient \code{which.min()} and \code{which.max()}
 functions instead.
 }
+\examples{
+# will produce lints
+lint(
+  text = "which(x == max(x))",
+  linters = unnecessary_which_linter()
+)
+
+lint(
+  text = "which(x == min(x))",
+  linters = unnecessary_which_linter()
+)
+
+# okay
+lint(
+  text = "which.max(x))",
+  linters = unnecessary_which_linter()
+)
+
+lint(
+  text = "which.min(x))",
+  linters = unnecessary_which_linter()
+)
+
+}
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }

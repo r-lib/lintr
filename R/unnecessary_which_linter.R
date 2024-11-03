@@ -9,6 +9,29 @@
 #' the index of the minimum or maximum value in a vector. They are more efficient
 #' and cleaner than using `which()` with equality comparison to `min()` or `max()`.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "which(x == max(x))",
+#'   linters = unnecessary_which_linter()
+#' )
+#'
+#' lint(
+#'   text = "which(x == min(x))",
+#'   linters = unnecessary_which_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "which.max(x))",
+#'   linters = unnecessary_which_linter()
+#' )
+#'
+#' lint(
+#'   text = "which.min(x))",
+#'   linters = unnecessary_which_linter()
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_which_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
