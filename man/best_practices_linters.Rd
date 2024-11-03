@@ -71,6 +71,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{unnecessary_nesting_linter}}}
 \item{\code{\link{unnecessary_placeholder_linter}}}
+\item{\code{\link{unnecessary_which_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
 \item{\code{\link{unused_import_linter}}}
 \item{\code{\link{vector_logic_linter}}}
