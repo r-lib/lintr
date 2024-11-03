@@ -65,7 +65,7 @@ withr::local_options(list(
 
 # Statement of Need
 
-A linter is a tool that analyzes code to identify potential errors, stylistic issues, or deviations from coding standards. It helps ensure consistency, readability, and best practices by flagging common mistakes, such as syntax errors, unused variables, or improper formatting. Linters are essential for improving code quality, preventing bugs, and maintaining a clean codebase, especially in collaborative development environments [@enwiki:1218663830]. `{lintr}` is an open-source package that provides linters for the R programming language, which is an interpreted, dynamically-typed programming language [@base2023], and is used by a wide range of researchers and data scientists. `{lintr}` can thus act as a valuable tool for R users to help improve the quality and reliability of their code.
+In computer programming, "linting" is the process of analyzing the source code to identify possible programming and stylistic problems (https://en.wiktionary.org/wiki/linting) and a linter is a tool used for linting. A linter analyzes code to identify potential errors, stylistic issues, or deviations from coding standards. It helps ensure consistency, readability, and best practices by flagging common mistakes, such as syntax errors, unused variables, or improper formatting. Linters are essential for improving code quality, preventing bugs, and maintaining a clean codebase, especially in collaborative development environments [@enwiki:1218663830]. `{lintr}` is an open-source package that provides linters for the R programming language, which is an interpreted, dynamically-typed programming language [@base2023], and is used by a wide range of researchers and data scientists. `{lintr}` can thus act as a valuable tool for R users to help improve the quality and reliability of their code.
 
 # Features
 
@@ -79,7 +79,7 @@ library(lintr)
 length(all_linters())
 ```
 
-Naturally, we can't discuss all of them here. To see details about all available linters, we encourage readers to see <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
+Naturally, we can't discuss all of them here. To see the most up-to-date details about all the available linters, we encourage readers to visit <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
 
 We will showcase one linter for each kind of common problem found in R code.
 

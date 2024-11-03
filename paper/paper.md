@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-10-02"
+date: "2024-11-03"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -51,7 +51,10 @@ link-citations: true
 
 # Statement of Need
 
-A linter is a tool that analyzes code to identify potential errors,
+In computer programming, "linting" is the process of analyzing the
+source code to identify possible programming and stylistic problems
+(<https://en.wiktionary.org/wiki/linting>) and a linter is a tool used
+for linting. A linter analyzes code to identify potential errors,
 stylistic issues, or deviations from coding standards. It helps ensure
 consistency, readability, and best practices by flagging common
 mistakes, such as syntax errors, unused variables, or improper
@@ -86,8 +89,8 @@ length(all_linters())
 #> [1] 113
 ```
 
-Naturally, we can't discuss all of them here. To see details about all
-available linters, we encourage readers to see
+Naturally, we can't discuss all of them here. To see the most up-to-date
+details about all the available linters, we encourage readers to visit
 <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
 
 We will showcase one linter for each kind of common problem found in R
