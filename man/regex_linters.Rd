@@ -15,6 +15,6 @@ The following linters are tagged with 'regex':
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{regex_subset_linter}}}
 \item{\code{\link{string_boundary_linter}}}
-\item{\code{\link{which_grepl_linter}}}
+\item{\code{\link{which_linter}}}
 }
 }

@@ -120,6 +120,6 @@ unneeded_concatenation_linter,style readability efficiency configurable deprecat
 unreachable_code_linter,best_practices readability configurable
 unused_import_linter,best_practices common_mistakes configurable executing
 vector_logic_linter,default efficiency best_practices common_mistakes
-which_grepl_linter,readability efficiency consistency regex
+which_linter,readability efficiency consistency regex
 whitespace_linter,style consistency default
 yoda_test_linter,package_development best_practices readability pkg_testthat

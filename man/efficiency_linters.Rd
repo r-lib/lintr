@@ -41,6 +41,6 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{unnecessary_which_linter}}}
 \item{\code{\link{vector_logic_linter}}}
-\item{\code{\link{which_grepl_linter}}}
+\item{\code{\link{which_linter}}}
 }
 }

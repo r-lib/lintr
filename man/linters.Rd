@@ -149,7 +149,7 @@ The following linters exist:
 \item{\code{\link{unreachable_code_linter}} (tags: best_practices, configurable, readability)}
 \item{\code{\link{unused_import_linter}} (tags: best_practices, common_mistakes, configurable, executing)}
 \item{\code{\link{vector_logic_linter}} (tags: best_practices, common_mistakes, default, efficiency)}
-\item{\code{\link{which_grepl_linter}} (tags: consistency, efficiency, readability, regex)}
+\item{\code{\link{which_linter}} (tags: consistency, efficiency, readability, regex)}
 \item{\code{\link{whitespace_linter}} (tags: consistency, default, style)}
 \item{\code{\link{yoda_test_linter}} (tags: best_practices, package_development, pkg_testthat, readability)}
 }

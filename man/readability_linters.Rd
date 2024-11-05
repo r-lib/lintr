@@ -75,7 +75,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{unnecessary_placeholder_linter}}}
 \item{\code{\link{unnecessary_which_linter}}}
 \item{\code{\link{unreachable_code_linter}}}
-\item{\code{\link{which_grepl_linter}}}
+\item{\code{\link{which_linter}}}
 \item{\code{\link{yoda_test_linter}}}
 }
 }

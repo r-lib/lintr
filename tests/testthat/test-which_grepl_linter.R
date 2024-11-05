@@ -1,10 +1,10 @@
-test_that("which_grepl_linter skips allowed usages", {
+test_that("which_linter skips allowed usages", {
   # this _could_ be combined as p1|p2, but often it's cleaner to read this way
-  expect_lint("which(grepl(p1, x) | grepl(p2, x))", NULL, which_grepl_linter())
+  expect_lint("which(grepl(p1, x) | grepl(p2, x))", NULL, which_linter())
 })
 
-test_that("which_grepl_linter blocks simple disallowed usages", {
-  linter <- which_grepl_linter()
+test_that("which_linter blocks simple disallowed usages", {
+  linter <- which_linter()
   lint_msg <- rex::rex("grep(pattern, x) is better than which(grepl(pattern, x)).")
 
   expect_lint("which(grepl('^a', x))", lint_msg, linter)

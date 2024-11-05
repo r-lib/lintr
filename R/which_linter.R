@@ -7,19 +7,19 @@
 #' # will produce lints
 #' lint(
 #'   text = "which(grepl('^a', x))",
-#'   linters = which_grepl_linter()
+#'   linters = which_linter()
 #' )
 #'
 #' # okay
 #' lint(
 #'   text = "which(grepl('^a', x) | grepl('^b', x))",
-#'   linters = which_grepl_linter()
+#'   linters = which_linter()
 #' )
 #'
-#' @evalRd rd_tags("which_grepl_linter")
+#' @evalRd rd_tags("which_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-which_grepl_linter <- make_linter_from_function_xpath(
+which_linter <- make_linter_from_function_xpath(
   function_names = "grepl",
   xpath = "
   parent::expr
