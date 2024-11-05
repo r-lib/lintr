@@ -2,22 +2,47 @@
 % Please edit documentation in R/which_linter.R
 \name{which_linter}
 \alias{which_linter}
-\title{Require usage of grep over which(grepl(.))}
+\title{Find suboptimal usages involving \code{which()}}
 \usage{
 which_linter()
 }
 \description{
-\code{which(grepl(pattern, x))} is the same as \code{grep(pattern, x)}, but harder
+\itemize{
+\item \code{which.min(x)} and \code{which.max(x)} are optimized functions that directly return
+the index of the minimum or maximum value in a vector. They are more
+efficient and cleaner than using \code{which(min(x))} or \code{which(max(x))}.
+\item \code{which(grepl(pattern, x))} is the same as \code{grep(pattern, x)}, but harder
 to read and requires two passes over the vector.
+}
 }
 \examples{
 # will produce lints
+lint(
+  text = "which(x == max(x))",
+  linters = unnecessary_which_linter()
+)
+
+lint(
+  text = "which(x == min(x))",
+  linters = unnecessary_which_linter()
+)
+
 lint(
   text = "which(grepl('^a', x))",
   linters = which_linter()
 )
 
 # okay
+lint(
+  text = "which.max(x))",
+  linters = unnecessary_which_linter()
+)
+
+lint(
+  text = "which.min(x))",
+  linters = unnecessary_which_linter()
+)
+
 lint(
   text = "which(grepl('^a', x) | grepl('^b', x))",
   linters = which_linter()

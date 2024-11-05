@@ -193,7 +193,6 @@ Collate:
     'unnecessary_lambda_linter.R'
     'unnecessary_nesting_linter.R'
     'unnecessary_placeholder_linter.R'
-    'unnecessary_which_linter.R'
     'unreachable_code_linter.R'
     'unused_import_linter.R'
     'use_lintr.R'
