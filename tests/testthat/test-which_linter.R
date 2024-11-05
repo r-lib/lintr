@@ -37,7 +37,6 @@ test_that("which_linter ignores valid which min/max usages", {
   expect_lint("min(which(x > 0L))", NULL, linter)
   expect_lint("max(which(x > 0L))", NULL, linter)
   expect_lint("# which(x == min(x))", NULL, linter)
-
 })
 
 test_that("which_linter identifies which(x == min(x)) pattern", {
@@ -74,4 +73,3 @@ test_that("lints vectorize", {
     which_linter()
   )
 })
-
