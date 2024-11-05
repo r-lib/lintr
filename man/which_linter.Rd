@@ -19,12 +19,12 @@ to read and requires two passes over the vector.
 # will produce lints
 lint(
   text = "which(x == max(x))",
-  linters = unnecessary_which_linter()
+  linters = which_linter()
 )
 
 lint(
   text = "which(x == min(x))",
-  linters = unnecessary_which_linter()
+  linters = which_linter()
 )
 
 lint(
@@ -35,12 +35,12 @@ lint(
 # okay
 lint(
   text = "which.max(x))",
-  linters = unnecessary_which_linter()
+  linters = which_linter()
 )
 
 lint(
   text = "which.min(x))",
-  linters = unnecessary_which_linter()
+  linters = which_linter()
 )
 
 lint(
