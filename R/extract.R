@@ -9,7 +9,7 @@ extract_r_source <- function(filename, lines, error = identity) {
   output <- rep.int(NA_character_, length(lines))
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
-  if (inherits(chunks, "error") || inherits(chunks, "lint")) {
+  if (is_error(chunks) || is_lint(chunks)) {
     assign("e", chunks, envir = parent.frame())
     # error, so return empty code
     return(output)
