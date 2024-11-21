@@ -360,11 +360,12 @@ validate_linter_object <- function(linter, name) {
   )
 }
 
+# A linter factory is a function whose last call is to `Linter()`
 is_linter_factory <- function(fun) {
-  # A linter factory is a function whose last call is to Linter()
   bdexpr <- body(fun)
-  # covr internally transforms each call into if (TRUE) { covr::count(...); call }
-  while (is.call(bdexpr) && (bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE"))) {
+  # covr internally transforms each call into `if (TRUE) { covr::count(...); call }`
+  is_relevant_call <- bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE")
+  while (is.call(bdexpr) && is_relevant_call) {
     bdexpr <- bdexpr[[length(bdexpr)]]
   }
   is.call(bdexpr) && identical(bdexpr[[1L]], as.name("Linter"))

@@ -1,11 +1,3 @@
-`%||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
-    y
-  } else {
-    x
-  }
-}
-
 `%==%` <- function(x, y) {
   identical(x, y)
 }

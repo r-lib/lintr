@@ -297,6 +297,8 @@ settings <- new.env(parent = emptyenv())
 
   # R>=4.1.0: ...names
   backports::import(pkgname, "...names")
+  # R>=4.4.0: %||%
+  backports::import(pkgname, "%||%")
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
