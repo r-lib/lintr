@@ -364,8 +364,7 @@ validate_linter_object <- function(linter, name) {
 is_linter_factory <- function(fun) {
   bdexpr <- body(fun)
   # covr internally transforms each call into `if (TRUE) { covr::count(...); call }`
-  is_relevant_call <- bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE")
-  while (is.call(bdexpr) && is_relevant_call) {
+  while (is.call(bdexpr) && (bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE"))) { # nolint: complex_conditional_linter
     bdexpr <- bdexpr[[length(bdexpr)]]
   }
   is.call(bdexpr) && identical(bdexpr[[1L]], as.name("Linter"))
