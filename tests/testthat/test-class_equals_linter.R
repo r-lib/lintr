@@ -29,7 +29,7 @@ test_that("class_equals_linter blocks usage of %in% for checking class", {
 test_that("class_equals_linter blocks class(x) != 'klass'", {
   expect_lint(
     "if (class(x) != 'character') TRUE",
-    rex::rex("Use inherits(x, 'class-name'), is.<class> or is(x, 'class')"),
+    rex::rex("Use inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes"),
     class_equals_linter()
   )
 })
