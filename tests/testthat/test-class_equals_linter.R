@@ -11,7 +11,7 @@ test_that("class_equals_linter skips allowed usages", {
 
 test_that("class_equals_linter blocks simple disallowed usages", {
   linter <- class_equals_linter()
-  lint_msg <- rex::rex("Use inherits(x, 'class-name'), is.<class> or is(x, 'class')")
+  lint_msg <- rex::rex("Use inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes")
 
   expect_lint("if (class(x) == 'character') stop('no')", lint_msg, linter)
   expect_lint("is_regression <- class(x) == 'lm'", lint_msg, linter)
@@ -20,7 +20,7 @@ test_that("class_equals_linter blocks simple disallowed usages", {
 
 test_that("class_equals_linter blocks usage of %in% for checking class", {
   linter <- class_equals_linter()
-  lint_msg <- rex::rex("Use inherits(x, 'class-name'), is.<class> or is(x, 'class')")
+  lint_msg <- rex::rex("Use inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes")
 
   expect_lint("if ('character' %in% class(x)) stop('no')", lint_msg, linter)
   expect_lint("if (class(x) %in% 'character') stop('no')", lint_msg, linter)
@@ -43,13 +43,13 @@ test_that("class_equals_linter skips usage for subsetting", {
   # but not further nesting
   expect_lint(
     "x[if (class(x) == 'foo') 1 else 2]",
-    rex::rex("Use inherits(x, 'class-name'), is.<class> or is(x, 'class')"),
+    rex::rex("Use inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes"),
     linter
   )
 })
 
 test_that("lints vectorize", {
-  lint_msg <- rex::rex("Use inherits(x, 'class-name'), is.<class> or is(x, 'class')")
+  lint_msg <- rex::rex("Use inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes")
 
   expect_lint(
     trim_some("{
