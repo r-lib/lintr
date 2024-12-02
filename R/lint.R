@@ -186,10 +186,17 @@ lint_dir <- function(path = ".", ...,
     lints <- lapply(
       # NB: This cli API is experimental (https://github.com/r-lib/cli/issues/709)
       cli::cli_progress_along(files, name = "Running linters"),
-      function(idx) lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
+      function(idx) {
+        lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
+      }
     )
   } else {
-    lints <- lapply(files, lint, file, ..., parse_settings = FALSE, exclusions = exclusions)
+    lints <- lapply(
+      files,
+      function(file) {
+        lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+      }
+    )
   }
 
   lints <- flatten_lints(lints)
