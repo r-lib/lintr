@@ -24,7 +24,7 @@ If you wish to contribute a new linter, the [Creating new linters](https://lintr
 
 *   Make your changes, commit them to Git, and create a PR using `usethis::pr_push()`. Follow the prompts in your browser to complete the process. Use a concise title for your PR that summarizes the change, and include `Fixes #issue-number` in the PR _description_. Doing so will automatically close the linked issue when the PR is merged. For complicated changes, add a textual overview of what your PR does in the description. Consider breaking up large PRs into a chain of more digestible+focused smaller PRs.
 
-*  For user-facing changes, add a bullet appropriately in the top section of `NEWS.md` (i.e. below the first header). Follow the style described in <https://style.tidyverse.org/news.html>. Your audience for NEWS items is a package user, i.e., _not_ a package developer.
+*  For user-facing changes, add a bullet appropriately in the top section of `NEWS.md` (i.e. below the first header). Follow the style described in <https://style.tidyverse.org/news.html>. Most importantly, your audience for NEWS items is a package user, i.e., _not_ a package developer.
 
 ### Code style
 
