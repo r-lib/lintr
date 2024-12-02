@@ -680,7 +680,7 @@ has_positional_logical <- function(dots) {
 }
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
-  if (inherits(error, "lint")) {
+  if (is_lint(error)) {
     error$linter <- "error"
     lints[[length(lints) + 1L]] <- error
 

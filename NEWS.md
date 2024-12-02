@@ -18,6 +18,8 @@
 * `cyclocomp_linter()` is no longer part of the default linters (#2555, @IndrajeetPatil) because the tidyverse style guide doesn't contain any guidelines on meeting certain complexity requirements. Note that users with `cyclocomp_linter()` in their configs may now need to install {cyclocomp} intentionally, in particular in CI/CD pipelines.
 * `scalar_in_linter` is now configurable to allow other `%in%` like operators to be linted. The data.table operator `%chin%` is no longer linted by default; use `in_operators = "%chin%"` to continue linting it. (@F-Noelle)
 * `lint()` and friends now normalize paths to forward slashes on Windows (@olivroy, #2613).
+* `undesirable_function_linter()`, `undesirable_operator_linter()`, and `list_comparison_linter()` were removed from the tag `efficiency` (@IndrajeetPatil, #2655). If you use `linters_with_tags("efficiency")` to include these linters, you'll need to adjust your config to keep linting your code against them. We did not find any such users on GitHub.
+  
 
 ## Bug fixes
 
@@ -27,6 +29,7 @@
 * `.lintr` configs set by option `lintr.linter_file` or environment variable `R_LINTR_LINTER_FILE` can point to subdirectories (#2512, @MichaelChirico).
 * `indentation_linter()` returns `ranges[1L]==1L` when the offending line has 0 spaces (#2550, @MichaelChirico).
 * `literal_coercion_linter()` doesn't surface a warning about NAs during coercion for code like `as.integer("a")` (#2566, @MichaelChirico).
+* `commented_code_linter()` can detect commented code that ends with a pipe (#2671, @jcken95)
 
 ## Changes to default linters
 
@@ -84,10 +87,13 @@
 ### Lint accuracy fixes: removing false positives
 
 * `object_name_linter()` and `object_length_linter()` ignore {rlang} name injection like `x |> mutate("{new_name}" := foo(col))` (#1926, @MichaelChirico). No checking is applied in such cases. {data.table} in-place assignments like `DT[, "sPoNGeBob" := "friend"]` are still eligible for lints.
+* `object_usage_linter()` finds global variables assigned with `=` or `->`, which avoids some issues around "undefined global variables" in scripts (#2654, @MichaelChirico).
 
 ## Notes
 
 * All user-facing messages (including progress bar) are now prepared using the `{cli}` package (#2418 and #2641, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
+* All user-facing messages are now prepared using the `{cli}` package (#2418, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
+* File locations in lints and error messages contain clickable hyperlinks to improve code navigation (#2645, #2588, @olivroy).
 * {lintr} now depends on R version 4.0.0. It already does so implicitly due to recursive upstream dependencies requiring this version; we've simply made that dependency explicit and up-front (#2569, @MichaelChirico).
 
 # lintr 3.1.2
