@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-11-28"
+date: "2024-12-02"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -51,18 +51,21 @@ link-citations: true
 
 # Statement of Need
 
-A linter is a tool that analyzes code to identify potential errors,
-stylistic issues, or deviations from coding standards. It helps ensure
-consistency, readability, and best practices by flagging common
-mistakes, such as syntax errors, unused variables, or improper
-formatting. Linters are essential for improving code quality, preventing
-bugs, and maintaining a clean codebase, especially in collaborative
-development environments [@enwiki:1218663830]. `{lintr}` is an
-open-source package that provides linters for the R programming
-language, which is an interpreted, dynamically-typed programming
-language [@base2023], and is used by a wide range of researchers and
-data scientists. `{lintr}` can thus act as a valuable tool for R users
-to help improve the quality and reliability of their code.
+In computer programming, "linting" is the process of analyzing the
+source code to identify possible programming and stylistic problems
+[@enwiki:1260589258] and a linter is a tool used for linting. A linter
+analyzes code to identify potential errors, stylistic issues, or
+deviations from coding standards. It helps ensure consistency,
+readability, and best practices by flagging common mistakes, such as
+syntax errors, unused variables, or improper formatting. Linters are
+essential for improving code quality, preventing bugs, and maintaining a
+clean codebase, especially in collaborative development environments
+[@enwiki:1218663830]. `{lintr}` is an open-source package that provides
+linters for the R programming language, which is an interpreted,
+dynamically-typed programming language [@base2023], and is used by a
+wide range of researchers and data scientists. `{lintr}` can thus act as
+a valuable tool for R users to help improve the quality and reliability
+of their code.
 
 # Features
 
@@ -86,8 +89,8 @@ length(all_linters())
 #> [1] 113
 ```
 
-Naturally, we can't discuss all of them here. To see details about all
-available linters, we encourage readers to see
+Naturally, we can't discuss all of them here. To see the most up-to-date
+details about all the available linters, we encourage readers to visit
 <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
 
 We will showcase one linter for each kind of common problem found in R
