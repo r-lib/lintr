@@ -59,7 +59,8 @@ knitr::opts_chunk$set(
 library(lintr)
 
 withr::local_options(list(
-  lintr.format_width = 60L
+  lintr.format_width = 60L,
+  cli.condition_unicode_bullets = FALSE
 ))
 ```
 
