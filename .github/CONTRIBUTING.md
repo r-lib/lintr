@@ -26,7 +26,7 @@ If you wish to contribute a new linter, the [Creating new linters](https://lintr
 
 *   Install all development dependencies with `devtools::install_dev_deps()`, and then make sure the package passes R CMD check by running `devtools::check()`. 
     If R CMD check doesn't pass cleanly, it's a good idea to ask for help before continuing. 
-*   Create a Git branch for your pull request (PR). We recommend using `usethis::pr_init("brief-description-of-change")`.
+*   Create a Git branch for your pull request (PR). We recommend using `usethis::pr_init("brief-description-of-change")`. At a minimum, please avoid submitting PRs from your fork's `main` branch` as this can make the review process more complicated.
 
 *   Make your changes, commit to git, and then create a PR by running `usethis::pr_push()`, and following the prompts in your browser.
     The title of your PR should briefly describe the change.
