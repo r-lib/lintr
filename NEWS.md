@@ -91,6 +91,7 @@
 
 ## Notes
 
+* All user-facing messages (including progress bars) are now prepared using the `{cli}` package (#2418 and #2641, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
 * All user-facing messages are now prepared using the `{cli}` package (#2418, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
 * File locations in lints and error messages contain clickable hyperlinks to improve code navigation (#2645, #2588, @olivroy).
 * {lintr} now depends on R version 4.0.0. It already does so implicitly due to recursive upstream dependencies requiring this version; we've simply made that dependency explicit and up-front (#2569, @MichaelChirico).
