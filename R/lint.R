@@ -193,9 +193,7 @@ lint_dir <- function(path = ".", ...,
   } else {
     lints <- lapply(
       files,
-      function(file) { # nolint: unnecessary_lambda_linter.
-        lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
-      }
+      lint, file, ..., parse_settings = FALSE, exclusions = exclusions
     )
   }
 
