@@ -66,8 +66,7 @@ object_overwrite_linter <- function(
   )
   pkg_exports <- data.frame(
     package = rep(packages, lengths(pkg_exports)),
-    name = unlist(pkg_exports),
-    stringsAsFactors = FALSE
+    name = unlist(pkg_exports)
   )
 
   # Take the first among duplicate names, e.g. 'plot' resolves to base::plot, not graphics::plot

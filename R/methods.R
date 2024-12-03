@@ -1,27 +1,16 @@
 #' @export
 format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
-  if (requireNamespace("cli", quietly = TRUE)) {
-    color <- switch(x$type,
-      warning = cli::col_magenta,
-      error = cli::col_red,
-      style = cli::col_blue,
-      cli::style_bold
-    )
-    emph <- cli::style_bold
-  } else {
-    # nocov start
-    color <- identity
-    emph <- identity
-    # nocov end
-  }
+  color <- switch(x$type,
+    warning = cli::col_magenta,
+    error = cli::col_red,
+    style = cli::col_blue,
+    cli::style_bold
+  )
+  emph <- cli::style_bold
 
+  line_ref <- build_line_ref(x)
   annotated_msg <- paste0(
-    emph(
-      x$filename, ":",
-      as.character(x$line_number), ":",
-      as.character(x$column_number), ": ",
-      sep = ""
-    ),
+    emph(line_ref, ": "),
     color(x$type, ": ", sep = ""),
     "[", x$linter, "] ",
     emph(x$message)
@@ -38,6 +27,19 @@ format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
     highlight_string(x$message, x$column_number, x$ranges),
     "\n"
   )
+}
+
+build_line_ref <- function(x) {
+  line_ref <- paste0(
+    x$filename, ":",
+    as.character(x$line_number), ":",
+    as.character(x$column_number)
+  )
+
+  if (!cli::ansi_has_hyperlink_support()) {
+    return(line_ref)
+  }
+  cli::format_inline("{.path {line_ref}}")
 }
 
 #' @export
@@ -92,7 +94,7 @@ print.lints <- function(x, ...) {
     inline_data <- x[[1L]][["filename"]] == "<text>"
     if (!inline_data && use_rstudio_source_markers) {
       rstudio_source_markers(x)
-    } else if (in_github_actions()) {
+    } else if (in_github_actions() && !in_pkgdown()) {
       github_actions_log_lints(x, project_dir = github_annotation_project_dir)
     } else {
       lapply(x, print, ...)
@@ -101,10 +103,14 @@ print.lints <- function(x, ...) {
     if (isTRUE(settings$error_on_lint)) {
       quit("no", 31L, FALSE) # nocov
     }
-  } else if (use_rstudio_source_markers) {
-    # Empty lints: clear RStudio source markers
-    rstudio_source_markers(x)
+  } else {
+    # Empty lints
+    cli_inform(c(i = "No lints found."))
+    if (use_rstudio_source_markers) {
+      rstudio_source_markers(x) # clear RStudio source markers
+    }
   }
+
   invisible(x)
 }
 
@@ -163,8 +169,7 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # 
     type = vapply(x, `[[`, character(1L), "type"),
     message = vapply(x, `[[`, character(1L), "message"),
     line = vapply(x, `[[`, character(1L), "line"),
-    linter = vapply(x, `[[`, character(1L), "linter"),
-    stringsAsFactors = FALSE
+    linter = vapply(x, `[[`, character(1L), "linter")
   )
 }
 
@@ -198,7 +203,7 @@ summary.lints <- function(object, ...) {
   )
   tbl <- table(filenames, types)
   filenames <- rownames(tbl)
-  res <- as.data.frame.matrix(tbl, stringsAsFactors = FALSE, row.names = NULL)
+  res <- as.data.frame.matrix(tbl, row.names = NULL)
   res$filenames <- filenames %||% character()
   nms <- colnames(res)
   res[order(res$filenames), c("filenames", nms[nms != "filenames"])]

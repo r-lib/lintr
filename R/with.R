@@ -31,8 +31,11 @@
 #' names(my_undesirable_functions)
 #' @export
 modify_defaults <- function(defaults, ...) {
-  if (missing(defaults) || !is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    cli_abort("{.arg defaults} must be a named list.")
+  if (missing(defaults)) {
+    cli_abort("{.arg defaults} is a required argument, but is missing.")
+  }
+  if (!is.list(defaults) || !all(nzchar(names2(defaults)))) {
+    cli_abort("{.arg defaults} must be a named list, not {.obj_type_friendly {defaults}}.")
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -90,7 +93,7 @@ modify_defaults <- function(defaults, ...) {
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
   if (!is.character(tags) && !is.null(tags)) {
-    cli_abort("{.arg tags} must be a {.cls character} vector, or {.code NULL}.")
+    cli_abort("{.arg tags} must be a character vector, or {.code NULL}, not {.obj_type_friendly {tags}}.")
   }
   tagged_linters <- list()
 
@@ -102,8 +105,8 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
       if (!all(available$linter %in% ns_exports)) {
         missing_linters <- setdiff(available$linter, ns_exports) # nolint: object_usage_linter. TODO(#2252).
         cli_abort(c(
-          i = "Linters {.fn {missing_linters}} are advertised by {.fn available_linters}.",
-          x = "But these linters are not exported by package {.pkg {package}}."
+          x = "Can't find linters {.fn {missing_linters}}.",
+          i = "These are advertised by {.fn available_linters}, but are not exported by package {.pkg {package}}."
         ))
       }
       linter_factories <- mget(available$linter, envir = pkg_ns)
@@ -178,9 +181,12 @@ linters_with_defaults <- function(..., defaults = default_linters) {
   dots <- list(...)
   if (missing(defaults) && "default" %in% names(dots)) {
     cli_warn(c(
-      "Did you mean {.arg defaults}?",
-      x = "{.arg default} is not an argument to {.fun linters_with_defaults}.",
-      i = "This warning will be removed when {.fun with_defaults} is fully deprecated."
+      x = "
+        {.arg default} is not an argument to {.help [{.fn linters_with_defaults}](lintr::linters_with_defaults)}.
+      ",
+      i = "Did you mean {.arg defaults}?",
+      # make message more subtle
+      cli::col_silver("This warning will be removed when {.fun with_defaults} is fully deprecated.")
     ))
     defaults <- dots$default
     nms <- names2(dots)
@@ -207,10 +213,10 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
     error = function(e) {
-      cli_abort(c(
+      cli_abort(
         "Could not create linter with {.fun {package}::{linter_name}}.",
-        conditionMessage(e)
-      ))
+        parent = e
+      )
     }
   )
   # Otherwise, all linters would be called "linter_factory".

@@ -687,6 +687,19 @@ test_that("allow_comment_regex= works", {
     NULL,
     linter_x1x2
   )
+
+  # might contain capture groups, #2678
+  expect_lint(
+    trim_some("
+      function() {
+        stop('a')
+        # a
+        # ab
+      }
+    "),
+    NULL,
+    unreachable_code_linter(allow_comment_regex = "#\\s*(a|ab|abc)")
+  )
 })
 
 test_that("allow_comment_regex= obeys covr's custom exclusion when set", {

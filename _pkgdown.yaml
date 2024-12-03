@@ -2,6 +2,7 @@ url: https://lintr.r-lib.org
 
 template:
   bootstrap: 5
+  light-switch: true
   includes:
     in_header: |
       <script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
@@ -26,6 +27,10 @@ reference:
     contents:
       - ends_with("linter")
 
+  - title: Groups of linters
+    contents:
+      - ends_with("linters")
+
   - title: Common default configurations
     contents:
       - all_undesirable_functions
@@ -46,7 +51,6 @@ reference:
 
   - title: Meta-tooling
     contents:
-      - ends_with("linters")
       - Lint
       - checkstyle_output
       - sarif_output

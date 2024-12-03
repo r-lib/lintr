@@ -86,7 +86,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   source_expression$content <- get_content(source_expression$lines)
   parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
 
-  if (inherits(e, "lint") && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
+  if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
     expressions <- list()
   } else {
@@ -502,7 +502,7 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
-  if (inherits(parsed_content, c("error", "lint"))) {
+  if (is_error(parsed_content) || is_lint(parsed_content)) {
     assign("e", parsed_content, envir = parent.frame())
     parse_error <- TRUE
   }
@@ -513,7 +513,7 @@ get_source_expression <- function(source_expression, error = identity) {
     error = error
   )
 
-  if (inherits(parsed_content, c("error", "lint"))) {
+  if (is_error(parsed_content) || is_lint(parsed_content)) {
     # Let parse errors take precedence over encoding problems
     if (!parse_error) assign("e", parsed_content, envir = parent.frame())
     return() # parsed_content is unreliable if encoding is invalid
@@ -636,8 +636,7 @@ fix_eq_assigns <- function(pc) {
     parent = integer(n_expr),
     token = character(n_expr),
     terminal = logical(n_expr),
-    text = character(n_expr),
-    stringsAsFactors = FALSE
+    text = character(n_expr)
   )
 
   for (i in seq_len(n_expr)) {

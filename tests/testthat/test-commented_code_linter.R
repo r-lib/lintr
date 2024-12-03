@@ -103,3 +103,13 @@ test_that("commented_code_linter can detect operators in comments and lint corre
     commented_code_linter()
   )
 })
+
+test_that("commented_code_linter can detect commented code ending with pipes", {
+  linter <- commented_code_linter()
+  lint_msg <- rex::rex("Remove commented code.")
+
+  expect_lint("# f() %>%", lint_msg, linter)
+
+  skip_if_not_r_version("4.1.0")
+  expect_lint("# f() |>", lint_msg, linter)
+})

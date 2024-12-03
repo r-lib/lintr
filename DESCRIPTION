@@ -21,7 +21,7 @@ License: MIT + file LICENSE
 URL: https://lintr.r-lib.org, https://github.com/r-lib/lintr
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
-    R (>= 3.6)
+    R (>= 4.0)
 Imports:
     backports (>= 1.1.7),
     cli (>= 3.4.0),
@@ -56,7 +56,7 @@ Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Collate:
     'make_linter_from_xpath.R'
     'xp_utils.R'
