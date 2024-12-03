@@ -341,7 +341,7 @@ enhances_method_registration <- function(generic, s3class, implementation, owner
 
   reset_settings()
 
-  enhances_method_registration(    "as_tibble", "lints",     as_tibble.lints,     "tibble")
+  enhances_method_registration("as_tibble"    , "lints",     as_tibble.lints,     "tibble")
   enhances_method_registration("as.data.table", "lints", as.data.table.lints, "data.table")
 }
 # nocov end
