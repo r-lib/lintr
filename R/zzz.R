@@ -286,6 +286,17 @@ default_settings <- NULL
 
 settings <- new.env(parent = emptyenv())
 
+enhances_method_registration <- function(generic, s3class, implementation, owner_package) {
+  # don't try requireNamespace(), which will load the package (with any associated side-effects).
+  if (isNamespaceLoaded(owner_package)) {
+    registerS3method(generic, s3class, implementation, asNamespace(owner_package))
+    return(invisible())
+  }
+  setHook(packageEvent(owner_package, "onLoad"), function(...) {
+    registerS3method(generic, s3class, implementation, envir = asNamespace(owner_package))
+  })
+}
+
 # nocov start
 .onLoad <- function(libname, pkgname) {
   op <- options()
@@ -330,11 +341,7 @@ settings <- new.env(parent = emptyenv())
 
   reset_settings()
 
-  if (requireNamespace("tibble", quietly = TRUE)) {
-    registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))
-  }
-  if (requireNamespace("data.table", quietly = TRUE)) {
-    registerS3method("as.data.table", "lints", as.data.table.lints, asNamespace("data.table"))
-  }
+  enhances_method_registration(    "as_tibble", "lints",     as_tibble.lints,     "tibble")
+  enhances_method_registration("as.data.table", "lints", as.data.table.lints, "data.table")
 }
 # nocov end
