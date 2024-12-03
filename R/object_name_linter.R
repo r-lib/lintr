@@ -146,13 +146,8 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 }
 
 check_style <- function(nms, style, generics = character()) {
-  conforming <- re_matches(nms, style)
+  conforming <- re_matches_logical(nms, style)
 
-  # style has capture group(s)
-  if (is.data.frame(conforming)) {
-    # if any group is missing, all groups are missing, so just check the first column
-    conforming <- !is.na(conforming[[1L]])
-  }
   # mark empty or NA names as conforming
   conforming <- is.na(nms) | !nzchar(nms) | conforming
 

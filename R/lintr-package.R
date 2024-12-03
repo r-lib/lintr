@@ -11,7 +11,7 @@
 #' @importFrom cli cli_inform cli_abort cli_warn
 #' @importFrom glue glue glue_collapse
 #' @importFrom rex rex regex re_matches re_substitutes character_class
-#' @importFrom stats na.omit
+#' @importFrom stats complete.cases na.omit
 #' @importFrom tools R_user_dir
 #' @importFrom utils capture.output getParseData  globalVariables head relist tail
 #' @importFrom xml2 as_list

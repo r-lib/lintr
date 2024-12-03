@@ -195,6 +195,17 @@ release_bullets <- function() {
 platform_independent_order <- function(x) order(tolower(x), method = "radix")
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
 
+#' re_matches with type-stable logical output
+#' TODO(r-lib/rex#94): Use re_matches() option directly & deprecate this.
+#' @noRd
+re_matches_logical <- function(x, regex, ...) {
+  res <- re_matches(x, regex, ...)
+  if (is.data.frame(res)) {
+    res <- complete.cases(res)
+  }
+  res
+}
+
 #' Extract text from `STR_CONST` nodes
 #'
 #' Convert `STR_CONST` `text()` values into R strings. This is useful to account for arbitrary
