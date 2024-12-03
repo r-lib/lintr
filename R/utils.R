@@ -256,9 +256,12 @@ get_r_string <- function(s, xpath = NULL) {
 }
 
 is_linter <- function(x) inherits(x, "linter")
+is_lint <- function(x) inherits(x, "lint")
+
+is_error <- function(x) inherits(x, "error")
 
 is_tainted <- function(lines) {
-  inherits(tryCatch(nchar(lines), error = identity), "error")
+  is_error(tryCatch(nchar(lines), error = identity))
 }
 
 #' Check that the entries in ... are valid
