@@ -27,11 +27,14 @@
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
 #' @examples
+#' # linting inline-code
+#' lint("a = 123\n")
+#' lint(text = "a = 123")
+#'
+#' # linting a file
 #' f <- tempfile()
 #' writeLines("a=1", f)
-#' lint(f)                # linting a file
-#' lint("a = 123\n")      # linting inline-code
-#' lint(text = "a = 123") # linting inline-code
+#' lint(f)
 #' unlink(f)
 #'
 #' @export
