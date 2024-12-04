@@ -186,8 +186,7 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
 
 # nocov start
 # support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {
-}
+release_bullets <- function() {}
 # nocov end
 
 # see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.

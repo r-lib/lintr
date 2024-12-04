@@ -72,11 +72,12 @@
 #'  - <https://style.tidyverse.org/functions.html?q=return#return>
 #' @export
 return_linter <- function(
-    return_style = c("implicit", "explicit"),
-    allow_implicit_else = TRUE,
-    return_functions = NULL,
-    except = NULL,
-    except_regex = NULL) {
+  return_style = c("implicit", "explicit"),
+  allow_implicit_else = TRUE,
+  return_functions = NULL,
+  except = NULL,
+  except_regex = NULL
+) {
   return_style <- match.arg(return_style)
 
   check_except <- !allow_implicit_else || return_style == "explicit"
