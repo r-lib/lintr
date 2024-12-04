@@ -329,6 +329,5 @@ settings <- new.env(parent = emptyenv())
   ))
 
   reset_settings()
-
 }
 # nocov end
