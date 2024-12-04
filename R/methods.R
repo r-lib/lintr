@@ -173,6 +173,7 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # 
   )
 }
 
+#' @exportS3Method tibble::as_tibble
 as_tibble.lints <- function(x, ..., # nolint: object_name_linter.
                             .rows = NULL,
                             .name_repair = c("check_unique", "unique", "universal", "minimal"),
@@ -181,6 +182,7 @@ as_tibble.lints <- function(x, ..., # nolint: object_name_linter.
   tibble::as_tibble(as.data.frame(x), ..., .rows = .rows, .name_repair = .name_repair, rownames = rownames)
 }
 
+#' @exportS3Method data.table::as.data.table
 as.data.table.lints <- function(x, keep.rownames = FALSE, ...) { # nolint: object_name_linter.
   stopifnot(requireNamespace("data.table", quietly = TRUE))
   data.table::setDT(as.data.frame(x), keep.rownames = keep.rownames, ...)

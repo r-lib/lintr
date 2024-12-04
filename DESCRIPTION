@@ -37,6 +37,7 @@ Imports:
 Suggests:
     bookdown,
     cyclocomp,
+    data.table,
     jsonlite,
     patrick (>= 0.2.0),
     rlang,
@@ -46,8 +47,6 @@ Suggests:
     tibble,
     tufte,
     withr (>= 2.5.0)
-Enhances:
-    data.table
 VignetteBuilder: 
     knitr
 Config/Needs/website: tidyverse/tidytemplate
