@@ -76,6 +76,7 @@ Collate:
     'commas_linter.R'
     'commented_code_linter.R'
     'comparison_negation_linter.R'
+    'complex_conditional_linter.R'
     'condition_call_linter.R'
     'condition_message_linter.R'
     'conjunct_test_linter.R'
