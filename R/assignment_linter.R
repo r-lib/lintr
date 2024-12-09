@@ -7,6 +7,9 @@
 #' @param allow_right_assign Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
 #' @param allow_pipe_assign Logical, default `FALSE`. If `TRUE`, magrittr's `%<>%` assignment is allowed.
+#' @param top_level_operator Character, default `"<-"`, matching the style guide recommendation for assignments with
+#'   `<-`. When `"="`, all top-level assignments must be done with `=`; when `"any"`, there is no enforcement of
+#'   top-level assignment operator.
 #'
 #' @examples
 #' # will produce lints
@@ -25,6 +28,11 @@
 #' lint(
 #'   text = "x %<>% as.character()",
 #'   linters = assignment_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- 1",
+#'   linters = assignment_linter(top_level_operator = "=")
 #' )
 #'
 #' # okay
@@ -64,6 +72,11 @@
 #'   linters = assignment_linter(allow_pipe_assign = TRUE)
 #' )
 #'
+#' lint(
+#'   text = "x = 1",
+#'   linters = assignment_linter(top_level_operator = "=")
+#' )
+#'
 #' @evalRd rd_tags("assignment_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
@@ -73,7 +86,10 @@
 assignment_linter <- function(allow_cascading_assign = TRUE,
                               allow_right_assign = FALSE,
                               allow_trailing = TRUE,
-                              allow_pipe_assign = FALSE) {
+                              allow_pipe_assign = FALSE,
+                              top_level_operator = c("<-", "=", "any")) {
+  top_level_operator <- match.arg(top_level_operator)
+
   trailing_assign_xpath <- paste(
     collapse = " | ",
     c(

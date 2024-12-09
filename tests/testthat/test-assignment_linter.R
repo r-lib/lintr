@@ -196,14 +196,18 @@ test_that("multiple lints throw correct messages", {
 test_that("assignment operator can be toggled", {
   eq_linter <- assignment_linter(top_level_operator = "=")
   any_linter <- assignment_linter(top_level_operator = "any")
+  lint_message <- rex("Use =, not")
 
   expect_lint("a = 1", NULL, eq_linter())
   expect_lint("a = 1", NULL, any_linter())
 
-  expect_lint("a <- 1", "xxx", eq_linter())
+  expect_lint("a <- 1", lint_message, eq_linter())
   expect_lint("a <- 1", NULL, any_linter())
 
-  expect_lint("a = 1; b <- 2", "xxx", eq_linter())
+  expect_lint("a := 1", lint_message, eq_linter())
+  expect_lint("a := 1", NULL, any_linter())
+
+  expect_lint("a = 1; b <- 2", lint_message, eq_linter())
   expect_lint("a = 1; b <- 2", NULL, any_linter())
 
   expect_lint(
@@ -231,7 +235,7 @@ test_that("assignment operator can be toggled", {
         a <- 1
       }
     "),
-    NULL,
+    list(lint_msg, line_number = 3L),
     eq_linter()
   )
   expect_lint(
@@ -247,6 +251,56 @@ test_that("assignment operator can be toggled", {
   expect_lint("if ({a = TRUE}) 1", NULL, eq_linter())
   expect_lint("if ({a = TRUE}) 1", NULL, any_linter())
 
-  expect_lint("if ({a <- TRUE}) 1", NULL, eq_linter())
-  expect_lint("if ({a <- TRUE}) 1", NULL, any_linter())
+  expect_lint("if (a <- TRUE) 1", NULL, eq_linter())
+  expect_lint("if (a <- TRUE) 1", NULL, any_linter())
+
+  expect_lint("for (ii in {a = TRUE}) 1", NULL, eq_linter())
+  expect_lint("for (ii in {a = TRUE}) 1", NULL, any_linter())
+
+  expect_lint("for (ii in a <- TRUE) 1", NULL, eq_linter())
+  expect_lint("for (ii in a <- TRUE) 1", NULL, any_linter())
+
+  expect_lint("DT[, a := 1]", NULL, eq_linter())
+  expect_lint("DT[, a := 1]", NULL, any_linter())
+})
+
+test_that("multiple lints throw correct messages when both = and <- are allowed", {
+  expect_lint(
+    trim_some("{
+      x <<- 1
+      y ->> 2
+      z -> 3
+      x %<>% as.character()
+      foo <- 1
+      bar = 2
+    }"),
+    list(
+      list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
+      list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
+      list(message = "Use <-, not ->", line_number = 4L),
+      list(message = "Avoid the assignment pipe %<>%", line_number = 5L)
+    ),
+    assignment_linter(allow_cascading_assign = FALSE, top_level_operator = "any")
+  )
+})
+
+test_that("multiple lints throw correct messages when = is required", {
+  expect_lint(
+    trim_some("{
+      x <<- 1
+      y ->> 2
+      z -> 3
+      x %<>% as.character()
+      foo <- 1
+      bar = 2
+    }"),
+    list(
+      list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
+      list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
+      list(message = "Use <-, not ->", line_number = 4L),
+      list(message = "Avoid the assignment pipe %<>%", line_number = 5L),
+      list(message = "Use =, not <-, for top-level assignment.", line_number = 6L)
+    ),
+    assignment_linter(allow_cascading_assign = FALSE, top_level_operator = "=")
+  )
 })
