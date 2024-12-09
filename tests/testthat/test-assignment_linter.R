@@ -192,3 +192,61 @@ test_that("multiple lints throw correct messages", {
     assignment_linter(allow_cascading_assign = FALSE)
   )
 })
+
+test_that("assignment operator can be toggled", {
+  eq_linter <- assignment_linter(top_level_operator = "=")
+  any_linter <- assignment_linter(top_level_operator = "any")
+
+  expect_lint("a = 1", NULL, eq_linter())
+  expect_lint("a = 1", NULL, any_linter())
+
+  expect_lint("a <- 1", "xxx", eq_linter())
+  expect_lint("a <- 1", NULL, any_linter())
+
+  expect_lint("a = 1; b <- 2", "xxx", eq_linter())
+  expect_lint("a = 1; b <- 2", NULL, any_linter())
+
+  expect_lint(
+    trim_some("
+      foo = function() {
+        a = 1
+      }
+    "),
+    NULL,
+    eq_linter()
+  )
+  expect_lint(
+    trim_some("
+      foo = function() {
+        a = 1
+      }
+    "),
+    NULL,
+    any_linter()
+  )
+
+  expect_lint(
+    trim_some("
+      foo = function() {
+        a <- 1
+      }
+    "),
+    NULL,
+    eq_linter()
+  )
+  expect_lint(
+    trim_some("
+      foo = function() {
+        a <- 1
+      }
+    "),
+    NULL,
+    any_linter()
+  )
+
+  expect_lint("if ({a = TRUE}) 1", NULL, eq_linter())
+  expect_lint("if ({a = TRUE}) 1", NULL, any_linter())
+
+  expect_lint("if ({a <- TRUE}) 1", NULL, eq_linter())
+  expect_lint("if ({a <- TRUE}) 1", NULL, any_linter())
+})
