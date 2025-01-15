@@ -138,7 +138,7 @@ test_that("pipe-continuation linter handles native pipe", {
 
 local({
   linter <- pipe_continuation_linter()
-  .cases = tibble::tribble(
+  .cases <- tibble::tribble(
     ~code_string,            ~.test_name,
     trim_some("
       my_fun <- function() {
