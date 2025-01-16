@@ -42,7 +42,7 @@ test_that("fixed_regex_linter blocks simple disallowed usages", {
 })
 
 patrick::with_parameters_test_that(
-  "fixed_regex_linter is robust to unrecognized escapes error",
+  "fixed_regex_linter is robust to unrecognized escapes error for {char}",
   {
     expect_lint(
       sprintf(R"{grep('\\%s', x)}", char),
@@ -56,14 +56,11 @@ patrick::with_parameters_test_that(
       fixed_regex_linter()
     )
   },
-  .cases = local({
-    char <- c(
-      "^", "$", "{", "}", "(", ")", ".", "*", "+", "?",
-      "|", "[", "]", R"(\\)", "<", ">", "=", ":", ";", "/",
-      "_", "-", "!", "@", "#", "%", "&", "~"
-    )
-    data.frame(char = char, .test_name = char)
-  })
+  char = c(
+    "^", "$", "{", "}", "(", ")", ".", "*", "+", "?",
+    "|", "[", "]", R"(\\)", "<", ">", "=", ":", ";", "/",
+    "_", "-", "!", "@", "#", "%", "&", "~"
+  )
 )
 
 test_that("fixed_regex_linter catches regex like [.] or [$]", {
@@ -326,7 +323,7 @@ local({
     skip_cases <- character()
   }
   patrick::with_parameters_test_that(
-    "fixed replacements are correct",
+    "fixed replacements of {regex_expr} with {fixed_expr} is correct",
     {
       # TODO(google/patrick#19): handle this more cleanly by skipping up-front
       skip_if(
