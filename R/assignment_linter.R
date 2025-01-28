@@ -107,9 +107,8 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     "[@line1 < following-sibling::expr[1]/@line1]"
   )
 
-  xpath <- paste(collapse = " | ", c(
-    # always block = (NB: the parser differentiates EQ_ASSIGN, EQ_SUB, and EQ_FORMALS)
-    "//EQ_ASSIGN",
+  op_xpath_parts <- c(
+    if (!"=" %in% operator) "//EQ_ASSIGN",
     # -> and ->> are both 'RIGHT_ASSIGN'
     if (!any(c("->", "->>") %in% operator)) {
       "//RIGHT_ASSIGN"
@@ -122,31 +121,38 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     if (!"<<-" %in% operator) "//LEFT_ASSIGN[text() = '<<-']",
     if (!allow_trailing) trailing_assign_xpath,
     if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
-  ))
+  )
+  op_xpath <- if (!is.null(op_xpath_parts)) paste(op_xpath_parts, collapse = "|")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
-    if (length(bad_expr) == 0L) {
-      return(list())
-    }
+    lints <- NULL
+    if (!is.null(op_xpath)) {
+      op_expr <- xml_find_all(xml, op_xpath)
 
-    operator <- xml_text(bad_expr)
-    lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(operator))
-    lint_message_fmt[operator %in% c("<<-", "->>")] <-
-      "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
-    lint_message_fmt[operator == "%<>%"] <-
-      "Avoid the assignment pipe %s; prefer using <- and %%>%% separately."
+      op_text <- xml_text(op_expr)
+      op_lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(op_text))
+      op_lint_message_fmt[op_text %in% c("<<-", "->>")] <-
+        "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
+      op_lint_message_fmt[op_text == "%<>%"] <-
+        "Avoid the assignment pipe %s; prefer using <- and %%>%% separately."
+
+      op_lint_message <- sprintf(op_lint_message_fmt, op_text)
+      lints <- xml_nodes_to_lints(op_expr, source_expression, op_lint_message, type = "style")
+    }
 
     if (!allow_trailing) {
-      bad_trailing_expr <- xml_find_all(xml, trailing_assign_xpath)
-      trailing_assignments <- xml2::xml_attrs(bad_expr) %in% xml2::xml_attrs(bad_trailing_expr)
-      lint_message_fmt[trailing_assignments] <- "Assignment %s should not be trailing at the end of a line."
+      trailing_assign_expr <- xml_find_all(xml, trailing_assign_xpath)
+      trailing_assign_text <- xml_text(trailing_assign_expr)
+      trailing_assign_msg_fmt <- "Assignment %s should not be trailing at the end of a line."
+      trailing_assign_msg <- sprintf(trailing_assign_msg_fmt, trailing_assign_text)
+      lints <- c(lints,
+        xml_nodes_to_lints(trailing_assign_expr, source_expression, trailing_assign_msg, type = "style")
+      )
     }
 
-    lint_message <- sprintf(lint_message_fmt, operator)
-    xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "style")
+    lints
   })
 }
 
