@@ -96,11 +96,13 @@ assignment_linter <- function(operator = c("<-", "<<-"),
   trailing_assign_xpath <- paste(
     collapse = " | ",
     c(
-      paste0("//LEFT_ASSIGN", if (allow_cascading_assign) "" else "[text() = '<-']"),
-      if (allow_right_assign) paste0("//RIGHT_ASSIGN", if (allow_cascading_assign) "" else "[text() = '->']"),
+      paste0("//LEFT_ASSIGN", if ("<<-" %in% operator) "" else "[text() = '<-']"),
+      if (any(c("->", "->>") %in% operator)) {
+        paste0("//RIGHT_ASSIGN", if ("->>" %in% operator) "" else "[text() = '->']")
+      },
       "//EQ_SUB",
       "//EQ_FORMALS",
-      if (!allow_pipe_assign) "//SPECIAL[text() = '%<>%']"
+      if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
     ),
     "[@line1 < following-sibling::expr[1]/@line1]"
   )
@@ -109,13 +111,17 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     # always block = (NB: the parser differentiates EQ_ASSIGN, EQ_SUB, and EQ_FORMALS)
     "//EQ_ASSIGN",
     # -> and ->> are both 'RIGHT_ASSIGN'
-    if (!allow_right_assign) "//RIGHT_ASSIGN" else if (!allow_cascading_assign) "//RIGHT_ASSIGN[text() = '->>']",
+    if (!any(c("->", "->>") %in% operator)) {
+      "//RIGHT_ASSIGN"
+    } else if (!"->>" %in% operator) {
+      "//RIGHT_ASSIGN[text() = '->>']"
+    },
     # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
     # NB: := is not linted because of (1) its common usage in rlang/data.table and
     #   (2) it's extremely uncommon as a normal assignment operator
-    if (!allow_cascading_assign) "//LEFT_ASSIGN[text() = '<<-']",
+    if (!"<<-" %in% operator) "//LEFT_ASSIGN[text() = '<<-']",
     if (!allow_trailing) trailing_assign_xpath,
-    if (!allow_pipe_assign) "//SPECIAL[text() = '%<>%']"
+    if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
   ))
 
   Linter(linter_level = "expression", function(source_expression) {
