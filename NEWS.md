@@ -18,6 +18,7 @@
 * `scalar_in_linter` is now configurable to allow other `%in%` like operators to be linted. The data.table operator `%chin%` is no longer linted by default; use `in_operators = "%chin%"` to continue linting it. (@F-Noelle)
 * `lint()` and friends now normalize paths to forward slashes on Windows (@olivroy, #2613).
 * `undesirable_function_linter()`, `undesirable_operator_linter()`, and `list_comparison_linter()` were removed from the tag `efficiency` (@IndrajeetPatil, #2655). If you use `linters_with_tags("efficiency")` to include these linters, you'll need to adjust your config to keep linting your code against them. We did not find any such users on GitHub.
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are all deprecated in favor of the new `operator=` argument. See below about the new argument.
 
 ## Bug fixes
 
@@ -61,6 +62,7 @@
 * `expect_no_lint()` was added as new function to cover the typical use case of expecting no lint message, akin to the recent {testthat} functions like `expect_no_warning()` (#2580, @F-Noelle).
 * `lint()` and friends emit a message if no lints are found (#2643, @IndrajeetPatil).
 * `{lintr}` now has a hex sticker (https://github.com/rstudio/hex-stickers/pull/110). Thank you, @gregswinehart!
+* `assignment_linter()` can be fully customized with the new `operator=` argument to specify an exact vector of assignment operators to allow (#2441, @MichaelChirico and @J-Moravec). The default is `<-` and `<<-`; authors wishing to use `=` (only) for assignment in their codebase can use `operator = "="`. This supersedes several old arguments: to accomplish `allow_cascading_assign=TRUE`, add `"<<-"` (and/or `"->>"`) to `operator=`; for `allow_right_assign=TRUE`, add `"->"` (and/or `"->>"`) to `operator=`; for `allow_pipe_assign=TRUE`, add `"%<>%"` to `operator=`. Use `operator = "any"` to denote "ignore all assignment operators"; in this case, only the value of `allow_trailing=` matters. Implicit assignments with `<-` are always ignored by `assignment_linter()`; use `implicit_assignment_linter()` to handle linting these.
 
 ### New linters
 

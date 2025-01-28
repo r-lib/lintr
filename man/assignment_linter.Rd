@@ -14,7 +14,8 @@ assignment_linter(
 }
 \arguments{
 \item{operator}{Character vector of valid assignment operators. Defaults to allowing \verb{<-} and \verb{<<-}; other valid
-options are \code{=}, \verb{->}, \verb{->>}, and \verb{\%<>\%}.}
+options are \code{=}, \verb{->}, \verb{->>}, \verb{\%<>\%}; use \code{"any"} to denote "allow all operators", in which case this linter only
+considers \code{allow_trailing} for generating lints.}
 
 \item{allow_cascading_assign}{(Deprecated) Logical, default \code{TRUE}.
 If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowed.}

@@ -3,7 +3,8 @@
 #' Check that the specified operator is used for assignment.
 #'
 #' @param operator Character vector of valid assignment operators. Defaults to allowing `<-` and `<<-`; other valid
-#'   options are `=`, `->`, `->>`, and `%<>%`.
+#'   options are `=`, `->`, `->>`, `%<>%`; use `"any"` to denote "allow all operators", in which case this linter only
+#'   considers `allow_trailing` for generating lints.
 #' @param allow_cascading_assign (Deprecated) Logical, default `TRUE`.
 #'   If `FALSE`, [`<<-`][base::assignOps] and `->>` are not allowed.
 #' @param allow_right_assign (Deprecated) Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
