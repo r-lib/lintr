@@ -117,13 +117,25 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     # NB: := is not linted because of (1) its common usage in rlang/data.table and
     #   (2) it's extremely uncommon as a normal assignment operator
     if (!any(c("<-", "<<-") %in% operator)) {
-      "//LEFT_ASSIGN"
+      "//LEFT_ASSIGN[text() != ':=' or not(parent::expr/preceding-sibling::OP-LEFT-BRACKET)]"
     } else if (!"<<-" %in% operator) {
       "//LEFT_ASSIGN[text() = '<<-']"
     },
     if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
   )
-  op_xpath <- if (!is.null(op_xpath_parts)) paste(op_xpath_parts, collapse = " | ")
+  if (!is.null(op_xpath_parts)) {
+    # NB: copy-pasted from implicit_assignment_linter. Keep in sync.
+    implicit_assignment_xpath <- "
+      [not(parent::expr[
+        preceding-sibling::*[2][self::IF or self::WHILE]
+        or parent::forcond
+        or parent::expr/*[1][self::OP-LEFT-PAREN]
+      ])]
+    "
+    op_xpath <- paste0(op_xpath_parts, implicit_assignment_xpath, collapse = " | ")
+  } else {
+    op_xpath <- NULL
+  }
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

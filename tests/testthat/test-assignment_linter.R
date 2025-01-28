@@ -311,10 +311,10 @@ test_that("multiple lints throw correct messages when both = and <- are allowed"
       list(
         list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
         list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
-        list(message = "Use <-, not ->", line_number = 4L),
+        list(message = "Use one of =, <- for assignment, not ->", line_number = 4L),
         list(message = "Avoid the assignment pipe %<>%", line_number = 5L)
       ),
-      assignment_linter(allow_cascading_assign = FALSE, operator = "any")
+      assignment_linter(allow_cascading_assign = FALSE, operator = c("=", "<-"))
     ),
     "allow_cascading_assign"
   )
