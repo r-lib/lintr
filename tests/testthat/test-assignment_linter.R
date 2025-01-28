@@ -127,10 +127,16 @@ test_that("arguments handle trailing assignment operators correctly", {
   )
 
   expect_lint(
-    "\n\nblah=\n42\nblh2<-\n54",
+    trim_some("
+      blah =
+        42
+      blh2 <-
+        54
+    "),
     list(
-      list(message = "=", line_number = 3L, column_number = 5L),
-      list(message = "<-", line_number = 5L, column_number = 5L)
+      list(message = "Use one of <-, <<- for assignment, not =.", line_number = 1L, column_number = 6L),
+      list(message = "Assignment = should not be trailing at the end of a line", line_number = 1L, column_number = 6L),
+      list(message = "Assignment <- should not be trailing at the end of a line", line_number = 3L, column_number = 6L)
     ),
     linter
   )
@@ -138,7 +144,7 @@ test_that("arguments handle trailing assignment operators correctly", {
   expect_lint(
     "a =\n1",
     "= should not be trailing",
-    linter
+    assignment_linter(operator = "=", allow_trailing = FALSE)
   )
 })
 
