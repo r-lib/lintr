@@ -1,12 +1,14 @@
 #' Assignment linter
 #'
-#' Check that `<-` is always used for assignment.
+#' Check that the specified operator is used for assignment.
 #'
-#' @param allow_cascading_assign Logical, default `TRUE`.
+#' @param operator Character vector of valid assignment operators. Defaults to allowing `<-` and `<<-`; other valid
+#'   options are `=`, `->`, `->>`, and `%<>%`.
+#' @param allow_cascading_assign (Deprecated) Logical, default `TRUE`.
 #'   If `FALSE`, [`<<-`][base::assignOps] and `->>` are not allowed.
-#' @param allow_right_assign Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
+#' @param allow_right_assign (Deprecated) Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
-#' @param allow_pipe_assign Logical, default `FALSE`. If `TRUE`, magrittr's `%<>%` assignment is allowed.
+#' @param allow_pipe_assign (Deprecated) Logical, default `FALSE`. If `TRUE`, magrittr's `%<>%` assignment is allowed.
 #'
 #' @examples
 #' # will produce lints
@@ -25,6 +27,11 @@
 #' lint(
 #'   text = "x %<>% as.character()",
 #'   linters = assignment_linter()
+#' )
+#'
+#' lint(
+#'   text = "x <- 1",
+#'   linters = assignment_linter(operator = "=")
 #' )
 #'
 #' # okay
@@ -64,6 +71,11 @@
 #'   linters = assignment_linter(allow_pipe_assign = TRUE)
 #' )
 #'
+#' lint(
+#'   text = "x = 1",
+#'   linters = assignment_linter(operator = "=")
+#' )
+#'
 #' @evalRd rd_tags("assignment_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
@@ -87,7 +99,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     lintr_deprecated("allow_pipe_assign", '"%<>%" in operator', version = "3.2.0", type = "Argument")
     operator <- drop_or_add(operator, "%<>%", allow_pipe_assign)
   }
-  all_operators <- c("<-", "=", "->", "<<-", "->>", ":=", "%<>%")
+  all_operators <- c("<-", "=", "->", "<<-", "->>", "%<>%")
   if ("any" %in% operator) {
     operator <- all_operators
   } else {
@@ -108,15 +120,15 @@ assignment_linter <- function(operator = c("<-", "<<-"),
   op_xpath_parts <- c(
     if (!"=" %in% operator) "//EQ_ASSIGN",
     # -> and ->> are both 'RIGHT_ASSIGN'
-    glue("//RIGHT_ASSIGN[{xp_text_in_table(setdiff(c('->', '->>'), operator))}]"),
+    glue("//RIGHT_ASSIGN[{ xp_text_in_table(setdiff(c('->', '->>'), operator)) }]"),
     # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
     # NB: := is not linted because of (1) its common usage in rlang/data.table and
     #   (2) it's extremely uncommon as a normal assignment operator
-    glue("//LEFT_ASSIGN[{xp_text_in_table(setdiff(c('<-', '<<-'), operator))}]"),
+    glue("//LEFT_ASSIGN[{ xp_text_in_table(setdiff(c('<-', '<<-'), operator)) }]"),
     if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
   )
   if (!is.null(op_xpath_parts)) {
-    # NB: copy-pasted from implicit_assignment_linter. Keep in sync.
+    # NB: Also used, essentially, in implicit_assignment_linter. Keep in sync.
     implicit_assignment_xpath <- "
       [not(parent::expr[
         preceding-sibling::*[2][self::IF or self::WHILE]
