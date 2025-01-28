@@ -81,7 +81,7 @@ test_that("arguments handle trailing assignment operators correctly", {
   expect_lint("x <<-\ny", rex::rex("<<- should not be trailing"), linter)
   expect_warning(
     expect_lint(
-    "x <<-\ny",
+      "x <<-\ny",
       list(
         rex::rex("Replace <<- by assigning to a specific environment"),
         rex::rex("Assignment <<- should not be trailing")
