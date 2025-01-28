@@ -35,49 +35,60 @@ test_that("arguments handle <<- and ->/->> correctly", {
 
   # <<- is only blocked optionally
   expect_lint("1 <<- blah", NULL, linter)
-  expect_lint(
-    "1 <<- blah",
-    rex::rex("Replace <<- by assigning to a specific environment"),
-    assignment_linter(allow_cascading_assign = FALSE)
+  expect_warning(
+    expect_lint(
+      "1 <<- blah",
+      rex::rex("Replace <<- by assigning to a specific environment"),
+      assignment_linter(allow_cascading_assign = FALSE)
+    ),
+    "allow_cascading_assign"
   )
 
   # blocking -> can be disabled
-  expect_lint("1 -> blah", NULL, assignment_linter(allow_right_assign = TRUE))
-  expect_lint("1 ->> blah", NULL, assignment_linter(allow_right_assign = TRUE))
+  expect_warning(
+    expect_lint("1 -> blah", NULL, assignment_linter(allow_right_assign = TRUE)),
+    "allow_right_assign"
+  )
+  expect_warning(
+    expect_lint("1 ->> blah", NULL, assignment_linter(allow_right_assign = TRUE)),
+    "allow_right_assign"
+  )
   # blocked under cascading assign but not under right assign --> blocked
-  expect_lint(
-    "1 ->> blah",
-    lint_msg_right,
-    assignment_linter(allow_cascading_assign = FALSE, allow_right_assign = TRUE)
+  expect_warning(
+    expect_warning(
+      expect_lint(
+        "1 ->> blah",
+        lint_msg_right,
+        assignment_linter(allow_cascading_assign = FALSE, allow_right_assign = TRUE)
+      ),
+      "allow_cascading_assign"
+    ),
+    "allow_right_assign"
   )
 })
 
 test_that("arguments handle trailing assignment operators correctly", {
-  expect_lint("x <- y", NULL, assignment_linter(allow_trailing = FALSE))
-  expect_lint("foo(bar = 1)", NULL, assignment_linter(allow_trailing = FALSE))
+  linter <- assignment_linter(allow_trailing = FALSE)
+  expect_lint("x <- y", NULL, linter)
+  expect_lint("foo(bar = 1)", NULL, linter)
 
   expect_lint(
     "foo(bar =\n1)",
     rex::rex("= should not be trailing at the end of a line."),
-    assignment_linter(allow_trailing = FALSE)
+    linter
   )
 
-  expect_lint(
+  expect_lint("x <<-\ny", rex::rex("<<- should not be trailing"), linter)
+  expect_warning(
+    expect_lint(
     "x <<-\ny",
-    rex::rex("<<- should not be trailing"),
-    assignment_linter(allow_trailing = FALSE)
-  )
-  expect_lint(
-    "x <<-\ny",
-    rex::rex("Replace <<- by assigning to a specific environment"),
-    assignment_linter(allow_trailing = FALSE, allow_cascading_assign = FALSE)
+      rex::rex("Replace <<- by assigning to a specific environment"),
+      assignment_linter(allow_trailing = FALSE, allow_cascading_assign = FALSE)
+    ),
+    "allow_cascading_assign"
   )
 
-  expect_lint(
-    "x <- #Test \ny",
-    rex::rex("<- should not be trailing"),
-    assignment_linter(allow_trailing = FALSE)
-  )
+  expect_lint("x <- #Test \ny", rex::rex("<- should not be trailing"), linter)
 
   expect_lint(
     "is_long <-\nis %>%\ngather(measure, value, -Species) %>%\narrange(-value)",
@@ -87,7 +98,7 @@ test_that("arguments handle trailing assignment operators correctly", {
   expect_lint(
     "is_long <-\nis %>%\ngather(measure, value, -Species) %>%\narrange(-value)",
     rex::rex("<- should not be trailing"),
-    assignment_linter(allow_trailing = FALSE)
+    linter
   )
 
   expect_lint(
@@ -98,12 +109,15 @@ test_that("arguments handle trailing assignment operators correctly", {
   expect_lint(
     "is %>%\ngather(measure, value, -Species) %>%\narrange(-value) ->\nis_long",
     rex::rex("Use <-, not ->"),
-    assignment_linter(allow_trailing = FALSE)
+    linter
   )
-  expect_lint(
-    "is %>%\ngather(measure, value, -Species) %>%\narrange(-value) ->\nis_long",
-    rex::rex("-> should not be trailing"),
-    assignment_linter(allow_right_assign = TRUE, allow_trailing = FALSE)
+  expect_warning(
+    expect_lint(
+      "is %>%\ngather(measure, value, -Species) %>%\narrange(-value) ->\nis_long",
+      rex::rex("-> should not be trailing"),
+      assignment_linter(allow_right_assign = TRUE, allow_trailing = FALSE)
+    ),
+    "allow_right_assign"
   )
 
   expect_lint(
@@ -112,7 +126,7 @@ test_that("arguments handle trailing assignment operators correctly", {
       list(message = "=", line_number = 3L, column_number = 5L),
       list(message = "<-", line_number = 5L, column_number = 5L)
     ),
-    assignment_linter(allow_trailing = FALSE)
+    linter
   )
 })
 
@@ -169,26 +183,32 @@ test_that("allow_trailing interacts correctly with comments in braced expression
 
 test_that("%<>% throws a lint", {
   expect_lint("x %<>% sum()", "Avoid the assignment pipe %<>%", assignment_linter())
-  expect_lint("x %<>% sum()", NULL, assignment_linter(allow_pipe_assign = TRUE))
+  expect_warning(
+    expect_lint("x %<>% sum()", NULL, assignment_linter(allow_pipe_assign = TRUE)),
+    "allow_pipe_assign"
+  )
 
   # interaction with allow_trailing
   expect_lint("x %<>%\n  sum()", "Assignment %<>% should not be trailing", assignment_linter(allow_trailing = FALSE))
 })
 
 test_that("multiple lints throw correct messages", {
-  expect_lint(
-    trim_some("{
-      x <<- 1
-      y ->> 2
-      z -> 3
-      x %<>% as.character()
-    }"),
-    list(
-      list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
-      list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
-      list(message = "Use <-, not ->", line_number = 4L),
-      list(message = "Avoid the assignment pipe %<>%", line_number = 5L)
+  expect_warning(
+    expect_lint(
+      trim_some("{
+        x <<- 1
+        y ->> 2
+        z -> 3
+        x %<>% as.character()
+      }"),
+      list(
+        list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
+        list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
+        list(message = "Use <-, not ->", line_number = 4L),
+        list(message = "Avoid the assignment pipe %<>%", line_number = 5L)
+      ),
+      assignment_linter(allow_cascading_assign = FALSE)
     ),
-    assignment_linter(allow_cascading_assign = FALSE)
+    "allow_cascading_assign"
   )
 })

@@ -70,10 +70,29 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment-1>
 #' - <https://style.tidyverse.org/pipes.html#assignment-2>
 #' @export
-assignment_linter <- function(allow_cascading_assign = TRUE,
+assignment_linter <- function(operator = c("<-", "<<-"),
+                              allow_cascading_assign = TRUE,
                               allow_right_assign = FALSE,
                               allow_trailing = TRUE,
                               allow_pipe_assign = FALSE) {
+  if (!missing(allow_cascading_assign)) {
+    lintr_deprecated("allow_cascading_assign", '"<<-" and/or "->>" in operator', version = "3.2.0", type = "Argument")
+    operator <- drop_or_add(operator, "<<-", allow_cascading_assign)
+  }
+  if (!missing(allow_right_assign)) {
+    lintr_deprecated("allow_right_assign", '"->" in operator', version = "3.2.0", type = "Argument")
+    operator <- drop_or_add(operator, c("->", if (allow_cascading_assign) "->>"), allow_right_assign)
+  }
+  if (!missing(allow_pipe_assign)) {
+    lintr_deprecated("allow_pipe_assign", '"%<>%" in operator', version = "3.2.0", type = "Argument")
+    operator <- drop_or_add(operator, "%<>%", allow_pipe_assign)
+  }
+  all_operators <- c("<-", "=", "->", "<<-", "->>", ":=", "%<>%")
+  if ("any" %in% operator) {
+    operator <- all_operators
+  } else {
+    operator <- match.arg(operator, all_operators, several.ok = TRUE)
+  }
   trailing_assign_xpath <- paste(
     collapse = " | ",
     c(
@@ -124,3 +143,5 @@ assignment_linter <- function(allow_cascading_assign = TRUE,
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "style")
   })
 }
+
+drop_or_add <- function(x, y, add) (if (add) union else setdiff)(x, y)
