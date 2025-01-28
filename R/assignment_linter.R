@@ -93,16 +93,14 @@ assignment_linter <- function(operator = c("<-", "<<-"),
   } else {
     operator <- match.arg(operator, all_operators, several.ok = TRUE)
   }
-  trailing_assign_xpath <- paste(
+  trailing_assign_xpath <- paste0(
     collapse = " | ",
     c(
-      paste0("//LEFT_ASSIGN", if ("<<-" %in% operator) "" else "[text() = '<-']"),
-      if (any(c("->", "->>") %in% operator)) {
-        paste0("//RIGHT_ASSIGN", if ("->>" %in% operator) "" else "[text() = '->']")
-      },
+      "//LEFT_ASSIGN",
+      "//RIGHT_ASSIGN",
       "//EQ_SUB",
       "//EQ_FORMALS",
-      if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
+      "//SPECIAL[text() = '%<>%']"
     ),
     "[@line1 < following-sibling::expr[1]/@line1]"
   )
@@ -118,11 +116,14 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
     # NB: := is not linted because of (1) its common usage in rlang/data.table and
     #   (2) it's extremely uncommon as a normal assignment operator
-    if (!"<<-" %in% operator) "//LEFT_ASSIGN[text() = '<<-']",
-    if (!allow_trailing) trailing_assign_xpath,
+    if (!any(c("<-", "<<-") %in% operator)) {
+      "//LEFT_ASSIGN"
+    } else if (!"<<-" %in% operator) {
+      "//LEFT_ASSIGN[text() = '<<-']"
+    },
     if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
   )
-  op_xpath <- if (!is.null(op_xpath_parts)) paste(op_xpath_parts, collapse = "|")
+  op_xpath <- if (!is.null(op_xpath_parts)) paste(op_xpath_parts, collapse = " | ")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
@@ -132,7 +133,13 @@ assignment_linter <- function(operator = c("<-", "<<-"),
       op_expr <- xml_find_all(xml, op_xpath)
 
       op_text <- xml_text(op_expr)
-      op_lint_message_fmt <- rep("Use <-, not %s, for assignment.", length(op_text))
+      op_lint_message_fmt <- rep(
+        sprintf(
+          "Use %s for assignment, not %%s.",
+          if (length(operator) > 1L) paste("one of", toString(operator)) else operator
+        ),
+        length(op_text)
+      )
       op_lint_message_fmt[op_text %in% c("<<-", "->>")] <-
         "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
       op_lint_message_fmt[op_text == "%<>%"] <-
