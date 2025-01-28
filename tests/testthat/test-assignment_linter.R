@@ -134,6 +134,12 @@ test_that("arguments handle trailing assignment operators correctly", {
     ),
     linter
   )
+
+  expect_lint(
+    "a =\n1",
+    "= should not be trailing",
+    linter
+  )
 })
 
 test_that("allow_trailing interacts correctly with comments in braced expressions", {

@@ -111,6 +111,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     c(
       "//LEFT_ASSIGN",
       "//RIGHT_ASSIGN",
+      "//EQ_ASSIGN",
       "//EQ_SUB",
       "//EQ_FORMALS",
       "//SPECIAL[text() = '%<>%']"
