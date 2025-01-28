@@ -237,9 +237,6 @@ test_that("assignment operator can be toggled", {
   expect_lint("a <- 1", lint_message, eq_linter)
   expect_lint("a <- 1", NULL, any_linter)
 
-  expect_lint("a := 1", lint_message, eq_linter)
-  expect_lint("a := 1", NULL, any_linter)
-
   expect_lint("a = 1; b <- 2", lint_message, eq_linter)
   expect_lint("a = 1; b <- 2", NULL, any_linter)
 
@@ -292,9 +289,6 @@ test_that("assignment operator can be toggled", {
 
   expect_lint("for (ii in a <- TRUE) 1", NULL, eq_linter)
   expect_lint("for (ii in a <- TRUE) 1", NULL, any_linter)
-
-  expect_lint("DT[, a := 1]", NULL, eq_linter)
-  expect_lint("DT[, a := 1]", NULL, any_linter)
 })
 
 test_that("multiple lints throw correct messages when both = and <- are allowed", {

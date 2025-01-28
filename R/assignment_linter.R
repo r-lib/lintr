@@ -108,19 +108,11 @@ assignment_linter <- function(operator = c("<-", "<<-"),
   op_xpath_parts <- c(
     if (!"=" %in% operator) "//EQ_ASSIGN",
     # -> and ->> are both 'RIGHT_ASSIGN'
-    if (!any(c("->", "->>") %in% operator)) {
-      "//RIGHT_ASSIGN"
-    } else if (!"->>" %in% operator) {
-      "//RIGHT_ASSIGN[text() = '->>']"
-    },
+    glue("//RIGHT_ASSIGN[{xp_text_in_table(setdiff(c('->', '->>'), operator))}]"),
     # <-, :=, and <<- are all 'LEFT_ASSIGN'; check the text if blocking <<-.
     # NB: := is not linted because of (1) its common usage in rlang/data.table and
     #   (2) it's extremely uncommon as a normal assignment operator
-    if (!any(c("<-", "<<-") %in% operator)) {
-      "//LEFT_ASSIGN[text() != ':=' or not(parent::expr/preceding-sibling::OP-LEFT-BRACKET)]"
-    } else if (!"<<-" %in% operator) {
-      "//LEFT_ASSIGN[text() = '<<-']"
-    },
+    glue("//LEFT_ASSIGN[{xp_text_in_table(setdiff(c('<-', '<<-'), operator))}]"),
     if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
   )
   if (!is.null(op_xpath_parts)) {
