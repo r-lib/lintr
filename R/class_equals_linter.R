@@ -48,9 +48,10 @@ class_equals_linter <- function() {
     bad_expr <- xml_find_all(xml_calls, xpath)
 
     operator <- xml_find_chr(bad_expr, "string(*[2])")
-    lint_message <- sprintf(
-      "Use inherits(x, 'class-name'), is.<class> or is(x, 'class') instead of comparing class(x) with %s.",
-      operator
+    lint_message <- paste0(
+      "Use inherits(x, 'class-name'), is.<class> for S3 classes, ",
+      "or is(x, 'S4Class') for S4 classes, ",
+      "instead of comparing class(x) with ", operator, "."
     )
     xml_nodes_to_lints(
       bad_expr,

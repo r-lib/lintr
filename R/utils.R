@@ -186,14 +186,24 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
 
 # nocov start
 # support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {
-}
+release_bullets <- function() {}
 # nocov end
 
 # see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
 #   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.
 platform_independent_order <- function(x) order(tolower(x), method = "radix")
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
+
+#' re_matches with type-stable logical output
+#' TODO(r-lib/rex#94): Use re_matches() option directly & deprecate this.
+#' @noRd
+re_matches_logical <- function(x, regex, ...) {
+  res <- re_matches(x, regex, ...)
+  if (is.data.frame(res)) {
+    res <- complete.cases(res)
+  }
+  res
+}
 
 #' Extract text from `STR_CONST` nodes
 #'
@@ -245,9 +255,12 @@ get_r_string <- function(s, xpath = NULL) {
 }
 
 is_linter <- function(x) inherits(x, "linter")
+is_lint <- function(x) inherits(x, "lint")
+
+is_error <- function(x) inherits(x, "error")
 
 is_tainted <- function(lines) {
-  inherits(tryCatch(nchar(lines), error = identity), "error")
+  is_error(tryCatch(nchar(lines), error = identity))
 }
 
 #' Check that the entries in ... are valid

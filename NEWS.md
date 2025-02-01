@@ -6,7 +6,6 @@
    + `source_file=` argument to `ids_with_token()` and `with_id()`.
    + Passing linters by name or as non-`"linter"`-classed functions.
    + `linter=` argument of `Lint()`.
-   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`..
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + Helper `with_defaults()`.
@@ -19,7 +18,6 @@
 * `scalar_in_linter` is now configurable to allow other `%in%` like operators to be linted. The data.table operator `%chin%` is no longer linted by default; use `in_operators = "%chin%"` to continue linting it. (@F-Noelle)
 * `lint()` and friends now normalize paths to forward slashes on Windows (@olivroy, #2613).
 * `undesirable_function_linter()`, `undesirable_operator_linter()`, and `list_comparison_linter()` were removed from the tag `efficiency` (@IndrajeetPatil, #2655). If you use `linters_with_tags("efficiency")` to include these linters, you'll need to adjust your config to keep linting your code against them. We did not find any such users on GitHub.
-  
 
 ## Bug fixes
 
@@ -29,6 +27,7 @@
 * `.lintr` configs set by option `lintr.linter_file` or environment variable `R_LINTR_LINTER_FILE` can point to subdirectories (#2512, @MichaelChirico).
 * `indentation_linter()` returns `ranges[1L]==1L` when the offending line has 0 spaces (#2550, @MichaelChirico).
 * `literal_coercion_linter()` doesn't surface a warning about NAs during coercion for code like `as.integer("a")` (#2566, @MichaelChirico).
+* `commented_code_linter()` can detect commented code that ends with a pipe (#2671, @jcken95)
 
 ## Changes to default linters
 
@@ -61,6 +60,7 @@
 * `paste_linter()` is extended to recommend using `paste()` instead of `paste0()` for simply aggregating a character vector with `collapse=`, i.e., when `sep=` is irrelevant (#1108, @MichaelChirico).
 * `expect_no_lint()` was added as new function to cover the typical use case of expecting no lint message, akin to the recent {testthat} functions like `expect_no_warning()` (#2580, @F-Noelle).
 * `lint()` and friends emit a message if no lints are found (#2643, @IndrajeetPatil).
+* `{lintr}` now has a hex sticker (https://github.com/rstudio/hex-stickers/pull/110). Thank you, @gregswinehart!
 
 ### New linters
 
@@ -90,9 +90,10 @@
 
 ## Notes
 
-* All user-facing messages are now prepared using the `{cli}` package (#2418, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
+* All user-facing messages (including progress bars) are now prepared using the `{cli}` package (#2418 and #2641, @IndrajeetPatil). All messages have been reviewed and updated to be more informative and consistent.
 * File locations in lints and error messages contain clickable hyperlinks to improve code navigation (#2645, #2588, @olivroy).
 * {lintr} now depends on R version 4.0.0. It already does so implicitly due to recursive upstream dependencies requiring this version; we've simply made that dependency explicit and up-front (#2569, @MichaelChirico).
+* Some code with parameters accepting regular expressions is less strict about whether there are capture groups  (#2678, @MichaelChirico). In particular, this affects `unreachable_code_linter(allow_comment_regex=)` and `expect_lint(checks=)`.
 
 # lintr 3.1.2
 

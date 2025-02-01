@@ -52,8 +52,9 @@
 #'  - <https://style.tidyverse.org/syntax.html#object-names>
 #' @export
 object_overwrite_linter <- function(
-    packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices"),
-    allow_names = character()) {
+  packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices"),
+  allow_names = character()
+) {
   for (package in packages) {
     if (!requireNamespace(package, quietly = TRUE)) {
       cli_abort("Package {.pkg {package}} is required, but not available.")

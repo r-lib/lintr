@@ -257,9 +257,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     }
 
     # Only lint non-empty lines if the indentation level doesn't match.
+    # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
+    # styler: off
     bad_lines <- which(indent_levels != expected_indent_levels &
                          nzchar(trimws(source_expression$file_lines)) &
                          !in_str_const)
+    # styler: on
     if (length(bad_lines) > 0L) {
       # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
       is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)

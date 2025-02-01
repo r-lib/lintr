@@ -329,12 +329,5 @@ settings <- new.env(parent = emptyenv())
   ))
 
   reset_settings()
-
-  if (requireNamespace("tibble", quietly = TRUE)) {
-    registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))
-  }
-  if (requireNamespace("data.table", quietly = TRUE)) {
-    registerS3method("as.data.table", "lints", as.data.table.lints, asNamespace("data.table"))
-  }
 }
 # nocov end
