@@ -89,11 +89,14 @@ Note that if files contain unparseable encoding problems, only the encoding prob
 unintelligible error messages from other linters.
 }
 \examples{
+# linting inline-code
+lint("a = 123\n")
+lint(text = "a = 123")
+
+# linting a file
 f <- tempfile()
 writeLines("a=1", f)
-lint(f)                # linting a file
-lint("a = 123\n")      # linting inline-code
-lint(text = "a = 123") # linting inline-code
+lint(f)
 unlink(f)
 
 if (FALSE) {
