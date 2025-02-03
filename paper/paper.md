@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2024-10-02"
+date: "2025-02-01"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -32,7 +32,7 @@ affiliations:
   - index: 3
     name: Mathematisches Institut der Heinrich-Heine-Universität Düsseldorf
   - index: 4
-    name: Preisenergie GmbH, Munich, Germany
+    name: Carl Zeiss AG, Germany
   - index: 5
     name: Jumping Rivers
   - index: 6
@@ -51,18 +51,21 @@ link-citations: true
 
 # Statement of Need
 
-A linter is a tool that analyzes code to identify potential errors,
-stylistic issues, or deviations from coding standards. It helps ensure
-consistency, readability, and best practices by flagging common
-mistakes, such as syntax errors, unused variables, or improper
-formatting. Linters are essential for improving code quality, preventing
-bugs, and maintaining a clean codebase, especially in collaborative
-development environments [@enwiki:1218663830]. `{lintr}` is an
-open-source package that provides linters for the R programming
-language, which is an interpreted, dynamically-typed programming
-language [@base2023], and is used by a wide range of researchers and
-data scientists. `{lintr}` can thus act as a valuable tool for R users
-to help improve the quality and reliability of their code.
+In computer programming, "linting" is the process of analyzing the
+source code to identify possible programming and stylistic problems
+[@enwiki:1260589258] and a linter is a tool used for linting. A linter
+analyzes code to identify potential errors, stylistic issues, or
+deviations from coding standards. It helps ensure consistency,
+readability, and best practices by flagging common mistakes, such as
+syntax errors, unused variables, or improper formatting. Linters are
+essential for improving code quality, preventing bugs, and maintaining a
+clean codebase, especially in collaborative development environments
+[@enwiki:1218663830]. `{lintr}` is an open-source package that provides
+linters for the R programming language, which is an interpreted,
+dynamically-typed programming language [@base2023], and is used by a
+wide range of researchers and data scientists. `{lintr}` can thus act as
+a valuable tool for R users to help improve the quality and reliability
+of their code.
 
 # Features
 
@@ -86,8 +89,8 @@ length(all_linters())
 #> [1] 113
 ```
 
-Naturally, we can't discuss all of them here. To see details about all
-available linters, we encourage readers to see
+Naturally, we can't discuss all of them here. To see the most up-to-date
+details about all the available linters, we encourage readers to visit
 <https://lintr.r-lib.org/dev/reference/index.html#individual-linters>.
 
 We will showcase one linter for each kind of common problem found in R
@@ -120,7 +123,7 @@ lint(
   text = "x >= 2.5",
   linters = redundant_ifelse_linter()
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   **Efficiency**
@@ -153,7 +156,7 @@ lint(
   text = "anyNA(x)",
   linters = any_is_na_linter()
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   **Readability**
@@ -186,7 +189,7 @@ lint(
   text = "x != 2",
   linters = comparison_negation_linter()
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   **Tidyverse style**
@@ -214,7 +217,7 @@ lint(
   text = "my_var <- 1L",
   linters = object_name_linter()
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   **Common mistakes**
@@ -288,7 +291,7 @@ lint(
   text = "my.var <- 1L",
   linters = object_name_linter(styles = "dotted.case")
 )
-#> ℹ No lints found.
+#> i No lints found.
 ```
 
 -   Create new linters (by leveraging functions like

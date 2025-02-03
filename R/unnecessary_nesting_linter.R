@@ -95,16 +95,17 @@
 #'  - [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_nesting_linter <- function(
-    allow_assignment = TRUE,
-    allow_functions = c(
-      "switch",
-      "try", "tryCatch", "withCallingHandlers",
-      "quote", "expression", "bquote", "substitute",
-      "with_parameters_test_that",
-      "reactive", "observe", "observeEvent",
-      "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
-      "renderPrint", "renderTable", "renderText", "renderUI"
-    )) {
+  allow_assignment = TRUE,
+  allow_functions = c(
+    "switch",
+    "try", "tryCatch", "withCallingHandlers",
+    "quote", "expression", "bquote", "substitute",
+    "with_parameters_test_that",
+    "reactive", "observe", "observeEvent",
+    "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
+    "renderPrint", "renderTable", "renderText", "renderUI"
+  )
+) {
   exit_calls <- c("stop", "return", "abort", "quit", "q")
   exit_call_expr <- glue("
     expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]]

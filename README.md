@@ -1,4 +1,4 @@
-# lintr
+# lintr <img src="man/figures/logo.png" align="right" width="240" />
 
 [![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions)
 [![codecov.io](https://codecov.io/gh/r-lib/lintr/branch/main/graphs/badge.svg)](https://app.codecov.io/gh/r-lib/lintr?branch=main)
