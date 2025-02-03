@@ -323,6 +323,8 @@ test_that("Deprecated arguments work & warn as intended", {
   expect_warning(regexp = "allow_cascading_assign", {
     linter_no_cascade <- assignment_linter(allow_cascading_assign = FALSE)
   })
+  # Also throw a deprecation warning for positionally-passed argument since we changed argument order.
+  expect_warning(assignment_linter(FALSE), "allow_cascading_assign")
   expect_warning(regexp = "allow_right_assign", {
     linter_yes_right <- assignment_linter(allow_right_assign = TRUE)
   })
