@@ -338,7 +338,7 @@ test_that("Deprecated arguments work & warn as intended", {
     linter_yes_right_no_trailing <- assignment_linter(allow_right_assign = TRUE, allow_trailing = FALSE)
   })
   expect_warning(regexp = "allow_pipe_assign", {
-    linter_yes_pipe <- assignment_linter(allow_pipe_assign = TRUE) 
+    linter_yes_pipe <- assignment_linter(allow_pipe_assign = TRUE)
   })
 
   expect_lint(
