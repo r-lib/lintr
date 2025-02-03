@@ -32,7 +32,7 @@ test_that("arguments handle <<- and ->/->> correctly", {
   lint_msg_right <- rex::rex("Replace ->> by assigning to a specific environment")
 
   expect_lint("1 -> blah", rex::rex("Use one of <-, <<- for assignment, not ->."), linter)
-  expect_lint("1 ->> blah", lint_msg_right, linter)
+  expect_lint("1 ->> blah", lint_msg_right, assignment_linter(operator = "<-"))
 
   # <<- is only blocked optionally
   expect_lint("1 <<- blah", NULL, linter)
