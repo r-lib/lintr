@@ -161,7 +161,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
       op_lint_message_fmt[op_text %in% c("<<-", "->>")] <-
         "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
       op_lint_message_fmt[op_text == "%<>%"] <-
-        "Avoid the assignment pipe %s; prefer using <- and %%>%% separately."
+        "Avoid the assignment pipe %s; prefer pipes and assignment in separate steps."
 
       op_lint_message <- sprintf(op_lint_message_fmt, op_text)
       lints <- xml_nodes_to_lints(op_expr, source_expression, op_lint_message, type = "style")
