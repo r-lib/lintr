@@ -106,6 +106,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
   } else {
     operator <- match.arg(operator, all_operators, several.ok = TRUE)
   }
+  no_cascading <- !any(c("<<-", "->>") %in% operator)
   trailing_assign_xpath <- paste0(
     collapse = " | ",
     c(
@@ -158,8 +159,10 @@ assignment_linter <- function(operator = c("<-", "<<-"),
         ),
         length(op_text)
       )
-      op_lint_message_fmt[op_text %in% c("<<-", "->>")] <-
-        "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
+      if (no_cascading) {
+        op_lint_message_fmt[op_text %in% c("<<-", "->>")] <-
+          "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
+      }
       op_lint_message_fmt[op_text == "%<>%"] <-
         "Avoid the assignment pipe %s; prefer pipes and assignment in separate steps."
 

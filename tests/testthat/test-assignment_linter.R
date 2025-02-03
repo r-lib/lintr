@@ -51,6 +51,19 @@ test_that("arguments handle <<- and ->/->> correctly", {
     lint_msg_right,
     assignment_linter(operator = c("<-", "->"))
   )
+
+  # when user allows _some_ cascading assignment, advice should not mention the
+  #   problems with cascading assignment, but focus on the specific disallowed operator.
+  expect_lint(
+    "1 ->> blah",
+    rex::rex("Use one of <-, <<- for assignment, not ->>."),
+    assignment_linter(operator = c("<-", "<<-"))
+  )
+  expect_lint(
+    "blah <<- 1",
+    rex::rex("Use one of ->, ->> for assignment, not <<-."),
+    assignment_linter(operator = c("->", "->>"))
+  )
 })
 
 test_that("arguments handle trailing assignment operators correctly", {
