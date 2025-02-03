@@ -170,21 +170,21 @@ test_that("complex_conditional_linter skips non-conditional expressions", {
 })
 
 # styler: off
-invalid_cases <- list(
-  list(name = "character", input = "2",         error = "is.numeric"),
-  list(name = "logical",   input = TRUE,        error = "is.numeric"),
-  list(name = "vector",    input = c(2L, 3L),   error = "length"),
-  list(name = "empty",     input = numeric(0L), error = "length"),
-  list(name = "zero",      input = 0L,          error = "threshold >= 1L"),
-  list(name = "negative",  input = -1L,         error = "threshold >= 1L"),
-  list(name = "NA",        input = NA_real_,    error = "is.numeric"),
-  list(name = "NaN",       input = NaN,         error = "threshold >= 1L"),
-  list(name = "Inf",       input = Inf,         error = "threshold >= 1L")
-)
-# styler: on
-
+skip_if_not_installed("tibble")
 patrick::with_parameters_test_that(
   "complex_conditional_linter rejects invalid threshold arguments",
-  expect_error(complex_conditional_linter(input), regexp = invalid_cases$error),
-  .cases = invalid_cases
+  expect_error(complex_conditional_linter(input)),
+  .cases = tibble::tribble(
+    ~.test_name,  ~input,            ~error,
+    "character",  list("2"),         "is.numeric",
+    "logical",    list(TRUE),        "is.numeric",
+    "vector",     list(c(2L, 3L)),   "length",
+    "empty",      list(numeric(0L)), "length",
+    "zero",       list(0L),          "threshold >= 1L",
+    "negative",   list(-1L),         "threshold >= 1L",
+    "NA",         list(NA_real_),    "is.numeric",
+    "NaN",        list(NaN),         "threshold >= 1L",
+    "Inf",        list(Inf),         "threshold >= 1L"
+  )
 )
+# styler: on
