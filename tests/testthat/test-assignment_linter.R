@@ -67,19 +67,33 @@ test_that("arguments handle <<- and ->/->> correctly", {
 })
 
 test_that("arguments handle trailing assignment operators correctly", {
-  linter <- assignment_linter(allow_trailing = FALSE)
-  expect_lint("x <- y", NULL, linter)
-  expect_lint("foo(bar = 1)", NULL, linter)
+  linter_default <- assignment_linter()
+  linter_no_trailing <- assignment_linter(allow_trailing = FALSE)
+  expect_lint("x <- y", NULL, linter_no_trailing)
+  expect_lint("foo(bar = 1)", NULL, linter_no_trailing)
 
   expect_lint(
-    "foo(bar =\n1)",
+    trim_some("
+      foo(bar =
+        1)
+    "),
     rex::rex("= should not be trailing at the end of a line."),
-    linter
+    linter_no_trailing
   )
 
-  expect_lint("x <<-\ny", rex::rex("<<- should not be trailing"), linter)
   expect_lint(
-    "x <<-\ny",
+    trim_some("
+      x <<-
+        y
+    "),
+    rex::rex("<<- should not be trailing"),
+    linter_no_trailing
+  )
+  expect_lint(
+    trim_some("
+      x <<-
+        y
+    "),
     list(
       rex::rex("Replace <<- by assigning to a specific environment"),
       rex::rex("Assignment <<- should not be trailing")
@@ -87,34 +101,41 @@ test_that("arguments handle trailing assignment operators correctly", {
     assignment_linter(operator = "<-", allow_trailing = FALSE)
   )
 
-  expect_lint("x <- #Test \ny", rex::rex("<- should not be trailing"), linter)
-
   expect_lint(
-    "is_long <-\nis %>%\ngather(measure, value, -Species) %>%\narrange(-value)",
-    NULL,
-    assignment_linter()
-  )
-  expect_lint(
-    "is_long <-\nis %>%\ngather(measure, value, -Species) %>%\narrange(-value)",
+    trim_some("
+      x <- #Test
+        y
+    "),
     rex::rex("<- should not be trailing"),
-    linter
+    linter_no_trailing
   )
 
+  pipe_left_string <- trim_some("
+    is_long <-
+      is %>%
+      gather(measure, value, -Species) %>%
+      arrange(-value)
+  ")
+  expect_lint(pipe_left_string, NULL, linter_default)
+  expect_lint(pipe_left_string, rex::rex("<- should not be trailing"), linter_no_trailing)
+
+  pipe_right_string <- trim_some("
+    is %>%
+      gather(measure, value, -Species) %>%
+      arrange(-value) ->
+      is_long
+  ")
+  expect_lint(pipe_right_string, rex::rex("Use one of <-, <<- for assignment, not ->"), linter_default)
   expect_lint(
-    "is %>%\ngather(measure, value, -Species) %>%\narrange(-value) ->\nis_long",
-    rex::rex("Use one of <-, <<- for assignment, not ->"),
-    assignment_linter()
-  )
-  expect_lint(
-    "is %>%\ngather(measure, value, -Species) %>%\narrange(-value) ->\nis_long",
+    pipe_right_string,
     list(
       rex::rex("Use one of <-, <<- for assignment, not ->"),
       rex::rex("Assignment -> should not be trailing")
     ),
-    linter
+    linter_no_trailing
   )
   expect_lint(
-    "is %>%\ngather(measure, value, -Species) %>%\narrange(-value) ->\nis_long",
+    pipe_right_string,
     rex::rex("-> should not be trailing"),
     assignment_linter(operator = "->", allow_trailing = FALSE)
   )
@@ -131,11 +152,14 @@ test_that("arguments handle trailing assignment operators correctly", {
       list(message = "Assignment = should not be trailing at the end of a line", line_number = 1L, column_number = 6L),
       list(message = "Assignment <- should not be trailing at the end of a line", line_number = 3L, column_number = 6L)
     ),
-    linter
+    linter_no_trailing
   )
 
   expect_lint(
-    "a =\n1",
+    trim_some("
+      a =
+        1
+    "),
     "= should not be trailing",
     assignment_linter(operator = "=", allow_trailing = FALSE)
   )
@@ -198,7 +222,10 @@ test_that("%<>% throws a lint", {
 
   # interaction with allow_trailing
   expect_lint(
-    "x %<>%\n  sum()",
+    trim_some("
+      x %<>%
+        sum()
+    "),
     list(
       "Avoid the assignment pipe %<>%",
       "Assignment %<>% should not be trailing"
@@ -368,7 +395,10 @@ test_that("Deprecated arguments work & warn as intended", {
     linter_no_cascade_yes_right
   )
   expect_lint(
-    "x <<-\ny",
+    trim_some("
+      x <<-
+        y
+    "),
     list(
       rex::rex("Replace <<- by assigning to a specific environment"),
       rex::rex("Assignment <<- should not be trailing")
@@ -376,7 +406,12 @@ test_that("Deprecated arguments work & warn as intended", {
     linter_no_cascade_no_trailing
   )
   expect_lint(
-    "is %>%\ngather(measure, value, -Species) %>%\narrange(-value) ->\nis_long",
+    trim_some("
+      is %>%
+        gather(measure, value, -Species) %>%
+        arrange(-value) ->
+        is_long
+    "),
     rex::rex("-> should not be trailing"),
     linter_yes_right_no_trailing
   )
