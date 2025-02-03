@@ -351,7 +351,7 @@ test_that("Deprecated arguments work & warn as intended", {
 
   expect_lint(
     "1 ->> blah",
-    lint_msg_right,
+    rex::rex("Replace ->> by assigning to a specific environment"),
     linter_no_cascade_yes_right
   )
   expect_lint(
