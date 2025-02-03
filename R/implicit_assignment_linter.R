@@ -79,6 +79,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     sep = " | "
   )
 
+  # NB: Also used, essentially, in assignment_linter. Keep in sync.
   xpath <- glue("
     ({assignments})
       /parent::expr[
