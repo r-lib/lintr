@@ -154,7 +154,7 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
   expect_lint(stop_warning_lines, lint_msg, linter)
 
   # Optionally consider 'warning' as an exit call --> no lint
-  expect_lint(stop_warning_lines, NULL, unnecessary_nesting_linter(branch_exit_calls = 'warning'))
+  expect_lint(stop_warning_lines, NULL, unnecessary_nesting_linter(branch_exit_calls = "warning"))
 })
 
 test_that("unnecessary_nesting_linter skips one-line functions", {
