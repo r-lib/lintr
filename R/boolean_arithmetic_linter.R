@@ -48,8 +48,7 @@ boolean_arithmetic_linter <- function() {
       or (EQ or NE or GT or LT or GE or LE)
     ]
     and parent::expr[ ({zero_expr}) or ({one_expr})]
-  ]
-  ")
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
     length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))
