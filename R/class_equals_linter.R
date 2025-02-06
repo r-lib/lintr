@@ -36,7 +36,6 @@
 class_equals_linter <- function() {
   xpath <- "
   parent::expr
-    /parent::expr
     /parent::expr[
       not(preceding-sibling::OP-LEFT-BRACKET)
       and (EQ or NE or SPECIAL[text() = '%in%'])

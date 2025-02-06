@@ -9,8 +9,8 @@
 #'
 #' @noRd
 build_xml_find_function_calls <- function(xml) {
-  function_call_cache <- xml_find_all(xml, "//SYMBOL_FUNCTION_CALL")
-  names(function_call_cache) <- get_r_string(function_call_cache)
+  function_call_cache <- xml_find_all(xml, "//SYMBOL_FUNCTION_CALL/parent::expr")
+  names(function_call_cache) <- get_r_string(function_call_cache, "SYMBOL_FUNCTION_CALL")
 
   function(function_names, keep_names = FALSE) {
     if (is.null(function_names)) {

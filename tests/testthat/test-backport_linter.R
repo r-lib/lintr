@@ -53,6 +53,12 @@ test_that("backport_linter detects backwards-incompatibility", {
     rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 3.6.3."),
     backport_linter("oldrel-3")
   )
+  # no interference from namespace-qualification (even of base functions)
+  expect_lint(
+    "base::numToBits(2)",
+    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 3.6.3."),
+    backport_linter("oldrel-3")
+  )
 
   # except is honored
   expect_lint(
