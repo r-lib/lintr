@@ -88,7 +88,13 @@ assignment_linter <- function(operator = c("<-", "<<-"),
                               allow_right_assign = FALSE,
                               allow_trailing = TRUE,
                               allow_pipe_assign = FALSE) {
-  if (!missing(allow_cascading_assign) || is.logical(operator)) {
+  if (is.logical(operator)) {
+    cli_abort(c(
+      "'operator' should be a character vector but was logical.",
+      i = "If you intended positional usage of allow_cascading_assign=, that is hard-deprecated."
+    ))
+  }
+  if (!missing(allow_cascading_assign)) {
     lintr_deprecated("allow_cascading_assign", '"<<-" and/or "->>" in operator', version = "3.2.0", type = "Argument")
     operator <- drop_or_add(operator, "<<-", allow_cascading_assign)
   }

@@ -18,7 +18,7 @@
 * `scalar_in_linter` is now configurable to allow other `%in%` like operators to be linted. The data.table operator `%chin%` is no longer linted by default; use `in_operators = "%chin%"` to continue linting it. (@F-Noelle)
 * `lint()` and friends now normalize paths to forward slashes on Windows (@olivroy, #2613).
 * `undesirable_function_linter()`, `undesirable_operator_linter()`, and `list_comparison_linter()` were removed from the tag `efficiency` (@IndrajeetPatil, #2655). If you use `linters_with_tags("efficiency")` to include these linters, you'll need to adjust your config to keep linting your code against them. We did not find any such users on GitHub.
-* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are all deprecated in favor of the new `operator=` argument. See below about the new argument.
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are all deprecated in favor of the new `operator=` argument. Usage of a positional first argument like `assignment_linter(TRUE)`, of which we found 0 cases on GitHub, is totally deprecated to allow `operator=` to be positionally first. See below about the new argument.
 
 ## Bug fixes
 
