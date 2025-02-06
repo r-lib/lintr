@@ -49,7 +49,6 @@ consecutive_assertion_linter <- function() {
     # need the full file to also catch usages at the top level
     stopifnot_calls <- source_expression$xml_find_function_calls("stopifnot")
     assert_that_calls <- source_expression$xml_find_function_calls("assert_that")
-    # browser()
     bad_expr <- combine_nodesets(
       xml_find_all(stopifnot_calls, stopifnot_xpath),
       xml_find_all(assert_that_calls, assert_that_xpath)
