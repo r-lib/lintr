@@ -33,8 +33,7 @@
 #' @export
 expect_true_false_linter <- function() {
   xpath <- "
-  parent::expr
-    /following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
+  following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
     /parent::expr
   "
 

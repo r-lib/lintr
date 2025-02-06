@@ -20,22 +20,19 @@
 #' @export
 missing_package_linter <- function() {
   library_require_xpath <- "
-  parent::expr
-    /parent::expr[
-      expr[2][STR_CONST]
-      or (
-        expr[2][SYMBOL]
-        and not(
-          SYMBOL_SUB[text() = 'character.only']
-          /following-sibling::expr[1]
-          /NUM_CONST[text() = 'TRUE' or text() = 'T']
-        )
+  parent::expr[
+    expr[2][STR_CONST]
+    or (
+      expr[2][SYMBOL]
+      and not(
+        SYMBOL_SUB[text() = 'character.only']
+        /following-sibling::expr[1]
+        /NUM_CONST[text() = 'TRUE' or text() = 'T']
       )
-    ]
-  "
+    )
+  ]"
   load_require_namespace_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][STR_CONST]
+  following-sibling::expr[1][STR_CONST]
     /parent::expr
   "
 

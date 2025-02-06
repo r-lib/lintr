@@ -63,23 +63,21 @@ strings_as_factors_linter <- local({
   #   (1) above argument is to row.names=
   #   (2) stringsAsFactors is manually supplied (with any value)
   xpath <- glue("
-  parent::expr
-    /parent::expr[
-      expr[
-        (
-          STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
-          or ( {c_combine_strings} )
-          or expr[1][
-            SYMBOL_FUNCTION_CALL[text() = 'rep']
-            and following-sibling::expr[1][STR_CONST or ({c_combine_strings})]
-          ]
-          or expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
-        )
-        and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
-      ]
-      and not(SYMBOL_SUB[text() = 'stringsAsFactors'])
+  parent::expr[
+    expr[
+      (
+        STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+        or ( {c_combine_strings} )
+        or expr[1][
+          SYMBOL_FUNCTION_CALL[text() = 'rep']
+          and following-sibling::expr[1][STR_CONST or ({c_combine_strings})]
+        ]
+        or expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
+      )
+      and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
     ]
-  ")
+    and not(SYMBOL_SUB[text() = 'stringsAsFactors'])
+  ]")
 
   make_linter_from_function_xpath(
     function_names = "data.frame",
