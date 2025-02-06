@@ -94,7 +94,7 @@
 #' code <- "if (x && y) { \n  return(1L) \n}"
 #' writeLines(code)
 #' lint(
-#'   text = code",
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
