@@ -315,6 +315,20 @@ test_that("assignment operator can be toggled", {
 
   expect_lint("for (ii in a <- TRUE) 1", NULL, eq_linter)
   expect_lint("for (ii in a <- TRUE) 1", NULL, any_linter)
+
+  expect_lint(
+    trim_some("
+      x =
+        2
+      y <-
+        3
+    "),
+    list(
+      list("Assignment = should not be trailing", line_number = 1L),
+      list("Assignment <- should not be trailing", line_number = 3L)
+    ),
+    assignment_linter(operator = "any", allow_trailing = FALSE)
+  )
 })
 
 test_that("multiple lints throw correct messages when both = and <- are allowed", {
