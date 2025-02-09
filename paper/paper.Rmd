@@ -32,7 +32,7 @@ affiliations:
   - index: 3
     name: Mathematisches Institut der Heinrich-Heine-Universität Düsseldorf
   - index: 4
-    name: Preisenergie GmbH, Munich, Germany
+    name: Carl Zeiss AG, Germany
   - index: 5
     name: Jumping Rivers
   - index: 6

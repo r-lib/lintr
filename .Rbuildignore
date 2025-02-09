@@ -31,3 +31,4 @@ testthat-problems[.]rds$
 ^CRAN-SUBMISSION$
 ^CODE_OF_CONDUCT\.md$
 ^paper$
+^LICENSE\.md$
