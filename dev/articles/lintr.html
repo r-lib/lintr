@@ -352,8 +352,8 @@ into your <code>.lintr</code>:</p>
 default settings are also shown.</p>
 <table class="table">
 <colgroup>
-<col width="22%">
-<col width="77%">
+<col width="19%">
+<col width="80%">
 </colgroup>
 <thead><tr class="header">
 <th align="left"></th>
@@ -362,8 +362,9 @@ default settings are also shown.</p>
 <tbody>
 <tr class="odd">
 <td align="left">assignment_linter</td>
-<td align="left">allow_cascading_assign = TRUE, allow_right_assign =
-FALSE, allow_trailing = TRUE, allow_pipe_assign = FALSE</td>
+<td align="left">operator = c(“&lt;-”, “&lt;&lt;-”),
+allow_cascading_assign = TRUE, allow_right_assign = FALSE,
+allow_trailing = TRUE, allow_pipe_assign = FALSE</td>
 </tr>
 <tr class="even">
 <td align="left">brace_linter</td>
@@ -636,14 +637,14 @@ enough:</p>
 <span>  <span class="co"># more concise alternative for this case: use eval(call(.))</span></span>
 <span>  <span class="fu">show_lint</span><span class="op">(</span><span class="fu"><a href="../reference/lint.html">lint</a></span><span class="op">(</span><span class="va">tmp</span>, linters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/call.html" class="external-link">call</a></span><span class="op">(</span><span class="va">linter_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   line_number                        message linter</span></span>
-<span><span class="co">#&gt; 1           1 Use &lt;-, not =, for assignment.    get</span></span>
+<span><span class="co">#&gt;   line_number                                   message linter</span></span>
+<span><span class="co">#&gt; 1           1 Use one of &lt;-, &lt;&lt;- for assignment, not =.    get</span></span>
 <span><span class="co">#&gt; ---------------------------------------------------------------------------</span></span>
-<span><span class="co">#&gt;   line_number                        message            linter</span></span>
-<span><span class="co">#&gt; 1           1 Use &lt;-, not =, for assignment. assignment_linter</span></span>
+<span><span class="co">#&gt;   line_number                                   message            linter</span></span>
+<span><span class="co">#&gt; 1           1 Use one of &lt;-, &lt;&lt;- for assignment, not =. assignment_linter</span></span>
 <span><span class="co">#&gt; ---------------------------------------------------------------------------</span></span>
-<span><span class="co">#&gt;   line_number                        message            linter</span></span>
-<span><span class="co">#&gt; 1           1 Use &lt;-, not =, for assignment. assignment_linter</span></span></code></pre></div>
+<span><span class="co">#&gt;   line_number                                   message            linter</span></span>
+<span><span class="co">#&gt; 1           1 Use one of &lt;-, &lt;&lt;- for assignment, not =. assignment_linter</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -674,7 +675,7 @@ excluded from the results.</p>
 <pre><code><span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #0000BB;">style: </span>[object_name_linter] <span style="font-weight: bold;">Variable and function name style should match snake_case or symbols.</span></span></span>
 <span><span class="co">#&gt; X = 42L # -------------- this comment overflows the default 80 chars line length.</span></span>
 <span><span class="co">#&gt; ^</span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;-, not =, for assignment.</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span></span>
 <span><span class="co">#&gt; X = 42L # -------------- this comment overflows the default 80 chars line length.</span></span>
 <span><span class="co">#&gt;   ^</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:81: </span><span style="color: #0000BB;">style: </span>[line_length_linter] <span style="font-weight: bold;">Lines should not be more than 80 characters. This line is 81 characters.</span></span></span>
@@ -698,7 +699,7 @@ dot.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name_linter. this comment overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file3.R")</code></p>
-<pre><code><span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;-, not =, for assignment.</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span></span>
 <span><span class="co">#&gt; X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.</span></span>
 <span><span class="co">#&gt;   ^</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:81: </span><span style="color: #0000BB;">style: </span>[line_length_linter] <span style="font-weight: bold;">Lines should not be more than 80 characters. This line is 94 characters.</span></span></span>
@@ -714,7 +715,7 @@ separator:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file4.R")</code></p>
-<pre><code><span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;-, not =, for assignment.</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span></span>
 <span><span class="co">#&gt; X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.</span></span>
 <span><span class="co">#&gt;   ^</span></span></code></pre>
 <p>You can also specify the linter names by a unique prefix instead of
@@ -723,7 +724,7 @@ their full name:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint: object_name, line_len. this comment still overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file5.R")</code></p>
-<pre><code><span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;-, not =, for assignment.</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span></span>
 <span><span class="co">#&gt; X = 42L # nolint: object_name, line_len. this comment still overflows the default 80 chars line length.</span></span>
 <span><span class="co">#&gt;   ^</span></span></code></pre>
 </div>
