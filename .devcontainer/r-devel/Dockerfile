@@ -1,13 +1,12 @@
-FROM docker.io/rhub/r-minimal:devel
+FROM rocker/r-devel
 
-RUN apk update && \
-  apk add --no-cache git gcc g++ libxml2 linux-headers musl-dev
+RUN apt-get -qq update && \
+  apt-get install -y --no-install-recommends git libxml2-dev
 
 COPY DESCRIPTION .
 
 RUN Rscript -e '                                \
   options(repos="https://cloud.r-project.org"); \
-  install.packages("remotes");                  \
   remotes::install_deps(dependencies = c(       \
     "Imports",                                  \
     "Config/needs/development"                  \
