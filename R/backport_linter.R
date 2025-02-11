@@ -131,34 +131,35 @@ normalize_r_version <- function(r_version) {
 # devel NEWS https://cran.rstudio.com/doc/manuals/r-devel/NEWS.html
 # release NEWS https://cran.r-project.org/doc/manuals/r-release/NEWS.html
 backports <- list(
+  `4.4.0` = character(), # need character() entries for oldrel specifications 
   `4.3.0` = c("R_compiled_by", "array2DF"),
   `4.2.1` = "findCRANmirror",
   `4.2.0` = c(".pretty", ".LC.categories", "Sys.setLanguage()"),
-  `4.1.3` = character(), # need these for oldrel specifications
+  `4.1.3` = character(),
   `4.1.0` = c("numToBits", "numToInts", "gregexec", "charClass", "checkRdContents", "...names"),
-  `4.0.5` = character(), # need these for oldrel specifications
+  `4.0.5` = character(),
   `4.0.0` = c(
     ".class2", ".S3method", "activeBindingFunction", "deparse1", "globalCallingHandlers",
     "infoRDS", "list2DF", "marginSums", "proportions", "R_user_dir", "socketTimeout", "tryInvokeRestart"
   ),
-  `3.6.3` = character(), # need these for oldrel specifications
+  `3.6.3` = character(),
   `3.6.0` = c(
     "asplit", "hcl.colors", "hcl.pals", "mem.maxNsize", "mem.maxVsize", "nullfile", "str2lang",
     "str2expression", "update_PACKAGES"
   ),
-  `3.5.3` = character(), # need these for oldrel specifications
+  `3.5.3` = character(),
   `3.5.0` = c("...elt", "...length", "askYesNo", "getDefaultCluster", "isFALSE", "packageDate", "warnErrList"),
-  `3.4.4` = character(), # need these for oldrel specifications
+  `3.4.4` = character(),
   `3.4.0` = c(
     "check_packages_in_dir_details", "CRAN_package_db", "debugcall", "hasName",
     "isS3stdgeneric", "strcapture", "Sys.setFileTime", "undebugcall"
   ),
-  `3.3.3` = character(), # need these for oldrel specifications
+  `3.3.3` = character(),
   `3.3.0` = c(
     ".traceback", "chkDots", "curlGetHeaders", "endsWith", "grouping", "isS3method",
     "makevars_site", "makevars_user", "Rcmd", "sigma", "startsWith", "strrep", "validEnc", "validUTF8"
   ),
-  `3.2.5` = character(), # need these for oldrel specifications
+  `3.2.5` = character(),
   `3.2.0` = c(
     ".getNamespaceInfo", "check_packages_in_dir_changes", "debuggingState",
     "dir.exists", "dynGet", "extSoftVersion", "get0", "grSoftVersion", "hsearch_db",
