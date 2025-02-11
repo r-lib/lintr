@@ -5,10 +5,10 @@ RUN apt-get -qq update && \
 
 COPY DESCRIPTION .
 
-RUN Rscript -e '                                \
-  options(repos="https://cloud.r-project.org"); \
-  remotes::install_deps(dependencies = c(       \
-    "Imports",                                  \
-    "Config/needs/development"                  \
-  ))                                            \
+RUN Rscript -e '                          \
+  install.packages("remotes");            \
+  remotes::install_deps(dependencies = c( \
+    "Imports",                            \
+    "Config/needs/development"            \
+  ))                                      \
 '
