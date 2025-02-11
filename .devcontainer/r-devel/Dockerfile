@@ -5,10 +5,11 @@ RUN apk update && \
 
 COPY DESCRIPTION .
 
-RUN Rscript -e '                           \
-  install.packages("remotes");             \
-  remotes::install_deps(dependencies = c(  \
-    "Imports",                             \
-    "Config/needs/development"             \
-  ))                                       \
+RUN Rscript -e '                                \
+  options(repos="https://cloud.r-project.org"); \
+  install.packages("remotes");                  \
+  remotes::install_deps(dependencies = c(       \
+    "Imports",                                  \
+    "Config/needs/development"                  \
+  ))                                            \
 '
