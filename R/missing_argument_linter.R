@@ -44,9 +44,8 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
   # require >3 children to exclude foo(), which is <expr><OP-LEFT-PAREN><OP-RIGHT-PAREN>
   xpath <- glue("
-    parent::expr
-      /parent::expr[count(*) > 3]
-      /*[{xp_or(conds)}]
+  parent::expr[count(*) > 3]
+    /*[{xp_or(conds)}]
   ")
 
   Linter(linter_level = "file", function(source_expression) {

@@ -93,7 +93,6 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # NB: this includes 0+3 and TRUE+FALSE, which are also fine.
   inner_comparison_xpath <- glue("
   parent::expr
-    /parent::expr
     /expr[FUNCTION]
     /expr[
       ({ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) })
@@ -118,8 +117,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
   default_fun_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
+  following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
     /expr[last()][
       count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
       and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
@@ -143,13 +141,11 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   #   2. the lone argument marker `.x` or `.`
   purrr_symbol <- "SYMBOL[text() = '.x' or text() = '.']"
   purrr_fun_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[
-      OP-TILDE
-      and expr[OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/{purrr_symbol}]
-      and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
-    ]
-  ")
+  following-sibling::expr[
+    OP-TILDE
+    and expr[OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/{purrr_symbol}]
+    and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
+  ]")
 
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"

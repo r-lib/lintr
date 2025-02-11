@@ -54,15 +54,13 @@ regex_subset_linter <- function() {
   #   is basically what we need, i.e., whatever expression comes in
   #   <expr>[grepl(pattern, <expr>)] matches exactly, e.g. names(x)[grepl(ptn, names(x))].
   xpath_fmt <- "
-  parent::expr
-    /parent::expr[
-      parent::expr[
-        OP-LEFT-BRACKET
-        and not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])
-      ]
-      and expr[position() = {arg_pos} ] = parent::expr/expr[1]
+  parent::expr[
+    parent::expr[
+      OP-LEFT-BRACKET
+      and not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])
     ]
-  "
+    and expr[position() = {arg_pos} ] = parent::expr/expr[1]
+  ]"
   grep_xpath <- glue(xpath_fmt, arg_pos = 3L)
   stringr_xpath <- glue(xpath_fmt, arg_pos = 2L)
 

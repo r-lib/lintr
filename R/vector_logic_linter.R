@@ -92,14 +92,15 @@ vector_logic_linter <- function() {
   "
 
   subset_xpath <- "
-    parent::expr[not(SYMBOL_PACKAGE[text() = 'stats'])]
-      /parent::expr
-      //expr[
-        (AND2 or OR2)
-        and not(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[not(text() = 'subset' or text() = 'filter')])
-        and not(preceding-sibling::OP-LEFT-BRACKET)
-        and not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'circular'])
-      ]/*[2]
+  self::*[not(SYMBOL_PACKAGE[text() = 'stats'])]
+    /parent::expr
+    //expr[
+      (AND2 or OR2)
+      and not(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[not(text() = 'subset' or text() = 'filter')])
+      and not(preceding-sibling::OP-LEFT-BRACKET)
+      and not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'circular'])
+    ]
+    /*[2]
   "
 
   Linter(linter_level = "expression", function(source_expression) {

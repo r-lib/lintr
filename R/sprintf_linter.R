@@ -28,15 +28,13 @@
 #' @export
 sprintf_linter <- function() {
   call_xpath <- "
-    parent::expr
-    /parent::expr[
-      (
-        OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
-        SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
-      ) and
-      not(expr/SYMBOL[text() = '...'])
-    ]
-  "
+  parent::expr[
+    (
+      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
+      SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+    ) and
+    not(expr/SYMBOL[text() = '...'])
+  ]"
 
   pipes <- setdiff(magrittr_pipes, "%$%")
   in_pipe_xpath <- glue("self::expr[

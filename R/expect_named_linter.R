@@ -32,11 +32,10 @@
 #' @export
 expect_named_linter <- function() {
   xpath <- "
-  parent::expr
-    /following-sibling::expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'names']]
-      and (position() = 1 or preceding-sibling::expr[STR_CONST])
-    ]
+  following-sibling::expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'names']]
+    and (position() = 1 or preceding-sibling::expr[STR_CONST])
+  ]
     /parent::expr
   "
 

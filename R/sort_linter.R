@@ -83,8 +83,7 @@ sort_linter <- function() {
   ")
 
   sorted_xpath <- "
-  parent::expr
-    /parent::expr[not(SYMBOL_SUB)]
+  parent::expr[not(SYMBOL_SUB)]
     /parent::expr[
       (EQ or NE)
       and expr/expr = expr

@@ -106,12 +106,12 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
   pos_1_xpath <- glue("
-    parent::expr[
-      not(following-sibling::SYMBOL_SUB[
-        (text() = 'fixed' or text() = 'ignore.case')
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
+  self::*[
+    not(following-sibling::SYMBOL_SUB[
+      (text() = 'fixed' or text() = 'ignore.case')
+      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]
     /following-sibling::expr[
       (
         position() = 1
@@ -125,12 +125,12 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     ]
   ")
   pos_2_xpath <- glue("
-    parent::expr[
-      not(following-sibling::SYMBOL_SUB[
-        text() = 'fixed'
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
+  self::*[
+    not(following-sibling::SYMBOL_SUB[
+      text() = 'fixed'
+      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]
     /following-sibling::expr[
       position() = 2 - count({ in_pipe_cond })
       and STR_CONST

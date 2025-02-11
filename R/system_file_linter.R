@@ -27,11 +27,11 @@
 system_file_linter <- function() {
   # either system.file(file.path(...)) or file.path(system.file(...))
   file_path_xpath <- "
-  parent::expr[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']]
+  self::*[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'system.file']]
     /parent::expr
   "
   system_file_xpath <- "
-  parent::expr[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']]
+  self::*[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'file.path']]
     /parent::expr
   "
 
