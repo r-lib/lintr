@@ -79,8 +79,8 @@
 
 <dl><dt id="arg-xpath">xpath<a class="anchor" aria-label="anchor" href="#arg-xpath"></a></dt>
 <dd><p>Character string, an XPath identifying R code to lint.
-For <code>make_linter_from_function_xpath()</code>, the XPath is relative to the <code>SYMBOL_FUNCTION_CALL</code> nodes of the
-selected functions.
+For <code>make_linter_from_function_xpath()</code>, the XPath is relative to the <code>parent::expr</code> of the
+<code>SYMBOL_FUNCTION_CALL</code> nodes of the selected functions.
 See <code><a href="https://rdrr.io/pkg/xmlparsedata/man/xml_parse_data.html" class="external-link">xmlparsedata::xml_parse_data()</a></code> and <code><a href="get_source_expressions.html">get_source_expressions()</a></code>.</p></dd>
 
 
