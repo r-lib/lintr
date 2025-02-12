@@ -55,7 +55,8 @@
 <div class="section level3">
 <h3 id="deprecations--breaking-changes-development-version">Deprecations &amp; breaking changes<a class="anchor" aria-label="anchor" href="#deprecations--breaking-changes-development-version"></a></h3>
 <ul><li>As previously announced, the following fully-deprecated items are now removed from the package:
-<ul><li>
+<ul><li>Linters <code>closed_curly_linter()</code>, <code>open_curly_linter()</code>, <code>paren_brace_linter()</code>, and <code>semicolon_terminator_linter()</code>.</li>
+<li>
 <code>linter=</code> argument of <code><a href="../reference/lint-s3.html">Lint()</a></code>.</li>
 </ul></li>
 </ul></div>
@@ -72,7 +73,7 @@
 <code>linter=</code> argument of <code><a href="../reference/lint-s3.html">Lint()</a></code>.</li>
 <li>
 <code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code>.</li>
-<li>Linters <code><a href="../reference/lintr-deprecated.html">closed_curly_linter()</a></code>, <code><a href="../reference/lintr-deprecated.html">open_curly_linter()</a></code>, <code><a href="../reference/lintr-deprecated.html">paren_brace_linter()</a></code>, and <code><a href="../reference/lintr-deprecated.html">semicolon_terminator_linter()</a></code>.</li>
+<li>Linters <code>closed_curly_linter()</code>, <code>open_curly_linter()</code>, <code>paren_brace_linter()</code>, and <code>semicolon_terminator_linter()</code>.</li>
 <li>Helper <code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code>.</li>
 </ul></li>
 <li>
@@ -620,11 +621,11 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <div class="section level3">
 <h3 id="deprecations-3-0-0">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-3-0-0"></a></h3>
 <ul><li>Lints are now marked with the name of the <code>linter</code> that caused them instead of the name of their implementation function. Deprecated the obsolete <code>linter</code> argument of <code><a href="../reference/lint-s3.html">Lint()</a></code> (<a href="https://github.com/r-lib/lintr/issues/664" class="external-link">#664</a>, <a href="https://github.com/r-lib/lintr/issues/673" class="external-link">#673</a>, <a href="https://github.com/r-lib/lintr/issues/746" class="external-link">#746</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>). Downstream custom linters should follow suit.</li>
-<li>Renamed <code><a href="../reference/lintr-deprecated.html">semicolon_terminator_linter()</a></code> to <code><a href="../reference/semicolon_linter.html">semicolon_linter()</a></code> for better consistency. <code><a href="../reference/lintr-deprecated.html">semicolon_terminator_linter()</a></code> survives but is marked for deprecation. The new linter also has a new signature, taking arguments <code>allow_compound</code> and <code>allow_trailing</code> to replace the old single argument <code>semicolon</code>, again for signature consistency with other linters.</li>
+<li>Renamed <code>semicolon_terminator_linter()</code> to <code><a href="../reference/semicolon_linter.html">semicolon_linter()</a></code> for better consistency. <code>semicolon_terminator_linter()</code> survives but is marked for deprecation. The new linter also has a new signature, taking arguments <code>allow_compound</code> and <code>allow_trailing</code> to replace the old single argument <code>semicolon</code>, again for signature consistency with other linters.</li>
 <li>The following linters were subsumed into <code><a href="../reference/brace_linter.html">brace_linter()</a></code> and are now deprecated; see the item on <code><a href="../reference/brace_linter.html">brace_linter()</a></code> below:
-<ul><li><code><a href="../reference/lintr-deprecated.html">closed_curly_linter()</a></code></li>
-<li><code><a href="../reference/lintr-deprecated.html">open_curly_linter()</a></code></li>
-<li><code><a href="../reference/lintr-deprecated.html">paren_brace_linter()</a></code></li>
+<ul><li><code>closed_curly_linter()</code></li>
+<li><code>open_curly_linter()</code></li>
+<li><code>paren_brace_linter()</code></li>
 </ul></li>
 <li>The <code>...</code> argument for <code><a href="../reference/lint.html">lint()</a></code>, <code><a href="../reference/lint.html">lint_dir()</a></code>, and <code><a href="../reference/lint.html">lint_package()</a></code> has been promoted to an earlier position to better match the <a href="https://design.tidyverse.org/required-no-defaults.html" class="external-link">Tidyverse design principle</a> of data-&gt;descriptor-&gt;details. This change enables passing objects to <code>...</code> without needing to specify non-required arguments, e.g. <code>lint_dir("/path/to/dir", linter())</code> now works without the need to specify <code>relative_path</code>. This affects some code that uses positional arguments (<a href="https://github.com/r-lib/lintr/issues/935" class="external-link">#935</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
 <ul><li>For <code><a href="../reference/lint.html">lint()</a></code>, <code>...</code> is now the 3rd argument, where earlier this was <code>cache</code>.</li>
@@ -641,11 +642,11 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <a class="anchor" aria-label="anchor" href="#updates-to-default_linters-3-0-0"></a></h4>
 <ul><li>New <code><a href="../reference/brace_linter.html">brace_linter()</a></code> which combines several curly brace related linters, deprecating the following predecessors (<a href="https://github.com/r-lib/lintr/issues/1041" class="external-link">#1041</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>):
 <ul><li>
-<code><a href="../reference/lintr-deprecated.html">closed_curly_linter()</a></code>; both now also allow <code>}]</code> in addition to <code>})</code> and <code>},</code> as exceptions, i.e., <code>}</code> doesn’t need to be on its own line if paired with a closing square bracket, a closing parenthesis, or a comma. Also improved lint metadata so that source markers land at the closing brace instead of the closing parenthesis to improve the experience of fixing the lint (<a href="https://github.com/r-lib/lintr/issues/583" class="external-link">#583</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
+<code>closed_curly_linter()</code>; both now also allow <code>}]</code> in addition to <code>})</code> and <code>},</code> as exceptions, i.e., <code>}</code> doesn’t need to be on its own line if paired with a closing square bracket, a closing parenthesis, or a comma. Also improved lint metadata so that source markers land at the closing brace instead of the closing parenthesis to improve the experience of fixing the lint (<a href="https://github.com/r-lib/lintr/issues/583" class="external-link">#583</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
-<code><a href="../reference/lintr-deprecated.html">open_curly_linter()</a></code>; both also no longer lint unnecessary trailing whitespace (use <code><a href="../reference/trailing_whitespace_linter.html">trailing_whitespace_linter()</a></code> for this) and also allow <code>(</code>, <code>,</code>, and <code>%&gt;%</code> on preceding lines as exceptions, i.e., <code>{</code> can be alone on a line if the previous line is terminated with an opening parenthesis, a comma, or a pipe (<code>%&gt;%</code>) (<a href="https://github.com/r-lib/lintr/issues/487" class="external-link">#487</a>, <a href="https://github.com/r-lib/lintr/issues/1028" class="external-link">#1028</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
+<code>open_curly_linter()</code>; both also no longer lint unnecessary trailing whitespace (use <code><a href="../reference/trailing_whitespace_linter.html">trailing_whitespace_linter()</a></code> for this) and also allow <code>(</code>, <code>,</code>, and <code>%&gt;%</code> on preceding lines as exceptions, i.e., <code>{</code> can be alone on a line if the previous line is terminated with an opening parenthesis, a comma, or a pipe (<code>%&gt;%</code>) (<a href="https://github.com/r-lib/lintr/issues/487" class="external-link">#487</a>, <a href="https://github.com/r-lib/lintr/issues/1028" class="external-link">#1028</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
-<code><a href="../reference/lintr-deprecated.html">paren_brace_linter()</a></code>; <code><a href="../reference/brace_linter.html">brace_linter()</a></code> also lints <code>if</code>/<code>else</code> and <code>repeat</code> with missing whitespace.</li>
+<code>paren_brace_linter()</code>; <code><a href="../reference/brace_linter.html">brace_linter()</a></code> also lints <code>if</code>/<code>else</code> and <code>repeat</code> with missing whitespace.</li>
 <li>
 <code><a href="../reference/brace_linter.html">brace_linter()</a></code> also newly enforces the following rules surrounding curly braces (originally Google linters, see below):
 <ul><li>Require <code>else</code> to come on the same line as the preceding <code>}</code>, if present (<a href="https://github.com/r-lib/lintr/issues/884" class="external-link">#884</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
@@ -982,9 +983,9 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>New <code><a href="../reference/function_left_parentheses_linter.html">function_left_parentheses_linter()</a></code> to check that there is no space between a function name and its left parentheses (<a href="https://github.com/r-lib/lintr/issues/204" class="external-link">#204</a>, <a href="https://github.com/jrnold" class="external-link">@jrnold</a>).</li>
 <li>New <code><a href="../reference/implicit_integer_linter.html">implicit_integer_linter()</a></code> detects round numbers not declared as integers, i.e. 1 instead of 1L (<a href="https://github.com/fangly" class="external-link">@fangly</a>).</li>
 <li>New <code><a href="../reference/nonportable_path_linter.html">nonportable_path_linter()</a></code> identifies paths constructed without file.path() (<a href="https://github.com/fangly" class="external-link">@fangly</a>).</li>
-<li>New <code><a href="../reference/lintr-deprecated.html">paren_brace_linter()</a></code> checks that there is a space between right parenthesis and an opening curly brace (<a href="https://github.com/bfgray3" class="external-link">@bfgray3</a>, <a href="https://github.com/r-lib/lintr/issues/242" class="external-link">#242</a>).</li>
+<li>New <code>paren_brace_linter()</code> checks that there is a space between right parenthesis and an opening curly brace (<a href="https://github.com/bfgray3" class="external-link">@bfgray3</a>, <a href="https://github.com/r-lib/lintr/issues/242" class="external-link">#242</a>).</li>
 <li>New <code><a href="../reference/pipe_continuation_linter.html">pipe_continuation_linter()</a></code> to ensure there is a space before %&gt;% and newline afterwards (<a href="https://github.com/r-lib/lintr/issues/216" class="external-link">#216</a>).</li>
-<li>New <code><a href="../reference/lintr-deprecated.html">semicolon_terminator_linter()</a></code> reports semicolons at the end of a line (<a href="https://github.com/r-lib/lintr/issues/147" class="external-link">#147</a>,
+<li>New <code>semicolon_terminator_linter()</code> reports semicolons at the end of a line (<a href="https://github.com/r-lib/lintr/issues/147" class="external-link">#147</a>,
 <ol class="example" style="list-style-type: decimal"><li>and between expressions (<a href="https://github.com/r-lib/lintr/issues/181" class="external-link">#181</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>).</li>
 </ol></li>
 <li>New <code><a href="../reference/seq_linter.html">seq_linter()</a></code>, finds <code>1:length(...)</code> (and similar) expressions (<a href="https://github.com/r-lib/lintr/issues/155" class="external-link">#155</a>, 1)</li>
@@ -1008,7 +1009,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <div class="section level3">
 <h3 id="linter-fixes-2-0-0">Linter fixes<a class="anchor" aria-label="anchor" href="#linter-fixes-2-0-0"></a></h3>
 <ul><li>
-<code><a href="../reference/lintr-deprecated.html">closed_curly_linter()</a></code> now allows closing parenthesis or comma after closing curly brace (<a href="https://github.com/r-lib/lintr/issues/167" class="external-link">#167</a>, <a href="https://github.com/Enchufa2" class="external-link">@Enchufa2</a>)</li>
+<code>closed_curly_linter()</code> now allows closing parenthesis or comma after closing curly brace (<a href="https://github.com/r-lib/lintr/issues/167" class="external-link">#167</a>, <a href="https://github.com/Enchufa2" class="external-link">@Enchufa2</a>)</li>
 <li>
 <code><a href="../reference/commas_linter.html">commas_linter()</a></code> now handles missing arguments calls properly (<a href="https://github.com/r-lib/lintr/issues/145" class="external-link">#145</a>)</li>
 <li>
@@ -1030,9 +1031,9 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>
 <code>object_linter*()</code>s now only lint objects declared in the current file (<a href="https://github.com/r-lib/lintr/issues/76" class="external-link">#76</a>, <a href="https://github.com/r-lib/lintr/issues/108" class="external-link">#108</a>, <a href="https://github.com/r-lib/lintr/issues/136" class="external-link">#136</a>, <a href="https://github.com/r-lib/lintr/issues/191" class="external-link">#191</a>, <a href="https://github.com/r-lib/lintr/issues/194" class="external-link">#194</a>, <a href="https://github.com/r-lib/lintr/issues/201" class="external-link">#201</a>, <a href="https://github.com/fangly" class="external-link">@fangly</a>).</li>
 <li>
-<code><a href="../reference/lintr-deprecated.html">open_curly_linter()</a></code> and <code><a href="../reference/lintr-deprecated.html">closed_curly_linter()</a></code> now do not lint double curly syntax (<a href="https://github.com/r-lib/lintr/issues/388" class="external-link">#388</a>)</li>
+<code>open_curly_linter()</code> and <code>closed_curly_linter()</code> now do not lint double curly syntax (<a href="https://github.com/r-lib/lintr/issues/388" class="external-link">#388</a>)</li>
 <li>
-<code><a href="../reference/lintr-deprecated.html">open_curly_linter()</a></code> now allows comments after the curly braces (<a href="https://github.com/r-lib/lintr/issues/188" class="external-link">#188</a>)</li>
+<code>open_curly_linter()</code> now allows comments after the curly braces (<a href="https://github.com/r-lib/lintr/issues/188" class="external-link">#188</a>)</li>
 <li>
 <code><a href="../reference/pipe_continuation_linter.html">pipe_continuation_linter()</a></code> now behaves better in nested expressions, functions etc. (<a href="https://github.com/r-lib/lintr/issues/366" class="external-link">#366</a> <a href="https://github.com/russHyde" class="external-link">@russHyde</a>)</li>
 <li>
