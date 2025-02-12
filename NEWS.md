@@ -3,6 +3,9 @@
 ## Deprecations & breaking changes
 
 * Two linters marked as deprecated with warning in the previous release are now fully deprecated: `extraction_operator_linter()` and `unnecessary_nested_if_linter()`. They will be removed in the next release.
+* As previously announced, the following fully-deprecated items are now removed from the package:
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+   + `linter=` argument of `Lint()`.
 
 # lintr 3.2.0
 

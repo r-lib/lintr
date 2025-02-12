@@ -1,73 +1,10 @@
 #' @name lintr-deprecated
 #' @title Deprecated functions in lintr
 #'
-#' @description
-#'
-#' These functions have been deprecated from lintr.
-#'
-#' - `open_curly_linter()` (use [brace_linter()])
-#' - `closed_curly_linter()` (use `brace_linter()`)
-#' - `paren_brace_linter()` (use `brace_linter()`)
-#' - `semicolon_terminator_linter()` (use [semicolon_linter()])
-#'
-#' @param allow_single_line,semicolon Irrelevant parameters to defunct linters.
-#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @evalRd rd_tags("single_quotes_linter")
 #' @keywords internal
 NULL
-
-#' Closed curly linter
-#' @rdname lintr-deprecated
-#' @export
-closed_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated(
-    what = "closed_curly_linter",
-    alternative = "brace_linter",
-    version = "3.0.0",
-    type = "Linter",
-    signal = "stop"
-  )
-}
-
-#' Open curly linter
-#' @rdname lintr-deprecated
-#' @export
-open_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated(
-    what = "open_curly_linter",
-    alternative = "brace_linter",
-    version = "3.0.0",
-    type = "Linter",
-    signal = "stop"
-  )
-}
-
-#' Parentheses before brace linter
-#' @rdname lintr-deprecated
-#' @export
-paren_brace_linter <- function() {
-  lintr_deprecated(
-    what = "paren_brace_linter",
-    alternative = "brace_linter",
-    version = "3.0.0",
-    type = "Linter",
-    signal = "stop"
-  )
-}
-
-#' Semicolon linter
-#' @rdname lintr-deprecated
-#' @export
-semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
-  lintr_deprecated(
-    what = "semicolon_terminator_linter",
-    alternative = "semicolon_linter",
-    version = "3.0.0",
-    type = "Linter",
-    signal = "stop"
-  )
-}
 
 #' Unnecessary concatenation linter
 #' @rdname lintr-deprecated
