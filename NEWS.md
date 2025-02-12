@@ -1,5 +1,10 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* As previously announced, the following fully-deprecated items are now removed from the package:
+   + `source_file=` argument to `ids_with_token()` and `with_id()`.
+
 # lintr 3.2.0
 
 ## Deprecations & breaking changes
