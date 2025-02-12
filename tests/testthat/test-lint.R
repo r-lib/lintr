@@ -156,7 +156,7 @@ test_that("exclusions work with custom linter names", {
 })
 
 test_that("old compatibility usage errors", {
-  err = rex::rex("Expected `", anything, "` to be a function of class <linter>")
+  err <- rex::rex("Expected `", anything, "` to be a function of class <linter>")
 
   expect_error(
     expect_lint(
