@@ -21,7 +21,7 @@ R/, tests/, inst/, vignettes/, data-raw/, demo/, and exec/.
 
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.1.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -192,10 +192,10 @@ unintelligible error messages from other linters.</p>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"a=1"</span>, <span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">lint</span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/Rtmp5AQwfr/file1f0978bb5213:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpyUUjbF/file1c046b4a7f5b:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/Rtmp5AQwfr/file1f0978bb5213:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpyUUjbF/file1c046b4a7f5b:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
