@@ -38,8 +38,8 @@ test_that("backport_linter detects backwards-incompatibility", {
 
   # oldrel specification
   expect_lint(
-    ".pretty(2)",
-    rex::rex(".pretty (R 4.2.0) is not available for dependency R >= 4.1.3."),
+    "R_compiled_by()",
+    rex::rex("R_compiled_by (R 4.3.0) is not available for dependency R >= 4.2.3."),
     backport_linter("oldrel")
   )
 
@@ -50,13 +50,13 @@ test_that("backport_linter detects backwards-incompatibility", {
 
   expect_lint(
     "numToBits(2)",
-    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 3.6.3."),
+    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.5."),
     backport_linter("oldrel-3")
   )
   # no interference from namespace-qualification (even of base functions)
   expect_lint(
     "base::numToBits(2)",
-    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 3.6.3."),
+    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.5."),
     backport_linter("oldrel-3")
   )
 
