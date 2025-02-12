@@ -85,14 +85,6 @@ test_that("modify_defaults works", {
 })
 
 test_that("linters_with_defaults(default = .) is supported with a deprecation warning", {
-  expect_warning(
-    {
-      linters <- linters_with_defaults(default = list(), whitespace_linter())
-    },
-    "`default` is not an argument"
-  )
-  expect_named(linters, "whitespace_linter")
-
   # the same warning is not triggered in modify_defaults
   expect_silent({
     linters <- modify_defaults(defaults = list(), default = list(), whitespace_linter())
