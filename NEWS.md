@@ -4,6 +4,7 @@
 
 * As previously announced, the following fully-deprecated items are now removed from the package:
    + `with_defaults()`.
+   + `linter=` argument of `Lint()`.
 
 # lintr 3.2.0
 
