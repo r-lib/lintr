@@ -4,6 +4,7 @@
 
 * Two linters marked as deprecated with warning in the previous release are now fully deprecated: `extraction_operator_linter()` and `unnecessary_nested_if_linter()`. They will be removed in the next release.
 * As previously announced, the following fully-deprecated items are now removed from the package:
+   + Passing linters by name or as non-`"linter"`-classed functions.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + `linter=` argument of `Lint()`.
 
@@ -1017,7 +1018,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * Make spaces_left_parentheses_linter more robust when determining `(` type (#128, @saurfang)
 * commented_code_linter (#83, @jackwasey)
 * Now trims long comments (#55, reported by @paulstaab)
-* Automatic commenting of Github commits and pull requests when linting on Travis-CI
+* Automatic commenting of GitHub commits and pull requests when linting on Travis-CI
 * expect_lint_free expectation can be added to testthat unit tests.
 * Robust configuration system and exclusion logic
 * Emacs and Sublime Text 3 plugins now available from their respective package repositories.
