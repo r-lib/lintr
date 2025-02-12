@@ -3,6 +3,9 @@
 ## Deprecations & breaking changes
 
 * Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now defunct.
+* As previously announced, the following fully-deprecated items are now removed from the package:
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+   + `linter=` argument of `Lint()`.
 
 # lintr 3.2.0
 
