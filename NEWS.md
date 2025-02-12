@@ -4,6 +4,7 @@
 
 * As previously announced, the following fully-deprecated items are now removed from the package:
    + Passing linters by name or as non-`"linter"`-classed functions.
+   + `linter=` argument of `Lint()`.
 
 # lintr 3.2.0
 

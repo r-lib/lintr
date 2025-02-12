@@ -383,22 +383,12 @@ reorder_lints <- function(lints) {
 #' @param message message used to describe the lint error
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
-#' @param linter deprecated. No longer used.
 #' @return an object of class `c("lint", "list")`.
 #' @name lint-s3
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
-                 message = "", line = "", ranges = NULL, linter = "") {
-  if (!missing(linter)) {
-    lintr_deprecated(
-      what = "Using the `linter` argument of `Lint()`",
-      version = "3.0.0",
-      type = "",
-      signal = "stop"
-    )
-  }
-
+                 message = "", line = "", ranges = NULL) {
   if (length(line) != 1L || !is.character(line)) {
     cli_abort("{.arg line} must be a string.", call. = FALSE)
   }
