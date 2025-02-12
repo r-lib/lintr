@@ -1,5 +1,7 @@
 # lintr (development version)
 
+# lintr 3.2.0
+
 ## Deprecations & breaking changes
 
 * Various things marked deprecated since {lintr} 3.0.0 have been fully deprecated. They will be completely removed in the subsequent release. See previous NEWS for advice on how to replace them.
