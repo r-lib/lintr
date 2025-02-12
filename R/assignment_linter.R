@@ -91,7 +91,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
       '"<<-" and/or "->>" in operator',
       version = "3.2.0",
       type = "Argument",
-      signal = "error"
+      signal = "stop"
     )
   }
   if (!missing(allow_right_assign)) {
@@ -100,7 +100,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
       '"->" in operator',
       version = "3.2.0",
       type = "Argument",
-      signal = "error"
+      signal = "stop"
     )
   }
   if (!missing(allow_pipe_assign)) {
@@ -109,7 +109,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
       '"%<>%" in operator',
       version = "3.2.0",
       type = "Argument",
-      signal = "error"
+      signal = "stop"
     )
   }
   all_operators <- c("<-", "=", "->", "<<-", "->>", "%<>%")
