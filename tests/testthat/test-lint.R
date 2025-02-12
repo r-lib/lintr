@@ -156,7 +156,7 @@ test_that("exclusions work with custom linter names", {
 })
 
 test_that("old compatibility usage errors", {
-  err <- rex::rex("Expected `", anything, "` to be a function of class <linter>")
+  error_msg <- rex::rex("Expected `", anything, "` to be a function of class <linter>")
 
   expect_error(
     expect_lint(
@@ -164,7 +164,7 @@ test_that("old compatibility usage errors", {
       "Use is.na",
       linters = equals_na_linter
     ),
-    err
+    error_msg
   )
 
   expect_error(
@@ -173,7 +173,7 @@ test_that("old compatibility usage errors", {
       "Use <-",
       linters = assignment_linter
     ),
-    err
+    error_msg
   )
 
   # Also within `linters_with_defaults()` (#1725)
@@ -183,7 +183,7 @@ test_that("old compatibility usage errors", {
       "Use <-",
       linters = linters_with_defaults(assignment_linter)
     ),
-    err
+    error_msg
   )
 
   expect_error(
@@ -192,7 +192,7 @@ test_that("old compatibility usage errors", {
       "Use is.na",
       linters = unclass(equals_na_linter())
     ),
-    err
+    error_msg
   )
 
   # Trigger compatibility in auto_names()
@@ -202,17 +202,17 @@ test_that("old compatibility usage errors", {
       "Use is.na",
       linters = list(unclass(equals_na_linter()))
     ),
-    err
+    error_msg
   )
 
   expect_error(
     lint("a <- 1\n", linters = function(two, arguments) NULL),
-    err
+    error_msg
   )
 
   expect_error(
     lint("a <- 1\n", linters = "equals_na_linter"),
-    err
+    error_msg
   )
 })
 
