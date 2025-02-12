@@ -1,5 +1,10 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* As previously announced, the following fully-deprecated items are now removed from the package:
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+
 # lintr 3.2.0
 
 ## Deprecations & breaking changes
