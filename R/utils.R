@@ -263,25 +263,6 @@ is_tainted <- function(lines) {
   is_error(tryCatch(nchar(lines), error = identity))
 }
 
-#' Check that the entries in ... are valid
-#'
-#' @param dot_names Supplied names, from [...names()].
-#' @param ref_calls Functions consuming these `...` (character).
-#' @param ref_help Help page to refer users hitting an error to.
-#' @noRd
-check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
-  valid_args <- unlist(lapply(ref_calls, function(f) names(formals(f))))
-  is_valid <- dot_names %in% valid_args
-  if (all(is_valid)) {
-    return(invisible())
-  }
-  invalid_args <- dot_names[!is_valid] # nolint: object_usage_linter. TODO(#2252).
-  cli_abort(c(
-    x = "Found unknown arguments in `...`: {.arg {invalid_args}}.",
-    i = "Check for typos and see ?{ref_help} for valid arguments."
-  ))
-}
-
 cli_abort_internal <- function(...) {
   cli_abort(..., .internal = TRUE)
 }

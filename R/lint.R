@@ -39,10 +39,6 @@
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-  # TODO(#2502): Remove this workaround.
-  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
-  check_dots(dot_names, c("exclude", "parse_exclusions"))
-
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
   lines <- get_lines(filename, text)
@@ -147,10 +143,6 @@ lint_dir <- function(path = ".", ...,
                      pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
                      parse_settings = TRUE,
                      show_progress = NULL) {
-  # TODO(#2502): Remove this workaround.
-  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
-  check_dots(dot_names, c("lint", "exclude", "parse_exclusions"))
-
   if (isTRUE(parse_settings)) {
     read_settings(path)
     on.exit(reset_settings(), add = TRUE)
