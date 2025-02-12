@@ -27,7 +27,10 @@ testthat-problems[.]rds$
 ^_pkgdown\.yaml$
 ^docs$
 ^pkgdown$
-^vignettes/[^-]+.gif$
+# large files not needed for CRAN
+^man/figures/logo[.]png$
+# keep '-still.gif' compact versions
+^vignettes/.*([^l]|[^l]l|[^i]ll|[^t]ill|[^s]till)[.]gif$
 ^CRAN-SUBMISSION$
 ^CODE_OF_CONDUCT\.md$
 ^paper$
