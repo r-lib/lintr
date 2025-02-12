@@ -1,5 +1,9 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* Two linters marked as deprecated with warning in the previous release are now fully deprecated: `extraction_operator_linter()` and `unnecessary_nested_if_linter()`. They will be removed in the next release.
+
 # lintr 3.2.0
 
 ## Deprecations & breaking changes
