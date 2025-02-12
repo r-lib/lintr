@@ -347,24 +347,10 @@ validate_linter_object <- function(linter, name) {
   if (is_linter(linter)) {
     return(linter)
   }
-  if (!is.function(linter)) {
-    cli_abort(c(
-      i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
-      x = "Instead, it is {.obj_type_friendly {linter}}."
-    ))
-  }
-  if (is_linter_factory(linter)) {
-    what <- "Passing linters as variables"
-    alternative <- "a call to the linters (see ?linters)"
-  } else {
-    what <- "The use of linters of class 'function'"
-    alternative <- "linters classed as 'linter' (see ?Linter)"
-  }
-  lintr_deprecated(
-    what = what, alternative = alternative, version = "3.0.0",
-    type = "",
-    signal = "stop"
-  )
+  cli_abort(c(
+    i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
+    x = "Instead, it is {.obj_type_friendly {linter}}."
+  ))
 }
 
 is_linter_factory <- function(fun) {
