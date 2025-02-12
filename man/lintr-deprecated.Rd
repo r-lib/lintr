@@ -2,10 +2,6 @@
 % Please edit documentation in R/lintr-deprecated.R
 \name{lintr-deprecated}
 \alias{lintr-deprecated}
-\alias{closed_curly_linter}
-\alias{open_curly_linter}
-\alias{paren_brace_linter}
-\alias{semicolon_terminator_linter}
 \alias{unneeded_concatenation_linter}
 \alias{single_quotes_linter}
 \alias{consecutive_stopifnot_linter}
@@ -14,14 +10,6 @@
 \alias{unnecessary_nested_if_linter}
 \title{Deprecated functions in lintr}
 \usage{
-closed_curly_linter(allow_single_line = FALSE)
-
-open_curly_linter(allow_single_line = FALSE)
-
-paren_brace_linter()
-
-semicolon_terminator_linter(semicolon = c("compound", "trailing"))
-
 unneeded_concatenation_linter(allow_single_expression = TRUE)
 
 single_quotes_linter()
@@ -34,17 +22,20 @@ extraction_operator_linter()
 
 unnecessary_nested_if_linter()
 }
-\arguments{
-\item{allow_single_line, semicolon}{Irrelevant parameters to defunct linters.}
-}
 \description{
-These functions have been deprecated from lintr.
-\itemize{
-\item \code{open_curly_linter()} (use \code{\link[=brace_linter]{brace_linter()}})
-\item \code{closed_curly_linter()} (use \code{brace_linter()})
-\item \code{paren_brace_linter()} (use \code{brace_linter()})
-\item \code{semicolon_terminator_linter()} (use \code{\link[=semicolon_linter]{semicolon_linter()}})
-}
+Deprecated functions in lintr
+
+Unnecessary concatenation linter
+
+Single quotes linter
+
+Consecutive stopifnot linter
+
+No tabs linter
+
+Extraction operator linter
+
+Unnecessary nested if linter
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
