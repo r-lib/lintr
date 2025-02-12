@@ -4,6 +4,7 @@
 
 * As previously announced, the following fully-deprecated items are now removed from the package:
    + `source_file=` argument to `ids_with_token()` and `with_id()`.
+   + `linter=` argument of `Lint()`.
 
 # lintr 3.2.0
 
