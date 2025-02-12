@@ -375,56 +375,5 @@ test_that("multiple lints throw correct messages when = is required", {
 test_that("Deprecated arguments error as intended", {
   expect_error(regexp = "allow_cascading_assign", assignment_linter(allow_cascading_assign = FALSE))
   expect_error(regexp = "allow_right_assign", assignment_linter(allow_right_assign = TRUE))
-  expect_warning(regexp = "allow_pipe_assign", assignment_linter(allow_pipe_assign = TRUE))
-
-  expect_lint(
-    "1 <<- blah",
-    rex::rex("Replace <<- by assigning to a specific environment"),
-    linter_no_cascade
-  )
-  expect_lint("1 -> blah", NULL, linter_yes_right)
-  expect_lint("1 ->> blah", NULL, linter_yes_right)
-
-  expect_lint(
-    "1 ->> blah",
-    rex::rex("Replace ->> by assigning to a specific environment"),
-    linter_no_cascade_yes_right
-  )
-  expect_lint(
-    trim_some("
-      x <<-
-        y
-    "),
-    list(
-      rex::rex("Replace <<- by assigning to a specific environment"),
-      rex::rex("Assignment <<- should not be trailing")
-    ),
-    linter_no_cascade_no_trailing
-  )
-  expect_lint(
-    trim_some("
-      is %>%
-        gather(measure, value, -Species) %>%
-        arrange(-value) ->
-        is_long
-    "),
-    rex::rex("-> should not be trailing"),
-    linter_yes_right_no_trailing
-  )
-  expect_lint("x %<>% sum()", NULL, linter_yes_pipe)
-  expect_lint(
-    trim_some("{
-      x <<- 1
-      y ->> 2
-      z -> 3
-      x %<>% as.character()
-    }"),
-    list(
-      list(message = "Replace <<- by assigning to a specific environment", line_number = 2L),
-      list(message = "Replace ->> by assigning to a specific environment", line_number = 3L),
-      list(message = "Use <- for assignment, not ->", line_number = 4L),
-      list(message = "Avoid the assignment pipe %<>%", line_number = 5L)
-    ),
-    linter_no_cascade
-  )
+  expect_error(regexp = "allow_pipe_assign", assignment_linter(allow_pipe_assign = TRUE))
 })
