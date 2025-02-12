@@ -1017,7 +1017,7 @@ lintr 2.0.0 is a major release, and incorporates development changes since the l
 * Make spaces_left_parentheses_linter more robust when determining `(` type (#128, @saurfang)
 * commented_code_linter (#83, @jackwasey)
 * Now trims long comments (#55, reported by @paulstaab)
-* Automatic commenting of Github commits and pull requests when linting on Travis-CI
+* Automatic commenting of GitHub commits and pull requests when linting on Travis-CI
 * expect_lint_free expectation can be added to testthat unit tests.
 * Robust configuration system and exclusion logic
 * Emacs and Sublime Text 3 plugins now available from their respective package repositories.
