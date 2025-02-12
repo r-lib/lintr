@@ -12,8 +12,7 @@ Lint(
   type = c("style", "warning", "error"),
   message = "",
   line = "",
-  ranges = NULL,
-  linter = ""
+  ranges = NULL
 )
 }
 \arguments{
@@ -30,8 +29,6 @@ Lint(
 \item{line}{code source where the lint occurred}
 
 \item{ranges}{a list of ranges on the line that should be emphasized.}
-
-\item{linter}{deprecated. No longer used.}
 }
 \value{
 an object of class \code{c("lint", "list")}.

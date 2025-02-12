@@ -4,6 +4,7 @@
 
 * As previously announced, the following fully-deprecated items are now removed from the package:
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+   + `linter=` argument of `Lint()`.
 
 # lintr 3.2.0
 
