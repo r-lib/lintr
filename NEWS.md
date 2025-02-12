@@ -1,5 +1,10 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* As previously announced, the following fully-deprecated items are now removed from the package:
+   + `with_defaults()`.
+
 # lintr 3.2.0
 
 ## Deprecations & breaking changes

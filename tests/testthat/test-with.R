@@ -74,13 +74,6 @@ test_that("can instantiate all linters without arguments", {
   expect_length(really_all_linters, nrow(available_linters(exclude_tags = NULL)))
 })
 
-test_that("with_defaults is fully deprecated", {
-  expect_error(
-    with_defaults(),
-    rex::rex("Use linters_with_defaults or modify_defaults instead.")
-  )
-})
-
 test_that("modify_defaults works", {
   my_default <- list(a = 1L, b = 2L, c = 3L)
   expect_identical(modify_defaults(defaults = my_default), my_default)
