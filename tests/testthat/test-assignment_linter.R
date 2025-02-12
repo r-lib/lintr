@@ -372,28 +372,10 @@ test_that("multiple lints throw correct messages when = is required", {
   )
 })
 
-# tests copy-pasted from earlier suite and embellished with warnings; to be removed
-test_that("Deprecated arguments work & warn as intended", {
-  expect_warning(regexp = "allow_cascading_assign", {
-    linter_no_cascade <- assignment_linter(allow_cascading_assign = FALSE)
-  })
-  # Positionally-passed argument is hard-deprecated since we changed argument order.
-  expect_error(assignment_linter(FALSE), "allow_cascading_assign")
-  expect_warning(regexp = "allow_right_assign", {
-    linter_yes_right <- assignment_linter(allow_right_assign = TRUE)
-  })
-  expect_warning(regexp = "allow_right_assign", expect_warning(regexp = "allow_cascading_assign", {
-    linter_no_cascade_yes_right <- assignment_linter(allow_cascading_assign = FALSE, allow_right_assign = TRUE)
-  }))
-  expect_warning(regexp = "allow_cascading_assign", {
-    linter_no_cascade_no_trailing <- assignment_linter(allow_trailing = FALSE, allow_cascading_assign = FALSE)
-  })
-  expect_warning(regexp = "allow_right_assign", {
-    linter_yes_right_no_trailing <- assignment_linter(allow_right_assign = TRUE, allow_trailing = FALSE)
-  })
-  expect_warning(regexp = "allow_pipe_assign", {
-    linter_yes_pipe <- assignment_linter(allow_pipe_assign = TRUE)
-  })
+test_that("Deprecated arguments error as intended", {
+  expect_error(regexp = "allow_cascading_assign", assignment_linter(allow_cascading_assign = FALSE))
+  expect_error(regexp = "allow_right_assign", assignment_linter(allow_right_assign = TRUE))
+  expect_warning(regexp = "allow_pipe_assign", assignment_linter(allow_pipe_assign = TRUE))
 
   expect_lint(
     "1 <<- blah",

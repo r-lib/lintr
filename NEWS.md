@@ -1,5 +1,9 @@
 # lintr (development version)
 
+## Deprecations & breaking changes
+
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now defunct.
+
 # lintr 3.2.0
 
 ## Deprecations & breaking changes
