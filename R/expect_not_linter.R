@@ -25,8 +25,7 @@
 expect_not_linter <- make_linter_from_function_xpath(
   function_names = c("expect_true", "expect_false"),
   xpath = "
-  parent::expr
-    /following-sibling::expr[OP-EXCLAMATION]
+  following-sibling::expr[OP-EXCLAMATION]
     /parent::expr
   ",
   lint_message = "expect_false(x) is better than expect_true(!x), and vice versa."

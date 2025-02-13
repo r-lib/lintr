@@ -51,8 +51,7 @@ expect_comparison_linter <- function() {
   # != doesn't have a clean replacement
   comparator_nodes <- setdiff(infix_metadata$xml_tag[infix_metadata$comparator], "NE")
   xpath <- glue("
-  parent::expr
-    /following-sibling::expr[1][ {xp_or(comparator_nodes)} ]
+  following-sibling::expr[1][ {xp_or(comparator_nodes)} ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info'])]
   ")
 

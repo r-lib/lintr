@@ -57,4 +57,11 @@ test_that("except_regex= excludes valid TODO", {
     NULL,
     todo_comment_linter(except_regex = c("TODO\\(#[0-9]+\\):", "fixme\\(#[0-9]+\\):"))
   )
+
+  # ignore captured groups
+  expect_lint(
+    "# TODO(a)",
+    NULL,
+    todo_comment_linter(except_regex = "TODO\\((a|abc)\\)")
+  )
 })

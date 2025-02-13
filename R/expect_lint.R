@@ -86,10 +86,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
         itr <<- itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
-            stop(sprintf(
-              "check #%d had an invalid field: \"%s\"\nValid fields are: %s\n",
-              itr, field, toString(lint_fields)
-            ), call. = FALSE)
+            cli_abort(c(
+              x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+              i = "Valid fields are: {.field {lint_fields}}."
+            ))
           }
           check <- check[[field]]
           value <- lint[[field]]
@@ -99,16 +99,9 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
           ok <- if (field == "message") {
-            re_matches(value, check)
+            re_matches_logical(value, check)
           } else {
             isTRUE(all.equal(value, check))
-          }
-          if (!is.logical(ok)) {
-            stop(
-              "Invalid regex result, did you mistakenly have a capture group in the regex? ",
-              "Be sure to escape parenthesis with `[]`",
-              call. = FALSE
-            )
           }
           testthat::expect(ok, msg)
         })
@@ -130,8 +123,9 @@ expect_no_lint <- function(content, ..., file = NULL, language = "en") {
 
 #' Test that the package is lint free
 #'
-#' This function is a thin wrapper around lint_package that simply tests there are no lints in the package.
-#' It can be used to ensure that your tests fail if the package contains lints.
+#' This function is a thin wrapper around lint_package that simply tests there are no
+#' lints in the package. It can be used to ensure that your tests fail if the package
+#' contains lints.
 #'
 #' @param ... arguments passed to [lint_package()]
 #' @export
@@ -159,9 +153,10 @@ expect_lint_free <- function(...) {
 # Helper function to check if testthat is installed.
 require_testthat <- function(name = linter_auto_name(-5L)) {
   if (!requireNamespace("testthat", quietly = TRUE)) {
-    stop( # nocov start
-      name, " is designed to work within the 'testthat' testing framework, but 'testthat' is not installed.",
-      call. = FALSE
-    ) # nocov end
+    # nocov start
+    cli_abort(
+      "{.fun {name}} is designed to work within the {.pkg testthat} testing framework, which could not be loaded."
+    )
+    # nocov end
   }
 }

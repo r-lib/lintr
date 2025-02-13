@@ -58,10 +58,10 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   stopifnot(is.logical(symbol_is_undesirable))
   if (is.null(names(fun)) || !all(nzchar(names(fun))) || length(fun) == 0L) {
-    stop(
-      "'fun' should be a non-empty named character vector; use missing elements to indicate default messages.",
-      call. = FALSE
-    )
+    cli_abort(c(
+      x = "{.arg fun} should be a non-empty named character vector.",
+      i = "Use missing elements to indicate default messages."
+    ))
   }
 
   xp_condition <- xp_and(
@@ -76,7 +76,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   if (symbol_is_undesirable) {
     symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(names(fun))}) and {xp_condition}]")
   }
-  xpath <- glue("self::SYMBOL_FUNCTION_CALL[{xp_condition}]")
+  xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition}]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

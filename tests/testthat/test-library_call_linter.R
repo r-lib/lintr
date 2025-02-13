@@ -360,10 +360,10 @@ patrick::with_parameters_test_that(
   "library_call_linter blocks simple disallowed usages",
   {
     linter <- library_call_linter()
-    message <- sprintf("Unify consecutive calls to %s\\(\\)\\.", call)
+    lint_msg <- sprintf("Unify consecutive calls to %s\\(\\)\\.", call)
 
     # one test of inline usage
-    expect_lint(sprintf("%1$s(library(x)); %1$s(library(y))", call), message, linter)
+    expect_lint(sprintf("%1$s(library(x)); %1$s(library(y))", call), lint_msg, linter)
 
     expect_lint(
       trim_some(glue::glue("
@@ -371,7 +371,7 @@ patrick::with_parameters_test_that(
 
         {call}(library(y))
       ")),
-      message,
+      lint_msg,
       linter
     )
 
@@ -380,7 +380,7 @@ patrick::with_parameters_test_that(
         {call}(require(x))
         {call}(require(y))
       ")),
-      message,
+      lint_msg,
       linter
     )
 
@@ -390,7 +390,7 @@ patrick::with_parameters_test_that(
         # a comment on y
         {call}(library(y))
       ")),
-      message,
+      lint_msg,
       linter
     )
   },

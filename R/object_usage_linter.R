@@ -148,8 +148,10 @@ get_assignment_symbols <- function(xml) {
   get_r_string(xml_find_all(
     xml,
     "
-      expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
+      expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[1]/SYMBOL[1] |
+      expr[RIGHT_ASSIGN]/expr[2]/SYMBOL[1] |
       equal_assign/expr[1]/SYMBOL[1] |
+      expr_or_assign_or_help/expr[1]/SYMBOL[1] |
       expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
       expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
     "
@@ -210,11 +212,11 @@ parse_check_usage <- function(expression,
   is_missing <- is.na(res$message)
   if (any(is_missing)) {
     # TODO(#2474): Remove this.
-    warning(
-      "Possible bug in lintr: Couldn't parse usage message ", sQuote(vals[is_missing][[1L]]), ". ",
-      "Ignoring ", sum(is_missing), " usage warnings. Please report an issue at https://github.com/r-lib/lintr/issues.",
-      call. = FALSE
-    )
+    missing_msg <- vals[is_missing][[1L]] # nolint: object_usage_linter. TODO(#2252).
+    cli_warn(c(
+      x = "Couldn't parse usage message {.str {missing_msg}}. Ignoring {.val {sum(is_missing)}} usage warnings.",
+      i = "Please report a possible bug at {.url https://github.com/r-lib/lintr/issues}."
+    ))
   }
   # nocov end
   res <- res[!is_missing, ]

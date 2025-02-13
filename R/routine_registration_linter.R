@@ -34,8 +34,7 @@
 routine_registration_linter <- make_linter_from_function_xpath(
   function_names = c(".C", ".Call", ".Fortran", ".External"),
   xpath = "
-  parent::expr
-    /following-sibling::expr[1]/STR_CONST
+  following-sibling::expr[1]/STR_CONST
     /parent::expr
   ",
   lint_message = "Register your native code routines with useDynLib and R_registerRoutines()."

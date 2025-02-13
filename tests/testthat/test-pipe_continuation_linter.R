@@ -138,46 +138,42 @@ test_that("pipe-continuation linter handles native pipe", {
 
 local({
   linter <- pipe_continuation_linter()
-  valid_code <- c(
-    # all on one line
+  .cases <- tibble::tribble(
+    ~code_string,            ~.test_name,
     trim_some("
       my_fun <- function() {
         a %>% b()
       }
-    "),
+    "),                      "two on one line",
     trim_some("
       my_fun <- function() {
         a %>% b() %>% c()
       }
-    "),
+    "),                      "three on one line",
     trim_some("
       with(
         diamonds,
         x %>% head(10) %>% tail(5)
       )
-    "),
+    "),                      "three inside with()",
     trim_some("
       test_that('blah', {
         test_data <- diamonds %>% head(10) %>% tail(5)
       })
-    "),
-
-    # two different single-line pipelines
+    "),                      "three inside test_that()",
     trim_some("
       {
         x <- a %>% b %>% c
         y <- c %>% b %>% a
       }
-    "),
-
-    # at most one pipe-character per line
+    "),                      "two different single-line pipelines",
     trim_some("
       my_fun <- function() {
         a %>%
           b() %>%
           c()
       }
-    ")
+    "),                      "at most one pipe-character per line"
   )
   patrick::with_parameters_test_that(
     "valid nesting is handled",
@@ -185,8 +181,7 @@ local({
     {
       expect_lint(code_string, NULL, linter)
     },
-    .test_name = valid_code,
-    code_string = valid_code
+    .cases = .cases
   )
 })
 

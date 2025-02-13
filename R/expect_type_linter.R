@@ -43,16 +43,14 @@ expect_type_linter <- function() {
   )
   base_type_tests <- xp_text_in_table(paste0("is.", base_types))
   expect_equal_identical_xpath <- "
-  parent::expr
-    /following-sibling::expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'typeof']]
-      and (position() = 1 or preceding-sibling::expr[STR_CONST])
-    ]
+  following-sibling::expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'typeof']]
+    and (position() = 1 or preceding-sibling::expr[STR_CONST])
+  ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
   "
   expect_true_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
+  following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {base_type_tests} ]]]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   ")
 

@@ -56,14 +56,13 @@ test_that("as.data.frame.lints", {
   expect_s3_class(df, "data.frame")
 
   exp <- data.frame(
-    filename = rep("dummy.R", 2L),
+    filename = "dummy.R",
     line_number = c(1L, 2L),
     column_number = c(1L, 6L),
     type = c("style", "error"),
     message = c("", "Under no circumstances is the use of foobar allowed."),
     line = c("", "a <- 1"),
-    linter = c(NA_character_, NA_character_), # These are assigned in lint() now.
-    stringsAsFactors = FALSE
+    linter = NA_character_ # These are assigned in lint() now.
   )
 
   expect_identical(df, exp)
@@ -95,6 +94,13 @@ test_that("print.lint works", {
     line = c(`1` = "\t\t1:length(x)"), ranges = list(c(3L, 3L))
   )
   expect_output(print(l), "  1:length(x)", fixed = TRUE)
+})
+
+test_that("print.lint works with empty lints", {
+  withr::local_options(list(lintr.rstudio_source_markers = FALSE))
+  l <- lint(text = "1L")
+
+  expect_message(print(l), "No lints found", fixed = TRUE)
 })
 
 test_that("print.lint works for inline data, even in RStudio", {

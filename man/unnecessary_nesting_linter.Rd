@@ -9,7 +9,8 @@ unnecessary_nesting_linter(
   allow_functions = c("switch", "try", "tryCatch", "withCallingHandlers", "quote",
     "expression", "bquote", "substitute", "with_parameters_test_that", "reactive",
     "observe", "observeEvent", "renderCachedPlot", "renderDataTable", "renderImage",
-    "renderPlot", "renderPrint", "renderTable", "renderText", "renderUI")
+    "renderPlot", "renderPrint", "renderTable", "renderText", "renderUI"),
+  branch_exit_calls = character()
 )
 }
 \arguments{
@@ -25,7 +26,13 @@ one-child braced expressions. \code{testthat::test_that()} is always allowed bec
 testthat requires a braced expression in its \code{code} argument. The other defaults
 similarly compute on expressions in a way which is worth highlighting by
 em-bracing them, even if there is only one expression, while \code{\link[=switch]{switch()}} is allowed
-for its use as a control flow analogous to \code{if}/\verb{else}.}
+for its use as a control flow analogous to \code{if}/\verb{else}.]}
+
+\item{branch_exit_calls}{Character vector of functions which are considered
+as "exiting" a branch for the purpose of recommending removing nesting in a branch
+\emph{lacking} an exit call when the other branch terminates with one. Calls which
+always interrupt or quit the current call or R session,
+e.g. \code{\link[=stop]{stop()}} and \code{\link[=q]{q()}}, are always included.}
 }
 \description{
 Excessive nesting harms readability. Use helper functions or early returns
@@ -54,14 +61,29 @@ lint(
   linters = unnecessary_nesting_linter(allow_assignment = FALSE)
 )
 
-writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
+code <- "if (x) { \n  if (y) { \n   return(1L) \n  } \n}"
+writeLines(code)
 lint(
-  text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
+  text = code,
   linters = unnecessary_nesting_linter()
 )
 
 lint(
   text = "my_quote({x})",
+  linters = unnecessary_nesting_linter()
+)
+
+code <- paste(
+  "if (A) {",
+  "  stop('A is bad because a.')",
+  "} else {",
+  "  warning('!A requires caution.')",
+  "}",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
   linters = unnecessary_nesting_linter()
 )
 
@@ -87,21 +109,37 @@ lint(
   linters = unnecessary_nesting_linter()
 )
 
-writeLines("if (x && y) { \n  return(1L) \n}")
+code <- "if (x && y) { \n  return(1L) \n}"
+writeLines(code)
 lint(
-  text = "if (x && y) { \n  return(1L) \n}",
+  text = code,
   linters = unnecessary_nesting_linter()
 )
 
-writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
+code <- "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}"
+writeLines(code)
 lint(
-  text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
+  text = code,
   linters = unnecessary_nesting_linter()
 )
 
 lint(
   text = "my_quote({x})",
   linters = unnecessary_nesting_linter(allow_functions = "my_quote")
+)
+
+code <- paste(
+  "if (A) {",
+  "  stop('A is bad because a.')",
+  "} else {",
+  "  warning('!A requires caution.')",
+  "}",
+  sep = "\n"
+)
+writeLines(code)
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter(branch_exit_calls = c("stop", "warning"))
 )
 
 }

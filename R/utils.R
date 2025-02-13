@@ -72,7 +72,7 @@ auto_names <- function(x) {
     if (is_linter(x)) {
       attr(x, "name", exact = TRUE)
     } else {
-      paste(deparse(x, 500L), collapse = " ")
+      deparse1(x)
     }
   }
   defaults <- vapply(x[empty], default_name, character(1L), USE.NAMES = FALSE)
@@ -156,7 +156,7 @@ reset_lang <- function(old_lang) {
 #' @export
 Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
-    stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
+    cli_abort("{.arg fun} must be a function taking exactly one argument.")
   }
   linter_level <- match.arg(linter_level)
   force(name)
@@ -186,8 +186,7 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
 
 # nocov start
 # support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {
-}
+release_bullets <- function() {}
 # nocov end
 
 # see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
@@ -195,13 +194,23 @@ release_bullets <- function() {
 platform_independent_order <- function(x) order(tolower(x), method = "radix")
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
 
+#' re_matches with type-stable logical output
+#' TODO(r-lib/rex#94): Use re_matches() option directly & deprecate this.
+#' @noRd
+re_matches_logical <- function(x, regex, ...) {
+  res <- re_matches(x, regex, ...)
+  if (is.data.frame(res)) {
+    res <- complete.cases(res)
+  }
+  res
+}
+
 #' Extract text from `STR_CONST` nodes
 #'
 #' Convert `STR_CONST` `text()` values into R strings. This is useful to account for arbitrary
-#'  character literals valid since R 4.0, e.g. `R"------[hello]------"`, which is parsed in
-#'  R as `"hello"`. It is quite cumbersome to write XPaths allowing for strings like this,
-#'  so whenever your linter logic requires testing a `STR_CONST` node's value, use this
-#'  function.
+#'  character literals, e.g. `R"------[hello]------"`, which is parsed in R as `"hello"`.
+#'  It is quite cumbersome to write XPaths allowing for strings like this, so whenever your
+#'  linter logic requires testing a `STR_CONST` node's value, use this function.
 #' NB: this is also properly vectorized on `s`, and accepts a variety of inputs. Empty inputs
 #'  will become `NA` outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
 #'
@@ -219,15 +228,14 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #' get_r_string(expr_as_xml, "expr[3]")
 #' unlink(tmp)
 #'
-#' # more importantly, extract strings under R>=4 raw strings
-#' @examplesIf getRversion() >= "4.0.0"
-#' tmp4.0 <- tempfile()
-#' writeLines("c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')", tmp4.0)
-#' expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
-#' writeLines(as.character(expr_as_xml4.0))
-#' get_r_string(expr_as_xml4.0, "expr[2]")
-#' get_r_string(expr_as_xml4.0, "expr[3]")
-#' unlink(tmp4.0)
+#' # more importantly, extract raw strings correctly
+#' tmp_raw <- tempfile()
+#' writeLines("c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')", tmp_raw)
+#' expr_as_xml_raw <- get_source_expressions(tmp_raw)$expressions[[1L]]$xml_parsed_content
+#' writeLines(as.character(expr_as_xml_raw))
+#' get_r_string(expr_as_xml_raw, "expr[2]")
+#' get_r_string(expr_as_xml_raw, "expr[3]")
+#' unlink(tmp_raw)
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
@@ -247,9 +255,12 @@ get_r_string <- function(s, xpath = NULL) {
 }
 
 is_linter <- function(x) inherits(x, "linter")
+is_lint <- function(x) inherits(x, "lint")
+
+is_error <- function(x) inherits(x, "error")
 
 is_tainted <- function(lines) {
-  inherits(tryCatch(nchar(lines), error = identity), "error")
+  is_error(tryCatch(nchar(lines), error = identity))
 }
 
 #' Check that the entries in ... are valid
@@ -264,9 +275,13 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
   if (all(is_valid)) {
     return(invisible())
   }
-  stop(
-    "Found unknown arguments in ...: ", toString(dot_names[!is_valid]), ".\n",
-    "Check for typos and see ?", ref_help, " for valid arguments.",
-    call. = FALSE
-  )
+  invalid_args <- dot_names[!is_valid] # nolint: object_usage_linter. TODO(#2252).
+  cli_abort(c(
+    x = "Found unknown arguments in `...`: {.arg {invalid_args}}.",
+    i = "Check for typos and see ?{ref_help} for valid arguments."
+  ))
+}
+
+cli_abort_internal <- function(...) {
+  cli_abort(..., .internal = TRUE)
 }
