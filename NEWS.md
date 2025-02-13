@@ -10,6 +10,10 @@
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + `linter=` argument of `Lint()`.
 
+## Notes
+
+* `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
+
 # lintr 3.2.0
 
 ## Deprecations & breaking changes
