@@ -2,6 +2,7 @@
 
 ## Deprecations & breaking changes
 
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now defunct.
 * Two linters marked as deprecated with warning in the previous release are now fully deprecated: `extraction_operator_linter()` and `unnecessary_nested_if_linter()`. They will be removed in the next release.
 * As previously announced, the following fully-deprecated items are now removed from the package:
    + `with_defaults()`.
