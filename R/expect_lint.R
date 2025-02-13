@@ -42,14 +42,8 @@
 #' )
 #' @export
 expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
-  if (!requireNamespace("testthat", quietly = TRUE)) {
-    # nocov start
-    cli_abort(
-      # nolint next: line_length_linter.
-      "{.fun expect_lint} and {.fun expect_no_lint} are designed to work within the {.pkg testthat} testing framework, which is not installed."
-    )
-    # nocov end
-  }
+  require_testthat()
+
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
@@ -123,6 +117,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 #' @rdname expect_lint
 #' @export
 expect_no_lint <- function(content, ..., file = NULL, language = "en") {
+  require_testthat()
   expect_lint(content, NULL, ..., file = file, language = language)
 }
 
@@ -135,6 +130,8 @@ expect_no_lint <- function(content, ..., file = NULL, language = "en") {
 #' @param ... arguments passed to [lint_package()]
 #' @export
 expect_lint_free <- function(...) {
+  require_testthat()
+
   testthat::skip_on_cran()
   testthat::skip_on_covr()
 
@@ -151,4 +148,17 @@ expect_lint_free <- function(...) {
   )
 
   invisible(result)
+}
+
+# Helper function to check if testthat is installed.
+require_testthat <- function() {
+  parent_call <- sys.call(-1L)[[1L]]
+  # supported: foo() or lintr::foo(). Undefined behavior otherwise.
+  # nolint next: object_usage_linter. TODO(#2252): Remove this.
+  name <- as.character(if (is.name(parent_call)) parent_call else parent_call[[3L]])
+  if (!requireNamespace("testthat", quietly = TRUE)) {
+    cli_abort(
+      "{.fun {name}} is designed to work within the {.pkg testthat} testing framework, which could not be loaded."
+    )
+  }
 }

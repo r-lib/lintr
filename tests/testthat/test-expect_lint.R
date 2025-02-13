@@ -70,3 +70,13 @@ test_that("expect_lint doesn't change language", {
     expect_identical(Sys.getenv("LANGUAGE"), "mr")
   })
 })
+
+test_that("execution without testthat gives the right errors", {
+  local_mocked_bindings(requireNamespace = function(...) FALSE)
+  lint_msg <- function(nm) rex::rex("`", nm, "()` is designed to work", anything, "testthat")
+
+  expect_error(expect_lint(), lint_msg("expect_lint"))
+  expect_error(lintr::expect_lint(), lint_msg("expect_lint"))
+  expect_error(expect_no_lint(), lint_msg("expect_no_lint"))
+  expect_error(expect_lint_free(), lint_msg("expect_lint_free"))
+})
