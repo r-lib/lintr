@@ -65,16 +65,8 @@ test_that("handles R>=4.0.0 strings", {
   expect_lint("r'(\")'", NULL, linter)
 })
 
-test_that("single_quotes_linter is deprecated", {
-  expect_warning(
-    {
-      old_linter <- single_quotes_linter()
-    },
-    "Use quotes_linter instead",
-    fixed = TRUE
-  )
-  expect_lint('"blah"', NULL, old_linter)
-  expect_lint("'blah'", "Only use double-quotes", old_linter)
+test_that("single_quotes_linter is defunct", {
+  expect_error(single_quotes_linter(), "Use quotes_linter instead", fixed = TRUE)
 })
 
 test_that("lints vectorize", {

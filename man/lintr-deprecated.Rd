@@ -42,5 +42,5 @@ Unnecessary nested if linter
 }
 \keyword{internal}
 \section{Tags}{
-\link[=consistency_linters]{consistency}, \link[=deprecated_linters]{deprecated}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=deprecated_linters]{deprecated}
 }
