@@ -14,10 +14,8 @@ These linters will be excluded from \code{\link[=linters_with_tags]{linters_with
 The following linters are tagged with 'deprecated':
 \itemize{
 \item{\code{\link{consecutive_stopifnot_linter}}}
-\item{\code{\link{extraction_operator_linter}}}
 \item{\code{\link{no_tab_linter}}}
 \item{\code{\link{single_quotes_linter}}}
-\item{\code{\link{unnecessary_nested_if_linter}}}
 \item{\code{\link{unneeded_concatenation_linter}}}
 }
 }

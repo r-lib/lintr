@@ -71,32 +71,8 @@ extraction_operator_linter <- function() {
     what = "extraction_operator_linter",
     version = "3.2.0",
     type = "Linter",
-    signal = "warning"
+    signal = "stop"
   )
-
-  constant_nodes_in_brackets <- paste0("self::", c("expr", "OP-PLUS", "NUM_CONST", "STR_CONST"))
-  xpath <- glue("
-  //OP-DOLLAR[not(preceding-sibling::expr[1]/SYMBOL[text() = 'self' or text() = '.self'])]
-  |
-  //OP-LEFT-BRACKET[
-    not(following-sibling::expr[1]/descendant::*[not({xp_or(constant_nodes_in_brackets)})]) and
-    not(following-sibling::OP-COMMA)
-  ]
-  ")
-
-  Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_exprs <- xml_find_all(xml, xpath)
-    msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml_text(bad_exprs))
-
-    xml_nodes_to_lints(
-      bad_exprs,
-      source_expression = source_expression,
-      lint_message = msgs,
-      type = "warning"
-    )
-  })
 }
 
 #' Unnecessary nested if linter
@@ -108,31 +84,6 @@ unnecessary_nested_if_linter <- function() {
     alternative = "unnecessary_nesting_linter",
     version = "3.2.0",
     type = "Linter",
-    signal = "warning"
+    signal = "stop"
   )
-
-  xpath <- paste0(
-    "//IF/parent::expr[not(ELSE)]/OP-RIGHT-PAREN/",
-    c(
-      "following-sibling::expr[IF and not(ELSE)]", # catch if (cond) if (other_cond) { ... }
-      "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]
-         /expr[IF and not(ELSE)]" # catch if (cond) { if (other_cond) { ... } }
-    ),
-    collapse = " | "
-  )
-
-  Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_exprs <- xml_find_all(xml, xpath)
-    xml_nodes_to_lints(
-      bad_exprs,
-      source_expression = source_expression,
-      lint_message = paste(
-        "Don't use nested `if` statements,",
-        "where a single `if` with the combined conditional expression will do.",
-        "For example, instead of `if (x) { if (y) { ... }}`, use `if (x && y) { ... }`."
-      )
-    )
-  })
 }
