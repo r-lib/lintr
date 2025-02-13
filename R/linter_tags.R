@@ -142,11 +142,13 @@ available_tags <- function(packages = "lintr") {
 #' @param linter_name Name of the linter to generate Rd code for.
 #'
 #' @noRd
-rd_tags <- function(linter_name) {
-  linters <- available_linters(exclude_tags = NULL)
-  tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
-  if (length(tags) == 0L) {
-    cli_abort("Tags are required, but found none for {.fn {linter_name}}.")
+rd_tags <- function(linter_name, tags = NULL) {
+  if (is.null(tags)) {
+    linters <- available_linters(exclude_tags = NULL)
+    tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
+    if (length(tags) == 0L) {
+      cli_abort("Tags are required, but found none for {.fn {linter_name}}.")
+    }
   }
 
   c(
@@ -165,7 +167,7 @@ rd_linters <- function(tag_name) {
   linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
-    cli_abort("No linters found associated with tag {.emph {tag_name}}.")
+    return(paste0("There are not currently any linters tagged with '", tag_name, "'."))
   }
 
   c(
