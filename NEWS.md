@@ -2,6 +2,7 @@
 
 ## Deprecations & breaking changes
 
+* Two linters marked as deprecated with warning in the previous release are now fully deprecated: `extraction_operator_linter()` and `unnecessary_nested_if_linter()`. They will be removed in the next release.
 * As previously announced, the following fully-deprecated items are now removed from the package:
    + `with_defaults()`.
    + Passing linters by name or as non-`"linter"`-classed functions.
