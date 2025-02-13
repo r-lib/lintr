@@ -154,6 +154,7 @@ expect_lint_free <- function(...) {
 require_testthat <- function() {
   parent_call <- sys.call(-1L)[[1L]]
   # supported: foo() or lintr::foo(). Undefined behavior otherwise.
+  # nolint next: object_usage_linter. TODO(#2252): Remove this.
   name <- as.character(if (is.name(parent_call)) parent_call else parent_call[[3L]])
   if (!requireNamespace("testthat", quietly = TRUE)) {
     cli_abort(
