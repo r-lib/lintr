@@ -66,6 +66,11 @@
 </ul></li>
 </ul></div>
 <div class="section level3">
+<h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/brace_linter.html">brace_linter()</a></code>’ has a new argument <code>function_bodies</code> (default <code>"multi_line"</code>) which controls when to require function bodies to be wrapped in curly braces, with the options <code>"always"</code>, <code>"multi_line"</code> (only require curly braces when a function body spans multiple lines), <code>"not_inline"</code> (only require curly braces when a function body starts on a new line) and <code>"never"</code> (<a href="https://github.com/r-lib/lintr/issues/1807" class="external-link">#1807</a>, <a href="https://github.com/r-lib/lintr/issues/2240" class="external-link">#2240</a>, <a href="https://github.com/salim-b" class="external-link">@salim-b</a>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="notes-development-version">Notes<a class="anchor" aria-label="anchor" href="#notes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/expect_lint_free.html">expect_lint_free()</a></code> and other functions that rely on the {testthat} framework now have a consistent error message. (<a href="https://github.com/r-lib/lintr/issues/2585" class="external-link">#2585</a>, <a href="https://github.com/F-Noelle" class="external-link">@F-Noelle</a>).</li>
