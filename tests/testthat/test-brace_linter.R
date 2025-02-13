@@ -326,7 +326,7 @@ test_that("brace_linter lints function expressions correctly", {
   expect_lint("function(x) { x + 4 }", lints_single_line, linter_multi_line)
   expect_lint("function(x) { x + 4 }", lints_single_line, linter_not_inline)
   expect_lint("function(x) { x + 4 }", lints_single_line, linter_never)
-  # using function_bodies = "always" should only prohibit inline function definitions with allow_single_line = FALSE (the default):
+  # function_bodies = "always" should only prohibit inline function definitions with allow_single_line = FALSE (the default):
   expect_no_lint(
     "function(x) { x + 4 }",
     brace_linter(allow_single_line = TRUE, function_bodies = "always")
