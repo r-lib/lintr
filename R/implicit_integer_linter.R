@@ -47,7 +47,10 @@
 #' @export
 implicit_integer_linter <- function(allow_colon = FALSE) {
   if (allow_colon) {
-    xpath <- "//NUM_CONST[not(parent::expr/parent::expr/OP-COLON)]"
+    xpath <- "//NUM_CONST[not(parent::expr[
+      parent::expr/OP-COLON
+      or parent::expr[OP-MINUS]/parent::expr/OP-COLON
+    ])]"
   } else {
     xpath <- "//NUM_CONST"
   }
