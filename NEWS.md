@@ -3,6 +3,7 @@
 ## Deprecations & breaking changes
 
 * As previously announced, the following fully-deprecated items are now removed from the package:
+   + `with_defaults()`.
    + Passing linters by name or as non-`"linter"`-classed functions.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + `linter=` argument of `Lint()`.
