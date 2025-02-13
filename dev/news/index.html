@@ -55,7 +55,9 @@
 <div class="section level3">
 <h3 id="deprecations--breaking-changes-development-version">Deprecations &amp; breaking changes<a class="anchor" aria-label="anchor" href="#deprecations--breaking-changes-development-version"></a></h3>
 <ul><li>As previously announced, the following fully-deprecated items are now removed from the package:
-<ul><li>Passing linters by name or as non-<code>"linter"</code>-classed functions.</li>
+<ul><li>
+<code>with_defaults()</code>.</li>
+<li>Passing linters by name or as non-<code>"linter"</code>-classed functions.</li>
 <li>Linters <code>closed_curly_linter()</code>, <code>open_curly_linter()</code>, <code>paren_brace_linter()</code>, and <code>semicolon_terminator_linter()</code>.</li>
 <li>
 <code>linter=</code> argument of <code><a href="../reference/lint-s3.html">Lint()</a></code>.</li>
@@ -73,9 +75,9 @@
 <li>
 <code>linter=</code> argument of <code><a href="../reference/lint-s3.html">Lint()</a></code>.</li>
 <li>
-<code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code>.</li>
+<code>with_defaults()</code>.</li>
 <li>Linters <code>closed_curly_linter()</code>, <code>open_curly_linter()</code>, <code>paren_brace_linter()</code>, and <code>semicolon_terminator_linter()</code>.</li>
-<li>Helper <code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code>.</li>
+<li>Helper <code>with_defaults()</code>.</li>
 </ul></li>
 <li>
 <code><a href="../reference/all_linters.html">all_linters()</a></code> has signature <code>all_linters(..., packages)</code> rather than <code>all_linters(packages, ...)</code> (<a href="https://github.com/r-lib/lintr/issues/2332" class="external-link">#2332</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). This forces <code>packages=</code> to be supplied by name and will break users who rely on supplying <code>packages=</code> positionally, of which we found none searching GitHub.</li>
@@ -588,7 +590,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <div class="section level3">
 <h3 id="other-changes-3-0-1">Other changes<a class="anchor" aria-label="anchor" href="#other-changes-3-0-1"></a></h3>
 <ul><li>The minimum needed version for soft dependency <a href="https://withr.r-lib.org" class="external-link">withr</a> has been bumped to <code>2.5.0</code> (<a href="https://github.com/r-lib/lintr/issues/1404" class="external-link">#1404</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
-<li>Changed the deprecation warning for <code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code> to also mention <code><a href="../reference/modify_defaults.html">modify_defaults()</a></code> (<a href="https://github.com/r-lib/lintr/issues/1438" class="external-link">#1438</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
+<li>Changed the deprecation warning for <code>with_defaults()</code> to also mention <code><a href="../reference/modify_defaults.html">modify_defaults()</a></code> (<a href="https://github.com/r-lib/lintr/issues/1438" class="external-link">#1438</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>Quarto files (<code>.qmd</code>) were supported out of the box. The documentation and the testing infrastructure are updated to reflect this (<a href="https://github.com/r-lib/lintr/issues/1486" class="external-link">#1486</a>, <a href="https://github.com/IndrajeetPatil" class="external-link">@IndrajeetPatil</a>).</li>
 </ul></div>
 </div>
@@ -633,7 +635,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>For <code><a href="../reference/lint.html">lint_dir()</a></code> and <code><a href="../reference/lint.html">lint_package()</a></code>, <code>...</code> is now the 2nd argument, where earlier this was <code>relative_path</code>.</li>
 </ul></li>
 <li>Deprecated argument <code>source_file</code> to exported functions <code><a href="../reference/ids_with_token.html">with_id()</a></code> and <code><a href="../reference/ids_with_token.html">ids_with_token()</a></code>. It has been renamed to <code>source_expression</code> to better reflect that this argument is typically the output of <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code>. For now, the old argument <code>source_file</code> can still be used (with warning). The now-private functional versions of many linters also underwent the same renaming (<code>source_file</code> -&gt; <code>source_expression</code>). This has no direct effect on packages importing lintr, but is mentioned in case custom linters imitating <code>lintr</code> style had also adopted the <code>source_file</code> naming and want to adapt to keep in sync.</li>
-<li>Deprecated <code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code> in favor of <code><a href="../reference/linters_with_defaults.html">linters_with_defaults()</a></code>, and add <code><a href="../reference/modify_defaults.html">modify_defaults()</a></code> which is intended to be used more generally to modify (i.e., extend, trim, and/or update) a list of defaults. Note that the argument corresponding to <code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code>’s <code>default=</code> is called <code>defaults=</code> (i.e., pluralized) in both of these, and that usage like <code>with_defaults(default = NULL, ...)</code> should be converted to <code>linters_with_defaults(defaults = list(), ...)</code> (<a href="https://github.com/r-lib/lintr/issues/1029" class="external-link">#1029</a>, <a href="https://github.com/r-lib/lintr/issues/1336" class="external-link">#1336</a>, <a href="https://github.com/r-lib/lintr/issues/1361" class="external-link">#1361</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a> and <a href="https://github.com/michaelchirico" class="external-link">@michaelchirico</a>).</li>
+<li>Deprecated <code>with_defaults()</code> in favor of <code><a href="../reference/linters_with_defaults.html">linters_with_defaults()</a></code>, and add <code><a href="../reference/modify_defaults.html">modify_defaults()</a></code> which is intended to be used more generally to modify (i.e., extend, trim, and/or update) a list of defaults. Note that the argument corresponding to <code>with_defaults()</code>’s <code>default=</code> is called <code>defaults=</code> (i.e., pluralized) in both of these, and that usage like <code>with_defaults(default = NULL, ...)</code> should be converted to <code>linters_with_defaults(defaults = list(), ...)</code> (<a href="https://github.com/r-lib/lintr/issues/1029" class="external-link">#1029</a>, <a href="https://github.com/r-lib/lintr/issues/1336" class="external-link">#1336</a>, <a href="https://github.com/r-lib/lintr/issues/1361" class="external-link">#1361</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a> and <a href="https://github.com/michaelchirico" class="external-link">@michaelchirico</a>).</li>
 <li>Deprecated the <code>find_line()</code> and <code>find_column()</code> helpers from the item-level <code>expressions</code> returned with <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code>. These helpers were typically associated with regex-based logic for building linters, which is rarely needed and prone to false positives; now that lintr almost exclusively uses XPath-based logic for linters, these are no longer necessary (<a href="https://github.com/r-lib/lintr/issues/1373" class="external-link">#1373</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
@@ -921,7 +923,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>Stricter about what is considered to be a package – folders named <code>DESCRIPTION</code> are ignored (<a href="https://github.com/r-lib/lintr/issues/702" class="external-link">#702</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></li>
 <li>
-<code><a href="../reference/linters_with_defaults.html">linters_with_defaults()</a></code> (formerly <code><a href="../reference/lintr-deprecated.html">with_defaults()</a></code>):
+<code><a href="../reference/linters_with_defaults.html">linters_with_defaults()</a></code> (formerly <code>with_defaults()</code>):
 <ul><li>No longer duplicates the <code>lintr_function</code> class when it is already present (<a href="https://github.com/r-lib/lintr/issues/511" class="external-link">#511</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>Warns if a named argument is <code>NULL</code> but its name is not in <code>defaults</code> (<a href="https://github.com/r-lib/lintr/issues/1049" class="external-link">#1049</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 </ul></li>
