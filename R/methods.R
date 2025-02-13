@@ -1,27 +1,16 @@
 #' @export
 format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
-  if (requireNamespace("cli", quietly = TRUE)) {
-    color <- switch(x$type,
-      warning = cli::col_magenta,
-      error = cli::col_red,
-      style = cli::col_blue,
-      cli::style_bold
-    )
-    emph <- cli::style_bold
-  } else {
-    # nocov start
-    color <- identity
-    emph <- identity
-    # nocov end
-  }
+  color <- switch(x$type,
+    warning = cli::col_magenta,
+    error = cli::col_red,
+    style = cli::col_blue,
+    cli::style_bold
+  )
+  emph <- cli::style_bold
 
+  line_ref <- build_line_ref(x)
   annotated_msg <- paste0(
-    emph(
-      x$filename, ":",
-      as.character(x$line_number), ":",
-      as.character(x$column_number), ": ",
-      sep = ""
-    ),
+    emph(line_ref, ": "),
     color(x$type, ": ", sep = ""),
     "[", x$linter, "] ",
     emph(x$message)
@@ -38,6 +27,19 @@ format.lint <- function(x, ..., width = getOption("lintr.format_width")) {
     highlight_string(x$message, x$column_number, x$ranges),
     "\n"
   )
+}
+
+build_line_ref <- function(x) {
+  line_ref <- paste0(
+    x$filename, ":",
+    as.character(x$line_number), ":",
+    as.character(x$column_number)
+  )
+
+  if (!cli::ansi_has_hyperlink_support()) {
+    return(line_ref)
+  }
+  cli::format_inline("{.path {line_ref}}")
 }
 
 #' @export
@@ -171,6 +173,7 @@ as.data.frame.lints <- function(x, row.names = NULL, optional = FALSE, ...) { # 
   )
 }
 
+#' @exportS3Method tibble::as_tibble
 as_tibble.lints <- function(x, ..., # nolint: object_name_linter.
                             .rows = NULL,
                             .name_repair = c("check_unique", "unique", "universal", "minimal"),
@@ -179,6 +182,7 @@ as_tibble.lints <- function(x, ..., # nolint: object_name_linter.
   tibble::as_tibble(as.data.frame(x), ..., .rows = .rows, .name_repair = .name_repair, rownames = rownames)
 }
 
+#' @exportS3Method data.table::as.data.table
 as.data.table.lints <- function(x, keep.rownames = FALSE, ...) { # nolint: object_name_linter.
   stopifnot(requireNamespace("data.table", quietly = TRUE))
   data.table::setDT(as.data.frame(x), keep.rownames = keep.rownames, ...)

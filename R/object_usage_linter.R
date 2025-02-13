@@ -148,8 +148,10 @@ get_assignment_symbols <- function(xml) {
   get_r_string(xml_find_all(
     xml,
     "
-      expr[LEFT_ASSIGN]/expr[1]/SYMBOL[1] |
+      expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[1]/SYMBOL[1] |
+      expr[RIGHT_ASSIGN]/expr[2]/SYMBOL[1] |
       equal_assign/expr[1]/SYMBOL[1] |
+      expr_or_assign_or_help/expr[1]/SYMBOL[1] |
       expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
       expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
     "

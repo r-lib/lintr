@@ -23,11 +23,10 @@
 expect_length_linter <- function() {
   # TODO(#2465): also catch expect_true(length(x) == 1)
   xpath <- sprintf("
-  parent::expr
-    /following-sibling::expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
-      and (position() = 1 or preceding-sibling::expr[NUM_CONST])
-    ]
+  following-sibling::expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
+    and (position() = 1 or preceding-sibling::expr[NUM_CONST])
+  ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or contains(text(), 'label')])]
   ")
 

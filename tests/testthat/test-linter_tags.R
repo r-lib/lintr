@@ -103,12 +103,7 @@ test_that("rownames for available_linters data frame doesn't have missing entrie
 # See the roxygen helpers in R/linter_tags.R for the code used to generate the docs.
 #   This test helps ensure the documentation is up to date with the available_linters() database
 test_that("lintr help files are up to date", {
-  help_db <- tools::Rd_db("lintr")
-  # e.g. in dev under pkgload::load_all()
-  if (length(help_db) == 0L) {
-    help_db <- tools::Rd_db(dir = test_path("..", ".."))
-    skip_if_not(length(help_db) > 0L, message = "Package help not installed or corrupted")
-  }
+  help_db <- safe_load_help_db()
 
   lintr_db <- available_linters(exclude_tags = NULL)
   lintr_db$package <- NULL
@@ -233,4 +228,8 @@ test_that("available_linters gives precedence to included tags", {
     available_linters(tags = "deprecated"),
     available_linters(tags = "deprecated", exclude_tags = NULL)
   )
+})
+
+test_that("all linters have at least one tag", {
+  expect_true(all(lengths(available_linters()$tags) > 0L))
 })

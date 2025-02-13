@@ -28,8 +28,7 @@ rep_len_linter <- make_linter_from_function_xpath(
   function_names = "rep",
   # count(expr) is for cases using positional matching; see ?rep.
   xpath = "
-  parent::expr
-    /parent::expr[
+    parent::expr[
       (
         SYMBOL_SUB[text() = 'length.out']
         or (not(SYMBOL_SUB) and count(expr) = 4)

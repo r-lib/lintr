@@ -36,21 +36,19 @@ boolean_arithmetic_linter <- function() {
   one_expr <- "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
   length_xpath <- glue("
   parent::expr
-    /parent::expr
     /parent::expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
       and parent::expr[ ({zero_expr}) or ({one_expr})]
     ]
   ")
   sum_xpath <- glue("
-  parent::expr
-    /parent::expr[
-      expr[
-        expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
-        or (EQ or NE or GT or LT or GE or LE)
-      ] and parent::expr[ ({zero_expr}) or ({one_expr})]
+  parent::expr[
+    expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
+      or (EQ or NE or GT or LT or GE or LE)
     ]
-  ")
+    and parent::expr[ ({zero_expr}) or ({one_expr})]
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
     length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))

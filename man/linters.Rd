@@ -23,8 +23,8 @@ The following tags exist:
 \item{\link[=consistency_linters]{consistency} (32 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
-\item{\link[=deprecated_linters]{deprecated} (6 linters)}
-\item{\link[=efficiency_linters]{efficiency} (32 linters)}
+\item{\link[=deprecated_linters]{deprecated} (4 linters)}
+\item{\link[=efficiency_linters]{efficiency} (29 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
@@ -88,7 +88,7 @@ The following linters exist:
 \item{\code{\link{lengths_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{library_call_linter}} (tags: best_practices, configurable, readability, style)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
-\item{\code{\link{list_comparison_linter}} (tags: best_practices, common_mistakes, efficiency)}
+\item{\code{\link{list_comparison_linter}} (tags: best_practices, common_mistakes)}
 \item{\code{\link{literal_coercion_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{matrix_apply_linter}} (tags: efficiency, readability)}
 \item{\code{\link{missing_argument_linter}} (tags: common_mistakes, configurable, correctness)}
@@ -139,8 +139,8 @@ The following linters exist:
 \item{\code{\link{todo_comment_linter}} (tags: configurable, style)}
 \item{\code{\link{trailing_blank_lines_linter}} (tags: default, style)}
 \item{\code{\link{trailing_whitespace_linter}} (tags: configurable, default, style)}
-\item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
-\item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, efficiency, robustness, style)}
+\item{\code{\link{undesirable_function_linter}} (tags: best_practices, configurable, robustness, style)}
+\item{\code{\link{undesirable_operator_linter}} (tags: best_practices, configurable, robustness, style)}
 \item{\code{\link{unnecessary_concatenation_linter}} (tags: configurable, efficiency, readability, style)}
 \item{\code{\link{unnecessary_lambda_linter}} (tags: best_practices, configurable, efficiency, readability)}
 \item{\code{\link{unnecessary_nesting_linter}} (tags: best_practices, configurable, consistency, readability)}

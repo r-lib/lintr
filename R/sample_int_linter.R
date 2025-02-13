@@ -39,7 +39,7 @@ sample_int_linter <- function() {
   # exclude TRUE/FALSE for sample(replace = TRUE, ...) usage. better
   #   would be match.arg() but this also works.
   xpath <- glue("
-  parent::expr[not(OP-DOLLAR or OP-AT)]
+  self::*[not(OP-DOLLAR or OP-AT)]
     /following-sibling::expr[1][
       (
         expr[1]/NUM_CONST[text() = '1' or text() = '1L']

@@ -691,6 +691,20 @@ test_that("except_regex= argument works", {
     list(rex::rex("All functions must have an explicit return()."), line_number = 5L),
     linter
   )
+
+  # capture group doesn't cause issues, #2678
+  expect_lint(
+    trim_some("
+      TestFun <- function() {
+        non_return()
+      }
+      AssertFun <- function() {
+        non_return()
+      }
+    "),
+    NULL,
+    return_linter(return_style = "explicit", except_regex = "^(Test|Assert)")
+  )
 })
 
 test_that("except= and except_regex= combination works", {

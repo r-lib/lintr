@@ -105,15 +105,9 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
           ok <- if (field == "message") {
-            re_matches(value, check)
+            re_matches_logical(value, check)
           } else {
             isTRUE(all.equal(value, check))
-          }
-          if (!is.logical(ok)) {
-            cli_abort(c(
-              x = "Invalid regex result. Did you mistakenly have a capture group in the regex?",
-              i = "You can match parentheses with a character class, i.e. inside `[]`."
-            ))
           }
           testthat::expect(ok, msg)
         })

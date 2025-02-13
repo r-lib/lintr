@@ -27,11 +27,14 @@
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
 #' @examples
+#' # linting inline-code
+#' lint("a = 123\n")
+#' lint(text = "a = 123")
+#'
+#' # linting a file
 #' f <- tempfile()
 #' writeLines("a=1", f)
-#' lint(f)                # linting a file
-#' lint("a = 123\n")      # linting inline-code
-#' lint(text = "a = 123") # linting inline-code
+#' lint(f)
 #' unlink(f)
 #'
 #' @export
@@ -182,20 +185,24 @@ lint_dir <- function(path = ".", ...,
     return(lints)
   }
 
-  pb <- if (isTRUE(show_progress)) {
-    txtProgressBar(max = length(files), style = 3L)
+  if (isTRUE(show_progress)) {
+    lints <- lapply(
+      # NB: This cli API is experimental (https://github.com/r-lib/cli/issues/709)
+      cli::cli_progress_along(files, name = "Running linters"),
+      function(idx) {
+        lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
+      }
+    )
+  } else {
+    lints <- lapply(
+      files,
+      function(file) { # nolint: unnecessary_lambda_linter.
+        lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+      }
+    )
   }
 
-  lints <- flatten_lints(lapply(
-    files,
-    function(file) {
-      maybe_report_progress(pb)
-      lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
-    }
-  ))
-
-  if (!is.null(pb)) close(pb)
-
+  lints <- flatten_lints(lints)
   lints <- reorder_lints(lints)
 
   if (relative_path) {
@@ -340,24 +347,10 @@ validate_linter_object <- function(linter, name) {
   if (is_linter(linter)) {
     return(linter)
   }
-  if (!is.function(linter)) {
-    cli_abort(c(
-      i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
-      x = "Instead, it is {.obj_type_friendly {linter}}."
-    ))
-  }
-  if (is_linter_factory(linter)) {
-    what <- "Passing linters as variables"
-    alternative <- "a call to the linters (see ?linters)"
-  } else {
-    what <- "The use of linters of class 'function'"
-    alternative <- "linters classed as 'linter' (see ?Linter)"
-  }
-  lintr_deprecated(
-    what = what, alternative = alternative, version = "3.0.0",
-    type = "",
-    signal = "stop"
-  )
+  cli_abort(c(
+    i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
+    x = "Instead, it is {.obj_type_friendly {linter}}."
+  ))
 }
 
 is_linter_factory <- function(fun) {
@@ -390,22 +383,12 @@ reorder_lints <- function(lints) {
 #' @param message message used to describe the lint error
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
-#' @param linter deprecated. No longer used.
 #' @return an object of class `c("lint", "list")`.
 #' @name lint-s3
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
-                 message = "", line = "", ranges = NULL, linter = "") {
-  if (!missing(linter)) {
-    lintr_deprecated(
-      what = "Using the `linter` argument of `Lint()`",
-      version = "3.0.0",
-      type = "",
-      signal = "stop"
-    )
-  }
-
+                 message = "", line = "", ranges = NULL) {
   if (length(line) != 1L || !is.character(line)) {
     cli_abort("{.arg line} must be a string.", call. = FALSE)
   }
@@ -688,15 +671,8 @@ has_positional_logical <- function(dots) {
     !nzchar(names2(dots)[1L])
 }
 
-maybe_report_progress <- function(pb) {
-  if (is.null(pb)) {
-    return(invisible())
-  }
-  setTxtProgressBar(pb, getTxtProgressBar(pb) + 1L)
-}
-
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
-  if (inherits(error, "lint")) {
+  if (is_lint(error)) {
     error$linter <- "error"
     lints[[length(lints) + 1L]] <- error
 

@@ -7,7 +7,8 @@
 #' Additionally, it checks for `1:n()` (from `{dplyr}`) and `1:.N` (from `{data.table}`).
 #'
 #' These often cause bugs when the right-hand side is zero.
-#' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
+#' Instead, it is safer to use [base::seq_len()] (to create a sequence of a specified *length*) or
+#'   [base::seq_along()] (to create a sequence *along* an object).
 #'
 #' @examples
 #' # will produce lints
@@ -50,8 +51,7 @@ seq_linter <- function() {
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   seq_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
+  following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
     /parent::expr[count(expr) = 2]
   ")
   # `.N` from {data.table} is special since it's not a function but a symbol

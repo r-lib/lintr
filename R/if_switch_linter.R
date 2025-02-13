@@ -178,12 +178,10 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
     max_lines_cond <- glue(".//expr[{branch_expr_cond}]")
 
     switch_xpath <- glue("
-    parent::expr
-      /parent::expr[expr[
-        position() > 2
-        and {complexity_cond}
-      ]]
-    ")
+    parent::expr[expr[
+      position() > 2
+      and {complexity_cond}
+    ]]")
   } else {
     max_lines_cond <- "false"
 

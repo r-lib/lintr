@@ -61,8 +61,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     "contains(text(), '^') or contains(text(), '$')"
   )
   str_detect_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[2]
+  following-sibling::expr[2]
     /STR_CONST[ {str_cond} ]
   ")
   str_detect_message_map <- c(
@@ -73,17 +72,16 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
   if (!allow_grepl) {
     grepl_xpath <- glue("
-    parent::expr
-      /parent::expr[
-        not(SYMBOL_SUB[
-          text() = 'ignore.case'
-          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-        ])
-        and not(SYMBOL_SUB[
-          text() = 'fixed'
-          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-        ])
-      ]
+    parent::expr[
+      not(SYMBOL_SUB[
+        text() = 'ignore.case'
+        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+      ])
+      and not(SYMBOL_SUB[
+        text() = 'fixed'
+        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+      ])
+    ]
       /expr[2]
       /STR_CONST[ {str_cond} ]
     ")

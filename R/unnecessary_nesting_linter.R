@@ -14,8 +14,12 @@
 #'   testthat requires a braced expression in its `code` argument. The other defaults
 #'   similarly compute on expressions in a way which is worth highlighting by
 #'   em-bracing them, even if there is only one expression, while [switch()] is allowed
-#'   for its use as a control flow analogous to `if`/`else`.
-#'
+#'   for its use as a control flow analogous to `if`/`else`.]
+#' @param branch_exit_calls Character vector of functions which are considered
+#'   as "exiting" a branch for the purpose of recommending removing nesting in a branch
+#'   _lacking_ an exit call when the other branch terminates with one. Calls which
+#'   always interrupt or quit the current call or R session,
+#'   e.g. [stop()] and [q()], are always included.
 #' @examples
 #' # will produce lints
 #' code <- "if (A) {\n  stop('A is bad!')\n} else {\n  do_good()\n}"
@@ -39,14 +43,29 @@
 #'   linters = unnecessary_nesting_linter(allow_assignment = FALSE)
 #' )
 #'
-#' writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
+#' code <- "if (x) { \n  if (y) { \n   return(1L) \n  } \n}"
+#' writeLines(code)
 #' lint(
-#'   text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
 #' lint(
 #'   text = "my_quote({x})",
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' code <- paste(
+#'   "if (A) {",
+#'   "  stop('A is bad because a.')",
+#'   "} else {",
+#'   "  warning('!A requires caution.')",
+#'   "}",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
@@ -72,15 +91,17 @@
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
-#' writeLines("if (x && y) { \n  return(1L) \n}")
+#' code <- "if (x && y) { \n  return(1L) \n}"
+#' writeLines(code)
 #' lint(
-#'   text = "if (x && y) { \n  return(1L) \n}",
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
-#' writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
+#' code <- "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}"
+#' writeLines(code)
 #' lint(
-#'   text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
@@ -89,25 +110,43 @@
 #'   linters = unnecessary_nesting_linter(allow_functions = "my_quote")
 #' )
 #'
+#' code <- paste(
+#'   "if (A) {",
+#'   "  stop('A is bad because a.')",
+#'   "} else {",
+#'   "  warning('!A requires caution.')",
+#'   "}",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter(branch_exit_calls = c("stop", "warning"))
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
 #' @seealso
 #'  - [cyclocomp_linter()] for another linter that penalizes overly complex code.
 #'  - [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_nesting_linter <- function(
-    allow_assignment = TRUE,
-    allow_functions = c(
-      "switch",
-      "try", "tryCatch", "withCallingHandlers",
-      "quote", "expression", "bquote", "substitute",
-      "with_parameters_test_that",
-      "reactive", "observe", "observeEvent",
-      "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
-      "renderPrint", "renderTable", "renderText", "renderUI"
-    )) {
-  exit_calls <- c("stop", "return", "abort", "quit", "q")
+  allow_assignment = TRUE,
+  allow_functions = c(
+    "switch",
+    "try", "tryCatch", "withCallingHandlers",
+    "quote", "expression", "bquote", "substitute",
+    "with_parameters_test_that",
+    "reactive", "observe", "observeEvent",
+    "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
+    "renderPrint", "renderTable", "renderText", "renderUI"
+  ),
+  branch_exit_calls = character()
+) {
+  default_branch_exit_calls <- c("stop", "return", "abort", "quit", "q")
+  branch_exit_calls <- union(default_branch_exit_calls, branch_exit_calls)
+
   exit_call_expr <- glue("
-    expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]]
+    expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(branch_exit_calls)}]]
   ")
   # block IF here for cases where a nested if/else is entirely within
   #   one of the branches.
@@ -117,7 +156,7 @@ unnecessary_nesting_linter <- function(
     and expr[
       position() = last()
       and not(IF)
-      and not(expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]])
+      and not(expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(branch_exit_calls)}]])
     ]
   ]
   ")
@@ -209,7 +248,7 @@ unnecessary_nesting_linter <- function(
       lint_message = paste0(
         "Reduce the nesting of this if/else statement by unnesting the ",
         "portion without an exit clause (i.e., ",
-        paste0(exit_calls, "()", collapse = ", "),
+        paste0(branch_exit_calls, "()", collapse = ", "),
         ")."
       ),
       type = "warning"
