@@ -354,6 +354,16 @@ test_that("brace_linter lints function expressions correctly", {
   expect_lint(lines, msg_multi_line, linter_multi_line)
   expect_lint(lines, msg_not_inline, linter_not_inline)
   expect_no_lint(lines, linter_never)
+
+  # missing newline after opening brace; closing brace not on sep line
+  lines <- trim_some("
+    foo <- function(x) { x +
+      4 }
+  ")
+  expect_lint(lines, msgs_open_close, linter_always)
+  expect_lint(lines, msgs_open_close, linter_multi_line)
+  expect_lint(lines, msgs_open_close, linter_not_inline)
+  expect_lint(lines, msgs_open_close, linter_never)
 })
 
 test_that("brace_linter lints if/else matching braces correctly", {
