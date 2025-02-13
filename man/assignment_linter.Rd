@@ -6,10 +6,10 @@
 \usage{
 assignment_linter(
   operator = c("<-", "<<-"),
-  allow_cascading_assign = TRUE,
-  allow_right_assign = FALSE,
+  allow_cascading_assign = NULL,
+  allow_right_assign = NULL,
   allow_trailing = TRUE,
-  allow_pipe_assign = FALSE
+  allow_pipe_assign = NULL
 )
 }
 \arguments{
@@ -17,14 +17,9 @@ assignment_linter(
 options are \code{=}, \verb{->}, \verb{->>}, \verb{\%<>\%}; use \code{"any"} to denote "allow all operators", in which case this linter only
 considers \code{allow_trailing} for generating lints.}
 
-\item{allow_cascading_assign}{(Deprecated) Logical, default \code{TRUE}.
-If \code{FALSE}, \code{\link[base:assignOps]{<<-}} and \verb{->>} are not allowed.}
-
-\item{allow_right_assign}{(Deprecated) Logical, default \code{FALSE}. If \code{TRUE}, \verb{->} and \verb{->>} are allowed.}
+\item{allow_cascading_assign, allow_right_assign, allow_pipe_assign}{(Defunct)}
 
 \item{allow_trailing}{Logical, default \code{TRUE}. If \code{FALSE} then assignments aren't allowed at end of lines.}
-
-\item{allow_pipe_assign}{(Deprecated) Logical, default \code{FALSE}. If \code{TRUE}, magrittr's \verb{\%<>\%} assignment is allowed.}
 }
 \description{
 Check that the specified operator is used for assignment.
@@ -71,12 +66,12 @@ code_lines <- "1 -> x\n2 ->> y"
 writeLines(code_lines)
 lint(
   text = code_lines,
-  linters = assignment_linter(allow_right_assign = TRUE)
+  linters = assignment_linter(operator = "->")
 )
 
 lint(
   text = "x <<- 1",
-  linters = assignment_linter(allow_cascading_assign = FALSE)
+  linters = assignment_linter(operator = "<-")
 )
 
 writeLines("foo(bar = \n 1)")
@@ -87,7 +82,7 @@ lint(
 
 lint(
   text = "x \%<>\% as.character()",
-  linters = assignment_linter(allow_pipe_assign = TRUE)
+  linters = assignment_linter(operator = "\%<>\%")
 )
 
 lint(
