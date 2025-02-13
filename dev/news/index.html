@@ -54,7 +54,8 @@
 <h2 class="pkg-version" data-toc-text="development version" id="lintr-development-version">lintr (development version)<a class="anchor" aria-label="anchor" href="#lintr-development-version"></a></h2>
 <div class="section level3">
 <h3 id="deprecations--breaking-changes-development-version">Deprecations &amp; breaking changes<a class="anchor" aria-label="anchor" href="#deprecations--breaking-changes-development-version"></a></h3>
-<ul><li>Two linters marked as deprecated with warning in the previous release are now fully deprecated: <code><a href="../reference/lintr-deprecated.html">extraction_operator_linter()</a></code> and <code><a href="../reference/lintr-deprecated.html">unnecessary_nested_if_linter()</a></code>. They will be removed in the next release.</li>
+<ul><li>Arguments <code>allow_cascading_assign=</code>, <code>allow_right_assign=</code>, and <code>allow_pipe_assign=</code> to <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> are now defunct.</li>
+<li>Two linters marked as deprecated with warning in the previous release are now fully deprecated: <code><a href="../reference/lintr-deprecated.html">extraction_operator_linter()</a></code> and <code><a href="../reference/lintr-deprecated.html">unnecessary_nested_if_linter()</a></code>. They will be removed in the next release.</li>
 <li>As previously announced, the following fully-deprecated items are now removed from the package:
 <ul><li>
 <code>with_defaults()</code>.</li>
@@ -811,7 +812,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 <li>
 <code><a href="../reference/expect_type_linter.html">expect_type_linter()</a></code> Require usage of <code>expect_type(x, t)</code> over <code>expect_equal(typeof(x), t)</code> and similar.</li>
 <li>
-<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> Require <code>fixed = TRUE</code> or <code><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">stringr::fixed()</a></code> for regular expressions that can be expressed statically, e.g. <code>strsplit(x, "[.]")</code> can be <code>strsplit(x, ".", fixed = TRUE)</code>.
+<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> Require <code>fixed = TRUE</code> or <code>stringr::fixed()</code> for regular expressions that can be expressed statically, e.g. <code>strsplit(x, "[.]")</code> can be <code>strsplit(x, ".", fixed = TRUE)</code>.
 <ul><li>Added parameter <code>allow_grepl</code> (default <code>FALSE</code>) to toggle whether <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code> usages should be linted. These might be treated separately because <code>grepl("^x", NA)</code> is <code>FALSE</code>; the <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith()</a></code> equivalent to get <code>FALSE</code> for missing input is clunkier, but more explicit: <code>!is.na(x) &amp; startsWith(x, string)</code> (<a href="https://github.com/r-lib/lintr/issues/1376" class="external-link">#1376</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></li>
 <li>
