@@ -7,7 +7,6 @@ backport_linter,robustness configurable package_development
 boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
-closed_curly_linter,defunct
 commas_linter,style readability default configurable
 commented_code_linter,style readability best_practices default
 comparison_negation_linter,readability consistency
@@ -71,11 +70,9 @@ object_name_linter,style consistency default configurable executing
 object_overwrite_linter,best_practices robustness readability configurable executing
 object_usage_linter,style readability correctness default executing configurable
 one_call_pipe_linter,style readability
-open_curly_linter,defunct
 outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
-paren_brace_linter,defunct
 paste_linter,best_practices consistency configurable
 pipe_call_linter,style readability
 pipe_consistency_linter,style readability configurable
@@ -93,7 +90,6 @@ routine_registration_linter,best_practices efficiency robustness
 sample_int_linter,efficiency readability robustness
 scalar_in_linter,readability consistency best_practices efficiency configurable
 semicolon_linter,style readability default configurable
-semicolon_terminator_linter,defunct
 seq_linter,robustness efficiency consistency best_practices default
 single_quotes_linter,style consistency readability deprecated
 sort_linter,readability best_practices efficiency

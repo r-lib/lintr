@@ -21,8 +21,7 @@
 #' @export
 length_test_linter <- function() {
   xpath <- glue::glue("
-  parent::expr
-    /following-sibling::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
+  following-sibling::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
     /parent::expr
   ")
 

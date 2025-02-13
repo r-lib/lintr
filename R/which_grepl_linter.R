@@ -23,7 +23,6 @@ which_grepl_linter <- make_linter_from_function_xpath(
   function_names = "grepl",
   xpath = "
   parent::expr
-    /parent::expr
     /parent::expr[expr/SYMBOL_FUNCTION_CALL[text() = 'which']]
   ",
   lint_message = "grep(pattern, x) is better than which(grepl(pattern, x))."

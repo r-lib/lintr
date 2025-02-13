@@ -37,8 +37,7 @@
 #' @export
 any_is_na_linter <- function() {
   any_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
+  following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
     /parent::expr[
       count(expr) = 2
       or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])

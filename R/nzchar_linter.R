@@ -78,7 +78,6 @@ nzchar_linter <- function() {
   # unsure allowNA compatible, so allow it just in case (see TODO in tests)
   nchar_xpath <- glue("
   parent::expr
-    /parent::expr
     /parent::expr[
       ({ xp_or(comparator_nodes) })
       and not(expr/SYMBOL_SUB[

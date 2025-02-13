@@ -32,13 +32,12 @@
 print_linter <- make_linter_from_function_xpath(
   function_names = "print",
   xpath = "
-    parent::expr
-      /parent::expr[expr[2][
-        STR_CONST
-        or expr/SYMBOL_FUNCTION_CALL[
-          text() = 'paste' or text() = 'paste0' or text() = 'sprintf'
-        ]
-      ]]
+    parent::expr[expr[2][
+      STR_CONST
+      or expr/SYMBOL_FUNCTION_CALL[
+        text() = 'paste' or text() = 'paste0' or text() = 'sprintf'
+      ]
+    ]]
   ",
   lint_message =
     "Use cat() instead of print() logging messages. Use message() in cases calling for a signalled condition."

@@ -87,12 +87,10 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     )
   }
   call_xpath <- glue("
-  parent::expr
-    /parent::expr[
-      not(EQ_SUB)
-      and ( {xp_or(zero_arg_cond, one_arg_cond)} )
-    ]
-  ")
+  parent::expr[
+    not(EQ_SUB)
+    and ( {xp_or(zero_arg_cond, one_arg_cond)} )
+  ]")
   num_args_xpath <- "count(./expr) - 1"
 
   Linter(linter_level = "expression", function(source_expression) {

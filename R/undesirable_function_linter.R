@@ -76,7 +76,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   if (symbol_is_undesirable) {
     symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(names(fun))}) and {xp_condition}]")
   }
-  xpath <- glue("self::SYMBOL_FUNCTION_CALL[{xp_condition}]")
+  xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition}]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
