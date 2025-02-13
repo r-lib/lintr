@@ -152,9 +152,9 @@ expect_lint_free <- function(...) {
 
 # Helper function to check if testthat is installed.
 require_testthat <- function() {
-  parent_call = sys.call(-1L)[[1L]]
+  parent_call <- sys.call(-1L)[[1L]]
   # supported: foo() or lintr::foo(). Undefined behavior otherwise.
-  name = as.character(if (is.name(parent_call)) parent_call else parent_call[[3L]])
+  name <- as.character(if (is.name(parent_call)) parent_call else parent_call[[3L]])
   if (!requireNamespace("testthat", quietly = TRUE)) {
     cli_abort(
       "{.fun {name}} is designed to work within the {.pkg testthat} testing framework, which could not be loaded."
