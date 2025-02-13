@@ -12,6 +12,8 @@
 
 ## New and improved features
 
+* `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
+
 ### Lint accuracy fixes: removing false positives
 
 * `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
