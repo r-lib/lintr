@@ -17,6 +17,7 @@
 ### Lint accuracy fixes: removing false positives
 
 * `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
+* `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
 
 ## Notes
 
