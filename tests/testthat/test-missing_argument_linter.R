@@ -12,9 +12,10 @@ test_that("missing_argument_linter skips allowed usages", {
 
   # always allow this missing usage
   expect_no_lint("foo()", linter)
-  # even if there's an intervening comment
+  # even if there's intervening comment(s)
   expect_no_lint("foo(#\n)", linter)
   expect_no_lint("foo(\n#\n)", linter)
+  expect_no_lint("foo(#\n#\n)", linter)
 
   expect_no_lint("test(a =, b =, c = 1, 0)", missing_argument_linter("test"))
 })
