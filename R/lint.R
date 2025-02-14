@@ -417,7 +417,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     line_number = as.integer(line_number),
     column_number = as.integer(column_number),
     type = type,
-    message = message, # nolint: undesirable_function_linter
+    message = message,
     line = line,
     ranges = ranges,
     linter = NA_character_
