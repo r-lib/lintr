@@ -2,7 +2,7 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
   linter <- unnecessary_nesting_linter()
 
   # parallel stops() and return()s are OK
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (A) {
         stop()
@@ -10,11 +10,10 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         stop()
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (A) {
         return()
@@ -22,14 +21,13 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         return()
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("Multiple if/else statements don't require unnesting", {
   # with further branches, reducing nesting might be less readable
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x == 'a') {
         stop()
@@ -39,26 +37,24 @@ test_that("Multiple if/else statements don't require unnesting", {
         stop()
       }
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
 
 test_that("else-less if statements don't lint", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x == 4) {
         msg <- 'failed'
         stop(msg)
       }
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
 
 test_that("non-terminal expressions are not considered for the logic", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x == 4) {
         x <- 5
@@ -67,13 +63,12 @@ test_that("non-terminal expressions are not considered for the logic", {
         return(x)
       }
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
 
 test_that("parallels in further nesting are skipped", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (length(bucket) > 1) {
         return(age)
@@ -86,7 +81,6 @@ test_that("parallels in further nesting are skipped", {
         }
       }
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
@@ -154,42 +148,39 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
   expect_lint(stop_warning_lines, lint_msg, linter)
 
   # Optionally consider 'warning' as an exit call --> no lint
-  expect_lint(stop_warning_lines, NULL, unnecessary_nesting_linter(branch_exit_calls = "warning"))
+  expect_no_lint(stop_warning_lines, unnecessary_nesting_linter(branch_exit_calls = "warning"))
 })
 
 test_that("unnecessary_nesting_linter skips one-line functions", {
   linter <- unnecessary_nesting_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         return(x)
       }
     "),
-    NULL,
     linter
   )
 
   # purrr anonymous functions also get skipped
-  expect_lint(
+  expect_no_lint(
     trim_some("
       purrr::map(x, ~ {
         .x
       })
     "),
-    NULL,
     linter
   )
 
   # ditto short-hand lambda
   skip_if_not_r_version("4.1.0")
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- \\(x) {
         return(x)
       }
     "),
-    NULL,
     linter
   )
 })
@@ -197,30 +188,28 @@ test_that("unnecessary_nesting_linter skips one-line functions", {
 test_that("unnecessary_nesting_linter skips one-expression for loops", {
   linter <- unnecessary_nesting_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       for (i in 1:10) {
         print(i)
       }
     "),
-    NULL,
     linter
   )
 
   # also for extended control flow functionality from packages
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foreach (i = 1:10) %dopar% {
         print(i)
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("unnecessary_nesting_linter skips one-expression if and else clauses", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (TRUE) {
         x
@@ -228,49 +217,45 @@ test_that("unnecessary_nesting_linter skips one-expression if and else clauses",
         y
       }
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
 
 test_that("unnecessary_nesting_linter skips one-expression while loops", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       while (x < 10) {
         x <- x + 1
       }
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
 
 test_that("unnecessary_nesting_linter skips one-expression repeat loops", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       repeat {
         x <- x + 1
       }
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
 
 test_that("unnecessary_nesting_linter skips one-expression assignments by default", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       {
         x <- foo()
       }
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
 
 test_that("unnecessary_nesting_linter passes for multi-line braced expressions", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       tryCatch(
         {
@@ -280,7 +265,6 @@ test_that("unnecessary_nesting_linter passes for multi-line braced expressions",
         error = identity
       )
     "),
-    NULL,
     unnecessary_nesting_linter()
   )
 })
@@ -288,61 +272,55 @@ test_that("unnecessary_nesting_linter passes for multi-line braced expressions",
 test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", {
   linter <- unnecessary_nesting_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       test_that('this works', {
         expect_true(TRUE)
       })
     "),
-    NULL,
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       DT[, {
         plot(x, y)
       }]
     "),
-    NULL,
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       DT[, x := {
         foo(x, y)
       }]
     "),
-    NULL,
     linter
   )
 
   # NB: styler would re-style these anyway
-  expect_lint(
+  expect_no_lint(
     trim_some("
       tryCatch({
         foo()
       }, error = identity)
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       DT[{
         n <- .N - 1
         x[n] < y[n]
       }, j = TRUE, by = x]
     "),
-    NULL,
     linter
   )
 })
 
 test_that("rlang's double-brace operator is skipped", {
-  expect_lint(
+  expect_no_lint(
     "rename(DF, col = {{ val }})",
-    NULL,
     unnecessary_nesting_linter()
   )
 })
@@ -404,17 +382,16 @@ test_that("lints vectorize", {
 test_that("unnecessary_nesting_linter skips allowed usages", {
   linter <- unnecessary_nesting_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x && y) {
         1L
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       for (x in 1:3) {
         if (x && y) {
@@ -422,11 +399,10 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         }
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x) {
         1L
@@ -434,11 +410,10 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         2L
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x) {
         1L
@@ -449,21 +424,19 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         }
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (if (x) TRUE else FALSE) {
         1L
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x) {
         y <- x + 1L
@@ -472,22 +445,20 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         }
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if ((x && y) || (if (x) TRUE else FALSE)) {
         1L
       }
     "),
-    NULL,
     linter
   )
 
   # if there is any additional code between the inner and outer scopes, no lint
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x && a) {
         y <- x + 1L
@@ -496,11 +467,23 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         }
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  # '=' operator also (which uses non-<expr> node), #2245
+  expect_no_lint(
+    trim_some("
+      if (x && a) {
+        y = x + 1L
+        if (y || b) {
+          1L
+        }
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
     trim_some("
       if (x) {
         if (y) {
@@ -509,11 +492,10 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         y <- x + 1L
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x) {
         y <- x + 1L
@@ -523,11 +505,10 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         y <- x
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x) {
         y <- x + 1L
@@ -538,11 +519,10 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         }
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x) {
         {
@@ -553,11 +533,10 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         }
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x) {
         {
@@ -568,11 +547,10 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         y <- x + 1L
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (x) {
         {
@@ -585,7 +563,6 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
         }
       }
     "),
-    NULL,
     linter
   )
 })
@@ -738,7 +715,7 @@ test_that("else that can drop braces is found", {
 
 patrick::with_parameters_test_that(
   "default allowed functions are skipped",
-  expect_lint(sprintf("%s(x, {y}, z)", call), NULL, unnecessary_nesting_linter()),
+  expect_no_lint(sprintf("%s(x, {y}, z)", call), unnecessary_nesting_linter()),
   call = c(
     "test_that", "with_parameters_test_that",
     "switch",
@@ -754,7 +731,7 @@ test_that("allow_functions= works", {
   linter_default <- unnecessary_nesting_linter()
   linter_foo <- unnecessary_nesting_linter(allow_functions = "foo")
   expect_lint("foo(x, {y}, z)", "Reduce the nesting of this statement", linter_default)
-  expect_lint("foo(x, {y}, z)", NULL, linter_foo)
-  expect_lint("test_that('a', {y})", NULL, linter_default)
-  expect_lint("that_that('b', {y})", NULL, linter_foo)
+  expect_no_lint("foo(x, {y}, z)", linter_foo)
+  expect_no_lint("test_that('a', {y})", linter_default)
+  expect_no_lint("that_that('b', {y})", linter_foo)
 })
