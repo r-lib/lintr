@@ -137,9 +137,6 @@ test_that("Warns if encoding is misspecified", {
 })
 
 test_that("Can extract line number from parser errors", {
-  skip_if_not_r_version("4.0.0")
-
-  # malformed raw string literal at line 2
   with_content_to_parse(
     trim_some('
       "ok"
@@ -151,7 +148,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # invalid \u{xxxx} sequence (line 3)
   with_content_to_parse(
     trim_some('
       ok
@@ -164,7 +160,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # invalid \u{xxxx} sequence (line 4)
   with_content_to_parse(
     trim_some('
       ok
@@ -178,7 +173,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # repeated formal argument 'a' on line 1
   with_content_to_parse("function(a, a) {}", {
     expect_identical(error$message, "Repeated formal argument 'a'.")
     expect_identical(error$line_number, 1L)

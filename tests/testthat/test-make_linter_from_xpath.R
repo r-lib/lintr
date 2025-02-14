@@ -21,12 +21,12 @@ test_that("input validation works", {
     fixed = TRUE
   )
 
-  err_msg <- if (getRversion() < "4.0.0") "is.character(xpath)" else "xpath should be a character string"
+  err_msg <- "xpath should be a character string"
   expect_error(make_linter_from_xpath(FALSE), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(letters), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(NA_character_), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(character()), err_msg, fixed = TRUE)
 
-  err_msg <- if (getRversion() < "4.0.0") "!missing(lint_message)" else "lint_message is required"
+  err_msg <- "lint_message is required"
   expect_error(make_linter_from_xpath(""), err_msg, fixed = TRUE)
 })
