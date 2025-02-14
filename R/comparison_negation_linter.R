@@ -80,7 +80,7 @@ comparison_negation_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = glue("Use x {inverse} y, not !(x {comparator_text} y)."),
+      lint_message = paste("Use x", inverse, "y, not !(x", comparator_text, "y)."),
       type = "warning"
     )
   })

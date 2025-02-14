@@ -120,7 +120,7 @@ filter_chunk_end_positions <- function(starts, ends) {
   if (length(bad_end_indexes) > 0L) {
     bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
     # This error message is formatted like a parse error; don't use {cli}
-    stop(sprintf( # nolint: undesirable_function_linter
+    stop(sprintf( # nolint: undesirable_function_call_linter.
       "<rmd>:%1$d:1: Missing chunk end for chunk (maybe starting at line %1$d).\n",
       bad_start_positions[1L]
     ), call. = FALSE)

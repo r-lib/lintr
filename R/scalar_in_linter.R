@@ -44,9 +44,9 @@ scalar_in_linter <- function(in_operators = NULL) {
 
     bad_expr <- xml_find_all(xml, xpath)
     in_op <- xml_find_chr(bad_expr, "string(SPECIAL)")
-    lint_msg <- glue(
-      "Use comparison operators (e.g. ==, !=, etc.) to match length-1 scalars instead of {in_op}. ",
-      "Note that comparison operators preserve NA where {in_op} does not."
+    lint_msg <- paste0(
+      "Use comparison operators (e.g. ==, !=, etc.) to match length-1 scalars instead of ", in_op, ". ",
+      "Note that comparison operators preserve NA where ", in_op, " does not."
     )
 
     xml_nodes_to_lints(

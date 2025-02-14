@@ -136,7 +136,7 @@ split_path <- function(dirs, prefix) {
 #' Simple wrapper around normalizePath to ensure forward slash on Windows
 #' https://github.com/r-lib/lintr/pull/2613
 #' @noRd
-# nolint next: undesirable_function_linter, object_name_linter.
+# nolint next: undesirable_function_name_linter, object_name_linter.
 normalize_path <- function(path, mustWork = NA) normalizePath(path = path, winslash = "/", mustWork = mustWork)
 
 #' @include utils.R
@@ -156,7 +156,7 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
             line_number = token[["line1"]],
             column_number = path_start,
             type = "warning",
-            message = message, # nolint: undesirable_function_linter
+            message = message,
             line = source_expression[["lines"]][[as.character(token[["line1"]])]],
             ranges = list(c(path_start, path_end))
           )

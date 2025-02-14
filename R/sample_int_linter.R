@@ -76,7 +76,7 @@ sample_int_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = glue("sample.int(n, m, ...) is preferable to sample({original}, m, ...)."),
+      lint_message = paste0("sample.int(n, m, ...) is preferable to sample(", original, ", m, ...)."),
       type = "warning"
     )
   })
