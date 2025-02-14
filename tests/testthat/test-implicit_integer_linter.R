@@ -96,8 +96,6 @@ local({
     left_is_double <- !endsWith(left, "L")
     right_is_double <- !endsWith(right, "L")
     n_lints <- (!allow_colon) * (left_is_double + right_is_double)
-    left_is_negative <- startsWith(left, "-")
-    right_is_negative <- startsWith(right, "-")
     make_rex <- function(s) rex::rex("Use ", s, "L or ", s, ".0")
     left_replacement <- vapply(left, make_rex, character(1L))
     right_replacement <- vapply(right, make_rex, character(1L))
