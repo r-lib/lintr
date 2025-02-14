@@ -21,7 +21,7 @@ linters: all_linters(
       c(
         message = "use cli::cli_inform()",
         warning = "use cli::cli_warn()",
-        stop = "use cli::cli_abort()",
+        stop = "use cli::cli_abort()"
       ),
       symbol_is_undesirable = FALSE
     ),
