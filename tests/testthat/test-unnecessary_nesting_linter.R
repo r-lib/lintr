@@ -470,6 +470,19 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
     linter
   )
 
+  # before _or_ after the inner if, #2245
+  expect_no_lint(
+    trim_some("
+      if (x && a) {
+        if (y || b) {
+          1L
+        }
+        y <- x + 1L
+      }
+    "),
+    linter
+  )
+
   expect_no_lint(
     trim_some("
       if (x) {
