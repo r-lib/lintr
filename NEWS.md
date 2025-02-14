@@ -16,7 +16,10 @@
 
 ### Lint accuracy fixes: removing false positives
 
-* `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
+* `unnecessary_nesting_linter()`:
+   + Treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
+   + Treats `=` assignment the same as `<-` when deciding to combine consecutive `if()` clauses (#2245, @MichaelChirico).
+
 
 ## Notes
 
