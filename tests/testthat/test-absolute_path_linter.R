@@ -140,11 +140,11 @@ test_that("returns the correct linting", {
     encodeString("blah\\file.txt")
   )
   for (path in non_absolute_path_strings) {
-    expect_lint(single_quote(path), NULL, linter)
-    expect_lint(double_quote(path), NULL, linter)
+    expect_no_lint(single_quote(path), linter)
+    expect_no_lint(double_quote(path), linter)
   }
 
-  expect_lint("\"'/'\"", NULL, linter) # nested quotes
+  expect_no_lint("\"'/'\"", linter) # nested quotes
 
   absolute_path_strings <- c(
     "/",
@@ -171,14 +171,13 @@ test_that("returns the correct linting", {
     "/as:df/bar"
   )
   for (path in unlikely_path_strings) {
-    expect_lint(single_quote(path), NULL, linter)
-    expect_lint(double_quote(path), NULL, linter)
+    expect_no_lint(single_quote(path), linter)
+    expect_no_lint(double_quote(path), linter)
   }
 })
 
 test_that("raw strings are handled correctly", {
-  skip_if_not_r_version("4.0.0")
-  expect_lint('R"(./blah)"', NULL, absolute_path_linter(lax = FALSE))
+  expect_no_lint('R"(./blah)"', absolute_path_linter(lax = FALSE))
   expect_lint(
     "R'--[/blah/file.txt]--'",
     rex::rex("Do not use absolute paths."),
