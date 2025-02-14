@@ -134,7 +134,7 @@ test_that("print.lints works", {
 
   tmp <- withr::local_tempfile()
   stopifnot(file.create(tmp))
-  expect_invisible(print(lint(tmp)))
+  expect_message(print(lint(tmp)), "No lints found")
 })
 
 test_that("split.lint works as intended", {
