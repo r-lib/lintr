@@ -117,7 +117,7 @@ test_that("lints vectorize", {
 })
 
 test_that("old name consecutive_stopifnot_linter() is funct", {
-  expect_warning(consecutive_stopifnot_linter(), "Use consecutive_assertion_linter instead", fixed = TRUE)
+  expect_error(consecutive_stopifnot_linter(), "Use consecutive_assertion_linter instead", fixed = TRUE)
 })
 
 test_that("interceding = assignments aren't linted", {
