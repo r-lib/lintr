@@ -167,17 +167,17 @@ rd_linters <- function(tag_name) {
   linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
-    return(paste0("There are not currently any linters tagged with '", tag_name, "'."))
+    body <- paste0("There are not currently any linters tagged with '", tag_name, "'.")
+  } else {
+    body <- c(
+      paste0("The following linters are tagged with '", tag_name, "':"),
+      "\\itemize{",
+      paste0("  \\item{\\code{\\link{", tagged, "}}}"),
+      "}",
+    )
   }
 
-  c(
-    "\\section{Linters}{",
-    paste0("The following linters are tagged with '", tag_name, "':"),
-    "\\itemize{",
-    paste0("\\item{\\code{\\link{", tagged, "}}}"),
-    "}", # itemize
-    "}" # section
-  )
+  c("\\section{Linters}{", body, "}")
 }
 
 #' Generate Rd fragment for the main help page, listing all tags
