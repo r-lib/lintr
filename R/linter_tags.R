@@ -172,7 +172,7 @@ rd_linters <- function(tag_name) {
     section_body <- c(
       paste0("The following linters are tagged with '", tag_name, "':"),
       "\\itemize{",
-      paste0("  \\item{\\code{\\link{", tagged, "}}}"),
+      paste0("\\item{\\code{\\link{", tagged, "}}}"),
       "}"
     )
   }

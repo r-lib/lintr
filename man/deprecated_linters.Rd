@@ -10,4 +10,6 @@ These linters will be excluded from \code{\link[=linters_with_tags]{linters_with
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
+\section{Linters}{
 There are not currently any linters tagged with 'deprecated'.
+}
