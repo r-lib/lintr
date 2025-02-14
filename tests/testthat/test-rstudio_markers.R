@@ -114,5 +114,5 @@ test_that("rstudio_source_markers apply to print within rstudio", {
   expect_output(print(l), "matched", fixed = TRUE)
 
   l <- lint(empty, seq_linter())
-  expect_output(print(l), "matched", fixed = TRUE)
+  expect_message(expect_output(print(l), "matched", fixed = TRUE), "No lints found")
 })
