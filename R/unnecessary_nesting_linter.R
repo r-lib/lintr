@@ -206,6 +206,7 @@ unnecessary_nesting_linter <- function(
       count(expr) = 1
       and not(preceding-sibling::*[
         self::FUNCTION
+        or self::OP-LAMBDA
         or self::FOR
         or self::IF
         or self::WHILE
