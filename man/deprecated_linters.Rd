@@ -11,11 +11,5 @@ These linters will be excluded from \code{\link[=linters_with_tags]{linters_with
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Linters}{
-The following linters are tagged with 'deprecated':
-\itemize{
-\item{\code{\link{consecutive_stopifnot_linter}}}
-\item{\code{\link{no_tab_linter}}}
-\item{\code{\link{single_quotes_linter}}}
-\item{\code{\link{unneeded_concatenation_linter}}}
-}
+There are not currently any linters tagged with 'deprecated'.
 }
