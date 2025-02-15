@@ -57,9 +57,9 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ids_with_token</span><span class="op">(</span><span class="va">source_expression</span>, <span class="va">value</span>, fun <span class="op">=</span> <span class="va">`==`</span>, source_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ids_with_token</span><span class="op">(</span><span class="va">source_expression</span>, <span class="va">value</span>, fun <span class="op">=</span> <span class="va">`==`</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">with_id</span><span class="op">(</span><span class="va">source_expression</span>, <span class="va">id</span>, <span class="va">source_file</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">with_id</span><span class="op">(</span><span class="va">source_expression</span>, <span class="va">id</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -84,10 +84,6 @@ For example:</p><ul><li><p>"SYMBOL"</p></li>
 <dt id="arg-fun">fun<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
 <dd><p>For additional flexibility, a function to search for in
 the <code>token</code> column of <code>parsed_content</code>. Typically <code>==</code> or <code>%in%</code>.</p></dd>
-
-
-<dt id="arg-source-file">source_file<a class="anchor" aria-label="anchor" href="#arg-source-file"></a></dt>
-<dd><p>(DEPRECATED) Same as <code>source_expression</code>. Will be removed.</p></dd>
 
 
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
