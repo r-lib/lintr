@@ -2,6 +2,7 @@
 
 ## Deprecations & breaking changes
 
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now defunct.
 * Two linters marked as deprecated with warning in the previous release are now fully deprecated: `extraction_operator_linter()` and `unnecessary_nested_if_linter()`. They will be removed in the next release.
 * As previously announced, the following fully-deprecated items are now removed from the package:
    + `source_file=` argument to `ids_with_token()` and `with_id()`.
@@ -9,6 +10,19 @@
    + `linter=` argument of `Lint()`.
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+
+## New and improved features
+
+* `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
+
+### Lint accuracy fixes: removing false positives
+
+* `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
+* `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
+
+## Notes
+
+* `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
 
 # lintr 3.2.0
 
