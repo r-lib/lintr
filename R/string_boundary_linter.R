@@ -109,7 +109,8 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     }
     search_start <- 1L + initial_anchor
     search_end <- nchar(patterns) - terminal_anchor
-    can_replace <- is_not_regex(substr(patterns, search_start, search_end))
+    can_replace <- (initial_anchor | terminal_anchor) &
+      is_not_regex(substr(patterns, search_start, search_end))
     initial_anchor <- initial_anchor[can_replace]
     terminal_anchor <- terminal_anchor[can_replace]
 

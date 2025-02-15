@@ -155,6 +155,8 @@ test_that("whole-string regex recommends ==, not {starts,ends}With()", {
 })
 
 test_that("vectorization + metadata work as intended", {
+  linter <- string_boundary_linter()
+
   expect_lint(
     trim_some("{
       substring(a, 1, 3) == 'abc'
@@ -180,6 +182,16 @@ test_that("vectorization + metadata work as intended", {
       list("endsWith", line_number = 10L),
       list("==", line_number = 11L)
     ),
-    string_boundary_linter()
+    linter
+  )
+
+  # some but not all anchor-esque as in #2636
+  expect_lint(
+    trim_some(R"[{
+      grepl("\\^", x)
+      grepl("^abc", x)
+    }]"),
+    list("startsWith", line_number = 3L),
+    linter
   )
 })
