@@ -98,9 +98,15 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
   get_regex_lint_data <- function(xml, xpath) {
     expr <- xml_find_all(xml, xpath)
+    if (length(expr) == 0L) {
+      return(NULL)
+    }
     patterns <- get_r_string(expr)
     initial_anchor <- startsWith(patterns, "^")
     terminal_anchor <- endsWith(patterns, "$")
+    if (!any(initial_anchor) && !any(terminal_anchor)) {
+      return(NULL)
+    }
     search_start <- 1L + initial_anchor
     search_end <- nchar(patterns) - terminal_anchor
     can_replace <- is_not_regex(substr(patterns, search_start, search_end))
@@ -157,14 +163,16 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
     if (!allow_grepl) {
       grepl_lint_data <- get_regex_lint_data(source_expression$xml_find_function_calls("grepl"), grepl_xpath)
-      grepl_lint_message <- grepl_message_map[grepl_lint_data$lint_type]
+      if (length(grepl_lint_data) > 0L) {
+        grepl_lint_message <- grepl_message_map[grepl_lint_data$lint_type]
 
-      lints <- c(lints, xml_nodes_to_lints(
-        grepl_lint_data$lint_expr,
-        source_expression = source_expression,
-        lint_message = paste(grepl_lint_message, "Doing so is more readable and more efficient."),
-        type = "warning"
-      ))
+        lints <- c(lints, xml_nodes_to_lints(
+          grepl_lint_data$lint_expr,
+          source_expression = source_expression,
+          lint_message = paste(grepl_lint_message, "Doing so is more readable and more efficient."),
+          type = "warning"
+        ))
+      }
     }
 
     substr_expr <- xml_find_all(xml, substr_xpath)
