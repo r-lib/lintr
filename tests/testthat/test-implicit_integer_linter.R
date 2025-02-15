@@ -85,22 +85,29 @@ test_that("linter returns the correct linting", {
 })
 
 skip_if_not_installed("tibble")
-patrick::with_parameters_test_that(
-  "numbers in a:b input are optionally not linted",
-  expect_lint(
-    paste0(left, ":", right),
-    if (n_lints > 0L) rep(list(rex::rex("Use 1L or 1.0")), n_lints),
-    implicit_integer_linter(allow_colon = allow_colon)
-  ),
-  .cases = tibble::tribble(
-    ~left,  ~right, ~n_lints, ~allow_colon, ~.test_name,
-    "1",    "1",    2L,       FALSE,        "1:1, !allow_colon",
-    "1",    "1",    0L,       TRUE,         "1:1, allow_colon",
-    "1",    "1L",   1L,       FALSE,        "1:1L, !allow_colon",
-    "1",    "1L",   0L,       TRUE,         "1:1L, allow_colon",
-    "1L",   "1",    1L,       FALSE,        "1L:1, !allow_colon",
-    "1L",   "1",    0L,       TRUE,         "1L:1, allow_colon",
-    "1L",   "1L",   0L,       FALSE,        "1L:1L, !allow_colon",
-    "1L",   "1L",   0L,       TRUE,         "1L:1L, allow_colon"
+local({
+  .cases <- expand.grid(
+    left = c("1", "-1", "1L", "-1L"),
+    right = c("1", "-1", "1L", "-1L"),
+    allow_colon = c(FALSE, TRUE),
+    stringsAsFactors = FALSE
   )
-)
+  .cases <- within(.cases, {
+    left_is_double <- !endsWith(left, "L")
+    right_is_double <- !endsWith(right, "L")
+    n_lints <- (!allow_colon) * (left_is_double + right_is_double)
+    make_rex <- function(s) rex::rex("Use ", s, "L or ", s, ".0")
+    left_replacement <- vapply(left, make_rex, character(1L))
+    right_replacement <- vapply(right, make_rex, character(1L))
+    rm(make_rex)
+  })
+  patrick::with_parameters_test_that(
+    "Under allow_colon={allow_colon}, {left}:{right} throws {n_lints} lints",
+    expect_lint(
+      paste0(left, ":", right),
+      if (n_lints > 0L) c(if (left_is_double) list(left_replacement), if (right_is_double) list(right_replacement)),
+      implicit_integer_linter(allow_colon = allow_colon)
+    ),
+    .cases = .cases
+  )
+})
