@@ -5,11 +5,20 @@
 \title{Avoid implicit assignment in function calls}
 \usage{
 implicit_assignment_linter(
-  except = c("bquote", "expression", "expr", "quo", "quos", "quote")
+  except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+  allow_lazy = FALSE,
+  allow_scoped = FALSE
 )
 }
 \arguments{
 \item{except}{A character vector of functions to be excluded from linting.}
+
+\item{allow_lazy}{logical, default \code{FALSE}. If \code{TRUE}, assignments that only
+trigger conditionally (e.g. in the RHS of \code{&&} or \code{||} expressions) are skipped.}
+
+\item{allow_scoped}{Logical, default \code{FALSE}. If \code{TRUE}, "scoped assignments",
+where the object is assigned in the statement beginning a branch and used only
+within that branch, are skipped.}
 }
 \description{
 Assigning inside function calls makes the code difficult to read, and should
@@ -28,16 +37,34 @@ lint(
 )
 
 # okay
-writeLines("x <- 1L\nif (x) TRUE")
+lines <- "x <- 1L\nif (x) TRUE"
+writeLines(lines)
 lint(
-  text = "x <- 1L\nif (x) TRUE",
+  text = lines,
   linters = implicit_assignment_linter()
 )
 
-writeLines("x <- 1:4\nmean(x)")
+lines <- "x <- 1:4\nmean(x)"
+writeLines(lines)
 lint(
-  text = "x <- 1:4\nmean(x)",
+  text = lines,
   linters = implicit_assignment_linter()
+)
+
+lint(
+  text = "A && (B <- foo(A))",
+  linters = implicit_assignment_linter(allow_lazy = TRUE)
+)
+
+lines <- c(
+  "if (any(idx <- x < 0)) {",
+  "  stop('negative elements: ', toString(which(idx)))",
+  "}"
+)
+writeLines(lines)
+lint(
+  text = lines,
+  linters = implicit_assignment_linter(allow_scoped = TRUE)
 )
 
 }

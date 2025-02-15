@@ -4,10 +4,11 @@
 #' `1:NROW(...)` and `1:NCOL(...)` expressions in base-R, or their usage in
 #' conjunction with `seq()` (e.g., `seq(length(...))`, `seq(nrow(...))`, etc.).
 #'
-#' Additionally, it checks for `1:n()` (from dplyr) and `1:.N` (from data.table).
+#' Additionally, it checks for `1:n()` (from `{dplyr}`) and `1:.N` (from `{data.table}`).
 #'
 #' These often cause bugs when the right-hand side is zero.
-#' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
+#' Instead, it is safer to use [base::seq_len()] (to create a sequence of a specified *length*) or
+#'   [base::seq_along()] (to create a sequence *along* an object).
 #'
 #' @examples
 #' # will produce lints
@@ -49,14 +50,12 @@ seq_linter <- function() {
   bad_funcs <- xp_text_in_table(c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim"))
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
-  seq_xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'seq']
-    /parent::expr
-    /following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
+  seq_xpath <- glue("
+  following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
     /parent::expr[count(expr) = 2]
   ")
   # `.N` from {data.table} is special since it's not a function but a symbol
-  colon_xpath <- glue::glue("
+  colon_xpath <- glue("
   //OP-COLON
     /parent::expr[
       expr[NUM_CONST[text() = '1' or text() = '1L']]
@@ -67,12 +66,10 @@ seq_linter <- function() {
     ]
   ")
 
-  xpath <- paste(seq_xpath, "|", colon_xpath)
-
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1
   get_fun <- function(expr, n) {
-    funcall <- xml2::xml_find_chr(expr, sprintf("string(./expr[%d])", n))
+    funcall <- xml_find_chr(expr, sprintf("string(./expr[%d])", n))
 
     # `dplyr::n()` is special because it has no arguments, so the lint message
     # should mention `n()`, and not `n(...)`
@@ -86,32 +83,33 @@ seq_linter <- function() {
     fun
   }
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    seq_calls <- source_expression$xml_find_function_calls("seq")
 
-    badx <- xml2::xml_find_all(xml, xpath)
+    badx <- combine_nodesets(
+      xml_find_all(seq_calls, seq_xpath),
+      xml_find_all(xml, colon_xpath)
+    )
 
-    # TODO: better message customization. For example, length(x):1
-    #   would get rev(seq_along(x)) as the preferred replacement.
     dot_expr1 <- get_fun(badx, 1L)
     dot_expr2 <- get_fun(badx, 2L)
     seq_along_idx <- grepl("length(", dot_expr1, fixed = TRUE) | grepl("length(", dot_expr2, fixed = TRUE)
-    replacement <- ifelse(seq_along_idx, "seq_along", "seq_len")
+    rev_idx <- startsWith(dot_expr2, "1")
 
-    dot_expr3 <- ifelse(seq_along_idx, "...", dot_expr2)
+    replacement <- rep("seq_along(...)", length(badx))
+    replacement[!seq_along_idx] <- paste0("seq_len(", ifelse(rev_idx, dot_expr1, dot_expr2)[!seq_along_idx], ")")
+    replacement[rev_idx] <- paste0("rev(", replacement[rev_idx], ")")
+
     lint_message <- ifelse(
       grepl("seq", dot_expr1, fixed = TRUE),
       sprintf(
-        "%s(%s) is likely to be wrong in the empty edge case. Use %s(%s) instead.",
-        dot_expr1, dot_expr2, replacement, dot_expr3
+        "Use %s instead of %s(%s), which is likely to be wrong in the empty edge case.",
+        replacement, dot_expr1, dot_expr2
       ),
       sprintf(
-        "%s:%s is likely to be wrong in the empty edge case. Use %s(%s) instead.",
-        dot_expr1, dot_expr2, replacement, dot_expr3
+        "Use %s instead of %s:%s, which is likely to be wrong in the empty edge case.",
+        replacement, dot_expr1, dot_expr2
       )
     )
 

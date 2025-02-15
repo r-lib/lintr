@@ -30,9 +30,9 @@
 #' @evalRd rd_tags("empty_assignment_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-empty_assignment_linter <- function() {
+empty_assignment_linter <- make_linter_from_xpath(
   # for some reason, the parent in the `=` case is <equal_assign>, not <expr>, hence parent::expr
-  xpath <- "
+  xpath = "
   //OP-LEFT-BRACE[following-sibling::*[1][self::OP-RIGHT-BRACE]]
     /parent::expr[
       preceding-sibling::LEFT_ASSIGN
@@ -40,23 +40,6 @@ empty_assignment_linter <- function() {
       or following-sibling::RIGHT_ASSIGN
     ]
     /parent::*
-  "
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
-
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message =
-        "Assign NULL explicitly or, whenever possible, allocate the empty object with the right type and size.",
-      type = "warning"
-    )
-  })
-}
+  ",
+  lint_message = "Assign NULL explicitly or, whenever possible, allocate the empty object with the right type and size."
+)

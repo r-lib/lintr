@@ -9,9 +9,53 @@
 #'      is exacerbated for nested calls
 #'
 #' Users can instead rely on a more readable alternative modeled after SQL
-#'   CASE WHEN statements, such as `data.table::fcase()` or `dplyr::case_when()`,
-#'   or use a look-up-and-merge approach (build a mapping table between values
-#'   and outputs and merge this to the input).
+#'   CASE WHEN statements.
+#'
+#' Let's say this is our original code:
+#'
+#' ```r
+#' ifelse(
+#'   x == "a",
+#'   2L,
+#'   ifelse(x == "b", 3L, 1L)
+#' )
+#' ```
+#'
+#' Here are a few ways to avoid nesting and make the code more readable:
+#'
+#'   - Use `data.table::fcase()`
+#'
+#'     ```r
+#'     data.table::fcase(
+#'       x == "a", 2L,
+#'       x == "b", 3L,
+#'       default = 1L
+#'     )
+#'     ```
+#'
+#'   - Use `dplyr::case_match()`
+#'
+#'     ```r
+#'     dplyr::case_match(
+#'       x,
+#'       "a" ~ 2L,
+#'       "b" ~ 3L,
+#'       .default = 1L
+#'     )
+#'     ```
+#'
+#'   - Use a look-up-and-merge approach (build a mapping table between values
+#'     and outputs and merge this to the input)
+#'
+#'     ```r
+#'     default <- 1L
+#'     values <- data.frame(
+#'       a = 2L,
+#'       b = 3L
+#'     )
+#'     found_value <- values[[x]]
+#'     ifelse(is.null(found_value), default, found_value)
+#'     ```
 #'
 #' @examples
 #' # will produce lints
@@ -36,20 +80,14 @@
 #' @export
 nested_ifelse_linter <- function() {
   # NB: land on the nested (inner) call, not the outer call, and throw a lint with the inner call's name
-  xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)}]
-    /parent::expr
-    /following-sibling::expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
-  ")
+  xpath <- glue("
+  following-sibling::expr[
+    expr[1]/SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+  ]")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls(ifelse_funs)
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
     lint_message <- paste(
@@ -59,7 +97,3 @@ nested_ifelse_linter <- function() {
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
   })
 }
-
-# functions equivalent to base::ifelse() for linting purposes
-# NB: this is re-used elsewhere, e.g. in ifelse_censor_linter
-ifelse_funs <- c("ifelse", "if_else", "fifelse")

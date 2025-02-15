@@ -18,6 +18,8 @@ You can configure `lintr` to run as part of continuous integration (either for a
 
 ## For packages
 
+First, take special note of the proviso in `?executing_linters` about the need to have your package and its dependencies installed or loaded (e.g. with `pkgload::load_all()`) in order for certain linters (e.g. `object_usage_linter()`) to function as intended.
+
 ### GitHub Actions
 
 If your package is on GitHub, the easiest way to do this is with GitHub Actions.
@@ -48,27 +50,6 @@ Note that this will kill the R process in case of a lint.
 
 If your project is in a subdirectory and you would like to use GitHub Actions annotations, you can set
 `options(lintr.github_annotation_project_dir = "path/to/project")` which will make sure that the annotations point to the correct paths.
-
-### Travis CI
-
-If you want to run `lintr` on [Travis-CI](https://www.travis-ci.com/), you will need to have Travis install the package first.
-This can be done by adding the following line to your `.travis.yml`
-
-``` yaml
-r_github_packages:
-  - r-lib/lintr
-```
-
-We recommend running `lintr::lint_package()` as an after_success step in your build process:
-
-``` yaml
-after_success:
-  - R CMD INSTALL $PKG_TARBALL
-  - Rscript -e 'lintr::lint_package()'
-```
-
-If lints are found in the commit or pull request they will be printed on Travis-CI.
-The environment variable `LINTR_ERROR_ON_LINT` mentioned for GitHub actions also works with Travis CI builds.
 
 ## For projects
 

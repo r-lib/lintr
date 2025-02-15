@@ -53,35 +53,31 @@ pipe_continuation_linter <- function() {
   # Where a single-line pipeline is nested inside a larger expression
   #   e.g. inside a function definition), the outer expression can span multiple lines
   #   without throwing a lint.
-
-  pipe_conditions <- "
+  pipe_node <- glue("SPECIAL[{ xp_text_in_table(magrittr_pipes) }]")
+  preceding_pipe <- glue("preceding-sibling::expr[1]/descendant::*[self::{pipe_node} or self::PIPE]")
+  xpath <- glue("
+  (//PIPE | //{pipe_node})[
     parent::expr[@line1 < @line2]
-    and preceding-sibling::expr/descendant-or-self::*[self::SPECIAL[text() = '%>%'] or self::PIPE]
+    and {preceding_pipe}
     and (
-      preceding-sibling::expr/descendant-or-self::expr/@line2
-      = following-sibling::expr/descendant-or-self::expr/@line1
-      or @line1 = preceding-sibling::expr/descendant-or-self::*[self::SPECIAL[text() = '%>%'] or self::PIPE]/@line1
+      preceding-sibling::expr[1]/descendant-or-self::expr/@line2
+      = following-sibling::expr[1]/descendant-or-self::expr/@line1
+      or @line1 = {preceding_pipe}/@line1
     )
-  "
-  xpath <- glue::glue("
-  //SPECIAL[text() = '%>%' and {pipe_conditions} ]
-  | //PIPE[ {pipe_conditions} ]
+  ]
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    pipe_exprs <- xml2::xml_find_all(xml, xpath)
-    pipe_text <- ifelse(xml2::xml_name(pipe_exprs) == "PIPE", "|>", "%>%")
+    pipe_exprs <- xml_find_all(xml, xpath)
+    pipe_text <- xml_text(pipe_exprs)
 
     xml_nodes_to_lints(
       pipe_exprs,
       source_expression = source_expression,
       lint_message = sprintf(
-        "`%s` should always have a space before it and a new line after it, unless the full pipeline fits on one line.",
+        "Put a space before `%s` and a new line after it, unless the full pipeline fits on one line.",
         pipe_text
       ),
       type = "style"

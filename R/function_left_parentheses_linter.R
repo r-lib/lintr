@@ -41,37 +41,57 @@
 #' - [spaces_left_parentheses_linter()]
 #' @export
 function_left_parentheses_linter <- function() { # nolint: object_length.
-  xpath_fmt <- "//FUNCTION[ {cond} ] | //SYMBOL_FUNCTION_CALL/parent::expr[ {cond} ]"
-  bad_line_cond <- "@line1 != following-sibling::OP-LEFT-PAREN/@line1"
-  bad_col_cond <- xp_and(
-    "@line1 = following-sibling::OP-LEFT-PAREN/@line1",
-    "@col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1"
-  )
-  bad_line_xpath <- glue::glue(xpath_fmt, cond = bad_line_cond)
-  bad_col_xpath <- glue::glue(xpath_fmt, cond = bad_col_cond)
+  # NB: attach to SYMBOL_FUNCTION_CALL instead of SYMBOL_FUNCTION_CALL/parent::expr because
+  #   the latter might be associated with a different line, e.g. in the case of a
+  #   complicated call to an "extracted" function (see #1963). This mistake was made earlier
+  #   because it allows the xpath to be the same for both FUNCTION and SYMBOL_FUNCTION_CALL.
+  #   Further, write 4 separate XPaths because the 'range_end_xpath' differs for these two nodes.
+  bad_line_fun_xpath <- "(//FUNCTION | //OP-LAMBDA)[@line1 != following-sibling::OP-LEFT-PAREN/@line1]"
+  bad_line_call_xpath <- "//SYMBOL_FUNCTION_CALL[@line1 != parent::expr/following-sibling::OP-LEFT-PAREN/@line1]"
+  bad_col_fun_xpath <- "(//FUNCTION | //OP-LAMBDA)[
+    @line1 = following-sibling::OP-LEFT-PAREN/@line1
+    and @col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1
+  ]"
+  bad_col_call_xpath <- "//SYMBOL_FUNCTION_CALL[
+    @line1 = parent::expr/following-sibling::OP-LEFT-PAREN/@line1
+    and @col2 != parent::expr/following-sibling::OP-LEFT-PAREN/@col1 - 1
+  ]"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_line_exprs <- xml2::xml_find_all(xml, bad_line_xpath)
-    bad_line_lints <- xml_nodes_to_lints(
-      bad_line_exprs,
+    bad_line_fun_exprs <- xml_find_all(xml, bad_line_fun_xpath)
+    bad_line_fun_lints <- xml_nodes_to_lints(
+      bad_line_fun_exprs,
+      source_expression = source_expression,
+      lint_message = "Left parenthesis should be on the same line as the 'function' symbol."
+    )
+
+    bad_line_call_exprs <- xml_find_all(xml, bad_line_call_xpath)
+    bad_line_call_lints <- xml_nodes_to_lints(
+      bad_line_call_exprs,
       source_expression = source_expression,
       lint_message = "Left parenthesis should be on the same line as the function's symbol."
     )
 
-    bad_col_exprs <- xml2::xml_find_all(xml, bad_col_xpath)
-    bad_col_lints <- xml_nodes_to_lints(
-      bad_col_exprs,
+    bad_col_fun_exprs <- xml_find_all(xml, bad_col_fun_xpath)
+    bad_col_fun_lints <- xml_nodes_to_lints(
+      bad_col_fun_exprs,
       source_expression = source_expression,
-      lint_message = "Remove spaces before the left parenthesis in a function call.",
-      range_start_xpath = "number(./@col2 + 1)", # start after function / fun
+      lint_message = "Remove spaces before the left parenthesis in a function definition.",
+      range_start_xpath = "number(./@col2 + 1)", # start after function
       range_end_xpath = "number(./following-sibling::OP-LEFT-PAREN/@col1 - 1)" # end before (
     )
-    c(bad_line_lints, bad_col_lints)
+
+    bad_col_call_exprs <- xml_find_all(xml, bad_col_call_xpath)
+    bad_col_call_lints <- xml_nodes_to_lints(
+      bad_col_call_exprs,
+      source_expression = source_expression,
+      lint_message = "Remove spaces before the left parenthesis in a function call.",
+      range_start_xpath = "number(./@col2 + 1)", # start after call name
+      range_end_xpath = "number(./parent::expr/following-sibling::OP-LEFT-PAREN/@col1 - 1)" # end before (
+    )
+
+    c(bad_line_fun_lints, bad_line_call_lints, bad_col_fun_lints, bad_col_call_lints)
   })
 }

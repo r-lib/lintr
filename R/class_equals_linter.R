@@ -35,28 +35,22 @@
 #' @export
 class_equals_linter <- function() {
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'class']
-    /parent::expr
-    /parent::expr
+  parent::expr
     /parent::expr[
       not(preceding-sibling::OP-LEFT-BRACKET)
       and (EQ or NE or SPECIAL[text() = '%in%'])
     ]
   "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls("class")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
-
-    operator <- xml2::xml_find_chr(bad_expr, "string(*[2])")
-    lint_message <- sprintf(
-      "Instead of comparing class(x) with %s, use inherits(x, 'class-name') or is.<class> or is(x, 'class')",
-      operator
+    operator <- xml_find_chr(bad_expr, "string(*[2])")
+    lint_message <- paste0(
+      "Use inherits(x, 'class-name'), is.<class> for S3 classes, ",
+      "or is(x, 'S4Class') for S4 classes, ",
+      "instead of comparing class(x) with ", operator, "."
     )
     xml_nodes_to_lints(
       bad_expr,

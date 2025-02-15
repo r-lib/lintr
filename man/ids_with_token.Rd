@@ -48,9 +48,11 @@ conjunction with \code{ids_with_token} to iterate over rows containing desired t
 
 }}
 \examples{
-tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+tmp <- tempfile()
+writeLines(c("x <- 1", "y <- x + 1"), tmp)
 source_exprs <- get_source_expressions(tmp)
 ids_with_token(source_exprs$expressions[[1L]], value = "SYMBOL")
 with_id(source_exprs$expressions[[1L]], 2L)
+unlink(tmp)
 
 }

@@ -10,38 +10,47 @@
 #'   "@details",
 #'   "Exclusions can be specified in three different ways.",
 #'   "",
-#'   "1. single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.",
+#'   "1. Single line in the source file. default: `# nolint`, possibly followed by a listing of linters to exclude.",
 #'   "   If the listing is missing, all linters are excluded on that line. The default listing format is",
 #'   paste(
 #'     "   `#",
 #'     "nolint: linter_name, linter2_name.`. There may not be anything between the colon and the line exclusion tag"
 #'   ),
 #'   "   and the listing must be terminated with a full stop (`.`) for the linter list to be respected.",
-#'   "2. line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
+#'   "2. Line range in the source file. default: `# nolint start`, `# nolint end`. `# nolint start` accepts linter",
 #'   "   lists in the same form as `# nolint`.",
-#'   "3. exclusions parameter, a named list of files with named lists of linters and lines to exclude them on, a named",
-#'   "   list of the files and lines to exclude, or just the filenames if you want to exclude the entire file, or the",
-#'   "   directory names if you want to exclude all files in a directory."
+#'   "3. Exclusions parameter, a list with named and/or unnamed entries. ",
+#'   "   Outer elements have the following characteristics:",
+#'   "   1. Unnamed elements specify filenames or directories.",
+#'   "   2. Named elements are a vector or list of line numbers, with `Inf` indicating 'all lines'.",
+#'   "      The name gives a path relative to the config.",
+#'   "      1. Unnamed elements denote exclusion of all linters in the given path or directory.",
+#'   "      2. Named elements, where the name specifies a linter, denote exclusion for that linter.",
+#'   "   For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.",
+#'   "   a character vector of files to exclude or a vector of lines to exclude.",
+#'   NULL
 #' )
+#'
+#' @keywords internal
 exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL, ...) {
   if (length(lints) <= 0L) {
     return(lints)
   }
 
-  df <- as.data.frame(lints)
+  lint_df <- as.data.frame(lints)
 
-  filenames <- unique(df$filename)
+  filenames <- unique(lint_df$filename)
   source_exclusions <- lapply(filenames, parse_exclusions, linter_names = linter_names, ...)
   names(source_exclusions) <- filenames
 
 
   exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
   to_exclude <- vapply(
-    seq_len(nrow(df)),
+    seq_len(nrow(lint_df)),
     function(i) {
-      file <- df$filename[i]
-      file %in% names(exclusions) &&
-        is_excluded(df$line_number[i], df$linter[i], exclusions[[file]])
+      filename <- lint_df$filename[i]
+      filename %in% names(exclusions) &&
+        is_excluded(lint_df$line_number[i], lint_df$linter[i], exclusions[[filename]])
     },
     logical(1L)
   )
@@ -82,17 +91,21 @@ line_info <- function(line_numbers, type = c("start", "end")) {
 #' read a source file and parse all the excluded lines from it
 #'
 #' @param file R source file
-#' @param exclude regular expression used to mark lines to exclude
-#' @param exclude_start regular expression used to mark the start of an excluded range
-#' @param exclude_end regular expression used to mark the end of an excluded range
-#' @param exclude_linter regular expression used to capture a list of to-be-excluded linters immediately following a
+#' @param exclude Regular expression used to mark lines to exclude.
+#' @param exclude_next Regular expression used to mark lines immediately preceding excluded lines.
+#' @param exclude_start Regular expression used to mark the start of an excluded range.
+#' @param exclude_end Regular expression used to mark the end of an excluded range.
+#' @param exclude_linter Regular expression used to capture a list of to-be-excluded linters immediately following a
 #' `exclude` or `exclude_start` marker.
-#' @param exclude_linter_sep regular expression used to split a linter list into individual linter names for exclusion.
-#' @param lines a character vector of the content lines of `file`
-#' @param linter_names Names of active linters
+#' @param exclude_linter_sep Regular expression used to split a linter list into individual linter names for exclusion.
+#' @param lines A character vector of the content lines of `file`.
+#' @param linter_names Names of active linters.
 #'
 #' @return A possibly named list of excluded lines, possibly for specific linters.
-parse_exclusions <- function(file, exclude = settings$exclude,
+#' @keywords internal
+parse_exclusions <- function(file,
+                             exclude = settings$exclude,
+                             exclude_next = settings$exclude_next,
                              exclude_start = settings$exclude_start,
                              exclude_end = settings$exclude_end,
                              exclude_linter = settings$exclude_linter,
@@ -110,41 +123,56 @@ parse_exclusions <- function(file, exclude = settings$exclude,
     return(list())
   }
 
-  start_locations <- rex::re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
-  end_locations <- rex::re_matches(lines, exclude_end, locations = TRUE)[, "start"]
+  start_locations <- re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
+  end_locations <- re_matches(lines, exclude_end, locations = TRUE)[, "start"]
   starts <- which(!is.na(start_locations))
   ends <- which(!is.na(end_locations))
 
   if (length(starts) > 0L) {
     if (length(starts) != length(ends)) {
-      starts_msg <- line_info(starts, type = "start")
-      ends_msg <- line_info(ends, type = "end")
-      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!")
+      starts_msg <- line_info(starts, type = "start") # nolint: object_usage_linter. TODO(#2252).
+      ends_msg <- line_info(ends, type = "end") # nolint: object_usage_linter. TODO(#2252).
+      cli_abort(c(
+        i = "Equal number of line starts and ends expected for exclusion from linting.",
+        x = "{.file {file}} has {.strong {starts_msg}} and {.strong {ends_msg}}."
+      ))
     }
 
     for (i in seq_along(starts)) {
       excluded_lines <- seq(starts[i], ends[i])
       linters_string <- substring(lines[starts[i]], start_locations[starts[i]])
-      linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
+      linters_string <- re_matches(linters_string, exclude_linter)[, 1L]
 
       exclusions <- add_exclusions(exclusions, excluded_lines, linters_string, exclude_linter_sep, linter_names)
     }
   }
 
-  nolint_locations <- rex::re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
-  nolints <- which(!is.na(nolint_locations))
-  # Disregard nolint tags if they also match nolint start / end
-  nolints <- setdiff(nolints, c(starts, ends))
+  next_locations <- re_matches(lines, exclude_next, locations = TRUE)[, "end"] + 1L
+  nexts <- which(!is.na(next_locations))
 
-  for (i in seq_along(nolints)) {
-    linters_string <- substring(lines[nolints[i]], nolint_locations[nolints[i]])
-    linters_string <- rex::re_matches(linters_string, exclude_linter)[, 1L]
-    exclusions <- add_exclusions(exclusions, nolints[i], linters_string, exclude_linter_sep, linter_names)
+  nolint_locations <- re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
+  nolints <- which(!is.na(nolint_locations))
+
+  # Disregard nolint tags if they also match nolint next / start / end
+  nolints <- setdiff(nolints, c(nexts, starts, ends))
+
+  for (nolint in nolints) {
+    linters_string <- get_linters_string(lines[nolint], nolint_locations[nolint], exclude_linter)
+    exclusions <- add_exclusions(exclusions, nolint, linters_string, exclude_linter_sep, linter_names)
+  }
+  for (nextt in nexts) {
+    linters_string <- get_linters_string(lines[nextt], next_locations[nextt], exclude_linter)
+    exclusions <- add_exclusions(exclusions, nextt + 1L, linters_string, exclude_linter_sep, linter_names)
   }
 
   exclusions[] <- lapply(exclusions, function(lines) sort(unique(lines)))
 
   exclusions
+}
+
+get_linters_string <- function(line, loc, exclude_linter) {
+  linters_string <- substring(line, loc)
+  re_matches(linters_string, exclude_linter)[, 1L]
 }
 
 add_excluded_lines <- function(exclusions, excluded_lines, excluded_linters) {
@@ -178,12 +206,11 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
       idxs <- pmatch(excluded_linters, linter_names, duplicates.ok = TRUE)
       matched <- !is.na(idxs)
       if (!all(matched)) {
-        bad <- excluded_linters[!matched]
-        warning(
-          "Could not find linter", if (length(bad) > 1L) "s" else "", " named ",
-          glue::glue_collapse(sQuote(bad), sep = ", ", last = " and "),
-          " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix."
-        )
+        bad <- excluded_linters[!matched] # nolint: object_usage_linter. TODO(#2252).
+        cli_warn(c(
+          x = "Could not find linter{?s} named {.field {bad}} in the list of active linters.",
+          i = "Make sure the linter is uniquely identified by the given name or prefix."
+        ))
       }
       excluded_linters[matched] <- linter_names[idxs[matched]]
     }
@@ -225,7 +252,6 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   x <- as.list(x)
   unnamed <- !nzchar(names2(x))
   if (any(unnamed)) {
-    # must be character vectors of length 1
     bad <- vapply(
       seq_along(x),
       function(i) {
@@ -235,12 +261,10 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     )
 
     if (any(bad)) {
-      stop(
-        "Full file exclusions must be character vectors of length 1. items: ",
-        toString(which(bad)),
-        " are not!",
-        call. = FALSE
-      )
+      cli_abort(c(
+        i = "Full file exclusions must be {.cls character} vectors of length 1.",
+        x = "Items at the following indices are not: {.val {which(bad)}}."
+      ))
     }
     # Normalize unnamed entries to list(<filename> = list(Inf), ...)
     names(x)[unnamed] <- x[unnamed]
@@ -255,12 +279,10 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     bad <- full_line_exclusions & !are_numeric
 
     if (any(bad)) {
-      stop(
-        "Full line exclusions must be numeric or integer vectors. items: ",
-        toString(which(bad)),
-        " are not!",
-        call. = FALSE
-      )
+      cli_abort(c(
+        i = "Full line exclusions must be {.cls numeric} or {.cls integer} vectors.",
+        x = "Items at the following indices are not: {.val {which(bad)}}."
+      ))
     }
 
     # Normalize list(<filename> = c(<lines>)) to
@@ -304,7 +326,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     paths[rel_path] <- file.path(root, paths[rel_path])
     names(x) <- paths
     x <- x[file.exists(paths)] # remove exclusions for non-existing files
-    names(x) <- normalizePath(names(x)) # get full path for remaining files
+    names(x) <- normalize_path(names(x)) # get full path for remaining files
   }
 
   remove_line_duplicates(
@@ -353,11 +375,11 @@ remove_linter_duplicates <- function(x) {
 
     if (length(unique_linters) < length(ex)) {
       ex <- lapply(unique_linters, function(linter) {
-        lines <- unlist(ex[names2(ex) == linter])
-        if (Inf %in% lines) {
+        excluded_lines <- unlist(ex[names2(ex) == linter])
+        if (Inf %in% excluded_lines) {
           Inf
         } else {
-          lines
+          excluded_lines
         }
       })
 

@@ -37,26 +37,33 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
     "self::EQ_SUB[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN or self::OP-COMMA]]"
   )
   if (!allow_trailing) {
-    conds <- c(conds, "self::OP-COMMA[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-PAREN]]")
+    conds <- c(conds,
+      "self::OP-RIGHT-PAREN[preceding-sibling::*[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-COMMA]]"
+    )
   }
 
-  xpath <- glue::glue("//SYMBOL_FUNCTION_CALL/parent::expr/parent::expr/*[{xp_or(conds)}]")
-  to_function_xpath <- "string(./preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)"
+  # require >3 children to exclude foo(), which is <expr><OP-LEFT-PAREN><OP-RIGHT-PAREN>
+  xpath <- glue("
+  parent::expr[count(*) > 3]
+    /*[{xp_or(conds)}]
+  ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
+  Linter(linter_level = "file", function(source_expression) {
+    xml_targets <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
+    xml_targets <- xml_targets[!names(xml_targets) %in% except]
 
-    xml <- source_expression$full_xml_parsed_content
+    missing_args <- xml_find_all(xml_targets, xpath)
 
-    missing_args <- xml2::xml_find_all(xml, xpath)
-    function_call_name <- get_r_string(xml2::xml_find_chr(missing_args, to_function_xpath))
+    named_idx <- xml_name(missing_args) == "EQ_SUB"
+    arg_id <- character(length(missing_args))
+    arg_id[named_idx] <- sQuote(xml_find_chr(missing_args[named_idx], "string(preceding-sibling::SYMBOL_SUB[1])"), "'")
+    # TODO(#2452): use xml_find_int() instead
+    arg_id[!named_idx] <- xml_find_num(missing_args[!named_idx], "count(preceding-sibling::OP-COMMA)") + 1.0
 
     xml_nodes_to_lints(
-      missing_args[!function_call_name %in% except],
+      missing_args,
       source_expression = source_expression,
-      lint_message = "Missing argument in function call."
+      lint_message = sprintf("Missing argument %s in function call.", arg_id)
     )
   })
 }

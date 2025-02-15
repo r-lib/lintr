@@ -4,7 +4,11 @@
 \alias{commas_linter}
 \title{Commas linter}
 \usage{
-commas_linter()
+commas_linter(allow_trailing = FALSE)
+}
+\arguments{
+\item{allow_trailing}{If \code{TRUE}, the linter allows a comma to be followed
+directly by a closing bracket without a space.}
 }
 \description{
 Check that all commas are followed by spaces, but do not have spaces before them.
@@ -23,6 +27,11 @@ lint(
 
 lint(
   text = "x[ ,, drop=TRUE]",
+  linters = commas_linter()
+)
+
+lint(
+  text = "x[1,]",
   linters = commas_linter()
 )
 
@@ -47,6 +56,11 @@ lint(
   linters = commas_linter()
 )
 
+lint(
+  text = "x[1,]",
+  linters = commas_linter(allow_trailing = TRUE)
+)
+
 }
 \seealso{
 \itemize{
@@ -55,5 +69,5 @@ lint(
 }
 }
 \section{Tags}{
-\link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }

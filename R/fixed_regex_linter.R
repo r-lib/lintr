@@ -10,6 +10,8 @@
 #'   likely cases. It should _never_ report false positives, however; please
 #'   report false positives as an error.
 #'
+#' @param allow_unescaped Logical, default `FALSE`. If `TRUE`, only patterns that
+#'   require regex escapes (e.g. `"\\$"` or `"[$]"`) will be linted. See examples.
 #' @examples
 #' # will produce lints
 #' code_lines <- 'gsub("\\\\.", "", x)'
@@ -22,6 +24,11 @@
 #' lint(
 #'   text = 'grepl("a[*]b", x)',
 #'   linters = fixed_regex_linter()
+#' )
+#'
+#' lint(
+#'   text = 'grepl("a[*]b", x)',
+#'   linters = fixed_regex_linter(allow_unescaped = TRUE)
 #' )
 #'
 #' code_lines <- 'stringr::str_subset(x, "\\\\$")'
@@ -59,17 +66,22 @@
 #'   linters = fixed_regex_linter()
 #' )
 #'
+#' lint(
+#'   text = 'grepl("Munich", address)',
+#'   linters = fixed_regex_linter(allow_unescaped = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("fixed_regex_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-fixed_regex_linter <- function() {
+fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # regular expression pattern is the first argument
-  pos_1_regex_funs <- xp_text_in_table(c(
+  pos_1_regex_funs <- c(
     "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
-  ))
+  )
 
   # regular expression pattern is the second argument
-  pos_2_regex_funs <- xp_text_in_table(c(
+  pos_2_regex_funs <- c(
     # base functions.
     "strsplit",
     # data.table functions.
@@ -83,162 +95,81 @@ fixed_regex_linter <- function() {
     "str_remove", "str_remove_all", "str_replace", "str_replace_all",
     "str_split", "str_starts", "str_subset",
     "str_view", "str_view_all", "str_which"
-  ))
+  )
+
+  pipes <- setdiff(magrittr_pipes, c("%$%", "%T>%"))
+  in_pipe_cond <- glue("
+    parent::expr/preceding-sibling::SPECIAL[{ xp_text_in_table(pipes) }]
+    | parent::expr/preceding-sibling::PIPE
+  ")
 
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
-  xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
-    /parent::expr[
-      not(following-sibling::SYMBOL_SUB[
-        (text() = 'fixed' or text() = 'ignore.case')
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
+  pos_1_xpath <- glue("
+  self::*[
+    not(following-sibling::SYMBOL_SUB[
+      (text() = 'fixed' or text() = 'ignore.case')
+      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]
+    /following-sibling::expr[
+      (
+        position() = 1
+        and STR_CONST
+        and not(EQ_SUB)
+        and not({ in_pipe_cond })
+      ) or (
+        STR_CONST
+        and preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
+      )
     ]
-    /following-sibling::expr[1][STR_CONST and not(EQ_SUB)]
-  |
-  //SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
-    /parent::expr[
-      not(following-sibling::SYMBOL_SUB[
-        text() = 'fixed'
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
+  ")
+  pos_2_xpath <- glue("
+  self::*[
+    not(following-sibling::SYMBOL_SUB[
+      text() = 'fixed'
+      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]
+    /following-sibling::expr[
+      position() = 2 - count({ in_pipe_cond })
+      and STR_CONST
+      and not(EQ_SUB)
     ]
-    /following-sibling::expr[2][STR_CONST and not(EQ_SUB)]
   ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    patterns <- xml2::xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    pos_1_calls <- source_expression$xml_find_function_calls(pos_1_regex_funs)
+    pos_2_calls <- source_expression$xml_find_function_calls(pos_2_regex_funs)
+    patterns <- combine_nodesets(
+      xml_find_all(pos_1_calls, pos_1_xpath),
+      xml_find_all(pos_2_calls, pos_2_xpath)
+    )
     pattern_strings <- get_r_string(patterns)
-    is_static <- is_not_regex(pattern_strings)
 
-    fixed_equivalent <- encodeString(get_fixed_string(pattern_strings[is_static]), quote = '"', justify = "none")
-    call_name <- xml2::xml_find_chr(patterns[is_static], "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
+    is_static <- is_not_regex(pattern_strings, allow_unescaped)
+    patterns <- patterns[is_static]
+    pattern_strings <- pattern_strings[is_static]
+
+    fixed_equivalent <- encodeString(get_fixed_string(pattern_strings), quote = '"', justify = "none")
+    call_name <- xml_find_chr(patterns, "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
-    replacement <- ifelse(
+    replacement_suggestion <- ifelse(
       is_stringr,
-      sprintf("stringr::fixed(%s)", fixed_equivalent),
-      fixed_equivalent
+      sprintf("stringr::fixed(%s) as the pattern", fixed_equivalent),
+      sprintf("%s with fixed = TRUE", fixed_equivalent)
     )
     msg <- paste(
-      "This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which",
-      "is faster to compute. Here, you can use",
-      replacement, ifelse(is_stringr, "as the pattern.", "with fixed = TRUE.")
+      "Use", replacement_suggestion, "here. This regular expression is static, i.e.,",
+      "its matches can be expressed as a fixed substring expression, which is faster to compute."
     )
 
     xml_nodes_to_lints(
-      patterns[is_static],
+      patterns,
       source_expression = source_expression,
       lint_message = msg,
       type = "warning"
     )
   })
-}
-
-rx_non_active_char <- rex::rex(none_of("^${(.*+?|[\\"))
-rx_static_escape <- local({
-  rx_char_escape <- rex::rex(or(
-    group("\\", none_of(alnum)),
-    group("\\x", between(xdigit, 1L, 2L)),
-    group("\\", between("0":"7", 1L, 3L)),
-    group("\\u{", between(xdigit, 1L, 4L), "}"),
-    group("\\u", between(xdigit, 1L, 4L)),
-    group("\\U{", between(xdigit, 1L, 8L), "}"),
-    group("\\U", between(xdigit, 1L, 8L))
-  ))
-  rx_trivial_char_group <- rex::rex(
-    "[",
-    or(
-      any,
-      group("\\", none_of("dswDSW")), # character classes, e.g. \d are enabled in [] too if perl = TRUE
-      rx_char_escape
-    ),
-    "]"
-  )
-  rex::rex(or(
-    capture(rx_char_escape, name = "char_escape"),
-    capture(rx_trivial_char_group, name = "trivial_char_group")
-  ))
-})
-
-rx_static_token <- local({
-  rex::rex(or(
-    rx_non_active_char,
-    rx_static_escape
-  ))
-})
-
-rx_static_regex <- paste0("(?s)", rex::rex(start, zero_or_more(rx_static_token), end))
-rx_first_static_token <- paste0("(?s)", rex::rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
-
-#' Determine whether a regex pattern actually uses regex patterns
-#'
-#' Note that is applies to the strings that are found on the XML parse tree,
-#'   _not_ plain strings. This is important for backslash escaping, which
-#'   happens at different layers of escaping than one might expect. So testing
-#'   this function is best done through testing the expected results of a lint
-#'   on a given file, rather than passing strings to this function, which can
-#'   be confusing.
-#'
-#' @param str A character vector.
-#' @return A logical vector, `TRUE` wherever `str` could be replaced by a
-#'   string with `fixed = TRUE`.
-#' @noRd
-is_not_regex <- function(str) {
-  # need to add single-line option to allow literal newlines
-  grepl(rx_static_regex, str, perl = TRUE)
-}
-
-#' Compute a fixed string equivalent to a static regular expression
-#'
-#' @param static_regex A regex for which `is_not_regex()` returns `TRUE`
-#' @return A string such that `grepl(static_regex, x)` is equivalent to
-#' `grepl(get_fixed_string(static_regex), x, fixed = TRUE)`
-#'
-#' @noRd
-get_fixed_string <- function(static_regex) {
-  if (length(static_regex) == 0L) {
-    return(character())
-  } else if (length(static_regex) > 1L) {
-    return(vapply(static_regex, get_fixed_string, character(1L)))
-  }
-  fixed_string <- ""
-  current_match <- regexpr(rx_first_static_token, static_regex, perl = TRUE)
-  while (current_match != -1L) {
-    token_type <- attr(current_match, "capture.names")[attr(current_match, "capture.start") > 0L]
-    token_start <- max(attr(current_match, "capture.start"))
-    if (token_start > 1L) {
-      fixed_string <- paste0(fixed_string, substr(static_regex, 1L, token_start - 1L))
-    }
-    consume_to <- attr(current_match, "match.length")
-    token_content <- substr(static_regex, token_start, consume_to)
-    fixed_string <- paste0(fixed_string, get_token_replacement(token_content, token_type))
-    static_regex <- substr(static_regex, start = consume_to + 1L, stop = nchar(static_regex))
-    current_match <- regexpr(rx_first_static_token, static_regex, perl = TRUE)
-  }
-  paste0(fixed_string, static_regex)
-}
-
-get_token_replacement <- function(token_content, token_type) {
-  if (token_type == "trivial_char_group") {
-    token_content <- substr(token_content, start = 2L, stop = nchar(token_content) - 1L)
-    if (startsWith(token_content, "\\")) { # escape within trivial char group
-      get_token_replacement(token_content, "char_escape")
-    } else {
-      token_content
-    }
-  } else { # char_escape token
-    if (rex::re_matches(token_content, rex::rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
-      substr(token_content, start = 2L, stop = nchar(token_content))
-    } else {
-      eval(parse(text = paste0('"', token_content, '"')))
-    }
-  }
 }

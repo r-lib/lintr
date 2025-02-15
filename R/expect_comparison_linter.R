@@ -49,11 +49,9 @@
 #' @export
 expect_comparison_linter <- function() {
   # != doesn't have a clean replacement
-  comparator_nodes <- setdiff(as.list(infix_metadata$xml_tag[infix_metadata$comparator]), "NE")
-  xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-    /parent::expr
-    /following-sibling::expr[ {xp_or(comparator_nodes)} ]
+  comparator_nodes <- setdiff(infix_metadata$xml_tag[infix_metadata$comparator], "NE")
+  xpath <- glue("
+  following-sibling::expr[1][ {xp_or(comparator_nodes)} ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info'])]
   ")
 
@@ -63,16 +61,11 @@ expect_comparison_linter <- function() {
     `==` = "expect_identical"
   )
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls("expect_true")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
-
-    comparator <- xml2::xml_find_chr(bad_expr, "string(expr[2]/*[2])")
+    comparator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")
     expectation <- comparator_expectation_map[comparator]
     lint_message <- sprintf("%s(x, y) is better than expect_true(x %s y).", expectation, comparator)
     xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, type = "warning")

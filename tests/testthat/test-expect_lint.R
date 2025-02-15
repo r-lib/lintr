@@ -3,12 +3,12 @@
 # for failure, always put the lint check or lint field that must fail first.
 
 linter <- assignment_linter()
-lint_msg <- "Use <-, not ="
+lint_msg <- "Use one of <-, <<- for assignment, not ="
 
 test_that("no checks", {
-  expect_success(expect_lint("a", NULL, linter))
-  expect_success(expect_lint("a=1", NULL, list()))
-  expect_failure(expect_lint("a=1", NULL, linter))
+  expect_success(expect_no_lint("a", linter))
+  expect_success(expect_no_lint("a=1", list()))
+  expect_failure(expect_no_lint("a=1", linter))
 })
 
 test_that("single check", {
@@ -23,14 +23,14 @@ test_that("single check", {
   expect_success(expect_lint("a=1", c(message = lint_msg, line_number = 1L), linter))
   expect_failure(expect_lint("a=1", c(line_number = 2L, message = lint_msg), linter))
 
-  expect_error(expect_lint("a=1", c(message = lint_msg, lineXXX = 1L), linter), "invalid field")
+  expect_error(expect_lint("a=1", c(message = lint_msg, lineXXX = 1L), linter), "Check 1 has an invalid field: lineXXX")
 
   expect_failure(expect_lint("foo ()", list(ranges = list(c(2L, 2L))), function_left_parentheses_linter()))
   expect_success(expect_lint("\t1", list(ranges = list(c(1L, 1L))), whitespace_linter()))
   expect_success(expect_lint("a=1", list(message = lint_msg, line_number = 1L), linter))
   expect_failure(expect_lint("a=1", list(2L, lint_msg), linter))
 
-  expect_error(expect_lint("1:nrow(x)", "(group)", seq_linter()), "Invalid regex result", fixed = TRUE)
+  expect_success(expect_lint("1:nrow(x)", "(nrow)", seq_linter()))
 })
 
 test_that("multiple checks", {
@@ -42,8 +42,8 @@ test_that("multiple checks", {
   expect_success(expect_lint("a=1; b=2", list(c(message = lint_msg), c(message = lint_msg)), linter))
   expect_success(expect_lint("a=1; b=2", list(c(line_number = 1L), c(linter = "assignment_linter")), linter))
   expect_success(expect_lint("a=1; b=2", list(lint_msg, c(line = "a=1; b=2", type = "warning")), linter))
-  expect_success(expect_lint(c("a=1", "b=2"), list(c(line_number = 1L), c(line_number = 2L)), linter))
-  expect_failure(expect_lint(c("a=1", "b=2"), list(c(line_number = 2L), c(line_number = 2L)), linter))
+  expect_success(expect_lint("a=1\nb=2", list(c(line_number = 1L), c(line_number = 2L)), linter))
+  expect_failure(expect_lint("a=1\nb=2", list(c(line_number = 2L), c(line_number = 2L)), linter))
 
   expect_success(expect_lint("a=1; b=2", list(list(line_number = 1L), list(line_number = 2L)), linter))
   expect_failure(expect_lint("a=1; b=2", list(list(line_number = 2L), list(line_number = 2L)), linter))
@@ -65,8 +65,18 @@ test_that("expect_lint_free works", {
 })
 
 test_that("expect_lint doesn't change language", {
-  withr::with_envvar(c("LANGUAGE" = "mr"), {
+  withr::with_envvar(c(LANGUAGE = "mr"), {
     expect_success(expect_lint("a=1", lint_msg, linter))
-    expect_equal(Sys.getenv("LANGUAGE"), "mr")
+    expect_identical(Sys.getenv("LANGUAGE"), "mr")
   })
+})
+
+test_that("execution without testthat gives the right errors", {
+  local_mocked_bindings(requireNamespace = function(...) FALSE)
+  lint_msg <- function(nm) rex::rex("`", nm, "()` is designed to work", anything, "testthat")
+
+  expect_error(expect_lint(), lint_msg("expect_lint"))
+  expect_error(lintr::expect_lint(), lint_msg("expect_lint"))
+  expect_error(expect_no_lint(), lint_msg("expect_no_lint"))
+  expect_error(expect_lint_free(), lint_msg("expect_lint_free"))
 })

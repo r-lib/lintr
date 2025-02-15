@@ -26,23 +26,17 @@ expect_s4_class_linter <- function() {
   # require 2 expressions because methods::is(x) alone is a valid call, even
   #   though the character output wouldn't make any sense for expect_true().
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-    /parent::expr
-    /following-sibling::expr[1][count(expr) = 3 and expr[1][SYMBOL_FUNCTION_CALL[text() = 'is']]]
+  following-sibling::expr[1][count(expr) = 3 and expr[1][SYMBOL_FUNCTION_CALL[text() = 'is']]]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    # TODO(michaelchirico): also catch expect_{equal,identical}(methods::is(x), k).
+  Linter(linter_level = "expression", function(source_expression) {
+    # TODO(#2423): also catch expect_{equal,identical}(methods::is(x), k).
     #   this seems empirically rare, but didn't check many S4-heavy packages.
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls("expect_true")
+    bad_expr <- xml_find_all(xml_calls, xpath)
+
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,

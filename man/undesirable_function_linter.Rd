@@ -20,8 +20,7 @@ use \code{\link[=modify_defaults]{modify_defaults()}}.}
 name as a symbol undesirable or not.}
 }
 \description{
-Report the use of undesirable functions (e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
-\code{\link[base:lapply]{base::sapply()}}) and suggest an alternative.
+Report the use of undesirable functions and suggest an alternative.
 }
 \examples{
 # defaults for which functions are considered undesirable
@@ -69,5 +68,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
 }

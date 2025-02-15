@@ -2,7 +2,6 @@
 % Please edit documentation in R/lint.R
 \name{lint}
 \alias{lint}
-\alias{lint_file}
 \alias{lint_dir}
 \alias{lint_package}
 \title{Lint a file, directory, or package}
@@ -21,9 +20,9 @@ lint_dir(
   ...,
   relative_path = TRUE,
   exclusions = list("renv", "packrat"),
-  pattern = rex::rex(".", one_of("Rr"), or("", "html", "md", "nw", "rst", "tex", "txt"),
-    end),
-  parse_settings = TRUE
+  pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
+  parse_settings = TRUE,
+  show_progress = NULL
 )
 
 lint_package(
@@ -31,14 +30,15 @@ lint_package(
   ...,
   relative_path = TRUE,
   exclusions = list("R/RcppExports.R"),
-  parse_settings = TRUE
+  parse_settings = TRUE,
+  show_progress = NULL
 )
 }
 \arguments{
-\item{filename}{either the filename for a file to lint, or a character string of inline R code for linting.
+\item{filename}{Either the filename for a file to lint, or a character string of inline R code for linting.
 The latter (inline data) applies whenever \code{filename} has a newline character (\\n).}
 
-\item{linters}{a named list of linter functions to apply. See \link{linters} for a full list of default and available
+\item{linters}{A named list of linter functions to apply. See \link{linters} for a full list of default and available
 linters.}
 
 \item{...}{Provide additional arguments to be passed to:
@@ -47,10 +47,11 @@ linters.}
 \item \code{\link[=lint]{lint()}} (in case of \code{lint_dir()} and \code{lint_package()}; e.g. \code{linters} or \code{cache})
 }}
 
-\item{cache}{given a logical, toggle caching of lint results. If passed a character string, store the cache in this
+\item{cache}{When logical, toggle caching of lint results. If passed a character string, store the cache in this
 directory.}
 
-\item{parse_settings}{whether to try and parse the settings.}
+\item{parse_settings}{Logical, default \code{TRUE}. Whether to try and parse the \link[=read_settings]{settings}. Otherwise,
+the \code{\link[=default_settings]{default_settings()}} are used.}
 
 \item{text}{Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 linting is being done ad hoc.}
@@ -65,6 +66,10 @@ If \code{FALSE}, use the full absolute path.}
 
 \item{pattern}{pattern for files, by default it will take files with any of the extensions
 .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).}
+
+\item{show_progress}{Logical controlling whether to show linting progress with a simple text
+progress bar \emph{via} \code{\link[utils:txtProgressBar]{utils::txtProgressBar()}}. The default behavior is to show progress in
+\code{\link[=interactive]{interactive()}} sessions not running a testthat suite.}
 }
 \value{
 An object of class \code{c("lints", "list")}, each element of which is a \code{"list"} object.
@@ -74,7 +79,7 @@ An object of class \code{c("lints", "list")}, each element of which is a \code{"
 \item \code{lint()} lints a single file.
 \item \code{lint_dir()} lints all files in a directory.
 \item \code{lint_package()} lints all likely locations for R files in a package, i.e.
-\verb{R/}, \verb{tests/}, \verb{inst/}, \verb{vignettes/}, \verb{data-raw/}, and \verb{demo/}.
+\verb{R/}, \verb{tests/}, \verb{inst/}, \verb{vignettes/}, \verb{data-raw/}, \verb{demo/}, and \verb{exec/}.
 }
 }
 \details{
@@ -84,12 +89,16 @@ Note that if files contain unparseable encoding problems, only the encoding prob
 unintelligible error messages from other linters.
 }
 \examples{
-\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-f <- withr::local_tempfile(lines = "a=1", fileext = "R")
-lint(f)                # linting a file
-lint("a = 123\n")      # linting inline-code
-lint(text = "a = 123") # linting inline-code
-\dontshow{\}) # examplesIf}
+# linting inline-code
+lint("a = 123\n")
+lint(text = "a = 123")
+
+# linting a file
+f <- tempfile()
+writeLines("a=1", f)
+lint(f)
+unlink(f)
+
 if (FALSE) {
   lint_dir()
 

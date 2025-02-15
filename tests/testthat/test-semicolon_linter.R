@@ -1,7 +1,7 @@
 test_that("Lint all semicolons", {
   linter <- semicolon_linter()
-  trail_msg <- "Trailing semicolons are not needed."
-  comp_msg <- "Compound semicolons are discouraged. Replace them by a newline."
+  trail_msg <- rex::rex("Remove trailing semicolons.")
+  comp_msg <- rex::rex("Replace compound semicolons by a newline.")
 
   # No semicolon
   expect_lint("", NULL, linter)
@@ -99,45 +99,7 @@ test_that("Trailing semicolons only", {
 test_that("Compound semicolons only", {
   expect_error(
     lint(text = "a <- 1;", linters = semicolon_linter(allow_trailing = TRUE, allow_compound = TRUE)),
-    "At least one of `allow_compound` or `allow_trailing` must be FALSE, otherwise no lints can be generated.",
+    "At least one of `allow_compound` or `allow_trailing` must be `FALSE`",
     fixed = TRUE
   )
-})
-
-test_that("deprecation notices for semicolon_terminator_linter succeed, and the deprecated version works", {
-  expect_warning(
-    linter <- semicolon_terminator_linter(),
-    "Linter semicolon_terminator_linter was deprecated",
-    fixed = TRUE
-  )
-  expect_lint("a <- 1", NULL, linter)
-  expect_lint("a <- 1;", rex::rex("Trailing semicolons are not needed."), linter)
-  expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are discouraged."), linter)
-
-  # old string argument gets translated to new boolean arguments
-  expect_warning(
-    linter <- semicolon_terminator_linter("compound"),
-    "Linter semicolon_terminator_linter was deprecated",
-    fixed = TRUE
-  )
-  expect_lint("a <- 1", NULL, linter)
-  expect_lint("a <- 1;", NULL, linter)
-  expect_lint("a <- 1; b <- 2", rex::rex("Compound semicolons are discouraged."), linter)
-
-  expect_warning(
-    linter <- semicolon_terminator_linter("trailing"),
-    "Linter semicolon_terminator_linter was deprecated",
-    fixed = TRUE
-  )
-  expect_lint("a <- 1", NULL, linter)
-  expect_lint("a <- 1;", rex::rex("Trailing semicolons are not needed."), linter)
-  expect_lint("a <- 1; b <- 2", NULL, linter)
-
-  # linters_with_defaults warns about now-absent semicolon_terminator_linter
-  expect_warning(
-    d <- linters_with_defaults(semicolon_terminator_linter = NULL),
-    # regex because the message uses sQuote() --> fancy quotes
-    rex::rex("Trying to remove", anything, "semicolon_terminator_linter", anything, ", which is not in `defaults`.")
-  )
-  expect_true("semicolon_linter" %in% names(d))
 })

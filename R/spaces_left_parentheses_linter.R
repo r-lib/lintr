@@ -64,7 +64,7 @@ spaces_left_parentheses_linter <- function() {
       xpath <- expression_level_xpath
     }
 
-    bad_paren <- xml2::xml_find_all(xml, xpath)
+    bad_paren <- xml_find_all(xml, xpath)
 
     xml_nodes_to_lints(
       bad_paren,

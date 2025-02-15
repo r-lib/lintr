@@ -18,49 +18,40 @@ test_that("outer_negation_linter skips allowed usages", {
 })
 
 test_that("outer_negation_linter blocks simple disallowed usages", {
-  expect_lint(
-    "any(!x)",
-    rex::rex("!all(x) is better than any(!x)"),
-    outer_negation_linter()
-  )
+  linter <- outer_negation_linter()
+  not_all_msg <- rex::rex("!all(x) is better than any(!x)")
+  not_any_msg <- rex::rex("!any(x) is better than all(!x)")
 
-  expect_lint(
-    "all(!foo(x))",
-    rex::rex("!any(x) is better than all(!x)"),
-    outer_negation_linter()
-  )
-
+  expect_lint("any(!x)", not_all_msg, linter)
+  expect_lint("all(!foo(x))", not_any_msg, linter)
   # na.rm doesn't change the recommendation
-  expect_lint(
-    "any(!x, na.rm = TRUE)",
-    rex::rex("!all(x) is better than any(!x)"),
-    outer_negation_linter()
-  )
-
+  expect_lint("any(!x, na.rm = TRUE)", not_all_msg, linter)
   # also catch nested usage
-  expect_lint(
-    "all(!(x + y))",
-    rex::rex("!any(x) is better than all(!x)"),
-    outer_negation_linter()
-  )
-
+  expect_lint("all(!(x + y))", not_any_msg, linter)
   # catch when all inputs are negated
-  expect_lint(
-    "any(!x, !y)",
-    rex::rex("!all(x) is better than any(!x)"),
-    outer_negation_linter()
-  )
-
-  expect_lint(
-    "all(!x, !y, na.rm = TRUE)",
-    rex::rex("!any(x) is better than all(!x)"),
-    outer_negation_linter()
-  )
+  expect_lint("any(!x, !y)", not_all_msg, linter)
+  expect_lint("all(!x, !y, na.rm = TRUE)", not_any_msg, linter)
 })
 
 test_that("outer_negation_linter doesn't trigger on empty calls", {
+  linter <- outer_negation_linter()
+
   # minimal version of issue
-  expect_lint("any()", NULL, outer_negation_linter())
+  expect_lint("any()", NULL, linter)
   # closer to what was is practically relevant, as another regression test
-  expect_lint("x %>% any()", NULL, outer_negation_linter())
+  expect_lint("x %>% any()", NULL, linter)
+})
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      any(!x)
+      all(!y)
+    }"),
+    list(
+      list(rex::rex("!all(x)"), line_number = 2L),
+      list(rex::rex("!any(x)"), line_number = 3L)
+    ),
+    outer_negation_linter()
+  )
 })

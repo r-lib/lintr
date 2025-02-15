@@ -87,13 +87,13 @@ test_that("matrix_apply_linter works with multiple lints in a single expression"
   linter <- matrix_apply_linter()
 
   expect_lint(
-    "rbind(
-      apply(x, 1, sum),
+    trim_some("{
+      apply(x, 1, sum)
       apply(y, 2:4, mean, na.rm = TRUE)
-    )",
+    }"),
     list(
-      rex::rex("Use rowSums(x)"),
-      rex::rex("Use rowMeans(colMeans(y, na.rm = TRUE), dims = 3) or colMeans(y, na.rm = TRUE) if y has 4 dimensions")
+      list(rex::rex("rowSums(x)"), line_number = 2L),
+      list(rex::rex("rowMeans(colMeans(y, na.rm = TRUE), dims = 3)"), line_number = 3L)
     ),
     linter
   )

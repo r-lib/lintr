@@ -1,9 +1,10 @@
 #' Check that imported packages are actually used
 #'
+#' @inheritParams object_usage_linter
 #' @param allow_ns_usage Suppress lints for packages only used via namespace.
 #' This is `FALSE` by default because `pkg::fun()` doesn't require `library(pkg)`.
 #' You can use [requireNamespace("pkg")][requireNamespace()] to ensure a package is
-#' installed without loading it.
+#' installed without attaching it.
 #' @param except_packages Character vector of packages that are ignored.
 #' These are usually attached for their side effects.
 #'
@@ -41,44 +42,54 @@
 #' @evalRd rd_tags("unused_import_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bit64", "data.table", "tidyverse")) {
-  import_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-    /parent::expr
-    /parent::expr[
-      expr[2][STR_CONST]
-      or not(SYMBOL_SUB[
-        text() = 'character.only' and
-        following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
-  "
+unused_import_linter <- function(allow_ns_usage = FALSE,
+                                 except_packages = c("bit64", "data.table", "tidyverse"),
+                                 interpret_glue = TRUE) {
+  # Get dataset names lazy-loaded by imported packages
+  get_datasets <- function(pkg) {
+    results <- utils::data(package = pkg)$results
+    items <- results[, "Item"]
+    # e.g. 'state.abb (state)' in 'datasets'
+    gsub("\\s*\\([^)]*\\)$", "", items)
+  }
 
+  import_xpath <- "
+  parent::expr[
+    expr[2][STR_CONST]
+    or not(SYMBOL_SUB[
+      text() = 'character.only' and
+      following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]"
+
+  xp_used_functions <- "SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]"
   xp_used_symbols <- paste(
-    "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]/text()",
     "//SYMBOL[not(
       parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-    )]/text()",
-    "//SPECIAL/text()",
+    )]",
+    "//SPECIAL",
     sep = " | "
   )
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
+    library_calls <- source_expression$xml_find_function_calls(c("library", "require"))
+    all_calls <- source_expression$xml_find_function_calls(NULL)
 
-    import_exprs <- xml2::xml_find_all(xml, import_xpath)
+    import_exprs <- xml_find_all(library_calls, import_xpath)
+
     if (length(import_exprs) == 0L) {
       return(list())
     }
-    imported_pkgs <- xml2::xml_find_chr(import_exprs, "string(expr[STR_CONST|SYMBOL])")
+    imported_pkgs <- xml_find_chr(import_exprs, "string(expr[STR_CONST|SYMBOL])")
     # as.character(parse(...)) returns one entry per expression
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
 
-    used_symbols <- xml2::xml_text(xml2::xml_find_all(xml, xp_used_symbols))
+    used_symbols <- unique(c(
+      xml_text(xml_find_all(all_calls, xp_used_functions)),
+      xml_text(xml_find_all(xml, xp_used_symbols)),
+      extract_glued_symbols(xml, interpret_glue = interpret_glue)
+    ))
 
     is_used <- vapply(
       imported_pkgs,
@@ -96,12 +107,11 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
       logical(1L)
     )
 
-    # TODO(michaelchirico): instead of vectorizing over packages,
-    #   xml_find_all SYMBOL_PACKAGE namespaces and check imported_pkgs %in%
+    # TODO(#2480): Only call //SYMBOL_PACKAGE once.
     is_ns_used <- vapply(
       imported_pkgs,
       function(pkg) {
-        ns_usage <- xml2::xml_find_first(xml, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
+        ns_usage <- xml_find_first(xml, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
         !identical(ns_usage, xml2::xml_missing())
       },
       logical(1L)
@@ -118,20 +128,11 @@ unused_import_linter <- function(allow_ns_usage = FALSE, except_packages = c("bi
     lint_message <- ifelse(
       is_ns_used[is_unused][unused_packages],
       paste0(
-        "Package '", unused_packages, "' is only used by namespace. ",
+        "Don't attach package '", unused_packages, "', which is only used by namespace. ",
         "Check that it is installed using loadNamespace() instead."
       ),
       paste0("Package '", unused_packages, "' is attached but never used.")
     )
     xml_nodes_to_lints(import_exprs, source_expression, lint_message, type = "warning")
   })
-}
-
-#' Get dataset names lazy-loaded by imported packages
-#' @noRd
-get_datasets <- function(pkg) {
-  results <- utils::data(package = pkg)$results
-  items <- results[, "Item"]
-  # e.g. 'state.abb (state)' in 'datasets'
-  gsub("\\s*\\([^)]*\\)$", "", items)
 }

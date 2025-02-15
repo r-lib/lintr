@@ -1,0 +1,64 @@
+url: https://lintr.r-lib.org
+
+template:
+  bootstrap: 5
+  light-switch: true
+  includes:
+    in_header: |
+      <script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+
+development:
+  mode: "auto"
+
+reference:
+  - title: Linting
+    contents:
+      - lint
+      - linters_with_defaults
+
+  - title: Configuration
+    contents:
+      - read_settings
+      - exclude
+      - linters_with_tags
+      - modify_defaults
+
+  - title: Individual linters
+    contents:
+      - ends_with("linter")
+
+  - title: Groups of linters
+    contents:
+      - ends_with("linters")
+
+  - title: Common default configurations
+    contents:
+      - all_undesirable_functions
+      - starts_with("default_")
+
+  - title: Utilities
+    contents:
+      - Linter
+      - expect_lint
+      - expect_lint_free
+      - ids_with_token
+      - is_lint_level
+      - get_r_string
+      - use_lintr
+      - make_linter_from_xpath
+      - xml_nodes_to_lints
+      - xp_call_name
+
+  - title: Meta-tooling
+    contents:
+      - Lint
+      - checkstyle_output
+      - sarif_output
+      - clear_cache
+      - get_source_expressions
+      - parse_exclusions
+
+news:
+  releases:
+    - text: "Version 3.0.0"
+      href: https://www.tidyverse.org/blog/2022/07/lintr-3-0-0/

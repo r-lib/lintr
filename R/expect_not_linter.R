@@ -22,28 +22,11 @@
 #' @evalRd rd_tags("expect_not_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-expect_not_linter <- function() {
-  xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']
+expect_not_linter <- make_linter_from_function_xpath(
+  function_names = c("expect_true", "expect_false"),
+  xpath = "
+  following-sibling::expr[OP-EXCLAMATION]
     /parent::expr
-    /following-sibling::expr[OP-EXCLAMATION]
-    /parent::expr
-  "
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
-
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message = "expect_false(x) is better than expect_true(!x), and vice versa.",
-      type = "warning"
-    )
-  })
-}
+  ",
+  lint_message = "expect_false(x) is better than expect_true(!x), and vice versa."
+)

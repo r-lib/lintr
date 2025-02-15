@@ -20,52 +20,46 @@ test_that("expect_s3_class_linter skips allowed usages", {
 })
 
 test_that("expect_s3_class_linter blocks simple disallowed usages", {
+  linter <- expect_s3_class_linter()
+
   expect_lint(
     "expect_equal(class(x), 'data.frame')",
     rex::rex("expect_s3_class(x, k) is better than expect_equal(class(x), k)"),
-    expect_s3_class_linter()
+    linter
   )
 
   # works when testing against a sequence of classes too
   expect_lint(
     "expect_equal(class(x), c('data.table', 'data.frame'))",
     rex::rex("expect_s3_class(x, k) is better than expect_equal(class(x), k)"),
-    expect_s3_class_linter()
+    linter
   )
 
   # expect_identical is treated the same as expect_equal
   expect_lint(
     "testthat::expect_identical(class(x), 'lm')",
     rex::rex("expect_s3_class(x, k) is better than expect_identical(class(x), k)"),
-    expect_s3_class_linter()
+    linter
   )
 
   # yoda test with string literal in first arg also caught
   expect_lint(
     "expect_equal('data.frame', class(x))",
     rex::rex("expect_s3_class(x, k) is better than expect_equal(class(x), k)"),
-    expect_s3_class_linter()
+    linter
   )
 
   # different equivalent usages
   expect_lint(
     "expect_true(is.table(foo(x)))",
     rex::rex("expect_s3_class(x, k) is better than expect_true(is.<k>(x))"),
-    expect_s3_class_linter()
+    linter
   )
   expect_lint(
     "expect_true(inherits(x, 'table'))",
     rex::rex("expect_s3_class(x, k) is better than expect_true(is.<k>(x))"),
-    expect_s3_class_linter()
+    linter
   )
-
-  # TODO(michaelchirico): consider more carefully which sorts of class(x) %in% . and
-  #   . %in% class(x) calls should be linted
-  #> expect_lint(
-  #>   "expect_true('lm' %in% class(x))",
-  #>   "expect_s3_class\\(x, k\\) is better than expect_equal\\(class\\(x\\), k",
-  #>   expect_s3_class_linter
-  #> )
 })
 
 local({
@@ -85,5 +79,21 @@ local({
     ),
     .test_name = is_classes,
     is_class = is_classes
+  )
+})
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      expect_true(is.factor(x))
+      expect_true(inherits(x, k))
+      expect_equal(class(x), k)
+    }"),
+    list(
+      list(rex::rex("is.<k>"), line_number = 2L),
+      list(rex::rex("is.<k>"), line_number = 3L),
+      list("expect_equal", line_number = 4L)
+    ),
+    expect_s3_class_linter()
   )
 })

@@ -31,6 +31,11 @@
 #'   linters = vector_logic_linter()
 #' )
 #'
+#' lint(
+#'   text = "filter(x, A && B)",
+#'   linters = vector_logic_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "if (TRUE && FALSE) 1",
@@ -39,6 +44,11 @@
 #'
 #' lint(
 #'   text = "if (TRUE && (TRUE || FALSE)) 4",
+#'   linters = vector_logic_linter()
+#' )
+#'
+#' lint(
+#'   text = "filter(x, A & B)",
 #'   linters = vector_logic_linter()
 #' )
 #'
@@ -60,8 +70,8 @@ vector_logic_linter <- function() {
   #     <expr> ... </expr>
   #  </expr>
   #  we _don't_ want to match anything on the second expr, hence this
-  xpath_parts <- glue::glue("
-  //{ c('AND', 'OR') }[
+  condition_xpath <- "
+  (//AND | //OR)[
     ancestor::expr[
       not(preceding-sibling::OP-RIGHT-PAREN)
       and preceding-sibling::*[
@@ -74,23 +84,47 @@ vector_logic_linter <- function() {
       preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
       or preceding-sibling::OP-LEFT-BRACKET
     ])
+    and not(parent::expr/expr[
+      STR_CONST
+      or expr/SYMBOL_FUNCTION_CALL[text() = 'as.raw' or text() = 'as.octmode' or text() = 'as.hexmode']
+    ])
   ]
-  ")
-  xpath <- paste(xpath_parts, collapse = " | ")
+  "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
+  subset_xpath <- "
+  self::*[not(SYMBOL_PACKAGE[text() = 'stats'])]
+    /parent::expr
+    //expr[
+      (AND2 or OR2)
+      and not(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[not(text() = 'subset' or text() = 'filter')])
+      and not(preceding-sibling::OP-LEFT-BRACKET)
+      and not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'circular'])
+    ]
+    /*[2]
+  "
 
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    xml_call <- source_expression$xml_find_function_calls(c("subset", "filter"))
 
-    xml_nodes_to_lints(
-      bad_expr,
+    condition_expr <- xml_find_all(xml, condition_xpath)
+    condition_op <- xml_text(condition_expr)
+    condition_lints <- xml_nodes_to_lints(
+      condition_expr,
       source_expression = source_expression,
-      lint_message = "Conditional expressions require scalar logical operators (&& and ||)",
+      lint_message = sprintf("Use `%s` in conditional expressions.", strrep(condition_op, 2L)),
       type = "warning"
     )
+
+    subset_expr <- xml_find_all(xml_call, subset_xpath)
+    subset_op <- xml_text(subset_expr)
+    subset_lints <- xml_nodes_to_lints(
+      subset_expr,
+      source_expression = source_expression,
+      lint_message = sprintf("Use `%s` in subsetting expressions.", substr(subset_op, 1L, 1L)),
+      type = "warning"
+    )
+
+    c(condition_lints, subset_lints)
   })
 }

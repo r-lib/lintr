@@ -21,7 +21,7 @@ test_that("strings_as_factors_linter skips allowed usages", {
 
 test_that("strings_as_factors_linter blocks simple disallowed usages", {
   linter <- strings_as_factors_linter()
-  lint_msg <- "This code relies on the default value of stringsAsFactors"
+  lint_msg <- "Supply an explicit value for stringsAsFactors for this code"
 
   expect_lint("data.frame('a')", lint_msg, linter)
   expect_lint("data.frame(c('a', 'b'))", lint_msg, linter)
@@ -38,7 +38,7 @@ test_that("strings_as_factors_linter blocks simple disallowed usages", {
 
 test_that("strings_as_factors_linters catches rep(char) usages", {
   linter <- strings_as_factors_linter()
-  lint_msg <- "This code relies on the default value of stringsAsFactors"
+  lint_msg <- "Supply an explicit value for stringsAsFactors for this code"
 
   expect_lint("data.frame(rep('a', 10L))", lint_msg, linter)
   expect_lint("data.frame(rep(c('a', 'b'), 10L))", lint_msg, linter)
@@ -52,7 +52,7 @@ test_that("strings_as_factors_linters catches rep(char) usages", {
 
 test_that("strings_as_factors_linter catches character(), as.character() usages", {
   linter <- strings_as_factors_linter()
-  lint_msg <- "This code relies on the default value of stringsAsFactors"
+  lint_msg <- "Supply an explicit value for stringsAsFactors for this code"
 
   expect_lint("data.frame(a = character())", lint_msg, linter)
   expect_lint("data.frame(a = character(1L))", lint_msg, linter)
@@ -64,7 +64,7 @@ test_that("strings_as_factors_linter catches character(), as.character() usages"
 
 test_that("strings_as_factors_linter catches more functions with string output", {
   linter <- strings_as_factors_linter()
-  lint_msg <- "This code relies on the default value of stringsAsFactors"
+  lint_msg <- "Supply an explicit value for stringsAsFactors for this code"
 
   expect_lint("data.frame(a = paste(1, 2, 3))", lint_msg, linter)
   expect_lint("data.frame(a = sprintf('%d', 1:10))", lint_msg, linter)
@@ -75,4 +75,20 @@ test_that("strings_as_factors_linter catches more functions with string output",
   expect_lint("data.frame(a = encodeString(x))", lint_msg, linter)
   # but not for row.names
   expect_lint("data.frame(a = 1:10, row.names = paste(1:10))", NULL, linter)
+})
+
+test_that("lints vectorize", {
+  lint_msg <- "Supply an explicit value for stringsAsFactors for this code"
+
+  expect_lint(
+    trim_some("{
+      data.frame('a')
+      data.frame('b')
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    strings_as_factors_linter()
+  )
 })

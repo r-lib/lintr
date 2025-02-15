@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # Script to get URL keys from CRAN
-#   of packags that Suggest or Import lintr
+#   of packages that Suggest or Import lintr
 
 cran_db <- as.data.frame(available.packages(repos = "https://cran.r-project.org"), stringsAsFactors = FALSE)
 lintr_re <- "\\blintr\\b"
@@ -50,12 +50,12 @@ git_urls <- extract_github_repo(urls)
 matched <- nzchar(git_urls)
 
 utils::write.csv(
-  data.frame(package = lintr_pkg[!matched], repo = file.path("https://github.com/cran", lintr_pkg[!matched])), # nolint: strings_as_factors_linter.
+  data.frame(package = lintr_pkg[!matched], repo = file.path("https://github.com/cran", lintr_pkg[!matched])),
   "revdep-no-repos",
   row.names = FALSE, quote = FALSE
 )
 utils::write.csv(
-  data.frame(package = lintr_pkg[matched], repo = git_urls[matched]), # nolint: strings_as_factors_linter.
+  data.frame(package = lintr_pkg[matched], repo = git_urls[matched]),
   "revdep-repos",
   row.names = FALSE, quote = FALSE
 )

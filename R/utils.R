@@ -1,5 +1,5 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || length(x) <= 0L || is.na(x[[1L]])) {
+  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
     y
   } else {
     x
@@ -10,15 +10,14 @@
   identical(x, y)
 }
 
-"%:::%" <- function(p, f) {
+`%:::%` <- function(p, f) {
   get(f, envir = asNamespace(p))
 }
 
 flatten_lints <- function(x) {
-  structure(
-    flatten_list(x, class = "lint"),
-    class = "lints"
-  )
+  x <- flatten_list(x, class = "lint")
+  class(x) <- "lints"
+  x
 }
 
 # any function using unlist or c was dropping the classnames,
@@ -44,28 +43,28 @@ fix_names <- function(x, default) {
   if (is.null(nms)) {
     nms <- default
   } else {
-    nms[nms == ""] <- default
+    nms[!nzchar(nms)] <- default
   }
   names(x) <- nms
   x
 }
 
 linter_auto_name <- function(which = -3L) {
-  call <- sys.call(which = which)
-  nm <- paste(deparse(call, 500L), collapse = " ")
+  sys_call <- sys.call(which = which)
+  nm <- paste(deparse(sys_call, 500L), collapse = " ")
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
-    match <- re_matches(nm, regex, locations = TRUE)
-    nm <- substr(nm, start = 1L, stop = match[1L, "end"])
-    nm <- re_substitutes(nm, rex::rex(start, alnums, "::"), "")
+    match_data <- re_matches(nm, regex, locations = TRUE)
+    nm <- substr(nm, start = 1L, stop = match_data[1L, "end"])
+    nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
   }
   nm
 }
 
 auto_names <- function(x) {
   nms <- names2(x)
-  missing <- nms == ""
-  if (!any(missing)) {
+  empty <- !nzchar(nms, keepNA = TRUE)
+  if (!any(empty)) {
     return(nms)
   }
 
@@ -73,12 +72,12 @@ auto_names <- function(x) {
     if (is_linter(x)) {
       attr(x, "name", exact = TRUE)
     } else {
-      paste(deparse(x, 500L), collapse = " ")
+      deparse1(x)
     }
   }
-  defaults <- vapply(x[missing], default_name, character(1L), USE.NAMES = FALSE)
+  defaults <- vapply(x[empty], default_name, character(1L), USE.NAMES = FALSE)
 
-  nms[missing] <- defaults
+  nms[empty] <- defaults
   nms
 }
 
@@ -87,24 +86,13 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
-safe_parse_to_xml <- function(parsed_content) {
-  if (is.null(parsed_content)) {
-    return(xml2::xml_missing())
-  }
-  tryCatch(
-    xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)),
-    # use xml_missing so that code doesn't always need to condition on XML existing
-    error = function(e) xml2::xml_missing()
-  )
-}
-
 get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
-    if (inherits(info, "xml_node")) {
+    if (is_node(info)) {
       info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
-        as.integer(xml2::xml_attr(info, attr))
+        as.integer(xml_attr(info, attr))
       })
     }
 
@@ -112,7 +100,7 @@ get_content <- function(lines, info) {
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
-  paste0(collapse = "\n", lines)
+  paste(lines, collapse = "\n")
 }
 
 logical_env <- function(x) {
@@ -139,18 +127,19 @@ try_silently <- function(expr) {
   )
 }
 
-# imitate sQuote(x, q) [requires R>=3.6]
-quote_wrap <- function(x, q) paste0(q, x, q)
-
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {
   old_lang <- Sys.getenv("LANGUAGE", unset = NA)
-  Sys.setenv(LANGUAGE = new_lang)
+  Sys.setenv(LANGUAGE = new_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
   old_lang
 }
 # handle the logic of either unsetting if it was previously unset, or resetting
 reset_lang <- function(old_lang) {
-  if (is.na(old_lang)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old_lang)
+  if (is.na(old_lang)) {
+    Sys.unsetenv("LANGUAGE")
+  } else {
+    Sys.setenv(LANGUAGE = old_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
+  }
 }
 
 #' Create a `linter` closure
@@ -158,14 +147,23 @@ reset_lang <- function(old_lang) {
 #' @param fun A function that takes a source file and returns `lint` objects.
 #' @param name Default name of the Linter.
 #' Lints produced by the linter will be labelled with `name` by default.
+#' @param linter_level Which level of expression is the linter working with?
+#'   `"expression"` means an individual expression in `xml_parsed_content`, while `"file"` means all expressions
+#'   in the current file are available in `full_xml_parsed_content`.
+#'   `NA` means the linter will be run with both, expression-level and file-level source expressions.
+#'
 #' @return The same function with its class set to 'linter'.
 #' @export
-Linter <- function(fun, name = linter_auto_name()) { # nolint: object_name.
+Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
-    stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
+    cli_abort("{.arg fun} must be a function taking exactly one argument.")
   }
+  linter_level <- match.arg(linter_level)
   force(name)
-  structure(fun, class = c("linter", "function"), name = name)
+  class(fun) <- c("linter", "function")
+  attr(fun, "name") <- name
+  attr(fun, "linter_level") <- linter_level
+  fun
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
@@ -188,22 +186,31 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
 
 # nocov start
 # support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {
-}
+release_bullets <- function() {}
 # nocov end
 
-# see issue #923 -- some locales ignore _ when running sort(), others don't.
-#   we want to consistently treat "_" < "n" = "N"
-platform_independent_order <- function(x) order(tolower(gsub("_", "0", x, fixed = TRUE)))
+# see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
+#   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.
+platform_independent_order <- function(x) order(tolower(x), method = "radix")
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
+
+#' re_matches with type-stable logical output
+#' TODO(r-lib/rex#94): Use re_matches() option directly & deprecate this.
+#' @noRd
+re_matches_logical <- function(x, regex, ...) {
+  res <- re_matches(x, regex, ...)
+  if (is.data.frame(res)) {
+    res <- complete.cases(res)
+  }
+  res
+}
 
 #' Extract text from `STR_CONST` nodes
 #'
 #' Convert `STR_CONST` `text()` values into R strings. This is useful to account for arbitrary
-#'  character literals valid since R 4.0, e.g. `R"------[hello]------"`, which is parsed in
-#'  R as `"hello"`. It is quite cumbersome to write XPaths allowing for strings like this,
-#'  so whenever your linter logic requires testing a `STR_CONST` node's value, use this
-#'  function.
+#'  character literals, e.g. `R"------[hello]------"`, which is parsed in R as `"hello"`.
+#'  It is quite cumbersome to write XPaths allowing for strings like this, so whenever your
+#'  linter logic requires testing a `STR_CONST` node's value, use this function.
 #' NB: this is also properly vectorized on `s`, and accepts a variety of inputs. Empty inputs
 #'  will become `NA` outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
 #'
@@ -212,28 +219,31 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
 #' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' tmp <- withr::local_tempfile(lines = "c('a', 'b')")
+#' @examples
+#' tmp <- tempfile()
+#' writeLines("c('a', 'b')", tmp)
 #' expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml))
-#' get_r_string(expr_as_xml, "expr[2]") # "a"
-#' get_r_string(expr_as_xml, "expr[3]") # "b"
+#' get_r_string(expr_as_xml, "expr[2]")
+#' get_r_string(expr_as_xml, "expr[3]")
+#' unlink(tmp)
 #'
-#' # more importantly, extract strings under R>=4 raw strings
-#' @examplesIf getRversion() >= "4.0.0"
-#' tmp4.0 <- withr::local_tempfile(lines = "c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')")
-#' expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
-#' writeLines(as.character(expr_as_xml4.0))
-#' get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
-#' get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+#' # more importantly, extract raw strings correctly
+#' tmp_raw <- tempfile()
+#' writeLines("c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')", tmp_raw)
+#' expr_as_xml_raw <- get_source_expressions(tmp_raw)$expressions[[1L]]$xml_parsed_content
+#' writeLines(as.character(expr_as_xml_raw))
+#' get_r_string(expr_as_xml_raw, "expr[2]")
+#' get_r_string(expr_as_xml_raw, "expr[3]")
+#' unlink(tmp_raw)
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
-  if (inherits(s, c("xml_node", "xml_nodeset"))) {
+  if (is_node(s) || is_nodeset(s)) {
     if (is.null(xpath)) {
-      s <- xml2::xml_text(s)
+      s <- xml_text(s)
     } else {
-      s <- xml2::xml_find_chr(s, sprintf("string(%s)", xpath))
+      s <- xml_find_chr(s, sprintf("string(%s)", xpath))
     }
   }
   # parse() skips "" elements --> offsets the length of the output,
@@ -244,53 +254,34 @@ get_r_string <- function(s, xpath = NULL) {
   out
 }
 
-#' Convert XML node to R code within
-#'
-#' NB this is not equivalent to `xml2::xml_text(xml)` in the presence of line breaks
-#'
-#' @param xml An `xml_node`.
-#'
-#' @return A source-code equivalent of `xml` with unnecessary whitespace removed.
-#'
-#' @noRd
-get_r_code <- function(xml) {
-  # shortcut if xml has line1 and line2 attrs and they are equal
-  # if they are missing, xml_attr() returns NA, so we continue
-  if (isTRUE(xml2::xml_attr(xml, "line1") == xml2::xml_attr(xml, "line2"))) {
-    return(xml2::xml_text(xml))
-  }
-  # find all unique line numbers
-  line_numbers <- sort(unique(xml2::xml_find_num(
-    xml2::xml_find_all(xml, "./descendant-or-self::*[@line1]"),
-    "number(./@line1)"
-  )))
-  if (length(line_numbers) <= 1L) {
-    # no line breaks necessary
-    return(xml2::xml_text(xml))
-  }
-  lines <- vapply(line_numbers, function(line_num) {
-    # all terminal nodes starting on line_num
-    paste(xml2::xml_text(
-      xml2::xml_find_all(xml, sprintf("./descendant-or-self::*[@line1 = %d and not(*)]", line_num))
-    ), collapse = "")
-  }, character(1L))
-  paste(lines, collapse = "\n")
-}
-
-#' str2lang, but for xml children.
-#'
-#' [xml2::xml_text()] is deceptively close to obviating this helper, but it collapses
-#'   text across lines. R is _mostly_ whitespace-agnostic, so this only matters in some edge cases,
-#'   in particular when there are comments within an expression (`<expr>` node). See #1919.
-#'
-#' @noRd
-xml2lang <- function(x) {
-  x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
-  str2lang(paste(xml2::xml_text(x_strip_comments), collapse = ""))
-}
-
 is_linter <- function(x) inherits(x, "linter")
+is_lint <- function(x) inherits(x, "lint")
+
+is_error <- function(x) inherits(x, "error")
 
 is_tainted <- function(lines) {
-  inherits(tryCatch(nchar(lines), error = identity), "error")
+  is_error(tryCatch(nchar(lines), error = identity))
+}
+
+#' Check that the entries in ... are valid
+#'
+#' @param dot_names Supplied names, from [...names()].
+#' @param ref_calls Functions consuming these `...` (character).
+#' @param ref_help Help page to refer users hitting an error to.
+#' @noRd
+check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
+  valid_args <- unlist(lapply(ref_calls, function(f) names(formals(f))))
+  is_valid <- dot_names %in% valid_args
+  if (all(is_valid)) {
+    return(invisible())
+  }
+  invalid_args <- dot_names[!is_valid] # nolint: object_usage_linter. TODO(#2252).
+  cli_abort(c(
+    x = "Found unknown arguments in `...`: {.arg {invalid_args}}.",
+    i = "Check for typos and see ?{ref_help} for valid arguments."
+  ))
+}
+
+cli_abort_internal <- function(...) {
+  cli_abort(..., .internal = TRUE)
 }

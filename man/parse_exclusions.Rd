@@ -7,6 +7,7 @@
 parse_exclusions(
   file,
   exclude = settings$exclude,
+  exclude_next = settings$exclude_next,
   exclude_start = settings$exclude_start,
   exclude_end = settings$exclude_end,
   exclude_linter = settings$exclude_linter,
@@ -18,20 +19,22 @@ parse_exclusions(
 \arguments{
 \item{file}{R source file}
 
-\item{exclude}{regular expression used to mark lines to exclude}
+\item{exclude}{Regular expression used to mark lines to exclude.}
 
-\item{exclude_start}{regular expression used to mark the start of an excluded range}
+\item{exclude_next}{Regular expression used to mark lines immediately preceding excluded lines.}
 
-\item{exclude_end}{regular expression used to mark the end of an excluded range}
+\item{exclude_start}{Regular expression used to mark the start of an excluded range.}
 
-\item{exclude_linter}{regular expression used to capture a list of to-be-excluded linters immediately following a
+\item{exclude_end}{Regular expression used to mark the end of an excluded range.}
+
+\item{exclude_linter}{Regular expression used to capture a list of to-be-excluded linters immediately following a
 \code{exclude} or \code{exclude_start} marker.}
 
-\item{exclude_linter_sep}{regular expression used to split a linter list into individual linter names for exclusion.}
+\item{exclude_linter_sep}{Regular expression used to split a linter list into individual linter names for exclusion.}
 
-\item{lines}{a character vector of the content lines of \code{file}}
+\item{lines}{A character vector of the content lines of \code{file}.}
 
-\item{linter_names}{Names of active linters}
+\item{linter_names}{Names of active linters.}
 }
 \value{
 A possibly named list of excluded lines, possibly for specific linters.
@@ -39,3 +42,4 @@ A possibly named list of excluded lines, possibly for specific linters.
 \description{
 read a source file and parse all the excluded lines from it
 }
+\keyword{internal}

@@ -2,6 +2,19 @@
 #'
 #' Check that [file.path()] is used to construct safe and portable paths.
 #'
+#' @examples
+#' # will produce lints
+#' lint(
+#'   text = "'abcdefg/hijklmnop/qrst/uv/wxyz'",
+#'   linters = nonportable_path_linter()
+#' )
+#'
+#' # okay
+#' lint(
+#'   text = "file.path('abcdefg', 'hijklmnop', 'qrst', 'uv', 'wxyz')",
+#'   linters = nonportable_path_linter()
+#' )
+#'
 #' @inheritParams absolute_path_linter
 #' @evalRd rd_tags("nonportable_path_linter")
 #' @seealso

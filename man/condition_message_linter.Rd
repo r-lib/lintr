@@ -9,8 +9,6 @@ condition_message_linter()
 \description{
 This linter discourages combining condition functions like \code{\link[=stop]{stop()}} with string concatenation
 functions \code{\link[=paste]{paste()}} and \code{\link[=paste0]{paste0()}}. This is because
-}
-\details{
 \itemize{
 \item \code{stop(paste0(...))} is redundant as it is exactly equivalent to \code{stop(...)}
 \item \code{stop(paste(...))} is similarly equivalent to \code{stop(...)} with separators (see examples)

@@ -33,24 +33,17 @@
 #' @export
 expect_true_false_linter <- function() {
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-    /parent::expr
-    /following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
+  following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
     /parent::expr
   "
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    xml_calls <- source_expression$xml_find_function_calls(c("expect_equal", "expect_identical"))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     # NB: use expr/$node, not expr[$node], to exclude other things (especially ns:: parts of the call)
     call_name <- xp_call_name(bad_expr, condition = "starts-with(text(), 'expect_')")
-    truth_value <- xml2::xml_find_chr(bad_expr, "string(expr/NUM_CONST[text() = 'TRUE' or text() = 'FALSE'])")
+    truth_value <- xml_find_chr(bad_expr, "string(expr/NUM_CONST[text() = 'TRUE' or text() = 'FALSE'])")
     lint_message <- sprintf(
       "expect_%s(x) is better than %s(x, %s)",
       tolower(truth_value), call_name, truth_value

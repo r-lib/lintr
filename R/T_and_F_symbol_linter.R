@@ -1,6 +1,7 @@
 #' `T` and `F` symbol linter
 #'
-#' Avoid the symbols `T` and `F`, and use `TRUE` and `FALSE` instead.
+#' Although they can be synonyms, avoid the symbols `T` and `F`, and use `TRUE` and `FALSE`, respectively, instead.
+#' `T` and `F` are not reserved keywords and can be assigned to any other values.
 #'
 #' @examples
 #' # will produce lints
@@ -31,42 +32,26 @@
 #' - <https://style.tidyverse.org/syntax.html#logical-vectors>
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name.
-  xpath <- paste0(
-    "//SYMBOL[",
-    "  (text() = 'T' or text() = 'F')", # T or F symbol
-    "  and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
-    "  and not(parent::expr[",
-    "    following-sibling::LEFT_ASSIGN", # not target of left assignment
-    "    or preceding-sibling::RIGHT_ASSIGN", # not target of right assignment
-    "    or following-sibling::EQ_ASSIGN", # not target of equals assignment
-    "  ])",
-    "]"
-  )
+  symbol_xpath <- "//SYMBOL[
+    (text() = 'T' or text() = 'F')
+    and not(parent::expr[OP-DOLLAR or OP-AT])
+  ]"
+  assignment_xpath <-
+    "parent::expr[following-sibling::LEFT_ASSIGN or preceding-sibling::RIGHT_ASSIGN or following-sibling::EQ_ASSIGN]"
 
-  xpath_assignment <- paste0(
-    "//SYMBOL[",
-    "  (text() = 'T' or text() = 'F')", # T or F symbol
-    "  and not(preceding-sibling::OP-DOLLAR)", # not part of a $-subset expression
-    "  and parent::expr[", # , but ...
-    "    following-sibling::LEFT_ASSIGN", # target of left assignment
-    "    or preceding-sibling::RIGHT_ASSIGN", # target of right assignment
-    "    or following-sibling::EQ_ASSIGN", # target of equals assignment
-    "  ]",
-    "]"
-  )
+  usage_xpath <- sprintf("%s[not(%s)]", symbol_xpath, assignment_xpath)
+  assignment_xpath <- sprintf("%s[%s]", symbol_xpath, assignment_xpath)
 
   replacement_map <- c(T = "TRUE", F = "FALSE")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
 
-    bad_exprs <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath)
-    bad_assigns <- xml2::xml_find_all(source_expression$xml_parsed_content, xpath_assignment)
+    bad_usage <- xml_find_all(xml, usage_xpath)
+    bad_assignment <- xml_find_all(xml, assignment_xpath)
 
     make_lints <- function(expr, fmt) {
-      symbol <- xml2::xml_text(expr)
+      symbol <- xml_text(expr)
       lint_message <- sprintf(fmt, replacement_map[symbol], symbol)
       xml_nodes_to_lints(
         xml = expr,
@@ -79,8 +64,8 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
     }
 
     c(
-      make_lints(bad_exprs, "Use %s instead of the symbol %s."),
-      make_lints(bad_assigns, "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s.")
+      make_lints(bad_usage, "Use %s instead of the symbol %s."),
+      make_lints(bad_assignment, "Don't use %2$s as a variable name, as it can break code relying on %2$s being %1$s.")
     )
   })
 }

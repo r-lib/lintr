@@ -17,7 +17,9 @@ returned. If \code{tags} is \code{NULL}, all linters will be returned. See \code
 tags are already used by lintr.}
 
 \item{exclude_tags}{Tags to exclude from the results. Linters with at least one matching tag will not be returned.
-If \code{except_tags} is \code{NULL}, no linters will be excluded.}
+If \code{exclude_tags} is \code{NULL}, no linters will be excluded. Note that \code{tags} takes priority, meaning that any
+tag found in both \code{tags} and \code{exclude_tags} will be included, not excluded. Note that linters with tag \code{"defunct"}
+(which do not work and can no longer be run) cannot be queried directly. See \link{lintr-deprecated} instead.}
 }
 \value{
 \code{available_linters} returns a data frame with columns 'linter', 'package' and 'tags':
@@ -64,5 +66,8 @@ identical(lintr_linters, lintr_linters2)
 available_tags()
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \code{\link[=available_tags]{available_tags()}} to retrieve the set of valid tags.
+}
 }

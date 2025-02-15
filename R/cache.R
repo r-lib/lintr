@@ -53,9 +53,9 @@ load_cache <- function(file, path = NULL) {
         invokeRestart("muffleWarning")
       },
       error = function(e) {
-        warning(
-          "Could not load cache file '", file, "':\n",
-          conditionMessage(e)
+        cli_warn(
+          "Could not load cache file {.file {file}}:",
+          parent = e
         )
       }
     )
@@ -127,9 +127,8 @@ retrieve_lint <- function(cache, expr, linter, lines) {
     )
     if (is.na(new_line_number)) {
       return(NULL)
-    } else {
-      lints[[i]]$line_number <- new_line_number
     }
+    lints[[i]]$line_number <- new_line_number
   }
   cache_lint(cache, expr, linter, lints)
   lints
@@ -167,16 +166,12 @@ find_new_line <- function(line_number, line, lines) {
 
   while (width <= length(lines)) {
     low <- line_number - width
-    if (low > 0L) {
-      if (lines[low] %==% line) {
-        return(low)
-      }
+    if (low > 0L && lines[low] %==% line) {
+      return(low)
     }
     high <- line_number + width
-    if (high <= length(lines)) {
-      if (lines[high] %==% line) {
-        return(high)
-      }
+    if (high <= length(lines) && lines[high] %==% line) {
+      return(high)
     }
     width <- width + 1L
   }

@@ -29,33 +29,14 @@
 #' @evalRd rd_tags("for_loop_index_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-for_loop_index_linter <- function() {
-  xpath <- "
+for_loop_index_linter <- make_linter_from_xpath(
+  xpath = "
   //forcond
     /SYMBOL[text() =
       following-sibling::expr
-        //SYMBOL[not(
-          preceding-sibling::OP-DOLLAR
-          or parent::expr[preceding-sibling::OP-LEFT-BRACKET]
-        )]
+        //SYMBOL[not(parent::expr[OP-DOLLAR or OP-AT or preceding-sibling::OP-LEFT-BRACKET])]
         /text()
     ]
-  "
-
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
-
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message = "Don't re-use any sequence symbols as the index symbol in a for loop.",
-      type = "warning"
-    )
-  })
-}
+  ",
+  lint_message = "Don't re-use any sequence symbols as the index symbol in a for loop."
+)

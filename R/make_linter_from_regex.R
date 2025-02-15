@@ -1,73 +1,49 @@
 make_linter_from_regex <- function(regex,
                                    lint_type,
-                                   lint_msg,
-                                   ignore_strings = TRUE) {
-  # If a regex-based linter is found, only flag those lints that occur within
-  # a relevant section of source code
-  .in_ignorable_position <- function(source_expression, line_number, match) {
-    ignore_strings && in_string(source_expression, line_number, match)
-  }
-
+                                   lint_msg) {
   function() {
-    Linter(function(source_expression) {
-      if (!is_lint_level(source_expression, "expression")) {
-        return(list())
-      }
-
+    Linter(linter_level = "file", function(source_expression) {
       all_matches <- re_matches(
-        source_expression[["lines"]],
+        source_expression[["file_lines"]],
         regex,
         locations = TRUE,
-        global = TRUE
+        global = FALSE
       )
+      all_matches <- all_matches[!is.na(all_matches$start), ]
+      all_matches$line_number <- as.integer(rownames(all_matches))
 
-      line_numbers <- as.integer(names(source_expression[["lines"]]))
+      matches_by_row <- split(all_matches, seq_len(nrow(all_matches)))
 
-      lints <- Map(
-        function(line_matches, line_number) {
-          lapply(
-            split(line_matches, seq_len(nrow(line_matches))),
-            function(.match) {
-              if (
-                is.na(.match[["start"]]) ||
-                  .in_ignorable_position(source_expression, line_number, .match)
-              ) {
-                return()
-              }
-              start <- .match[["start"]]
-              end <- .match[["end"]]
-              Lint(
-                filename = source_expression[["filename"]],
-                line_number = line_number,
-                column_number = start,
-                type = lint_type,
-                message = lint_msg,
-                line = source_expression[["lines"]][[as.character(line_number)]],
-                ranges = list(c(start, end))
-              )
-            }
-          )
-        },
-        all_matches,
-        line_numbers
-      )
-
-      Filter(function(x) any(lengths(x) > 0L), lints)
+      lints <- lapply(matches_by_row, function(.match) {
+        if (is_match_covered(.match, source_expression)) {
+          return()
+        }
+        Lint(
+          filename = source_expression[["filename"]],
+          line_number = .match$line_number,
+          type = lint_type,
+          message = lint_msg,
+          line = source_expression[["file_lines"]][[rownames(.match)]],
+          ranges = list(c(.match$start, .match$end))
+        )
+      })
+      lints[lengths(lints) > 0L]
     })
   }
 }
 
 #' Determine if a regex match is covered by an expression in a source_expression
 #'
-#' @param   source_expression   A source_expression
-#' @param   line_number,match   The position where a regex match was observed.
-#'   match must have entries "start" and "end".
-#' @param   token_type    Restrict analysis to tokens of this type, for example,
-#'   with token_type = "STR_CONST" you can check that a regex match occurs
-#'   within a string
+#' @param match The position where a regex match was observed.
+#'   It must have the following elements: `"start"`, `"end"`, and `"line_number"`.
+#' @param source_expression A source_expression.
+#' @param token_type Restrict analysis to tokens of this type, for example,
+#'   with `token_type = "STR_CONST"` you can check that a regex match occurs
+#'   within a string.
 #' @noRd
-is_match_covered <- function(source_expression, line_number, match, token_type = NULL) {
-  pc <- source_expression[["parsed_content"]]
+is_match_covered <- function(match, source_expression, token_type = "STR_CONST") {
+  line_number <- match$line_number
+  pc <- source_expression[["full_parsed_content"]]
   if (!is.null(token_type)) {
     pc <- pc[pc[["token"]] == token_type, ]
   }
@@ -91,10 +67,4 @@ is_match_covered <- function(source_expression, line_number, match, token_type =
   }
 
   any_single_line_covers() || any_multi_line_covers()
-}
-
-in_string <- function(source_expression, line_number, match) {
-  # do any of the strings in the parsed content contain the matched regex?
-
-  is_match_covered(source_expression, line_number, match, "STR_CONST")
 }

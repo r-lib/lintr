@@ -18,7 +18,9 @@ If it does not exist, it is added. If the value is \code{NULL}, the linter is re
 \item{packages}{A character vector of packages to search for linters.}
 
 \item{exclude_tags}{Tags to exclude from the results. Linters with at least one matching tag will not be returned.
-If \code{except_tags} is \code{NULL}, no linters will be excluded.}
+If \code{exclude_tags} is \code{NULL}, no linters will be excluded. Note that \code{tags} takes priority, meaning that any
+tag found in both \code{tags} and \code{exclude_tags} will be included, not excluded. Note that linters with tag \code{"defunct"}
+(which do not work and can no longer be run) cannot be queried directly. See \link{lintr-deprecated} instead.}
 }
 \value{
 A modified list of linters.

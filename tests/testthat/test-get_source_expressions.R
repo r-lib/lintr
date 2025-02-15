@@ -93,8 +93,12 @@ test_that("Multi-byte character truncated by parser is ignored", {
   skip_if_not_utf8_locale()
   # \U2013 is the Unicode character 'en dash', which is
   # almost identical to a minus sign in monospaced fonts.
-  with_content_to_parse("y <- x \U2013 42", {
-    expect_identical(error$message, "unexpected input")
+  content <- "y <- x \U2013 42"
+  # message is like '<text>:1:8: unexpected invalid token\n1: ...'
+  with_content_to_parse(content, {
+    base_msg <- conditionMessage(tryCatch(str2lang(content), error = identity))
+    # Just ensure that the captured message is a substring of the parser error, #2527
+    expect_true(grepl(error$message, base_msg, fixed = TRUE, useBytes = TRUE))
     expect_identical(error$column_number, 8L)
   })
 })
@@ -133,9 +137,6 @@ test_that("Warns if encoding is misspecified", {
 })
 
 test_that("Can extract line number from parser errors", {
-  skip_if_not_r_version("4.0.0")
-
-  # malformed raw string literal at line 2
   with_content_to_parse(
     trim_some('
       "ok"
@@ -147,7 +148,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # invalid \u{xxxx} sequence (line 3)
   with_content_to_parse(
     trim_some('
       ok
@@ -160,7 +160,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # invalid \u{xxxx} sequence (line 4)
   with_content_to_parse(
     trim_some('
       ok
@@ -174,7 +173,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # repeated formal argument 'a' on line 1
   with_content_to_parse("function(a, a) {}", {
     expect_identical(error$message, "Repeated formal argument 'a'.")
     expect_identical(error$line_number, 1L)
@@ -219,8 +217,8 @@ test_that("returned data structure is complete", {
   for (i in seq_along(lines)) {
     expr <- exprs$expressions[[i]]
     expect_named(expr, c(
-      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "content", "find_line",
-      "find_column"
+      "filename", "line", "column", "lines", "parsed_content", "xml_parsed_content", "xml_find_function_calls",
+      "content"
     ))
     expect_identical(expr$filename, temp_file)
     expect_identical(expr$line, i)
@@ -229,15 +227,11 @@ test_that("returned data structure is complete", {
     expect_identical(nrow(expr$parsed_content), 2L)
     expect_true(xml2::xml_find_lgl(expr$xml_parsed_content, "count(//SYMBOL) > 0"))
     expect_identical(expr$content, lines[i])
-    expect_type(expr$find_line, "closure")
-    expect_type(expr$find_column, "closure")
-    # find_line() and find_column() are deprecated
-    expect_warning(expr$find_line(1L), "find_line.*deprecated")
-    expect_warning(expr$find_column(1L), "find_column.*deprecated")
   }
   full_expr <- exprs$expressions[[length(lines) + 1L]]
   expect_named(full_expr, c(
-    "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "terminal_newline"
+    "filename", "file_lines", "content", "full_parsed_content", "full_xml_parsed_content", "xml_find_function_calls",
+    "terminal_newline"
   ))
   expect_identical(full_expr$filename, temp_file)
   expect_identical(full_expr$file_lines, lines_with_attr)
@@ -251,6 +245,48 @@ test_that("returned data structure is complete", {
 
   expect_null(exprs$error)
   expect_identical(exprs$lines, lines_with_attr)
+})
+
+test_that("xml_find_function_calls works as intended", {
+  lines <- c("foo()", "bar()", "foo()", "{ foo(); foo(); bar() }")
+  temp_file <- withr::local_tempfile(lines = lines)
+
+  exprs <- get_source_expressions(temp_file)
+
+  expect_length(exprs$expressions[[1L]]$xml_find_function_calls("foo"), 1L)
+  expect_length(exprs$expressions[[1L]]$xml_find_function_calls("bar"), 0L)
+  expect_identical(
+    exprs$expressions[[1L]]$xml_find_function_calls("foo"),
+    xml_find_all(exprs$expressions[[1L]]$xml_parsed_content, "//SYMBOL_FUNCTION_CALL[text() = 'foo']/parent::expr")
+  )
+
+  expect_length(exprs$expressions[[2L]]$xml_find_function_calls("foo"), 0L)
+  expect_length(exprs$expressions[[2L]]$xml_find_function_calls("bar"), 1L)
+
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls("foo"), 2L)
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls("bar"), 1L)
+  expect_length(exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar")), 3L)
+
+  # file-level source expression contains all function calls
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("foo"), 4L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("bar"), 2L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")), 6L)
+
+  # Also check order is retained:
+  expect_identical(
+    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")),
+    xml_find_all(exprs$expressions[[5L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL/parent::expr")
+  )
+
+  # Check naming and full cache
+  expect_identical(
+    exprs$expressions[[5L]]$xml_find_function_calls(NULL),
+    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar"))
+  )
+  expect_named(
+    exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar"), keep_names = TRUE),
+    c("foo", "foo", "bar")
+  )
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
@@ -372,14 +408,46 @@ param_df$.test_name <- with(param_df, sprintf("%s on expression %d", linter, exp
 patrick::with_parameters_test_that(
   "linters pass with xml_missing() content",
   {
-    linter <- eval(call(linter))
+    if (linter == "backport_linter") {
+      # otherwise we test the trivial linter (#2339)
+      linter <- backport_linter(r_version = "3.6.0")
+    } else {
+      if (linter == "cyclocomp_linter") {
+        skip_if_not_installed("cyclocomp")
+      }
+      linter <- eval(call(linter))
+    }
     expression <- expressions[[expression_idx]]
-    expect_no_warning({
-      lints <- linter(expression)
-    })
-    expect_length(lints, 0L)
+    is_valid_linter_level <-
+      (is_linter_level(linter, "expression") && is_lint_level(expression, "expression")) ||
+      (is_linter_level(linter, "file") && is_lint_level(expression, "file"))
+    if (is_valid_linter_level) {
+      expect_no_warning({
+        lints <- linter(expression)
+      })
+      expect_length(lints, 0L)
+    } else {
+      # suppress "empty test" skips
+      expect_true(TRUE)
+    }
   },
   .test_name = param_df$.test_name,
   linter = param_df$linter,
   expression_idx = param_df$expression_idx
 )
+
+test_that("invalid function definition parser failure lints", {
+  expect_lint(
+    "function(a = 1, a = 1) NULL",
+    rex::rex("Repeated formal argument 'a'."),
+    linters = list()
+  )
+})
+
+test_that("Disallowed embedded null gives parser failure lint", {
+  expect_lint(
+    "'\\0'",
+    rex::rex("Nul character not allowed."),
+    linters = list()
+  )
+})

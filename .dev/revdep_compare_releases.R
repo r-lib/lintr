@@ -7,6 +7,7 @@ library(glue)
 if (!file.exists("revdep-repos")) {
   stop("Please run .dev/revdep_get_repos.R first before running this")
 }
+withr::local_options(width = 180)
 repo_data <- rbind(
   data.table::fread("revdep-repos"),
   # land after the initial lines of comments on the header line
@@ -24,7 +25,7 @@ if (length(failed_install) > 0L) {
 
 dev_dir <- getwd()
 dev_branch <- system2("git", c("rev-parse", "--abbrev-ref", "HEAD"), stdout = TRUE)
-old_release <- "v2.0.1"
+old_release <- "v3.0.2"
 main <- "main"
 
 all_repos <- repo_data$repo
@@ -208,7 +209,7 @@ summarize_lint_delta <- function(new, old) {
   ][, .(line = sprintf("%s [%s]", line, linter), location = paste0(package, ":", filename))
   ][, print(.SD)]
 
-  NULL
+  invisible()
 }
 
 # ---- Main linting execution ----
@@ -229,12 +230,17 @@ main_only <- setdiff(basename(main_results), basename(old_results))
 old_only <- setdiff(basename(old_results), basename(main_results))
 shared <- intersect(basename(main_results), basename(old_results))
 
-message("The following packages warned on ", main, " only: ")
-message("  ", toString(match_and_strip(main_only, "\\.warnings$")), "\n")
-message("The following packages warned on ", old_release, " only: ")
-message("  ", toString(match_and_strip(old_only, "\\.warnings$")), "\n")
-message("The following packages warned on both branches: ")
-message("  ", toString(match_and_strip(shared, "\\.warnings$")), "\n")
+summarize_warned <- function(warned, label) {
+  message("The following packages warned on ", label, ":")
+  if (length(warned) > 0) {
+    message("  ", toString(match_and_strip(warned, "\\.warnings$")), "\n")
+  } else {
+    message("  None! 🎉")
+  }
+}
+summarize_warned(main_only, "main only")
+summarize_warned(old_only, paste(old_release, "only"))
+summarize_warned(shared, "both branches")
 
 main_only <- grep("warnings$", main_only, invert = TRUE, value = TRUE)
 old_only <- grep("warnings$", old_only, invert = TRUE, value = TRUE)

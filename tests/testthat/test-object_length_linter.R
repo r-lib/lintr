@@ -64,3 +64,20 @@ test_that("object_length_linter won't fail if dependency has no exports", {
     1L
   )
 })
+
+test_that("function shorthand is caught", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint(
+    "abcdefghijklm <- \\() NULL",
+    "function names",
+    object_length_linter(length = 10L)
+  )
+})
+
+test_that("rlang name injection is handled", {
+  linter <- object_length_linter(length = 10L)
+
+  expect_lint("tibble('{foo() |> bar() |> baz()}' := TRUE)", NULL, linter)
+  expect_lint("DT[, 'a_very_long_name' := FALSE]", "names should not be longer than 10 characters", linter)
+})

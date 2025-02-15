@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "lintr",
+          "informationUri": "https://lintr.r-lib.org/",
+          "version": "2.0.1",
+          "rules": [
+            {
+              "id": "trailing_whitespace_linter",
+              "fullDescription": {
+                "text": "Trailing whitespace is superfluous."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "trailing_whitespace_linter",
+          "ruleIndex": 0,
+          "message": {
+            "text": "Trailing blank lines are superfluous."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "TestFileFolder/hello.r",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "snippet": {
+                    "text": "print(Hello World!) "
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "columnKind": "utf16CodeUnits",
+      "originalUriBaseIds": {
+        "ROOTPATH": {
+          "uri": "file:///C:/repos/repototest/"
+        }
+      }
+    }
+  ]
+}

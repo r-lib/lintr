@@ -50,7 +50,7 @@ lint(
 \seealso{
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
-\item \url{https://design.tidyverse.org/args-data-details.html}
+\item \url{https://design.tidyverse.org/required-no-defaults.html}
 }
 }
 \section{Tags}{

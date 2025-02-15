@@ -830,3 +830,52 @@ test_that("it doesn't error on invalid code", {
   # Part of #1427
   expect_lint("function() {)", list(linter = "error", message = rex::rex("unexpected ')'")), indentation_linter())
 })
+
+test_that("function shorthand is handled", {
+  skip_if_not_r_version("4.1.0")
+  linter <- indentation_linter()
+
+  expect_lint(
+    trim_some("
+      lapply(1:10, \\(i) {
+        i %% 2
+      })
+    "),
+    NULL,
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      lapply(1:10, \\(i) {
+       i %% 2  # indentation is only 1 character
+      })
+    "),
+    "Indentation",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      \\(
+          a = 1L,
+          b = 2L) {
+        a + b
+      }
+    "),
+    NULL,
+    linter
+  )
+})
+
+test_that("lint metadata works for 0-space case", {
+  expect_lint(
+    trim_some("
+    if (TRUE) {
+    FALSE
+    }
+    "),
+    list(ranges = list(1L:2L)),
+    indentation_linter()
+  )
+})

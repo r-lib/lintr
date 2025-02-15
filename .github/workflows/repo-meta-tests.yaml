@@ -1,0 +1,38 @@
+# Various repo-level tests for code quality
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+name: repo-meta-tests
+
+jobs:
+  repo-meta-tests:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "release"
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::roxygen2
+
+      - name: Ensure lint metadata is tested
+        run: |
+          options(crayon.enabled = TRUE)
+          callr::rscript(".dev/lint_metadata_test.R")
+        shell: Rscript {0}
+
+      - name: Ensure roxygen content matches man directory
+        run: |
+          callr::rscript(".dev/roxygen_test.R")
+        shell: Rscript {0}

@@ -37,31 +37,33 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
-  xpath_call_with_args <- "//EQ_SUB/parent::expr"
-  xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[1]"
+  # NB: approach checking for duplicates in XPath is hard because of
+  #   quoted names, e.g. foo(a = 1, `a` = 2), so compute duplicates in R
+  xpath_call_with_args <- glue("
+    //EQ_SUB[not(
+      preceding-sibling::expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(except) }]
+    )]
+      /parent::expr[count(EQ_SUB) > 1]
+  ")
+  xpath_arg_name <- "./EQ_SUB/preceding-sibling::*[not(self::COMMENT)][1]"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    calls <- xml2::xml_find_all(xml, xpath_call_with_args)
+    call_expr <- xml_find_all(xml, xpath_call_with_args)
 
-    if (length(except) > 0L) {
-      calls_text <- get_r_string(xp_call_name(calls))
-      calls <- calls[!(calls_text %in% except)]
-    }
-
-    all_arg_nodes <- lapply(calls, xml2::xml_find_all, xpath_arg_name)
-    arg_names <- lapply(all_arg_nodes, get_r_string)
-    is_duplicated <- lapply(arg_names, duplicated)
+    bad_expr <- lapply(
+      call_expr,
+      function(expr) {
+        arg_expr <- xml_find_all(expr, xpath_arg_name)
+        arg_expr[duplicated(get_r_string(arg_expr))]
+      }
+    )
 
     xml_nodes_to_lints(
-      unlist(all_arg_nodes, recursive = FALSE)[unlist(is_duplicated)],
+      unlist(bad_expr, recursive = FALSE),
       source_expression = source_expression,
-      lint_message = "Duplicate arguments in function call.",
+      lint_message = "Avoid duplicate arguments in function calls.",
       type = "warning"
     )
   })

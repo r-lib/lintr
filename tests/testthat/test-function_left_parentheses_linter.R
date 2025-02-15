@@ -26,29 +26,31 @@ test_that("function_left_parentheses_linter skips allowed usages", {
 
 test_that("function_left_parentheses_linter blocks disallowed usages", {
   linter <- function_left_parentheses_linter()
-  lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function call.")
+  fun_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function definition.")
+  call_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function call.")
 
-  expect_lint("blah (1)", lint_msg, linter)
-  expect_lint("base::print (blah)", lint_msg, linter)
-  expect_lint("base::print(blah, f (1))", lint_msg, linter)
-  expect_lint("`+` (1, 1)", lint_msg, linter)
-  expect_lint("test <- function (x) { }", lint_msg, linter)
+  expect_lint("blah (1)", call_lint_msg, linter)
+  expect_lint("base::print (blah)", call_lint_msg, linter)
+  expect_lint("base::print(blah, f (1))", call_lint_msg, linter)
+  expect_lint("`+` (1, 1)", call_lint_msg, linter)
+  expect_lint("test <- function (x) { }", fun_lint_msg, linter)
 
   expect_lint(
     "blah  (1)",
-    list(message = lint_msg, column_number = 5L, ranges = list(c(5L, 6L))),
+    list(message = call_lint_msg, column_number = 5L, ranges = list(c(5L, 6L))),
     linter
   )
   expect_lint(
     "test <- function  (x) { }",
-    list(message = lint_msg, column_number = 17L, ranges = list(c(17L, 18L))),
+    list(message = fun_lint_msg, column_number = 17L, ranges = list(c(17L, 18L))),
     linter
   )
 })
 
 test_that("multi-line cases are handled correctly", {
   linter <- function_left_parentheses_linter()
-  lint_msg <- rex::rex("Left parenthesis should be on the same line as the function's symbol.")
+  call_lint_msg <- rex::rex("Left parenthesis should be on the same line as the function's symbol.")
+  fun_lint_msg <- rex::rex("Left parenthesis should be on the same line as the 'function' symbol.")
 
   expect_lint(
     trim_some("
@@ -59,7 +61,7 @@ test_that("multi-line cases are handled correctly", {
         param + 1
       }
     "),
-    lint_msg,
+    fun_lint_msg,
     linter
   )
 
@@ -73,7 +75,7 @@ test_that("multi-line cases are handled correctly", {
         param + 1
       }
     "),
-    lint_msg,
+    fun_lint_msg,
     linter
   )
 
@@ -89,7 +91,7 @@ test_that("multi-line cases are handled correctly", {
         TRUE
       }
     "),
-    lint_msg,
+    call_lint_msg,
     linter
   )
   expect_lint(
@@ -103,7 +105,7 @@ test_that("multi-line cases are handled correctly", {
         TRUE
       }
     "),
-    lint_msg,
+    call_lint_msg,
     linter
   )
 })
@@ -161,4 +163,33 @@ test_that("it doesn't produce invalid lints", {
       function_left_parentheses_linter()
     )
   )
+})
+
+test_that("newline in character string doesn't trigger false positive (#1963)", {
+  linter <- function_left_parentheses_linter()
+
+  expect_lint('foo("\n")$bar()', NULL, linter)
+  # also corrected the lint metadata for similar cases
+  expect_lint(
+    trim_some('
+      (
+        foo("
+        ")$bar
+        ()
+      )
+    '),
+    # attach to 'b' in '$bar'
+    list(line_number = 3L, column_number = 6L),
+    linter
+  )
+})
+
+test_that("shorthand functions are handled", {
+  skip_if_not_r_version("4.1.0")
+  linter <- function_left_parentheses_linter()
+  fun_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function definition.")
+
+  expect_lint("blah <- \\(blah) { }", NULL, linter)
+  expect_lint("\\(){\\(){}}()()", NULL, linter)
+  expect_lint("test <- \\ (x) { }", fun_lint_msg, linter)
 })

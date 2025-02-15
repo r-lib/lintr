@@ -4,7 +4,11 @@
 \alias{fixed_regex_linter}
 \title{Require usage of \code{fixed=TRUE} in regular expressions where appropriate}
 \usage{
-fixed_regex_linter()
+fixed_regex_linter(allow_unescaped = FALSE)
+}
+\arguments{
+\item{allow_unescaped}{Logical, default \code{FALSE}. If \code{TRUE}, only patterns that
+require regex escapes (e.g. \code{"\\\\$"} or \code{"[$]"}) will be linted. See examples.}
 }
 \description{
 Invoking a regular expression engine is overkill for cases when the search
@@ -30,6 +34,11 @@ lint(
 lint(
   text = 'grepl("a[*]b", x)',
   linters = fixed_regex_linter()
+)
+
+lint(
+  text = 'grepl("a[*]b", x)',
+  linters = fixed_regex_linter(allow_unescaped = TRUE)
 )
 
 code_lines <- 'stringr::str_subset(x, "\\\\\\\\$")'
@@ -67,10 +76,15 @@ lint(
   linters = fixed_regex_linter()
 )
 
+lint(
+  text = 'grepl("Munich", address)',
+  linters = fixed_regex_linter(allow_unescaped = TRUE)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}, \link[=regex_linters]{regex}
 }

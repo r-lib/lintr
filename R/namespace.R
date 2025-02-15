@@ -24,18 +24,18 @@ safe_get_exports <- function(ns) {
 
   # importFrom directives appear as list(ns, imported_funs)
   if (length(ns) > 1L) {
-    return(data.frame(pkg = ns[[1L]], fun = ns[[2L]], stringsAsFactors = FALSE))
+    return(data.frame(pkg = ns[[1L]], fun = ns[[2L]]))
   }
 
   # relevant only if there are any exported objects
   fun <- getNamespaceExports(ns)
   if (length(fun) > 0L) {
-    data.frame(pkg = ns, fun = fun, stringsAsFactors = FALSE)
+    data.frame(pkg = ns, fun = fun)
   }
 }
 
 empty_namespace_data <- function() {
-  data.frame(pkg = character(), fun = character(), stringsAsFactors = FALSE)
+  data.frame(pkg = character(), fun = character())
 }
 
 # filter namespace_imports() for S3 generics
@@ -64,11 +64,7 @@ exported_s3_generics <- function(path = find_package(".")) {
     return(empty_namespace_data())
   }
 
-  data.frame(
-    pkg = basename(path),
-    fun = unique(namespace_data$S3methods[, 1L]),
-    stringsAsFactors = FALSE
-  )
+  data.frame(pkg = basename(path), fun = unique(namespace_data$S3methods[, 1L]))
 }
 
 is_s3_generic <- function(fun) {
@@ -85,13 +81,7 @@ is_s3_generic <- function(fun) {
 
 .base_s3_generics <- unique(c(
   names(.knownS3Generics),
-  if (getRversion() >= "3.5.0") {
-    .S3_methods_table[, 1L]
-  } else {
-    # R < 3.5.0 doesn't provide .S3_methods_table
-    # fallback: search baseenv() for generic methods
-    imported_s3_generics(data.frame(pkg = "base", fun = ls(baseenv()), stringsAsFactors = FALSE))$fun
-  },
+  .S3_methods_table[, 1L],
   # Contains S3 generic groups, see ?base::groupGeneric and src/library/base/R/zzz.R
   ls(.GenericArgsEnv)
 ))

@@ -45,8 +45,8 @@ trim_some <- function(x, num = NULL) {
   rex::re_substitutes(x, rex::rex(start, n_times(any, num)), "", global = TRUE, options = "multi-line")
 }
 
-local_config <- function(config_dir, contents, .local_envir = parent.frame()) {
-  config_path <- file.path(config_dir, ".lintr")
+local_config <- function(config_dir, contents, filename = ".lintr", .local_envir = parent.frame()) {
+  config_path <- file.path(config_dir, filename)
   writeLines(contents, config_path)
   withr::defer(unlink(config_path), envir = .local_envir)
   config_path
@@ -60,4 +60,27 @@ skip_if_not_r_version <- function(min_version) {
 
 skip_if_not_utf8_locale <- function() {
   testthat::skip_if_not(l10n_info()[["UTF-8"]], "Not a UTF-8 locale")
+}
+
+safe_load_help_db <- function() {
+  help_db <- tryCatch(tools::Rd_db("lintr"), error = function(e) NULL)
+  # e.g. in dev under pkgload::load_all()
+  if (length(help_db) == 0L) {
+    help_db <- tryCatch(tools::Rd_db(dir = testthat::test_path("..", "..")), error = function(e) NULL)
+    testthat::skip_if_not(length(help_db) > 0L, message = "Package help corrupted or not installed")
+  }
+  help_db
+}
+
+pipes <- function(exclude = NULL) {
+  if (getRversion() < "4.1.0") exclude <- unique(c(exclude, "|>"))
+  all_pipes <- c(
+    standard = "%>%",
+    greedy = "%!>%",
+    tee = "%T>%",
+    assignment = "%<>%",
+    extraction = "%$%",
+    native = "|>"
+  )
+  all_pipes[!all_pipes %in% exclude]
 }

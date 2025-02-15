@@ -47,7 +47,7 @@ quotes_linter <- function(delimiter = c('"', "'")) {
       single_quote,
       end
     )
-    lint_message <- "Only use double-quotes." # nolint: object_usage_linter. An apparent codetools bug.
+    lint_message <- "Only use double-quotes."
   } else {
     quote_regex <- rex(
       start,
@@ -60,32 +60,12 @@ quotes_linter <- function(delimiter = c('"', "'")) {
     lint_message <- "Only use single-quotes."
   }
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
 
-    content <- source_expression$full_parsed_content
-    str_idx <- which(content$token == "STR_CONST")
-    quote_matches <- which(re_matches(content[str_idx, "text"], quote_regex))
+    string_exprs <- xml_find_all(xml, "//STR_CONST")
+    is_bad <- re_matches(xml_text(string_exprs), quote_regex)
 
-    lapply(
-      quote_matches,
-      function(id) {
-        with(content[str_idx[id], ], {
-          line <- source_expression$file_lines[[line1]]
-          col2 <- if (line1 == line2) col2 else nchar(line)
-          Lint(
-            filename = source_expression$filename,
-            line_number = line1,
-            column_number = col1,
-            type = "style",
-            message = lint_message,
-            line = line,
-            ranges = list(c(col1, col2))
-          )
-        })
-      }
-    )
+    xml_nodes_to_lints(string_exprs[is_bad], source_expression, lint_message)
   })
 }

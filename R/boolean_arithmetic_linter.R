@@ -34,40 +34,34 @@ boolean_arithmetic_linter <- function() {
   # TODO(#1581): extend to include all()-alike expressions
   zero_expr <- "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
   one_expr <- "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
-  length_xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'which' or text() = 'grep']
-    /parent::expr
-    /parent::expr
+  length_xpath <- glue("
+  parent::expr
     /parent::expr[
       expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
       and parent::expr[ ({zero_expr}) or ({one_expr})]
     ]
   ")
-  sum_xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'sum']
-    /parent::expr
-    /parent::expr[
-      expr[
-        expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
-        or (EQ or NE or GT or LT or GE or LE)
-      ] and parent::expr[ ({zero_expr}) or ({one_expr})]
+  sum_xpath <- glue("
+  parent::expr[
+    expr[
+      expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
+      or (EQ or NE or GT or LT or GE or LE)
     ]
-  ")
-  any_xpath <- paste(length_xpath, "|", sum_xpath)
+    and parent::expr[ ({zero_expr}) or ({one_expr})]
+  ]")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    any_expr <- xml2::xml_find_all(xml, any_xpath)
+  Linter(linter_level = "expression", function(source_expression) {
+    length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))
+    sum_calls <- source_expression$xml_find_function_calls("sum")
+    any_expr <- c(
+      xml_find_all(length_calls, length_xpath),
+      xml_find_all(sum_calls, sum_xpath)
+    )
 
     xml_nodes_to_lints(
       any_expr,
       source_expression = source_expression,
-      # TODO(michaelchirico): customize this?
+      # TODO(#2464): customize this?
       lint_message = paste(
         "Use any() to express logical aggregations.",
         "For example, replace length(which(x == y)) == 0 with !any(x == y)."

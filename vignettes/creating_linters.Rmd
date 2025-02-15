@@ -1,7 +1,5 @@
 ---
 title: "Creating new linters"
-author: "lintr maintainers"
-date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Creating new linters}
@@ -27,12 +25,13 @@ A good example of a simple linter is the `pipe_call_linter`.
 pipe_call_linter <- function() {
   xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
 
-  Linter(function(source_expression) {
+  Linter(linter_level = "expression", function(source_expression) {
     if (!is_lint_level(source_expression, "expression")) {
       return(list())
     }
 
     xml <- source_expression$xml_parsed_content
+    if (is.null(xml)) return(list())
 
     bad_expr <- xml2::xml_find_all(xml, xpath)
 
@@ -152,6 +151,8 @@ expressions in the file. This is done to facilitate caching. Suppose your packag
 rather than run linters on every expression every time the file is updated, when caching is activated `lintr` will
 only run the linter again on expressions that have changed.
 
+Note that this check is unnecessary because we provided `linter_level = "expression"` which guarantees that `source_expression` will be at the expression level and not at the file level.
+
 Therefore, it is preferable to write expression-level linters whenever possible. Two types of exceptions observed in `lintr` are
 (1) when several or all expressions are _required_ to ensure the linter logic applies (e.g., `conjunct_test_linter` looks for
 consecutive calls to `stopifnot()`, which will typically appear on consecutive expressions) or (2) when the linter logic
@@ -187,6 +188,12 @@ the message is customized to more closely match the observed usage. In such case
 accept a function in `lint_message` which takes a node as input and converts it to a customized message.
 See, for example, `seq_linter`.
 
+```r
+linter_level = "expression"
+```
+
+This is a more efficient way to implement the condition `if (!is_lint_level(source_expression, "expression"))`.
+
 ## Writing linter tests
 
 (NB: this section uses the `assignment_linter()` which has simpler examples than `pipe_continuation_linter()`.)
@@ -208,7 +215,7 @@ The main three aspects to test are:
 1. Linter returns no lints when there is nothing to lint, e.g.
 
 ```r
-expect_lint("blah", NULL, assignment_linter())
+expect_no_lint("blah", assignment_linter())
 ```
 
 2. Linter returns a lint when there is something to lint, e.g.
@@ -247,7 +254,7 @@ expect_lint("blah=1; blah=2",
   list(
     list(line_number = 1, column_number = 5),
     list(line_number = 1, column_number = 13),
-  )
+  ),
   assignment_linter()
 )
 ```
@@ -265,6 +272,32 @@ and so they've been tested and demonstrated their utility already.
    extract the string exactly as R will see it. This is especially important to make
    your logic robust to R-4-style raw strings like `R"-(hello)-"`, which is otherwise
    difficult to express, for example as an XPath.
+ * `xml_find_function_calls()`: Whenever your linter needs to query R function calls,
+   e.g. via the XPath `//SYMBOL_FUNCTION_CALL[text() = 'myfun']`, use this member of
+   `source_expression` to obtain the function call nodes more efficiently.
+   Instead of
+   ```r
+   xml <- source_expression$xml_parsed_content
+   xpath <- "//SYMBOL_FUNCTION_CALL[text() = 'myfun']/parent::expr/some/cond"
+   xml_find_all(xml, xpath)
+   ```
+   use
+   ```r
+   xml_calls <- source_expression$xml_find_function_calls("myfun")
+   call_xpath <- "some/cond"
+   xml_find_all(xml_calls, call_xpath)
+   ```
+ * `make_linter_from_xpath()` and `make_linter_from_function_xpath()`: Whenever your
+   linter can be expressed by a static XPath and a static message, use `make_linter_from_xpath()`
+   or, if the XPath starts with `//SYMBOL_FUNCTION_CALL`, use `make_linter_from_function_xpath()`.
+   Instead of
+   `make_linter_from_xpath(xpath = "//SYMBOL_FUNCTION_CALL[text() = 'foo' or text() = 'bar']")`,
+   use
+   `make_linter_from_function_xpath(function_names = c("foo", "bar"), xpath = "SYMBOL_FUNCTION_CALL/cond")`.
+   Very often, such XPaths look like `//SYMBOL_FUNCTION_CALL/parent::expr/cond2`,
+   in which case the `xpath=` is simpler: `xpath = "cond2"`. Another common case is
+   `//SYMBOL_FUNCTION_CALL/parent::expr[exprCond]/furtherCond`, which becomes
+   `xpath = "self::*[exprCond]/furtherCond"`.
 
 ## Contributing to `{lintr}`
 

@@ -12,10 +12,11 @@ This linter checks for \code{1:length(...)}, \code{1:nrow(...)}, \code{1:ncol(..
 conjunction with \code{seq()} (e.g., \code{seq(length(...))}, \code{seq(nrow(...))}, etc.).
 }
 \details{
-Additionally, it checks for \code{1:n()} (from dplyr) and \code{1:.N} (from data.table).
+Additionally, it checks for \code{1:n()} (from \code{{dplyr}}) and \code{1:.N} (from \code{{data.table}}).
 
 These often cause bugs when the right-hand side is zero.
-It is safer to use \code{\link[base:seq]{base::seq_len()}} or \code{\link[base:seq]{base::seq_along()}} instead.
+Instead, it is safer to use \code{\link[base:seq]{base::seq_len()}} (to create a sequence of a specified \emph{length}) or
+\code{\link[base:seq]{base::seq_along()}} (to create a sequence \emph{along} an object).
 }
 \examples{
 # will produce lints

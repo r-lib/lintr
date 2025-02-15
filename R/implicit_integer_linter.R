@@ -47,23 +47,30 @@
 #' @export
 implicit_integer_linter <- function(allow_colon = FALSE) {
   if (allow_colon) {
-    xpath <- "//NUM_CONST[not(parent::expr/parent::expr/OP-COLON)]"
+    xpath <- "//NUM_CONST[not(parent::expr/parent::expr[
+      OP-COLON
+      or (OP-MINUS and parent::expr/OP-COLON)
+    ])]"
   } else {
     xpath <- "//NUM_CONST"
   }
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    numbers <- xml2::xml_find_all(xml, xpath)
+    number_expr <- xml_find_all(xml, xpath)
+    number <- xml_text(number_expr)
+    lint_idx <- is_implicit_integer(number)
+    number_expr <- number_expr[lint_idx]
+    number <- number[lint_idx]
+    is_negative <- !is.na(xml_find_first(number_expr, "parent::expr/preceding-sibling::OP-MINUS"))
+
+    lint_message <-
+      sprintf("Use %1$dL or %1$d.0 to avoid implicit integers.", ((-1L)^is_negative) * as.integer(number))
 
     xml_nodes_to_lints(
-      numbers[is_implicit_integer(xml2::xml_text(numbers))],
+      number_expr,
       source_expression = source_expression,
-      lint_message = "Integers should not be implicit. Use the form 1L for integers or 1.0 for doubles.",
+      lint_message = lint_message,
       type = "style",
       column_number_xpath = "number(./@col2 + 1)", # mark at end
       range_end_xpath = "number(./@col2 + 1)" # end after number for easy fixing (enter "L" or ".0")

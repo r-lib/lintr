@@ -4,10 +4,28 @@
 #'   e.g. `lapply(DF, sum)` is the same as `lapply(DF, function(x) sum(x))` and
 #'   the former is more readable.
 #'
+#' Cases like `lapply(x, \(xi) grep("ptn", xi))` are excluded because, though
+#'   the anonymous function _can_ be avoided, doing so is not always more
+#'   readable.
+#'
+#' @param allow_comparison Logical, default `FALSE`. If `TRUE`, lambdas like
+#'   `function(x) foo(x) == 2`, where `foo` can be extracted to the "mapping"
+#'   function and `==` vectorized instead of called repeatedly, are linted.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
 #'   text = "lapply(list(1:3, 2:4), function(xi) sum(xi))",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) xi == 2)",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) sum(xi) > 0)",
 #'   linters = unnecessary_lambda_linter()
 #' )
 #'
@@ -27,10 +45,30 @@
 #'   linters = unnecessary_lambda_linter()
 #' )
 #'
+#' lint(
+#'   text = "sapply(x, function(xi) xi == 2)",
+#'   linters = unnecessary_lambda_linter(allow_comparison = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) sum(xi) > 0)",
+#'   linters = unnecessary_lambda_linter(allow_comparison = TRUE)
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, function(xi) sum(abs(xi)) > 10)",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
+#' lint(
+#'   text = "sapply(x, sum) > 0",
+#'   linters = unnecessary_lambda_linter()
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_lambda_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-unnecessary_lambda_linter <- function() {
+unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # include any base function like those where FUN is an argument
   #   and ... follows positionally directly afterwards (with ...
   #   being passed on to FUN). That excludes functions like
@@ -42,77 +80,85 @@ unnecessary_lambda_linter <- function() {
   #   call is using positional or keyword arguments -- we can
   #   throw a lint for sweep() lambdas where the following arguments
   #   are all named) but for now it seems like overkill.
-  apply_funs <- xp_text_in_table(c( # nolint: object_usage_linter. Used in glue call below.
+  apply_funs <- c(
     "lapply", "sapply", "vapply", "apply",
     "tapply", "rapply", "eapply", "dendrapply",
     "mapply", "by", "outer",
     "mclapply", "mcmapply", "parApply", "parCapply", "parLapply",
     "parLapplyLB", "parRapply", "parSapply", "parSapplyLB", "pvec",
     purrr_mappers
-  ))
+  )
+
+  # OP-PLUS: condition for complex literal, e.g. 0+2i.
+  # NB: this includes 0+3 and TRUE+FALSE, which are also fine.
+  inner_comparison_xpath <- glue("
+  parent::expr
+    /expr[FUNCTION]
+    /expr[
+      ({ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) })
+      and expr[
+        expr/SYMBOL_FUNCTION_CALL
+        and expr/SYMBOL
+      ]
+      and expr[
+        NUM_CONST
+        or STR_CONST
+        or (OP-PLUS and count(expr/NUM_CONST) = 2)
+      ]
+    ]
+  ")
 
   # outline:
   #   1. match one of the identified mappers
   #   2. match an anonymous function that can be "symbol-ized"
-  #     a. it's a one-variable function [TODO(michaelchirico): is this necessary?]
+  #     a. it's a one-variable function [TODO(#2477): relax this]
   #     b. the function is a single call
   #     c. that call's _first_ argument is just the function argument (a SYMBOL)
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
-  # TODO(#1703): handle explicit returns too: function(x) return(x)
-  default_fun_xpath_fmt <- "
-  //SYMBOL_FUNCTION_CALL[ {apply_funs} ]
-    /parent::expr
-    /following-sibling::expr[
-      FUNCTION
-      and count(SYMBOL_FORMALS) = 1
-      and {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[1][self::EQ_SUB])]/SYMBOL
-      and SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[1]/SYMBOL
-      and not(SYMBOL_FORMALS = {paren_path}/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//SYMBOL)
+  default_fun_xpath <- glue("
+  following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
+    /expr[last()][
+      count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
+      and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
+      and preceding-sibling::SYMBOL_FORMALS =
+        .//expr[
+          position() = 2
+          and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
+          and not(preceding-sibling::*[1][self::EQ_SUB])
+          and not(parent::expr[
+            preceding-sibling::expr[not(SYMBOL_FUNCTION_CALL)]
+            or following-sibling::*[not(self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACE)]
+          ])
+        ]/SYMBOL
     ]
-  "
-  default_fun_xpath <- paste(
-    sep = "|",
-    glue::glue(default_fun_xpath_fmt, paren_path = "expr"),
-    glue::glue(default_fun_xpath_fmt, paren_path = "expr[OP-LEFT-BRACE and count(expr) = 1]/expr[1]")
-  )
+    /parent::expr
+  ")
 
   # purrr-style inline formulas-as-functions, e.g. ~foo(.x)
   # logic is basically the same as that above, except we need
   #   1. a formula (OP-TILDE)
   #   2. the lone argument marker `.x` or `.`
   purrr_symbol <- "SYMBOL[text() = '.x' or text() = '.']"
-  purrr_fun_xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(purrr_mappers)} ]
-    /parent::expr
-    /following-sibling::expr[
-      OP-TILDE
-      and expr[OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/{purrr_symbol}]
-      and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
-    ]
-  ")
+  purrr_fun_xpath <- glue("
+  following-sibling::expr[
+    OP-TILDE
+    and expr[OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/{purrr_symbol}]
+    and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
+  ]")
 
   # path to calling function symbol from the matched expressions
   fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"
   # path to the symbol of the simpler function that avoids a lambda
-  symbol_xpath <- glue::glue("(expr|expr[OP-LEFT-BRACE]/expr[1])/expr[SYMBOL_FUNCTION_CALL]")
+  symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
+  Linter(linter_level = "expression", function(source_expression) {
+    default_calls <- source_expression$xml_find_function_calls(apply_funs)
+    default_fun_expr <- xml_find_all(default_calls, default_fun_xpath)
 
-    xml <- source_expression$xml_parsed_content
-
-    default_fun_expr <- xml2::xml_find_all(xml, default_fun_xpath)
-
-    # TODO(michaelchirico): further message customization is possible here,
-    #   e.g. don't always refer to 'lapply()' in the example, and customize to
-    #   whether arguments need to be subsumed in '...' or not. The trouble is in
-    #   keeping track of which argument the anonymous function is supplied (2nd
-    #   argument for many calls, but 3rd e.g. for apply())
-    default_call_fun <- xml2::xml_text(xml2::xml_find_first(default_fun_expr, fun_xpath))
-    default_symbol <- xml2::xml_text(xml2::xml_find_first(default_fun_expr, symbol_xpath))
+    # TODO(#2478): Give a specific recommendation in the message.
+    default_call_fun <- xml_text(xml_find_first(default_fun_expr, fun_xpath))
+    default_symbol <- xml_text(xml_find_first(default_fun_expr, symbol_xpath))
     default_fun_lints <- xml_nodes_to_lints(
       default_fun_expr,
       source_expression = source_expression,
@@ -124,10 +170,33 @@ unnecessary_lambda_linter <- function() {
       type = "warning"
     )
 
-    purrr_fun_expr <- xml2::xml_find_all(xml, purrr_fun_xpath)
+    inner_comparison_lints <- NULL
+    if (!allow_comparison) {
+      sapply_vapply_calls <- source_expression$xml_find_function_calls(c("sapply", "vapply"))
+      inner_comparison_expr <- xml_find_all(sapply_vapply_calls, inner_comparison_xpath)
 
-    purrr_call_fun <- xml2::xml_text(xml2::xml_find_first(purrr_fun_expr, fun_xpath))
-    purrr_symbol <- xml2::xml_text(xml2::xml_find_first(purrr_fun_expr, symbol_xpath))
+      mapper <- xp_call_name(xml_find_first(inner_comparison_expr, "parent::expr/parent::expr"))
+      if (length(mapper) > 0L) fun_value <- if (mapper == "sapply") "" else ", FUN.VALUE = <intermediate>"
+
+      inner_comparison_lints <- xml_nodes_to_lints(
+        inner_comparison_expr,
+        source_expression = source_expression,
+        lint_message = sprintf(
+          paste(
+            "Compare to a constant after calling %1$s() to get the full benefits of vectorization.",
+            "Prefer %1$s(x, foo%2$s) == 2 over %1$s(x, function(xi) foo(xi) == 2, logical(1L))."
+          ),
+          mapper, fun_value
+        ),
+        type = "warning"
+      )
+    }
+
+    purrr_calls <- source_expression$xml_find_function_calls(purrr_mappers)
+    purrr_fun_expr <- xml_find_all(purrr_calls, purrr_fun_xpath)
+
+    purrr_call_fun <- xml_text(xml_find_first(purrr_fun_expr, fun_xpath))
+    purrr_symbol <- xml_text(xml_find_first(purrr_fun_expr, symbol_xpath))
     purrr_fun_lints <- xml_nodes_to_lints(
       purrr_fun_expr,
       source_expression = source_expression,
@@ -139,12 +208,6 @@ unnecessary_lambda_linter <- function() {
       type = "warning"
     )
 
-    c(default_fun_lints, purrr_fun_lints)
+    c(default_fun_lints, inner_comparison_lints, purrr_fun_lints)
   })
 }
-
-purrr_mappers <- c(
-  "map", "walk",
-  "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr", "map_vec",
-  "map_df", "map_dfr", "map_dfc"
-)

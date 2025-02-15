@@ -4,17 +4,37 @@
 \alias{unnecessary_lambda_linter}
 \title{Block usage of anonymous functions in iteration functions when unnecessary}
 \usage{
-unnecessary_lambda_linter()
+unnecessary_lambda_linter(allow_comparison = FALSE)
+}
+\arguments{
+\item{allow_comparison}{Logical, default \code{FALSE}. If \code{TRUE}, lambdas like
+\code{function(x) foo(x) == 2}, where \code{foo} can be extracted to the "mapping"
+function and \code{==} vectorized instead of called repeatedly, are linted.}
 }
 \description{
 Using an anonymous function in, e.g., \code{\link[=lapply]{lapply()}} is not always necessary,
 e.g. \code{lapply(DF, sum)} is the same as \code{lapply(DF, function(x) sum(x))} and
 the former is more readable.
 }
+\details{
+Cases like \verb{lapply(x, \\(xi) grep("ptn", xi))} are excluded because, though
+the anonymous function \emph{can} be avoided, doing so is not always more
+readable.
+}
 \examples{
 # will produce lints
 lint(
   text = "lapply(list(1:3, 2:4), function(xi) sum(xi))",
+  linters = unnecessary_lambda_linter()
+)
+
+lint(
+  text = "sapply(x, function(xi) xi == 2)",
+  linters = unnecessary_lambda_linter()
+)
+
+lint(
+  text = "sapply(x, function(xi) sum(xi) > 0)",
   linters = unnecessary_lambda_linter()
 )
 
@@ -34,10 +54,30 @@ lint(
   linters = unnecessary_lambda_linter()
 )
 
+lint(
+  text = "sapply(x, function(xi) xi == 2)",
+  linters = unnecessary_lambda_linter(allow_comparison = TRUE)
+)
+
+lint(
+  text = "sapply(x, function(xi) sum(xi) > 0)",
+  linters = unnecessary_lambda_linter(allow_comparison = TRUE)
+)
+
+lint(
+  text = "sapply(x, function(xi) sum(abs(xi)) > 10)",
+  linters = unnecessary_lambda_linter()
+)
+
+lint(
+  text = "sapply(x, sum) > 0",
+  linters = unnecessary_lambda_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=readability_linters]{readability}
 }

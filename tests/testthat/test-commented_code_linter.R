@@ -3,9 +3,8 @@ test_that("commented_code_linter skips allowed usages", {
 
   expect_lint("blah", NULL, linter)
   expect_lint("#' blah <- 1", NULL, linter)
-  expect_lint(c("a <- 1", "# comment without code"), NULL, linter)
-  expect_lint(c("a <- 1", "# comment without code"), NULL, linter)
-  expect_lint(c("a <- 1", "## whatever"), NULL, linter)
+  expect_lint("a <- 1\n# comment without code", NULL, linter)
+  expect_lint("a <- 1\n## whatever", NULL, linter)
 
   expect_lint("TRUE", NULL, linter)
   expect_lint("#' @examples", NULL, linter)
@@ -20,7 +19,7 @@ test_that("commented_code_linter skips allowed usages", {
 })
 
 test_that("commented_code_linter blocks disallowed usages", {
-  lint_msg <- rex::rex("Commented code should be removed.")
+  lint_msg <- rex::rex("Remove commented code.")
   linter <- commented_code_linter()
 
   expect_lint("# blah <- 1", lint_msg, linter)
@@ -80,7 +79,7 @@ test_that("commented_code_linter blocks disallowed usages", {
 
 test_that("commented_code_linter can detect operators in comments and lint correctly", {
   linter <- commented_code_linter()
-  lint_msg <- rex::rex("Commented code should be removed.")
+  lint_msg <- rex::rex("Remove commented code.")
 
   test_ops <- c(
     "+", "=", "==", "!=", "<=", ">=", "<-", "<<-", "<", ">", "->",
@@ -100,7 +99,17 @@ test_that("commented_code_linter can detect operators in comments and lint corre
 
   expect_lint(
     "# 1:3 |> sum()",
-    rex::rex("Commented code should be removed."),
+    rex::rex("Remove commented code."),
     commented_code_linter()
   )
+})
+
+test_that("commented_code_linter can detect commented code ending with pipes", {
+  linter <- commented_code_linter()
+  lint_msg <- rex::rex("Remove commented code.")
+
+  expect_lint("# f() %>%", lint_msg, linter)
+
+  skip_if_not_r_version("4.1.0")
+  expect_lint("# f() |>", lint_msg, linter)
 })

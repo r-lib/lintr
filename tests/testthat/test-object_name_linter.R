@@ -1,8 +1,8 @@
 # styler: off
 test_that("styles are correctly identified", {
-  do_style_check <- function(nms) lapply(unname(style_regexes), check_style, nms = nms)
+  do_style_check <- function(nms) lapply(unname(style_regexes), lintr:::check_style, nms = nms)
 
-  #                                            symbl   UpC   lowC   snake  SNAKE  dot    allow  ALLUP
+  #                                            symbl   UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
   expect_identical(do_style_check("x"),   list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
   expect_identical(do_style_check(".x"),  list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
   expect_identical(do_style_check("X"),   list(FALSE, TRUE,  FALSE, FALSE, TRUE,  FALSE,  FALSE,  TRUE))
@@ -96,7 +96,7 @@ test_that("linter accepts vector of styles", {
   linter <- object_name_linter(styles = c("camelCase", "dotted.case"))
 
   expect_lint(
-    c("var.one <- 1", "varTwo <- 2", "var_three <- 3"),
+    "var.one <- 1\nvarTwo <- 2\nvar_three <- 3",
     list(message = lint_msg, line_number = 3L, column_number = 1L),
     linter
   )
@@ -105,13 +105,28 @@ test_that("linter accepts vector of styles", {
 test_that("dollar subsetting only lints the first expression", {
   # Regression test for #582
   linter <- object_name_linter()
-  lint_msg <- "Variable and function name style should match snake_case or symbols."
+  lint_msg <- rex::rex("Variable and function name style should match snake_case or symbols.")
 
   expect_lint("my_var$MY_COL <- 42L", NULL, linter)
   expect_lint("MY_VAR$MY_COL <- 42L", lint_msg, linter)
-  expect_lint("my_var$MY_SUB$MY_COL <- 42L", NULL, linter)
-  expect_lint("MY_VAR$MY_SUB$MY_COL <- 42L", lint_msg, linter)
+  expect_lint("my_var@MY_SUB <- 42L", NULL, linter)
+  expect_lint("MY_VAR@MY_SUB <- 42L", lint_msg, linter)
 })
+
+patrick::with_parameters_test_that(
+  "nested extraction only lints on the first symbol",
+  expect_lint(
+    sprintf("%s%sMY_SUB%sMY_COL <- 42L", if (should_lint) "MY_VAR" else "my_var", op1, op2),
+    if (should_lint) rex::rex("Variable and function name style should match snake_case or symbols."),
+    object_name_linter()
+  ),
+  .cases = within(
+    expand.grid(should_lint = c(TRUE, FALSE), op1 = c("$", "@"), op2 = c("$", "@"), stringsAsFactors = FALSE),
+    {
+      .test_name <- sprintf("(should lint? %s, op1=%s, op2=%s)", should_lint, op1, op2)
+    }
+  )
+)
 
 test_that("assignment targets of compound lhs are correctly identified", {
   linter <- object_name_linter()
@@ -165,12 +180,12 @@ test_that("object_name_linter won't fail if an imported namespace is unavailable
 test_that("object_name_linter supports custom regexes", {
   # disables default styles
   linter <- object_name_linter(
-    regexes = c("shinyModule" = rex::rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
+    regexes = c(shinyModule = rex::rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
   )
   msg <- rex::rex("Variable and function name style should match shinyModule.")
   linter2 <- object_name_linter(
     styles = c("snake_case", "symbols"),
-    regexes = c("shinyModule" = rex::rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
+    regexes = c(shinyModule = rex::rex(start, lower, zero_or_more(alnum), "UI" %or% "Server", end))
   )
   msg2 <- rex::rex("Variable and function name style should match snake_case, symbols or shinyModule.")
 
@@ -245,4 +260,29 @@ test_that("object_name_linter supports custom regexes", {
     list(line_number = 3L, message = rex::rex("Variable and function name style should match a or /^b$/.")),
     object_name_linter(regexes = c(a = "^a$", "^b$"))
   )
+})
+
+test_that("complex LHS of := doesn't cause false positive", {
+  # "_l" would be included under previous logic which tried ancestor::expr[ASSIGN] for STR_CONST,
+  #   but only parent::expr[ASSIGN] is needed for strings.
+  expect_lint('dplyr::mutate(df, !!paste0(v, "_l") := df$a * 2)', NULL, object_name_linter())
+})
+
+test_that("function shorthand also lints", {
+  skip_if_not_r_version("4.1.0")
+
+  expect_lint("aBc <- \\() NULL", "function name style", object_name_linter())
+})
+
+test_that("capture groups in style are fine", {
+  expect_lint("a <- 1\nab <- 2", NULL, object_name_linter(regexes = c(capture = "^(a)")))
+  expect_lint("ab <- 1\nabc <- 2", NULL, object_name_linter(regexes = c(capture = "^(a)(b)")))
+})
+
+test_that("rlang name injection is handled", {
+  linter <- object_name_linter()
+
+  expect_lint('tibble("{name}" := 2)', NULL, linter)
+  expect_lint('x %>% mutate("{name}" := 2)', NULL, linter)
+  expect_lint('DT[, "{name}" := 2]', "style should match snake_case", linter)
 })

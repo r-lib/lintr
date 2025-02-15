@@ -25,7 +25,9 @@ test_that(
       "abc = 123",
       # from jkl.R
       "jkl = 456",
-      "mno = 789"
+      "mno = 789",
+      # from exec/script.R
+      "x = 1:4"
     )
 
     lints_from_outside <- lint_package(
@@ -80,7 +82,7 @@ test_that(
     # `jkl.R` (and remove it on finishing this test)
     local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
 
-    expected_lines <- "mno = 789"
+    expected_lines <- c("mno = 789", "x = 1:4")
     lints_from_outside <- lint_package(
       pkg_path,
       linters = list(assignment_linter())
@@ -153,4 +155,96 @@ test_that("lint_package returns early if no package is found", {
 
 test_that("length(path)>1 is not supported", {
   expect_error(lint_package(letters), "one package at a time", fixed = TRUE)
+})
+
+test_that(
+  "`lint_package` will use a `.lintr` file in `.github/linters/` directory the same as the package root",
+  {
+    withr::local_options(lintr.linter_file = "lintr_test_config")
+
+    pkg_path <- test_path("dummy_packages", "github_lintr_file")
+
+    # First, ensure that the package has lint messages in the absence of a
+    # custom configuration:
+
+    pkg_lints_before <- withr::with_dir(
+      pkg_path,
+      lint_package(".", linters = list(quotes_linter()))
+    )
+
+    expect_identical(
+      as.data.frame(pkg_lints_before)[["line"]],
+      c("'abc'", "'abc'"),
+      "linting the `github_lintr_file` package should fail"
+    )
+
+    # In `github/linters`add a `.lintr` file
+    dir.create(
+      path = file.path(pkg_path, ".github", "linters/"),
+      recursive = TRUE
+    )
+    on.exit(unlink(file.path(pkg_path, ".github"), recursive = TRUE), add = TRUE)
+
+    local_config(
+      file.path(pkg_path, ".github", "linters"),
+      "linters: linters_with_defaults(quotes_linter(\"'\"))",
+      filename = "lintr_test_config"
+    )
+
+    pkg_lints <- withr::with_dir(pkg_path, lint_package("."))
+    expect_length(pkg_lints, 0L)
+
+    subdir_lints <- withr::with_dir(pkg_path, lint_dir("tests/testthat"))
+    expect_length(subdir_lints, 0L)
+  }
+)
+
+test_that("package using .lintr.R config lints correctly", {
+  withr::local_options(lintr.linter_file = "lintr_test_config")
+
+  r_config_pkg <- test_path("dummy_packages", "RConfig")
+
+  lints <- as.data.frame(lint_package(r_config_pkg))
+  expect_identical(unique(basename(lints$filename)), "lint_me.R")
+  expect_identical(lints$linter, c("infix_spaces_linter", "any_duplicated_linter"))
+
+  # config has bad R syntax
+  expect_error(
+    lint_package(test_path("dummy_packages", "RConfigInvalid")),
+    "Malformed config file (lintr_test_config.R), ensure it is valid R syntax",
+    fixed = TRUE
+  )
+
+  # config produces unused variables
+  withr::local_options(lintr.linter_file = "lintr_test_config_extraneous")
+  expect_warning(
+    expect_length(lint_package(r_config_pkg), 2L),
+    "Found unused settings in config file",
+    fixed = TRUE
+  )
+
+  # R is preferred if multiple matched configs
+  withr::local_options(lintr.linter_file = "lintr_test_config_conflict")
+  lints <- as.data.frame(lint_package(r_config_pkg))
+  expect_identical(unique(basename(lints$filename)), "testthat.R")
+  expect_identical(lints$linter, c("expect_null_linter", "trailing_blank_lines_linter"))
+})
+
+test_that("lintr need not be attached for .lintr.R configs to use lintr functions", {
+  exprs <- paste(
+    'options(lintr.linter_file = "lintr_test_config")',
+    sprintf('lints <- lintr::lint_package("%s")', test_path("dummy_packages", "RConfig")),
+    # simplify output to be read from stdout
+    'cat(paste(as.data.frame(lints)$linter, collapse = "|"), "\n", sep = "")',
+    sep = "; "
+  )
+  if (tolower(Sys.info()[["sysname"]]) == "windows") {
+    rscript <- file.path(R.home("bin"), "Rscript.exe")
+  } else {
+    rscript <- file.path(R.home("bin"), "Rscript")
+  }
+  expect_identical(
+    system2(rscript, c("-e", shQuote(exprs)), stdout = TRUE),
+    "infix_spaces_linter|any_duplicated_linter"
+  )
 })

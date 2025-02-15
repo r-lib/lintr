@@ -1,24 +1,3 @@
-object_name_xpath <- local({
-  xp_assignment_target <- paste0(
-    "not(preceding-sibling::OP-DOLLAR)",
-    "and ancestor::expr[",
-    " following-sibling::LEFT_ASSIGN",
-    " or preceding-sibling::RIGHT_ASSIGN",
-    " or following-sibling::EQ_ASSIGN",
-    "]",
-    "and not(ancestor::expr[",
-    " preceding-sibling::OP-LEFT-BRACKET",
-    " or preceding-sibling::LBB",
-    "])"
-  )
-
-  glue::glue("
-  //SYMBOL[ {xp_assignment_target} ]
-  |  //STR_CONST[ {xp_assignment_target} ]
-  |  //SYMBOL_FORMALS
-  ")
-})
-
 #' Object name linter
 #'
 #' Check that object names conform to a naming style.
@@ -45,7 +24,12 @@ object_name_xpath <- local({
 #'
 #' @param styles A subset of
 #'   \Sexpr[stage=render, results=rd]{lintr:::regexes_rd}. A name should
-#'   match at least one of these styles.
+#'   match at least one of these styles. The `"symbols"` style refers to
+#'   names containing *only* non-alphanumeric characters; e.g., defining `%+%`
+#'   from ggplot2 or `%>%` from magrittr would not generate lint markers,
+#'   whereas `%m+%` from lubridate (containing both alphanumeric *and*
+#'   non-alphanumeric characters) would.
+#'
 #' @param regexes A (possibly named) character vector specifying a custom naming convention.
 #'   If named, the names will be used in the lint message. Otherwise, the regexes enclosed by `/` will be used in the
 #'   lint message.
@@ -108,7 +92,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
   }
   if (length(regexes) > 0L) {
     if (!is.character(regexes)) {
-      stop("`regexes` must be a character vector.")
+      cli_abort("{.arg regexes} must be a {.cls character} vector.")
     }
     rx_names <- names2(regexes)
     missing_name <- !nzchar(rx_names)
@@ -118,26 +102,22 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     style_list <- c(style_list, as.list(regexes))
   }
   if (length(style_list) == 0L) {
-    stop("At least one style must be specified using `styles` or `regexes`.")
+    cli_abort("At least one style must be specified using {.arg styles} or {.arg regexes}.")
   }
 
   lint_message <- paste0(
     "Variable and function name style should match ",
-    glue::glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
+    glue_collapse(unique(names(style_list)), sep = ", ", last = " or "), "."
   )
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
+  Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    assignments <- xml2::xml_find_all(xml, object_name_xpath)
+    assignments <- xml_find_all(xml, object_name_xpath)
 
     # Retrieve assigned name
     nms <- strip_names(
-      xml2::xml_text(assignments)
+      xml_text(assignments)
     )
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change
@@ -166,10 +146,10 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 }
 
 check_style <- function(nms, style, generics = character()) {
-  conforming <- re_matches(nms, style)
+  conforming <- re_matches_logical(nms, style)
 
-  # mark empty names and NA names as conforming
-  conforming[!nzchar(nms) | is.na(conforming)] <- TRUE
+  # mark empty or NA names as conforming
+  conforming <- is.na(nms) | !nzchar(nms) | conforming
 
   if (!all(conforming)) {
     possible_s3 <- re_matches(
@@ -189,44 +169,18 @@ check_style <- function(nms, style, generics = character()) {
   conforming
 }
 
-# Remove quotes or other things from names
-strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(quote, "`", "%")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
-  x
-}
-
-# see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().
-#   All of .onLoad, .onAttach, and .onUnload are used in base packages,
-#   and should be caught in is_base_function; they're included here for completeness / stability
-#   (they don't strictly _have_ to be defined in base, so could in principle be removed).
-#   .Last.sys and .First.sys are part of base itself, so aren't included here.
-special_funs <- c(
-  ".onLoad",
-  ".onAttach",
-  ".onUnload",
-  ".onDetach",
-  ".Last.lib",
-  ".First",
-  ".Last"
-)
-
-is_special_function <- function(x) {
-  x %in% special_funs
-}
-
 loweralnum <- rex(one_of(lower, digit))
 upperalnum <- rex(one_of(upper, digit))
 
 style_regexes <- list(
-  "symbols"     = rex(start, zero_or_more(none_of(alnum)), end),
-  "CamelCase"   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
-  "camelCase"   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
-  "snake_case"  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
-  "SNAKE_CASE"  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
-  "dotted.case" = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
-  "lowercase"   = rex(start, maybe("."), one_or_more(loweralnum), end),
-  "UPPERCASE"   = rex(start, maybe("."), one_or_more(upperalnum), end)
+  symbols     = rex(start, zero_or_more(none_of(alnum)), end),
+  CamelCase   = rex(start, maybe("."), upper, zero_or_more(alnum), end),
+  camelCase   = rex(start, maybe("."), lower, zero_or_more(alnum), end),
+  snake_case  = rex(start, maybe("."), some_of(lower, digit), any_of("_", lower, digit), end),
+  SNAKE_CASE  = rex(start, maybe("."), some_of(upper, digit), any_of("_", upper, digit), end),
+  dotted.case = rex(start, maybe("."), one_or_more(loweralnum), zero_or_more(dot, one_or_more(loweralnum)), end),
+  lowercase   = rex(start, maybe("."), one_or_more(loweralnum), end),
+  UPPERCASE   = rex(start, maybe("."), one_or_more(upperalnum), end)
 )
 
 regexes_rd <- toString(paste0("\\sQuote{", names(style_regexes), "}"))

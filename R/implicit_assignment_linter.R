@@ -4,6 +4,11 @@
 #' be avoided, except for functions that capture side-effects (e.g. [capture.output()]).
 #'
 #' @param except A character vector of functions to be excluded from linting.
+#' @param allow_lazy logical, default `FALSE`. If `TRUE`, assignments that only
+#'   trigger conditionally (e.g. in the RHS of `&&` or `||` expressions) are skipped.
+#' @param allow_scoped Logical, default `FALSE`. If `TRUE`, "scoped assignments",
+#'   where the object is assigned in the statement beginning a branch and used only
+#'   within that branch, are skipped.
 #'
 #' @examples
 #' # will produce lints
@@ -18,16 +23,34 @@
 #' )
 #'
 #' # okay
-#' writeLines("x <- 1L\nif (x) TRUE")
+#' lines <- "x <- 1L\nif (x) TRUE"
+#' writeLines(lines)
 #' lint(
-#'   text = "x <- 1L\nif (x) TRUE",
+#'   text = lines,
 #'   linters = implicit_assignment_linter()
 #' )
 #'
-#' writeLines("x <- 1:4\nmean(x)")
+#' lines <- "x <- 1:4\nmean(x)"
+#' writeLines(lines)
 #' lint(
-#'   text = "x <- 1:4\nmean(x)",
+#'   text = lines,
 #'   linters = implicit_assignment_linter()
+#' )
+#'
+#' lint(
+#'   text = "A && (B <- foo(A))",
+#'   linters = implicit_assignment_linter(allow_lazy = TRUE)
+#' )
+#'
+#' lines <- c(
+#'   "if (any(idx <- x < 0)) {",
+#'   "  stop('negative elements: ', toString(which(idx)))",
+#'   "}"
+#' )
+#' writeLines(lines)
+#' lint(
+#'   text = lines,
+#'   linters = implicit_assignment_linter(allow_scoped = TRUE)
 #' )
 #'
 #' @evalRd rd_tags("implicit_assignment_linter")
@@ -36,82 +59,69 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment>
 #'
 #' @export
-implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote")) {
+implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+                                       allow_lazy = FALSE,
+                                       allow_scoped = FALSE) {
   stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
     exceptions <- xp_text_in_table(except)
-    xpath_exceptions <- glue::glue("
-    //SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
+    xpath_exceptions <- glue("SYMBOL_FUNCTION_CALL[ not({exceptions}) ]")
   } else {
-    xpath_exceptions <- "
-    //SYMBOL_FUNCTION_CALL"
+    xpath_exceptions <- "SYMBOL_FUNCTION_CALL"
   }
 
   # The walrus operator `:=` is also `LEFT_ASSIGN`, but is not a relevant operator
   # to be considered for the present linter.
-  assignments <- c(
-    "LEFT_ASSIGN[text() != ':=']", # e.g. mean(x <- 1:4)
-    "RIGHT_ASSIGN" # e.g. mean(1:4 -> x)
+  assignments <- paste(
+    "//LEFT_ASSIGN[text() != ':=']",
+    "//RIGHT_ASSIGN",
+    sep = " | "
   )
 
-  xpath_fun_call <- paste0(
-    xpath_exceptions,
-    "
-    /parent::expr
-    /following-sibling::expr[1]
-    /"
-  )
-  xpath_fun_assigment <- paste0(
-    xpath_fun_call,
-    assignments,
-    collapse = " | "
+  # NB: Also used, essentially, in assignment_linter. Keep in sync.
+  xpath <- glue("
+    ({assignments})
+      /parent::expr[
+        preceding-sibling::*[2][self::IF or self::WHILE]
+        or parent::forcond
+        or preceding-sibling::expr/{xpath_exceptions}
+        or parent::expr/*[1][self::OP-LEFT-PAREN]
+      ]
+  ")
+
+  if (allow_lazy) {
+    xpath <- paste0(xpath, "[not(ancestor::expr/preceding-sibling::*[self::AND2 or self::OR2])]")
+  }
+  if (allow_scoped) {
+    # force 2nd preceding to ensure we're in the loop condition, not the loop expression
+    in_branch_cond <- "ancestor::expr[preceding-sibling::*[2][self::IF or self::WHILE]]"
+    xpath <- paste0(
+      xpath,
+      # _if_ we're in an IF/WHILE branch, lint if the assigned SYMBOL appears anywhere later on.
+      glue("[not({in_branch_cond}) or expr[1]/SYMBOL = {in_branch_cond}/parent::expr/following::SYMBOL]")
+    )
+  }
+
+  implicit_message <- paste(
+    "Avoid implicit assignments in function calls.",
+    "For example, instead of `if (x <- 1L) { ... }`, write `x <- 1L; if (x) { ... }`."
   )
 
-  controls <- c(
-    # e.g. if (x <- 1L) { ... }
-    "
-    //IF
-    /following-sibling::expr[1]
-    /",
-    # e.g. while (x <- 0L) { ... }
-    "
-    //WHILE
-    /following-sibling::expr[1]
-    /",
-    # e.g. for (x in y <- 1:10) { ... }
-    "
-    //forcond
-    /expr[1]
-    /"
-  )
-  xpath_controls_assignment <- paste0(
-    rep(controls, each = length(assignments)),
-    assignments,
-    collapse = " | "
-  )
+  print_message <- "Call print() explicitly instead of relying on implicit printing behavior via '('."
 
-  xpath <- paste0(c(xpath_controls_assignment, xpath_fun_assigment), collapse = " | ")
-
-  Linter(function(source_expression) {
+  Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
-
     xml <- source_expression$full_xml_parsed_content
 
-    bad_expr <- xml2::xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml, xpath)
 
-    lint_message <- paste(
-      "Avoid implicit assignments in function calls.",
-      "For example, instead of `if (x <- 1L) { ... }`, write `x <- 1L; if (x) { ... }`."
-    )
+    print_only <- !is.na(xml_find_first(bad_expr, "parent::expr[parent::exprlist and *[1][self::OP-LEFT-PAREN]]"))
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = lint_message,
+      lint_message = ifelse(print_only, print_message, implicit_message),
       type = "warning"
     )
   })

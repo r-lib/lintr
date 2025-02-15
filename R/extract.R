@@ -9,7 +9,7 @@ extract_r_source <- function(filename, lines, error = identity) {
   output <- rep.int(NA_character_, length(lines))
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
-  if (inherits(chunks, "error") || inherits(chunks, "lint")) {
+  if (is_error(chunks) || is_lint(chunks)) {
     assign("e", chunks, envir = parent.frame())
     # error, so return empty code
     return(output)
@@ -51,7 +51,7 @@ get_knitr_pattern <- function(filename, lines) {
     ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
     warning = function(cond) {
       if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
-        warning(cond)
+        cli_warn(cond)
       }
       invokeRestart("muffleWarning")
     }
@@ -82,17 +82,19 @@ get_chunk_positions <- function(pattern, lines) {
   #   set the initial column to the leftmost one within each chunk (including the start+end gates). See tests.
   # use 'ws_re' to make clear that we're matching knitr's definition of initial whitespace.
   ws_re <- sub("```.*", "", pattern$chunk.begin)
-  indents <- mapply(
-    function(start, end) min(vapply(gregexpr(ws_re, lines[start:end], perl = TRUE), attr, integer(1L), "match.length")),
-    starts, ends
-  )
+  extract_min_chunk_indent <- function(start, end) {
+    indents <- attr(regexpr(ws_re, lines[start:end], perl = TRUE), "match.length")
+    min(indents)
+  }
+  # NB: min() guarantees length(indents) == length(starts)
+  indents <- unlist(Map(extract_min_chunk_indent, starts, ends))
   list(starts = starts, ends = ends, indents = indents)
 }
 
 filter_chunk_start_positions <- function(starts, lines) {
   # keep blocks that don't set a knitr engine (and so contain evaluated R code)
-  drop <- defines_knitr_engine(lines[starts])
-  starts[!drop]
+  drop_idx <- defines_knitr_engine(lines[starts])
+  starts[!drop_idx]
 }
 
 filter_chunk_end_positions <- function(starts, ends) {
@@ -117,8 +119,8 @@ filter_chunk_end_positions <- function(starts, ends) {
   bad_end_indexes <- grep("starts", names(code_ends), fixed = TRUE)
   if (length(bad_end_indexes) > 0L) {
     bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
-    # This error message is formatted like a parse error
-    stop(sprintf(
+    # This error message is formatted like a parse error; don't use {cli}
+    stop(sprintf( # nolint: undesirable_function_linter
       "<rmd>:%1$d:1: Missing chunk end for chunk (maybe starting at line %1$d).\n",
       bad_start_positions[1L]
     ), call. = FALSE)
@@ -137,16 +139,16 @@ defines_knitr_engine <- function(start_lines) {
   engines <- names(knitr::knit_engines$get())
 
   # {some_engine}, {some_engine label, ...} or {some_engine, ...}
-  bare_engine_pattern <- rex::rex(
+  bare_engine_pattern <- rex(
     "{", or(engines), one_of("}", " ", ",")
   )
   # {... engine = "some_engine" ...}
-  explicit_engine_pattern <- rex::rex(
+  explicit_engine_pattern <- rex(
     boundary, "engine", any_spaces, "="
   )
 
-  rex::re_matches(start_lines, explicit_engine_pattern) |
-    rex::re_matches(start_lines, bare_engine_pattern)
+  re_matches(start_lines, explicit_engine_pattern) |
+    re_matches(start_lines, bare_engine_pattern)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {

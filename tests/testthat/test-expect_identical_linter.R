@@ -30,6 +30,10 @@ test_that("expect_identical_linter skips cases likely testing numeric equality",
   lint_msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
 
   expect_lint("expect_equal(x, 1.034)", NULL, linter)
+  expect_lint("expect_equal(x, -1.034)", NULL, linter)
+  expect_lint("expect_equal(x, c(-1.034))", NULL, linter)
+  expect_lint("expect_equal(x, -c(1.034))", NULL, linter)
+
   expect_lint("expect_equal(x, c(1.01, 1.02))", NULL, linter)
   # whole numbers with explicit decimals are OK, even in mixed scenarios
   expect_lint("expect_equal(x, c(1.0, 2))", NULL, linter)
@@ -39,6 +43,9 @@ test_that("expect_identical_linter skips cases likely testing numeric equality",
   # NB: TRUE is a NUM_CONST so we want test matching it, even though this test is
   #   also a violation of expect_true_false_linter()
   expect_lint("expect_equal(x, TRUE)", lint_msg, linter)
+
+  expect_lint("expect_equal(x, 1.01 - y)", lint_msg, linter)
+  expect_lint("expect_equal(x, foo() - 0.01)", lint_msg, linter)
 })
 
 test_that("expect_identical_linter skips 3e cases needing expect_equal", {
@@ -49,4 +56,20 @@ test_that("expect_identical_linter skips 3e cases needing expect_equal", {
 #   some of the "allowed" arguments were being passed --> false positive
 test_that("expect_identical_linter skips calls using ...", {
   expect_lint("expect_equal(x, y, ...)", NULL, expect_identical_linter())
+})
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Use expect_identical(x, y) by default; resort to expect_equal() only when needed")
+
+  expect_lint(
+    trim_some("{
+      expect_equal(x, 1)
+      expect_true(identical(x, y))
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    expect_identical_linter()
+  )
 })

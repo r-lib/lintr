@@ -3,6 +3,11 @@
 \docType{data}
 \name{default_settings}
 \alias{default_settings}
+\alias{settings}
+\alias{config}
+\alias{lintr-config}
+\alias{lintr-settings}
+\alias{.lintr}
 \title{Default lintr settings}
 \format{
 An object of class \code{list} of length 12.
@@ -18,12 +23,13 @@ The default settings consist of
 \item \code{exclude}: pattern used to exclude a line of code
 \item \code{exclude_start}, \code{exclude_end}: patterns used to mark start and end of the code block to exclude
 \item \code{exclude_linter}, \code{exclude_linter_sep}: patterns used to exclude linters
-\item \code{exclusions}:a list of files to exclude
+\item \code{exclusions}: a list of exclusions, see \code{\link[=exclude]{exclude()}} for a complete description of valid values.
 \item \code{cache_directory}: location of cache directory
 \item \code{comment_token}: a GitHub token character
-\item \code{comment_bot}: decides if lintr comment bot on GitHub can comment on commits
 \item \code{error_on_lint}: decides if error should be produced when any lints are found
 }
+
+There are no settings without defaults, i.e., this list describes every valid setting.
 }
 \examples{
 # available settings

@@ -1,6 +1,5 @@
 ---
 title: "Using lintr"
-author: "Alexander Rosenstock"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using lintr}
@@ -8,7 +7,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -54,6 +53,8 @@ Checking an R project for lints can be done with three different functions:
 
 For more information about the assumed package structure, see [R Packages](https://r-pkgs.org/structure.html).
 
+Note that some linters (e.g. `object_usage_linter()`) require the package to be installed to function properly. `pkgload::load_all()` will also suffice. See `?executing_linters` for more details.
+
 ## Configuring linters
 
 ### The `.lintr` file
@@ -76,12 +77,12 @@ Below is an example .lintr file that uses 120 character line lengths, disables  
 
 ``` yaml
 linters: linters_with_defaults(
-    line_length_linter(120), 
+    line_length_linter(120),
     commented_code_linter = NULL
   )
 exclusions: list(
-    "inst/doc/creating_linters.R" = 1, 
-    "inst/example/bad.R", 
+    "inst/doc/creating_linters.R" = 1,
+    "inst/example/bad.R",
     "tests/testthat/exclusions-test"
   )
 ```
@@ -89,12 +90,15 @@ exclusions: list(
 ### Other configuration options
 
 More generally, `lintr` searches for a settings file according to following prioritized list.
-The first one found, if any, will be used.
+The first one found, if any, will be used:
 
-1.  If `options(lintr.linter_file)` is an absolute path, this file will be used. The default for this option is `".lintr"`.
-2.  A linter file (that is a file named like `lintr.linter_file`) in the currently searched directory, i.e. the directory of the file passed to `lint()`. When run from `lint_package()`, this directory can differ for each linted file.
-3.  A linter file in a parent directory of the currently-searched directory, starting from the deepest path, moving upwards one level at a time.
+1.  If `options("lintr.linter_file")` is an absolute path, this file will be used. The default for this option is `".lintr"` or the value of the environment variable `R_LINTR_LINTER_FILE`, if set.
+2.  A project-local linter file; that is, either
+    1.  a linter file (that is, a file named like `lintr.linter_file`) in the currently-searched directory, i.e. the directory of the file passed to `lint()`; or
+    2.  a linter file in the `.github/linters` child directory of the currently-searched directory.
+3.  A project-local linter file in the closest parent directory of the currently-searched directory, starting from the deepest path, moving upwards one level at a time. When run from `lint_package()`, this directory can differ for each linted file.
 4.  A linter file in the user's `HOME` directory.
+5.  A linter file called `config` in the user's configuration path (given by `tools::R_user_dir("lintr", which = "config")`).
 
 If no linter file is found, only default settings take effect (see [defaults](#defaults)).
 
@@ -121,7 +125,7 @@ However, the behavior can be customized using different methods.
 
 Apart from `lintr.linter_file`, which defaults to `".lintr"`, there are the following settings:
 
-```{r, echo = FALSE}
+```{r show_default_settings, echo = FALSE}
 default_settings <- lintr::default_settings
 default_settings$linters <- "`lintr::default_linters`"
 default_settings$comment_token <- "(lintr-bot comment token for automatic GitHub comments)"
@@ -135,10 +139,10 @@ make_string <- function(x) {
   }
 }
 
-defaults_table <- data.frame(
-  default = vapply(default_settings, make_string, character(1L)),
-  stringsAsFactors = FALSE
-)
+defaults_table <- data.frame(default = vapply(default_settings, make_string, character(1L)))
+
+# avoid conflict when loading lintr in echo=TRUE cell below
+rm(default_settings)
 
 knitr::kable(defaults_table)
 ```
@@ -163,33 +167,32 @@ linters: linters_with_defaults(
 By default, the following linters are enabled.
 Where applicable, the default settings are also shown.
 
-```{r, echo = FALSE}
+```{r show_linter_defaults, echo = FALSE}
+library(lintr) # needed here for formalArgs
+
 default_linters <- lintr::default_linters
 linters_with_args <- lapply(
   setNames(nm = intersect(names(default_linters), lintr::available_linters(tags = "configurable")$linter)),
-  function(linter_name) {
-    names(formals(get(linter_name, envir = asNamespace("lintr"))))
-  }
+  formalArgs
 )
 
 make_setting_string <- function(linter_name) {
-  args <- linters_with_args[[linter_name]]
-  if (is.null(args)) {
+  linter_args <- linters_with_args[[linter_name]]
+  if (is.null(linter_args)) {
     return("")
   }
 
-  arglist <- vapply(args, function(arg) {
+  arglist <- vapply(linter_args, function(arg) {
     env <- environment(default_linters[[linter_name]])
     deparse(env[[arg]])
   }, character(1L))
 
-  paste0(args, " = ", arglist, collapse = ", ")
+  paste0(linter_args, " = ", arglist, collapse = ", ")
 }
 
 defaults_table <- data.frame(
   row.names = names(default_linters),
-  settings = vapply(names(default_linters), make_setting_string, character(1L)),
-  stringsAsFactors = FALSE
+  settings = vapply(names(default_linters), make_setting_string, character(1L))
 )
 
 knitr::kable(defaults_table)
@@ -198,13 +201,13 @@ knitr::kable(defaults_table)
 Another way to customize linters is by specifying tags in `linters_with_tags()`.
 The available tags are listed below:
 
-```{r}
+```{r show_tags}
 lintr::available_tags(packages = "lintr")
 ```
 
 You can select tags of interest to see which linters are included:
 
-```{r}
+```{r show_tag_linters}
 linters <- lintr::linters_with_tags(tags = c("package_development", "readability"))
 names(linters)
 ```
@@ -222,7 +225,7 @@ linters: linters_with_tags(
 
 The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using
 
-```{r}
+```{r show_all_linter_names}
 names(lintr::all_linters())
 ```
 
@@ -251,19 +254,27 @@ Beware that in such cases, a simple `get()` is not enough:
 library(lintr)
 linter_name <- "assignment_linter"
 
+show_lint <- function(l) {
+  lint_df <- as.data.frame(l)
+  print(lint_df[, c("line_number", "message", "linter")])
+}
+hline <- function() cat(strrep("-", getOption("width") - 5L), "\n", sep = "")
+
 withr::with_tempfile("tmp", {
   writeLines("a = 1", tmp)
 
   # linter column is just 'get'
-  print(as.data.frame(lint(tmp, linters = get(linter_name)())))
+  show_lint(lint(tmp, linters = get(linter_name)()))
+  hline()
 
   this_linter <- get(linter_name)()
   attr(this_linter, "name") <- linter_name
   # linter column is 'assignment_linter'
-  print(as.data.frame(lint(tmp, linters = this_linter)))
+  show_lint(lint(tmp, linters = this_linter))
+  hline()
 
-  # more concise alternative: use eval(call(.))
-  print(as.data.frame(lint(tmp, linters = eval(call(linter_name)))))
+  # more concise alternative for this case: use eval(call(.))
+  show_lint(lint(tmp, linters = eval(call(linter_name))))
 })
 ```
 
@@ -290,8 +301,8 @@ X = 42L # -------------- this comment overflows the default 80 chars line length
 
 `> lint("file.R")`
 
-```{r, echo = FALSE}
-lintr::lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
+```{r show_long_line_lint, echo = FALSE}
+lint("X = 42L # -------------- this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -304,8 +315,8 @@ X = 42L # nolint ------ this comment overflows the default 80 chars line length.
 
 `> lint("file2.R")`
 
-```{r, echo = FALSE}
-lintr::lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
+```{r show_nolint, echo = FALSE}
+lint("X = 42L # nolint ------ this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -324,8 +335,8 @@ X = 42L # nolint: object_name_linter. this comment overflows the default 80 char
 
 `> lint("file3.R")`
 
-```{r, echo = FALSE}
-lintr::lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
+```{r show_long_line_lint_not_skipped, echo = FALSE}
+lint("X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.\n",
   parse_settings = FALSE
 )
 ```
@@ -343,8 +354,8 @@ X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows
 
 `> lint("file4.R")`
 
-```{r, echo = FALSE}
-lintr::lint(
+```{r show_nolint_multiple, echo = FALSE}
+lint(
   paste(
     "X = 42L",
     "# nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.\n"
@@ -363,8 +374,8 @@ X = 42L # nolint: object_name, line_len. this comment still overflows the defaul
 
 `> lint("file5.R")`
 
-```{r, echo = FALSE}
-lintr::lint(
+```{r show_nolint_abbrev, echo = FALSE}
+lint(
   paste(
     "X = 42L",
     "# nolint: object_name, line_len. this comment still overflows the default 80 chars line length.\n"
@@ -385,8 +396,8 @@ They default to `# nolint start` and `# nolint end` respectively.
 # print(x)
 ```
 
-```{r, echo = FALSE}
-lintr::lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
+```{r show_comment_code_lint, echo = FALSE}
+lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
 ```
 
 ``` r
@@ -396,8 +407,8 @@ lintr::lint("# x <- 42L\n# print(x)\n", parse_settings = FALSE)
 # nolint end
 ```
 
-```{r, echo = FALSE}
-lintr::lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
+```{r show_comment_code_nolint, echo = FALSE}
+lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint end\n",
   parse_settings = FALSE
 )
 ```

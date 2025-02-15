@@ -4,23 +4,12 @@ test_that("regex_subset_linter skips allowed usages", {
 })
 
 test_that("regex_subset_linter blocks simple disallowed usages", {
-  expect_lint(
-    "x[grep(ptn, x)]",
-    rex::rex("Prefer grep(pattern, x, ..., value = TRUE)"),
-    regex_subset_linter()
-  )
+  linter <- regex_subset_linter()
+  lint_msg <- rex::rex("Prefer grep(pattern, x, ..., value = TRUE)")
 
-  expect_lint(
-    "names(y)[grepl(ptn, names(y), perl = TRUE)]",
-    rex::rex("Prefer grep(pattern, x, ..., value = TRUE)"),
-    regex_subset_linter()
-  )
-
-  expect_lint(
-    "names(foo(y))[grepl(ptn, names(foo(y)), fixed = TRUE)]",
-    rex::rex("Prefer grep(pattern, x, ..., value = TRUE)"),
-    regex_subset_linter()
-  )
+  expect_lint("x[grep(ptn, x)]", lint_msg, linter)
+  expect_lint("names(y)[grepl(ptn, names(y), perl = TRUE)]", lint_msg, linter)
+  expect_lint("names(foo(y))[grepl(ptn, names(foo(y)), fixed = TRUE)]", lint_msg, linter)
 })
 
 test_that("regex_subset_linter skips grep/grepl subassignment", {
@@ -42,15 +31,23 @@ test_that("regex_subset_linter skips allowed usages for stringr equivalents", {
 })
 
 test_that("regex_subset_linter blocks disallowed usages for stringr equivalents", {
-  expect_lint(
-    "x[str_which(x, ptn)]",
-    rex::rex("Prefer stringr::str_subset(x, pattern) over"),
-    regex_subset_linter()
-  )
+  linter <- regex_subset_linter()
+  lint_msg <- rex::rex("Prefer stringr::str_subset(x, pattern) over")
 
+  expect_lint("x[str_which(x, ptn)]", lint_msg, linter)
+  expect_lint("names(y)[str_detect(names(y), ptn, negate = TRUE)]", lint_msg, linter)
+})
+
+test_that("lints vectorize", {
   expect_lint(
-    "names(y)[str_detect(names(y), ptn, negate = TRUE)]",
-    rex::rex("Prefer stringr::str_subset(x, pattern) over"),
+    trim_some("{
+      x[grep(ptn, x)]
+      y[str_detect(y, ptn)]
+    }"),
+    list(
+      list(rex::rex("Prefer grep"), line_number = 2L),
+      list(rex::rex("Prefer stringr::str_subset"), line_number = 3L)
+    ),
     regex_subset_linter()
   )
 })

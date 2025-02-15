@@ -35,9 +35,7 @@
 #' @export
 any_duplicated_linter <- function() {
   any_duplicated_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'any']
-    /parent::expr
-    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
+  following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
     /parent::expr[
       count(expr) = 2
       or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
@@ -54,7 +52,7 @@ any_duplicated_linter <- function() {
   #  the final parent::expr/expr gets us to the expr on the other side of EQ;
   #  this lets us match on either side of EQ, where following-sibling
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
-  length_unique_xpath_parts <- glue::glue("
+  length_unique_xpath_parts <- glue("
   //{ c('EQ', 'NE', 'GT', 'LT') }
     /parent::expr
     /expr[
@@ -85,14 +83,11 @@ any_duplicated_linter <- function() {
 
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    xml_calls <- source_expression$xml_find_function_calls("any")
 
-    any_duplicated_expr <- xml2::xml_find_all(xml, any_duplicated_xpath)
+    any_duplicated_expr <- xml_find_all(xml_calls, any_duplicated_xpath)
     any_duplicated_lints <- xml_nodes_to_lints(
       any_duplicated_expr,
       source_expression = source_expression,
@@ -100,9 +95,9 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    length_unique_expr <- xml2::xml_find_all(xml, length_unique_xpath)
+    length_unique_expr <- xml_find_all(xml, length_unique_xpath)
     lint_message <- ifelse(
-      is.na(xml2::xml_find_first(length_unique_expr, uses_nrow_xpath)),
+      is.na(xml_find_first(length_unique_expr, uses_nrow_xpath)),
       "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x).",
       "anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"
     )
@@ -113,6 +108,6 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    return(c(any_duplicated_lints, length_unique_lints))
+    c(any_duplicated_lints, length_unique_lints)
   })
 }

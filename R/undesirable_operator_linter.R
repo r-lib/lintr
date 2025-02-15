@@ -44,26 +44,16 @@
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators) {
   if (is.null(names(op)) || !all(nzchar(names(op))) || length(op) == 0L) {
-    stop("'op' should be a non-empty named character vector; use missing elements to indicate default messages.")
+    cli_abort(c(
+      x = "{.arg op} should be a non-empty named character vector.",
+      i = "Use missing elements to indicate default messages."
+    ))
   }
-  undesirable_operator_metadata <- merge(
-    # infix must be handled individually below; non-assignment `=` are always OK
-    infix_metadata[
-      infix_metadata$string_value != "%%" & !infix_metadata$xml_tag %in% c("EQ_SUB", "EQ_FORMALS"),
-    ],
-    infix_overload,
-    by = "xml_tag", all.x = TRUE
-  )
-
-  included_operators <- undesirable_operator_metadata$string_value %in% names(op) |
-    undesirable_operator_metadata$exact_string_value %in% names(op)
-  operator_nodes <- undesirable_operator_metadata$xml_tag[included_operators]
-  needs_exact_string <- !is.na(undesirable_operator_metadata$exact_string_value[included_operators])
-  operator_nodes[needs_exact_string] <- sprintf(
-    "%s[text() = '%s']",
-    operator_nodes[needs_exact_string],
-    undesirable_operator_metadata$exact_string_value[included_operators][needs_exact_string]
-  )
+  # infix must be handled individually below; non-assignment `=` are always OK
+  operator_nodes <- infix_metadata$xml_tag_exact[
+    infix_metadata$string_value %in% setdiff(names(op), "%%") &
+      !infix_metadata$xml_tag %in% c("EQ_SUB", "EQ_FORMALS")
+  ]
 
   is_infix <- startsWith(names(op), "%")
   if (any(is_infix)) {
@@ -71,22 +61,18 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
   }
 
   if (length(operator_nodes) == 0L) {
-    stop("Did not recognize any valid operators in request for: ", toString(names(op)))
+    cli_abort("Did not recognize any valid operators in request for: {.str {names(op)}}")
   }
 
   xpath <- paste(paste0("//", operator_nodes), collapse = " | ")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_op <- xml2::xml_find_all(xml, xpath)
+    bad_op <- xml_find_all(xml, xpath)
 
-    operator <- xml2::xml_text(bad_op)
-    lint_message <- sprintf("Operator `%s` is undesirable.", operator)
+    operator <- xml_text(bad_op)
+    lint_message <- sprintf("Avoid undesirable operator `%s`.", operator)
     alternative <- op[operator]
     has_alternative <- !is.na(alternative)
     lint_message[has_alternative] <- paste(lint_message[has_alternative], alternative[has_alternative])

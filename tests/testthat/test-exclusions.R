@@ -41,7 +41,7 @@ test_that("it gives the expected error message when there is only one start but 
 
   expect_error(
     lintr:::parse_exclusions("dummy_projects/project/one_start_no_end.R"),
-    "has 1 range start (line 3) but only 0 range ends for exclusion from linting",
+    "has 1 range start (line 3) and 0 range ends",
     fixed = TRUE
   )
 })
@@ -51,7 +51,7 @@ test_that("it gives the expected error message when there is mismatch between mu
 
   expect_error(
     lintr:::parse_exclusions("dummy_projects/project/mismatched_starts_ends.R"),
-    "has 3 range starts (lines 3, 7, 11) but only 2 range ends (lines 1, 9) for exclusion from linting",
+    "has 3 range starts (lines 3, 7, 11) and 2 range ends (lines 1, 9)",
     fixed = TRUE
   )
 })
@@ -151,4 +151,60 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
     )
   )
   expect_length(lint_dir(tmp), 3L)
+})
+
+test_that("next-line exclusion works", {
+  withr::local_options(
+    lintr.exclude = "# NL",
+    lintr.exclude_next = "# NLN",
+    lintr.exclude_linter = default_settings$exclude_linter
+  )
+
+  linter <- assignment_linter()
+
+  # blanket exclusion works
+  expect_lint(
+    trim_some("
+      # NLN
+      x = 1
+    "),
+    NULL,
+    linter
+  )
+
+  # specific exclusion works
+  expect_lint(
+    trim_some("
+      # NLN: assignment_linter.
+      x = 1
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      # NLN: assignment.
+      x = 1
+    "),
+    NULL,
+    linter
+  )
+  expect_lint(
+    trim_some("
+      # NLN: line_length_linter.
+      x = 1
+    "),
+    rex::rex("Use one of <-, <<- for assignment, not =."),
+    list(linter, line_length_linter())
+  )
+
+  # interaction with plain nolint
+  expect_lint(
+    trim_some("
+      x = 1 # NLN: assignment_linter.
+      x = 2
+    "),
+    list(rex::rex("Use one of <-, <<- for assignment, not =."), line_number = 1L),
+    linter
+  )
 })

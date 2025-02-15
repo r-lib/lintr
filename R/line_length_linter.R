@@ -23,27 +23,27 @@
 #' - <https://style.tidyverse.org/syntax.html#long-lines>
 #' @export
 line_length_linter <- function(length = 80L) {
-  Linter(function(source_expression) {
-    # Only go over complete file
-    if (!is_lint_level(source_expression, "file")) {
-      return(list())
-    }
+  general_msg <- paste("Lines should not be more than", length, "characters.")
 
+  Linter(linter_level = "file", function(source_expression) {
+    # Only go over complete file
     line_lengths <- nchar(source_expression$file_lines)
     long_lines <- which(line_lengths > length)
 
-    lint_message <- sprintf("Lines should not be more than %d characters.", length)
-
-    lapply(long_lines, function(long_line) {
-      Lint(
-        filename = source_expression$filename,
-        line_number = long_line,
-        column_number = length + 1L,
-        type = "style",
-        message = lint_message,
-        line = source_expression$file_lines[long_line],
-        ranges = list(c(1L, line_lengths[long_line]))
-      )
-    })
+    Map(
+      function(long_line, line_length) {
+        Lint(
+          filename = source_expression$filename,
+          line_number = long_line,
+          column_number = length + 1L,
+          type = "style",
+          message = paste(general_msg, "This line is", line_length, "characters."),
+          line = source_expression$file_lines[long_line],
+          ranges = list(c(1L, line_length))
+        )
+      },
+      long_lines,
+      line_lengths[long_lines]
+    )
   })
 }

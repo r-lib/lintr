@@ -1,13 +1,13 @@
 test_that("quotes_linter skips allowed usages", {
   linter <- quotes_linter()
 
-  expect_lint("blah", NULL, linter)
-  expect_lint('"blah"', NULL, linter)
-  expect_lint('"\'blah"', NULL, linter)
-  expect_lint('"blah\'"', NULL, linter)
-  expect_lint('"\'blah\'"', NULL, linter)
-  expect_lint("'\"'", NULL, linter)
-  expect_lint("'\"blah\"'", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint('"blah"', linter)
+  expect_no_lint('"\'blah"', linter)
+  expect_no_lint('"blah\'"', linter)
+  expect_no_lint('"\'blah\'"', linter)
+  expect_no_lint("'\"'", linter)
+  expect_no_lint("'\"blah\"'", linter)
 })
 
 test_that("quotes_linter blocks disallowed usages", {
@@ -31,15 +31,15 @@ test_that("quotes_linter blocks disallowed usages", {
 test_that("quotes_linter skips allowed usages of delimiter='", {
   linter <- quotes_linter(delimiter = "'")
 
-  expect_lint("blah", NULL, linter)
-  expect_lint('"\'blah"', NULL, linter)
-  expect_lint('"blah\'"', NULL, linter)
-  expect_lint('"\'blah\'"', NULL, linter)
-  expect_lint("'\"'", NULL, linter)
-  expect_lint("'\"blah\"'", NULL, linter)
-  expect_lint("'blah'", NULL, linter)
-  expect_lint("fun('blah')", NULL, linter)
-  expect_lint("{'blah'}", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint('"\'blah"', linter)
+  expect_no_lint('"blah\'"', linter)
+  expect_no_lint('"\'blah\'"', linter)
+  expect_no_lint("'\"'", linter)
+  expect_no_lint("'\"blah\"'", linter)
+  expect_no_lint("'blah'", linter)
+  expect_no_lint("fun('blah')", linter)
+  expect_no_lint("{'blah'}", linter)
 })
 
 test_that("quotes_linter blocks disallowed usages of delimiter='", {
@@ -56,13 +56,12 @@ test_that("quotes_linter blocks disallowed usages of delimiter='", {
   )
 })
 
-test_that("handles R>=4.0.0 strings", {
-  skip_if_not_r_version("4.0.0")
+test_that("raw strings are handled correctly", {
   linter <- quotes_linter()
-  expect_lint('R"(hello \'\' there)"', NULL, linter)
+  expect_no_lint('R"(hello \'\' there)"', linter)
   expect_lint("R'( whoops )'", rex::rex("Only use double-quotes."), linter)
   expect_lint("R'---[ daisy ]---'", rex::rex("Only use double-quotes."), linter)
-  expect_lint("r'(\")'", NULL, linter)
+  expect_no_lint("r'(\")'", linter)
 })
 
 test_that("single_quotes_linter is deprecated", {
@@ -73,6 +72,22 @@ test_that("single_quotes_linter is deprecated", {
     "Use quotes_linter instead",
     fixed = TRUE
   )
-  expect_lint('"blah"', NULL, old_linter)
+  expect_no_lint('"blah"', old_linter)
   expect_lint("'blah'", "Only use double-quotes", old_linter)
+})
+
+test_that("lints vectorize", {
+  lint_msg <- rex::rex("Only use double-quotes.")
+
+  expect_lint(
+    trim_some("{
+      'abc'
+      'def'
+    }"),
+    list(
+      list(lint_msg, line_number = 2L),
+      list(lint_msg, line_number = 3L)
+    ),
+    quotes_linter()
+  )
 })

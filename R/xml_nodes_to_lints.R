@@ -52,27 +52,33 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     )
     class(lints) <- "lints"
     return(lints)
-  } else if (!inherits(xml, "xml_node")) {
-    stop(
-      "Expected an xml_nodeset, a list of xml_nodes or an xml_node, got an object of class(es): ",
-      toString(class(xml))
-    )
+  } else if (!is_node(xml)) {
+    cli_abort(c(
+      x = "Expected an {.cls xml_nodeset}, a {.cls list} of xml_nodes, or an {.cls xml_node}.",
+      i = "Instead got {.obj_type_friendly {xml}}."
+    ))
   }
   type <- match.arg(type, c("style", "warning", "error"))
-  line1 <- xml2::xml_attr(xml, "line1")
+  line1 <- xml_attr(xml, "line1")
   col1 <- xp_find_location(xml, range_start_xpath)
   if (is.na(col1)) {
-    warning("Could not find range start for lint. Defaulting to start of line.")
+    cli_warn(c(
+      x = "Could not find range start for lint.",
+      i = "Defaulting to start of line."
+    ))
     col1 <- 1L
   }
 
   lines <- source_expression[["lines"]]
   if (is.null(lines)) lines <- source_expression[["file_lines"]]
 
-  if (xml2::xml_attr(xml, "line2") == line1) {
+  if (xml_attr(xml, "line2") == line1) {
     col2 <- xp_find_location(xml, range_end_xpath)
     if (is.na(col2)) {
-      warning("Could not find range end for lint. Defaulting to width 1.")
+      cli_warn(c(
+        x = "Could not find range end for lint.",
+        i = "Defaulting to width 1."
+      ))
       col2 <- col1
     }
   } else {
@@ -81,7 +87,10 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
 
   column_number <- xp_find_location(xml, column_number_xpath)
   if (is.na(column_number)) {
-    warning("Could not find location for lint. Defaulting to start of range.")
+    cli_warn(c(
+      x = "Could not find location for lint.",
+      i = "Defaulting to start of range."
+    ))
     column_number <- col1
   }
 
@@ -94,9 +103,4 @@ xml_nodes_to_lints <- function(xml, source_expression, lint_message,
     line = lines[[line1]],
     ranges = list(c(col1, col2))
   )
-}
-
-is_nodeset_like <- function(xml) {
-  inherits(xml, "xml_nodeset") ||
-    (is.list(xml) && all(vapply(xml, inherits, logical(1L), what = "xml_node")))
 }

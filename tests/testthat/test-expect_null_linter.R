@@ -15,30 +15,48 @@ test_that("expect_null_linter skips allowed usages", {
 })
 
 test_that("expect_null_linter blocks simple disallowed usages", {
+  linter <- expect_null_linter()
+
   expect_lint(
     "expect_equal(x, NULL)",
     rex::rex("expect_null(x) is better than expect_equal(x, NULL)"),
-    expect_null_linter()
+    linter
   )
 
   # expect_identical is treated the same as expect_equal
   expect_lint(
     "testthat::expect_identical(x, NULL)",
     rex::rex("expect_null(x) is better than expect_identical(x, NULL)"),
-    expect_null_linter()
+    linter
   )
 
   # reverse order lints the same
   expect_lint(
     "expect_equal(NULL, x)",
     rex::rex("expect_null(x) is better than expect_equal(x, NULL)"),
-    expect_null_linter()
+    linter
   )
 
   # different equivalent usage
   expect_lint(
     "expect_true(is.null(foo(x)))",
     rex::rex("expect_null(x) is better than expect_true(is.null(x))"),
+    linter
+  )
+})
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      expect_equal(x, NULL)
+      expect_identical(x, NULL)
+      expect_true(is.null(x))
+    }"),
+    list(
+      list("expect_equal", line_number = 2L),
+      list("expect_identical", line_number = 3L),
+      list("expect_true", line_number = 4L)
+    ),
     expect_null_linter()
   )
 })

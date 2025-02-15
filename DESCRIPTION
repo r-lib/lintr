@@ -1,12 +1,12 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 3.0.2.9000
+Version: 3.2.0.9000
 Authors@R: c(
-    person("Jim", "Hester", , "james.f.hester@gmail.com", role = c("aut", "cre")),
+    person("Jim", "Hester", , role = "aut"),
     person("Florent", "Angly", role = "aut",
            comment = "fangly"),
     person("Russ", "Hyde", role = "aut"),
-    person("Michael", "Chirico", role = "aut"),
+    person("Michael", "Chirico", email = "michaelchirico4@gmail.com", role = c("aut", "cre")),
     person("Kun", "Ren", role = "aut"),
     person("Alexander", "Rosenstock", role = "aut",
            comment = "AshesITR"),
@@ -18,14 +18,14 @@ Description: Checks adherence to a given style, syntax errors and possible
     'RStudio IDE', 'Emacs', 'Vim', 'Sublime Text', 'Atom' and 'Visual
     Studio Code'.
 License: MIT + file LICENSE
-URL: https://github.com/r-lib/lintr, https://lintr.r-lib.org
+URL: https://lintr.r-lib.org, https://github.com/r-lib/lintr
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
-    R (>= 3.5)
+    R (>= 4.0)
 Imports:
-    backports,
+    backports (>= 1.4.0),
+    cli (>= 3.4.0),
     codetools,
-    cyclocomp,
     digest,
     glue,
     knitr,
@@ -36,29 +36,32 @@ Imports:
     xmlparsedata (>= 1.0.5)
 Suggests:
     bookdown,
-    crayon,
-    httr (>= 1.2.1),
+    cyclocomp,
     jsonlite,
-    mockery,
-    patrick,
+    patrick (>= 0.2.0),
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
-    testthat (>= 3.1.5),
+    testthat (>= 3.2.1),
     tibble,
     tufte,
     withr (>= 2.5.0)
+Enhances:
+    data.table
 VignetteBuilder: 
     knitr
 Config/Needs/website: tidyverse/tidytemplate
+Config/Needs/development: pkgload, testthat, patrick
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Collate:
-    'T_and_F_symbol_linter.R'
+    'make_linter_from_xpath.R'
+    'xp_utils.R'
     'utils.R'
-    'aaa.R'
+    'AAA.R'
+    'T_and_F_symbol_linter.R'
     'absolute_path_linter.R'
     'actions.R'
     'addins.R'
@@ -71,11 +74,13 @@ Collate:
     'cache.R'
     'class_equals_linter.R'
     'commas_linter.R'
-    'comment_linters.R'
-    'comments.R'
+    'commented_code_linter.R'
+    'comparison_negation_linter.R'
+    'condition_call_linter.R'
     'condition_message_linter.R'
     'conjunct_test_linter.R'
     'consecutive_assertion_linter.R'
+    'consecutive_mutate_linter.R'
     'cyclocomp_linter.R'
     'declared_functions.R'
     'deprecated.R'
@@ -95,7 +100,6 @@ Collate:
     'expect_true_false_linter.R'
     'expect_type_linter.R'
     'extract.R'
-    'extraction_operator_linter.R'
     'fixed_regex_linter.R'
     'for_loop_index_linter.R'
     'function_argument_linter.R'
@@ -103,6 +107,8 @@ Collate:
     'function_return_linter.R'
     'get_source_expressions.R'
     'ids_with_token.R'
+    'if_not_else_linter.R'
+    'if_switch_linter.R'
     'ifelse_censor_linter.R'
     'implicit_assignment_linter.R'
     'implicit_integer_linter.R'
@@ -111,13 +117,18 @@ Collate:
     'inner_combine_linter.R'
     'is_lint_level.R'
     'is_numeric_linter.R'
+    'keyword_quote_linter.R'
+    'length_levels_linter.R'
+    'length_test_linter.R'
     'lengths_linter.R'
+    'library_call_linter.R'
     'line_length_linter.R'
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
     'lintr-deprecated.R'
     'lintr-package.R'
+    'list_comparison_linter.R'
     'literal_coercion_linter.R'
     'make_linter_from_regex.R'
     'matrix_apply_linter.R'
@@ -127,34 +138,52 @@ Collate:
     'namespace.R'
     'namespace_linter.R'
     'nested_ifelse_linter.R'
+    'nested_pipe_linter.R'
     'nonportable_path_linter.R'
+    'shared_constants.R'
+    'nrow_subset_linter.R'
     'numeric_leading_zero_linter.R'
+    'nzchar_linter.R'
     'object_length_linter.R'
     'object_name_linter.R'
+    'object_overwrite_linter.R'
     'object_usage_linter.R'
+    'one_call_pipe_linter.R'
     'outer_negation_linter.R'
     'package_hooks_linter.R'
     'paren_body_linter.R'
     'paste_linter.R'
     'path_utils.R'
     'pipe_call_linter.R'
+    'pipe_consistency_linter.R'
     'pipe_continuation_linter.R'
+    'pipe_return_linter.R'
+    'print_linter.R'
     'quotes_linter.R'
     'redundant_equals_linter.R'
     'redundant_ifelse_linter.R'
     'regex_subset_linter.R'
+    'rep_len_linter.R'
+    'repeat_linter.R'
+    'return_linter.R'
     'routine_registration_linter.R'
+    'sample_int_linter.R'
+    'scalar_in_linter.R'
     'semicolon_linter.R'
     'seq_linter.R'
     'settings.R'
     'settings_utils.R'
     'sort_linter.R'
+    'source_utils.R'
     'spaces_inside_linter.R'
     'spaces_left_parentheses_linter.R'
     'sprintf_linter.R'
+    'stopifnot_all_linter.R'
     'string_boundary_linter.R'
     'strings_as_factors_linter.R'
     'system_file_linter.R'
+    'terminal_close_linter.R'
+    'todo_comment_linter.R'
     'trailing_blank_lines_linter.R'
     'trailing_whitespace_linter.R'
     'tree_utils.R'
@@ -162,17 +191,18 @@ Collate:
     'undesirable_operator_linter.R'
     'unnecessary_concatenation_linter.R'
     'unnecessary_lambda_linter.R'
-    'unnecessary_nested_if_linter.R'
+    'unnecessary_nesting_linter.R'
     'unnecessary_placeholder_linter.R'
     'unreachable_code_linter.R'
     'unused_import_linter.R'
     'use_lintr.R'
     'vector_logic_linter.R'
+    'which_grepl_linter.R'
     'whitespace_linter.R'
     'with.R'
     'with_id.R'
     'xml_nodes_to_lints.R'
-    'xp_utils.R'
+    'xml_utils.R'
     'yoda_test_linter.R'
     'zzz.R'
 Language: en-US

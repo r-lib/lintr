@@ -39,7 +39,7 @@
 #' @evalRd rd_tags("strings_as_factors_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-strings_as_factors_linter <- function() {
+strings_as_factors_linter <- local({
   # a call to c() with only literal string inputs,
   #   e.g. c("a") or c("a", "b"), but not c("a", b)
   c_combine_strings <- "
@@ -62,45 +62,28 @@ strings_as_factors_linter <- function() {
   # two exclusions
   #   (1) above argument is to row.names=
   #   (2) stringsAsFactors is manually supplied (with any value)
-  xpath <- glue::glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'data.frame']
-    /parent::expr
-    /parent::expr[
-      expr[
-        (
-          STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
-          or ( {c_combine_strings} )
-          or expr[1][
-            SYMBOL_FUNCTION_CALL[text() = 'rep']
-            and following-sibling::expr[1][STR_CONST or ({c_combine_strings})]
-          ]
-          or expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
-        )
-        and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
-      ]
-      and not(SYMBOL_SUB[text() = 'stringsAsFactors'])
+  xpath <- glue("
+  parent::expr[
+    expr[
+      (
+        STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+        or ( {c_combine_strings} )
+        or expr[1][
+          SYMBOL_FUNCTION_CALL[text() = 'rep']
+          and following-sibling::expr[1][STR_CONST or ({c_combine_strings})]
+        ]
+        or expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
+      )
+      and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
     ]
-  ")
+    and not(SYMBOL_SUB[text() = 'stringsAsFactors'])
+  ]")
 
-  Linter(function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
-    xml <- source_expression$xml_parsed_content
-
-    bad_expr <- xml2::xml_find_all(xml, xpath)
-
-    xml_nodes_to_lints(
-      bad_expr,
-      source_expression = source_expression,
-      lint_message = paste(
-        "This code relies on the default value of stringsAsFactors,",
-        "which changed in version R 4.0. Please supply an explicit value for",
-        "stringsAsFactors for this code to work with versions of R both before",
-        "and after this switch."
-      ),
-      type = "warning"
-    )
-  })
-}
+  make_linter_from_function_xpath(
+    function_names = "data.frame",
+    xpath = xpath,
+    lint_message =
+      "Supply an explicit value for stringsAsFactors for this code to work before and after R version 4.0.",
+    type = "warning"
+  )
+})

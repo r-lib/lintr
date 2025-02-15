@@ -75,3 +75,24 @@ test_that("function_return_linter blocks simple disallowed usages", {
     linter
   )
 })
+
+test_that("lints vectorize", {
+  linter <- function_return_linter()
+  lint_msg <- rex::rex("Move the assignment outside of the return() clause")
+
+  expect_lint(
+    trim_some("{
+      function() {
+        return(x <- 1)
+      }
+      function() {
+        return(y <- 2)
+      }
+    }"),
+    list(
+      list(lint_msg, line_number = 3L),
+      list(lint_msg, line_number = 6L)
+    ),
+    function_return_linter()
+  )
+})

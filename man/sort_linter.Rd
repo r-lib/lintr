@@ -2,14 +2,30 @@
 % Please edit documentation in R/sort_linter.R
 \name{sort_linter}
 \alias{sort_linter}
-\title{Require usage of \code{sort()} over \code{.[order(.)]}}
+\title{Check for common mistakes around sorting vectors}
 \usage{
 sort_linter()
 }
 \description{
+This linter checks for some common mistakes when using \code{\link[=order]{order()}} or \code{\link[=sort]{sort()}}.
+}
+\details{
+First, it requires usage of \code{sort()} over \code{.[order(.)]}.
+
 \code{\link[=sort]{sort()}} is the dedicated option to sort a list or vector. It is more legible
 and around twice as fast as \code{.[order(.)]}, with the gap in performance
 growing with the vector size.
+
+Second, it requires usage of \code{\link[=is.unsorted]{is.unsorted()}} over equivalents using \code{sort()}.
+
+The base function \code{is.unsorted()} exists to test the sortedness of a vector.
+Prefer it to inefficient and less-readable equivalents like
+\code{x != sort(x)}. The same goes for checking \code{x == sort(x)} -- use
+\code{!is.unsorted(x)} instead.
+
+Moreover, use of \code{x == sort(x)} can be risky because \code{\link[=sort]{sort()}} drops missing
+elements by default, meaning \code{==} might end up trying to compare vectors
+of differing lengths.
 }
 \examples{
 # will produce lints
@@ -23,6 +39,11 @@ lint(
   linters = sort_linter()
 )
 
+lint(
+  text = "sort(x) == x",
+  linters = sort_linter()
+)
+
 # okay
 lint(
   text = "x[sample(order(x))]",
@@ -31,6 +52,11 @@ lint(
 
 lint(
   text = "y[order(x)]",
+  linters = sort_linter()
+)
+
+lint(
+  text = "sort(x, decreasing = TRUE) == x",
   linters = sort_linter()
 )
 

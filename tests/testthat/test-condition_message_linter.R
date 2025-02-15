@@ -1,16 +1,18 @@
 test_that("condition_message_linter skips allowed usages", {
   linter <- condition_message_linter()
 
-  expect_lint("stop('a string', 'another')", NULL, linter)
-  expect_lint("warning('a string', 'another')", NULL, linter)
-  expect_lint("message('a string', 'another')", NULL, linter)
+  expect_no_lint("stop('a string', 'another')", linter)
+  expect_no_lint("warning('a string', 'another')", linter)
+  expect_no_lint("message('a string', 'another')", linter)
+  # extracted calls likely don't obey base::stop() semantics
+  expect_no_lint("ctx$stop(paste('a', 'b'))", linter)
+  expect_no_lint("ctx@stop(paste('a', 'b'))", linter)
 
-  # sprintf is OK (really should be gettextf but offering translations
-  #   at google internally is not likely to happen any time soon)
-  expect_lint("stop(sprintf('A %s!', 'string'))", NULL, linter)
+  # sprintf is OK -- gettextf() enforcement is left to other linters
+  expect_no_lint("stop(sprintf('A %s!', 'string'))", linter)
 
   # get multiple sep= in one expression
-  expect_lint(
+  expect_no_lint(
     trim_some("
       tryCatch(
         foo(x),
@@ -18,7 +20,6 @@ test_that("condition_message_linter skips allowed usages", {
         warning = function(w) warning(paste(a, b, sep = '--')),
       )
     "),
-    NULL,
     linter
   )
 })
@@ -26,9 +27,8 @@ test_that("condition_message_linter skips allowed usages", {
 skip_if_not_installed("tibble")
 patrick::with_parameters_test_that(
   "paste/paste0 allowed by condition_message_linter when using other seps and/or collapse",
-  expect_lint(
+  expect_no_lint(
     sprintf("%s(%s(x, %s = '%s'))", condition, fun, parameter, arg),
-    NULL,
     condition_message_linter()
   ),
   .cases = tibble::tribble(
@@ -46,36 +46,27 @@ patrick::with_parameters_test_that(
 )
 
 test_that("condition_message_linter blocks simple disallowed usages", {
-  expect_lint(
-    "stop(paste('a string', 'another'))",
-    rex::rex("Don't use paste to build stop strings."),
-    condition_message_linter()
-  )
+  linter <- condition_message_linter()
+  lint_msg_paste_stop <- rex::rex("Don't use paste to build stop strings.")
+
+  expect_lint("stop(paste('a string', 'another'))", lint_msg_paste_stop, linter)
 
   expect_lint(
     "warning(paste0('a string ', 'another'))",
     rex::rex("Don't use paste0 to build warning strings."),
-    condition_message_linter()
+    linter
   )
 
   # `sep` argument allowed, but only if it is different from default
-  expect_lint(
-    "stop(paste(x, sep = ' '))",
-    rex::rex("Don't use paste to build stop strings."),
-    condition_message_linter()
-  )
+  expect_lint("stop(paste(x, sep = ' '))", lint_msg_paste_stop, linter)
 
   # not thrown off by named arguments
-  expect_lint(
-    "stop(paste('a', 'b'), call. = FALSE)",
-    rex::rex("Don't use paste to build stop strings."),
-    condition_message_linter()
-  )
+  expect_lint("stop(paste('a', 'b'), call. = FALSE)", lint_msg_paste_stop, linter)
 
   expect_lint(
     "warning(paste0('a', 'b'), immediate. = TRUE)",
     rex::rex("Don't use paste0 to build warning strings."),
-    condition_message_linter()
+    linter
   )
 
   expect_lint(
@@ -86,8 +77,8 @@ test_that("condition_message_linter blocks simple disallowed usages", {
         warning = function(w) warning(paste(a, b, sep = '--')),
       )
     "),
-    rex::rex("Don't use paste to build stop strings."),
-    condition_message_linter()
+    lint_msg_paste_stop,
+    linter
   )
 
   # one with no sep, one with linted sep
@@ -100,10 +91,10 @@ test_that("condition_message_linter blocks simple disallowed usages", {
       )
     "),
     list(
-      list(message = rex::rex("Don't use paste to build stop strings.")),
-      list(message = rex::rex("Don't use paste to build warning strings"))
+      list(lint_msg_paste_stop, line_number = 3L),
+      list(rex::rex("Don't use paste to build warning strings"), line_number = 4L)
     ),
-    condition_message_linter()
+    linter
   )
 })
 
@@ -121,18 +112,12 @@ test_that("packageStartupMessage usages are also matched", {
   )
 })
 
-test_that("R>=4.0.0 raw strings are handled", {
-  skip_if_not_r_version("4.0.0")
-  expect_lint(
-    "warning(paste(a, b, sep = R'( )'))",
-    rex::rex("Don't use paste to build warning strings."),
-    condition_message_linter()
-  )
-  expect_lint(
-    "warning(paste(a, b, sep = R'---[ ]---'))",
-    rex::rex("Don't use paste to build warning strings."),
-    condition_message_linter()
-  )
+test_that("raw strings are handled correctly", {
+  linter <- condition_message_linter()
+  lint_msg <- rex::rex("Don't use paste to build warning strings.")
+
+  expect_lint("warning(paste(a, b, sep = R'( )'))", lint_msg, linter)
+  expect_lint("warning(paste(a, b, sep = R'---[ ]---'))", lint_msg, linter)
 })
 
 test_that("message vectorization works", {

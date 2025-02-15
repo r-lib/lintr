@@ -6,17 +6,21 @@
 \usage{
 unused_import_linter(
   allow_ns_usage = FALSE,
-  except_packages = c("bit64", "data.table", "tidyverse")
+  except_packages = c("bit64", "data.table", "tidyverse"),
+  interpret_glue = TRUE
 )
 }
 \arguments{
 \item{allow_ns_usage}{Suppress lints for packages only used via namespace.
 This is \code{FALSE} by default because \code{pkg::fun()} doesn't require \code{library(pkg)}.
 You can use \link[=requireNamespace]{requireNamespace("pkg")} to ensure a package is
-installed without loading it.}
+installed without attaching it.}
 
 \item{except_packages}{Character vector of packages that are ignored.
 These are usually attached for their side effects.}
+
+\item{interpret_glue}{If \code{TRUE}, interpret \code{\link[glue:glue]{glue::glue()}} calls to avoid false positives caused by local variables
+which are only used in a glue expression.}
 }
 \description{
 Check that imported packages are actually used
