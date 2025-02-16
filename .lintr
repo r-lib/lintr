@@ -37,6 +37,8 @@ linters: all_linters(
     # We now require R>=4.0.0
     strings_as_factors_linter = NULL,
     todo_comment_linter = NULL,
+    # exclude; we use customized version above
+    undesirable_function_linter = NULL,
     # TODO(#2327): Enable this.
     unreachable_code_linter = NULL
   )

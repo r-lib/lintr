@@ -407,6 +407,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   obj
 }
 
+# nolint next: cyclocomp_linter. Sequence of checks + early returns.
 validate_lint_object <- function(message, line, line_number, column_number, ranges) {
   if (length(message) != 1L || !is.character(message)) {
     cli_abort("{.arg message} must be a character string")
