@@ -5,9 +5,9 @@
 \alias{with_id}
 \title{Get parsed IDs by token}
 \usage{
-ids_with_token(source_expression, value, fun = `==`, source_file = NULL)
+ids_with_token(source_expression, value, fun = `==`)
 
-with_id(source_expression, id, source_file)
+with_id(source_expression, id)
 }
 \arguments{
 \item{source_expression}{A list of source expressions, the result of a call to \code{\link[=get_source_expressions]{get_source_expressions()}},
@@ -25,8 +25,6 @@ For example:
 
 \item{fun}{For additional flexibility, a function to search for in
 the \code{token} column of \code{parsed_content}. Typically \code{==} or \code{\%in\%}.}
-
-\item{source_file}{(DEPRECATED) Same as \code{source_expression}. Will be removed.}
 
 \item{id}{Integer. The index corresponding to the desired row
 of \code{parsed_content}.}
