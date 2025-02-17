@@ -103,16 +103,17 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     terminal_anchor <- endsWith(patterns, "$")
     search_start <- 1L + initial_anchor
     search_end <- nchar(patterns) - terminal_anchor
-    can_replace <- is_not_regex(substr(patterns, search_start, search_end))
-    initial_anchor <- initial_anchor[can_replace]
-    terminal_anchor <- terminal_anchor[can_replace]
+    should_lint <- (initial_anchor | terminal_anchor) &
+      is_not_regex(substr(patterns, search_start, search_end))
+    initial_anchor <- initial_anchor[should_lint]
+    terminal_anchor <- terminal_anchor[should_lint]
 
     lint_type <- character(length(initial_anchor))
 
     lint_type[initial_anchor & terminal_anchor] <- "both"
     lint_type[initial_anchor & !terminal_anchor] <- "initial"
     lint_type[!initial_anchor & terminal_anchor] <- "terminal"
-    list(lint_expr = expr[can_replace], lint_type = lint_type)
+    list(lint_expr = expr[should_lint], lint_type = lint_type)
   }
 
   substr_xpath <- glue("
