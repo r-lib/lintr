@@ -180,6 +180,18 @@ test_that("unnecessary_nesting_linter skips one-line functions", {
     NULL,
     linter
   )
+
+  # ditto short-hand lambda
+  skip_if_not_r_version("4.1.0")
+  expect_lint(
+    trim_some("
+      foo <- \\(x) {
+        return(x)
+      }
+    "),
+    NULL,
+    linter
+  )
 })
 
 test_that("unnecessary_nesting_linter skips one-expression for loops", {
