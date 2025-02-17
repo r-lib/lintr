@@ -116,7 +116,7 @@ test_that("lints vectorize", {
   )
 })
 
-test_that("old name consecutive_stopifnot_linter() is funct", {
+test_that("old name consecutive_stopifnot_linter() is defunct", {
   expect_error(consecutive_stopifnot_linter(), "Use consecutive_assertion_linter instead", fixed = TRUE)
 })
 
