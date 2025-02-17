@@ -8,7 +8,7 @@ test_that("string_boundary_linter skips allowed grepl() usages", {
   # regex pattern --> no lint
   expect_no_lint("grepl('^[a-z]', x)", linter)
   expect_no_lint("grepl('[a-z]$', x)", linter)
-  # anchor-ish but not a regex --> no lint
+  # anchor-ish but not a regex --> no lint (#2636)
   expect_no_lint(R"[grepl("\\^", x)]", linter)
   expect_no_lint(R"[grepl("\\\\^", x)]", linter)
   expect_no_lint(R"[grepl("$\\\\", x)]", linter)
