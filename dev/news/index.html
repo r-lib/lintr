@@ -79,6 +79,11 @@
 </ul><div class="section level4">
 <h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
 <ul><li>
+<code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code>:
+<ul><li>Treats function bodies under the shorthand lambda (<code>\()</code>) the same as normal function bodies (<a href="https://github.com/r-lib/lintr/issues/2748" class="external-link">#2748</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>Treats <code>=</code> assignment the same as <code>&lt;-</code> when deciding to combine consecutive <code>if()</code> clauses (<a href="https://github.com/r-lib/lintr/issues/2245" class="external-link">#2245</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
+<li>
 <code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code> treats function bodies under the shorthand lambda (<code>\()</code>) the same as normal function bodies (<a href="https://github.com/r-lib/lintr/issues/2748" class="external-link">#2748</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/string_boundary_linter.html">string_boundary_linter()</a></code> omits lints of patterns like <code>\\^</code> which have an anchor but are not regular expressions (<a href="https://github.com/r-lib/lintr/issues/2636" class="external-link">#2636</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
