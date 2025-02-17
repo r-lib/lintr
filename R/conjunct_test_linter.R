@@ -79,19 +79,16 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
   allow_filter <- match.arg(allow_filter)
 
   expect_true_assert_that_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][AND2]
+  following-sibling::expr[1][AND2]
     /parent::expr
   "
   named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
   stopifnot_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[1][AND2 {named_stopifnot_condition}]
+  following-sibling::expr[1][AND2 {named_stopifnot_condition}]
     /parent::expr
   ")
   expect_false_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][OR2]
+  following-sibling::expr[1][OR2]
     /parent::expr
   "
 
@@ -101,7 +98,7 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
     always = "true"
   )
   filter_xpath <- glue("
-  parent::expr[{ filter_ns_cond }]
+  self::*[{ filter_ns_cond }]
     /parent::expr
     /expr[AND]
   ")

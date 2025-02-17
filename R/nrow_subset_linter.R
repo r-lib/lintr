@@ -38,7 +38,6 @@ nrow_subset_linter <- make_linter_from_function_xpath(
   function_names = c("subset", "filter"),
   xpath = glue("
   parent::expr
-    /parent::expr
     /parent::expr[
       expr/SYMBOL_FUNCTION_CALL[text() = 'nrow']
       or (self::expr | parent::expr)[

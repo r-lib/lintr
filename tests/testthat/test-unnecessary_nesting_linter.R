@@ -93,6 +93,7 @@ test_that("parallels in further nesting are skipped", {
 
 test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
   linter <- unnecessary_nesting_linter()
+  lint_msg <- rex::rex("Reduce the nesting of this if/else statement by unnesting the portion")
 
   expect_lint(
     trim_some("
@@ -102,7 +103,7 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
         B
       }
     "),
-    rex::rex("Reduce the nesting of this if/else statement by unnesting the portion"),
+    lint_msg,
     linter
   )
 
@@ -114,7 +115,7 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
         B
       }
     "),
-    rex::rex("Reduce the nesting of this if/else statement by unnesting the portion"),
+    lint_msg,
     linter
   )
 
@@ -127,7 +128,7 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
         stop()
       }
     "),
-    rex::rex("Reduce the nesting of this if/else statement by unnesting the portion"),
+    lint_msg,
     linter
   )
 
@@ -139,9 +140,21 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
         return()
       }
     "),
-    rex::rex("Reduce the nesting of this if/else statement by unnesting the portion"),
+    lint_msg,
     linter
   )
+
+  stop_warning_lines <- trim_some("
+    if (A) {
+      stop('An error')
+    } else {
+      warning('A warning')
+    }
+  ")
+  expect_lint(stop_warning_lines, lint_msg, linter)
+
+  # Optionally consider 'warning' as an exit call --> no lint
+  expect_lint(stop_warning_lines, NULL, unnecessary_nesting_linter(branch_exit_calls = "warning"))
 })
 
 test_that("unnecessary_nesting_linter skips one-line functions", {
@@ -163,6 +176,18 @@ test_that("unnecessary_nesting_linter skips one-line functions", {
       purrr::map(x, ~ {
         .x
       })
+    "),
+    NULL,
+    linter
+  )
+
+  # ditto short-hand lambda
+  skip_if_not_r_version("4.1.0")
+  expect_lint(
+    trim_some("
+      foo <- \\(x) {
+        return(x)
+      }
     "),
     NULL,
     linter

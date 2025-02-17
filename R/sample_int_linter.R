@@ -39,7 +39,7 @@ sample_int_linter <- function() {
   # exclude TRUE/FALSE for sample(replace = TRUE, ...) usage. better
   #   would be match.arg() but this also works.
   xpath <- glue("
-  parent::expr[not(OP-DOLLAR or OP-AT)]
+  self::*[not(OP-DOLLAR or OP-AT)]
     /following-sibling::expr[1][
       (
         expr[1]/NUM_CONST[text() = '1' or text() = '1L']
@@ -76,7 +76,7 @@ sample_int_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = glue("sample.int(n, m, ...) is preferable to sample({original}, m, ...)."),
+      lint_message = paste0("sample.int(n, m, ...) is preferable to sample(", original, ", m, ...)."),
       type = "warning"
     )
   })

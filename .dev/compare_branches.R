@@ -124,6 +124,8 @@ param_list <- list(
     "--benchmark",
     default = if (interactive()) {
       askYesNo("Benchmark the timing of linter execution?")
+    } else {
+      FALSE
     },
     type = "logical",
     help = "Whether to run performance diagnostics of the branch(es)"
@@ -310,16 +312,24 @@ lint_one_package <- function(package, linters, out_dir, check_deps) {
   #   in d20768a~lintr>2.0.1~Feb 2021; prior to that, we get a ton of those warnings.
   #   ignore them because they're innocuous.
   # also ignore lintr's deprecations to make including all linters easier
-  suppressMessages(withCallingHandlers(
-    lints <- as.data.frame(lint_dir(package, linters = linters, parse_settings = FALSE)),
+  lints <- suppressMessages(withCallingHandlers(
+    lint_dir(package, linters = linters, parse_settings = FALSE),
     warning = function(cond) {
       if (!grepl("ncomplete final line found|was deprecated in lintr", cond$message)) {
-        warning(cond$message, call. = FALSE)
+        warning(cond, call. = FALSE)
       }
       invokeRestart("muffleWarning")
+    },
+    # Don't fail out if one branch exhibits errors (e.g. if the new version fixes a known error)
+    error = function(cond) {
+      lints <- list(Lint(package, message = paste("Failed:", conditionMessage(lints))))
+      class(lints) <- "lints"
+      lints
     }
   ))
-  if (nrow(lints) > 0L) data.table::fwrite(lints, file.path(out_dir, paste0(package_name, ".csv")))
+  if (length(lints) > 0L) {
+    data.table::fwrite(as.data.frame(lints), file.path(out_dir, paste0(package_name, ".csv")))
+  }
   TRUE
 }
 

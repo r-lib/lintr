@@ -3,7 +3,7 @@
 # for failure, always put the lint check or lint field that must fail first.
 
 linter <- assignment_linter()
-lint_msg <- "Use <-, not ="
+lint_msg <- "Use one of <-, <<- for assignment, not ="
 
 test_that("no checks", {
   expect_success(expect_no_lint("a", linter))
@@ -69,4 +69,14 @@ test_that("expect_lint doesn't change language", {
     expect_success(expect_lint("a=1", lint_msg, linter))
     expect_identical(Sys.getenv("LANGUAGE"), "mr")
   })
+})
+
+test_that("execution without testthat gives the right errors", {
+  local_mocked_bindings(requireNamespace = function(...) FALSE)
+  lint_msg <- function(nm) rex::rex("`", nm, "()` is designed to work", anything, "testthat")
+
+  expect_error(expect_lint(), lint_msg("expect_lint"))
+  expect_error(lintr::expect_lint(), lint_msg("expect_lint"))
+  expect_error(expect_no_lint(), lint_msg("expect_no_lint"))
+  expect_error(expect_lint_free(), lint_msg("expect_lint_free"))
 })

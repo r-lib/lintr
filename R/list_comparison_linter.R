@@ -32,7 +32,6 @@ list_comparison_linter <- function() {
   #   in the lint message.
   xpath <- glue("
   parent::expr
-    /parent::expr
     /parent::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
   ")
 

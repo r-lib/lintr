@@ -7,7 +7,6 @@ backport_linter,robustness configurable package_development
 boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
-closed_curly_linter,defunct
 commas_linter,style readability default configurable
 commented_code_linter,style readability best_practices default
 comparison_negation_linter,readability consistency
@@ -31,7 +30,7 @@ expect_s3_class_linter,package_development best_practices pkg_testthat
 expect_s4_class_linter,package_development best_practices pkg_testthat
 expect_true_false_linter,package_development best_practices readability pkg_testthat
 expect_type_linter,package_development best_practices pkg_testthat
-extraction_operator_linter,style best_practices deprecated
+extraction_operator_linter,defunct
 fixed_regex_linter,best_practices readability efficiency configurable regex
 for_loop_index_linter,best_practices readability robustness
 function_argument_linter,style consistency best_practices
@@ -70,11 +69,9 @@ object_name_linter,style consistency default configurable executing
 object_overwrite_linter,best_practices robustness readability configurable executing
 object_usage_linter,style readability correctness default executing configurable
 one_call_pipe_linter,style readability
-open_curly_linter,defunct
 outer_negation_linter,readability efficiency best_practices
 package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
-paren_brace_linter,defunct
 paste_linter,best_practices consistency configurable
 pipe_call_linter,style readability
 pipe_consistency_linter,style readability configurable
@@ -92,7 +89,6 @@ routine_registration_linter,best_practices efficiency robustness
 sample_int_linter,efficiency readability robustness
 scalar_in_linter,readability consistency best_practices efficiency configurable
 semicolon_linter,style readability default configurable
-semicolon_terminator_linter,defunct
 seq_linter,robustness efficiency consistency best_practices default
 single_quotes_linter,style consistency readability deprecated
 sort_linter,readability best_practices efficiency
@@ -112,7 +108,7 @@ undesirable_function_linter,style configurable robustness best_practices
 undesirable_operator_linter,style configurable robustness best_practices
 unnecessary_concatenation_linter,style readability efficiency configurable
 unnecessary_lambda_linter,best_practices efficiency readability configurable
-unnecessary_nested_if_linter,readability best_practices deprecated
+unnecessary_nested_if_linter,defunct
 unnecessary_nesting_linter,readability consistency configurable best_practices
 unnecessary_placeholder_linter,readability best_practices
 unneeded_concatenation_linter,style readability efficiency configurable deprecated

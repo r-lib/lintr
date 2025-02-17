@@ -347,24 +347,10 @@ validate_linter_object <- function(linter, name) {
   if (is_linter(linter)) {
     return(linter)
   }
-  if (!is.function(linter)) {
-    cli_abort(c(
-      i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
-      x = "Instead, it is {.obj_type_friendly {linter}}."
-    ))
-  }
-  if (is_linter_factory(linter)) {
-    what <- "Passing linters as variables"
-    alternative <- "a call to the linters (see ?linters)"
-  } else {
-    what <- "The use of linters of class 'function'"
-    alternative <- "linters classed as 'linter' (see ?Linter)"
-  }
-  lintr_deprecated(
-    what = what, alternative = alternative, version = "3.0.0",
-    type = "",
-    signal = "stop"
-  )
+  cli_abort(c(
+    i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
+    x = "Instead, it is {.obj_type_friendly {linter}}."
+  ))
 }
 
 is_linter_factory <- function(fun) {
@@ -397,24 +383,40 @@ reorder_lints <- function(lints) {
 #' @param message message used to describe the lint error
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
-#' @param linter deprecated. No longer used.
 #' @return an object of class `c("lint", "list")`.
 #' @name lint-s3
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
-                 message = "", line = "", ranges = NULL, linter = "") {
-  if (!missing(linter)) {
-    lintr_deprecated(
-      what = "Using the `linter` argument of `Lint()`",
-      version = "3.0.0",
-      type = "",
-      signal = "stop"
-    )
-  }
+                 message = "", line = "", ranges = NULL) {
+  validate_lint_object(message, line, line_number, column_number, ranges)
 
+  type <- match.arg(type)
+
+  obj <- list(
+    filename = filename,
+    line_number = as.integer(line_number),
+    column_number = as.integer(column_number),
+    type = type,
+    message = message,
+    line = line,
+    ranges = ranges,
+    linter = NA_character_
+  )
+  class(obj) <- c("lint", "list")
+  obj
+}
+
+# nolint next: cyclocomp_linter. Sequence of checks + early returns.
+validate_lint_object <- function(message, line, line_number, column_number, ranges) {
+  if (length(message) != 1L || !is.character(message)) {
+    cli_abort("{.arg message} must be a character string")
+  }
+  if (is.object(message)) {
+    cli_abort("{.arg message} must be a simple string, but has class {.cls {class(message)}}")
+  }
   if (length(line) != 1L || !is.character(line)) {
-    cli_abort("{.arg line} must be a string.", call. = FALSE)
+    cli_abort("{.arg line} must be a character string.")
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
@@ -427,21 +429,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     cli_abort("{.arg line_number} must be a positive integer, not {.obj_type_friendly {line_number}}.")
   }
   check_ranges(ranges, max_col)
-
-  type <- match.arg(type)
-
-  obj <- list(
-    filename = filename,
-    line_number = as.integer(line_number),
-    column_number = as.integer(column_number),
-    type = type,
-    message = message, # nolint: undesirable_function_linter
-    line = line,
-    ranges = ranges,
-    linter = NA_character_
-  )
-  class(obj) <- c("lint", "list")
-  obj
+  invisible()
 }
 
 is_number <- function(number, n = 1L) {

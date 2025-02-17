@@ -65,12 +65,10 @@ literal_coercion_linter <- function() {
     )
   "
   xpath <- glue("
-  parent::expr
-    /parent::expr[
-      count(expr) = 2
-      and expr[2][ {not_extraction_or_scientific} ]
-    ]
-  ")
+  parent::expr[
+    count(expr) = 2
+    and expr[2][ {not_extraction_or_scientific} ]
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(coercers)
