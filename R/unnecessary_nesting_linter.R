@@ -232,7 +232,9 @@ unnecessary_nesting_linter <- function(
       # catch if (cond) if (other_cond) { ... }
       "following-sibling::expr[IF and not(ELSE)]",
       # catch if (cond) { if (other_cond) { ... } }
-      "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]/expr[IF and not(ELSE)]"
+      #   count(*): only OP-LEFT-BRACE, one <expr>, and OP-RIGHT-BRACE.
+      #             Note that third node could be <expr_or_assign_or_help>.
+      "following-sibling::expr[OP-LEFT-BRACE and count(*) = 3]/expr[IF and not(ELSE)]"
     ),
     collapse = " | "
   )
