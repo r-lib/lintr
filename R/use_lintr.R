@@ -30,8 +30,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
     cli_abort("Found an existing configuration file at {.file {config_file}}.")
   }
   type <- match.arg(type)
-  the_config <- switch(
-    type,
+  the_config <- switch(type,
     tidyverse = list(
       linters = 'linters_with_defaults() # see vignette("lintr")',
       encoding = '"UTF-8"'

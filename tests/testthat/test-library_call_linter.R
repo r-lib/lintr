@@ -1,46 +1,39 @@
 test_that("library_call_linter skips allowed usages", {
   linter <- library_call_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       library(dplyr)
       print('test')
     "),
-    NULL,
     linter
   )
 
-  expect_lint("print('test')",
-    NULL,
-    linter
-  )
+  expect_no_lint("print('test')", linter)
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # comment
       library(dplyr)
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       print('test')
       # library(dplyr)
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       suppressPackageStartupMessages({
         library(dplyr)
         library(knitr)
       })
     "),
-    NULL,
     linter
   )
 })
@@ -133,12 +126,11 @@ test_that("require() treated the same as library()", {
   lint_message_library <- rex::rex("Move all library calls to the top of the script.")
   lint_message_require <- rex::rex("Move all require calls to the top of the script.")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       library(dplyr)
       require(tidyr)
     "),
-    NULL,
     linter
   )
 
@@ -179,7 +171,7 @@ test_that("allow_preamble applies as intended", {
 
     print(letters)
   ")
-  expect_lint(lines, NULL, linter_preamble)
+  expect_no_lint(lines, linter_preamble)
   expect_lint(lines, list(list(line_number = 2L), list(line_number = 3L)), linter_no_preamble)
 
   lines <- trim_some("
@@ -191,7 +183,7 @@ test_that("allow_preamble applies as intended", {
 
     print(letters)
   ")
-  expect_lint(lines, NULL, linter_preamble)
+  expect_no_lint(lines, linter_preamble)
   expect_lint(lines, list(list(line_number = 3L), list(line_number = 4L)), linter_no_preamble)
 
   lines <- trim_some("
@@ -201,7 +193,7 @@ test_that("allow_preamble applies as intended", {
 
     print(letters)
   ")
-  expect_lint(lines, NULL, linter_preamble)
+  expect_no_lint(lines, linter_preamble)
   expect_lint(lines, list(list(line_number = 2L), list(line_number = 3L)), linter_no_preamble)
 
   lines <- trim_some("
@@ -211,7 +203,7 @@ test_that("allow_preamble applies as intended", {
 
     print(letters)
   ")
-  expect_lint(lines, NULL, linter_preamble)
+  expect_no_lint(lines, linter_preamble)
   expect_lint(lines, list(list(line_number = 2L), list(line_number = 3L)), linter_no_preamble)
 
   lines <- trim_some("
@@ -219,16 +211,16 @@ test_that("allow_preamble applies as intended", {
     library(moreFun)
     oops()
   ")
-  expect_lint(lines, NULL, linter_preamble)
+  expect_no_lint(lines, linter_preamble)
   expect_lint(lines, lint_msg, linter_no_preamble)
 })
 
 test_that("skips allowed usages of library()/character.only=TRUE", {
   linter <- library_call_linter()
 
-  expect_lint("library(data.table)", NULL, linter)
-  expect_lint("function(pkg) library(pkg, character.only = TRUE)", NULL, linter)
-  expect_lint("function(pkgs) sapply(pkgs, require, character.only = TRUE)", NULL, linter)
+  expect_no_lint("library(data.table)", linter)
+  expect_no_lint("function(pkg) library(pkg, character.only = TRUE)", linter)
+  expect_no_lint("function(pkgs) sapply(pkgs, require, character.only = TRUE)", linter)
 })
 
 test_that("blocks disallowed usages of strings in library()/require()", {
@@ -324,31 +316,29 @@ patrick::with_parameters_test_that(
   {
     linter <- library_call_linter()
 
-    expect_lint(sprintf("%s(x)", call), NULL, linter)
-    expect_lint(sprintf("%s(x, y, z)", call), NULL, linter)
+    expect_no_lint(sprintf("%s(x)", call), linter)
+    expect_no_lint(sprintf("%s(x, y, z)", call), linter)
 
     # intervening expression
-    expect_lint(sprintf("%1$s(x); y; %1$s(z)", call), NULL, linter)
+    expect_no_lint(sprintf("%1$s(x); y; %1$s(z)", call), linter)
 
     # inline or potentially with gaps don't matter
-    expect_lint(
+    expect_no_lint(
       trim_some(glue::glue("
         {call}(x)
         y
 
         stopifnot(z)
       ")),
-      NULL,
       linter
     )
 
     # only suppressing calls with library()
-    expect_lint(
+    expect_no_lint(
       trim_some(glue::glue("
         {call}(x)
         {call}(y)
       ")),
-      NULL,
       linter
     )
   },
@@ -402,24 +392,15 @@ test_that("Namespace differences are detected", {
   linter <- library_call_linter()
 
   # totally different namespaces
-  expect_lint(
-    "ns::suppressMessages(library(x)); base::suppressMessages(library(y))",
-    NULL,
-    linter
-  )
+  expect_no_lint("ns::suppressMessages(library(x)); base::suppressMessages(library(y))", linter)
 
   # one namespaced, one not
-  expect_lint(
-    "ns::suppressMessages(library(x)); suppressMessages(library(y))",
-    NULL,
-    linter
-  )
+  expect_no_lint("ns::suppressMessages(library(x)); suppressMessages(library(y))", linter)
 })
 
 test_that("Consecutive calls to different blocked calls is OK", {
-  expect_lint(
+  expect_no_lint(
     "suppressPackageStartupMessages(library(x)); suppressMessages(library(y))",
-    NULL,
     library_call_linter()
   )
 })
