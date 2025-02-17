@@ -79,6 +79,8 @@
 <code><a href="../reference/string_boundary_linter.html">string_boundary_linter()</a></code> omits lints of patterns like <code>\\^</code> which have an anchor but are not regular expressions (<a href="https://github.com/r-lib/lintr/issues/2636" class="external-link">#2636</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code>implicit_integer_linter(allow_colon = TRUE)</code> is OK with negative literals, e.g. <code>-1:1</code> or <code>1:-1</code> (<a href="https://github.com/r-lib/lintr/issues/2673" class="external-link">#2673</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/missing_argument_linter.html">missing_argument_linter()</a></code> allows empty calls like <code>foo()</code> even if there are comments between <code>(</code> and <code>)</code> (<a href="https://github.com/r-lib/lintr/issues/2741" class="external-link">#2741</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
 <div class="section level3">
