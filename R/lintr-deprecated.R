@@ -1,8 +1,9 @@
 #' @name lintr-deprecated
 #' @title Deprecated functions in lintr
 #'
-#' @seealso [linters] for a complete list of linters available in lintr.
-#' @evalRd rd_tags(tags = "deprecated")
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - [deprecated_linters] for a list of linters tagged as deprecated.
 #' @keywords internal
 NULL
 

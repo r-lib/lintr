@@ -38,9 +38,9 @@ Extraction operator linter
 Unnecessary nested if linter
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \link{deprecated_linters} for a list of linters tagged as deprecated.
+}
 }
 \keyword{internal}
-\section{Tags}{
-\link[=deprecated_linters]{deprecated}
-}
