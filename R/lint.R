@@ -389,8 +389,34 @@ reorder_lints <- function(lints) {
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
                  message = "", line = "", ranges = NULL) {
+  validate_lint_object(message, line, line_number, column_number, ranges)
+
+  type <- match.arg(type)
+
+  obj <- list(
+    filename = filename,
+    line_number = as.integer(line_number),
+    column_number = as.integer(column_number),
+    type = type,
+    message = message,
+    line = line,
+    ranges = ranges,
+    linter = NA_character_
+  )
+  class(obj) <- c("lint", "list")
+  obj
+}
+
+# nolint next: cyclocomp_linter. Sequence of checks + early returns.
+validate_lint_object <- function(message, line, line_number, column_number, ranges) {
+  if (length(message) != 1L || !is.character(message)) {
+    cli_abort("{.arg message} must be a character string")
+  }
+  if (is.object(message)) {
+    cli_abort("{.arg message} must be a simple string, but has class {.cls {class(message)}}")
+  }
   if (length(line) != 1L || !is.character(line)) {
-    cli_abort("{.arg line} must be a string.", call. = FALSE)
+    cli_abort("{.arg line} must be a character string.")
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
@@ -403,21 +429,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     cli_abort("{.arg line_number} must be a positive integer, not {.obj_type_friendly {line_number}}.")
   }
   check_ranges(ranges, max_col)
-
-  type <- match.arg(type)
-
-  obj <- list(
-    filename = filename,
-    line_number = as.integer(line_number),
-    column_number = as.integer(column_number),
-    type = type,
-    message = message, # nolint: undesirable_function_linter
-    line = line,
-    ranges = ranges,
-    linter = NA_character_
-  )
-  class(obj) <- c("lint", "list")
-  obj
+  invisible()
 }
 
 is_number <- function(number, n = 1L) {

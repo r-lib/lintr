@@ -5,10 +5,15 @@
 * Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now defunct.
 * Two linters marked as deprecated with warning in the previous release are now fully deprecated: `extraction_operator_linter()` and `unnecessary_nested_if_linter()`. They will be removed in the next release.
 * As previously announced, the following fully-deprecated items are now removed from the package:
-   + `with_defaults()`.
+   + `source_file=` argument to `ids_with_token()` and `with_id()`.
    + Passing linters by name or as non-`"linter"`-classed functions.
-   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + `linter=` argument of `Lint()`.
+   + `with_defaults()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+
+## Bug fixes
+
+* `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
 
 ## New and improved features
 
@@ -20,6 +25,10 @@
    + Treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
    + Treats `=` assignment the same as `<-` when deciding to combine consecutive `if()` clauses (#2245, @MichaelChirico).
 
+* `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
+* `string_boundary_linter()` omits lints of patterns like `\\^` which have an anchor but are not regular expressions (#2636, @MichaelChirico).
+* `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
+* `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
 
 ## Notes
 
