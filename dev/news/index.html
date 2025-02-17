@@ -68,6 +68,11 @@
 </ul></li>
 </ul></div>
 <div class="section level3">
+<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/lint-s3.html">Lint()</a></code>, and thus all linters, ensures that the returned object’s <code>message</code> attribute is consistently a simple character string (and not, for example, an object of class <code>"glue"</code>; <a href="https://github.com/r-lib/lintr/issues/2740" class="external-link">#2740</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/brace_linter.html">brace_linter()</a></code>’ has a new argument <code>function_bodies</code> (default <code>"multi_line"</code>) which controls when to require function bodies to be wrapped in curly braces, with the options <code>"always"</code>, <code>"multi_line"</code> (only require curly braces when a function body spans multiple lines), <code>"not_inline"</code> (only require curly braces when a function body starts on a new line) and <code>"never"</code> (<a href="https://github.com/r-lib/lintr/issues/1807" class="external-link">#1807</a>, <a href="https://github.com/r-lib/lintr/issues/2240" class="external-link">#2240</a>, <a href="https://github.com/salim-b" class="external-link">@salim-b</a>).</li>
