@@ -12,18 +12,11 @@ Check for an inconsistent number of arguments or arguments with incompatible typ
 }
 \details{
 \code{\link[=gettextf]{gettextf()}} calls are also included, since \code{gettextf()} is a thin wrapper around \code{sprintf()}.
-
-Also test for redundant calls which don't do any formatting, like \code{sprintf("abc")}.
 }
 \examples{
 # will produce lints
 lint(
   text = 'sprintf("hello \%s \%s \%d", x, y)',
-  linters = sprintf_linter()
-)
-
-lint(
-  text = 'sprintf("abc")',
   linters = sprintf_linter()
 )
 
@@ -35,11 +28,6 @@ lint(
 
 lint(
   text = 'sprintf("hello \%s \%s \%d", x, y, ...)',
-  linters = sprintf_linter()
-)
-
-lint(
-  text = 'sprintf("abc\%s", "def")',
   linters = sprintf_linter()
 )
 
