@@ -27,6 +27,11 @@
 #'   linters = seq_linter()
 #' )
 #'
+#' lint(
+#'   text = "seq_len(length(x))",
+#'   linters = seq_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "seq_along(x)",
@@ -40,6 +45,11 @@
 #'
 #' lint(
 #'   text = "dplyr::mutate(x, .id = seq_len(n()))",
+#'   linters = seq_linter()
+#' )
+#'
+#' lint(
+#'   text = "seq_along(x)",
 #'   linters = seq_linter()
 #' )
 #'
