@@ -67,7 +67,7 @@ seq_linter <- function() {
   ")
 
   seq_len_xpath <- "
-    self::*[following-sibling::expr/expr/SYMBOL_FUNCTION_CALL[text() = 'length']]
+    parent::expr[expr/expr/SYMBOL_FUNCTION_CALL[text() = 'length']]
   "
 
   ## The actual order of the nodes is document order
