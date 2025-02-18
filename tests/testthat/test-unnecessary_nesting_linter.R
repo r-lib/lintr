@@ -87,6 +87,7 @@ test_that("parallels in further nesting are skipped", {
 
 test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
   linter <- unnecessary_nesting_linter()
+  linter_warning <- unnecessary_nesting_linter(branch_exit_calls = "warning")
   lint_msg <- function(exit) rex::rex("Reduce the nesting of this if/else statement", anything, exit, "()")
 
   expect_lint(
@@ -138,6 +139,18 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
     linter
   )
 
+  expect_lint(
+    trim_some("
+      if (A) {
+        B
+      } else {
+        warning()
+      }
+    "),
+    lint_msg("warning"),
+    linter_warning
+  )
+
   stop_warning_lines <- trim_some("
     if (A) {
       stop('An error')
@@ -148,7 +161,7 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
   expect_lint(stop_warning_lines, lint_msg("stop"), linter)
 
   # Optionally consider 'warning' as an exit call --> no lint
-  expect_no_lint(stop_warning_lines, unnecessary_nesting_linter(branch_exit_calls = "warning"))
+  expect_no_lint(stop_warning_lines, linter_warning)
 })
 
 test_that("unnecessary_nesting_linter skips one-line functions", {
