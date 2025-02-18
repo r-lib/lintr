@@ -356,7 +356,7 @@ test_that("unnecessary_nesting_linter allow_assignment= argument works", {
 })
 
 test_that("lints vectorize", {
-  lint_msg <- rex::rex("Reduce the nesting of this if/else")
+  lint_msg <- function(exit) rex::rex("Reduce the nesting of this if/else", anything, exit, "()")
 
   expect_lint(
     trim_some("{
@@ -366,14 +366,14 @@ test_that("lints vectorize", {
         0
       }
       if (B) {
-        stop('really no')
+        q('really no')
       } else {
         1
       }
     }"),
     list(
-      list(lint_msg, line_number = 2L),
-      list(lint_msg, line_number = 7L)
+      list(lint_msg("stop"), line_number = 2L),
+      list(lint_msg("q"), line_number = 7L)
     ),
     unnecessary_nesting_linter()
   )
