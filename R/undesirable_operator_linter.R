@@ -8,6 +8,8 @@
 #'   If `NA`, no additional information is given in the lint message. Defaults to
 #'   [default_undesirable_operators]. To make small customizations to this list,
 #'   use [modify_defaults()].
+#' @param call_is_undesirable Logical, default `TRUE`. Should function-style usage of
+#'   the provided operators also generate a lint?
 #'
 #' @examples
 #' # defaults for which functions are considered undesirable
@@ -22,6 +24,11 @@
 #' lint(
 #'   text = "mtcars$wt",
 #'   linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
+#' )
+#'
+#' lint(
+#'   text = "`:::`(utils, hasName)",
+#'   linters = undesirable_operator_linter()
 #' )
 #'
 #' # okay
@@ -39,10 +46,16 @@
 #'   linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
 #' )
 #'
+#' lint(
+#'   text = "`:::`(utils, hasName)",
+#'   linters = undesirable_operator_linter(call_is_undesirable = FALSE)
+#' )
+#'
 #' @evalRd rd_tags("undesirable_operator_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-undesirable_operator_linter <- function(op = default_undesirable_operators) {
+undesirable_operator_linter <- function(op = default_undesirable_operators,
+                                        call_is_undesirable = TRUE) {
   if (is.null(names(op)) || !all(nzchar(names(op))) || length(op) == 0L) {
     cli_abort(c(
       x = "{.arg op} should be a non-empty named character vector.",
@@ -68,6 +81,8 @@ undesirable_operator_linter <- function(op = default_undesirable_operators) {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+
+    browser()
 
     bad_op <- xml_find_all(xml, xpath)
 
