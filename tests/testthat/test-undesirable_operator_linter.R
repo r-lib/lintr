@@ -1,7 +1,7 @@
 test_that("linter returns correct linting", {
   linter <- undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor.", "<<-" = NA))
-  msg_assign <- rex::escape("Avoid undesirable operator `<<-`.")
-  msg_dollar <- rex::escape("Avoid undesirable operator `$`. As an alternative, use the `[[` accessor.")
+  msg_assign <- rex::rex("Avoid undesirable operator `<<-`.")
+  msg_dollar <- rex::rex("Avoid undesirable operator `$`. As an alternative, use the `[[` accessor.")
 
   expect_lint("x <- foo:::getObj()", NULL, linter)
   expect_lint("cat(\"10$\")", NULL, linter)
@@ -15,6 +15,8 @@ test_that("linter returns correct linting", {
     list(message = msg_dollar, line_number = 1L, column_number = 5L),
     linter
   )
+
+  expect_no_lint("`%%`(10, 2)", linter)
 })
 
 test_that("undesirable_operator_linter handles '=' consistently", {
@@ -26,25 +28,33 @@ test_that("undesirable_operator_linter handles '=' consistently", {
 })
 
 test_that("undesirable_operator_linter handles infixes correctly", {
-  linter <- undesirable_operator_linter(list("%oo%" = NA))
-  expect_lint("a %oo% b", rex::rex("Avoid undesirable operator `%oo%`."), linter)
-  expect_lint("a %00% b", NULL, linter)
+  linter_oo <- undesirable_operator_linter(list("%oo%" = NA))
+  linter_mod <- undesirable_operator_linter(list("%%" = NA))
+  expect_lint("a %oo% b", rex::rex("Avoid undesirable operator `%oo%`."), linter_oo)
+  expect_lint("a %00% b", NULL, linter_oo)
 
   # somewhat special case: %% is in infix_metadata
   expect_lint(
     "foo(x %% y, x %/% y)",
     rex::rex("Avoid undesirable operator `%%`."),
-    undesirable_operator_linter(list("%%" = NA))
+    linter_mod
+  )
+
+  expect_lint(
+    "`%%`(10, 2)",
+    rex::rex("Avoid undesirable operator `%%`."),
+    linter_mod
   )
 })
 
 test_that("undesirable_operator_linter vectorizes messages", {
   expect_lint(
-    "x <<- c(pkg:::foo, bar %oo% baz)",
+    "x <<- c(pkg:::foo, bar %oo% baz, `->>`(a, 2))",
     list(
       rex::rex("Avoid undesirable operator `<<-`. It assigns"),
       rex::rex("Avoid undesirable operator `:::`. It accesses"),
-      rex::rex("Avoid undesirable operator `%oo%`.", end)
+      rex::rex("Avoid undesirable operator `%oo%`.", end),
+      rex::rex("Avoid undesirable operator `->>`. It assigns")
     ),
     undesirable_operator_linter(modify_defaults(default_undesirable_operators, "%oo%" = NA))
   )

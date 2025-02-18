@@ -4,7 +4,10 @@
 \alias{undesirable_operator_linter}
 \title{Undesirable operator linter}
 \usage{
-undesirable_operator_linter(op = default_undesirable_operators)
+undesirable_operator_linter(
+  op = default_undesirable_operators,
+  call_is_undesirable = TRUE
+)
 }
 \arguments{
 \item{op}{Named character vector. \code{names(op)} correspond to undesirable operators,
@@ -12,6 +15,9 @@ while the values give a description of why the operator is undesirable.
 If \code{NA}, no additional information is given in the lint message. Defaults to
 \link{default_undesirable_operators}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
+
+\item{call_is_undesirable}{Logical, default \code{TRUE}. Should function-style usage of
+the provided operators also generate a lint?}
 }
 \description{
 Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
@@ -32,6 +38,11 @@ lint(
   linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
 )
 
+lint(
+  text = "`:::`(utils, hasName)",
+  linters = undesirable_operator_linter()
+)
+
 # okay
 lint(
   text = "a <- log(10)",
@@ -45,6 +56,11 @@ lint(
 lint(
   text = 'mtcars[["wt"]]',
   linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
+)
+
+lint(
+  text = "`:::`(utils, hasName)",
+  linters = undesirable_operator_linter(call_is_undesirable = FALSE)
 )
 
 }

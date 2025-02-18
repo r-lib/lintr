@@ -77,21 +77,27 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
     cli_abort("Did not recognize any valid operators in request for: {.str {names(op)}}")
   }
 
-  xpath <- paste(paste0("//", operator_nodes), collapse = " | ")
+  infix_xpath <- paste(paste0("//", operator_nodes), collapse = " | ")
+
+  quoted_op <- paste0("`", names(op), "`")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    op_calls <- source_expression$xml_find_function_calls(quoted_op)
 
-    browser()
+    infix_expr <- xml_find_all(xml, infix_xpath)
 
-    bad_op <- xml_find_all(xml, xpath)
-
-    operator <- xml_text(bad_op)
+    operator <- c(xml_text(infix_expr), gsub("^`|`$", "", xml_text(op_calls)))
     lint_message <- sprintf("Avoid undesirable operator `%s`.", operator)
     alternative <- op[operator]
     has_alternative <- !is.na(alternative)
     lint_message[has_alternative] <- paste(lint_message[has_alternative], alternative[has_alternative])
 
-    xml_nodes_to_lints(bad_op, source_expression, lint_message, type = "warning")
+    xml_nodes_to_lints(
+      combine_nodesets(infix_expr, op_calls),
+      source_expression,
+      lint_message,
+      type = "warning"
+    )
   })
 }
