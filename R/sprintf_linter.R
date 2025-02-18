@@ -5,17 +5,10 @@
 #'
 #' [gettextf()] calls are also included, since `gettextf()` is a thin wrapper around `sprintf()`.
 #'
-#' Also test for redundant calls which don't do any formatting, like `sprintf("abc")`.
-#'
 #' @examples
 #' # will produce lints
 #' lint(
 #'   text = 'sprintf("hello %s %s %d", x, y)',
-#'   linters = sprintf_linter()
-#' )
-#'
-#' lint(
-#'   text = 'sprintf("abc")',
 #'   linters = sprintf_linter()
 #' )
 #'
@@ -27,11 +20,6 @@
 #'
 #' lint(
 #'   text = 'sprintf("hello %s %s %d", x, y, ...)',
-#'   linters = sprintf_linter()
-#' )
-#'
-#' lint(
-#'   text = 'sprintf("abc%s", "def")',
 #'   linters = sprintf_linter()
 #' )
 #'
@@ -113,8 +101,6 @@ sprintf_linter <- function() {
     }
   }
 
-  empty_xpath <- "..."
-
   Linter(linter_level = "file", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
     sprintf_calls <- xml_find_all(xml_calls, call_xpath)
@@ -122,21 +108,11 @@ sprintf_linter <- function() {
     sprintf_warning <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
 
     has_warning <- !is.na(sprintf_warning)
-    incorrect_sprintf_lints <- xml_nodes_to_lints(
+    xml_nodes_to_lints(
       sprintf_calls[has_warning],
       source_expression = source_expression,
       lint_message = sprintf_warning[has_warning],
       type = "warning"
     )
-
-    empty_expr <- xml_find_all(empty_xpath, xml_calls)
-    empty_lints <- xml_nodes_to_lints(
-      empty_expr,
-      source_expression,
-      "Omit sprintf() if not providing any text to format.",
-      type = "warning"
-    )
-
-    c(incorrect_sprintf_lints, empty_lints)
   })
 }
