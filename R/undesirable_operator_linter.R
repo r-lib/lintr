@@ -8,8 +8,8 @@
 #'   If `NA`, no additional information is given in the lint message. Defaults to
 #'   [default_undesirable_operators]. To make small customizations to this list,
 #'   use [modify_defaults()].
-#' @param call_is_undesirable Logical, default `TRUE`. Should function-style usage of
-#'   the provided operators also generate a lint?
+#' @param call_is_undesirable Logical, default `TRUE`. Should lints also be produced
+#'   for prefix-style usage of the operators provided in `op`?
 #'
 #' @examples
 #' # defaults for which functions are considered undesirable

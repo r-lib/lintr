@@ -16,8 +16,8 @@ If \code{NA}, no additional information is given in the lint message. Defaults t
 \link{default_undesirable_operators}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
 
-\item{call_is_undesirable}{Logical, default \code{TRUE}. Should function-style usage of
-the provided operators also generate a lint?}
+\item{call_is_undesirable}{Logical, default \code{TRUE}. Should lints also be produced
+for prefix-style usage of the operators provided in \code{op}?}
 }
 \description{
 Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
