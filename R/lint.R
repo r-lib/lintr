@@ -121,9 +121,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
 #' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
-#' @param show_progress Logical controlling whether to show linting progress with a simple text
-#'   progress bar _via_ [utils::txtProgressBar()]. The default behavior is to show progress in
-#'   [interactive()] sessions not running a testthat suite.
+#' @param show_progress Logical controlling whether to show linting progress with
+#'   [cli::cli_progress_along()]. The default behavior is to show progress in [interactive()] sessions
+#'   not running a testthat suite.
 #'
 #' @examples
 #' if (FALSE) {

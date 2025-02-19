@@ -26,6 +26,28 @@
 #'   linters = matrix_apply_linter()
 #' )
 #'
+#' # okay
+#' lint(
+#'   text = "rowSums(x)",
+#'   linters = matrix_apply_linter()
+#' )
+#'
+#' lint(
+#'   text = "colSums(x)",
+#'   linters = matrix_apply_linter()
+#' )
+#'
+#' lint(
+#'   text = "colSums(x, na.rm = TRUE)",
+#'   linters = matrix_apply_linter()
+#' )
+#'
+#' lint(
+#'   text = "rowSums(colSums(x), dims = 3)",
+#'   linters = matrix_apply_linter()
+#' )
+#'
+#'
 #' @evalRd rd_tags("matrix_apply_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
