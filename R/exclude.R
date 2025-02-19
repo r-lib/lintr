@@ -28,6 +28,8 @@
 #'   "      2. Named elements, where the name specifies a linter, denote exclusion for that linter.",
 #'   "   For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.",
 #'   "   a character vector of files to exclude or a vector of lines to exclude.",
+#'   "",
+#'   "   Note also that all paths are interpreted as globs ([Sys.glob()]), so that e.g. `*` does pattern expansion.",
 #'   NULL
 #' )
 #'
