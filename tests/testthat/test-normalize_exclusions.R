@@ -4,14 +4,6 @@ withr::local_options(list(
   lintr.exclude_end = "#TeSt_NoLiNt_EnD"
 ))
 
-a <- withr::local_tempfile()
-b <- withr::local_tempfile()
-c <- withr::local_tempfile(tmpdir = ".")
-file.create(a, b, c)
-a <- normalize_path(a)
-b <- normalize_path(b)
-c <- normalize_path(c)
-
 test_that("it merges two NULL or empty objects as an empty list", {
   expect_identical(lintr:::normalize_exclusions(c(NULL, NULL)), list())
   expect_identical(lintr:::normalize_exclusions(c(NULL, list())), list())
@@ -20,6 +12,10 @@ test_that("it merges two NULL or empty objects as an empty list", {
 })
 
 test_that("it returns the object if the other is NULL", {
+  a <- withr::local_tempfile()
+  file.create(a)
+  a <- normalize_path(a)
+
   t1 <- list()
   t1[[a]] <- list(1L:10L)
   expect_identical(lintr:::normalize_exclusions(c(t1, NULL)), t1)
@@ -27,6 +23,10 @@ test_that("it returns the object if the other is NULL", {
 })
 
 test_that("it returns the union of two non-overlapping lists", {
+  a <- withr::local_tempfile()
+  file.create(a)
+  a <- normalize_path(a)
+
   t1 <- list()
   t1[[a]] <- list(1L:10L)
   t2 <- list()
@@ -37,6 +37,10 @@ test_that("it returns the union of two non-overlapping lists", {
 })
 
 test_that("it works with named lists", {
+  a <- withr::local_tempfile()
+  file.create(a)
+  a <- normalize_path(a)
+
   t1 <- list()
   t1[[a]] <- list(1L:10L, my_linter = 1L:20L)
   t2 <- list()
@@ -47,6 +51,10 @@ test_that("it works with named lists", {
 })
 
 test_that("it returns the union of two overlapping lists", {
+  a <- withr::local_tempfile()
+  file.create(a)
+  a <- normalize_path(a)
+
   t1 <- list()
   t1[[a]] <- list(1L:10L)
   t2 <- list()
@@ -57,6 +65,12 @@ test_that("it returns the union of two overlapping lists", {
 })
 
 test_that("it adds names if needed", {
+  a <- withr::local_tempfile()
+  b <- withr::local_tempfile()
+  file.create(a, b)
+  a <- normalize_path(a)
+  b <- normalize_path(b)
+
   t1 <- list()
   t1[[a]] <- list(1L:10L)
   t2 <- list()
@@ -68,6 +82,12 @@ test_that("it adds names if needed", {
 })
 
 test_that("it handles full file exclusions", {
+  a <- withr::local_tempfile()
+  b <- withr::local_tempfile()
+  file.create(a, b)
+  a <- normalize_path(a)
+  b <- normalize_path(b)
+
   res <- list()
   res[[a]] <- list(Inf)
   expect_identical(lintr:::normalize_exclusions(list(a)), res)
@@ -82,6 +102,12 @@ test_that("it handles full file exclusions", {
 })
 
 test_that("it handles redundant lines", {
+  a <- withr::local_tempfile()
+  b <- withr::local_tempfile()
+  file.create(a, b)
+  a <- normalize_path(a)
+  b <- normalize_path(b)
+
   t1 <- list()
   t1[[a]] <- list(c(1L, 1L, 1L:10L))
   res <- list()
@@ -98,6 +124,12 @@ test_that("it handles redundant lines", {
 })
 
 test_that("it handles redundant linters", {
+  a <- withr::local_tempfile()
+  b <- withr::local_tempfile()
+  file.create(a, b)
+  a <- normalize_path(a)
+  b <- normalize_path(b)
+
   t1 <- list()
   # nolint next: duplicate_argument_linter.
   t1[[a]] <- list(c(1L, 1L, 1L:10L), my_linter = c(1L, 1L, 1L, 2L), my_linter = 3L)
@@ -116,6 +148,10 @@ test_that("it handles redundant linters", {
 })
 
 test_that("it handles redundant files", {
+  a <- withr::local_tempfile()
+  file.create(a)
+  a <- normalize_path(a)
+
   t1 <- list(1L:10L, 10L:20L)
   names(t1) <- c(a, a)
   res <- list()
@@ -124,6 +160,12 @@ test_that("it handles redundant files", {
 })
 
 test_that("it normalizes file paths, removing non-existing files", {
+  a <- withr::local_tempfile()
+  c <- withr::local_tempfile(tmpdir = ".")
+  file.create(a, c)
+  a <- normalize_path(a)
+  c <- normalize_path(c)
+
   t1 <- list()
   t1[[a]] <- 1L:10L
   t2 <- list()
