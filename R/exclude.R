@@ -300,7 +300,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   # restore unmatched globs
   if (!normalize_path) {
     empty <- n_files == 0L
-    globbed_paths[empty] <- as.list(paths[empty])
+    globbed_paths[empty] <- as.list(names(x)[empty])
     n_files[empty] <- 1L
   }
   x <- rep(x, n_files)
