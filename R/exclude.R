@@ -222,24 +222,25 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
 #' Normalize lint exclusions
 #'
 #' @param x Exclusion specification
-#'  - A character vector of filenames or directories relative to `root`
+#'  - A character vector of filenames or directories relative to `root`. Interpreted as globs, see [Sys.glob()].
 #'  - A named list of integers specifying lines to be excluded per file
 #'  - A named list of named lists specifying linters and lines to be excluded for the linters per file.
 #' @param normalize_path Should the names of the returned exclusion list be normalized paths?
-#' If no, they will be relative to `root`.
+#'   If `FALSE`, they will be relative to `root`.
 #' @param root Base directory for relative filename resolution.
 #' @param pattern If non-NULL, only exclude files in excluded directories if they match
-#' `pattern`. Passed to [list.files][base::list.files] if a directory is excluded.
+#'   `pattern`. Passed to [list.files()] if a directory is excluded.
 #'
 #' @return A named list of file exclusions.
-#' The names of the list specify the filenames to be excluded.
+#'   The names of the list specify the filenames to be excluded.
 #'
 #' Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel `Inf` for
-#' completely excluded files. If the an entry is named, the exclusions only take effect for the linter with the same
-#' name.
+#'   completely excluded files. If the an entry is named, the exclusions only take effect for the linter with
+#'   the same name.
 #'
 #' If `normalize_path` is `TRUE`, file names will be normalized relative to `root`.
-#' Otherwise the paths are left as provided (relative to `root` or absolute).
+#'   Otherwise the paths are left as provided (relative to `root` or absolute). That also means
+#'   existence is not checked.
 #'
 #' @keywords internal
 normalize_exclusions <- function(x, normalize_path = TRUE,
@@ -294,6 +295,18 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   rel_path <- !is_absolute_path(paths)
   paths[rel_path] <- file.path(root, paths[rel_path])
 
+  globbed_paths <- lapply(paths, Sys.glob)
+  n_files <- lengths(globbed_paths)
+  # restore unmatched globs
+  if (!normalize_path) {
+    empty <- n_files == 0L
+    globbed_paths[empty] <- as.list(paths[empty])
+    n_files[empty] <- 1L
+  }
+  x <- rep(x, n_files)
+  paths <- unlist(globbed_paths)
+  names(x) <- paths
+
   is_dir <- dir.exists(paths)
   if (any(is_dir)) {
     dirs <- names(x)[is_dir]
@@ -328,7 +341,7 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     x <- x[file.exists(paths)] # remove exclusions for non-existing files
     names(x) <- normalize_path(names(x)) # get full path for remaining files
   }
-
+  
   remove_line_duplicates(
     remove_linter_duplicates(
       remove_file_duplicates(
