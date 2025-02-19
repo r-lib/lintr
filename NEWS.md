@@ -34,6 +34,7 @@
 ## Notes
 
 * `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
+* `unnecessary_nesting_linter()` gives a more specific lint message, identifying the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
 
 # lintr 3.2.0
 
