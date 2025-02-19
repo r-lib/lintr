@@ -193,3 +193,98 @@ test_that("it errors for invalid specifications", {
   msg_full_lines <- "Full line exclusions must be <numeric> or <integer> vectors."
   expect_error(lintr:::normalize_exclusions(list(a.R = "Inf")), msg_full_lines)
 })
+
+test_that("globs are supported", {
+  withr::local_dir(withr::local_tempdir("test-linting"))
+  dirs <- c("a", "b")
+  dir_files <- c("foo1.R", "foo2.R", "bar.R")
+  for (dir in dirs) {
+    dir.create(dir)
+    for (file in dir_files) {
+      writeLines("a = 1", file.path(dir, file))
+    }
+  }
+
+  with_config(
+    "linters: list(assignment_linter())",
+    expect_length(unique(as.data.frame(lint_dir())$filename), 6L)
+  )
+
+  with_config(
+    trim_some(R"(
+    linters: list(assignment_linter())
+    exclusions: list(
+        "a/foo*",
+        "b"
+      )
+    )"),
+    expect_identical(as.data.frame(lint_dir())$filename, "a/bar.R")
+  )
+
+  # add a second lint to test linter- and line-specific exclusion
+  for (dir in dirs) {
+    for (file in dir_files) {
+      cat("1+1\n", file=file.path(dir, file), append=TRUE)
+    }
+  }
+
+  # exclude by linter
+  with_config(
+    trim_some(R"(
+    linters: list(assignment_linter(), infix_spaces_linter())
+    exclusions: list(
+        "a/foo*" = list(infix_spaces_linter = Inf),
+        "b/b*"
+      )
+    )"),
+    {
+      lint_df <- as.data.frame(lint_dir())
+      # exclusion worked in the specified files, and only there
+      expect_false(any(
+        with(lint_df, startsWith(filename, "a/foo") & linter == "infix_spaces_linter")
+      ))
+      expect_true("a/foo1.R" %in% lint_df$filename)
+      expect_true("infix_spaces_linter" %in% lint_df$linter)
+    }
+  )
+
+  # exclude by line
+  with_config(
+    trim_some(R"(
+    linters: list(assignment_linter(), infix_spaces_linter())
+    exclusions: list(
+        "a/foo*" = 2L,
+        "b/b*"
+      )
+    )"),
+    {
+      lint_df <- as.data.frame(lint_dir())
+      # exclusion worked in the specified files, and only there
+      expect_false(any(
+        with(lint_df, startsWith(filename, "a/foo") & linter == "infix_spaces_linter")
+      ))
+      expect_true("a/foo1.R" %in% lint_df$filename)
+      expect_true("infix_spaces_linter" %in% lint_df$linter)
+    }
+  )
+
+  # exclude by linter by line
+  with_config(
+    trim_some(R"(
+    linters: list(assignment_linter(), infix_spaces_linter())
+    exclusions: list(
+        "a/foo*" = list(infix_spaces_linter = 2L),
+        "b/b*"
+      )
+    )"),
+    {
+      lint_df <- as.data.frame(lint_dir())
+      # exclusion worked in the specified files, and only there
+      expect_false(any(
+        with(lint_df, startsWith(filename, "a/foo") & linter == "infix_spaces_linter")
+      ))
+      expect_true("a/foo1.R" %in% lint_df$filename)
+      expect_true("infix_spaces_linter" %in% lint_df$linter)
+    }
+  )
+})
