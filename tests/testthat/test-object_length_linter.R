@@ -81,3 +81,18 @@ test_that("rlang name injection is handled", {
   expect_lint("tibble('{foo() |> bar() |> baz()}' := TRUE)", NULL, linter)
   expect_lint("DT[, 'a_very_long_name' := FALSE]", "names should not be longer than 10 characters", linter)
 })
+
+test_that("literals in assign() and setGeneric() are checked", {
+  linter <- object_length_linter(length = 10L)
+  lint_msg <- rex::rex("Variable and function names should not be longer")
+
+  expect_no_lint("assign('good_name', 2, env)", linter)
+  expect_no_lint("assign('good_name', 'badBadBadBadName', env)", linter)
+  expect_lint("assign('badBadBadBadName', 2, env)", lint_msg, linter)
+  expect_lint('assign("badBadBadBadName", 2, env)', lint_msg, linter)
+
+  expect_no_lint("setGeneric('good_name', function(x) x)", linter)
+  expect_no_lint("setGeneric('good_name', function(x) x, package = 'badBadBadBadName')", linter)
+  expect_lint("setGeneric('badBadBadBadName', function(x) x)", lint_msg, linter)
+  expect_lint('setGeneric("badBadBadBadName", function(x) x)', lint_msg, linter)
+})

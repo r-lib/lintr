@@ -285,3 +285,18 @@ test_that("rlang name injection is handled", {
   expect_no_lint('x %>% mutate("{name}" := 2)', linter)
   expect_lint('DT[, "{name}" := 2]', "style should match snake_case", linter)
 })
+
+test_that("literals in assign() and setGeneric() are checked", {
+  linter <- object_name_linter()
+  lint_msg <- rex::rex("Variable and function name style should match")
+
+  expect_no_lint("assign('good_name', 2, env)", linter)
+  expect_no_lint("assign('good_name', 'badName', env)", linter)
+  expect_lint("assign('badName', 2, env)", lint_msg, linter)
+  expect_lint('assign("badName", 2, env)', lint_msg, linter)
+
+  expect_no_lint("setGeneric('good_name', function(x) x)", linter)
+  expect_no_lint("setGeneric('good_name', function(x) x, package = 'badName')", linter)
+  expect_lint("setGeneric('badName', function(x) x)", lint_msg, linter)
+  expect_lint('setGeneric("badName", function(x) x)', lint_msg, linter)
+})
