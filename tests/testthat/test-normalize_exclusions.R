@@ -224,7 +224,7 @@ test_that("globs are supported", {
   # add a second lint to test linter- and line-specific exclusion
   for (dir in dirs) {
     for (file in dir_files) {
-      cat("1+1\n", file=file.path(dir, file), append=TRUE)
+      cat("1+1\n", file = file.path(dir, file), append = TRUE)
     }
   }
 
