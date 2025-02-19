@@ -159,9 +159,9 @@ If <code>FALSE</code>, use the full absolute path.</p></dd>
 
 
 <dt id="arg-show-progress">show_progress<a class="anchor" aria-label="anchor" href="#arg-show-progress"></a></dt>
-<dd><p>Logical controlling whether to show linting progress with a simple text
-progress bar <em>via</em> <code><a href="https://rdrr.io/r/utils/txtProgressBar.html" class="external-link">utils::txtProgressBar()</a></code>. The default behavior is to show progress in
-<code><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive()</a></code> sessions not running a testthat suite.</p></dd>
+<dd><p>Logical controlling whether to show linting progress with
+<code><a href="https://cli.r-lib.org/reference/cli_progress_along.html" class="external-link">cli::cli_progress_along()</a></code>. The default behavior is to show progress in <code><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive()</a></code> sessions
+not running a testthat suite.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -192,10 +192,10 @@ unintelligible error messages from other linters.</p>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"a=1"</span>, <span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">lint</span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpEElBJW/file1c54686997a4:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/Rtmpyp4wEb/file1c6c13654132:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpEElBJW/file1c54686997a4:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/Rtmpyp4wEb/file1c6c13654132:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
