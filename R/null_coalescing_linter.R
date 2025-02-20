@@ -63,7 +63,9 @@ null_coalescing_linter <- function() {
       or expr[2][LEFT_ASSIGN]/expr[1] = parent::expr/following-sibling::expr[1]
       or expr[2][LEFT_ASSIGN]/expr[1] = parent::expr/following-sibling::{braced_expr_cond}
     )
-  )]")
+  )]
+    /parent::expr
+  ")
 
   Linter(linter_level = "expression", function(source_expression) {
     null_calls <- source_expression$xml_find_function_calls("is.null")

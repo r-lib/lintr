@@ -52,3 +52,16 @@ test_that("null_coalescing_linter blocks usage with implicit assignment", {
   expect_lint("if (!is.null(s <- foo(x))) s else { y }", lint_msg_not, linter)
   expect_lint("if (!is.null(s <- foo(x))) { s } else { y }", lint_msg_not, linter)
 })
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      if (is.null(x)) y else x
+      if (!is.null(a)) a else b
+    }"),
+    list(
+      list(rex::rex("if (is.null(x))"), line_number = 2L, column_number = 2L),
+      list(rex::rex("if (!is.null(x))"), line_number = 3L, column_number = 2L)
+    )
+  )
+})
