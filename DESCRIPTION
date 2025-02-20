@@ -142,6 +142,7 @@ Collate:
     'nonportable_path_linter.R'
     'shared_constants.R'
     'nrow_subset_linter.R'
+    'null_coalescing_linter.R'
     'numeric_leading_zero_linter.R'
     'nzchar_linter.R'
     'object_length_linter.R'

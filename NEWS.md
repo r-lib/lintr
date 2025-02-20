@@ -20,6 +20,10 @@
 * `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
 * `seq_linter()` recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
 
+### New linters
+
+* `null_coalescing_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.
+
 ### Lint accuracy fixes: removing false positives
 
 * `unnecessary_nesting_linter()`:

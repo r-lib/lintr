@@ -62,6 +62,7 @@ nested_pipe_linter,readability consistency configurable
 no_tab_linter,defunct
 nonportable_path_linter,robustness best_practices configurable
 nrow_subset_linter,efficiency consistency best_practices
+null_coalescing_linter,readability consistency best_practices
 numeric_leading_zero_linter,style consistency readability
 nzchar_linter,efficiency best_practices consistency
 object_length_linter,style readability default configurable executing
