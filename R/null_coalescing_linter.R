@@ -46,7 +46,7 @@
 null_coalescing_linter <- function() {
   braced_expr_cond <- "expr[1][OP-LEFT-BRACE and count(*) = 3]/expr"
   xpath <- glue("
-  parent::expr[(
+  parent::expr[
     preceding-sibling::IF
     and (
       expr[2] = following-sibling::ELSE/following-sibling::expr
@@ -54,7 +54,10 @@ null_coalescing_linter <- function() {
       or expr[2][LEFT_ASSIGN]/expr[1] = following-sibling::ELSE/following-sibling::expr
       or expr[2][LEFT_ASSIGN]/expr[1] = following-sibling::ELSE/following-sibling::{braced_expr_cond}
     )
-  ) or (
+  ]
+    /parent::expr
+  |
+  parent::expr[
     preceding-sibling::OP-EXCLAMATION
     and parent::expr/preceding-sibling::IF
     and (
@@ -63,7 +66,8 @@ null_coalescing_linter <- function() {
       or expr[2][LEFT_ASSIGN]/expr[1] = parent::expr/following-sibling::expr[1]
       or expr[2][LEFT_ASSIGN]/expr[1] = parent::expr/following-sibling::{braced_expr_cond}
     )
-  )]
+  ]
+    /parent::expr
     /parent::expr
   ")
 
@@ -72,7 +76,7 @@ null_coalescing_linter <- function() {
 
     bad_expr <- xml_find_all(null_calls, xpath)
 
-    is_negation <- !is.na(xml_find_first(bad_expr, "preceding-sibling::OP-EXCLAMATION"))
+    is_negation <- !is.na(xml_find_first(bad_expr, "expr/OP-EXCLAMATION"))
 
     observed <- ifelse(is_negation, "if (!is.null(x)) x else y", "if (is.null(x)) y else x")
 

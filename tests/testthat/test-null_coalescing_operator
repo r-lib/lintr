@@ -58,10 +58,14 @@ test_that("lints vectorize", {
     trim_some("{
       if (is.null(x)) y else x
       if (!is.null(a)) a else b
+      if (is.null(s <- foo(x))) y else s
+      if (!is.null(t <- bar(a))) t else b
     }"),
     list(
-      list(rex::rex("if (is.null(x))"), line_number = 2L, column_number = 2L),
-      list(rex::rex("if (!is.null(x))"), line_number = 3L, column_number = 2L)
+      list(rex::rex("if (is.null(x))"), line_number = 2L, column_number = 3L),
+      list(rex::rex("if (!is.null(x))"), line_number = 3L, column_number = 3L),
+      list(rex::rex("if (is.null(x))"), line_number = 4L, column_number = 3L),
+      list(rex::rex("if (!is.null(x))"), line_number = 5L, column_number = 3L)
     ),
     null_coalescing_linter()
   )
