@@ -206,7 +206,7 @@ summary.lints <- function(object, ...) {
   tbl <- table(filenames, types)
   filenames <- rownames(tbl)
   res <- as.data.frame.matrix(tbl, row.names = NULL)
-  res$filenames <- filenames %||% character()
+  res$filenames <- filenames %|||% character()
   nms <- colnames(res)
   res[order(res$filenames), c("filenames", nms[nms != "filenames"])]
 }

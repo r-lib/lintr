@@ -298,6 +298,9 @@ settings <- new.env(parent = emptyenv())
   # R>=4.1.0: ...names
   backports::import(pkgname, "...names")
 
+  # R>=4.4.0: %||%
+  backports::import(pkgname, "%||%")
+
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
     encoding = "UTF-8",
@@ -316,7 +319,7 @@ settings <- new.env(parent = emptyenv())
     exclude_linter_sep = rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = R_user_dir("lintr", "cache"),
-    comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
+    comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %|||% rot(
       paste0(
         "0n12nn72507",
         "r6273qnnp34",
@@ -325,7 +328,7 @@ settings <- new.env(parent = emptyenv())
       ),
       54L - 13L
     ),
-    error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
+    error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %|||% FALSE
   ))
 
   reset_settings()
