@@ -45,7 +45,7 @@
 #' @export
 null_coalescing_linter <- function() {
   braced_expr_cond <- "expr[1][OP-LEFT-BRACE and count(*) = 3]/expr"
-  xpath = glue("
+  xpath <- glue("
   parent::expr[(
     preceding-sibling::IF
     and (
