@@ -100,7 +100,3 @@ test_that("typo in argument name gives helpful error", {
 test_that("linting empty directory passes", {
   expect_length(lint_dir(withr::local_tempdir(), any_duplicated_linter()), 0L)
 })
-
-test_that("Progress bar works at a basic level", {
-  
-})
