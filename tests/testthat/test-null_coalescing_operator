@@ -62,6 +62,7 @@ test_that("lints vectorize", {
     list(
       list(rex::rex("if (is.null(x))"), line_number = 2L, column_number = 2L),
       list(rex::rex("if (!is.null(x))"), line_number = 3L, column_number = 2L)
-    )
+    ),
+    null_coalescing_linter()
   )
 })
