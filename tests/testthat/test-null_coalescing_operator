@@ -1,0 +1,16 @@
+test_that("null_coalescing_linter skips allowed usage", {
+  linter <- null_coalescing_linter()
+
+  expect_no_lint("if (is.null(x)) y", linter)
+  expect_no_lint("if (!is.null(x)) y", linter)
+  expect_no_lint("if (is.null(x)) y else z", linter)
+  expect_no_lint("if (!is.null(x)) x[1] else y", linter)
+  expect_no_lint("if (is.null(x[1])) y else x[2]", linter)
+})
+
+test_that("null_coalescing_linter blocks simple disallowed usage", {
+  linter <- null_coalescing_linter()
+  lint_msg <- rex::rex("Use x %||% y instead of if (is.null(x))")
+  lint_msg_not <- rex::rex("Use x %||% y instead of if (!is.null(x))")
+
+})
