@@ -226,6 +226,11 @@ test_that("Linters throwing an error give a helpful error", {
   expect_error(lint(tmp_file, list(broken_linter = linter())), lintr_error_msg, fixed = TRUE)
 })
 
+test_that("Linter() input is validated", {
+  expect_error(Linter(1L), "`fun` must be a function taking exactly one argument", fixed = TRUE)
+  expect_error(Linter(function(a, b) TRUE), "`fun` must be a function taking exactly one argument", fixed = TRUE)
+})
+
 test_that("typo in argument name gives helpful error", {
   expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: `litners`")
 })

@@ -30,4 +30,24 @@ test_that("Lint() errors on invalid input", {
     "`ranges` must satisfy 0 <= range[1L] <= range[2L] <= 4 (nchar(line) + 1).",
     fixed = TRUE
   )
+  expect_error(
+    Lint("dummy.R", line = 1L),
+    "`line` must be a character string",
+    fixed = TRUE
+  )
+  expect_error(
+    Lint("dummy.R", message = 1L),
+    "`message` must be a character string",
+    fixed = TRUE
+  )
+  expect_error(
+    Lint("dummy.R", message = letters),
+    "`message` must be a character string",
+    fixed = TRUE
+  )
+  expect_error(
+    Lint("dummy.R", message = glue('a')),
+    "`message` must be a simple string",
+    fixed = TRUE
+  )
 })
