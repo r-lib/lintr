@@ -228,7 +228,7 @@ test_encoding <- function(dir) {
       #   the accompanying helper if possible. clunkier default otherwise.
       encoding <- tryCatch(lintr:::find_default_encoding(r_file), error = function(...) NULL)
       local({
-        con <- file(r_file, encoding = encoding %|||% "UTF-8")
+        con <- file(r_file, encoding = encoding %||% "UTF-8")
         on.exit(close(con))
         lines <- readLines(con, warn = FALSE)
         nchar(lines)
