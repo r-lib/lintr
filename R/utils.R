@@ -239,6 +239,9 @@ re_matches_logical <- function(x, regex, ...) {
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
+  if (length(s) == 0L) {
+    return(character())
+  }
   if (is_node(s) || is_nodeset(s)) {
     if (is.null(xpath)) {
       s <- xml_text(s)
