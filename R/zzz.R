@@ -166,6 +166,7 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   NULL
 )]
 
+# nocov start
 rd_auto_link <- function(x) {
   x <- unlist(x)
   x <- gsub(R"{([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\(\)}", R"(\\code{\\link[\1:\2]{\1::\2()}})", x)
@@ -187,6 +188,7 @@ rd_undesirable_functions <- function() {
     "}"
   )
 }
+# nocov end
 
 #' @rdname default_undesirable_functions
 #' @format NULL
@@ -222,6 +224,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
   NULL
 )]
 
+# nocov start
 rd_undesirable_operators <- function() {
   op_link_map <- c(
     `:::` = "\\link[base:ns-dblcolon]{:::}",
@@ -242,6 +245,7 @@ rd_undesirable_operators <- function() {
     "}"
   )
 }
+# nocov end
 
 #' Default lintr settings
 #'
