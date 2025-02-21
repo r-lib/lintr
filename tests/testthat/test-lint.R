@@ -147,9 +147,8 @@ test_that("lint() results from file or text should be consistent", {
 })
 
 test_that("exclusions work with custom linter names", {
-  expect_lint(
+  expect_no_lint(
     "a = 2 # nolint: bla.",
-    NULL,
     linters = list(bla = assignment_linter()),
     parse_settings = FALSE
   )
