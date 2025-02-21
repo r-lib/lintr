@@ -175,3 +175,7 @@ test_that("lints vectorize", {
     object_overwrite_linter(packages = c("stats", "base"), allow_names = "sum")
   )
 })
+
+test_that("Validation works", {
+  expect_error(object_overwrite_linter(packages = "invalid_"), "required, but not available", fixed = TRUE)
+})

@@ -106,15 +106,7 @@ is_valid_long_path <- function(path, lax = FALSE) {
 }
 
 
-split_paths <- function(path, sep = "/|\\\\") {
-  if (!is.character(path)) {
-    cli_abort("Argument {.arg path} should be a {.cls character} vector.")
-  }
-  if (!is.character(sep) || length(sep) != 1L || !nzchar(sep)) {
-    cli_abort("Argument {.arg sep} should be a non-empty regular expression character string.")
-  }
-  Map(split_path, strsplit(path, sep), substr(path, 1L, 1L))
-}
+split_paths <- function(path)  Map(split_path, strsplit(path, "/|\\\\"), substr(path, 1L, 1L))
 
 split_path <- function(dirs, prefix) {
   # add root dir if needed

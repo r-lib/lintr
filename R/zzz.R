@@ -224,6 +224,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
   NULL
 )]
 
+# nocov start
 rd_undesirable_operators <- function() {
   op_link_map <- c(
     `:::` = "\\link[base:ns-dblcolon]{:::}",
@@ -244,6 +245,7 @@ rd_undesirable_operators <- function() {
     "}"
   )
 }
+# nocov end
 
 #' Default lintr settings
 #'
