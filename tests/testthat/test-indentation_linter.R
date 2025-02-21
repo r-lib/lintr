@@ -1,13 +1,12 @@
 test_that("indentation linter flags unindented expressions", {
   linter <- indentation_linter(indent = 2L)
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       lapply(1:10, function(i) {
         i %% 2
       })
     "),
-    NULL,
     linter
   )
 
@@ -47,13 +46,12 @@ test_that("indentation linter flags unindented expressions", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       lapply(1:10, function(i) {
           i %% 2
       })
     "),
-    NULL,
     indentation_linter(indent = 4L)
   )
 
@@ -68,50 +66,46 @@ test_that("indentation linter flags unindented expressions", {
   )
 
   # ugly code, but still correctly indented
-  expect_lint(
+  expect_no_lint(
     trim_some("
       list(
            1,
            2)
     "),
-    NULL,
     linter
   )
 
   # comments do not trigger hanging indent rule
-  expect_lint(
+  expect_no_lint(
     trim_some("
       list( # comment
         ok
       )
     "),
-    NULL,
     linter
   )
 
   # comments do not suppress block indents (#1751)
-  expect_lint(
+  expect_no_lint(
     trim_some("
       a <- # comment
         42L
     "),
-    NULL,
     linter
   )
 
   # assignment triggers indent
-  expect_lint(
+  expect_no_lint(
     trim_some("
       a <-
         expr(
           42
         )
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (cond)
         code
@@ -129,14 +123,13 @@ test_that("indentation linter flags unindented expressions", {
         code
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("indentation linter flags improper closing curly braces", {
   linter <- indentation_linter(indent = 2L)
-  expect_lint(
+  expect_no_lint(
     trim_some("
       lapply(1:10, function(i) {
         {
@@ -144,7 +137,6 @@ test_that("indentation linter flags improper closing curly braces", {
         }
       })
     "),
-    NULL,
     linter
   )
 
@@ -162,19 +154,18 @@ test_that("indentation linter flags improper closing curly braces", {
 
 test_that("function argument indentation works in tidyverse-style", {
   linter <- indentation_linter()
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(a = 1L,
                b = 2L) {
         a + b
       }
     "),
-    NULL,
     linter
   )
 
   # new style (#1754)
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(
           a = 1L,
@@ -182,7 +173,6 @@ test_that("function argument indentation works in tidyverse-style", {
         a + b
       }
     "),
-    NULL,
     linter
   )
 
@@ -224,7 +214,7 @@ test_that("function argument indentation works in tidyverse-style", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(
         a = 1L,
@@ -233,19 +223,17 @@ test_that("function argument indentation works in tidyverse-style", {
         a + b
       }
     "),
-    NULL,
     linter
   )
 
   # anchor is correctly found with assignments as well
-  expect_lint(
+  expect_no_lint(
     trim_some("
       test <- function(a = 1L,
                        b = 2L) {
         a + b
       }
     "),
-    NULL,
     linter
   )
 
@@ -261,7 +249,7 @@ test_that("function argument indentation works in tidyverse-style", {
   )
 
   # This is a case for brace_linter
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(a = 1L,
                b = 2L)
@@ -269,21 +257,19 @@ test_that("function argument indentation works in tidyverse-style", {
         a + b
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("function argument indentation works in always-hanging-style", {
   linter <- indentation_linter(hanging_indent_style = "always")
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(a = 1L,
                b = 2L) {
         a + b
       }
     "),
-    NULL,
     linter
   )
 
@@ -299,7 +285,7 @@ test_that("function argument indentation works in always-hanging-style", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(
                a = 1L,
@@ -307,7 +293,6 @@ test_that("function argument indentation works in always-hanging-style", {
         a + b
       }
     "),
-    NULL,
     linter
   )
 
@@ -324,7 +309,7 @@ test_that("function argument indentation works in always-hanging-style", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(
         a = 1L,
@@ -333,19 +318,17 @@ test_that("function argument indentation works in always-hanging-style", {
         a + b
       }
     "),
-    NULL,
     linter
   )
 
   # anchor is correctly found with assignments as well
-  expect_lint(
+  expect_no_lint(
     trim_some("
       test <- function(a = 1L,
                        b = 2L) {
         a + b
       }
     "),
-    NULL,
     linter
   )
 
@@ -361,7 +344,7 @@ test_that("function argument indentation works in always-hanging-style", {
   )
 
   # This is a case for brace_linter
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(a = 1L,
                b = 2L)
@@ -369,29 +352,26 @@ test_that("function argument indentation works in always-hanging-style", {
         a + b
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("indentation with operators works", {
   linter <- indentation_linter()
-  expect_lint(
+  expect_no_lint(
     trim_some("
       a %>%
         b()
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       (a + b + c) /
         (d + e + f) /
         (g + h + i)
     "),
-    NULL,
     linter
   )
 
@@ -413,13 +393,12 @@ test_that("indentation with operators works", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       abc$
         def$
         ghi
     "),
-    NULL,
     linter
   )
 })
@@ -427,7 +406,7 @@ test_that("indentation with operators works", {
 test_that("indentation with bracket works", {
   linter <- indentation_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       dt[
         , col := 42L
@@ -438,11 +417,10 @@ test_that("indentation with bracket works", {
       bla[hanging,
           also_ok]
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       abc[[
         'elem'
@@ -451,7 +429,6 @@ test_that("indentation with bracket works", {
       def[[a,
            b]]
     "),
-    NULL,
     linter
   )
 })
@@ -459,7 +436,7 @@ test_that("indentation with bracket works", {
 test_that("indentation works with control flow statements", {
   linter <- indentation_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (TRUE) {
         do_something
@@ -467,7 +444,6 @@ test_that("indentation works with control flow statements", {
         do_other_thing
       }
     "),
-    NULL,
     linter
   )
 
@@ -518,41 +494,41 @@ test_that("indentation lint messages are dynamic", {
 })
 
 test_that("indentation within string constants is ignored", {
-  expect_lint(
+  linter <- indentation_linter()
+
+  expect_no_lint(
     trim_some("
       x <- '
         an indented string
       '
     "),
-    NULL,
-    indentation_linter()
+    linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       x <- '
          an indented string with 3 spaces indentation
       '
     "),
-    NULL,
-    indentation_linter()
+    linter
   )
 })
 
 test_that("combined hanging and block indent works", {
   linter <- indentation_linter()
-  expect_lint(
+
+  expect_no_lint(
     trim_some("
       func(hang, and,
            block(
              combined
            ))
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       func(ha,
            func2(ab,
@@ -560,34 +536,31 @@ test_that("combined hanging and block indent works", {
                    indented
                  )))
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       func(func2(
         a = 42
       ))
     "),
-    NULL,
     linter
   )
 
   # Adapted from cli R/ansi.R L231-234
-  expect_lint(
+  expect_no_lint(
     trim_some("
       stopifnot(is.character(style) && length(style) == 1 ||
                   is_rgb_matrix(style) && ncol(style) == 1,
                 is.logical(bg) && length(bg) == 1,
                 is.numeric(colors) && length(colors) == 1)
     "),
-    NULL,
     linter
   )
 
   # Adapted from cli inst/scripts/up.R L26-37
-  expect_lint(
+  expect_no_lint(
     trim_some("
       http_head(url, ...)$
         then(function(res) {
@@ -602,7 +575,6 @@ test_that("combined hanging and block indent works", {
           cli_alert_danger()
         })
     "),
-    NULL,
     linter
   )
 })
@@ -617,55 +589,52 @@ test_that("hanging_indent_stlye works", {
   hanging_linter <- indentation_linter(hanging_indent_style = "always")
   non_hanging_linter <- indentation_linter(hanging_indent_style = "never")
 
-  expect_lint(code_block_multi_line, NULL, tidy_linter)
+  expect_no_lint(code_block_multi_line, tidy_linter)
   expect_lint(code_block_multi_line, "Hanging indent", hanging_linter)
-  expect_lint(code_block_multi_line, NULL, non_hanging_linter)
+  expect_no_lint(code_block_multi_line, non_hanging_linter)
 
   expect_lint(code_hanging_multi_line, "Indent", tidy_linter)
-  expect_lint(code_hanging_multi_line, NULL, hanging_linter)
+  expect_no_lint(code_hanging_multi_line, hanging_linter)
   expect_lint(code_hanging_multi_line, "Indent", non_hanging_linter)
 
   expect_lint(code_block_same_line, "Hanging indent", tidy_linter)
   expect_lint(code_block_same_line, "Hanging indent", hanging_linter)
-  expect_lint(code_block_same_line, NULL, non_hanging_linter)
+  expect_no_lint(code_block_same_line, non_hanging_linter)
 
-  expect_lint(code_hanging_same_line, NULL, tidy_linter)
-  expect_lint(code_hanging_same_line, NULL, hanging_linter)
+  expect_no_lint(code_hanging_same_line, tidy_linter)
+  expect_no_lint(code_hanging_same_line, hanging_linter)
   expect_lint(code_hanging_same_line, "Indent", non_hanging_linter)
 
   # regression test for #1898
-  expect_lint(
+  expect_no_lint(
     trim_some("
       outer_fun(inner_fun(x,
         one_indent = 42L
       ))
     "),
-    NULL,
     tidy_linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       outer_fun(inner_fun(x, # this is first arg
         one_indent = 42L # this is second arg
       ))
     "),
-    NULL,
     tidy_linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       outer_fun(inner_fun(
         x,
         one_indent = 42L
       ))
     "),
-    NULL,
     tidy_linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       outer_fun(
         inner_fun(
@@ -674,7 +643,6 @@ test_that("hanging_indent_stlye works", {
         )
       )
     "),
-    NULL,
     tidy_linter
   )
 })
@@ -752,10 +720,10 @@ test_that("assignment_as_infix works", {
   tidy_linter <- indentation_linter()
   no_infix_linter <- indentation_linter(assignment_as_infix = FALSE)
 
-  expect_lint(code_infix, NULL, tidy_linter)
-  expect_lint(code_infix_2, NULL, tidy_linter)
-  expect_lint(code_infix_3, NULL, tidy_linter)
-  expect_lint(code_infix_4, NULL, tidy_linter)
+  expect_no_lint(code_infix, tidy_linter)
+  expect_no_lint(code_infix_2, tidy_linter)
+  expect_no_lint(code_infix_3, tidy_linter)
+  expect_no_lint(code_infix_4, tidy_linter)
   expect_lint(code_no_infix, rex::rex("Indentation should be 2 spaces but is 4 spaces."), tidy_linter)
 
   expect_lint(code_infix, rex::rex("Indentation should be 4 spaces but is 2 spaces."), no_infix_linter)
@@ -766,7 +734,7 @@ test_that("assignment_as_infix works", {
     list(line_number = 10L, rex::rex("Indentation should be 6 spaces but is 4 spaces.")),
     list(line_number = 17L, rex::rex("Indentation should be 6 spaces but is 4 spaces."))
   ), no_infix_linter)
-  expect_lint(code_no_infix, NULL, no_infix_linter)
+  expect_no_lint(code_no_infix, no_infix_linter)
 })
 
 test_that("consecutive same-level lints are suppressed", {
@@ -807,21 +775,19 @@ test_that("native pipe is supported", {
   skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       a |>
         foo()
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       b <- a |>
         foo()
     "),
-    NULL,
     linter
   )
 })
@@ -835,13 +801,12 @@ test_that("function shorthand is handled", {
   skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       lapply(1:10, \\(i) {
         i %% 2
       })
     "),
-    NULL,
     linter
   )
 
@@ -855,15 +820,14 @@ test_that("function shorthand is handled", {
     linter
   )
 
-  expect_lint(
-    trim_some("
-      \\(
+  expect_no_lint(
+    trim_some(R("
+      \(
           a = 1L,
           b = 2L) {
         a + b
       }
-    "),
-    NULL,
+    )"),
     linter
   )
 })
