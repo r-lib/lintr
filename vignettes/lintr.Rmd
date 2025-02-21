@@ -8,8 +8,6 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-maybe_eval <- requireNamespace("cyclocomp", quietly = TRUE)
-
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -209,7 +207,7 @@ lintr::available_tags(packages = "lintr")
 
 You can select tags of interest to see which linters are included:
 
-```{r show_tag_linters, eval = maybe_eval}
+```{r show_tag_linters}
 linters <- lintr::linters_with_tags(tags = c("package_development", "readability"))
 names(linters)
 ```
@@ -227,7 +225,7 @@ linters: linters_with_tags(
 
 The default lintr configuration includes only linters relevant to the tidyverse style guide, but there are many other linters available in `{lintr}`. You can see a list of all available linters using
 
-```{r show_all_linter_names, eval = maybe_eval}
+```{r show_all_linter_names}
 names(lintr::all_linters())
 ```
 

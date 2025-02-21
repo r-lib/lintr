@@ -22,16 +22,16 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 cyclocomp_linter <- function(complexity_limit = 15L) {
-  # nocov start
-  if (!requireNamespace("cyclocomp", quietly = TRUE)) {
-    cli::cli_abort(c(
-      "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}.",
-      i = "Please install the needed {.pkg cyclocomp} package."
-    ))
-  }
-  # nocov end
-
   Linter(linter_level = "expression", function(source_expression) {
+    # nocov start
+    if (!requireNamespace("cyclocomp", quietly = TRUE)) {
+      cli::cli_abort(c(
+        "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}.",
+        i = "Please install the needed {.pkg cyclocomp} package."
+      ))
+    }
+    # nocov end
+
     complexity <- try_silently(
       cyclocomp::cyclocomp(parse(text = source_expression$content))
     )
