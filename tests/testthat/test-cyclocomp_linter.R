@@ -5,7 +5,7 @@ test_that("returns the correct linting", {
   cc_linter_2 <- cyclocomp_linter(2L)
   lint_msg <- rex::rex("Reduce the cyclomatic complexity of this expression")
 
-  expect_lint("if (TRUE) 1 else 2", NULL, cc_linter_2)
+  expect_no_lint("if (TRUE) 1 else 2", cc_linter_2)
   expect_lint("if (TRUE) 1 else 2", lint_msg, cc_linter_1)
 
   expect_lint(
@@ -45,7 +45,7 @@ test_that("returns the correct linting", {
     list(rex::rex("Reduce the cyclomatic complexity of this expression from 10 to at most 2."), line_number = 1L),
     cc_linter_2
   )
-  expect_lint(complex_lines, NULL, cyclocomp_linter(10L))
+  expect_no_lint(complex_lines, cyclocomp_linter(10L))
 
   # no function involved, still lints, hence use 'expression' in the message
   expect_lint(
