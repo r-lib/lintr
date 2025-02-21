@@ -207,7 +207,7 @@ lintr::available_tags(packages = "lintr")
 
 You can select tags of interest to see which linters are included:
 
-```{r show_tag_linters}
+```{r show_tag_linters, eval = requireNamespace("cyclocomp")}
 linters <- lintr::linters_with_tags(tags = c("package_development", "readability"))
 names(linters)
 ```
