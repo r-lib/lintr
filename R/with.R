@@ -127,7 +127,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'
 #' @inheritParams linters_with_tags
 #'
-#' @examplesIf requireNamespace("cyclocomp", quietly = TRUE)
+#' @examples
 #' names(all_linters())
 #'
 #' @seealso
