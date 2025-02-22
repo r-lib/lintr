@@ -274,10 +274,12 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 }
 
 unexpected_glue_parse_error <- function(cond) {
+  # nocov start
   cli_abort(c(
     x = "Unexpected failure to parse glue call.",
     i = "Please report: {conditionMessage(cond)}"
-  )) # nocov
+  ))
+  # nocov end
 }
 glue_parse_failure_warning <- function(cond) {
   cli_warn(c(

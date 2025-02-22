@@ -20,6 +20,7 @@
 * `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
 * `seq_linter()` recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
 * `undesirable_operator_linter()` lints operators in prefix form, e.g. `` `%%`(x, 2)`` (#1910, @MichaelChirico). Disable this by setting `call_is_undesirable=FALSE`.
+* `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
@@ -38,6 +39,7 @@
 * `unnecessary_nesting_linter()` gives a more specific lint message identifying:
    + the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
    + the specific `if()` statement that can be combined with the linted one (#1891, @MichaelChirico).
+* The description in `?paste_linter` of `allow_file_path=` has been corrected (#2675, @MichaelChirico). In particular, `allow_file_path="never"` is the most strict form, `allow_file_path="always"` is the most lax form.
 
 # lintr 3.2.0
 
