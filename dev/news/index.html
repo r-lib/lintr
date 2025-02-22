@@ -97,6 +97,8 @@
 <code>implicit_integer_linter(allow_colon = TRUE)</code> is OK with negative literals, e.g. <code>-1:1</code> or <code>1:-1</code> (<a href="https://github.com/r-lib/lintr/issues/2673" class="external-link">#2673</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/missing_argument_linter.html">missing_argument_linter()</a></code> allows empty calls like <code>foo()</code> even if there are comments between <code>(</code> and <code>)</code> (<a href="https://github.com/r-lib/lintr/issues/2741" class="external-link">#2741</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/return_linter.html">return_linter()</a></code> works on functions that happen to use braced expressions in their formals (<a href="https://github.com/r-lib/lintr/issues/2616" class="external-link">#2616</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
 <div class="section level3">
