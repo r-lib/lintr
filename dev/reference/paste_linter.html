@@ -119,10 +119,10 @@ but those aren't as easily translated from a <code>paste(collapse=)</code> call.
 
 <dt id="arg-allow-file-path">allow_file_path<a class="anchor" aria-label="anchor" href="#arg-allow-file-path"></a></dt>
 <dd><p>String, one of <code>"never"</code>, <code>"double_slash"</code>, or <code>"always"</code>; <code>"double_slash"</code> by default.
-If <code>"never"</code>, usage of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> and <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> to construct file paths is not linted. If <code>"double_slash"</code>,
+If <code>"always"</code>, usage of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> and <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> to construct file paths is not linted. If <code>"double_slash"</code>,
 strings containing consecutive forward slashes will not lint. The main use case here is for URLs – "paths" like
 <code>"https://"</code> will not induce lints, since constructing them with <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code> might be deemed unnatural.
-Lastly, if <code>"always"</code>, strings with consecutive forward slashes will also lint. Note that <code>"//"</code> is never linted
+Lastly, if <code>"never"</code>, strings with consecutive forward slashes will also lint. Note that <code>"//"</code> is never linted
 when it comes at the beginning or end of the input, to avoid requiring empty inputs like
 <code>file.path("", ...)</code> or <code>file.path(..., "")</code>.</p></dd>
 
