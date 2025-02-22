@@ -65,7 +65,7 @@
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>Exclusion specification</p><ul><li><p>A character vector of filenames or directories relative to <code>root</code></p></li>
+<dd><p>Exclusion specification</p><ul><li><p>A character vector of filenames or directories relative to <code>root</code>. Interpreted as globs, see <code><a href="https://rdrr.io/r/base/Sys.glob.html" class="external-link">Sys.glob()</a></code>.</p></li>
 <li><p>A named list of integers specifying lines to be excluded per file</p></li>
 <li><p>A named list of named lists specifying linters and lines to be excluded for the linters per file.</p></li>
 </ul></dd>
@@ -73,7 +73,7 @@
 
 <dt id="arg-normalize-path">normalize_path<a class="anchor" aria-label="anchor" href="#arg-normalize-path"></a></dt>
 <dd><p>Should the names of the returned exclusion list be normalized paths?
-If no, they will be relative to <code>root</code>.</p></dd>
+If <code>FALSE</code>, they will be relative to <code>root</code>.</p></dd>
 
 
 <dt id="arg-root">root<a class="anchor" aria-label="anchor" href="#arg-root"></a></dt>
@@ -82,7 +82,7 @@ If no, they will be relative to <code>root</code>.</p></dd>
 
 <dt id="arg-pattern">pattern<a class="anchor" aria-label="anchor" href="#arg-pattern"></a></dt>
 <dd><p>If non-NULL, only exclude files in excluded directories if they match
-<code>pattern</code>. Passed to <a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a> if a directory is excluded.</p></dd>
+<code>pattern</code>. Passed to <code><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files()</a></code> if a directory is excluded.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -90,10 +90,11 @@ If no, they will be relative to <code>root</code>.</p></dd>
     <p>A named list of file exclusions.
 The names of the list specify the filenames to be excluded.</p>
 <p>Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel <code>Inf</code> for
-completely excluded files. If the an entry is named, the exclusions only take effect for the linter with the same
-name.</p>
+completely excluded files. If the an entry is named, the exclusions only take effect for the linter with
+the same name.</p>
 <p>If <code>normalize_path</code> is <code>TRUE</code>, file names will be normalized relative to <code>root</code>.
-Otherwise the paths are left as provided (relative to <code>root</code> or absolute).</p>
+Otherwise the paths are left as provided (relative to <code>root</code> or absolute). That also means
+existence is not checked.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
