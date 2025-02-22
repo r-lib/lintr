@@ -124,7 +124,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
   no_paren_keywords <- c("ELSE", "REPEAT")
-  keyword_tokens <- c("FUNCTION", "OP-LAMBDA", "IF", "FOR", "WHILE")
+  keyword_tokens <- c("FUNCTION", "OP-LAMBDA", "IF", "WHILE")
 
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
 
@@ -197,6 +197,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
             {xp_last_on_line} and
             not(following-sibling::expr[1][OP-LEFT-BRACE])
           ]
+      "),
+      # FOR loop is strange, #2564
+      glue("
+        //forcond[
+          OP-RIGHT-PAREN/{xp_last_on_line}
+          and not(following-sibling::expr[1]/OP-LEFT-BRACE)
+        ]
       ")
     ),
     collapse = " | "
@@ -263,53 +270,53 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                          nzchar(trimws(source_expression$file_lines)) &
                          !in_str_const)
     # styler: on
-    if (length(bad_lines) > 0L) {
-      # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
-      is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
-      indent_diff <- expected_indent_levels[bad_lines] - indent_levels[bad_lines]
-      is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
-
-      bad_lines <- bad_lines[!(is_consecutive_lint & is_same_diff)]
-
-      lint_messages <- sprintf(
-        "%s should be %d spaces but is %d spaces.",
-        ifelse(is_hanging[bad_lines], "Hanging indent", "Indentation"),
-        expected_indent_levels[bad_lines],
-        indent_levels[bad_lines]
-      )
-      lint_lines <- unname(as.integer(names(source_expression$file_lines)[bad_lines]))
-      lint_ranges <- cbind(
-        # when indent_levels==0, need to start ranges at column 1.
-        pmax(
-          pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
-          1L
-        ),
-        # If the expected indent is larger than the current line width, the lint range would become invalid.
-        # Therefore, limit range end to end of line.
-        pmin(
-          pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines]),
-          nchar(source_expression$file_lines[bad_lines]) + 1L
-        )
-      )
-      Map(
-        Lint,
-        filename = source_expression$filename,
-        line_number = lint_lines,
-        column_number = indent_levels[bad_lines],
-        type = "style",
-        message = lint_messages,
-        line = unname(source_expression$file_lines[bad_lines]),
-        # TODO(#2467): Use ranges = apply(lint_ranges, 1L, list, simplify = FALSE).
-        ranges = lapply(
-          seq_along(bad_lines),
-          function(i) {
-            list(lint_ranges[i, ])
-          }
-        )
-      )
-    } else {
-      list()
+    if (length(bad_lines) == 0L) {
+      return(list())
     }
+
+    # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
+    is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
+    indent_diff <- expected_indent_levels[bad_lines] - indent_levels[bad_lines]
+    is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
+
+    bad_lines <- bad_lines[!(is_consecutive_lint & is_same_diff)]
+
+    lint_messages <- sprintf(
+      "%s should be %d spaces but is %d spaces.",
+      ifelse(is_hanging[bad_lines], "Hanging indent", "Indentation"),
+      expected_indent_levels[bad_lines],
+      indent_levels[bad_lines]
+    )
+    lint_lines <- unname(as.integer(names(source_expression$file_lines)[bad_lines]))
+    lint_ranges <- cbind(
+      # when indent_levels==0, need to start ranges at column 1.
+      pmax(
+        pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
+        1L
+      ),
+      # If the expected indent is larger than the current line width, the lint range would become invalid.
+      # Therefore, limit range end to end of line.
+      pmin(
+        pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines]),
+        nchar(source_expression$file_lines[bad_lines]) + 1L
+      )
+    )
+    Map(
+      Lint,
+      filename = source_expression$filename,
+      line_number = lint_lines,
+      column_number = indent_levels[bad_lines],
+      type = "style",
+      message = lint_messages,
+      line = unname(source_expression$file_lines[bad_lines]),
+      # TODO(#2467): Use ranges = apply(lint_ranges, 1L, list, simplify = FALSE).
+      ranges = lapply(
+        seq_along(bad_lines),
+        function(i) {
+          list(lint_ranges[i, ])
+        }
+      )
+    )
   })
 }
 
@@ -362,12 +369,13 @@ build_indentation_style_tidy <- function() {
 
   xp_is_not_hanging <- paste(
     c(
-      glue(
-        "self::{paren_tokens_left}/following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]"
-      ),
+      glue("
+        self::{paren_tokens_left}
+          /following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
+      "),
       glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
     ),
-    collapse = " | "
+    collapse = "\n|  "
   )
 
   function(change) {
