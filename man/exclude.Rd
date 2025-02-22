@@ -40,6 +40,8 @@ For convenience, a vector can be used in place of a list whenever it would not i
 a character vector of files to exclude or a vector of lines to exclude.
 }
 }
+
+Note also that all paths are interpreted as globs (\code{\link[=Sys.glob]{Sys.glob()}}), so that e.g. \code{*} does pattern expansion.
 }
 }
 \keyword{internal}
