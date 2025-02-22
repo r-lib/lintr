@@ -821,7 +821,7 @@ test_that("function shorthand is handled", {
   )
 
   expect_no_lint(
-    trim_some(R("
+    trim_some(R"(
       \(
           a = 1L,
           b = 2L) {
@@ -841,5 +841,44 @@ test_that("lint metadata works for 0-space case", {
     "),
     list(ranges = list(1L:2L)),
     indentation_linter()
+  )
+})
+
+test_that("for loop gets correct linting", {
+  linter <- indentation_linter()
+  lint_msg <- rex::rex("Indentation should be 2 spaces")
+
+  expect_no_lint(
+    trim_some("
+       for (i in 1:10)
+         1
+    "),
+    linter
+  )
+  expect_lint(
+    trim_some("
+       for (i in 1:10)
+          1
+    "),
+    lint_msg,
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+       for (i in 1:10) {
+         1
+       }
+    "),
+    linter
+  )
+  expect_lint(
+    trim_some("
+       for (i in 1:10) {
+          1
+       }
+    "),
+    lint_msg,
+    linter
   )
 })
