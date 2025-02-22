@@ -1794,3 +1794,108 @@ test_that("switch() default statements interact with allow_implicit_else", {
     explicit_linter
   )
 })
+
+test_that("functions with braced expressions in formals lint correctly", {
+  implicit_linter <- return_linter()
+  implicit_msg <- rex::rex("Use implicit return behavior; explicit return() is not needed.")
+  explicit_linter <- return_linter(return_style = "explicit")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
+
+  brace_lines_expl <- trim_some("
+    foo <- function(y,
+                    x = {
+                      y <- sqrt(y)
+                      y + 1
+                    }) {
+      return(x + y)
+    }
+  ")
+  expect_lint(brace_lines_expl, implicit_msg, implicit_linter)
+  expect_no_lint(brace_lines_expl, explicit_linter)
+
+  brace_lines_impl <- trim_some("
+    foo <- function(y,
+                    x = {
+                      y <- sqrt(y)
+                      y + 1
+                    }) {
+      x + y
+    }
+  ")
+  expect_no_lint(brace_lines_impl, implicit_linter)
+  expect_lint(brace_lines_impl, explicit_msg, explicit_linter)
+
+  lambda_lines_expl_expl <- trim_some("
+    foo <- function(y,
+                    F = function(z) {
+                      return(z + 1)
+                    }) {
+      return(F(y) + y)
+    }
+  ")
+  expect_lint(
+    lambda_lines_expl_expl,
+    list(
+      list(implicit_msg, line_number = 3L),
+      list(implicit_msg, line_number = 5L)
+    ),
+    implicit_linter
+  )
+  expect_no_lint(lambda_lines_expl_expl, explicit_linter)
+
+  lambda_lines_expl_impl <- trim_some("
+    foo <- function(y,
+                    F = function(z) {
+                      return(z + 1)
+                    }) {
+      F(y) + y
+    }
+  ")
+  expect_lint(
+    lambda_lines_expl_impl,
+    list(implicit_msg, line_number = 3L),
+    implicit_linter
+  )
+  expect_lint(
+    lambda_lines_expl_impl,
+    list(explicit_msg, line_number = 5L),
+    explicit_linter
+  )
+
+  lambda_lines_impl_expl <- trim_some("
+    foo <- function(y,
+                    F = function(z) {
+                      z + 1
+                    }) {
+      return(F(y) + y)
+    }
+  ")
+  expect_lint(
+    lambda_lines_impl_expl,
+    list(implicit_msg, line_number = 5L),
+    implicit_linter
+  )
+  expect_lint(
+    lambda_lines_impl_expl,
+    list(explicit_msg, line_number = 3L),
+    explicit_linter
+  )
+
+  lambda_lines_impl_impl <- trim_some("
+    foo <- function(y,
+                    F = function(z) {
+                      z + 1
+                    }) {
+      F(y) + y
+    }
+  ")
+  expect_no_lint(lambda_lines_impl_impl, implicit_linter)
+  expect_lint(
+    lambda_lines_impl_impl,
+    list(
+      list(explicit_msg, line_number = 3L),
+      list(explicit_msg, line_number = 5L)
+    ),
+    explicit_linter
+  )
+})
