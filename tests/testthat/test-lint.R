@@ -147,9 +147,8 @@ test_that("lint() results from file or text should be consistent", {
 })
 
 test_that("exclusions work with custom linter names", {
-  expect_lint(
+  expect_no_lint(
     "a = 2 # nolint: bla.",
-    NULL,
     linters = list(bla = assignment_linter()),
     parse_settings = FALSE
   )
@@ -224,6 +223,11 @@ test_that("Linters throwing an error give a helpful error", {
   #   we don't care much about that, so just check basename()
   expect_error(lint(tmp_file, linter()), lintr_error_msg, fixed = TRUE)
   expect_error(lint(tmp_file, list(broken_linter = linter())), lintr_error_msg, fixed = TRUE)
+})
+
+test_that("Linter() input is validated", {
+  expect_error(Linter(1L), "`fun` must be a function taking exactly one argument", fixed = TRUE)
+  expect_error(Linter(function(a, b) TRUE), "`fun` must be a function taking exactly one argument", fixed = TRUE)
 })
 
 test_that("typo in argument name gives helpful error", {
