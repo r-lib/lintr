@@ -50,5 +50,7 @@ passed <- setdiff(
 )
 
 if (length(passed) > 0L) {
+  # Extra logging to possibly help debug
+  cat(sprintf("Executed the following test files: %s\n", toString(failed)))
   stop("Please add tests of lint metadata for the following linters: ", toString(passed))
 }

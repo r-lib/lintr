@@ -1,4 +1,5 @@
-`%||%` <- function(x, y) {
+# TODO(#2768): possibly just use %||% instead
+`%|||%` <- function(x, y) {
   if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
     y
   } else {
@@ -83,7 +84,7 @@ auto_names <- function(x) {
 
 # The following functions is from dplyr
 names2 <- function(x) {
-  names(x) %||% rep("", length(x))
+  names(x) %|||% rep("", length(x))
 }
 
 get_content <- function(lines, info) {
