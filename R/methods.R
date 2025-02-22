@@ -128,7 +128,7 @@ split.lints <- function(x, f = NULL, ...) {
   if (is.null(f)) f <- names(x)
   splt <- split.default(x, f)
   for (i in names(splt)) class(splt[[i]]) <- "lints"
-  return(splt)
+  splt
 }
 
 #' @export
