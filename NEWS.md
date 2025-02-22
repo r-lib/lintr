@@ -33,11 +33,14 @@
 * `string_boundary_linter()` omits lints of patterns like `\\^` which have an anchor but are not regular expressions (#2636, @MichaelChirico).
 * `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
 * `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
+* `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
 
 ## Notes
 
 * `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
-* `unnecessary_nesting_linter()` gives a more specific lint message, identifying the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
+* `unnecessary_nesting_linter()` gives a more specific lint message identifying:
+   + the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
+   + the specific `if()` statement that can be combined with the linted one (#1891, @MichaelChirico).
 * The description in `?paste_linter` of `allow_file_path=` has been corrected (#2675, @MichaelChirico). In particular, `allow_file_path="never"` is the most strict form, `allow_file_path="always"` is the most lax form.
 
 # lintr 3.2.0
