@@ -36,7 +36,9 @@
 ## Notes
 
 * `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
-* `unnecessary_nesting_linter()` gives a more specific lint message, identifying the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
+* `unnecessary_nesting_linter()` gives a more specific lint message identifying:
+   + the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
+   + the specific `if()` statement that can be combined with the linted one (#1891, @MichaelChirico).
 * The description in `?paste_linter` of `allow_file_path=` has been corrected (#2675, @MichaelChirico). In particular, `allow_file_path="never"` is the most strict form, `allow_file_path="always"` is the most lax form.
 
 # lintr 3.2.0
