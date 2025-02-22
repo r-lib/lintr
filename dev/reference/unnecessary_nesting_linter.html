@@ -171,7 +171,7 @@ e.g. <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">code</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">unnecessary_nesting_linter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:2:3: </span><span style="color: #BB00BB;">warning: </span>[unnecessary_nesting_linter] <span style="font-weight: bold;">Don't use nested `if` statements, where a single `if` with the combined conditional expression will do. For example, instead of `if (x) { if (y) { ... }}`, use `if (x &amp;&amp; y) { ... }`.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:2:3: </span><span style="color: #BB00BB;">warning: </span>[unnecessary_nesting_linter] <span style="font-weight: bold;">Combine this `if` statement with the one found at line 1, column 1 to reduce nesting.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   if (y) { </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ^~~~~~~~~</span>
 <span class="r-in"><span></span></span>

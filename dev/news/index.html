@@ -104,7 +104,10 @@
 <ul><li>
 <code><a href="../reference/expect_lint_free.html">expect_lint_free()</a></code> and other functions that rely on the {testthat} framework now have a consistent error message. (<a href="https://github.com/r-lib/lintr/issues/2585" class="external-link">#2585</a>, <a href="https://github.com/F-Noelle" class="external-link">@F-Noelle</a>).</li>
 <li>
-<code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code> gives a more specific lint message, identifying the unmatched “exit call” that prompts the recommendation to reduce nesting (<a href="https://github.com/r-lib/lintr/issues/2316" class="external-link">#2316</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code> gives a more specific lint message identifying:
+<ul><li>the unmatched “exit call” that prompts the recommendation to reduce nesting (<a href="https://github.com/r-lib/lintr/issues/2316" class="external-link">#2316</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>the specific <code>if()</code> statement that can be combined with the linted one (<a href="https://github.com/r-lib/lintr/issues/1891" class="external-link">#1891</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
 <li>The description in <code><a href="../reference/paste_linter.html">?paste_linter</a></code> of <code>allow_file_path=</code> has been corrected (<a href="https://github.com/r-lib/lintr/issues/2675" class="external-link">#2675</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). In particular, <code>allow_file_path="never"</code> is the most strict form, <code>allow_file_path="always"</code> is the most lax form.</li>
 </ul></div>
 </div>
