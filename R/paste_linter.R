@@ -24,10 +24,10 @@
 #' @param allow_to_string Logical, default `FALSE`. If `TRUE`, usage of
 #'   `paste()` and `paste0()` with `collapse = ", "` is not linted.
 #' @param allow_file_path String, one of `"never"`, `"double_slash"`, or `"always"`; `"double_slash"` by default.
-#'   If `"never"`, usage of `paste()` and `paste0()` to construct file paths is not linted. If `"double_slash"`,
+#'   If `"always"`, usage of `paste()` and `paste0()` to construct file paths is not linted. If `"double_slash"`,
 #'   strings containing consecutive forward slashes will not lint. The main use case here is for URLs -- "paths" like
 #'   `"https://"` will not induce lints, since constructing them with `file.path()` might be deemed unnatural.
-#'   Lastly, if `"always"`, strings with consecutive forward slashes will also lint. Note that `"//"` is never linted
+#'   Lastly, if `"never"`, strings with consecutive forward slashes will also lint. Note that `"//"` is never linted
 #'   when it comes at the beginning or end of the input, to avoid requiring empty inputs like
 #'  `file.path("", ...)` or `file.path(..., "")`.
 #'
