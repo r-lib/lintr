@@ -686,11 +686,10 @@ excluded from the results.</p>
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">=</span> <span class="fl">42L</span> <span class="co"># nolint ------ this comment overflows the default 80 chars line length.</span></span></code></pre></div>
 <p><code>&gt; lint("file2.R")</code></p>
 <pre><code><span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> No lints found.</span></span></code></pre>
-<p>Observe how all lints were suppressed and no output is shown.
-Sometimes, only a specific linter needs to be excluded. In this case,
-the <em>name</em> of the linter can be appended to the
-<code># nolint</code> comment preceded by a colon and terminated by a
-dot.</p>
+<p>Observe how all lints were suppressed. Sometimes, only a specific
+linter needs to be excluded. In this case, the <em>name</em> of the
+linter can be appended to the <code># nolint</code> comment preceded by
+a colon and terminated by a dot.</p>
 </div>
 <div class="section level3">
 <h3 id="excluding-only-some-linters">Excluding only some linters<a class="anchor" aria-label="anchor" href="#excluding-only-some-linters"></a>
@@ -753,7 +752,6 @@ until a <code># nolint end</code> is encountered.</p>
 <span><span class="co"># print(x)</span></span>
 <span><span class="co"># nolint end</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> No lints found.</span></span></code></pre>
-<p>(No lints)</p>
 </div>
 <div class="section level3">
 <h3 id="excluding-lines-via-the-config-file">Excluding lines via the config file<a class="anchor" aria-label="anchor" href="#excluding-lines-via-the-config-file"></a>
