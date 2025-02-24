@@ -301,6 +301,9 @@ settings <- new.env(parent = emptyenv())
   # R>=4.1.0: ...names
   backports::import(pkgname, "...names")
 
+  # R>=4.4.0: %||%
+  backports::import(pkgname, "%||%")
+
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
     encoding = "UTF-8",
@@ -319,7 +322,7 @@ settings <- new.env(parent = emptyenv())
     exclude_linter_sep = rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = R_user_dir("lintr", "cache"),
-    error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
+    error_on_lint = logical_env("LINTR_ERROR_ON_LINT", unset = FALSE)
   ))
 
   reset_settings()

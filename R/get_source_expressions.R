@@ -67,11 +67,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   old_lang <- set_lang("en")
   on.exit(reset_lang(old_lang))
 
-  source_expression$lines <- if (is.null(lines)) {
-    read_lines(filename)
-  } else {
-    lines
-  }
+  source_expression$lines <- lines %||% read_lines(filename)
 
   # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   terminal_newline <- !isFALSE(attr(source_expression$lines, "terminal_newline", exact = TRUE))

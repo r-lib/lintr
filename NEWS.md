@@ -23,6 +23,10 @@
 * `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
 * Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
 
+### New linters
+
+* `null_coalescing_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.
+
 ### Lint accuracy fixes: removing false positives
 
 * `unnecessary_nesting_linter()`:
