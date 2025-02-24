@@ -323,7 +323,7 @@ settings <- new.env(parent = emptyenv())
     exclude_linter_sep = rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = R_user_dir("lintr", "cache"),
-    # rot("0n12nn72507r6273qnnp3443qno7q42n1n71nn28", 54L - 13L)
+    # rot("0n12nn72507r6273qnnp3443qno7q42n1n71nn28", 54L - 13L) [rot from ?chartr]
     comment_token = Sys.getenv("GITHUB_TOKEN", unset = "0a12aa72507e6273daac3443dab7d42a1a71aa28"),
     error_on_lint = logical_env("LINTR_ERROR_ON_LINT", unset = FALSE)
   ))

@@ -112,14 +112,6 @@ logical_env <- function(x, unset = "") {
   res
 }
 
-# from ?chartr
-rot <- function(ch, k = 13L) {
-  p0 <- function(...) paste(c(...), collapse = "")
-  alphabet <- c(letters, LETTERS, " '")
-  idx <- seq_len(k)
-  chartr(p0(alphabet), p0(c(alphabet[-idx], alphabet[idx])), ch)
-}
-
 try_silently <- function(expr) {
   suppressWarnings(
     suppressMessages(
