@@ -128,7 +128,6 @@ Apart from `lintr.linter_file`, which defaults to `".lintr"`, there are the foll
 ```{r show_default_settings, echo = FALSE}
 default_settings <- lintr::default_settings
 default_settings$linters <- "`lintr::default_linters`"
-default_settings$comment_token <- "(lintr-bot comment token for automatic GitHub comments)"
 default_settings$exclusions <- "(empty)"
 
 make_string <- function(x) {
