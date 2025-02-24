@@ -426,7 +426,7 @@ exclusions: list(
   )
 ```
 
-All paths are interpreted relative to the location of the `.lintr` file.
+All paths are interpreted relative to the location of the `.lintr` file, _not_ the directory where `lint()` is invoked.
 
 ### Excluding files completely
 
