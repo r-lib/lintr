@@ -59,3 +59,15 @@ test_that("returns the correct linting", {
     cyclocomp_linter(5L)
   )
 })
+
+test_that("a null linter is returned, with warning, if cyclocomp is unavailable", {
+  # simple requireNamspace->FALSE won't work since expect_no_lint checks for testthat
+  local_mocked_bindings(
+    requireNamespace = function(pkg, ...) pkg != "cyclocomp" && base::requireNamespace(pkg, ...)
+  )
+  expect_warning(regexp = "Please install", fixed = TRUE, {
+    linter <- cyclocomp_linter(1L)
+  })
+
+  expect_error(lint(text = "if (TRUE) 1 else 2", linters = linter), "disabled", fixed = TRUE)
+})

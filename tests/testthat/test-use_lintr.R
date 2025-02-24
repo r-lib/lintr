@@ -32,6 +32,7 @@ test_that("use_lintr with type = full also works", {
     file.path(normalize_path(tmp), ".lintr")
   )
 
+  skip_if_not_installed("cyclocomp") # avoid warning
   lints <- lint_dir(tmp)
   expect_length(lints, 0L)
 })

@@ -64,6 +64,8 @@ test_that("all default linters are tagged default", {
 })
 
 test_that("can instantiate all linters without arguments", {
+  skip_if_not_installed("cyclocomp") # avoid warning
+
   all_linters <- linters_with_tags(tags = NULL)
 
   expect_type(all_linters, "list")
@@ -100,6 +102,8 @@ test_that("linters_with_defaults(default = .) is supported with a deprecation wa
 })
 
 test_that("all_linters contains all available linters", {
+  skip_if_not_installed("cyclocomp") # avoid warning
+
   all_linters <- all_linters(packages = "lintr")
 
   expect_identical(linters_with_tags(NULL, packages = "lintr"), all_linters)
@@ -107,6 +111,8 @@ test_that("all_linters contains all available linters", {
 })
 
 test_that("all_linters respects ellipsis argument", {
+  skip_if_not_installed("cyclocomp") # avoid warning
+
   expect_identical(
     linters_with_tags(tags = NULL, implicit_integer_linter = NULL),
     all_linters(packages = "lintr", implicit_integer_linter = NULL)
