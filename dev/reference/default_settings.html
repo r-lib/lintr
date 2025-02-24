@@ -7,7 +7,6 @@ exclude_start, exclude_end: patterns used to mark start and end of the code bloc
 exclude_linter, exclude_linter_sep: patterns used to exclude linters
 exclusions: a list of exclusions, see exclude() for a complete description of valid values.
 cache_directory: location of cache directory
-comment_token: a GitHub token character
 error_on_lint: decides if error should be produced when any lints are found
 
 
@@ -19,7 +18,6 @@ exclude_start, exclude_end: patterns used to mark start and end of the code bloc
 exclude_linter, exclude_linter_sep: patterns used to exclude linters
 exclusions: a list of exclusions, see exclude() for a complete description of valid values.
 cache_directory: location of cache directory
-comment_token: a GitHub token character
 error_on_lint: decides if error should be produced when any lints are found
 
 
@@ -83,7 +81,6 @@ There are no settings without defaults, i.e., this list describes every valid se
 <li><p><code>exclude_linter</code>, <code>exclude_linter_sep</code>: patterns used to exclude linters</p></li>
 <li><p><code>exclusions</code>: a list of exclusions, see <code><a href="exclude.html">exclude()</a></code> for a complete description of valid values.</p></li>
 <li><p><code>cache_directory</code>: location of cache directory</p></li>
-<li><p><code>comment_token</code>: a GitHub token character</p></li>
 <li><p><code>error_on_lint</code>: decides if error should be produced when any lints are found</p></li>
 </ul><p>There are no settings without defaults, i.e., this list describes every valid setting.</p>
     </div>
@@ -95,7 +92,7 @@ There are no settings without defaults, i.e., this list describes every valid se
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>An object of class <code>list</code> of length 12.</p>
+    <p>An object of class <code>list</code> of length 11.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -109,7 +106,7 @@ There are no settings without defaults, i.e., this list describes every valid se
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "linters"            "encoding"           "exclude"           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "exclude_next"       "exclude_start"      "exclude_end"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "exclude_linter"     "exclude_linter_sep" "exclusions"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "cache_directory"    "comment_token"      "error_on_lint"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "cache_directory"    "error_on_lint"     </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># linters included by default</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">default_settings</span><span class="op">$</span><span class="va">linters</span><span class="op">)</span></span></span>
