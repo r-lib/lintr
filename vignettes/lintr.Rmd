@@ -321,7 +321,7 @@ lint("X = 42L # nolint ------ this comment overflows the default 80 chars line l
 )
 ```
 
-Observe how all lints were suppressed and no output is shown.
+Observe how all lints were suppressed.
 Sometimes, only a specific linter needs to be excluded.
 In this case, the *name* of the linter can be appended to the `# nolint` comment preceded by a colon and terminated by a dot.
 
@@ -412,8 +412,6 @@ lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint e
   parse_settings = FALSE
 )
 ```
-
-(No lints)
 
 ### Excluding lines via the config file
 
