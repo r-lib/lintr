@@ -41,7 +41,11 @@ a character vector of files to exclude or a vector of lines to exclude.
 }
 }
 
-Note also that all paths are interpreted as globs (\code{\link[=Sys.glob]{Sys.glob()}}), so that e.g. \code{*} does pattern expansion.
+Note also that:
+\enumerate{
+\item All paths are interpreted as globs (\code{\link[=Sys.glob]{Sys.glob()}}), so that e.g. \code{*} does pattern expansion.
+\item All paths are taken as relative \emph{to the config file itself}, not the path where \code{lint()} is run.
+}
 }
 }
 \keyword{internal}

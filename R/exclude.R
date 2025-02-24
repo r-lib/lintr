@@ -29,7 +29,9 @@
 #'   "   For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.",
 #'   "   a character vector of files to exclude or a vector of lines to exclude.",
 #'   "",
-#'   "   Note also that all paths are interpreted as globs ([Sys.glob()]), so that e.g. `*` does pattern expansion.",
+#'   "   Note also that:",
+#'   "   1. All paths are interpreted as globs ([Sys.glob()]), so that e.g. `*` does pattern expansion.",
+#'   "   2. All paths are taken as relative _to the config file itself_, not the path where `lint()` is run.",
 #'   NULL
 #' )
 #'
