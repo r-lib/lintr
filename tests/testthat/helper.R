@@ -45,11 +45,16 @@ trim_some <- function(x, num = NULL) {
   rex::re_substitutes(x, rex::rex(start, n_times(any, num)), "", global = TRUE, options = "multi-line")
 }
 
-local_config <- function(config_dir, contents, filename = ".lintr", .local_envir = parent.frame()) {
+local_config <- function(contents, config_dir = ".", filename = ".lintr", .local_envir = parent.frame()) {
   config_path <- file.path(config_dir, filename)
   writeLines(contents, config_path)
   withr::defer(unlink(config_path), envir = .local_envir)
   config_path
+}
+
+with_config <- function(contents, code, config_dir = ".", filename = ".lintr") {
+  local_config(contents, config_dir, filename)
+  code
 }
 
 skip_if_not_r_version <- function(min_version) {

@@ -48,35 +48,6 @@ print.lint <- function(x, ...) {
   invisible(x)
 }
 
-markdown <- function(x, info, ...) {
-  cat(
-    sep = "",
-    "[", x$filename, ":",
-    as.character(x$line_number), ":",
-    as.character(x$column_number), ":", "]",
-    "(",
-    file.path(
-      "https://github.com",
-      info$user,
-      info$repo,
-      "blob",
-      info$commit,
-      x$filename
-    ), "#L", x$line_number,
-    ")",
-    " ",
-    "*", x$type, ":", "* ",
-    "[", x$linter, "] ",
-    "**", x$message, "**\n",
-    "```r\n\U200B", # we use a zero width unicode character here so that Github
-    # does not strip the leading whitespace
-    x$line, "\n",
-    highlight_string(x$message, x$column_number, x$ranges),
-    "\n```\n"
-  )
-  invisible(x)
-}
-
 #' @export
 format.lints <- function(x, ..., width = getOption("lintr.format_width")) {
   paste(vapply(x, format, character(1L), width = width), collapse = "\n")
@@ -157,7 +128,7 @@ split.lints <- function(x, f = NULL, ...) {
   if (is.null(f)) f <- names(x)
   splt <- split.default(x, f)
   for (i in names(splt)) class(splt[[i]]) <- "lints"
-  return(splt)
+  splt
 }
 
 #' @export

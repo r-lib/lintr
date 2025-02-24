@@ -51,7 +51,7 @@ get_knitr_pattern <- function(filename, lines) {
     ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
     warning = function(cond) {
       if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
-        cli_warn(cond)
+        cli_warn(cond) # nocov. No known way to reach here.
       }
       invokeRestart("muffleWarning")
     }

@@ -581,7 +581,8 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
 })
 
 test_that("unnecessary_nesting_linter blocks disallowed usages", {
-  lint_message <- rex::rex("Don't use nested `if` statements")
+  lint_message <-
+    function(l, c) rex::rex("Combine this `if` statement", anything, "line ", l, ", column ", c)
   linter <- unnecessary_nesting_linter()
 
   expect_lint(
@@ -592,7 +593,7 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
         }
       }
     "),
-    lint_message,
+    lint_message(1L, 1L),
     linter
   )
 
@@ -602,19 +603,21 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
         if (y) 1L
       }
     "),
-    lint_message,
+    lint_message(1L, 1L),
     linter
   )
 
   expect_lint(
     trim_some("
+      # comment
+      # comment
       if (x && a) {
         if (y || b) {
           1L
         }
       }
     "),
-    lint_message,
+    lint_message(3L, 1L),
     linter
   )
 
@@ -626,13 +629,13 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
         }
       }
     "),
-    lint_message,
+    lint_message(1L, 1L),
     linter
   )
 
   expect_lint(
     "if (x) if (y) 1L",
-    lint_message,
+    lint_message(1L, 1L),
     linter
   )
 
@@ -642,7 +645,7 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
         if (x) if (y) 1L
       }
     "),
-    lint_message,
+    lint_message(2L, 3L),
     linter
   )
 
@@ -657,9 +660,24 @@ test_that("unnecessary_nesting_linter blocks disallowed usages", {
       }
     "),
     list(
-      list(message = lint_message, line_number = 2L, column_number = 3L),
-      list(message = lint_message, line_number = 3L, column_number = 5L)
+      list(message = lint_message(1L, 1L), line_number = 2L, column_number = 3L),
+      list(message = lint_message(2L, 3L), line_number = 3L, column_number = 5L)
     ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      if (a) {
+        if (b) {
+          if (c) {
+            message('hi')
+          }
+          t <- 1L
+        }
+      }
+    "),
+    lint_message(1L, 1L),
     linter
   )
 })

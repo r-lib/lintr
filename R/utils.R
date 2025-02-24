@@ -287,5 +287,5 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
 }
 
 cli_abort_internal <- function(...) {
-  cli_abort(..., .internal = TRUE)
+  cli_abort(..., .internal = TRUE) # nocov
 }

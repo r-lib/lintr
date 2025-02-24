@@ -200,10 +200,12 @@ lint_parse_error_r43 <- function(e, source_expression) {
     line_number <- line_number - 1L
   }
 
+  # Safely handle invalid location info
   if (line_number < 1L || line_number > length(source_expression$lines)) {
-    # Safely handle invalid location info
+    # nocov start
     line_number <- 1L
     column <- 1L
+    # nocov end
   }
 
   line <- fixup_line(source_expression$lines[[line_number]])
