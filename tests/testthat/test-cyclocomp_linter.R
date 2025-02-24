@@ -69,6 +69,5 @@ test_that("a null linter is returned, with warning, if cyclocomp is unavailable"
     linter <- cyclocomp_linter(1L)
   })
 
-  # linted above
-  expect_no_lint("if (TRUE) 1 else 2", linter)
+  expect_error(lint(text = "if (TRUE) 1 else 2"), linters = linter), "disabled", fixed = TRUE)
 })
