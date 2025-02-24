@@ -246,7 +246,6 @@ test_that("other packages' linters can be included", {
     tags = c("tag1 tag2", "tag1 tag3")
   )
   custom_db$tags <- strsplit(custom_db$tags, " ", fixed = TRUE)
-      
   custom_loc <- file.path(db_loc, "myPkg", "lintr")
   dir.create(custom_loc, recursive = TRUE)
   write.csv(
