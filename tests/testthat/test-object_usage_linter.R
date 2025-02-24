@@ -858,3 +858,27 @@ test_that("globals in scripts are found regardless of assignment operator", {
     linter
   )
 })
+
+test_that("dplyr's .env-specified objects are marked as 'used'", {
+  skip_if_not_installed("dplyr")
+  skip_if_not_installed("rlang")
+  linter <- object_usage_linter()
+
+  expect_lint(
+    trim_some("
+      foo <- function(df) {
+        source <- 1
+        target <- 2
+        unused <- 3
+
+        df %>%
+          dplyr::mutate(
+            from = rlang::.env$source,
+            to = rlang::.env$target
+          )
+      }
+    "),
+    rex::rex("local variable", anything, "unused"),
+    linter
+  )
+})
