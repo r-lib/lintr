@@ -4,7 +4,9 @@
 #' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
 #' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
-#' which are only used in a glue expression.
+#'   which are only used in a glue expression.
+#' @param interpret_rlang If `TRUE`, interpret names like 'key' in `.env$key` to avoid false positives caused
+#'   by local variables which are only used in, e.g., a `mutate()` expression.
 #' @param skip_with A logical. If `TRUE` (default), code in `with()` expressions
 #'   will be skipped. This argument will be passed to `skipWith` argument of
 #'   `codetools::checkUsage()`.
@@ -29,7 +31,7 @@
 #' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
+object_usage_linter <- function(interpret_glue = TRUE, interpret_rlang = TRUE, skip_with = TRUE) {
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
@@ -77,7 +79,8 @@ object_usage_linter <- function(interpret_glue = TRUE, skip_with = TRUE) {
       if (inherits(fun, "try-error")) {
         return()
       }
-      known_used_symbols <- extract_glued_symbols(fun_assignment, interpret_glue = interpret_glue)
+      known_used_symbols <-
+        known_used_symbols(fun_assignment, interpret_glue = interpret_glue, interpret_rlang = interpret_rlang)
       res <- parse_check_usage(
         fun,
         known_used_symbols = known_used_symbols,
@@ -260,4 +263,27 @@ get_imported_symbols <- function(xml) {
       error = function(e) character()
     )
   }))
+}
+
+known_used_symbols <- function(fun_assignment, interpret_glue, interpret_rlang) {
+  unique(c(
+    extract_env_symbols(fun_assignment, interpret_rlang = interpret_rlang),
+    extract_glued_symbols(fun_assignment, interpret_glue = interpret_glue)
+  ))
+}
+
+extract_env_symbols <- function(fun_assignment, interpret_rlang) {
+  if (!interpret_rlang) {
+    return(character())
+  }
+  env_names <- xml_find_all(
+    fun_assignment,
+    "
+    .//SYMBOL[text() = '.env']
+      /parent::expr
+      /parent::expr[OP-DOLLAR]
+      /SYMBOL
+    "
+  )
+  xml_text(env_names)
 }
