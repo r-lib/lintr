@@ -73,7 +73,6 @@ null_coalescing_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     null_calls <- source_expression$xml_find_function_calls("is.null")
-
     bad_expr <- xml_find_all(null_calls, xpath)
     is_negation <- !is.na(xml_find_first(bad_expr, "expr/OP-EXCLAMATION"))
     observed <- ifelse(is_negation, "if (!is.null(x)) x else y", "if (is.null(x)) y else x")
