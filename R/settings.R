@@ -178,8 +178,8 @@ validate_config_file <- function(config, config_file, defaults) {
   validate_regex(config,
     c("exclude", "exclude_next", "exclude_start", "exclude_end", "exclude_linter", "exclude_linter_sep")
   )
-  validate_character_string(config, c("encoding", "cache_directory")
-  validate_true_false(config, c("comment_bot", "error_on_lint"))
+  validate_character_string(config, c("encoding", "cache_directory"))
+  validate_true_false(config, "error_on_lint")
   validate_linters(config$linters)
   validate_exclusions(config$exclusions)
 }
