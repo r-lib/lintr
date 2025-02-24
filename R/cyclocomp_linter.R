@@ -24,10 +24,11 @@
 cyclocomp_linter <- function(complexity_limit = 15L) {
   # nocov start
   if (!requireNamespace("cyclocomp", quietly = TRUE)) {
-    cli::cli_abort(c(
-      "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}.",
+    cli::cli_warn(c(
+      "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}. Returning a null linter.",
       i = "Please install the needed {.pkg cyclocomp} package."
     ))
+    return(Linter(function(.) NULL))
   }
   # nocov end
   Linter(linter_level = "expression", function(source_expression) {

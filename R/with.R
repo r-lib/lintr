@@ -187,10 +187,11 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
     error = function(e) {
-      cli_abort(
-        "Could not create linter with {.fun {package}::{linter_name}}.",
+      cli_warn(
+        "Could not create linter with {.fun {package}::{linter_name}}. Returning a null linter.",
         parent = e
       )
+      Linter(function(.) list())
     }
   )
   # Otherwise, all linters would be called "linter_factory".
