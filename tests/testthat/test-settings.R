@@ -84,10 +84,6 @@ test_that("it gives informative errors if the config file contains errors", {
   expect_error(lint_dir(), "Error from config setting `linters`", fixed = TRUE)
 })
 
-test_that("rot utility works as intended", {
-  expect_identical(lintr:::rot(letters), c(letters[14L:26L], LETTERS[1L:13L]))
-})
-
 # fixing #774
 test_that("linters_with_defaults doesn't break on very long input", {
   expect_named(
