@@ -219,16 +219,29 @@ object_name_xpath <- local({
     or parent::expr/preceding-sibling::OP-LEFT-BRACKET
   ]"
 
-  glue("
+  # either an argument supplied positionally, i.e., not like 'arg = val', or the call <expr>
+  not_kwarg_cond <- "not(preceding-sibling::*[1][self::EQ_SUB])"
+
+  glue(xp_strip_comments("
   //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]
   |  //STR_CONST[
       ({sprintf(xp_assignment_target_fmt, 'parent', dt_walrus_cond)})
       or parent::expr
-           /preceding-sibling::expr[1]
-           /SYMBOL_FUNCTION_CALL[text() = 'assign' or text() = 'setGeneric']
+        /preceding-sibling::expr[1]
+        /SYMBOL_FUNCTION_CALL[text() = 'setGeneric']
+      (: x= argument is the first positional argument, if not given as x= :)
+      or parent::expr[
+        (
+          ({not_kwarg_cond})
+          and count(preceding-sibling::expr[{not_kwarg_cond}]) = 1
+        )
+        or preceding-sibling::SYMBOL_SUB[1][text() = 'x']
+      ]
+        /preceding-sibling::expr[last()]
+        /SYMBOL_FUNCTION_CALL[text() = 'assign']
      ]
   |  //SYMBOL_FORMALS
-  ")
+  "))
 })
 
 # Remove quotes or other things from names

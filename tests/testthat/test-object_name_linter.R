@@ -299,4 +299,11 @@ test_that("literals in assign() and setGeneric() are checked", {
   expect_no_lint("setGeneric('good_name', function(x) x, package = 'badName')", linter)
   expect_lint("setGeneric('badName', function(x) x)", lint_msg, linter)
   expect_lint('setGeneric("badName", function(x) x)', lint_msg, linter)
+
+  # Ditto for keyword arguments
+  expect_no_lint("assign(envir = 'badEnvName', nm, 2)", linter)
+  expect_no_lint("assign(envir = 'badEnvName', 'good_name', 2)", linter)
+  expect_no_lint("assign(envir = 'badEnvName', x = 'good_name', 2)", linter)
+  expect_lint("assign(envir = 'good_env_name', 'badName', 2)", lint_msg, linter)
+  expect_lint("assign(envir = 'good_env_name', x = 'badName', 2)", lint_msg, linter)
 })
