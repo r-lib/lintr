@@ -54,17 +54,15 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
   }
 
   import_xpath <- "
-  parent::expr
-    /parent::expr[
-      expr[2][STR_CONST]
-      or not(SYMBOL_SUB[
-        text() = 'character.only' and
-        following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
-  "
+  parent::expr[
+    expr[2][STR_CONST]
+    or not(SYMBOL_SUB[
+      text() = 'character.only' and
+      following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]"
 
-  xp_used_functions <- "self::SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]"
+  xp_used_functions <- "SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]"
   xp_used_symbols <- paste(
     "//SYMBOL[not(
       parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']

@@ -61,8 +61,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     "contains(text(), '^') or contains(text(), '$')"
   )
   str_detect_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[2]
+  following-sibling::expr[2]
     /STR_CONST[ {str_cond} ]
   ")
   str_detect_message_map <- c(
@@ -73,17 +72,16 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
   if (!allow_grepl) {
     grepl_xpath <- glue("
-    parent::expr
-      /parent::expr[
-        not(SYMBOL_SUB[
-          text() = 'ignore.case'
-          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-        ])
-        and not(SYMBOL_SUB[
-          text() = 'fixed'
-          and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-        ])
-      ]
+    parent::expr[
+      not(SYMBOL_SUB[
+        text() = 'ignore.case'
+        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+      ])
+      and not(SYMBOL_SUB[
+        text() = 'fixed'
+        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
+      ])
+    ]
       /expr[2]
       /STR_CONST[ {str_cond} ]
     ")
@@ -105,16 +103,17 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     terminal_anchor <- endsWith(patterns, "$")
     search_start <- 1L + initial_anchor
     search_end <- nchar(patterns) - terminal_anchor
-    can_replace <- is_not_regex(substr(patterns, search_start, search_end))
-    initial_anchor <- initial_anchor[can_replace]
-    terminal_anchor <- terminal_anchor[can_replace]
+    should_lint <- (initial_anchor | terminal_anchor) &
+      is_not_regex(substr(patterns, search_start, search_end))
+    initial_anchor <- initial_anchor[should_lint]
+    terminal_anchor <- terminal_anchor[should_lint]
 
     lint_type <- character(length(initial_anchor))
 
     lint_type[initial_anchor & terminal_anchor] <- "both"
     lint_type[initial_anchor & !terminal_anchor] <- "initial"
     lint_type[!initial_anchor & terminal_anchor] <- "terminal"
-    list(lint_expr = expr[can_replace], lint_type = lint_type)
+    list(lint_expr = expr[should_lint], lint_type = lint_type)
   }
 
   substr_xpath <- glue("

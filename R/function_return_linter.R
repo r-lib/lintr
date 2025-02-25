@@ -57,6 +57,6 @@
 #' @export
 function_return_linter <- make_linter_from_function_xpath(
   function_names = "return",
-  xpath = "parent::expr/parent::expr/expr[LEFT_ASSIGN or RIGHT_ASSIGN]",
+  xpath = "parent::expr/expr[LEFT_ASSIGN or RIGHT_ASSIGN]",
   lint_message = "Move the assignment outside of the return() clause, or skip assignment altogether."
 )

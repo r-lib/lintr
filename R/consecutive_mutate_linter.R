@@ -38,8 +38,7 @@
 #' @export
 consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
   attach_pkg_xpath <- "
-  parent::expr
-    /following-sibling::expr
+  following-sibling::expr
     /*[self::SYMBOL or self::STR_CONST]
   "
 

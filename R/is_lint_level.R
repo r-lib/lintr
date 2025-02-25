@@ -28,7 +28,7 @@ is_lint_level <- function(source_expression, level = c("expression", "file")) {
 
 #' Determine whether a linter needs to run for a given source_expression level
 #'
-#' Used by [lint()] to avoid unneccessary calls to linters.
+#' Used by [lint()] to avoid unnecessary calls to linters.
 #'
 #' @param linter A linter.
 #' @param level Which level of expression is being tested? `"expression"`

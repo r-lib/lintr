@@ -3,8 +3,8 @@
 #' @inheritParams xml_nodes_to_lints
 #' @inheritParams is_lint_level
 #' @param xpath Character string, an XPath identifying R code to lint.
-#'   For `make_linter_from_function_xpath()`, the XPath is relative to the `SYMBOL_FUNCTION_CALL` nodes of the
-#'   selected functions.
+#'   For `make_linter_from_function_xpath()`, the XPath is relative to the `parent::expr` of the
+#'   `SYMBOL_FUNCTION_CALL` nodes of the selected functions.
 #'   See [xmlparsedata::xml_parse_data()] and [get_source_expressions()].
 #'
 #' @examples

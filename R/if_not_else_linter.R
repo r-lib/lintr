@@ -71,16 +71,14 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
   ")
 
   ifelse_xpath <- glue("
-  parent::expr
-    /parent::expr[expr[
-      position() = 2
-      and OP-EXCLAMATION
-      and not(expr[
-        OP-EXCLAMATION
-        or expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(exceptions) }]
-      ])
-    ]]
-  ")
+  parent::expr[expr[
+    position() = 2
+    and OP-EXCLAMATION
+    and not(expr[
+      OP-EXCLAMATION
+      or expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(exceptions) }]
+    ])
+  ]]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

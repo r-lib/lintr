@@ -33,7 +33,6 @@ stopifnot_all_linter <- make_linter_from_function_xpath(
   function_names = "stopifnot",
   xpath = "
   parent::expr
-    /parent::expr
     /expr[expr/SYMBOL_FUNCTION_CALL[text() = 'all']]
   ",
   lint_message = paste(

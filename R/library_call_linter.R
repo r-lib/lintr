@@ -208,10 +208,10 @@ library_call_linter <- function(allow_preamble = TRUE) {
 
     consecutive_suppress_expr <- xml_find_all(xml, consecutive_suppress_xpath)
     consecutive_suppress_call_text <- xp_call_name(consecutive_suppress_expr)
-    consecutive_suppress_message <- glue(
-      "Unify consecutive calls to {consecutive_suppress_call_text}(). ",
+    consecutive_suppress_message <- paste0(
+      "Unify consecutive calls to ", consecutive_suppress_call_text, "(). ",
       "You can do so by writing all of the calls in one braced expression ",
-      "like {consecutive_suppress_call_text}({{...}})."
+      "like ", consecutive_suppress_call_text, "({...})."
     )
     consecutive_suppress_lints <- xml_nodes_to_lints(
       consecutive_suppress_expr,

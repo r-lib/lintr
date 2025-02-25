@@ -26,8 +26,7 @@ expect_s4_class_linter <- function() {
   # require 2 expressions because methods::is(x) alone is a valid call, even
   #   though the character output wouldn't make any sense for expect_true().
   xpath <- "
-  parent::expr
-    /following-sibling::expr[1][count(expr) = 3 and expr[1][SYMBOL_FUNCTION_CALL[text() = 'is']]]
+  following-sibling::expr[1][count(expr) = 3 and expr[1][SYMBOL_FUNCTION_CALL[text() = 'is']]]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   "
 

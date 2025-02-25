@@ -70,7 +70,7 @@ expect_identical_linter <- function() {
   ")
 
   expect_equal_xpath <- glue::glue("
-  parent::expr[not(
+  self::*[not(
       following-sibling::EQ_SUB
       or following-sibling::expr[
         (
@@ -93,8 +93,7 @@ expect_identical_linter <- function() {
     /parent::expr
   ")
   expect_true_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
+  following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
     /parent::expr
   "
   Linter(linter_level = "expression", function(source_expression) {

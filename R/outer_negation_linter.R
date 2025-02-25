@@ -39,7 +39,7 @@ outer_negation_linter <- function() {
   # NB: requirement that count(expr)>1 is to prevent any() from linting
   #   e.g. in magrittr pipelines.
   xpath <- "
-  parent::expr[following-sibling::expr]
+  self::*[following-sibling::expr]
     /parent::expr[
       not(expr[
         position() > 1

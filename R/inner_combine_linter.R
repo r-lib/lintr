@@ -81,7 +81,7 @@ inner_combine_linter <- function() {
     lubridate_args_cond
   )
   xpath <- glue("
-  parent::expr[count(following-sibling::expr) > 1]
+  self::*[count(following-sibling::expr) > 1]
     /following-sibling::expr[1][ {c_expr_cond} ]
     /parent::expr
   ")
