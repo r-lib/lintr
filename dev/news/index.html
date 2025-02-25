@@ -83,6 +83,8 @@
 <li>
 <code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> handles <code>for</code> un-braced for loops correctly (<a href="https://github.com/r-lib/lintr/issues/2564" class="external-link">#2564</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>Setting <code>exclusions</code> supports globs like <code>knitr*</code> to exclude files/directories with a pattern (<a href="https://github.com/r-lib/lintr/issues/1554" class="external-link">#1554</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> and <code><a href="../reference/object_length_linter.html">object_length_linter()</a></code> apply to objects assigned with <code><a href="https://rdrr.io/r/base/assign.html" class="external-link">assign()</a></code> or generics created with <code>setGeneric()</code> (<a href="https://github.com/r-lib/lintr/issues/1665" class="external-link">#1665</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul><div class="section level4">
 <h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
 <ul><li>
