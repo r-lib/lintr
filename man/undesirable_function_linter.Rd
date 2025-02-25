@@ -50,7 +50,7 @@ lint(
 
 lint(
   text = 'dir <- "path/to/a/directory"',
-  linters = undesirable_function_linter(fun = "dir"))
+  linters = undesirable_function_linter(fun = "dir")
 )
 
 # okay
@@ -71,7 +71,7 @@ lint(
 
 lint(
   text = 'dir <- "path/to/a/directory"',
-  linters = undesirable_function_linter(fun = "dir", symbol_is_undesirable = FALSE))
+  linters = undesirable_function_linter(fun = "dir", symbol_is_undesirable = FALSE)
 )
 
 }

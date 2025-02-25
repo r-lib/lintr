@@ -43,6 +43,11 @@ lint(
   linters = undesirable_operator_linter()
 )
 
+lint(
+  text = "mtcars$wt",
+  linters = undesirable_operator_linter("$")
+)
+
 # okay
 lint(
   text = "a <- log(10)",
@@ -61,6 +66,11 @@ lint(
 lint(
   text = "`:::`(utils, hasName)",
   linters = undesirable_operator_linter(call_is_undesirable = FALSE)
+)
+
+lint(
+  text = 'mtcars[["wt"]]',
+  linters = undesirable_operator_linter("$")
 )
 
 }
