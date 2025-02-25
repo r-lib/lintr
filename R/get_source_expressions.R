@@ -91,7 +91,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   #   from the message itself, so we just grep the source for the
   #   exact string generating the warning; de-dupe in case of
   #   multiple exact matches like '1e-3L; 1e-3L'
-  w <- lint_parse_warnings(w)
+  w <- lint_parse_warnings(w, source_expression)
 
   if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
@@ -110,16 +110,7 @@ get_source_expressions <- function(filename, lines = NULL) {
     top_level_map
   )
 
-  if (!is.null(xml_parsed_content) && !is.na(xml_parsed_content)) {
-    expression_xmls <- lapply(
-      xml_find_all(xml_parsed_content, "/exprlist/*"),
-      function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
-    )
-    for (i in seq_along(expressions)) {
-      expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
-      expressions[[i]]$xml_find_function_calls <- build_xml_find_function_calls(expression_xmls[[i]])
-    }
-  }
+  expressions <- maybe_append_expression_xml(expressions, xml_parsed_content)
 
   # add global expression
   expressions[[length(expressions) + 1L]] <- list(
@@ -169,7 +160,7 @@ lint_parse_error <- function(e, source_expression) {
 #'   exact string generating the warning; de-dupe in case of
 #'   multiple exact matches like '1e-3L; 1e-3L'
 #' @noRd
-lint_parse_warnings <- function(w) {
+lint_parse_warnings <- function(w, source_expression) {
   if (!length(w)) {
     return(w)
   }
@@ -594,6 +585,21 @@ get_source_expression <- function(source_expression, error = identity) {
 
   source_expression$parsed_content <- parsed_content
   fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_expression)), source_expression$lines)
+}
+
+maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
+  if (is.null(xml_parsed_content) || is.na(xml_parsed_content)) {
+    return(expressions)
+  }
+  expression_xmls <- lapply(
+    xml_find_all(xml_parsed_content, "/exprlist/*"),
+    function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
+  )
+  for (i in seq_along(expressions)) {
+    expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
+    expressions[[i]]$xml_find_function_calls <- build_xml_find_function_calls(expression_xmls[[i]])
+  }
+  expressions
 }
 
 get_newline_locs <- function(x) {
