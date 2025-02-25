@@ -96,7 +96,10 @@ The name gives a path relative to the config.</p><ol><li><p>Unnamed elements den
 For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.
 a character vector of files to exclude or a vector of lines to exclude.</p></li>
 </ol></li>
-</ol><p>Note also that all paths are interpreted as globs (<code><a href="https://rdrr.io/r/base/Sys.glob.html" class="external-link">Sys.glob()</a></code>), so that e.g. <code>*</code> does pattern expansion.</p></li>
+</ol><p>Note also that:</p><ol><li><p>All paths are interpreted as globs (<code><a href="https://rdrr.io/r/base/Sys.glob.html" class="external-link">Sys.glob()</a></code>), so that e.g. <code>*</code> does pattern expansion.</p></li>
+<li><p>For <code>exclusions</code> provided <em>via</em> a config file, all paths are taken as
+relative <em>to the config file itself</em>, not the path where <code><a href="lint.html">lint()</a></code> is run.</p></li>
+</ol></li>
 </ol></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
