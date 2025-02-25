@@ -5,11 +5,8 @@
 #' @param operator Character vector of valid assignment operators. Defaults to allowing `<-` and `<<-`; other valid
 #'   options are `=`, `->`, `->>`, `%<>%`; use `"any"` to denote "allow all operators", in which case this linter only
 #'   considers `allow_trailing` for generating lints.
-#' @param allow_cascading_assign (Deprecated) Logical, default `TRUE`.
-#'   If `FALSE`, [`<<-`][base::assignOps] and `->>` are not allowed.
-#' @param allow_right_assign (Deprecated) Logical, default `FALSE`. If `TRUE`, `->` and `->>` are allowed.
+#' @param allow_cascading_assign,allow_right_assign,allow_pipe_assign (Defunct)
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
-#' @param allow_pipe_assign (Deprecated) Logical, default `FALSE`. If `TRUE`, magrittr's `%<>%` assignment is allowed.
 #'
 #' @examples
 #' # will produce lints
@@ -53,12 +50,12 @@
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
-#'   linters = assignment_linter(allow_right_assign = TRUE)
+#'   linters = assignment_linter(operator = "->")
 #' )
 #'
 #' lint(
 #'   text = "x <<- 1",
-#'   linters = assignment_linter(allow_cascading_assign = FALSE)
+#'   linters = assignment_linter(operator = "<-")
 #' )
 #'
 #' writeLines("foo(bar = \n 1)")
@@ -69,7 +66,7 @@
 #'
 #' lint(
 #'   text = "x %<>% as.character()",
-#'   linters = assignment_linter(allow_pipe_assign = TRUE)
+#'   linters = assignment_linter(operator = "%<>%")
 #' )
 #'
 #' lint(
@@ -84,27 +81,36 @@
 #' - <https://style.tidyverse.org/pipes.html#assignment-2>
 #' @export
 assignment_linter <- function(operator = c("<-", "<<-"),
-                              allow_cascading_assign = TRUE,
-                              allow_right_assign = FALSE,
+                              allow_cascading_assign = NULL,
+                              allow_right_assign = NULL,
                               allow_trailing = TRUE,
-                              allow_pipe_assign = FALSE) {
-  if (is.logical(operator)) {
-    cli_abort(c(
-      "'operator' should be a character vector but was logical.",
-      i = "If you intended positional usage of allow_cascading_assign=, that is hard-deprecated."
-    ))
-  }
+                              allow_pipe_assign = NULL) {
   if (!missing(allow_cascading_assign)) {
-    lintr_deprecated("allow_cascading_assign", '"<<-" and/or "->>" in operator', version = "3.2.0", type = "Argument")
-    operator <- drop_or_add(operator, "<<-", allow_cascading_assign)
+    lintr_deprecated(
+      "allow_cascading_assign",
+      '"<<-" and/or "->>" in operator',
+      version = "3.2.0",
+      type = "Argument",
+      signal = "stop"
+    )
   }
   if (!missing(allow_right_assign)) {
-    lintr_deprecated("allow_right_assign", '"->" in operator', version = "3.2.0", type = "Argument")
-    operator <- drop_or_add(operator, c("->", if (allow_cascading_assign) "->>"), allow_right_assign)
+    lintr_deprecated(
+      "allow_right_assign",
+      '"->" in operator',
+      version = "3.2.0",
+      type = "Argument",
+      signal = "stop"
+    )
   }
   if (!missing(allow_pipe_assign)) {
-    lintr_deprecated("allow_pipe_assign", '"%<>%" in operator', version = "3.2.0", type = "Argument")
-    operator <- drop_or_add(operator, "%<>%", allow_pipe_assign)
+    lintr_deprecated(
+      "allow_pipe_assign",
+      '"%<>%" in operator',
+      version = "3.2.0",
+      type = "Argument",
+      signal = "stop"
+    )
   }
   all_operators <- c("<-", "=", "->", "<<-", "->>", "%<>%")
   if ("any" %in% operator) {
@@ -189,5 +195,3 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     lints
   })
 }
-
-drop_or_add <- function(x, y, add) (if (add) union else setdiff)(x, y)

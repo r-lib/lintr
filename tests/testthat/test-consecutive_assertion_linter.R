@@ -116,16 +116,8 @@ test_that("lints vectorize", {
   )
 })
 
-test_that("old name consecutive_stopifnot_linter() is deprecated", {
-  expect_warning(
-    {
-      old_linter <- consecutive_stopifnot_linter()
-    },
-    "Use consecutive_assertion_linter instead",
-    fixed = TRUE
-  )
-  expect_lint("stopifnot(x); y; stopifnot(z)", NULL, old_linter)
-  expect_lint("stopifnot(x); stopifnot(y)", "Unify consecutive calls", old_linter)
+test_that("old name consecutive_stopifnot_linter() is defunct", {
+  expect_error(consecutive_stopifnot_linter(), "Use consecutive_assertion_linter instead", fixed = TRUE)
 })
 
 test_that("interceding = assignments aren't linted", {

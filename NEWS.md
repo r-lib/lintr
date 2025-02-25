@@ -2,11 +2,48 @@
 
 ## Deprecations & breaking changes
 
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now defunct.
+* Six linters marked as deprecated with warning in the previous release are now fully deprecated: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`. They will be removed in the next release.
 * As previously announced, the following fully-deprecated items are now removed from the package:
-   + `with_defaults()`.
+   + `source_file=` argument to `ids_with_token()` and `with_id()`.
    + Passing linters by name or as non-`"linter"`-classed functions.
-   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
    + `linter=` argument of `Lint()`.
+   + `with_defaults()`.
+   + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+
+## Bug fixes
+
+* `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
+
+## New and improved features
+
+* `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
+* `seq_linter()` recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
+* `undesirable_operator_linter()` lints operators in prefix form, e.g. `` `%%`(x, 2)`` (#1910, @MichaelChirico). Disable this by setting `call_is_undesirable=FALSE`.
+* `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
+* Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
+* `object_name_linter()` and `object_length_linter()` apply to objects assigned with `assign()` or generics created with `setGeneric()` (#1665, @MichaelChirico).
+
+### Lint accuracy fixes: removing false positives
+
+* `unnecessary_nesting_linter()`:
+   + Treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
+   + Treats `=` assignment the same as `<-` when deciding to combine consecutive `if()` clauses (#2245, @MichaelChirico).
+
+* `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
+* `string_boundary_linter()` omits lints of patterns like `\\^` which have an anchor but are not regular expressions (#2636, @MichaelChirico).
+* `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
+* `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
+* `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
+
+## Notes
+
+* `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
+* `unnecessary_nesting_linter()` gives a more specific lint message identifying:
+   + the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
+   + the specific `if()` statement that can be combined with the linted one (#1891, @MichaelChirico).
+* The description in `?paste_linter` of `allow_file_path=` has been corrected (#2675, @MichaelChirico). In particular, `allow_file_path="never"` is the most strict form, `allow_file_path="always"` is the most lax form.
+* `comment_token` is removed from settings. This was a vestige of the now-defunct support for posting GitHub comments.
 
 ## New linters
 

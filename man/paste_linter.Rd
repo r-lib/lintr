@@ -18,10 +18,10 @@ paste_linter(
 \code{paste()} and \code{paste0()} with \code{collapse = ", "} is not linted.}
 
 \item{allow_file_path}{String, one of \code{"never"}, \code{"double_slash"}, or \code{"always"}; \code{"double_slash"} by default.
-If \code{"never"}, usage of \code{paste()} and \code{paste0()} to construct file paths is not linted. If \code{"double_slash"},
+If \code{"always"}, usage of \code{paste()} and \code{paste0()} to construct file paths is not linted. If \code{"double_slash"},
 strings containing consecutive forward slashes will not lint. The main use case here is for URLs -- "paths" like
 \code{"https://"} will not induce lints, since constructing them with \code{file.path()} might be deemed unnatural.
-Lastly, if \code{"always"}, strings with consecutive forward slashes will also lint. Note that \code{"//"} is never linted
+Lastly, if \code{"never"}, strings with consecutive forward slashes will also lint. Note that \code{"//"} is never linted
 when it comes at the beginning or end of the input, to avoid requiring empty inputs like
 \code{file.path("", ...)} or \code{file.path(..., "")}.}
 }

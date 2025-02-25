@@ -21,5 +21,9 @@ NULL
 
 # make binding available for mock testing
 # ref: https://testthat.r-lib.org/dev/reference/local_mocked_bindings.html#base-functions
+# nolint start: object_name_linter. These will be copied from base style.
+requireNamespace <- NULL
+system.file <- NULL
 unlink <- NULL
 quit <- NULL
+# nolint end: object_name_linter.

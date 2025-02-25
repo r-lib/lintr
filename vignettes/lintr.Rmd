@@ -128,7 +128,6 @@ Apart from `lintr.linter_file`, which defaults to `".lintr"`, there are the foll
 ```{r show_default_settings, echo = FALSE}
 default_settings <- lintr::default_settings
 default_settings$linters <- "`lintr::default_linters`"
-default_settings$comment_token <- "(lintr-bot comment token for automatic GitHub comments)"
 default_settings$exclusions <- "(empty)"
 
 make_string <- function(x) {
@@ -321,7 +320,7 @@ lint("X = 42L # nolint ------ this comment overflows the default 80 chars line l
 )
 ```
 
-Observe how all lints were suppressed and no output is shown.
+Observe how all lints were suppressed.
 Sometimes, only a specific linter needs to be excluded.
 In this case, the *name* of the linter can be appended to the `# nolint` comment preceded by a colon and terminated by a dot.
 
@@ -413,8 +412,6 @@ lint("# nolint start: commented_code_linter.\n# x <- 42L\n# print(x)\n# nolint e
 )
 ```
 
-(No lints)
-
 ### Excluding lines via the config file
 
 Individual lines can also be excluded via the config file by setting the key `exclusions` to a list with elements corresponding to different files.
@@ -429,7 +426,7 @@ exclusions: list(
   )
 ```
 
-All paths are interpreted relative to the location of the `.lintr` file.
+All paths are interpreted relative to the location of the `.lintr` file, _not_ the directory where `lint()` is invoked.
 
 ### Excluding files completely
 
