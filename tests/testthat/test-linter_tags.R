@@ -263,9 +263,9 @@ test_that("other packages' linters can be included", {
   )
 
   # edge case
-  write_csv(custom_db[0, c("linter", "tags")], file.path(custom_loc, "linters.csv"))
+  write_csv(custom_db[0L, c("linter", "tags")], file.path(custom_loc, "linters.csv"))
   expect_identical(
     available_linters(packages = "myPkg"),
-    custom_db[0, ]
+    custom_db[0L, ]
   )
 })
