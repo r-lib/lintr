@@ -111,14 +111,6 @@ logical_env <- function(x) {
   res
 }
 
-# from ?chartr
-rot <- function(ch, k = 13L) {
-  p0 <- function(...) paste(c(...), collapse = "")
-  alphabet <- c(letters, LETTERS, " '")
-  idx <- seq_len(k)
-  chartr(p0(alphabet), p0(c(alphabet[-idx], alphabet[idx])), ch)
-}
-
 try_silently <- function(expr) {
   suppressWarnings(
     suppressMessages(
@@ -130,7 +122,7 @@ try_silently <- function(expr) {
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {
   old_lang <- Sys.getenv("LANGUAGE", unset = NA)
-  Sys.setenv(LANGUAGE = new_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
+  Sys.setenv(LANGUAGE = new_lang) # nolint: undesirable_function_name. Avoiding {withr} dep in pkg.
   old_lang
 }
 # handle the logic of either unsetting if it was previously unset, or resetting
@@ -138,7 +130,7 @@ reset_lang <- function(old_lang) {
   if (is.na(old_lang)) {
     Sys.unsetenv("LANGUAGE")
   } else {
-    Sys.setenv(LANGUAGE = old_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
+    Sys.setenv(LANGUAGE = old_lang) # nolint: undesirable_function_name. Avoiding {withr} dep in pkg.
   }
 }
 
@@ -239,6 +231,9 @@ re_matches_logical <- function(x, regex, ...) {
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
+  if (length(s) == 0L) {
+    return(character())
+  }
   if (is_node(s) || is_nodeset(s)) {
     if (is.null(xpath)) {
       s <- xml_text(s)
@@ -283,5 +278,5 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
 }
 
 cli_abort_internal <- function(...) {
-  cli_abort(..., .internal = TRUE)
+  cli_abort(..., .internal = TRUE) # nocov
 }

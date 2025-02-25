@@ -11,15 +11,20 @@ linters: all_linters(
         ")"
       )
     ),
-    undesirable_function_linter(modify_defaults(
+    undesirable_function_name_linter = undesirable_function_linter(modify_defaults(
       defaults = default_undesirable_functions,
       library = NULL,
       options = NULL,
-      message = "use cli::cli_inform()",
-      warning = "use cli::cli_warn()",
-      stop = "use cli::cli_abort()",
       normalizePath = "use normalize_path()"
     )),
+    undesirable_function_call_linter = undesirable_function_linter(
+      c(
+        message = "use cli::cli_inform()",
+        warning = "use cli::cli_warn()",
+        stop = "use cli::cli_abort()"
+      ),
+      symbol_is_undesirable = FALSE
+    ),
     undesirable_operator_linter(modify_defaults(
       defaults = default_undesirable_operators,
       `:::` = NULL,
@@ -32,18 +37,17 @@ linters: all_linters(
     # We now require R>=4.0.0
     strings_as_factors_linter = NULL,
     todo_comment_linter = NULL,
+    # exclude; we use customized version above
+    undesirable_function_linter = NULL,
     # TODO(#2327): Enable this.
     unreachable_code_linter = NULL
   )
 exclusions: list(
-    "inst/doc/creating_linters.R" = 1,
+    "inst/doc/creating_linters.R" = 1L,
     "inst/example/bad.R",
     "tests/testthat.R" = list(unused_import_linter = Inf),
     "tests/testthat/default_linter_testcode.R",
-    "tests/testthat/dummy_packages",
-    "tests/testthat/dummy_projects",
+    "tests/testthat/dummy_*",
     "tests/testthat/exclusions-test",
-    "tests/testthat/knitr_extended_formats",
-    "tests/testthat/knitr_formats",
-    "tests/testthat/knitr_malformed"
+    "tests/testthat/knitr_*"
   )

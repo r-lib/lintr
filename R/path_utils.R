@@ -106,15 +106,7 @@ is_valid_long_path <- function(path, lax = FALSE) {
 }
 
 
-split_paths <- function(path, sep = "/|\\\\") {
-  if (!is.character(path)) {
-    cli_abort("Argument {.arg path} should be a {.cls character} vector.")
-  }
-  if (!is.character(sep) || length(sep) != 1L || !nzchar(sep)) {
-    cli_abort("Argument {.arg sep} should be a non-empty regular expression character string.")
-  }
-  Map(split_path, strsplit(path, sep), substr(path, 1L, 1L))
-}
+split_paths <- function(path)  Map(split_path, strsplit(path, "/|\\\\"), substr(path, 1L, 1L))
 
 split_path <- function(dirs, prefix) {
   # add root dir if needed
@@ -136,7 +128,7 @@ split_path <- function(dirs, prefix) {
 #' Simple wrapper around normalizePath to ensure forward slash on Windows
 #' https://github.com/r-lib/lintr/pull/2613
 #' @noRd
-# nolint next: undesirable_function_linter, object_name_linter.
+# nolint next: undesirable_function_name_linter, object_name_linter.
 normalize_path <- function(path, mustWork = NA) normalizePath(path = path, winslash = "/", mustWork = mustWork)
 
 #' @include utils.R
@@ -156,7 +148,7 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
             line_number = token[["line1"]],
             column_number = path_start,
             type = "warning",
-            message = message, # nolint: undesirable_function_linter
+            message = message,
             line = source_expression[["lines"]][[as.character(token[["line1"]])]],
             ranges = list(c(path_start, path_end))
           )

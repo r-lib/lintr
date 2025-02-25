@@ -121,9 +121,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
 #' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
-#' @param show_progress Logical controlling whether to show linting progress with a simple text
-#'   progress bar _via_ [utils::txtProgressBar()]. The default behavior is to show progress in
-#'   [interactive()] sessions not running a testthat suite.
+#' @param show_progress Logical controlling whether to show linting progress with
+#'   [cli::cli_progress_along()]. The default behavior is to show progress in [interactive()] sessions
+#'   not running a testthat suite.
 #'
 #' @examples
 #' if (FALSE) {
@@ -186,6 +186,8 @@ lint_dir <- function(path = ".", ...,
   }
 
   if (isTRUE(show_progress)) {
+    # nocov start. Only displays after >=2 seconds;
+    #   we get ample testing interactively, so don't slow down tests just for coverage.
     lints <- lapply(
       # NB: This cli API is experimental (https://github.com/r-lib/cli/issues/709)
       cli::cli_progress_along(files, name = "Running linters"),
@@ -193,6 +195,7 @@ lint_dir <- function(path = ".", ...,
         lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
       }
     )
+    # nocov end
   } else {
     lints <- lapply(
       files,
@@ -353,16 +356,6 @@ validate_linter_object <- function(linter, name) {
   ))
 }
 
-is_linter_factory <- function(fun) {
-  # A linter factory is a function whose last call is to Linter()
-  bdexpr <- body(fun)
-  # covr internally transforms each call into if (TRUE) { covr::count(...); call }
-  while (is.call(bdexpr) && (bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE"))) {
-    bdexpr <- bdexpr[[length(bdexpr)]]
-  }
-  is.call(bdexpr) && identical(bdexpr[[1L]], as.name("Linter"))
-}
-
 reorder_lints <- function(lints) {
   files <- vapply(lints, `[[`, character(1L), "filename")
   lines <- vapply(lints, `[[`, integer(1L), "line_number")
@@ -389,8 +382,34 @@ reorder_lints <- function(lints) {
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
                  message = "", line = "", ranges = NULL) {
+  validate_lint_object(message, line, line_number, column_number, ranges)
+
+  type <- match.arg(type)
+
+  obj <- list(
+    filename = filename,
+    line_number = as.integer(line_number),
+    column_number = as.integer(column_number),
+    type = type,
+    message = message,
+    line = line,
+    ranges = ranges,
+    linter = NA_character_
+  )
+  class(obj) <- c("lint", "list")
+  obj
+}
+
+# nolint next: cyclocomp_linter. Sequence of checks + early returns.
+validate_lint_object <- function(message, line, line_number, column_number, ranges) {
+  if (length(message) != 1L || !is.character(message)) {
+    cli_abort("{.arg message} must be a character string")
+  }
+  if (is.object(message)) {
+    cli_abort("{.arg message} must be a simple string, but has class {.cls {class(message)}}")
+  }
   if (length(line) != 1L || !is.character(line)) {
-    cli_abort("{.arg line} must be a string.", call. = FALSE)
+    cli_abort("{.arg line} must be a character string.")
   }
   max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
   if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
@@ -403,21 +422,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
     cli_abort("{.arg line_number} must be a positive integer, not {.obj_type_friendly {line_number}}.")
   }
   check_ranges(ranges, max_col)
-
-  type <- match.arg(type)
-
-  obj <- list(
-    filename = filename,
-    line_number = as.integer(line_number),
-    column_number = as.integer(column_number),
-    type = type,
-    message = message, # nolint: undesirable_function_linter
-    line = line,
-    ranges = ranges,
-    linter = NA_character_
-  )
-  class(obj) <- c("lint", "list")
-  obj
+  invisible()
 }
 
 is_number <- function(number, n = 1L) {
@@ -663,12 +668,6 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
 fill_with <- function(character = " ", length = 1L) {
   paste(collapse = "", rep.int(character, length))
-}
-
-has_positional_logical <- function(dots) {
-  length(dots) > 0L &&
-    is.logical(dots[[1L]]) &&
-    !nzchar(names2(dots)[1L])
 }
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {

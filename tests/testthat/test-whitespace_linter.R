@@ -59,14 +59,6 @@ test_that("whitespace_linter blocks disallowed usages with a pipe", {
   )
 })
 
-test_that("no_tab_linter id deprecated", {
-  expect_warning(
-    {
-      old_linter <- no_tab_linter()
-    },
-    "Use whitespace_linter instead",
-    fixed = TRUE
-  )
-  expect_lint("  f(a, b, c)", NULL, old_linter)
-  expect_lint("\tf(a, b, c)", "not tabs", old_linter)
+test_that("no_tab_linter is defunct", {
+  expect_error(no_tab_linter(), "Use whitespace_linter instead", fixed = TRUE)
 })

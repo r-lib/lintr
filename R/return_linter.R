@@ -95,7 +95,7 @@ return_linter <- function(
 
   if (return_style == "implicit") {
     # nolint next: object_usage. False positive.
-    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
+    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[last()]"
     params <- list(
       implicit = TRUE,
       type = "style",
@@ -122,7 +122,7 @@ return_linter <- function(
 
     body_xpath_fmt <- "
     (//FUNCTION | //OP-LAMBDA)[{ except_xpath }]
-      /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
+      /following-sibling::expr[last()][OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
     "
     if (defer_except) {

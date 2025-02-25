@@ -195,5 +195,3 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     lints
   })
 }
-
-drop_or_add <- function(x, y, add) (if (add) union else setdiff)(x, y)
