@@ -550,7 +550,7 @@ get_single_source_expression <- function(loc,
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
-  env <- parent.frame()
+  env <- parent.frame() # nolint: object_usage_linter. Used below.
   parsed_content <- withCallingHandlers(
     tryCatch(
       parse(
