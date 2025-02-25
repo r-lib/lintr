@@ -31,7 +31,8 @@
 #'   "",
 #'   "   Note also that:",
 #'   "   1. All paths are interpreted as globs ([Sys.glob()]), so that e.g. `*` does pattern expansion.",
-#'   "   2. All paths are taken as relative _to the config file itself_, not the path where `lint()` is run.",
+#'   "   2. For `exclusions` provided _via_ a config file, all paths are taken as relative _to the config file itself_,",
+#'   "      not the path where `lint()` is run.",
 #'   NULL
 #' )
 #'
