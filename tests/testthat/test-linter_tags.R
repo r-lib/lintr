@@ -248,19 +248,24 @@ test_that("other packages' linters can be included", {
   custom_db$tags <- strsplit(custom_db$tags, " ", fixed = TRUE)
   custom_loc <- file.path(db_loc, "myPkg", "lintr")
   dir.create(custom_loc, recursive = TRUE)
-  write.csv(
+  write_csv <- function(x, file) write.csv(x, file, row.names = FALSE, quote = FALSE)
+  write_csv(
     within(custom_db, {
       tags <- vapply(tags, paste, collapse = " ", FUN.VALUE = character(1L))
       rm(package)
     }),
-    file.path(custom_loc, "linters.csv"),
-    row.names = FALSE,
-    quote = FALSE
+    file.path(custom_loc, "linters.csv")
   )
-
 
   expect_identical(
     available_linters(packages = "myPkg"),
     custom_db
+  )
+
+  # edge case
+  write_csv(custom_db[0, c("linter", "tags")], file.path(custom_loc, "linters.csv"))
+  expect_identical(
+    available_linters(packages = "myPkg"),
+    custom_db[0, ]
   )
 })
