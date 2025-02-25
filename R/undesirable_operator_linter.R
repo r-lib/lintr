@@ -56,12 +56,24 @@
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators,
                                         call_is_undesirable = TRUE) {
-  if (is.null(names(op)) || !all(nzchar(names(op))) || length(op) == 0L) {
-    cli_abort(c(
-      x = "{.arg op} should be a non-empty named character vector.",
-      i = "Use missing elements to indicate default messages."
-    ))
+  if (is.list(op)) op <- unlist(op)
+  stopifnot(
+    is.logical(call_is_undesirable),
+    # allow (uncoerced->implicitly logical) 'NA'
+    `\`op\` should be a non-empty character vector` =
+      length(op) > 0L && (is.character(op) || all(is.na(op)))
+  )
+
+  nm <- names2(op)
+  implicit_idx <- !nzchar(nm)
+  if (any(implicit_idx)) {
+    names(op)[implicit_idx] <- op[implicit_idx]
+    is.na(op) <- implicit_idx
   }
+  if (anyNA(names(op))) {
+    cli_abort("Found missing entries to {.arg op}: {.val {which(is.na(names(op)))}}")
+  }
+
   # infix must be handled individually below; non-assignment `=` are always OK
   operator_nodes <- infix_metadata$xml_tag_exact[
     infix_metadata$string_value %in% setdiff(names(op), "%%") &

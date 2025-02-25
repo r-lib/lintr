@@ -2,9 +2,9 @@
 #'
 #' Report the use of undesirable functions and suggest an alternative.
 #'
-#' @param fun Named character vector. `names(fun)` correspond to undesirable functions,
+#' @param fun Character vector. `names(fun)` correspond to undesirable functions,
 #'   while the values give a description of why the function is undesirable.
-#'   If `NA`, no additional information is given in the lint message. Defaults to
+#'   If `NA` or unnamed, no additional information is given in the lint message.
 #'   [default_undesirable_functions]. To make small customizations to this list,
 #'   use [modify_defaults()].
 #' @param symbol_is_undesirable Whether to consider the use of an undesirable function
@@ -35,6 +35,12 @@
 #'   linters = undesirable_function_linter(fun = c("dir" = NA))
 #' )
 #'
+#'
+#' lint(
+#'   text = 'dir <- "path/to/a/directory"',
+#'   linters = undesirable_function_linter(fun = "dir"))
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "vapply(x, mean, FUN.VALUE = numeric(1))",
@@ -51,17 +57,32 @@
 #'   linters = undesirable_function_linter(fun = c("dir" = NA), symbol_is_undesirable = FALSE)
 #' )
 #'
+#' lint(
+#'   text = 'dir <- "path/to/a/directory"',
+#'   linters = undesirable_function_linter(fun = "dir", symbol_is_undesirable = FALSE))
+#' )
+#'
 #' @evalRd rd_tags("undesirable_function_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
-  stopifnot(is.logical(symbol_is_undesirable))
-  if (is.null(names(fun)) || !all(nzchar(names(fun))) || length(fun) == 0L) {
-    cli_abort(c(
-      x = "{.arg fun} should be a non-empty named character vector.",
-      i = "Use missing elements to indicate default messages."
-    ))
+  if (is.list(fun)) fun <- unlist(fun)
+  stopifnot(
+    is.logical(symbol_is_undesirable),
+    # allow (uncoerced->implicitly logical) 'NA'
+    `\`fun\` should be a non-empty character vector` =
+      length(fun) > 0L && (is.character(fun) || all(is.na(fun)))
+  )
+
+  nm <- names2(fun)
+  implicit_idx <- !nzchar(nm)
+  if (any(implicit_idx)) {
+    names(fun)[implicit_idx] <- fun[implicit_idx]
+    is.na(fun) <- implicit_idx
+  }
+  if (anyNA(names(fun))) {
+    cli_abort("Found missing entries to {.arg fun}: {.val {which(is.na(names(fun)))}}")
   }
 
   xp_condition <- xp_and(
