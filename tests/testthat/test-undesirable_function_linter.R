@@ -79,7 +79,8 @@ test_that("invalid inputs fail correctly", {
 
 test_that("Default recommendations can be specified multiple ways", {
   linter_na <- undesirable_function_linter(c(foo = NA))
-  linter_unnamed <- undesirable_function_linter("foo")
+  linter_unnamed1 <- undesirable_function_linter("foo")
+  linter_unnamed2 <- undesirable_function_linter(c("foo", "bar"))
   linter_mixed1 <- undesirable_function_linter(c("foo", bar = "no bar"))
   linter_mixed2 <- undesirable_function_linter(c("foo", bar = NA))
 
@@ -87,7 +88,8 @@ test_that("Default recommendations can be specified multiple ways", {
 
   lint_str <- "foo()"
   expect_lint(lint_str, lint_message, linter_na)
-  expect_lint(lint_str, lint_message, linter_unnamed)
+  expect_lint(lint_str, lint_message, linter_unnamed1)
+  expect_lint(lint_str, lint_message, linter_unnamed2)
   expect_lint(lint_str, lint_message, linter_mixed1)
   expect_lint(lint_str, lint_message, linter_mixed2)
 })

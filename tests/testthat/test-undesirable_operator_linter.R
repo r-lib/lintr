@@ -90,7 +90,8 @@ test_that("invalid inputs fail correctly", {
 
 test_that("Default recommendations can be specified multiple ways", {
   linter_na <- undesirable_operator_linter(c(`%f%` = NA))
-  linter_unnamed <- undesirable_operator_linter("%f%")
+  linter_unnamed1 <- undesirable_operator_linter("%f%")
+  linter_unnamed2 <- undesirable_operator_linter(c("%f%", "%b%"))
   linter_mixed1 <- undesirable_operator_linter(c("%f%", `%b%` = "no %b%"))
   linter_mixed2 <- undesirable_operator_linter(c("%f%", `%b%` = NA))
 
@@ -98,7 +99,8 @@ test_that("Default recommendations can be specified multiple ways", {
 
   lint_str <- "a %f% b"
   expect_lint(lint_str, lint_message, linter_na)
-  expect_lint(lint_str, lint_message, linter_unnamed)
+  expect_lint(lint_str, lint_message, linter_unnamed1)
+  expect_lint(lint_str, lint_message, linter_unnamed2)
   expect_lint(lint_str, lint_message, linter_mixed1)
   expect_lint(lint_str, lint_message, linter_mixed2)
 })
