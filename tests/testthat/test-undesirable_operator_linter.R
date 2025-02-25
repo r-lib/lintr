@@ -95,7 +95,7 @@ test_that("Default recommendations can be specified multiple ways", {
   linter_mixed1 <- undesirable_operator_linter(c("%f%", `%b%` = "no %b%"))
   linter_mixed2 <- undesirable_operator_linter(c("%f%", `%b%` = NA))
 
-  lint_message <- rex::rex('Avoid undesirable operator `%f%`')
+  lint_message <- rex::rex("Avoid undesirable operator `%f%`")
 
   lint_str <- "a %f% b"
   expect_lint(lint_str, lint_message, linter_na)

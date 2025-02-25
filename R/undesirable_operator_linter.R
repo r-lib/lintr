@@ -5,7 +5,7 @@
 #'
 #' @param op Named character vector. `names(op)` correspond to undesirable operators,
 #'   while the values give a description of why the operator is undesirable.
-#'   If `NA`, no additional information is given in the lint message. Defaults to
+#'   If `NA` or unnamed, no additional information is given in the lint message. Defaults to
 #'   [default_undesirable_operators]. To make small customizations to this list,
 #'   use [modify_defaults()].
 #' @param call_is_undesirable Logical, default `TRUE`. Should lints also be produced

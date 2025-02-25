@@ -10,9 +10,9 @@ undesirable_function_linter(
 )
 }
 \arguments{
-\item{fun}{Named character vector. \code{names(fun)} correspond to undesirable functions,
+\item{fun}{Character vector. \code{names(fun)} correspond to undesirable functions,
 while the values give a description of why the function is undesirable.
-If \code{NA}, no additional information is given in the lint message. Defaults to
+If \code{NA} or unnamed, no additional information is given in the lint message.
 \link{default_undesirable_functions}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
 
@@ -47,6 +47,12 @@ lint(
   linters = undesirable_function_linter(fun = c("dir" = NA))
 )
 
+
+lint(
+  text = 'dir <- "path/to/a/directory"',
+  linters = undesirable_function_linter(fun = "dir"))
+)
+
 # okay
 lint(
   text = "vapply(x, mean, FUN.VALUE = numeric(1))",
@@ -61,6 +67,11 @@ lint(
 lint(
   text = 'dir <- "path/to/a/directory"',
   linters = undesirable_function_linter(fun = c("dir" = NA), symbol_is_undesirable = FALSE)
+)
+
+lint(
+  text = 'dir <- "path/to/a/directory"',
+  linters = undesirable_function_linter(fun = "dir", symbol_is_undesirable = FALSE))
 )
 
 }
