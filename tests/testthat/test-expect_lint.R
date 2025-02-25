@@ -69,6 +69,10 @@ test_that("expect_lint doesn't change language", {
     expect_success(expect_lint("a=1", lint_msg, linter))
     expect_identical(Sys.getenv("LANGUAGE"), "mr")
   })
+  withr::with_envvar(c(LANGUAGE = NA), {
+    expect_success(expect_lint("a=1", lint_msg, linter))
+    expect_identical(Sys.getenv("LANGUAGE", unset = NA), NA_character_)
+  })
 })
 
 test_that("execution without testthat gives the right errors", {

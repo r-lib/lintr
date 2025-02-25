@@ -121,9 +121,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
 #' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
-#' @param show_progress Logical controlling whether to show linting progress with a simple text
-#'   progress bar _via_ [utils::txtProgressBar()]. The default behavior is to show progress in
-#'   [interactive()] sessions not running a testthat suite.
+#' @param show_progress Logical controlling whether to show linting progress with
+#'   [cli::cli_progress_along()]. The default behavior is to show progress in [interactive()] sessions
+#'   not running a testthat suite.
 #'
 #' @examples
 #' if (FALSE) {
@@ -186,6 +186,8 @@ lint_dir <- function(path = ".", ...,
   }
 
   if (isTRUE(show_progress)) {
+    # nocov start. Only displays after >=2 seconds;
+    #   we get ample testing interactively, so don't slow down tests just for coverage.
     lints <- lapply(
       # NB: This cli API is experimental (https://github.com/r-lib/cli/issues/709)
       cli::cli_progress_along(files, name = "Running linters"),
@@ -193,6 +195,7 @@ lint_dir <- function(path = ".", ...,
         lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
       }
     )
+    # nocov end
   } else {
     lints <- lapply(
       files,
@@ -351,16 +354,6 @@ validate_linter_object <- function(linter, name) {
     i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
     x = "Instead, it is {.obj_type_friendly {linter}}."
   ))
-}
-
-is_linter_factory <- function(fun) {
-  # A linter factory is a function whose last call is to Linter()
-  bdexpr <- body(fun)
-  # covr internally transforms each call into if (TRUE) { covr::count(...); call }
-  while (is.call(bdexpr) && (bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE"))) {
-    bdexpr <- bdexpr[[length(bdexpr)]]
-  }
-  is.call(bdexpr) && identical(bdexpr[[1L]], as.name("Linter"))
 }
 
 reorder_lints <- function(lints) {
@@ -675,12 +668,6 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 
 fill_with <- function(character = " ", length = 1L) {
   paste(collapse = "", rep.int(character, length))
-}
-
-has_positional_logical <- function(dots) {
-  length(dots) > 0L &&
-    is.logical(dots[[1L]]) &&
-    !nzchar(names2(dots)[1L])
 }
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {

@@ -17,7 +17,7 @@ test_that("it uses option settings if provided", {
 test_that("it uses config settings in same directory if provided", {
   test_dir <- tempdir()
   file <- withr::local_tempfile(tmpdir = test_dir)
-  local_config(test_dir, 'exclude: "test"')
+  local_config('exclude: "test"', test_dir)
 
   lintr:::read_settings(file)
 
@@ -32,7 +32,7 @@ test_that("it uses config home directory settings if provided", {
   path <- withr::local_tempdir()
   home_path <- withr::local_tempdir()
   file <- withr::local_tempfile(tmpdir = path)
-  local_config(home_path, 'exclude: "test"')
+  local_config('exclude: "test"', home_path)
 
   withr::with_envvar(c(HOME = home_path), lintr:::read_settings(file))
 
@@ -49,7 +49,7 @@ test_that("it uses system config directory settings if provided", {
   config_path <- file.path(config_parent_path, "R", "lintr")
   dir.create(config_path, recursive = TRUE)
   file <- withr::local_tempfile(tmpdir = path)
-  local_config(config_path, 'exclude: "test"', filename = "config")
+  local_config('exclude: "test"', config_path, filename = "config")
 
   withr::with_envvar(c(R_USER_CONFIG_DIR = config_parent_path), lintr:::read_settings(file))
 
@@ -82,10 +82,6 @@ test_that("it gives informative errors if the config file contains errors", {
 
   writeLines("a <- 1", "aaa.R")
   expect_error(lint_dir(), "Error from config setting `linters`", fixed = TRUE)
-})
-
-test_that("rot utility works as intended", {
-  expect_identical(lintr:::rot(letters), c(letters[14L:26L], LETTERS[1L:13L]))
 })
 
 # fixing #774

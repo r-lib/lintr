@@ -1,8 +1,9 @@
 #' @name lintr-deprecated
 #' @title Deprecated functions in lintr
 #'
-#' @seealso [linters] for a complete list of linters available in lintr.
-#' @evalRd rd_tags("single_quotes_linter")
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - [deprecated_linters] for a list of linters tagged as deprecated.
 #' @keywords internal
 NULL
 
@@ -14,14 +15,9 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
     what = "unneeded_concatenation_linter",
     alternative = "unnecessary_concatenation_linter",
     version = "3.1.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-
-  stopifnot(
-    is.logical(allow_single_expression),
-    length(allow_single_expression) == 1L
-  )
-  unnecessary_concatenation_linter(allow_single_expression = allow_single_expression)
 }
 
 #' Single quotes linter
@@ -32,9 +28,9 @@ single_quotes_linter <- function() {
     what = "single_quotes_linter",
     alternative = "quotes_linter",
     version = "3.1.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-  quotes_linter()
 }
 
 #' Consecutive stopifnot linter
@@ -45,9 +41,9 @@ consecutive_stopifnot_linter <- function() {
     what = "consecutive_stopifnot_linter",
     alternative = "consecutive_assertion_linter",
     version = "3.1.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-  consecutive_assertion_linter()
 }
 
 #' No tabs linter
@@ -58,9 +54,9 @@ no_tab_linter <- function() {
     what = "no_tab_linter",
     alternative = "whitespace_linter",
     version = "3.1.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-  whitespace_linter()
 }
 
 #' Extraction operator linter
