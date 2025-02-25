@@ -90,7 +90,8 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     is.na(fun) <- implicit_idx
   }
   if (anyNA(names(fun))) {
-    cli_abort("Found missing entries to {.arg fun}: {.val {which(is.na(names(fun)))}}")
+    missing_idx <- which(is.na(names(fun)))
+    cli_abort("Unnamed elements of {.arg fun} must not be missing, but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}.")
   }
 
   xp_condition <- xp_and(

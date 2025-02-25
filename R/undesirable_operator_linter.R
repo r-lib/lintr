@@ -81,7 +81,8 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
     is.na(op) <- implicit_idx
   }
   if (anyNA(names(op))) {
-    cli_abort("Found missing entries to {.arg op}: {.val {which(is.na(names(op)))}}")
+    missing_idx <- which(is.na(names(op)))
+    cli_abort("Unnamed elements of {.arg op} must not be missing, but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}.")
   }
 
   # infix must be handled individually below; non-assignment `=` are always OK

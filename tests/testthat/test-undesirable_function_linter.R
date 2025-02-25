@@ -67,7 +67,7 @@ test_that("invalid inputs fail correctly", {
   )
   expect_error(
     undesirable_function_linter(c(NA, NA)),
-    "Found missing entries to `fun`: 1.*2"
+    rex::rex("Unnamed elements of `fun` must not be missing", anything, "1", anything, "2")
   )
 
   expect_error(

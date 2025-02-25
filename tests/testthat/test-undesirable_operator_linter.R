@@ -63,8 +63,7 @@ test_that("undesirable_operator_linter vectorizes messages", {
 test_that("invalid inputs fail correctly", {
   expect_error(
     undesirable_operator_linter(c("***" = NA, NA)),
-    "Found missing entries to `op`: 2",
-    fixed = TRUE
+    rex::rex("Unnamed elements of `op` must not be missing", anything, "2")
   )
   expect_error(
     undesirable_operator_linter(op = NULL),
