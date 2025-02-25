@@ -200,18 +200,18 @@ object_name_xpath <- local({
   #   the complicated nested assignment available for symbols
   #   is not possible for strings, though we do still have to
   #   be aware of cases like 'a$"b" <- 1'.
-  xp_assignment_target_fmt <- paste0(
-    "not(parent::expr[OP-DOLLAR or OP-AT])",
-    "and %1$s::expr[",
-    " following-sibling::LEFT_ASSIGN%2$s",
-    " or preceding-sibling::RIGHT_ASSIGN",
-    " or following-sibling::EQ_ASSIGN",
-    "]",
-    "and not(%1$s::expr[",
-    " preceding-sibling::OP-LEFT-BRACKET",
-    " or preceding-sibling::LBB",
-    "])"
-  )
+  xp_assignment_target_fmt <- "
+    not(parent::expr[OP-DOLLAR or OP-AT])
+    and %1$s::expr[
+      following-sibling::LEFT_ASSIGN%2$s
+      or preceding-sibling::RIGHT_ASSIGN
+      or following-sibling::EQ_ASSIGN
+    ]
+    and not(%1$s::expr[
+     preceding-sibling::OP-LEFT-BRACKET
+     or preceding-sibling::LBB
+    ])
+  "
 
   # strings on LHS of := are only checked if they look like data.table usage DT[, "a" := ...]
   dt_walrus_cond <- "[
@@ -219,11 +219,29 @@ object_name_xpath <- local({
     or parent::expr/preceding-sibling::OP-LEFT-BRACKET
   ]"
 
-  glue("
+  # either an argument supplied positionally, i.e., not like 'arg = val', or the call <expr>
+  not_kwarg_cond <- "not(preceding-sibling::*[1][self::EQ_SUB])"
+
+  glue(xp_strip_comments("
   //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]
-  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent', dt_walrus_cond)} ]
+  |  //STR_CONST[
+      ({sprintf(xp_assignment_target_fmt, 'parent', dt_walrus_cond)})
+      or parent::expr
+        /preceding-sibling::expr[1]
+        /SYMBOL_FUNCTION_CALL[text() = 'setGeneric']
+      (: x= argument is the first positional argument, if not given as x= :)
+      or parent::expr[
+        (
+          ({not_kwarg_cond})
+          and count(preceding-sibling::expr[{not_kwarg_cond}]) = 1
+        )
+        or preceding-sibling::SYMBOL_SUB[1][text() = 'x']
+      ]
+        /preceding-sibling::expr[last()]
+        /SYMBOL_FUNCTION_CALL[text() = 'assign']
+     ]
   |  //SYMBOL_FORMALS
-  ")
+  "))
 })
 
 # Remove quotes or other things from names

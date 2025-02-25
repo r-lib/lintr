@@ -23,6 +23,7 @@
 * `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
 * Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
 * `get_source_expression()` captures warnings emitted by the R parser (currently always for mis-specified literal integers like `1.1L`) and `lint()` returns them as lints (#2065, @MichaelChirico).
+* `object_name_linter()` and `object_length_linter()` apply to objects assigned with `assign()` or generics created with `setGeneric()` (#1665, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
