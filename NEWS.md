@@ -20,6 +20,8 @@
 * `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
 * `seq_linter()` recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
 * `undesirable_operator_linter()` lints operators in prefix form, e.g. `` `%%`(x, 2)`` (#1910, @MichaelChirico). Disable this by setting `call_is_undesirable=FALSE`.
+* `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
+* Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` apply to objects assigned with `assign()` or generics created with `setGeneric()` (#1665, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
@@ -32,11 +34,16 @@
 * `string_boundary_linter()` omits lints of patterns like `\\^` which have an anchor but are not regular expressions (#2636, @MichaelChirico).
 * `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
 * `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
+* `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
 
 ## Notes
 
 * `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
-* `unnecessary_nesting_linter()` gives a more specific lint message, identifying the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
+* `unnecessary_nesting_linter()` gives a more specific lint message identifying:
+   + the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
+   + the specific `if()` statement that can be combined with the linted one (#1891, @MichaelChirico).
+* The description in `?paste_linter` of `allow_file_path=` has been corrected (#2675, @MichaelChirico). In particular, `allow_file_path="never"` is the most strict form, `allow_file_path="always"` is the most lax form.
+* `comment_token` is removed from settings. This was a vestige of the now-defunct support for posting GitHub comments.
 
 # lintr 3.2.0
 

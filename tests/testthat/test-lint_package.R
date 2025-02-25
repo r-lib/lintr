@@ -80,7 +80,7 @@ test_that(
 
     # Add a .lintr that excludes the whole of `abc.R` and the first line of
     # `jkl.R` (and remove it on finishing this test)
-    local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
+    local_config("exclusions: list('R/abc.R', 'R/jkl.R' = 1)", pkg_path)
 
     expected_lines <- c("mno = 789", "x = 1:4")
     lints_from_outside <- lint_package(
@@ -186,8 +186,8 @@ test_that(
     on.exit(unlink(file.path(pkg_path, ".github"), recursive = TRUE), add = TRUE)
 
     local_config(
-      file.path(pkg_path, ".github", "linters"),
       "linters: linters_with_defaults(quotes_linter(\"'\"))",
+      file.path(pkg_path, ".github", "linters"),
       filename = "lintr_test_config"
     )
 

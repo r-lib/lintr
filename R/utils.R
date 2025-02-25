@@ -111,14 +111,6 @@ logical_env <- function(x) {
   res
 }
 
-# from ?chartr
-rot <- function(ch, k = 13L) {
-  p0 <- function(...) paste(c(...), collapse = "")
-  alphabet <- c(letters, LETTERS, " '")
-  idx <- seq_len(k)
-  chartr(p0(alphabet), p0(c(alphabet[-idx], alphabet[idx])), ch)
-}
-
 try_silently <- function(expr) {
   suppressWarnings(
     suppressMessages(
@@ -286,5 +278,5 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
 }
 
 cli_abort_internal <- function(...) {
-  cli_abort(..., .internal = TRUE)
+  cli_abort(..., .internal = TRUE) # nocov
 }
