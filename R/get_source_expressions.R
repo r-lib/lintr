@@ -91,10 +91,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   #   from the message itself, so we just grep the source for the
   #   exact string generating the warning; de-dupe in case of
   #   multiple exact matches like '1e-3L; 1e-3L'
-  if (length(w) > 0L) {
-    w <- unique(w)
-    w <- flatten_lints(lapply(w, lint_parse_warning, source_expression))
-  }
+  w <- lint_parse_warnings(w)
 
   if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
@@ -165,6 +162,18 @@ lint_parse_error <- function(e, source_expression) {
 
   # an error that does not use R_ParseErrorMsg
   lint_parse_error_nonstandard(e, source_expression)
+}
+
+#' Currently no way to distinguish the source of the warning
+#'   from the message itself, so we just grep the source for the
+#'   exact string generating the warning; de-dupe in case of
+#'   multiple exact matches like '1e-3L; 1e-3L'
+#' @noRd
+lint_parse_warnings <- function(w) {
+  if (!length(w)) {
+    return(w)
+  }
+  flatten_lints(lapply(unique(w), lint_parse_warning, source_expression))
 }
 
 #' The set of parser warnings seems pretty stable, but as
