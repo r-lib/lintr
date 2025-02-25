@@ -2,10 +2,18 @@
 #'
 #' Report the use of undesirable functions and suggest an alternative.
 #'
-#' @param fun Character vector. `names(fun)` correspond to undesirable functions,
-#'   while the values give a description of why the function is undesirable.
-#'   If `NA` or unnamed, no additional information is given in the lint message.
-#'   [default_undesirable_functions]. To make small customizations to this list,
+#' @param fun Character vector of undesirable function names. Input can be any of
+#'   three types, depending on whether the input is named or `NA`.
+#'   - Unnamed entries must be a character string specifying an undesirable function.
+#'   - For named entries, the name specifies the undesirable function.
+#'     + If the entry is a character string, it is used as a description of
+#'       why a given function is undesirable
+#'     + Otherwise, entries should be missing (`NA`)
+#'   A generic admonition that the named function is undesirable is used if no
+#'     specific description is provided.
+#'   Input can also be a list of character strings for convenience.
+#'
+#'   Defaults to [default_undesirable_functions]. To make small customizations to this list,
 #'   use [modify_defaults()].
 #' @param symbol_is_undesirable Whether to consider the use of an undesirable function
 #'   name as a symbol undesirable or not.
