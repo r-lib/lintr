@@ -470,6 +470,10 @@ test_that("parser warnings are captured in output", {
   with_content_to_parse("1e-3L\n1+1\n1.0L\n2+2\n1.1L", {
     expect_length(warning, 3L)
   })
+  with_content_to_parse("1e-3L\nc(", {
+    expect_length(warning, 1L)
+    expect_length(error, 1L)
+  })
 })
 
 test_that("parser warnings generate lints", {
@@ -522,6 +526,15 @@ test_that("parser warnings generate lints", {
       list("integer literal 2\\.2L contains decimal", line_number = 7L),
       list("integer literal 2\\.0L", line_number = 9L),
       list("non-integer value 2e-3L", line_number = 11L)
+    ),
+    linters = list()
+  )
+  # parser catches warning before erroring
+  expect_lint(
+    "1e-3L; c(",
+    list(
+      list("non-integer value 1e-3L", type = "warning"),
+      list("unexpected end of input", type = "error")
     ),
     linters = list()
   )
