@@ -25,7 +25,7 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
   # nocov start
   if (!requireNamespace("cyclocomp", quietly = TRUE)) {
     cli::cli_warn(c(
-      "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}. Returning a null linter.",
+      "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}.",
       i = "Please install the needed {.pkg cyclocomp} package."
     ))
     return(Linter(function(.) cli_abort("cyclocomp_linter is disabled due to lack of {.pkg cyclocomp} package")))
