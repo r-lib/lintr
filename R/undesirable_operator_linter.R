@@ -3,7 +3,7 @@
 #' Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
 #' [`<<-`][base::assignOps] and suggest an alternative.
 #'
-#' @param fun Character vector of undesirable operators. Input can be any of three types:
+#' @param op Character vector of undesirable operators. Input can be any of three types:
 #'   - Unnamed entries must be a character string specifying an undesirable operator.
 #'   - For named entries, the name specifies the undesirable operator.
 #'     + If the entry is a character string, it is used as a description of

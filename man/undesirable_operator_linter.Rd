@@ -10,10 +10,7 @@ undesirable_operator_linter(
 )
 }
 \arguments{
-\item{call_is_undesirable}{Logical, default \code{TRUE}. Should lints also be produced
-for prefix-style usage of the operators provided in \code{op}?}
-
-\item{fun}{Character vector of undesirable operators. Input can be any of three types:
+\item{op}{Character vector of undesirable operators. Input can be any of three types:
 \itemize{
 \item Unnamed entries must be a character string specifying an undesirable operator.
 \item For named entries, the name specifies the undesirable operator.
@@ -29,6 +26,9 @@ Input can also be a list of character strings for convenience.
 
 Defaults to \link{default_undesirable_operators}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
+
+\item{call_is_undesirable}{Logical, default \code{TRUE}. Should lints also be produced
+for prefix-style usage of the operators provided in \code{op}?}
 }
 \description{
 Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
