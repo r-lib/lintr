@@ -1,11 +1,11 @@
 #' Pipe consistency linter
 #'
-#' Check that pipe operators are used consistently by file, or optionally
-#' specify one valid pipe operator.
+#' Check that the recommended pipe operator is used, or more conservatively that
+#'   pipes are consistent by file.
 #'
-#' @param pipe Which pipe operator is valid (either `"%>%"` or `"|>"`). By default
-#' (`"auto"`), the linter has no preference but will check that each file uses
-#' only one type of pipe operator.
+#' @param pipe Which pipe operator is valid (either `"%>%"` or `"|>"`). The default
+#'   is to use the Guide-recommended native pipe (`|>`). Value `"auto"` will instead
+#'   only enforce consistency, i.e., that in any given file there is only one pipe.
 #'
 #' @examples
 #' # will produce lints
@@ -21,18 +21,18 @@
 #'
 #' # okay
 #' lint(
-#'   text = "1:3 %>% mean() %>% as.character()",
+#'   text = "1:3 |> mean() |> as.character()",
 #'   linters = pipe_consistency_linter()
 #' )
 #'
 #' lint(
-#'   text = "1:3 |> mean() |> as.character()",
-#'   linters = pipe_consistency_linter()
+#'   text = "1:3 %>% mean() %>% as.character()",
+#'   linters = pipe_consistency_linter("%>%")
 #' )
 #' @evalRd rd_tags("pipe_consistency_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
+pipe_consistency_linter <- function(pipe = c("|>", "auto", "%>%")) {
   pipe <- match.arg(pipe)
 
   xpath_magrittr <- glue("//SPECIAL[{ xp_text_in_table(magrittr_pipes) }]")
