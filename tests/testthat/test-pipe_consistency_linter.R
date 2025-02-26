@@ -145,6 +145,8 @@ test_that("pipe_consistency_linter works with %>% argument", {
 })
 
 test_that("simply enforcing a consistent style is supported", {
+  skip_if_not_r_version("4.1.0")
+
   linter <- pipe_consistency_linter("auto")
   lint_message <- rex::rex("Stick to one pipe operator; found 1 instances of %>% and 1 instances of |>.")
 
