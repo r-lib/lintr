@@ -81,7 +81,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
     is.na(op) <- implicit_idx
   }
   if (anyNA(names(op))) {
-    missing_idx <- which(is.na(names(fun))) # nolint: object_usage_linter. False positive.
+    missing_idx <- which(is.na(names(op))) # nolint: object_usage_linter. False positive.
     cli_abort(paste(
       "Unnamed elements of {.arg op} must not be missing,",
       "but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}."
