@@ -45,7 +45,11 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       signal = "warning"
     )
 
-    interpret_extensions <- (if (interpret_glue) union else setdiff)(interpret_extensions, "glue")
+    if (interpret_glue) {
+      interpret_extensions <- union(interpret_extensions, "glue")
+    } else {
+      interpret_extensions <- setdiff(interpret_extensions, "glue")
+    }
   }
 
   if (length(interpret_extensions) > 0L) {
