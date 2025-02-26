@@ -3,8 +3,9 @@
 #' Check that closures have the proper usage using [codetools::checkUsage()].
 #' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue (Deprecated) If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
-#'   which are only used in a glue expression. Provide `interpret_extensions` instead, see below.
+#' @param interpret_glue (Deprecated) If `TRUE`, interpret [glue::glue()] calls to avoid
+#'   false positives caused by local variables which are only used in a glue expression.
+#'   Provide `interpret_extensions` instead, see below.
 #' @param interpret_extensions Character vector of extensions to interpret. These are meant to cover known cases where
 #'   variables may be used in ways understood by the reader but not by `checkUsage()` to avoid false positives.
 #'   Currently `"glue"` and `"rlang"` are supported, both of which are in the default.
