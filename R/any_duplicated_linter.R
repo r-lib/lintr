@@ -35,7 +35,7 @@
 #' @export
 any_duplicated_linter <- function() {
   any_duplicated_xpath <- "
-  following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
+  following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'duplicated']]
     /parent::expr[
       count(expr) = 2
       or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
@@ -56,32 +56,40 @@ any_duplicated_linter <- function() {
   //{ c('EQ', 'NE', 'GT', 'LT') }
     /parent::expr
     /expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
-      and expr[expr[1][
+      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
+      and expr/expr[1][
         SYMBOL_FUNCTION_CALL[text() = 'unique']
         and (
           following-sibling::expr =
             parent::expr
-            /parent::expr
-            /parent::expr
-            /expr
-            /expr[1][SYMBOL_FUNCTION_CALL[text()= 'length']]
-            /following-sibling::expr
-          or
-          following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
+              /parent::expr
+              /parent::expr
+              /expr
+              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
+              /following-sibling::expr
+          or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
             parent::expr
+              /parent::expr
+              /parent::expr
+              /expr
+              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'nrow']]
+              /following-sibling::expr
+          or parent::expr
             /parent::expr
             /parent::expr
-            /expr
-            /expr[1][SYMBOL_FUNCTION_CALL[text()= 'nrow']]
-            /following-sibling::expr
+            /expr[
+              SYMBOL[text() = '.N']
+              or (expr/SYMBOL_FUNCTION_CALL[text() = 'n'] and count(expr) = 1)
+            ]
         )
-      ]]
+      ]
     ]
   ")
   length_unique_xpath <- paste(length_unique_xpath_parts, collapse = " | ")
 
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
+  uses_dtn_xpath <- "./parent::expr/expr/SYMBOL[text() = '.N']"
+  uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
@@ -96,11 +104,14 @@ any_duplicated_linter <- function() {
     )
 
     length_unique_expr <- xml_find_all(xml, length_unique_xpath)
-    lint_message <- ifelse(
-      is.na(xml_find_first(length_unique_expr, uses_nrow_xpath)),
-      "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x).",
+    lint_message <- character(length(length_unique_expr))
+    lint_message[] <- "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)."
+    lint_message[!is.na(xml_find_first(length_unique_expr, uses_nrow_xpath))] <-
       "anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"
-    )
+    lint_message[!is.na(xml_find_first(length_unique_expr, uses_dtn_xpath))] <-
+      "anyDuplicated(x) == 0L is better than length(unique(x)) == .N"
+    lint_message[!is.na(xml_find_first(length_unique_expr, uses_dplyr_xpath))] <-
+      "anyDuplicated(x) == 0L is better than length(unique(x)) == n()."
     length_unique_lints <- xml_nodes_to_lints(
       length_unique_expr,
       source_expression = source_expression,
