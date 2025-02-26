@@ -8,7 +8,7 @@ test_that("missing_argument_linter skips allowed usages", {
   expect_no_lint("array[, , 1]", linter)
   expect_no_lint("switch(a =, b =, c = 1, 0)", linter)
   expect_no_lint("alist(a =, b =, c = 1, 0)", linter)
-  expect_no_lint("pairlist(path = quote(expr = ))", linter) #1889
+  expect_no_lint("pairlist(path = quote(expr = ))", linter) # #1889
 
   # always allow this missing usage
   expect_no_lint("foo()", linter)
