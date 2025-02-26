@@ -98,7 +98,7 @@ any_duplicated_linter <- function() {
             parent::expr
               /parent::expr
               /expr
-              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
+              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length' or text() = 'nrow']]
               /following-sibling::expr
           or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
             parent::expr

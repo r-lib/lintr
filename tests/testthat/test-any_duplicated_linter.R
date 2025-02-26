@@ -61,13 +61,13 @@ test_that("dplyr & data.table equivalents are also linted", {
   expect_no_lint("x %>% summarize(length(unique(col)) == n(2))", linter)
   expect_no_lint("x %>% summarize(length(unique(col)) == n)", linter)
 
-  expect_lint("uniqueN(x) == nrow(x)", "xxx", linter)
-  expect_lint("data.table::uniqueN(x) == nrow(x)", "xxx", linter)
+  expect_lint("uniqueN(x) == nrow(x)", rex::rex("uniqueN(DF$col) == nrow(DF)"), linter)
+  expect_lint("data.table::uniqueN(x) == nrow(x)", rex::rex("uniqueN(DF$col) == nrow(DF)"), linter)
   expect_lint("x[, length(unique(col)) == .N]", rex::rex("length(unique(x)) == .N"), linter)
   expect_lint("x[, uniqueN(col) == .N]", rex::rex("uniqueN(x) == .N"), linter)
 
-  expect_lint("n_distinct(x) == nrow(x)", "xxx", linter)
-  expect_lint("dplyr::n_distinct(x) == nrow(x)", "xxx", linter)
+  expect_lint("n_distinct(x) == nrow(x)", rex::rex("n_distinct(DF$col) == nrow(DF)"), linter)
+  expect_lint("dplyr::n_distinct(x) == nrow(x)", rex::rex("n_distinct(DF$col) == nrow(DF)"), linter)
   expect_lint("x %>% summarize(length(unique(col)) == n())", rex::rex("length(unique(x)) == n()"), linter)
   expect_lint("x %>% summarize(n_distinct(col) == n())", rex::rex("n_distinct(x) == n()"), linter)
 })
