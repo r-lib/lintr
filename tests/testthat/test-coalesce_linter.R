@@ -1,5 +1,5 @@
-test_that("null_coalescing_linter skips allowed usage", {
-  linter <- null_coalescing_linter()
+test_that("coalesce_linter skips allowed usage", {
+  linter <- coalesce_linter()
 
   expect_no_lint("if (is.null(x)) y", linter)
   expect_no_lint("if (!is.null(x)) y", linter)
@@ -15,8 +15,8 @@ test_that("null_coalescing_linter skips allowed usage", {
   expect_no_lint("if (!is.null(s <- foo())) x else y", linter)
 })
 
-test_that("null_coalescing_linter blocks simple disallowed usage", {
-  linter <- null_coalescing_linter()
+test_that("coalesce_linter blocks simple disallowed usage", {
+  linter <- coalesce_linter()
   lint_msg <- rex::rex("Use x %||% y instead of if (is.null(x))")
   lint_msg_not <- rex::rex("Use x %||% y instead of if (!is.null(x))")
 
@@ -37,8 +37,8 @@ test_that("null_coalescing_linter blocks simple disallowed usage", {
   expect_lint("if (!is.null(foo(x))) foo(x) else y", lint_msg_not, linter)
 })
 
-test_that("null_coalescing_linter blocks usage with implicit assignment", {
-  linter <- null_coalescing_linter()
+test_that("coalesce_linter blocks usage with implicit assignment", {
+  linter <- coalesce_linter()
   lint_msg <- rex::rex("Use x %||% y instead of if (is.null(x))")
   lint_msg_not <- rex::rex("Use x %||% y instead of if (!is.null(x))")
 
@@ -67,6 +67,6 @@ test_that("lints vectorize", {
       list(rex::rex("if (is.null(x))"), line_number = 4L, column_number = 3L),
       list(rex::rex("if (!is.null(x))"), line_number = 5L, column_number = 3L)
     ),
-    null_coalescing_linter()
+    coalesce_linter()
   )
 })

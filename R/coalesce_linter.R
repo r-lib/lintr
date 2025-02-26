@@ -10,40 +10,40 @@
 #' # will produce lints
 #' lint(
 #'   text = "if (is.null(x)) y else x",
-#'   linters = null_coalescing_linter()
+#'   linters = coalesce_linter()
 #' )
 #'
 #' lint(
 #'   text = "if (!is.null(x)) x else y",
-#'   linters = null_coalescing_linter()
+#'   linters = coalesce_linter()
 #' )
 #'
 #' lint(
 #'   text = "if (is.null(x[1])) x[2] else x[1]",
-#'   linters = null_coalescing_linter()
+#'   linters = coalesce_linter()
 #' )
 #'
 #' # okay
 #' lint(
 #'   text = "x %||% y",
-#'   linters = null_coalescing_linter()
+#'   linters = coalesce_linter()
 #' )
 #'
 #' lint(
 #'   text = "x %||% y",
-#'   linters = null_coalescing_linter()
+#'   linters = coalesce_linter()
 #' )
 #'
 #' lint(
 #'   text = "x[1] %||% x[2]",
-#'   linters = null_coalescing_linter()
+#'   linters = coalesce_linter()
 #' )
 #'
 #'
-#' @evalRd rd_tags("null_coalescing_linter")
+#' @evalRd rd_tags("coalesce_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-null_coalescing_linter <- function() {
+coalesce_linter <- function() {
   braced_expr_cond <- "expr[1][OP-LEFT-BRACE and count(*) = 3]/expr"
   xpath <- glue("
   parent::expr[
