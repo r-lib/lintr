@@ -45,6 +45,7 @@ The following linters exist:
 \item{\code{\link{boolean_arithmetic_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
+\item{\code{\link{coalesce_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{commas_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{comparison_negation_linter}} (tags: consistency, readability)}
@@ -97,7 +98,6 @@ The following linters exist:
 \item{\code{\link{nested_pipe_linter}} (tags: configurable, consistency, readability)}
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{nrow_subset_linter}} (tags: best_practices, consistency, efficiency)}
-\item{\code{\link{null_coalescing_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{nzchar_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}

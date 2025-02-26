@@ -15,6 +15,7 @@ The following linters are tagged with 'consistency':
 \itemize{
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{class_equals_linter}}}
+\item{\code{\link{coalesce_linter}}}
 \item{\code{\link{comparison_negation_linter}}}
 \item{\code{\link{condition_message_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
@@ -30,7 +31,6 @@ The following linters are tagged with 'consistency':
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nested_pipe_linter}}}
 \item{\code{\link{nrow_subset_linter}}}
-\item{\code{\link{null_coalescing_linter}}}
 \item{\code{\link{numeric_leading_zero_linter}}}
 \item{\code{\link{nzchar_linter}}}
 \item{\code{\link{object_name_linter}}}

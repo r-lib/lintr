@@ -17,6 +17,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{any_is_na_linter}}}
 \item{\code{\link{boolean_arithmetic_linter}}}
 \item{\code{\link{class_equals_linter}}}
+\item{\code{\link{coalesce_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{condition_call_linter}}}
 \item{\code{\link{condition_message_linter}}}
@@ -48,7 +49,6 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
 \item{\code{\link{nrow_subset_linter}}}
-\item{\code{\link{null_coalescing_linter}}}
 \item{\code{\link{nzchar_linter}}}
 \item{\code{\link{object_overwrite_linter}}}
 \item{\code{\link{outer_negation_linter}}}
