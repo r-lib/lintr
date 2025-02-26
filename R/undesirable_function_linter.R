@@ -2,14 +2,13 @@
 #'
 #' Report the use of undesirable functions and suggest an alternative.
 #'
-#' @param fun Character vector of undesirable function names. Input can be any of
-#'   three types, depending on whether the input is named or `NA`.
+#' @param fun Character vector of undesirable function names. Input can be any of three types:
 #'   - Unnamed entries must be a character string specifying an undesirable function.
 #'   - For named entries, the name specifies the undesirable function.
 #'     + If the entry is a character string, it is used as a description of
 #'       why a given function is undesirable
 #'     + Otherwise, entries should be missing (`NA`)
-#'   A generic admonition that the named function is undesirable is used if no
+#'   A generic message that the named function is undesirable is used if no
 #'     specific description is provided.
 #'   Input can also be a list of character strings for convenience.
 #'

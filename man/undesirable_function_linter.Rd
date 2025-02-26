@@ -10,8 +10,7 @@ undesirable_function_linter(
 )
 }
 \arguments{
-\item{fun}{Character vector of undesirable function names. Input can be any of
-three types, depending on whether the input is named or \code{NA}.
+\item{fun}{Character vector of undesirable function names. Input can be any of three types:
 \itemize{
 \item Unnamed entries must be a character string specifying an undesirable function.
 \item For named entries, the name specifies the undesirable function.
@@ -19,7 +18,7 @@ three types, depending on whether the input is named or \code{NA}.
 \item If the entry is a character string, it is used as a description of
 why a given function is undesirable
 \item Otherwise, entries should be missing (\code{NA})
-A generic admonition that the named function is undesirable is used if no
+A generic message that the named function is undesirable is used if no
 specific description is provided.
 Input can also be a list of character strings for convenience.
 }
