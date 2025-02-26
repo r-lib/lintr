@@ -3,10 +3,13 @@
 #' Check that closures have the proper usage using [codetools::checkUsage()].
 #' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
-#'   which are only used in a glue expression.
-#' @param interpret_rlang If `TRUE`, interpret names like 'key' in `.env$key` to avoid false positives caused
-#'   by local variables which are only used in, e.g., a `mutate()` expression.
+#' @param interpret_glue (Deprecated) If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#'   which are only used in a glue expression. Provide `interpret_extensions` instead, see below.
+#' @param interpret_extensions Character vector of extensions to interpret. These are meant to cover known cases where
+#'   variables may be used in ways understood by the reader but not by `checkUsage()` to avoid false positives.
+#'   Currently `"glue"` and `"rlang"` are supported, both of which are in the default.
+#'   - For `glue`, examine [glue::glue()] calls.
+#'   - For `rlang`, examine `.env$key` usages.
 #' @param skip_with A logical. If `TRUE` (default), code in `with()` expressions
 #'   will be skipped. This argument will be passed to `skipWith` argument of
 #'   `codetools::checkUsage()`.
@@ -31,7 +34,23 @@
 #' @evalRd rd_linters("package_development")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-object_usage_linter <- function(interpret_glue = TRUE, interpret_rlang = TRUE, skip_with = TRUE) {
+object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c("glue", "rlang"), skip_with = TRUE) {
+  if (!is.null(interpret_glue)) {
+    lintr_deprecated(
+      "interpret_glue",
+      '"glue" in interpret_extensions',
+      version = "3.3.0",
+      type = "Argument",
+      signal = "warning"
+    )
+
+    interpret_extensions <- (if (interpret_glue) union else setdiff)(interpret_extensions, "glue")
+  }
+
+  if (length(interpret_extensions) > 0L) {
+    interpret_extensions <- match.arg(interpret_extensions, several.ok = TRUE)
+  }
+
   # NB: difference across R versions in how EQ_ASSIGN is represented in the AST
   #   (under <expr_or_assign_or_help> or <equal_assign>)
   # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
@@ -79,8 +98,7 @@ object_usage_linter <- function(interpret_glue = TRUE, interpret_rlang = TRUE, s
       if (inherits(fun, "try-error")) {
         return()
       }
-      known_used_symbols <-
-        known_used_symbols(fun_assignment, interpret_glue = interpret_glue, interpret_rlang = interpret_rlang)
+      known_used_symbols <- known_used_symbols(fun_assignment, interpret_extensions = interpret_extensions)
       res <- parse_check_usage(
         fun,
         known_used_symbols = known_used_symbols,
@@ -265,17 +283,14 @@ get_imported_symbols <- function(xml) {
   }))
 }
 
-known_used_symbols <- function(fun_assignment, interpret_glue, interpret_rlang) {
+known_used_symbols <- function(fun_assignment, interpret_extensions) {
   unique(c(
-    extract_env_symbols(fun_assignment, interpret_rlang = interpret_rlang),
-    extract_glued_symbols(fun_assignment, interpret_glue = interpret_glue)
+    if ("rlang" %in% interpret_extensions) extract_env_symbols(fun_assignment),
+    if ("glue" %in% interpret_extensions) extract_glued_symbols(fun_assignment)
   ))
 }
 
-extract_env_symbols <- function(fun_assignment, interpret_rlang) {
-  if (!interpret_rlang) {
-    return(character())
-  }
+extract_env_symbols <- function(fun_assignment) {
   env_names <- xml_find_all(
     fun_assignment,
     "
