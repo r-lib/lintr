@@ -74,7 +74,7 @@ package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
 paste_linter,best_practices consistency configurable
 pipe_call_linter,style readability
-pipe_consistency_linter,style readability configurable
+pipe_consistency_linter,default style readability configurable
 pipe_continuation_linter,style readability default
 pipe_return_linter,best_practices common_mistakes
 print_linter,best_practices consistency

@@ -30,7 +30,9 @@
 #'   linters = pipe_consistency_linter("%>%")
 #' )
 #' @evalRd rd_tags("pipe_consistency_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - <https://style.tidyverse.org/pipes.html#magrittr>
 #' @export
 pipe_consistency_linter <- function(pipe = c("|>", "auto", "%>%")) {
   pipe <- match.arg(pipe)
