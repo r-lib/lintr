@@ -91,7 +91,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   #   from the message itself, so we just grep the source for the
   #   exact string generating the warning; de-dupe in case of
   #   multiple exact matches like '1e-3L; 1e-3L'
-  w <- lint_parse_warnings(w, source_expression)
+  w <- lint_parse_warnings(w, parsed_content, source_expression)
 
   if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
@@ -160,24 +160,40 @@ lint_parse_error <- function(e, source_expression) {
 #'   exact string generating the warning; de-dupe in case of
 #'   multiple exact matches like '1e-3L; 1e-3L'
 #' @noRd
-lint_parse_warnings <- function(w, source_expression) {
+lint_parse_warnings <- function(w, parsed_content, source_expression) {
   if (!length(w)) {
     return(w)
   }
-  flatten_lints(lapply(unique(w), lint_parse_warning, source_expression))
+  flatten_lints(lapply(unique(w), lint_parse_warning, parsed_content, source_expression))
 }
 
 #' The set of parser warnings seems pretty stable, but as
 #'   long as they don't generate sourceref hints, we're
 #'   stuck with this somewhat-manual approach.
 #' @noRd
-lint_parse_warning <- function(w, source_expression) {
-  c(
-    lint_warning_matching(w, parser_warning_regexes[["int_with_decimal"]], source_expression),
-    lint_warning_matching(w, parser_warning_regexes[["nonint_with_l"]], source_expression),
-    lint_warning_matching(w, parser_warning_regexes[["unneeded_decimal"]], source_expression),
-    NULL
-  )
+lint_parse_warning <- function(w, parsed_content, source_expression) {
+  for (lint_re in parser_warning_regexes) {
+    bad_txt <- re_matches(w, lint_re)$txt[1L]
+    # at most one regex matches the warning
+    if (is.na(bad_txt)) {
+      next
+    } else {
+      break
+    }
+  }
+  # use the parse tree to avoid baroque matches to comments, strings
+  hits <- parsed_content[with(parsed_content, token == "NUM_CONST" & text == bad_txt), ]
+  lapply(seq_len(nrow(hits)), function(ii) {
+    Lint(
+      filename = source_expression$filename,
+      line_number = hits$line1[ii],
+      column_number = hits$col1[ii],
+      type = "warning",
+      message = w,
+      line = source_expression$lines[[as.character(hits$line1[ii])]],
+      ranges = list(c(hits$col1[ii], hits$col2[ii]))
+    )
+  })
 }
 
 parser_warning_regexes <- list(
@@ -188,29 +204,6 @@ parser_warning_regexes <- list(
   unneeded_decimal =
     rex("integer literal ", capture(anything, name = "txt"), " contains unnecessary decimal point")
 )
-
-lint_warning_matching <- function(w, lint_re, source_expression) {
-  bad_txt <- re_matches(w, lint_re)$txt[1L]
-  if (is.na(bad_txt)) {
-    return(NULL)
-  }
-  hits <- re_matches(source_expression$lines, rex(bad_txt), global = TRUE, locations = TRUE)
-  line_number <- rep(seq_along(hits), vapply(hits, NROW, integer(1L)))
-  hits <- do.call(rbind, hits)
-  hits$line_number <- line_number
-  hits <- hits[!is.na(hits$start), ]
-  lapply(seq_len(nrow(hits)), function(ii) {
-    Lint(
-      filename = source_expression$filename,
-      line_number = hits$line_number[ii],
-      column_number = hits$start[ii],
-      type = "warning",
-      message = w,
-      line = source_expression$lines[[as.character(hits$line_number[ii])]],
-      ranges = list(c(hits$start[ii], hits$end[ii]))
-    )
-  })
-}
 
 #' Ensure a string is valid for printing
 #'

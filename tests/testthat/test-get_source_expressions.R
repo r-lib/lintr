@@ -507,6 +507,13 @@ test_that("parser warnings generate lints", {
       2.0L
       5 + 5
       2e-3L
+      # don't match strictly on regex, use parse tree
+      # 3.0L
+      # 3e-3L
+      # 3.3L
+      '4.0L'
+      '4e-3L'
+      '4.4L'
     "),
     list(
       list("non-integer value 1e-3L", line_number = 1L),
