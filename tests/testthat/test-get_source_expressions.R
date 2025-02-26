@@ -472,7 +472,7 @@ test_that("parser warnings are captured in output", {
   })
   with_content_to_parse("1e-3L\nc(", {
     expect_length(warning, 1L)
-    expect_length(error, 1L)
+    expect_length(error, 8L)
   })
 })
 
