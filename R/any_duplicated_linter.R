@@ -117,8 +117,6 @@ any_duplicated_linter <- function() {
     ]
   ")
 
-  distinct_call_xpath <- ""
-
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
   uses_dtn_xpath <- "./parent::expr/expr/SYMBOL[text() = '.N']"
   uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
