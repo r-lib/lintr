@@ -1,7 +1,8 @@
 defunct_linters <- subset(
   read.csv("inst/lintr/linters.csv"),
   grepl("\\bdefunct\\b", tags),
-  "linter"
+  "linter",
+  drop = TRUE
 )
 
 pkgload::load_all()
