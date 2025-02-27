@@ -35,9 +35,6 @@ test_that("default styles are linted correctly", {
     recursive = FALSE,
     use.names = FALSE
   )
-  expected_order <- order(vapply(expected_lints, function(x) x$line_number, integer(1L)))
-  expected_lints <- expected_lints[expected_order]
-  debug(expect_lint)
   expect_lint(
     trim_some("
       x <-               #  1
@@ -73,7 +70,8 @@ test_that("default styles are linted correctly", {
         NULL
     "),
     expected_lints,
-    linters
+    linters,
+    ignore_order = TRUE
   )
 })
 
