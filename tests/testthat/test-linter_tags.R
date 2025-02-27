@@ -261,7 +261,7 @@ test_that("other packages' linters can be included", {
     expect_identical(
       available_linters(packages = "myPkg"),
       custom_db[0L, ]
-    )
+    ),
     'must contain the columns "linter" and "tags"'
   )
 })
