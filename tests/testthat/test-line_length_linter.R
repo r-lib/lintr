@@ -123,4 +123,10 @@ test_that("string bodies can be ignored", {
     lint_msg,
     linter
   )
+
+  expect_lint(
+    "123456789012345",
+    lint_msg,
+    linter
+  )
 })
