@@ -304,6 +304,12 @@ test_that("assignment operator can be toggled", {
   expect_no_lint("if (a <- TRUE) 1", eq_linter)
   expect_no_lint("if (a <- TRUE) 1", any_linter)
 
+  expect_no_lint("while ({a = TRUE}) 1", eq_linter)
+  expect_no_lint("while ({a = TRUE}) 1", any_linter)
+
+  expect_no_lint("while (a <- TRUE) 1", eq_linter)
+  expect_no_lint("while (a <- TRUE) 1", any_linter)
+
   expect_no_lint("for (ii in {a = TRUE}) 1", eq_linter)
   expect_no_lint("for (ii in {a = TRUE}) 1", any_linter)
 
@@ -370,4 +376,17 @@ test_that("Deprecated arguments error as intended", {
   expect_error(regexp = "allow_cascading_assign", assignment_linter(allow_cascading_assign = FALSE))
   expect_error(regexp = "allow_right_assign", assignment_linter(allow_right_assign = TRUE))
   expect_error(regexp = "allow_pipe_assign", assignment_linter(allow_pipe_assign = TRUE))
+})
+
+test_that("implicit '<-' assignments inside calls are ignored where top-level '<-' is disallowed", {
+  linter <- assignment_linter(operator = "=")
+
+  expect_no_lint("if (any(idx <- is.na(y))) which(idx)", linter)
+  expect_no_lint("if (any(foo(idx <- is.na(y)))) which(idx)", linter)
+
+  expect_no_lint("while (any(idx <- is.na(y))) break", linter)
+  expect_no_lint("while (any(foo(idx <- is.na(y)))) break", linter)
+
+  expect_no_lint("for (i in foo(idx <- is.na(y))) which(idx)", linter)
+  expect_no_lint("for (i in foo(bar(idx <- is.na(y)))) which(idx)", linter)
 })
