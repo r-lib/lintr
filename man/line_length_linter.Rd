@@ -4,10 +4,14 @@
 \alias{line_length_linter}
 \title{Line length linter}
 \usage{
-line_length_linter(length = 80L)
+line_length_linter(length = 80L, ignore_string_bodies = FALSE)
 }
 \arguments{
-\item{length}{maximum line length allowed. Default is 80L (Hollerith limit).}
+\item{length}{Maximum line length allowed. Default is \code{80L} (Hollerith limit).}
+
+\item{ignore_string_bodies}{Logical, default \code{FALSE}. If \code{TRUE}, the contents
+of string literals are ignored. The quotes themselves are included, so this
+mainly affects wide multiline strings, e.g. SQL queries.}
 }
 \description{
 Check that the line length of both comments and code is less than \code{length}.

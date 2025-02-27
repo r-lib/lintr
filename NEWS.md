@@ -23,6 +23,7 @@
 * `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
 * Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` apply to objects assigned with `assign()` or generics created with `setGeneric()` (#1665, @MichaelChirico).
+* `line_length_linter()` has a new argument `ignore_string_bodies` (defaulting to `FALSE`) which governs whether the contents of multi-line string bodies should be linted (#856, @MichaelChirico). We think the biggest use case for this is writing SQL in R strings, especially in cases where the recommended string with for SQL & R differ.
 
 ### Lint accuracy fixes: removing false positives
 
