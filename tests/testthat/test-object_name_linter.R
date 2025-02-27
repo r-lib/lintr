@@ -1,42 +1,81 @@
-# styler: off
-test_that("styles are correctly identified", {
-  do_style_check <- function(nms) lapply(unname(style_regexes), lintr:::check_style, nms = nms)
-
-  #                                            symbl   UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
-  expect_identical(do_style_check("x"),   list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
-  expect_identical(do_style_check(".x"),  list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
-  expect_identical(do_style_check("X"),   list(FALSE, TRUE,  FALSE, FALSE, TRUE,  FALSE,  FALSE,  TRUE))
-  expect_identical(do_style_check("x."),  list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("X."),  list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("x_"),  list(FALSE, FALSE, FALSE, TRUE,  FALSE, FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("X_"),  list(FALSE, FALSE, FALSE, FALSE, TRUE,  FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("xy"),  list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
-  expect_identical(do_style_check("xY"),  list(FALSE, FALSE, TRUE,  FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("Xy"),  list(FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("XY"),  list(FALSE, TRUE,  FALSE, FALSE, TRUE,  FALSE,  FALSE,  TRUE))
-  expect_identical(do_style_check("x1"),  list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,   TRUE,  FALSE))
-  expect_identical(do_style_check("X1"),  list(FALSE, TRUE,  FALSE, FALSE, TRUE,  FALSE,  FALSE,  TRUE))
-  expect_identical(do_style_check("x_y"), list(FALSE, FALSE, FALSE, TRUE,  FALSE, FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("X_Y"), list(FALSE, FALSE, FALSE, FALSE, TRUE,  FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("X.Y"), list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("x_2"), list(FALSE, FALSE, FALSE, TRUE,  FALSE, FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("X_2"), list(FALSE, FALSE, FALSE, FALSE, TRUE,  FALSE,  FALSE, FALSE))
-  expect_identical(do_style_check("x.2"), list(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,   FALSE, FALSE))
-  expect_identical(do_style_check("X.2"), list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  FALSE, FALSE))
-
-  #                                                     symbl   UpC   lowC   snake  SNAKE  dot    alllow  ALLUP
-  expect_identical(do_style_check("IHave1Cat"),     list(FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-  expect_identical(do_style_check("iHave1Cat"),     list(FALSE, FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE))
-  expect_identical(do_style_check("i_have_1_cat"),  list(FALSE, FALSE, FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE))
-  expect_identical(do_style_check("I_HAVE_1_CAT"),  list(FALSE, FALSE, FALSE, FALSE, TRUE,  FALSE, FALSE, FALSE))
-  expect_identical(do_style_check("i.have.1.cat"),  list(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,  FALSE, FALSE))
-  expect_identical(do_style_check("ihave1cat"),     list(FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,  TRUE,  FALSE))
-  expect_identical(do_style_check("IHAVE1CAT"),     list(FALSE, TRUE,  FALSE, FALSE, TRUE,  FALSE, FALSE, TRUE))
-  expect_identical(do_style_check("I.HAVE_ONECAT"), list(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-  expect_identical(do_style_check("."),             list(TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-  expect_identical(do_style_check("%^%"),           list(TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+test_that("default styles are linted correctly", {
+  linters <-  list(
+    symbols_linter = object_name_linter("symbols"),
+    CamelCase_linter = object_name_linter("CamelCase"),
+    camelCase_linter = object_name_linter("camelCase"),
+    snake_case_linter = object_name_linter("snake_case"),
+    SNAKE_CASE_linter = object_name_linter("SNAKE_CASE"),
+    dotted.case_linter = object_name_linter("dotted.case"),
+    lowercase_linter = object_name_linter("lowercase"),
+    UPPERCASE_linter = object_name_linter("UPPERCASE")
+  )
+  ok_lines <- list(
+    CamelCase_linter = c(3L, 10L, 11L, 13L, 21L, 27L),
+    SNAKE_CASE_linter = c(3L, 7L, 11L, 13L, 15L, 18L, 24L, 27L),
+    UPPERCASE_linter = c(3L, 11L, 13L, 27L),
+    camelCase_linter = c(1L, 2L, 8L, 9L, 12L, 22L, 26L),
+    dotted.case_linter = c(1L, 2L, 8L, 12L, 19L, 25L, 26L),
+    lowercase_linter = c(1L, 2L, 8L, 12L, 26L),
+    snake_case_linter = c(1L, 2L, 6L, 8L, 12L, 14L, 17L, 23L, 26L),
+    symbols_linter = 29L:30L
+  )
+  # build list(list(linter = L1, line_number = I1), list(linter = L1, line_number = I2), ...)
+  #   from the list of OK lines
+  expected_lints <- unlist(
+    Map(
+      function(nm, ok) {
+        lapply(
+          setdiff(1L:30L, ok),
+          function(bad) list(linter = nm, line_number = bad)
+        )
+      },
+      names(ok_lines),
+      ok_lines
+    ),
+    recursive = FALSE,
+    use.names = FALSE
+  )
+  expected_order <- order(vapply(expected_lints, function(x) x$line_number, integer(1L)))
+  expected_lints <- expected_lints[expected_order]
+  debug(expect_lint)
+  expect_lint(
+    trim_some("
+      x <-               #  1
+        .x <-            #  2
+        X <-             #  3
+        x. <-            #  4
+        X. <-            #  5
+        x_ <-            #  6
+        X_ <-            #  7
+        xy <-            #  8
+        xY <-            #  9
+        Xy <-            # 10
+        XY <-            # 11
+        x1 <-            # 12
+        X1 <-            # 13
+        x_y <-           # 14
+        X_Y <-           # 15
+        X.Y <-           # 16
+        x_2 <-           # 17
+        X_2 <-           # 18
+        x.2 <-           # 19
+        X.2 <-           # 20
+        IHave1Cat <-     # 21
+        iHave1Cat <-     # 22
+        i_have_1_cat <-  # 23
+        I_HAVE_1_CAT <-  # 24
+        i.have.1.cat <-  # 25
+        ihave1cat <-     # 26
+        IHAVE1CAT <      # 27
+        I.HAVE_ONECAT <- # 28
+        . <-             # 29
+        `%^%` <-         # 30
+        NULL
+    "),
+    expected_lints,
+    linters
+  )
 })
-# styler: on
 
 test_that("linter ignores some objects", {
   # names for which style check is ignored
