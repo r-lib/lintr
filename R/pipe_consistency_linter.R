@@ -4,7 +4,7 @@
 #'   pipes are consistent by file.
 #'
 #' @param pipe Which pipe operator is valid (either `"%>%"` or `"|>"`). The default
-#'   is to use the Guide-recommended native pipe (`|>`). Value `"auto"` will instead
+#'   is the native pipe (`|>`). `"auto"` will instead
 #'   only enforce consistency, i.e., that in any given file there is only one pipe.
 #'
 #' @examples
