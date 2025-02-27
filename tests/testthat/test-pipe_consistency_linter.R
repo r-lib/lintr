@@ -98,7 +98,7 @@ test_that("pipe_consistency_linter works with |> argument", {
     linter
   )
 
-  expect_lint("1:3 %>% mean() %T% print()", lint_message, linter)
+  expect_lint("1:3 %>% mean() %T>% print()", lint_message, linter)
 
   expect_lint(
     "1:3 |> mean() %T>% print()",
