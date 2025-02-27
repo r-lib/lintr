@@ -66,10 +66,11 @@ pipe_consistency_linter <- function(pipe = c("|>", "auto", "%>%")) {
         type = "style"
       )
     } else if (pipe == "|>" && n_magrittr > 0L) {
+      lint_message <- sprintf("Use the |> pipe operator instead of the %s pipe operator.", xml_text(match_magrittr))
       xml_nodes_to_lints(
         xml = match_magrittr,
         source_expression = source_expression,
-        lint_message = "Use the |> pipe operator instead of the %>% pipe operator.",
+        lint_message = lint_message,
         type = "style"
       )
     } else {

@@ -59,6 +59,7 @@ test_that("pipe_consistency_linter works with |> argument", {
 
   linter <- pipe_consistency_linter(pipe = "|>")
   lint_message <- rex::rex("Use the |> pipe operator instead of the %>% pipe operator.")
+  lint_message_tee <- rex::rex("Use the |> pipe operator instead of the %T>% pipe operator.")
 
   expect_lint(
     trim_some("
@@ -100,13 +101,13 @@ test_that("pipe_consistency_linter works with |> argument", {
 
   expect_lint(
     "1:3 %>% mean() %T>% print()",
-    list("%>%", "%T>%"),
+    list(lint_message, lint_message_tee),
     linter
   )
 
   expect_lint(
     "1:3 |> mean() %T>% print()",
-    list(lint_message, line_number = 1L, column_number = 15L),
+    list(lint_message_tee, line_number = 1L, column_number = 15L),
     linter
   )
 })
