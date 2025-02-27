@@ -35,6 +35,7 @@
 * `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
 * `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
 * `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
+* `object_name_linter()` and `object_length_linter()` account for S3 class correctly when the generic is assigned with `=` (#2507, @MichaelChirico).
 
 ## Notes
 
