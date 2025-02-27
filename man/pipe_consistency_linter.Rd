@@ -8,7 +8,7 @@ pipe_consistency_linter(pipe = c("|>", "auto", "\%>\%"))
 }
 \arguments{
 \item{pipe}{Which pipe operator is valid (either \code{"\%>\%"} or \code{"|>"}). The default
-is to use the Guide-recommended native pipe (\verb{|>}). Value \code{"auto"} will instead
+is the native pipe (\verb{|>}). \code{"auto"} will instead
 only enforce consistency, i.e., that in any given file there is only one pipe.}
 }
 \description{
