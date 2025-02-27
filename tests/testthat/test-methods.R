@@ -1,11 +1,3 @@
-test_that("it returns the input trimmed to the last full lint if one exists within the max", {
-  t1 <- readChar(test_path("lints"), file.size(test_path("lints")))
-  if (.Platform$OS.type == "windows") {
-    # Magic numbers expect newlines to be 1 character
-    t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
-  }
-})
-
 test_that("as.data.frame.lints", {
   l1 <- Lint(
     "dummy.R",
