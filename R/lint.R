@@ -45,6 +45,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
+
+  if (!inline_data && isTRUE(parse_settings)) {
+    read_settings(filename)
+    on.exit(reset_settings(), add = TRUE)
+  }
+
   lines <- get_lines(filename, text)
 
   if (needs_tempfile) {
@@ -57,11 +63,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   filename <- normalize_path(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
-
-  if (isTRUE(parse_settings)) {
-    read_settings(filename)
-    on.exit(reset_settings(), add = TRUE)
-  }
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
