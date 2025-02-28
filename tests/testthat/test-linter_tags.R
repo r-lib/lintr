@@ -256,7 +256,7 @@ test_that("other packages' linters can be included", {
     custom_db[0L, ]
   )
 
-  write_csv(data.frame(), custom_csv)
+  write_csv(data.frame(a = 1, b = 1), custom_csv)
   expect_warning(
     expect_identical(
       available_linters(packages = "myPkg"),
