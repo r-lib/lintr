@@ -1,19 +1,16 @@
 declared_s3_generics <- function(x) {
-  xpath <- paste0(
-    # Top level expression which
-    "/exprlist/expr",
+  # Top level expression which assigns to a symbol
+  #   and is an S3 Generic (contains call to UseMethod)
+  # Retrieve assigned name of the function
+  xpath <- "/exprlist
+    /*[
+      (LEFT_ASSIGN or EQ_ASSIGN)
+      and expr[FUNCTION or OP-LAMBDA]
+      and .//SYMBOL_FUNCTION_CALL[text() = 'UseMethod']
+    ]
+    /expr
+    /SYMBOL
+  "
 
-    # Assigns to a symbol
-    "[./LEFT_ASSIGN|EQ_ASSIGN]",
-    "[./expr[FUNCTION or OP-LAMBDA]]",
-    "[./expr/SYMBOL]",
-
-    # Is a S3 Generic (contains call to UseMethod)
-    "[.//SYMBOL_FUNCTION_CALL[text()='UseMethod']]",
-
-    # Retrieve assigned name of the function
-    "/expr/SYMBOL/text()"
-  )
-
-  as.character(xml_find_all(x, xpath))
+  xml_text(xml_find_all(x, xpath))
 }
