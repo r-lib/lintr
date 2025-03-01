@@ -235,3 +235,39 @@ test_that("available_linters gives precedence to included tags", {
 test_that("all linters have at least one tag", {
   expect_true(all(lengths(available_linters()$tags) > 0L))
 })
+
+test_that("other packages' linters can be included", {
+  db_loc <- withr::local_tempdir()
+  local_mocked_bindings(
+    system.file = function(..., package) file.path(db_loc, package, ...)
+  )
+
+  custom_db <- data.frame(
+    linter = c("linter1", "linter2"),
+    package = "myPkg",
+    tags = c("tag1 tag2", "tag1 tag3")
+  )
+  custom_db$tags <- strsplit(custom_db$tags, " ", fixed = TRUE)
+  custom_loc <- file.path(db_loc, "myPkg", "lintr")
+  dir.create(custom_loc, recursive = TRUE)
+  write_csv <- function(x, file) write.csv(x, file, row.names = FALSE, quote = FALSE)
+  write_csv(
+    within(custom_db, {
+      tags <- vapply(tags, paste, collapse = " ", FUN.VALUE = character(1L))
+      rm(package)
+    }),
+    file.path(custom_loc, "linters.csv")
+  )
+
+  expect_identical(
+    available_linters(packages = "myPkg"),
+    custom_db
+  )
+
+  # edge case
+  write_csv(custom_db[0L, c("linter", "tags")], file.path(custom_loc, "linters.csv"))
+  expect_identical(
+    available_linters(packages = "myPkg"),
+    custom_db[0L, ]
+  )
+})

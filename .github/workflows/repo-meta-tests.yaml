@@ -36,3 +36,8 @@ jobs:
         run: |
           callr::rscript(".dev/roxygen_test.R")
         shell: Rscript {0}
+
+      - name: Ensure defunct linters exist
+        run: |
+          callr::rscript(".dev/defunct_linters_test.R")
+        shell: Rscript {0}
