@@ -104,6 +104,7 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
+  withr::local_options(lintr.linter_file = tempfile())
   file <- test_path("dummy_projects", "project", "cp1252.R")
   lintr:::read_settings(file)
   expect_null(get_source_expressions(file)$error)
