@@ -1,5 +1,6 @@
 `%||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
+  is_atomic_and_missing <- is.atomic(x[[1L]]) && is.na(x[[1L]])
+  if (is.null(x) || length(x) == 0L || is_atomic_and_missing) {
     y
   } else {
     x
