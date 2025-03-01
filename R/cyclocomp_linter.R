@@ -28,7 +28,7 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
       "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}.",
       i = "Please install the needed {.pkg cyclocomp} package."
     ))
-    return(Linter(function(.) cli_abort("cyclocomp_linter is disabled due to lack of {.pkg cyclocomp} package")))
+    return(Linter(function(.) cli_abort("cyclocomp_linter is disabled due to lack of the {.pkg cyclocomp} package")))
   }
   # nocov end
   Linter(linter_level = "expression", function(source_expression) {
