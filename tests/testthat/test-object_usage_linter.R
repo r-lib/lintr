@@ -418,7 +418,7 @@ test_that("interprets glue expressions", {
       local_var <- 42
       glue::glue('The answer is {local_var}.')
     }
-  "), "local_var", object_usage_linter(interpret_glue = FALSE))
+  "), "local_var", object_usage_linter(interpret_extensions = NULL))
 
   # call in glue is caught
   expect_lint(
@@ -857,4 +857,52 @@ test_that("globals in scripts are found regardless of assignment operator", {
     NULL,
     linter
   )
+})
+
+test_that("dplyr's .env-specified objects are marked as 'used'", {
+  skip_if_not_installed("dplyr")
+  skip_if_not_installed("rlang")
+  linter <- object_usage_linter()
+
+  expect_lint(
+    trim_some("
+      foo <- function(df) {
+        source <- 1
+        target <- 2
+        unused <- 3
+
+        df %>%
+          dplyr::mutate(
+            from = rlang::.env$source,
+            to = rlang::.env[['target']]
+          )
+      }
+    "),
+    rex::rex("local variable", anything, "unused"),
+    linter
+  )
+})
+
+test_that("interpret_glue is deprecated", {
+  expect_warning(
+    {
+      linter_no <- object_usage_linter(interpret_glue = FALSE)
+    },
+    rex::rex("interpret_glue", anything, "deprecated")
+  )
+  expect_warning(
+    {
+      linter_yes <- object_usage_linter(interpret_glue = TRUE)
+    },
+    rex::rex("interpret_glue", anything, "deprecated")
+  )
+
+  code <- trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is {local_var}.')
+    }
+  ")
+  expect_lint(code, "local_var", linter_no)
+  expect_no_lint(code, linter_yes)
 })
