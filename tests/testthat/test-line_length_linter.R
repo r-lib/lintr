@@ -89,10 +89,34 @@ test_that("string bodies can be ignored", {
   expect_no_lint(
     trim_some("
       1234567890
+      str45 <- '
+      123456789012345
+               '
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      1234567890
       str <- '90
       123456789012345
       123456789'
     "),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      1234567890
+      str456 <- '
+      123456789012345
+                '
+    "),
+    list(
+      list("11 characters", line_number = 2L),
+      list("11 characters", line_number = 4L)
+    ),
     linter
   )
 
