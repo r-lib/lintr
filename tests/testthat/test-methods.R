@@ -177,6 +177,7 @@ local({
 
   lints <- lint(text = "a", linters = test_linter())
   lint <- lints[[1L]]
+  widths <- c(10L, 20L, 40L, 80L)
 
   patrick::with_parameters_test_that(
     "print.lint, print.lints support optional message wrapping",
@@ -187,7 +188,7 @@ local({
         expect_snapshot(print(lints))
       })
     },
-    width = c(10L, 20L, 40L, 80L)
+    width = widths
   )
 
   wrapped_strings <- c(
