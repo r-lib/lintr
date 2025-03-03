@@ -34,6 +34,8 @@ jobs:
 
       - name: Ensure roxygen content matches man directory
         run: |
+          sudo locale-gen en_US.UTF-8 hu_HU.UTF-8 ja_JP.UTF-8
+        run: |
           callr::rscript(".dev/roxygen_test.R")
         shell: Rscript {0}
 

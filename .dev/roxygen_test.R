@@ -16,7 +16,7 @@ normalize_rd <- function(rd_file) as.character(parse_Rd(rd_file))
 rd_equal <- function(f1, f2) isTRUE(all.equal(normalize_rd(f1), normalize_rd(f2)))
 
 check_roxygenize_idempotent <- function(LOCALE) {
-  Sys.setlocale("LC_COLLATE", LOCALE)
+  tryCatch(Sys.setlocale("LC_COLLATE", LOCALE), warning = stop)
   roxygenize()
   
   new_files <- list.files(new_dir, pattern = "\\.Rd$")
