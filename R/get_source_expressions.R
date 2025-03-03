@@ -86,7 +86,8 @@ get_source_expressions <- function(filename, lines = NULL) {
   # Currently no way to distinguish the source of the warning
   #   from the message itself, so we just grep the source for the
   #   exact string generating the warning; de-dupe in case of
-  #   multiple exact matches like '1e-3L; 1e-3L'
+  #   multiple exact matches like '1e-3L; 1e-3L'.
+  # See https://bugs.r-project.org/show_bug.cgi?id=18863.
   w <- lint_parse_warnings(w, parsed_content, source_expression)
 
   if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
