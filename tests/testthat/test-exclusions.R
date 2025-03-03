@@ -31,7 +31,8 @@ test_that("it doesn't fail when encountering misspecified encodings", {
   withr::local_options(
     lintr.exclude = "#TeSt_NoLiNt",
     lintr.exclude_start = "#TeSt_NoLiNt_StArT",
-    lintr.exclude_end = "#TeSt_NoLiNt_EnD"
+    lintr.exclude_end = "#TeSt_NoLiNt_EnD",
+    lintr.linter_file = tempfile()
   )
 
   withr::local_dir(test_path("dummy_projects", "project"))
@@ -39,6 +40,12 @@ test_that("it doesn't fail when encountering misspecified encodings", {
 })
 
 test_that("it gives the expected error message when there is only one start but no end", {
+  withr::local_options(
+    lintr.exclude = "#TeSt_NoLiNt",
+    lintr.exclude_start = "#TeSt_NoLiNt_StArT",
+    lintr.exclude_end = "#TeSt_NoLiNt_EnD",
+    lintr.linter_file = tempfile()
+  )
   withr::local_dir(test_path("dummy_projects", "project"))
 
   expect_error(
@@ -49,6 +56,12 @@ test_that("it gives the expected error message when there is only one start but 
 })
 
 test_that("it gives the expected error message when there is mismatch between multiple starts and ends", {
+  withr::local_options(
+    lintr.exclude = "#TeSt_NoLiNt",
+    lintr.exclude_start = "#TeSt_NoLiNt_StArT",
+    lintr.exclude_end = "#TeSt_NoLiNt_EnD",
+    lintr.linter_file = tempfile()
+  )
   withr::local_dir(test_path("dummy_projects", "project"))
 
   expect_error(
