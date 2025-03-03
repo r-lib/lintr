@@ -39,6 +39,8 @@ test_that("default_linters and default tag match up", {
 })
 
 test_that("warnings occur only for deprecated linters", {
+  skip_if_not_installed("cyclocomp") # actually we expect a warning there
+
   expect_silent(linters_with_tags(tags = NULL))
   num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
   deprecation_warns_seen <- 0L
