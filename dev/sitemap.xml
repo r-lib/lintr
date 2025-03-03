@@ -27,6 +27,7 @@
 <url><loc>https://lintr.r-lib.org/dev/reference/checkstyle_output.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/class_equals_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/clear_cache.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/coalesce_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/commas_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/commented_code_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/common_mistakes_linters.html</loc></url>

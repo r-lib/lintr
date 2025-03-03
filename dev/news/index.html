@@ -89,6 +89,11 @@
 <li>
 <code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> gains argument <code>interpret_extensions</code> to govern which false positive-prone common syntaxes should be checked for used objects (<a href="https://github.com/r-lib/lintr/issues/1472" class="external-link">#1472</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Currently <code>"glue"</code> (renamed from earlier argument <code>interpret_glue</code>) and <code>"rlang"</code> are supported. The latter newly covers usage of the <code>.env</code> pronoun like <code>.env$key</code>, where <code>key</code> was previously missed as being a used variable.</li>
 </ul><div class="section level4">
+<h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/coalesce_linter.html">coalesce_linter()</a></code> encourages the use of the infix operator <code>x %||% y</code>, which is equivalent to <code>if (is.null(x)) y else x</code> (<a href="https://github.com/r-lib/lintr/issues/2246" class="external-link">#2246</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.</li>
+</ul></div>
+<div class="section level4">
 <h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
 <ul><li>
 <code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code>:
