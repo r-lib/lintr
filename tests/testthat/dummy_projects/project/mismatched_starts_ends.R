@@ -1,11 +1,11 @@
-#nolint end
+#TeSt_NoLiNt_EnD
 
-#nolint start
+#TeSt_NoLiNt_StArT
 
 c(1,2)
 
-#nolint start
+#TeSt_NoLiNt_StArT
 
-#nolint end
+#TeSt_NoLiNt_EnD
 
-#nolint start
+#TeSt_NoLiNt_StArT

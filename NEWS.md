@@ -23,6 +23,7 @@
 * `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
 * Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` apply to objects assigned with `assign()` or generics created with `setGeneric()` (#1665, @MichaelChirico).
+* `expect_lint()` has a new argument `ignore_order` (default `FALSE`), which, if `TRUE`, allows the `checks=` to be provided in arbitary order vs. how `lint()` produces them (@MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
