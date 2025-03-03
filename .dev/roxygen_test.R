@@ -47,7 +47,7 @@ check_roxygenize_idempotent <- function(LOCALE) {
 }
 
 # Run the check in a few locales to ensure there's no idempotency issues w.r.t. sorting, too
-for (LOCALE in c("C", "en_US", "hu_HU", "ja_JP")) {
+for (LOCALE in c("C", "en_US.utf8", "hu_HU.utf8", "ja_JP.utf8")) {
   check_roxygenize_idempotent(LOCALE)
 }
 
