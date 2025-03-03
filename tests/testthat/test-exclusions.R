@@ -5,9 +5,9 @@ test_that("it excludes properly", {
     lintr.exclude_end = "#TeSt_NoLiNt_EnD"
   )
 
-  exclusion_sample <- normalizePath(test_path('exclusions-test'))
+  exclusion_sample <- normalize_path(test_path("exclusions-test"))
   withr::local_dir(withr::local_tempdir())
-  file.copy(exclusion_sample, '.')
+  file.copy(exclusion_sample, ".")
 
   t1 <- lint("exclusions-test")
   expect_length(t1, 8L)
