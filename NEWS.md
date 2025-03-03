@@ -10,6 +10,7 @@
    + `linter=` argument of `Lint()`.
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
+* Argument `interpret_glue` to `object_usage_linter()` is deprecated in favor of the more general `interpret_extensions`, in which `"glue"` is present by default (#1472, @MichaelChirico). See the description below.
 
 ## Bug fixes
 
@@ -23,7 +24,12 @@
 * `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
 * Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` apply to objects assigned with `assign()` or generics created with `setGeneric()` (#1665, @MichaelChirico).
+* `object_usage_linter()` gains argument `interpret_extensions` to govern which false positive-prone common syntaxes should be checked for used objects (#1472, @MichaelChirico). Currently `"glue"` (renamed from earlier argument `interpret_glue`) and `"rlang"` are supported. The latter newly covers usage of the `.env` pronoun like `.env$key`, where `key` was previously missed as being a used variable.
 * `any_duplicated_linter()` is extended to recognize some usages from {dplyr} and {data.table} that could be replaced by `anyDuplicated()`, e.g. `n_distinct(col) == n()` or `uniqueN(col) == .N` (#2482, @MichaelChirico).
+
+### New linters
+
+* `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.
 
 ### Lint accuracy fixes: removing false positives
 
@@ -36,6 +42,8 @@
 * `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
 * `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
 * `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
+* `object_name_linter()` and `object_length_linter()` account for S3 class correctly when the generic is assigned with `=` (#2507, @MichaelChirico).
+* `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
 
 ## Notes
 

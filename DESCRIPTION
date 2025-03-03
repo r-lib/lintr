@@ -23,7 +23,7 @@ BugReports: https://github.com/r-lib/lintr/issues
 Depends:
     R (>= 4.0)
 Imports:
-    backports (>= 1.4.0),
+    backports (>= 1.5.0),
     cli (>= 3.4.0),
     codetools,
     digest,
@@ -73,6 +73,7 @@ Collate:
     'brace_linter.R'
     'cache.R'
     'class_equals_linter.R'
+    'coalesce_linter.R'
     'commas_linter.R'
     'commented_code_linter.R'
     'comparison_negation_linter.R'
