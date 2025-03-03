@@ -30,7 +30,7 @@ line_length_linter <- function(length = 80L, ignore_string_bodies = FALSE) {
 
   Linter(linter_level = "file", function(source_expression) {
     # Only go over complete file
-    line_lengths <- as.integer(nchar(source_expression$file_lines))
+    line_lengths <- nchar(source_expression$file_lines)
     long_lines <- which(line_lengths > length)
 
     if (ignore_string_bodies) {
