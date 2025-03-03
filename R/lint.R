@@ -45,8 +45,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
+  parse_settings <- !inline_data && isTRUE(parse_settings)
 
-  if (!inline_data && isTRUE(parse_settings)) {
+  if (parse_settings) {
     read_settings(filename)
     on.exit(reset_settings(), add = TRUE)
   }
@@ -82,12 +83,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lints <- list()
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
-      if (is_lint_level(expr, "expression")) {
-        necessary_linters <- expression_linter_names
-      } else {
-        necessary_linters <- file_linter_names
-      }
-      for (linter in necessary_linters) {
+      for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
         # use withCallingHandlers for friendlier failures on unexpected linter errors
         lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
@@ -700,4 +696,12 @@ zap_temp_filename <- function(res, needs_tempfile) {
     }
   }
   res
+}
+
+necessary_linters <- function(expr, expression_linter_names, file_linter_names) {
+  if (is_lint_level(expr, "expression")) {
+    expression_linter_names
+  } else {
+    file_linter_names
+  }
 }
