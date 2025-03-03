@@ -34,7 +34,7 @@
 #'  - [linters] for a complete list of linters available in lintr.
 #'  - <https://style.tidyverse.org/pipes.html#magrittr>
 #' @export
-pipe_consistency_linter <- function(pipe = c("|>", "auto", "%>%")) {
+pipe_consistency_linter <- function(pipe = c("|>", "%>%", "auto")) {
   pipe <- match.arg(pipe)
 
   xpath_magrittr <- glue("//SPECIAL[{ xp_text_in_table(magrittr_pipes) }]")
