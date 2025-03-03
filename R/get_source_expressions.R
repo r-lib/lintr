@@ -551,6 +551,7 @@ get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
   env <- parent.frame() # nolint: object_usage_linter. Used below.
+  # https://adv-r.hadley.nz/conditions.html
   parsed_content <- withCallingHandlers(
     tryCatch(
       parse(

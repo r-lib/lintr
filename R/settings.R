@@ -122,6 +122,7 @@ read_config_file <- function(config_file, call = parent.frame()) {
             )
           }
         )
+        # https://adv-r.hadley.nz/conditions.html
         setting_value <- withCallingHandlers(
           tryCatch(
             eval(parsed_setting),
@@ -151,6 +152,7 @@ read_config_file <- function(config_file, call = parent.frame()) {
       )
     }
   }
+  # https://adv-r.hadley.nz/conditions.html
   withCallingHandlers(
     tryCatch(
       load_config(config_file),
