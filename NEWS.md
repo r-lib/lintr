@@ -43,6 +43,7 @@
 * `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` account for S3 class correctly when the generic is assigned with `=` (#2507, @MichaelChirico).
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
+* `expect_true_false_linter()` is pipe-aware, so that `42 |> expect_identical(x, ignore_attr = TRUE)` no longer lints (#1520, @MichaelChirico).
 
 ## Notes
 
