@@ -7,6 +7,7 @@ backport_linter,robustness configurable package_development
 boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
+coalesce_linter,readability consistency best_practices
 commas_linter,style readability default configurable
 commented_code_linter,style readability best_practices default
 comparison_negation_linter,readability consistency
