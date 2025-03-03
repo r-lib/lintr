@@ -1,6 +1,7 @@
 #' Check that imported packages are actually used
 #'
-#' @inheritParams object_usage_linter
+#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#'   which are only used in a glue expression.
 #' @param allow_ns_usage Suppress lints for packages only used via namespace.
 #' This is `FALSE` by default because `pkg::fun()` doesn't require `library(pkg)`.
 #' You can use [requireNamespace("pkg")][requireNamespace()] to ensure a package is
