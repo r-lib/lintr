@@ -104,14 +104,6 @@ get_content <- function(lines, info) {
   paste(lines, collapse = "\n")
 }
 
-logical_env <- function(x, unset = "") {
-  res <- as.logical(Sys.getenv(x, unset = unset))
-  if (is.na(res)) {
-    return(NULL)
-  }
-  res
-}
-
 try_silently <- function(expr) {
   suppressWarnings(
     suppressMessages(

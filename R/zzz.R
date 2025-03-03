@@ -290,6 +290,14 @@ default_settings <- NULL
 settings <- new.env(parent = emptyenv())
 
 # nocov start
+logical_env <- function(x, unset = "") {
+  res <- as.logical(Sys.getenv(x, unset = unset))
+  if (is.na(res)) {
+    return(NULL)
+  }
+  res
+}
+
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op_lintr <- list(
