@@ -301,9 +301,13 @@ extract_env_symbols <- function(fun_assignment) {
     "
     .//SYMBOL[text() = '.env']
       /parent::expr
-      /parent::expr[OP-DOLLAR]
-      /SYMBOL
+      /following-sibling::OP-DOLLAR
+      /following-sibling::SYMBOL
+    | .//SYMBOL[text() = '.env']
+      /parent::expr
+      /following-sibling::LBB
+      /following-sibling::expr[STR_CONST]
     "
   )
-  xml_text(env_names)
+  get_r_string(env_names)
 }

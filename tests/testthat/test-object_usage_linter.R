@@ -874,7 +874,7 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
         df %>%
           dplyr::mutate(
             from = rlang::.env$source,
-            to = rlang::.env$target
+            to = rlang::.env[['target']]
           )
       }
     "),
