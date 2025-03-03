@@ -34,7 +34,7 @@ jobs:
 
       - name: Generate some foreign locales
         run: |
-          sudo locale-gen en_US.UTF-8 hu_HU.UTF-8 ja_JP.UTF-8
+          sudo locale-gen en_US hu_HU ja_JP
           locale -a
 
       - name: Ensure roxygen content matches man directory
