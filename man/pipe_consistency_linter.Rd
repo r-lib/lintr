@@ -4,7 +4,7 @@
 \alias{pipe_consistency_linter}
 \title{Pipe consistency linter}
 \usage{
-pipe_consistency_linter(pipe = c("|>", "auto", "\%>\%"))
+pipe_consistency_linter(pipe = c("|>", "\%>\%", "auto"))
 }
 \arguments{
 \item{pipe}{Which pipe operator is valid (either \code{"\%>\%"} or \code{"|>"}). The default
