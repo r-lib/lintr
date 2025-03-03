@@ -106,6 +106,8 @@ test_that("linters_with_defaults doesn't break on very long input", {
 })
 
 test_that("it has a smart default for encodings", {
+  withr::local_options(list(lintr.linter_file = tempfile()))
+
   lintr:::read_settings(NULL)
   expect_identical(settings$encoding, "UTF-8")
 

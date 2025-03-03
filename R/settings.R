@@ -157,7 +157,7 @@ read_config_file <- function(config_file, call = parent.frame()) {
       error = malformed
     ),
     warning = function(w) {
-      cli::cli_warn(
+      cli_warn(
         "Warning encountered while loading config:",
         parent = w
       )
