@@ -1,9 +1,12 @@
 test_that("T_and_F_symbol_linter skips allowed usages", {
   linter <- T_and_F_symbol_linter()
 
-  expect_lint("FALSE", NULL, linter)
-  expect_lint("TRUE", NULL, linter)
-  expect_lint("x <- \"TRUE a vs FALSE b\"", NULL, linter)
+  expect_no_lint("FALSE", linter)
+  expect_no_lint("TRUE", linter)
+  expect_no_lint('x <- "TRUE a vs FALSE b"', linter)
+  expect_no_lint('y ~ T + F', linter)
+  expect_no_lint('y ~ x + I(T^2)', linter)
+  expect_no_lint('y ~ foo(T, F)', linter)
 })
 
 test_that("T_and_F_symbol_linter blocks disallowed usages", {
@@ -29,10 +32,19 @@ test_that("T_and_F_symbol_linter blocks disallowed usages", {
   expect_lint("DF$bool <- T", msg_true, linter)
   expect_lint("S4@bool <- T", msg_true, linter)
   expect_lint("sum(x, na.rm = T)", msg_true, linter)
+  expect_lint("y ~ foo(x, arg = T)", msg_true, linter)
+  expect_lint(
+    trim_some("
+      y ~ foo(x, arg = #comment
+      T)
+    "),
+    msg_true,
+    linter
+  )
 
   # Regression test for #657
   expect_lint(
-    trim_some("
+    trim_some('
       x <- list(
         T = 42L,
         F = 21L
@@ -41,10 +53,10 @@ test_that("T_and_F_symbol_linter blocks disallowed usages", {
       x$F <- 42L
       y@T <- 84L
 
-      T <- \"foo\"
-      F = \"foo2\"
-      \"foo3\" -> T
-    "),
+      T <- "foo"
+      F = "foo2"
+      "foo3" -> T
+    '),
     list(
       list(message = msg_variable_true, line_number = 9L),
       list(message = msg_variable_false, line_number = 10L),
