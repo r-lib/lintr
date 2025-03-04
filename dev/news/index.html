@@ -72,6 +72,7 @@
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/lint-s3.html">Lint()</a></code>, and thus all linters, ensures that the returned object’s <code>message</code> attribute is consistently a simple character string (and not, for example, an object of class <code>"glue"</code>; <a href="https://github.com/r-lib/lintr/issues/2740" class="external-link">#2740</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>Files with encoding inferred from settings read more robustly under <code>lint(parse_settings = TRUE)</code> (<a href="https://github.com/r-lib/lintr/issues/2803" class="external-link">#2803</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
