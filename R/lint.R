@@ -98,7 +98,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     }
   }
 
-  lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
+  lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
   lints <- reorder_lints(flatten_lints(lints))
   class(lints) <- c("lints", "list")
 
@@ -667,13 +667,22 @@ fill_with <- function(character = " ", length = 1L) {
   paste(collapse = "", rep.int(character, length))
 }
 
-maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
+maybe_append_condition_lints <- function(lints, source_expression, lint_cache, filename) {
+  error <- source_expression$error
   if (is_lint(error)) {
     error$linter <- "error"
     lints[[length(lints) + 1L]] <- error
 
     if (!is.null(lint_cache)) {
       cache_lint(lint_cache, list(filename = filename, content = ""), "error", error)
+    }
+  }
+  for (l in source_expression$warning) {
+    l$linter <- "parser_warning_linter"
+    lints[[length(lints) + 1L]] <- l
+
+    if (!is.null(lint_cache)) {
+      cache_lint(lint_cache, list(filename = filename, content = ""), "parser_warning_linter", l)
     }
   }
   lints
