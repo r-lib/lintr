@@ -44,6 +44,10 @@
 * `object_name_linter()` and `object_length_linter()` account for S3 class correctly when the generic is assigned with `=` (#2507, @MichaelChirico).
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
 
+### Lint accuracy fixes: removing false negatives
+
+* `todo_comment_linter()` finds comments inside {roxygen2} markup comments (#2447, @MichaelChirico).
+
 ## Notes
 
 * `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
