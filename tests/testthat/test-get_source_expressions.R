@@ -105,17 +105,14 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
-  withr::local_options(lintr.linter_file = tempfile())
-  file <- test_path("dummy_projects", "project", "cp1252.R")
-  lintr:::read_settings(file)
-  expect_null(get_source_expressions(file)$error)
+  proj_dir <- test_path("dummy_projects", "project")
+  withr::local_dir(proj_dir)
+  expect_no_lint(file = "cp1252.R", linters = list())
 })
 
-test_that("Warns if encoding is misspecified", {
-  file <- test_path("dummy_projects", "project", "cp1252.R")
-  lintr:::read_settings(NULL)
-  the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
-  expect_s3_class(the_lint, "lint")
+test_that("Warns if encoding is misspecified, Pt. 1", {
+  proj_dir <- test_path("dummy_projects", "project")
+  withr::local_dir(proj_dir)
 
   lint_msg <- "Invalid multibyte character in parser. Is the encoding correct?"
   if (!isTRUE(l10n_info()[["UTF-8"]])) {
@@ -125,17 +122,21 @@ test_that("Warns if encoding is misspecified", {
     lint_msg <- "unexpected '<'"
   }
 
-  expect_identical(the_lint$linter, "error")
-  expect_identical(the_lint$message, lint_msg)
-  expect_identical(the_lint$line_number, 4L)
+  expect_lint(
+    file = "cp1252.R",
+    parse_settings = FALSE,
+    checks = list(rex::rex(lint_msg), linter = "error", line_number = 4L)
+  )
 
-  file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
-  lintr:::read_settings(NULL)
-  the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
-  expect_s3_class(the_lint, "lint")
-  expect_identical(the_lint$linter, "error")
-  expect_identical(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
-  expect_identical(the_lint$line_number, 1L)
+  expect_lint(
+    file = "cp1252_parseable.R",
+    parse_settings = FALSE,
+    checks = list(
+      rex::rex("Invalid multibyte string. Is the encoding correct?"),
+      linter = "error",
+      line_number = 1L
+    )
+  )
 })
 
 test_that("Can extract line number from parser errors", {

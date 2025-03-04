@@ -15,6 +15,7 @@
 ## Bug fixes
 
 * `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
+* Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico).
 
 ## New and improved features
 
