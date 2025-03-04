@@ -127,34 +127,18 @@ test_that("finds potential sequence() replacements", {
   linter <- seq_linter()
   lint_msg <- rex::rex("Use sequence()")
 
-  expect_lint(
-    "unlist(lapply(x, seq_len))",
-    lint_msg,
-    linter
-  )
+  expect_lint("unlist(lapply(x, seq_len))", lint_msg, linter)
 
-  expect_lint(
-    "unlist(lapply(x, seq))",
-    lint_msg,
-    linter
-  )
+  expect_lint("unlist(lapply(x, seq))", lint_msg, linter)
 
   # Even for prefixed purrr:: calls
-  expect_lint(
-    "unlist(purrr::map(x, seq_len))",
-    lint_msg,
-    linter
-  )
+  expect_lint("unlist(purrr::map(x, seq_len))", lint_msg, linter)
 })
 
 test_that("sequence() is not recommended for complex seq() calls", {
   linter <- seq_linter()
 
-  expect_lint(
-    "unlist(lapply(x, seq, from = 2))",
-    NULL,
-    linter
-  )
+  expect_no_lint("unlist(lapply(x, seq, from = 2))", linter)
 })
 
 test_that("Message vectorization works for multiple lints", {

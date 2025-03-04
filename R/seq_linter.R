@@ -94,7 +94,7 @@ seq_linter <- function() {
   seq_funcs <- xp_text_in_table(c("seq_len", "seq"))
   # count(expr) = 3 because we only want seq() calls without extra arguments
   sequence_xpath <- glue("
-    parent::expr/parent::expr[
+    parent::expr[
       count(expr) = 3
       and expr/SYMBOL[ {seq_funcs} ]
       and preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
