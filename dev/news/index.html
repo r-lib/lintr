@@ -79,7 +79,10 @@
 <ul><li>
 <code><a href="../reference/brace_linter.html">brace_linter()</a></code>’ has a new argument <code>function_bodies</code> (default <code>"multi_line"</code>) which controls when to require function bodies to be wrapped in curly braces, with the options <code>"always"</code>, <code>"multi_line"</code> (only require curly braces when a function body spans multiple lines), <code>"not_inline"</code> (only require curly braces when a function body starts on a new line) and <code>"never"</code> (<a href="https://github.com/r-lib/lintr/issues/1807" class="external-link">#1807</a>, <a href="https://github.com/r-lib/lintr/issues/2240" class="external-link">#2240</a>, <a href="https://github.com/salim-b" class="external-link">@salim-b</a>).</li>
 <li>
-<code><a href="../reference/seq_linter.html">seq_linter()</a></code> recommends using <code>seq_along(x)</code> instead of <code>seq_len(length(x))</code> (<a href="https://github.com/r-lib/lintr/issues/2577" class="external-link">#2577</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<code><a href="../reference/seq_linter.html">seq_linter()</a></code>:
+<ul><li>recommends using <code>seq_along(x)</code> instead of <code>seq_len(length(x))</code> (<a href="https://github.com/r-lib/lintr/issues/2577" class="external-link">#2577</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>recommends using <code><a href="https://rdrr.io/r/base/sequence.html" class="external-link">sequence()</a></code> instead of <code>unlist(lapply(ints, seq))</code> (<a href="https://github.com/r-lib/lintr/issues/2618" class="external-link">#2618</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>)</li>
+</ul></li>
 <li>
 <code><a href="../reference/undesirable_operator_linter.html">undesirable_operator_linter()</a></code> lints operators in prefix form, e.g. <code>`%%`(x, 2)</code> (<a href="https://github.com/r-lib/lintr/issues/1910" class="external-link">#1910</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Disable this by setting <code>call_is_undesirable=FALSE</code>.</li>
 <li>
@@ -1210,7 +1213,7 @@ This fixes the location information for <code><a href="../reference/trailing_bla
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Jim Hester, Florent Angly, Russ Hyde, Michael Chirico, Kun Ren, Alexander Rosenstock, Indrajeet Patil.</p>
+  <p>Developed by Jim Hester, Florent Angly, Russ Hyde, Michael Chirico, Kun Ren, Alexander Rosenstock, Indrajeet Patil, Hugo Gruson.</p>
 </div>
 
 <div class="pkgdown-footer-right">
