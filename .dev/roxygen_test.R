@@ -4,9 +4,10 @@ library(roxygen2)
 
 old_dir <- file.path(tempdir(), "man")
 if (dir.exists(old_dir)) unlink(old_dir, recursive = TRUE)
-file.copy("man", tempdir(), recursive = TRUE)
+stopifnot(file.copy("man", tempdir(), recursive = TRUE))
 old_files <- list.files(old_dir, pattern = "\\.Rd$")
 new_dir <- "man"
+
 .Last <- function() unlink(old_dir, recursive = TRUE)
 
 # Rd2txt() prints to its out= argument, so we'd have to compare file contents;
@@ -17,7 +18,7 @@ rd_equal <- function(f1, f2) isTRUE(all.equal(normalize_rd(f1), normalize_rd(f2)
 
 check_roxygenize_idempotent <- function(LOCALE) {
   tryCatch(Sys.setlocale("LC_COLLATE", LOCALE), warning = stop)
-  roxygenize()
+  suppressMessages(roxygenize()) # 'loading lintr'
   
   new_files <- list.files(new_dir, pattern = "\\.Rd$")
   
@@ -50,5 +51,3 @@ check_roxygenize_idempotent <- function(LOCALE) {
 for (LOCALE in c("C", "en_US.utf8", "hu_HU.utf8", "ja_JP.utf8")) {
   check_roxygenize_idempotent(LOCALE)
 }
-
-unlink(old_dir, recursive = TRUE)
