@@ -45,6 +45,10 @@
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
 * `T_and_F_symbol_linter()` ignores `T` and `F` used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
 
+### Lint accuracy fixes: removing false negatives
+
+* `todo_comment_linter()` finds comments inside {roxygen2} markup comments (#2447, @MichaelChirico).
+
 ## Notes
 
 * `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
