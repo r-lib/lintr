@@ -114,6 +114,8 @@
 <code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> and <code><a href="../reference/object_length_linter.html">object_length_linter()</a></code> account for S3 class correctly when the generic is assigned with <code>=</code> (<a href="https://github.com/r-lib/lintr/issues/2507" class="external-link">#2507</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> with <code>operator = "="</code> does a better job of skipping implicit assignments, which are intended to be governed by <code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2765" class="external-link">#2765</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code> ignores <code>T</code> and <code>F</code> used as symbols in formulas (<code>y ~ T + F</code>), which can represent variables in data not controlled by the author (<a href="https://github.com/r-lib/lintr/issues/2637" class="external-link">#2637</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
 <div class="section level3">
