@@ -32,6 +32,11 @@
 #'   linters = seq_linter()
 #' )
 #'
+#' lint(
+#'   text = "unlist(lapply(x, seq_len))",
+#'   linters = seq_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "seq_along(x)",
@@ -50,6 +55,11 @@
 #'
 #' lint(
 #'   text = "seq_along(x)",
+#'   linters = seq_linter()
+#' )
+#'
+#' lint(
+#'   text = "sequence(x)",
 #'   linters = seq_linter()
 #' )
 #'
@@ -79,6 +89,17 @@ seq_linter <- function() {
   seq_len_xpath <- "
     parent::expr[expr/expr/SYMBOL_FUNCTION_CALL[text() = 'length']]
   "
+
+  map_funcs <- c("sapply", "lapply", "map")
+  seq_funcs <- xp_text_in_table(c("seq_len", "seq"))
+  # count(expr) = 3 because we only want seq() calls without extra arguments
+  sequence_xpath <- glue("
+    parent::expr[
+      count(expr) = 3
+      and expr/SYMBOL[ {seq_funcs} ]
+      and preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'unlist']
+    ]
+  ")
 
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1
@@ -138,6 +159,15 @@ seq_linter <- function() {
       type = "warning"
     )
 
-    c(seq_lints, seq_len_lints)
+    xml_map_calls <- source_expression$xml_find_function_calls(map_funcs)
+    potential_sequence_calls <- xml_find_all(xml_map_calls, sequence_xpath)
+    sequence_lints <- xml_nodes_to_lints(
+      potential_sequence_calls,
+      source_expression,
+      "Use sequence() to generate a concatenated sequence of seq_len().",
+      type = "warning"
+    )
+
+    c(seq_lints, seq_len_lints, sequence_lints)
   })
 }
