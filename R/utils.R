@@ -1,4 +1,5 @@
-# backports approach doesn't work since we need this before .onLoad() in names2()
+# TODO(R>=4.4.0): remove this.
+# NB: {backports} approach doesn't work since we need this before .onLoad() in names2()
 if (!exists("%||%", "package:base")) {
   `%||%` <- function(x, y) if (is.null(x)) y else x # nolint: coalesce_linter.
 }
