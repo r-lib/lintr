@@ -64,7 +64,7 @@ test_that("Lint return on end of lambda function", {
 test_that("Do not lint if/else statements (with return) on end of function", {
   linter <- return_linter(return_style = "explicit")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         if (x) {
@@ -76,7 +76,6 @@ test_that("Do not lint if/else statements (with return) on end of function", {
         }
       }
     "),
-    NULL,
     linter
   )
 })
@@ -143,7 +142,7 @@ test_that("Lint control statements (without return) on end of function", {
 })
 
 test_that("Do not lint stop on end of function", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         # Test
@@ -151,29 +150,26 @@ test_that("Do not lint stop on end of function", {
         stop(1)
       }
     "),
-    NULL,
     return_linter(return_style = "explicit")
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         stop(1)
       }
     "),
-    NULL,
     return_linter()
   )
 })
 
 test_that("return_linter works in simple function", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         return(bar)
       }
     "),
-    NULL,
     return_linter(return_style = "explicit")
   )
 })
@@ -181,27 +177,26 @@ test_that("return_linter works in simple function", {
 test_that("return_linter works for using stop() instead of returning", {
   linter <- return_linter(return_style = "explicit")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         stop('bad')
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("return_linter ignores expressions that aren't functions", {
-  expect_lint("x + 1", NULL, return_linter(return_style = "explicit"))
+  expect_no_lint("x + 1", return_linter(return_style = "explicit"))
 })
 
 test_that("return_linter ignores anonymous/inline functions", {
-  expect_lint("lapply(rnorm(10), function(x) x + 1)", NULL, return_linter(return_style = "explicit"))
+  expect_no_lint("lapply(rnorm(10), function(x) x + 1)", return_linter(return_style = "explicit"))
 })
 
 test_that("return_linter ignores if statements outside of functions", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (TRUE) {
         TRUE
@@ -209,20 +204,18 @@ test_that("return_linter ignores if statements outside of functions", {
         FALSE
       }
     "),
-    NULL,
     return_linter(return_style = "explicit")
   )
 })
 
 test_that("return_linter passes on multi-line functions", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         y <- x + 1
         return(y)
       }
     "),
-    NULL,
     return_linter(return_style = "explicit")
   )
 })
@@ -302,13 +295,12 @@ test_that("return_linter works regardless of braces in final if case", {
     rex::rex("All functions must have an explicit return()."),
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         if (TRUE) return(TRUE)
       }
     "),
-    NULL,
     linter
   )
 })
@@ -349,7 +341,7 @@ test_that("return_linter finds missing return in one branch of an if", {
 test_that("return_linter works in nested if statements", {
   linter <- return_linter(return_style = "explicit")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         if (TRUE) {
@@ -361,7 +353,6 @@ test_that("return_linter works in nested if statements", {
         }
       }
     "),
-    NULL,
     linter
   )
 
@@ -402,7 +393,7 @@ test_that("return_linter works in multi-line nested if statements", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         if (TRUE) {
@@ -415,7 +406,6 @@ test_that("return_linter works in multi-line nested if statements", {
         }
       }
     "),
-    NULL,
     linter
   )
 })
@@ -484,25 +474,23 @@ test_that("return_linter works for function factories", {
 })
 
 test_that("return_linter allows return()-less Rcpp wrappers", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       ReadCapacitorAsList <- function(file) {
         .Call(R_ReadCapacitorAsList, file)
       }
     "),
-    NULL,
     return_linter(return_style = "explicit")
   )
 })
 
 test_that("return_linter allows return()-less namespace hook calls", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       .onLoad <- function(libname, pkgname) {
         do_setup()
       }
     "),
-    NULL,
     return_linter(return_style = "explicit")
   )
 })
@@ -510,18 +498,17 @@ test_that("return_linter allows return()-less namespace hook calls", {
 test_that("return_linter correctly handles pipes", {
   linter <- return_linter(return_style = "explicit")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         x %>%
           return()
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         x %>%
@@ -529,11 +516,10 @@ test_that("return_linter correctly handles pipes", {
           return()
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         y <- rnorm(length(x))
@@ -543,7 +529,6 @@ test_that("return_linter correctly handles pipes", {
           return()
       }
     "),
-    NULL,
     linter
   )
 })
@@ -552,7 +537,7 @@ test_that("return_linter handles pipes in control flow", {
   linter <- return_linter(return_style = "explicit")
   lint_msg <- rex::rex("All functions must have an explicit return().")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         if (TRUE) {
@@ -563,7 +548,6 @@ test_that("return_linter handles pipes in control flow", {
         }
       }
     "),
-    NULL,
     linter
   )
 
@@ -597,7 +581,7 @@ test_that("return_linter handles pipes in control flow", {
 })
 
 test_that("return_linter passes on q() or quit() calls", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         if (TRUE) {
@@ -607,7 +591,6 @@ test_that("return_linter passes on q() or quit() calls", {
         }
       }
     "),
-    NULL,
     return_linter(return_style = "explicit")
   )
 })
@@ -615,35 +598,32 @@ test_that("return_linter passes on q() or quit() calls", {
 test_that("return_functions= argument works", {
   linter <- return_linter(return_style = "explicit", return_functions = "LOG")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         LOG('INFO', 'bad')
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         logging::LOG('INFO', 'bad')
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("except= argument works", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         5 + 3
       }
     "),
-    NULL,
     return_linter(return_style = "explicit", except = "foo")
   )
 })
@@ -651,7 +631,7 @@ test_that("except= argument works", {
 test_that("except_regex= argument works", {
   linter <- return_linter(return_style = "explicit", except_regex = "^Test")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       TestSummary <- function() {
         context <- foo(72643424)
@@ -659,17 +639,15 @@ test_that("except_regex= argument works", {
         checkEquals(expected, bar(context))
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       TestMyPackage <- function() {
         checkMyCustomComparator(x, y)
       }
     "),
-    NULL,
     linter
   )
 
@@ -691,10 +669,23 @@ test_that("except_regex= argument works", {
     list(rex::rex("All functions must have an explicit return()."), line_number = 5L),
     linter
   )
+
+  # capture group doesn't cause issues, #2678
+  expect_no_lint(
+    trim_some("
+      TestFun <- function() {
+        non_return()
+      }
+      AssertFun <- function() {
+        non_return()
+      }
+    "),
+    return_linter(return_style = "explicit", except_regex = "^(Test|Assert)")
+  )
 })
 
 test_that("except= and except_regex= combination works", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         no_return()
@@ -709,19 +700,18 @@ test_that("except= and except_regex= combination works", {
         no_return()
       }
     "),
-    NULL,
     return_linter(return_style = "explicit", except = c("foo", "bar"), except_regex = "baz$")
   )
 })
 
 test_that("return_linter skips brace-wrapped inline functions", {
-  expect_lint("function(x) { sum(x) }", NULL, return_linter(return_style = "explicit"))
+  expect_no_lint("function(x) { sum(x) }", return_linter(return_style = "explicit"))
 })
 
 test_that("return_linter skips common S4 method functions", {
   linter <- return_linter(return_style = "explicit")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       setGeneric(
         'ReadCircuitsPBAsDataTable',
@@ -730,17 +720,15 @@ test_that("return_linter skips common S4 method functions", {
         }
       )
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       setMethod('initialize', 'CircuitsTopology', function(.Object, ...) {
         callNextMethod(.Object, ...)
       })
     "),
-    NULL,
     linter
   )
 })
@@ -748,23 +736,21 @@ test_that("return_linter skips common S4 method functions", {
 test_that("return_functions= is not affected by namespace qualification", {
   linter <- return_linter(return_style = "explicit", return_functions = "abort")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         abort('bad')
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         rlang::abort('bad')
       }
     "),
-    NULL,
     linter
   )
 })
@@ -772,25 +758,23 @@ test_that("return_functions= is not affected by namespace qualification", {
 test_that("return_linter skips invokeRestart(), tryInvokeRestart()", {
   linter <- return_linter(return_style = "explicit")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       warning = function(w) {
         warn <<- append(warn, conditionMessage(w))
         invokeRestart('muffleWarning')
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       custom_warning = function(w) {
         warn <<- append(warn, conditionMessage(w))
         tryInvokeRestart('muffleCustom_warning')
       }
     "),
-    NULL,
     linter
   )
 })
@@ -907,7 +891,7 @@ test_that("return_linter handles arbitrarily nested terminal statements", {
   explicit_linter <- return_linter(return_style = "explicit")
   explicit_msg <- rex::rex("All functions must have an explicit return().")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         if (x < 0) {
@@ -936,11 +920,10 @@ test_that("return_linter handles arbitrarily nested terminal statements", {
         }
       }
     "),
-    NULL,
     implicit_linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         if (x < 0) {
@@ -969,7 +952,6 @@ test_that("return_linter handles arbitrarily nested terminal statements", {
         }
       }
     "),
-    NULL,
     explicit_linter
   )
 
@@ -1041,7 +1023,7 @@ test_that("explicit returns in control flow are linted correctly", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         if (TRUE) {
@@ -1054,7 +1036,6 @@ test_that("explicit returns in control flow are linted correctly", {
         }
       }
     "),
-    NULL,
     linter
   )
 })
@@ -1064,18 +1045,17 @@ test_that("explicit returns in control flow are linted correctly", {
 test_that("logic is robust to absence of '{'", {
   linter <- return_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         if (TRUE) # comment is a neighbor of 'if'
           FALSE
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         if (TRUE)
@@ -1084,11 +1064,10 @@ test_that("logic is robust to absence of '{'", {
           NA
       }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         if (TRUE) {
@@ -1097,7 +1076,6 @@ test_that("logic is robust to absence of '{'", {
           NA
       }
     "),
-    NULL,
     linter
   )
 })
@@ -1119,14 +1097,13 @@ test_that("logic is robust to terminal comments under '{'", {
     implicit_linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         return(TRUE)
         # comment
       }
     "),
-    NULL,
     explicit_linter
   )
 
@@ -1144,13 +1121,12 @@ test_that("logic is robust to terminal comments under '{'", {
 
 test_that("terminal = assignment is not an error", {
   # key is this is not an <expr> node
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         a = 1
       }
     "),
-    NULL,
     return_linter()
   )
 })
@@ -1162,23 +1138,23 @@ test_that("empty terminal '{' expression is handled correctly", {
   explicit_msg <- rex::rex("All functions must have an explicit return().")
 
   empty_inline <- "foo <- function() { }"
-  expect_lint(empty_inline, NULL, implicit_linter)
-  expect_lint(empty_inline, NULL, explicit_linter)
+  expect_no_lint(empty_inline, implicit_linter)
+  expect_no_lint(empty_inline, explicit_linter)
 
   empty_multiline <- trim_some("
     foo <- function() {
     }
   ")
-  expect_lint(empty_multiline, NULL, implicit_linter)
-  expect_lint(empty_multiline, NULL, explicit_linter)
+  expect_no_lint(empty_multiline, implicit_linter)
+  expect_no_lint(empty_multiline, explicit_linter)
 
   empty_comment <- trim_some("
     foo <- function() {
       # this line intentionally left blank
     }
   ")
-  expect_lint(empty_comment, NULL, implicit_linter)
-  expect_lint(empty_comment, NULL, explicit_linter)
+  expect_no_lint(empty_comment, implicit_linter)
+  expect_no_lint(empty_comment, explicit_linter)
 
   empty_if_implicit <- trim_some("
     foo <- function() {
@@ -1188,7 +1164,7 @@ test_that("empty terminal '{' expression is handled correctly", {
       }
     }
   ")
-  expect_lint(empty_if_implicit, NULL, implicit_linter)
+  expect_no_lint(empty_if_implicit, implicit_linter)
   expect_lint(
     empty_if_implicit,
     list(
@@ -1206,7 +1182,7 @@ test_that("empty terminal '{' expression is handled correctly", {
       }
     }
   ")
-  expect_lint(empty_else_implicit, NULL, implicit_linter)
+  expect_no_lint(empty_else_implicit, implicit_linter)
   expect_lint(
     empty_else_implicit,
     list(
@@ -1245,7 +1221,7 @@ test_that("empty terminal '{' expression is handled correctly", {
       }
     }
   ")
-  expect_lint(empty_if_else, NULL, implicit_linter)
+  expect_no_lint(empty_if_else, implicit_linter)
   expect_lint(
     empty_if_else,
     list(
@@ -1269,19 +1245,18 @@ test_that("empty terminal '{' expression is handled correctly", {
 })
 
 test_that("non-if returns are skipped under allow_implicit_else = FALSE", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         bar
       }
     "),
-    NULL,
     return_linter(allow_implicit_else = FALSE)
   )
 })
 
 test_that("if/else don't throw a lint under allow_implicit_else = FALSE", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(bar) {
         if (TRUE) {
@@ -1291,13 +1266,12 @@ test_that("if/else don't throw a lint under allow_implicit_else = FALSE", {
         }
       }
     "),
-    NULL,
     return_linter(allow_implicit_else = FALSE)
   )
 })
 
 test_that("implicit else outside a function doesn't lint under allow_implicit_else = FALSE", {
-  expect_lint("if(TRUE) TRUE", NULL, return_linter(allow_implicit_else = FALSE))
+  expect_no_lint("if(TRUE) TRUE", return_linter(allow_implicit_else = FALSE))
 })
 
 test_that("allow_implicit_else = FALSE identifies a simple implicit else", {
@@ -1359,23 +1333,21 @@ test_that("allow_implicit_else = FALSE works on anonymous/inline functions", {
 })
 
 test_that("side-effect functions like .onLoad ignore the lack of explicit else under allow_implicit_else = FALSE", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       .onAttach <- function(libname, pkgname) {
         if (TRUE) foo()
       }
     "),
-    NULL,
     return_linter(allow_implicit_else = FALSE)
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       .onAttach <- function(libname, pkgname) {
         if (TRUE) return(foo())
       }
     "),
-    NULL,
     return_linter(return_style = "explicit", allow_implicit_else = FALSE)
   )
 })
@@ -1497,23 +1469,21 @@ test_that("= assignments are handled correctly", {
   explicit_linter <- return_linter(return_style = "explicit")
   explicit_msg <- rex::rex("All functions must have an explicit return().")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       .onLoad = function() {
         1
       }
     "),
-    NULL,
     explicit_linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       .onLoad = function() {
         if (TRUE) 1
       }
     "),
-    NULL,
     implicit_linter
   )
 
@@ -1552,7 +1522,7 @@ test_that("terminal switch() is handled correctly", {
       )
     }
   ")
-  expect_lint(no_return_lines, NULL, implicit_linter)
+  expect_no_lint(no_return_lines, implicit_linter)
   expect_lint(no_return_lines, list(explicit_msg, explicit_msg), explicit_linter)
 
   outer_return_lines <- trim_some("
@@ -1564,7 +1534,7 @@ test_that("terminal switch() is handled correctly", {
     }
   ")
   expect_lint(outer_return_lines, implicit_msg, implicit_linter)
-  expect_lint(outer_return_lines, NULL, explicit_linter)
+  expect_no_lint(outer_return_lines, explicit_linter)
 
   partial_return_lines <- trim_some("
     foo <- function(x) {
@@ -1586,7 +1556,7 @@ test_that("terminal switch() is handled correctly", {
     }
   ")
   expect_lint(all_return_lines, list(implicit_msg, implicit_msg), implicit_linter)
-  expect_lint(all_return_lines, NULL, explicit_linter)
+  expect_no_lint(all_return_lines, explicit_linter)
 
   default_all_return_lines <- trim_some("
     foo <- function(x) {
@@ -1597,7 +1567,7 @@ test_that("terminal switch() is handled correctly", {
     }
   ")
   expect_lint(default_all_return_lines, list(implicit_msg, implicit_msg), implicit_linter)
-  expect_lint(default_all_return_lines, NULL, explicit_linter)
+  expect_no_lint(default_all_return_lines, explicit_linter)
 
   default_no_return_lines <- trim_some("
     foo <- function(x) {
@@ -1607,7 +1577,7 @@ test_that("terminal switch() is handled correctly", {
       )
     }
   ")
-  expect_lint(default_no_return_lines, NULL, implicit_linter)
+  expect_no_lint(default_no_return_lines, implicit_linter)
   expect_lint(default_no_return_lines, list(explicit_msg, explicit_msg), explicit_linter)
 
   no_return_braced_lines <- trim_some("
@@ -1627,7 +1597,7 @@ test_that("terminal switch() is handled correctly", {
       )
     }
   ")
-  expect_lint(no_return_braced_lines, NULL, implicit_linter)
+  expect_no_lint(no_return_braced_lines, implicit_linter)
   expect_lint(
     no_return_braced_lines,
     list(
@@ -1662,7 +1632,7 @@ test_that("terminal switch() is handled correctly", {
     ),
     implicit_linter
   )
-  expect_lint(all_return_braced_lines, NULL, explicit_linter)
+  expect_no_lint(all_return_braced_lines, explicit_linter)
 
   early_return_braced_lines <- trim_some("
     foo <- function(x) {
@@ -1683,7 +1653,7 @@ test_that("terminal switch() is handled correctly", {
       )
     }
   ")
-  expect_lint(early_return_braced_lines, NULL, implicit_linter)
+  expect_no_lint(early_return_braced_lines, implicit_linter)
   expect_lint(
     early_return_braced_lines,
     list(
@@ -1712,7 +1682,7 @@ test_that("terminal switch() is handled correctly", {
       )
     }
   ")
-  expect_lint(if_no_return_braced_lines, NULL, implicit_linter)
+  expect_no_lint(if_no_return_braced_lines, implicit_linter)
   expect_lint(
     if_no_return_braced_lines,
     list(
@@ -1751,7 +1721,7 @@ test_that("terminal switch() is handled correctly", {
     ),
     implicit_linter
   )
-  expect_lint(if_return_braced_lines, NULL, explicit_linter)
+  expect_no_lint(if_return_braced_lines, explicit_linter)
 
   ok_exit_lines <- trim_some("
     foo <- function(x) {
@@ -1762,8 +1732,8 @@ test_that("terminal switch() is handled correctly", {
       )
     }
   ")
-  expect_lint(ok_exit_lines, NULL, implicit_linter)
-  expect_lint(ok_exit_lines, NULL, explicit_linter)
+  expect_no_lint(ok_exit_lines, implicit_linter)
+  expect_no_lint(ok_exit_lines, explicit_linter)
 })
 
 test_that("switch() default statements interact with allow_implicit_else", {
@@ -1798,7 +1768,7 @@ test_that("switch() default statements interact with allow_implicit_else", {
       )
     }
   ")
-  expect_lint(ifelse_default_lines, NULL, implicit_linter)
+  expect_no_lint(ifelse_default_lines, implicit_linter)
   expect_lint(ifelse_default_lines, list(explicit_msg, explicit_msg, explicit_msg, explicit_msg), explicit_linter)
 
   if_no_else_default_lines <- trim_some("
@@ -1820,6 +1790,111 @@ test_that("switch() default statements interact with allow_implicit_else", {
       list(explicit_msg, line_number = 4L),
       list(implicit_else_msg, line_number = 5L),
       list(explicit_msg, line_number = 6L)
+    ),
+    explicit_linter
+  )
+})
+
+test_that("functions with braced expressions in formals lint correctly", {
+  implicit_linter <- return_linter()
+  implicit_msg <- rex::rex("Use implicit return behavior; explicit return() is not needed.")
+  explicit_linter <- return_linter(return_style = "explicit")
+  explicit_msg <- rex::rex("All functions must have an explicit return().")
+
+  brace_lines_expl <- trim_some("
+    foo <- function(y,
+                    x = {
+                      y <- sqrt(y)
+                      y + 1
+                    }) {
+      return(x + y)
+    }
+  ")
+  expect_lint(brace_lines_expl, implicit_msg, implicit_linter)
+  expect_no_lint(brace_lines_expl, explicit_linter)
+
+  brace_lines_impl <- trim_some("
+    foo <- function(y,
+                    x = {
+                      y <- sqrt(y)
+                      y + 1
+                    }) {
+      x + y
+    }
+  ")
+  expect_no_lint(brace_lines_impl, implicit_linter)
+  expect_lint(brace_lines_impl, explicit_msg, explicit_linter)
+
+  lambda_lines_expl_expl <- trim_some("
+    foo <- function(y,
+                    F = function(z) {
+                      return(z + 1)
+                    }) {
+      return(F(y) + y)
+    }
+  ")
+  expect_lint(
+    lambda_lines_expl_expl,
+    list(
+      list(implicit_msg, line_number = 3L),
+      list(implicit_msg, line_number = 5L)
+    ),
+    implicit_linter
+  )
+  expect_no_lint(lambda_lines_expl_expl, explicit_linter)
+
+  lambda_lines_expl_impl <- trim_some("
+    foo <- function(y,
+                    F = function(z) {
+                      return(z + 1)
+                    }) {
+      F(y) + y
+    }
+  ")
+  expect_lint(
+    lambda_lines_expl_impl,
+    list(implicit_msg, line_number = 3L),
+    implicit_linter
+  )
+  expect_lint(
+    lambda_lines_expl_impl,
+    list(explicit_msg, line_number = 5L),
+    explicit_linter
+  )
+
+  lambda_lines_impl_expl <- trim_some("
+    foo <- function(y,
+                    F = function(z) {
+                      z + 1
+                    }) {
+      return(F(y) + y)
+    }
+  ")
+  expect_lint(
+    lambda_lines_impl_expl,
+    list(implicit_msg, line_number = 5L),
+    implicit_linter
+  )
+  expect_lint(
+    lambda_lines_impl_expl,
+    list(explicit_msg, line_number = 3L),
+    explicit_linter
+  )
+
+  lambda_lines_impl_impl <- trim_some("
+    foo <- function(y,
+                    F = function(z) {
+                      z + 1
+                    }) {
+      F(y) + y
+    }
+  ")
+  expect_no_lint(lambda_lines_impl_impl, implicit_linter)
+  expect_lint(
+    lambda_lines_impl_impl,
+    list(
+      list(explicit_msg, line_number = 3L),
+      list(explicit_msg, line_number = 5L)
     ),
     explicit_linter
   )

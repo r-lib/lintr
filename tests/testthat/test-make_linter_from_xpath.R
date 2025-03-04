@@ -1,4 +1,4 @@
-test_that("basic usage works", {
+test_that("basic usage of make_linter_from_xpath works", {
   linter <- make_linter_from_xpath("//NUM_CONST", "Number")
   expect_type(linter, "closure")
   expect_lint("1", list("Number", type = "warning"), linter())
@@ -8,7 +8,7 @@ test_that("basic usage works", {
   expect_lint("'a'", list("Letter", type = "style"), make_linter_from_xpath("//STR_CONST", "Letter", type = "style")())
 })
 
-test_that("input validation works", {
+test_that("input validation works for make_linter_from_xpath", {
   expect_error(
     make_linter_from_xpath("//NUM_CONST", "Number", type = "x"),
     'one of "warning", "style", "error"',
@@ -21,12 +21,63 @@ test_that("input validation works", {
     fixed = TRUE
   )
 
-  err_msg <- if (getRversion() < "4.0.0") "is.character(xpath)" else "xpath should be a character string"
+  err_msg <- "xpath should be a character string"
   expect_error(make_linter_from_xpath(FALSE), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(letters), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(NA_character_), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(character()), err_msg, fixed = TRUE)
 
-  err_msg <- if (getRversion() < "4.0.0") "!missing(lint_message)" else "lint_message is required"
+  err_msg <- "lint_message is required"
   expect_error(make_linter_from_xpath(""), err_msg, fixed = TRUE)
+})
+
+test_that("basic usage of make_linter_from_function_xpath works", {
+  linter <- make_linter_from_function_xpath(
+    "sum",
+    "following-sibling::SYMBOL_SUB[text() = 'na.rm']",
+    "na.rm"
+  )
+  expect_type(linter, "closure")
+  expect_no_lint("sum()", linter())
+  expect_lint("sum(na.rm=TRUE)", "na.rm", linter())
+})
+
+test_that("input validation works for make_linter_from_function_xpath", {
+  expect_error(
+    make_linter_from_function_xpath(1L),
+    "function_names should be a character vector",
+    fixed = TRUE
+  )
+  expect_error(
+    make_linter_from_function_xpath(character()),
+    "function_names should be a character vector",
+    fixed = TRUE
+  )
+
+  expect_error(
+    make_linter_from_function_xpath("sum", 1L),
+    "xpath should be a character string",
+    fixed = TRUE
+  )
+  expect_error(
+    make_linter_from_function_xpath("sum", character()),
+    "xpath should be a character string",
+    fixed = TRUE
+  )
+  expect_error(
+    make_linter_from_function_xpath("sum", letters),
+    "xpath should be a character string",
+    fixed = TRUE
+  )
+  expect_error(
+    make_linter_from_function_xpath("sum", NA_character_),
+    "xpath should be a character string",
+    fixed = TRUE
+  )
+
+  expect_error(
+    make_linter_from_function_xpath("sum", "XP"),
+    "lint_message is required",
+    fixed = TRUE
+  )
 })

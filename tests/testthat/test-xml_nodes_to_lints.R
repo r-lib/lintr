@@ -111,7 +111,8 @@ test_that("it doesn't produce invalid lints", {
         range_end_xpath = xp_range_end
       )
     },
-    rex::rex("Could not find range start for lint. Defaulting to start of line.")
+    "Defaulting to start of line",
+    fixed = TRUE
   )
 
   expect_identical(lints1[["column_number"]], nchar("before") + 1L)
@@ -128,7 +129,8 @@ test_that("it doesn't produce invalid lints", {
         range_end_xpath = xp_invalid
       )
     },
-    rex::rex("Could not find range end for lint. Defaulting to width 1.")
+    "Defaulting to width 1",
+    fixed = TRUE
   )
 
   expect_identical(lints2[["column_number"]], nchar("before") + 1L)
@@ -145,7 +147,8 @@ test_that("it doesn't produce invalid lints", {
         range_end_xpath = xp_range_end
       )
     },
-    rex::rex("Could not find location for lint. Defaulting to start of range.")
+    "Defaulting to start of range",
+    fixed = TRUE
   )
 
   expect_identical(lints3[["column_number"]], 1L)
@@ -153,5 +156,5 @@ test_that("it doesn't produce invalid lints", {
 })
 
 test_that("erroneous input errors", {
-  expect_error(xml_nodes_to_lints(1L), "Expected an xml_nodeset", fixed = TRUE)
+  expect_error(xml_nodes_to_lints(1L), "Expected an <xml_nodeset>", fixed = TRUE)
 })

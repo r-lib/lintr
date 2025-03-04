@@ -14,8 +14,12 @@
 #'   testthat requires a braced expression in its `code` argument. The other defaults
 #'   similarly compute on expressions in a way which is worth highlighting by
 #'   em-bracing them, even if there is only one expression, while [switch()] is allowed
-#'   for its use as a control flow analogous to `if`/`else`.
-#'
+#'   for its use as a control flow analogous to `if`/`else`.]
+#' @param branch_exit_calls Character vector of functions which are considered
+#'   as "exiting" a branch for the purpose of recommending removing nesting in a branch
+#'   _lacking_ an exit call when the other branch terminates with one. Calls which
+#'   always interrupt or quit the current call or R session,
+#'   e.g. [stop()] and [q()], are always included.
 #' @examples
 #' # will produce lints
 #' code <- "if (A) {\n  stop('A is bad!')\n} else {\n  do_good()\n}"
@@ -39,14 +43,29 @@
 #'   linters = unnecessary_nesting_linter(allow_assignment = FALSE)
 #' )
 #'
-#' writeLines("if (x) { \n  if (y) { \n   return(1L) \n  } \n}")
+#' code <- "if (x) { \n  if (y) { \n   return(1L) \n  } \n}"
+#' writeLines(code)
 #' lint(
-#'   text = "if (x) { \n  if (y) { \n   return(1L) \n  } \n}",
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
 #' lint(
 #'   text = "my_quote({x})",
+#'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' code <- paste(
+#'   "if (A) {",
+#'   "  stop('A is bad because a.')",
+#'   "} else {",
+#'   "  warning('!A requires caution.')",
+#'   "}",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
@@ -72,15 +91,17 @@
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
-#' writeLines("if (x && y) { \n  return(1L) \n}")
+#' code <- "if (x && y) { \n  return(1L) \n}"
+#' writeLines(code)
 #' lint(
-#'   text = "if (x && y) { \n  return(1L) \n}",
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
-#' writeLines("if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}")
+#' code <- "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}"
+#' writeLines(code)
 #' lint(
-#'   text = "if (x) { \n  y <- x + 1L\n  if (y) { \n   return(1L) \n  } \n}",
+#'   text = code,
 #'   linters = unnecessary_nesting_linter()
 #' )
 #'
@@ -89,25 +110,43 @@
 #'   linters = unnecessary_nesting_linter(allow_functions = "my_quote")
 #' )
 #'
+#' code <- paste(
+#'   "if (A) {",
+#'   "  stop('A is bad because a.')",
+#'   "} else {",
+#'   "  warning('!A requires caution.')",
+#'   "}",
+#'   sep = "\n"
+#' )
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter(branch_exit_calls = c("stop", "warning"))
+#' )
+#'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
 #' @seealso
 #'  - [cyclocomp_linter()] for another linter that penalizes overly complex code.
 #'  - [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_nesting_linter <- function(
-    allow_assignment = TRUE,
-    allow_functions = c(
-      "switch",
-      "try", "tryCatch", "withCallingHandlers",
-      "quote", "expression", "bquote", "substitute",
-      "with_parameters_test_that",
-      "reactive", "observe", "observeEvent",
-      "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
-      "renderPrint", "renderTable", "renderText", "renderUI"
-    )) {
-  exit_calls <- c("stop", "return", "abort", "quit", "q")
+  allow_assignment = TRUE,
+  allow_functions = c(
+    "switch",
+    "try", "tryCatch", "withCallingHandlers",
+    "quote", "expression", "bquote", "substitute",
+    "with_parameters_test_that",
+    "reactive", "observe", "observeEvent",
+    "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
+    "renderPrint", "renderTable", "renderText", "renderUI"
+  ),
+  branch_exit_calls = character()
+) {
+  default_branch_exit_calls <- c("stop", "return", "abort", "quit", "q")
+  branch_exit_calls <- union(default_branch_exit_calls, branch_exit_calls)
+
   exit_call_expr <- glue("
-    expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]]
+    expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(branch_exit_calls)}]]
   ")
   # block IF here for cases where a nested if/else is entirely within
   #   one of the branches.
@@ -117,10 +156,9 @@ unnecessary_nesting_linter <- function(
     and expr[
       position() = last()
       and not(IF)
-      and not(expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(exit_calls)}]])
+      and not(expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(branch_exit_calls)}]])
     ]
-  ]
-  ")
+  ]")
   # condition for ELSE should be redundant, but include for robustness
   # condition on parent::expr[IF] ensures we're at the first `if` of a sequence of if/else statements
   # condition on expr uses following-sibling or preceding-sibling to ensure
@@ -129,9 +167,8 @@ unnecessary_nesting_linter <- function(
   #   to lead to a lint.
   # use position() = last() to ignore any expr but the last one in any branch.
   if_else_exit_xpath <- glue("
-  //expr[
-    IF
-    and ELSE
+  //IF/parent::expr[
+    ELSE
     and not(parent::expr[IF])
     and expr[
       OP-LEFT-BRACE
@@ -143,6 +180,8 @@ unnecessary_nesting_linter <- function(
     ]
   ]
   ")
+
+  used_exit_call_xpath <- glue("expr/expr[position() = last()]/{exit_call_expr}")
 
   assignment_cond <- if (allow_assignment) "expr[LEFT_ASSIGN or RIGHT_ASSIGN]" else "false"
 
@@ -167,6 +206,7 @@ unnecessary_nesting_linter <- function(
       count(expr) = 1
       and not(preceding-sibling::*[
         self::FUNCTION
+        or self::OP-LAMBDA
         or self::FOR
         or self::IF
         or self::WHILE
@@ -192,10 +232,14 @@ unnecessary_nesting_linter <- function(
       # catch if (cond) if (other_cond) { ... }
       "following-sibling::expr[IF and not(ELSE)]",
       # catch if (cond) { if (other_cond) { ... } }
-      "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]/expr[IF and not(ELSE)]"
+      #   count(*): only OP-LEFT-BRACE, one <expr>, and OP-RIGHT-BRACE.
+      #             Note that third node could be <expr_or_assign_or_help>.
+      "following-sibling::expr[OP-LEFT-BRACE and count(*) = 3]/expr[IF and not(ELSE)]"
     ),
     collapse = " | "
   )
+  # "un-walk" from the unnecessary IF to the IF with which it should be combined
+  corresponding_if_xpath <- "preceding-sibling::IF | parent::expr/preceding-sibling::IF"
 
   unnecessary_else_brace_xpath <- "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
 
@@ -203,14 +247,13 @@ unnecessary_nesting_linter <- function(
     xml <- source_expression$xml_parsed_content
 
     if_else_exit_expr <- xml_find_all(xml, if_else_exit_xpath)
+    used_exit_call <- get_r_string(if_else_exit_expr, used_exit_call_xpath)
     if_else_exit_lints <- xml_nodes_to_lints(
       if_else_exit_expr,
       source_expression = source_expression,
       lint_message = paste0(
         "Reduce the nesting of this if/else statement by unnesting the ",
-        "portion without an exit clause (i.e., ",
-        paste0(exit_calls, "()", collapse = ", "),
-        ")."
+        "portion without an exit clause, i.e., ", used_exit_call, "()."
       ),
       type = "warning"
     )
@@ -224,12 +267,15 @@ unnecessary_nesting_linter <- function(
     )
 
     unnecessary_nested_if_expr <- xml_find_all(xml, unnecessary_nested_if_xpath)
+    corresponding_brace <- xml_find_first(unnecessary_nested_if_expr, corresponding_if_xpath)
+    corresponding_line <- xml_attr(corresponding_brace, "line1")
+    corresponding_column <- xml_attr(corresponding_brace, "col1")
     unnecessary_nested_if_lints <- xml_nodes_to_lints(
       unnecessary_nested_if_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "Don't use nested `if` statements, where a single `if` with the combined conditional expression will do.",
-        "For example, instead of `if (x) { if (y) { ... }}`, use `if (x && y) { ... }`."
+      lint_message = paste0(
+        "Combine this `if` statement with the one found at line ",
+        corresponding_line, ", column ", corresponding_column, " to reduce nesting."
       ),
       type = "warning"
     )

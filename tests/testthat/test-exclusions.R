@@ -41,7 +41,7 @@ test_that("it gives the expected error message when there is only one start but 
 
   expect_error(
     lintr:::parse_exclusions("dummy_projects/project/one_start_no_end.R"),
-    "has 1 range start (line 3) but only 0 range ends for exclusion from linting",
+    "has 1 range start (line 3) and 0 range ends",
     fixed = TRUE
   )
 })
@@ -51,7 +51,7 @@ test_that("it gives the expected error message when there is mismatch between mu
 
   expect_error(
     lintr:::parse_exclusions("dummy_projects/project/mismatched_starts_ends.R"),
-    "has 3 range starts (lines 3, 7, 11) but only 2 range ends (lines 1, 9) for exclusion from linting",
+    "has 3 range starts (lines 3, 7, 11) and 2 range ends (lines 1, 9)",
     fixed = TRUE
   )
 })
@@ -194,7 +194,7 @@ test_that("next-line exclusion works", {
       # NLN: line_length_linter.
       x = 1
     "),
-    rex::rex("Use <-, not =, for assignment."),
+    rex::rex("Use one of <-, <<- for assignment, not =."),
     list(linter, line_length_linter())
   )
 
@@ -204,7 +204,7 @@ test_that("next-line exclusion works", {
       x = 1 # NLN: assignment_linter.
       x = 2
     "),
-    list(rex::rex("Use <-, not =, for assignment."), line_number = 1L),
+    list(rex::rex("Use one of <-, <<- for assignment, not =."), line_number = 1L),
     linter
   )
 })

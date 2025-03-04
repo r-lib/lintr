@@ -7,7 +7,8 @@
 #' Additionally, it checks for `1:n()` (from `{dplyr}`) and `1:.N` (from `{data.table}`).
 #'
 #' These often cause bugs when the right-hand side is zero.
-#' It is safer to use [base::seq_len()] or [base::seq_along()] instead.
+#' Instead, it is safer to use [base::seq_len()] (to create a sequence of a specified *length*) or
+#'   [base::seq_along()] (to create a sequence *along* an object).
 #'
 #' @examples
 #' # will produce lints
@@ -23,6 +24,11 @@
 #'
 #' lint(
 #'   text = "dplyr::mutate(x, .id = 1:n())",
+#'   linters = seq_linter()
+#' )
+#'
+#' lint(
+#'   text = "seq_len(length(x))",
 #'   linters = seq_linter()
 #' )
 #'
@@ -48,6 +54,11 @@
 #' )
 #'
 #' lint(
+#'   text = "seq_along(x)",
+#'   linters = seq_linter()
+#' )
+#'
+#' lint(
 #'   text = "sequence(x)",
 #'   linters = seq_linter()
 #' )
@@ -60,8 +71,7 @@ seq_linter <- function() {
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   seq_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
+  following-sibling::expr[1][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
     /parent::expr[count(expr) = 2]
   ")
   # `.N` from {data.table} is special since it's not a function but a symbol
@@ -75,6 +85,10 @@ seq_linter <- function() {
       )
     ]
   ")
+
+  seq_len_xpath <- "
+    parent::expr[expr/expr/SYMBOL_FUNCTION_CALL[text() = 'length']]
+  "
 
   map_funcs <- c("sapply", "lapply", "map")
   seq_funcs <- xp_text_in_table(c("seq_len", "seq"))
@@ -108,17 +122,17 @@ seq_linter <- function() {
     xml <- source_expression$xml_parsed_content
     seq_calls <- source_expression$xml_find_function_calls("seq")
 
-    badx <- combine_nodesets(
+    seq_expr <- combine_nodesets(
       xml_find_all(seq_calls, seq_xpath),
       xml_find_all(xml, colon_xpath)
     )
 
-    dot_expr1 <- get_fun(badx, 1L)
-    dot_expr2 <- get_fun(badx, 2L)
+    dot_expr1 <- get_fun(seq_expr, 1L)
+    dot_expr2 <- get_fun(seq_expr, 2L)
     seq_along_idx <- grepl("length(", dot_expr1, fixed = TRUE) | grepl("length(", dot_expr2, fixed = TRUE)
     rev_idx <- startsWith(dot_expr2, "1")
 
-    replacement <- rep("seq_along(...)", length(badx))
+    replacement <- rep("seq_along(...)", length(seq_expr))
     replacement[!seq_along_idx] <- paste0("seq_len(", ifelse(rev_idx, dot_expr1, dot_expr2)[!seq_along_idx], ")")
     replacement[rev_idx] <- paste0("rev(", replacement[rev_idx], ")")
 
@@ -134,7 +148,16 @@ seq_linter <- function() {
       )
     )
 
-    seq_lints <- xml_nodes_to_lints(badx, source_expression, lint_message, type = "warning")
+    seq_lints <- xml_nodes_to_lints(seq_expr, source_expression, lint_message, type = "warning")
+
+    seq_len_calls <- source_expression$xml_find_function_calls("seq_len")
+    seq_len_expr <- xml_find_all(seq_len_calls, seq_len_xpath)
+    seq_len_lints <- xml_nodes_to_lints(
+      seq_len_expr,
+      source_expression,
+      "Use seq_along(x) instead of seq_len(length(x)).",
+      type = "warning"
+    )
 
     xml_map_calls <- source_expression$xml_find_function_calls(map_funcs)
     potential_sequence_calls <- xml_find_all(xml_map_calls, sequence_xpath)
@@ -145,6 +168,6 @@ seq_linter <- function() {
       type = "warning"
     )
 
-    c(seq_lints, sequence_lints)
+    c(seq_lints, seq_len_lints, sequence_lints)
   })
 }

@@ -72,11 +72,12 @@
 #'  - <https://style.tidyverse.org/functions.html?q=return#return>
 #' @export
 return_linter <- function(
-    return_style = c("implicit", "explicit"),
-    allow_implicit_else = TRUE,
-    return_functions = NULL,
-    except = NULL,
-    except_regex = NULL) {
+  return_style = c("implicit", "explicit"),
+  allow_implicit_else = TRUE,
+  return_functions = NULL,
+  except = NULL,
+  except_regex = NULL
+) {
   return_style <- match.arg(return_style)
 
   check_except <- !allow_implicit_else || return_style == "explicit"
@@ -94,7 +95,7 @@ return_linter <- function(
 
   if (return_style == "implicit") {
     # nolint next: object_usage. False positive.
-    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[1]"
+    body_xpath <- "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[last()]"
     params <- list(
       implicit = TRUE,
       type = "style",
@@ -121,7 +122,7 @@ return_linter <- function(
 
     body_xpath_fmt <- "
     (//FUNCTION | //OP-LAMBDA)[{ except_xpath }]
-      /following-sibling::expr[OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
+      /following-sibling::expr[last()][OP-LEFT-BRACE and expr[last()]/@line1 != @line1]
       /expr[last()]
     "
     if (defer_except) {
@@ -147,7 +148,8 @@ return_linter <- function(
     xml <- source_expression$xml_parsed_content
     if (defer_except) {
       assigned_functions <- xml_text(xml_find_all(xml, function_name_xpath))
-      except <- union(except, assigned_functions[re_matches(assigned_functions, except_regex)])
+      except <-
+        union(except, assigned_functions[re_matches_logical(assigned_functions, except_regex)])
       except_xpath <- glue(except_xpath_fmt, except = except)
       body_xpath <- glue(body_xpath_fmt, except_xpath = except_xpath)
     }

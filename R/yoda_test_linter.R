@@ -47,9 +47,8 @@ yoda_test_linter <- function() {
   "
   pipes <- setdiff(magrittr_pipes, c("%$%", "%<>%"))
   xpath <- glue("
-    parent::expr
-      /following-sibling::expr[1][ {const_condition} ]
-      /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]])]
+  following-sibling::expr[1][ {const_condition} ]
+    /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]])]
   ")
 
   second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")

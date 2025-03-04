@@ -24,10 +24,10 @@
 #' @param allow_to_string Logical, default `FALSE`. If `TRUE`, usage of
 #'   `paste()` and `paste0()` with `collapse = ", "` is not linted.
 #' @param allow_file_path String, one of `"never"`, `"double_slash"`, or `"always"`; `"double_slash"` by default.
-#'   If `"never"`, usage of `paste()` and `paste0()` to construct file paths is not linted. If `"double_slash"`,
+#'   If `"always"`, usage of `paste()` and `paste0()` to construct file paths is not linted. If `"double_slash"`,
 #'   strings containing consecutive forward slashes will not lint. The main use case here is for URLs -- "paths" like
 #'   `"https://"` will not induce lints, since constructing them with `file.path()` might be deemed unnatural.
-#'   Lastly, if `"always"`, strings with consecutive forward slashes will also lint. Note that `"//"` is never linted
+#'   Lastly, if `"never"`, strings with consecutive forward slashes will also lint. Note that `"//"` is never linted
 #'   when it comes at the beginning or end of the input, to avoid requiring empty inputs like
 #'  `file.path("", ...)` or `file.path(..., "")`.
 #'
@@ -118,64 +118,57 @@ paste_linter <- function(allow_empty_sep = FALSE,
   check_file_paths <- allow_file_path %in% c("double_slash", "never")
 
   paste_sep_xpath <- "
-  parent::expr
-    /following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
     /parent::expr
   "
 
   to_string_xpath <- "
-  parent::expr
-    /parent::expr[
-      count(expr) = 3
-      and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
-    ]
-  "
+  parent::expr[
+    count(expr) = 3
+    and SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1][STR_CONST]
+  ]"
 
   paste0_sep_xpath <- "
-  parent::expr
-    /following-sibling::SYMBOL_SUB[text() = 'sep']
+  following-sibling::SYMBOL_SUB[text() = 'sep']
     /parent::expr
   "
 
   paste_strrep_xpath <- "
-  parent::expr[
+  self::*[
     count(following-sibling::expr) = 2
     and following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'rep']] and expr[2][STR_CONST]]
     and following-sibling::SYMBOL_SUB[text() = 'collapse']
-  ]/parent::expr
+  ]
+    /parent::expr
   "
 
   # Type II: paste0(x, "/", y, "/", z)
   #   NB: some conditions require evaluating the R string, only a few can be done in pure XPath. See below.
   paste0_file_path_xpath <- xp_strip_comments("
-  parent::expr
-    /parent::expr[
-      (: exclude paste0(x) :)
-      count(expr) > 2
-      (: An expression matching _any_ of these conditions is _not_ a file path :)
-      and not(
-        (: Any numeric input :)
-        expr/NUM_CONST
-        (: A call using collapse= :)
-        or SYMBOL_SUB[text() = 'collapse']
-        (: Consecutive non-strings like paste0(x, y) :)
-        or expr[(SYMBOL or expr) and following-sibling::expr[1][SYMBOL or expr]]
-      )
-    ]
-  ")
+  parent::expr[
+    (: exclude paste0(x) :)
+    count(expr) > 2
+    (: An expression matching _any_ of these conditions is _not_ a file path :)
+    and not(
+      (: Any numeric input :)
+      expr/NUM_CONST
+      (: A call using collapse= :)
+      or SYMBOL_SUB[text() = 'collapse']
+      (: Consecutive non-strings like paste0(x, y) :)
+      or expr[(SYMBOL or expr) and following-sibling::expr[1][SYMBOL or expr]]
+    )
+  ]")
 
   empty_paste_note <-
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
 
   paste0_collapse_xpath <- glue::glue("
-  parent::expr
-    /parent::expr[
-      SYMBOL_SUB[text() = 'collapse']
-      and count(expr) =
-        3 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
-      and not(expr/SYMBOL[text() = '...'])
-    ]
-  ")
+  parent::expr[
+    SYMBOL_SUB[text() = 'collapse']
+    and count(expr) =
+      3 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
+    and not(expr/SYMBOL[text() = '...'])
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
     paste_calls <- source_expression$xml_find_function_calls("paste")

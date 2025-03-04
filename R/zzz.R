@@ -166,11 +166,12 @@ default_undesirable_functions <- all_undesirable_functions[names(all_undesirable
   NULL
 )]
 
+# nocov start
 rd_auto_link <- function(x) {
   x <- unlist(x)
-  x <- gsub("([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\\(\\)", "\\\\code{\\\\link[\\1:\\2]{\\1::\\2()}}", x)
-  x <- gsub("([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\\(\\)", "\\1\\\\code{\\\\link[=\\2]{\\2()}}", x)
-  x <- gsub("`([^`]+)`", "\\\\code{\\1}", x)
+  x <- gsub(R"{([a-zA-Z0-9.]+)::([a-zA-Z0-9._]+)\(\)}", R"(\\code{\\link[\1:\2]{\1::\2()}})", x)
+  x <- gsub(R"{([^:a-zA-Z0-9._])([a-zA-Z0-9._]+)\(\)}", R"(\1\\code{\\link[=\2]{\2()}})", x)
+  x <- gsub("`([^`]+)`", R"(\\code{\1})", x)
   x
 }
 
@@ -181,12 +182,13 @@ rd_undesirable_functions <- function() {
     "The following functions are sometimes regarded as undesirable:",
     "\\itemize{",
     sprintf(
-      "\\item \\code{\\link[=%1$s]{%1$s()}} As an alternative, %2$s.",
+      R"(\item \code{\link[=%1$s]{%1$s()}} As an alternative, %2$s.)",
       names(default_undesirable_functions), alternatives
     ),
     "}"
   )
 }
+# nocov end
 
 #' @rdname default_undesirable_functions
 #' @format NULL
@@ -222,6 +224,7 @@ default_undesirable_operators <- all_undesirable_operators[names(all_undesirable
   NULL
 )]
 
+# nocov start
 rd_undesirable_operators <- function() {
   op_link_map <- c(
     `:::` = "\\link[base:ns-dblcolon]{:::}",
@@ -242,6 +245,7 @@ rd_undesirable_operators <- function() {
     "}"
   )
 }
+# nocov end
 
 #' Default lintr settings
 #'
@@ -255,7 +259,6 @@ rd_undesirable_operators <- function() {
 #'  - `exclude_linter`, `exclude_linter_sep`: patterns used to exclude linters
 #'  - `exclusions`: a list of exclusions, see [exclude()] for a complete description of valid values.
 #'  - `cache_directory`: location of cache directory
-#'  - `comment_token`: a GitHub token character
 #'  - `error_on_lint`: decides if error should be produced when any lints are found
 #'
 #' There are no settings without defaults, i.e., this list describes every valid setting.
@@ -287,6 +290,14 @@ default_settings <- NULL
 settings <- new.env(parent = emptyenv())
 
 # nocov start
+logical_env <- function(x, unset = "") {
+  res <- as.logical(Sys.getenv(x, unset = unset))
+  if (is.na(res)) {
+    return(NULL)
+  }
+  res
+}
+
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op_lintr <- list(
@@ -295,9 +306,11 @@ settings <- new.env(parent = emptyenv())
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
 
-  # R>=4.0.0: deparse1
   # R>=4.1.0: ...names
-  backports::import(pkgname, c("deparse1", "...names"))
+  backports::import(pkgname, "...names")
+
+  # R>=4.4.0: %||%
+  backports::import(pkgname, "%||%")
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,
@@ -317,25 +330,9 @@ settings <- new.env(parent = emptyenv())
     exclude_linter_sep = rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = R_user_dir("lintr", "cache"),
-    comment_token = Sys.getenv("GITHUB_TOKEN", unset = NA) %||% rot(
-      paste0(
-        "0n12nn72507",
-        "r6273qnnp34",
-        "43qno7q42n1",
-        "n71nn28"
-      ),
-      54L - 13L
-    ),
-    error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
+    error_on_lint = logical_env("LINTR_ERROR_ON_LINT", unset = FALSE)
   ))
 
   reset_settings()
-
-  if (requireNamespace("tibble", quietly = TRUE)) {
-    registerS3method("as_tibble", "lints", as_tibble.lints, asNamespace("tibble"))
-  }
-  if (requireNamespace("data.table", quietly = TRUE)) {
-    registerS3method("as.data.table", "lints", as.data.table.lints, asNamespace("data.table"))
-  }
 }
 # nocov end

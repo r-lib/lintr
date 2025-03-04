@@ -1,73 +1,11 @@
 #' @name lintr-deprecated
 #' @title Deprecated functions in lintr
 #'
-#' @description
-#'
-#' These functions have been deprecated from lintr.
-#'
-#' - `open_curly_linter()` (use [brace_linter()])
-#' - `closed_curly_linter()` (use `brace_linter()`)
-#' - `paren_brace_linter()` (use `brace_linter()`)
-#' - `semicolon_terminator_linter()` (use [semicolon_linter()])
-#'
-#' @param allow_single_line,semicolon Irrelevant parameters to defunct linters.
-#'
-#' @seealso [linters] for a complete list of linters available in lintr.
-#' @evalRd rd_tags("single_quotes_linter")
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - [deprecated_linters] for a list of linters tagged as deprecated.
 #' @keywords internal
 NULL
-
-#' Closed curly linter
-#' @rdname lintr-deprecated
-#' @export
-closed_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated(
-    what = "closed_curly_linter",
-    alternative = "brace_linter",
-    version = "3.0.0",
-    type = "Linter",
-    signal = "stop"
-  )
-}
-
-#' Open curly linter
-#' @rdname lintr-deprecated
-#' @export
-open_curly_linter <- function(allow_single_line = FALSE) {
-  lintr_deprecated(
-    what = "open_curly_linter",
-    alternative = "brace_linter",
-    version = "3.0.0",
-    type = "Linter",
-    signal = "stop"
-  )
-}
-
-#' Parentheses before brace linter
-#' @rdname lintr-deprecated
-#' @export
-paren_brace_linter <- function() {
-  lintr_deprecated(
-    what = "paren_brace_linter",
-    alternative = "brace_linter",
-    version = "3.0.0",
-    type = "Linter",
-    signal = "stop"
-  )
-}
-
-#' Semicolon linter
-#' @rdname lintr-deprecated
-#' @export
-semicolon_terminator_linter <- function(semicolon = c("compound", "trailing")) {
-  lintr_deprecated(
-    what = "semicolon_terminator_linter",
-    alternative = "semicolon_linter",
-    version = "3.0.0",
-    type = "Linter",
-    signal = "stop"
-  )
-}
 
 #' Unnecessary concatenation linter
 #' @rdname lintr-deprecated
@@ -77,14 +15,9 @@ unneeded_concatenation_linter <- function(allow_single_expression = TRUE) {
     what = "unneeded_concatenation_linter",
     alternative = "unnecessary_concatenation_linter",
     version = "3.1.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-
-  stopifnot(
-    is.logical(allow_single_expression),
-    length(allow_single_expression) == 1L
-  )
-  unnecessary_concatenation_linter(allow_single_expression = allow_single_expression)
 }
 
 #' Single quotes linter
@@ -95,9 +28,9 @@ single_quotes_linter <- function() {
     what = "single_quotes_linter",
     alternative = "quotes_linter",
     version = "3.1.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-  quotes_linter()
 }
 
 #' Consecutive stopifnot linter
@@ -108,9 +41,9 @@ consecutive_stopifnot_linter <- function() {
     what = "consecutive_stopifnot_linter",
     alternative = "consecutive_assertion_linter",
     version = "3.1.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-  consecutive_assertion_linter()
 }
 
 #' No tabs linter
@@ -121,9 +54,9 @@ no_tab_linter <- function() {
     what = "no_tab_linter",
     alternative = "whitespace_linter",
     version = "3.1.0",
-    type = "Linter"
+    type = "Linter",
+    signal = "stop"
   )
-  whitespace_linter()
 }
 
 #' Extraction operator linter
@@ -134,32 +67,8 @@ extraction_operator_linter <- function() {
     what = "extraction_operator_linter",
     version = "3.2.0",
     type = "Linter",
-    signal = "warning"
+    signal = "stop"
   )
-
-  constant_nodes_in_brackets <- paste0("self::", c("expr", "OP-PLUS", "NUM_CONST", "STR_CONST"))
-  xpath <- glue("
-  //OP-DOLLAR[not(preceding-sibling::expr[1]/SYMBOL[text() = 'self' or text() = '.self'])]
-  |
-  //OP-LEFT-BRACKET[
-    not(following-sibling::expr[1]/descendant::*[not({xp_or(constant_nodes_in_brackets)})]) and
-    not(following-sibling::OP-COMMA)
-  ]
-  ")
-
-  Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_exprs <- xml_find_all(xml, xpath)
-    msgs <- sprintf("Use `[[` instead of `%s` to extract an element.", xml_text(bad_exprs))
-
-    xml_nodes_to_lints(
-      bad_exprs,
-      source_expression = source_expression,
-      lint_message = msgs,
-      type = "warning"
-    )
-  })
 }
 
 #' Unnecessary nested if linter
@@ -171,31 +80,6 @@ unnecessary_nested_if_linter <- function() {
     alternative = "unnecessary_nesting_linter",
     version = "3.2.0",
     type = "Linter",
-    signal = "warning"
+    signal = "stop"
   )
-
-  xpath <- paste0(
-    "//IF/parent::expr[not(ELSE)]/OP-RIGHT-PAREN/",
-    c(
-      "following-sibling::expr[IF and not(ELSE)]", # catch if (cond) if (other_cond) { ... }
-      "following-sibling::expr[OP-LEFT-BRACE and count(expr) = 1]
-         /expr[IF and not(ELSE)]" # catch if (cond) { if (other_cond) { ... } }
-    ),
-    collapse = " | "
-  )
-
-  Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
-    bad_exprs <- xml_find_all(xml, xpath)
-    xml_nodes_to_lints(
-      bad_exprs,
-      source_expression = source_expression,
-      lint_message = paste(
-        "Don't use nested `if` statements,",
-        "where a single `if` with the combined conditional expression will do.",
-        "For example, instead of `if (x) { if (y) { ... }}`, use `if (x && y) { ... }`."
-      )
-    )
-  })
 }

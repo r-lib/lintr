@@ -104,6 +104,7 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
+  withr::local_options(lintr.linter_file = tempfile())
   file <- test_path("dummy_projects", "project", "cp1252.R")
   lintr:::read_settings(file)
   expect_null(get_source_expressions(file)$error)
@@ -137,9 +138,6 @@ test_that("Warns if encoding is misspecified", {
 })
 
 test_that("Can extract line number from parser errors", {
-  skip_if_not_r_version("4.0.0")
-
-  # malformed raw string literal at line 2
   with_content_to_parse(
     trim_some('
       "ok"
@@ -151,7 +149,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # invalid \u{xxxx} sequence (line 3)
   with_content_to_parse(
     trim_some('
       ok
@@ -164,7 +161,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # invalid \u{xxxx} sequence (line 4)
   with_content_to_parse(
     trim_some('
       ok
@@ -178,7 +174,6 @@ test_that("Can extract line number from parser errors", {
     }
   )
 
-  # repeated formal argument 'a' on line 1
   with_content_to_parse("function(a, a) {}", {
     expect_identical(error$message, "Repeated formal argument 'a'.")
     expect_identical(error$line_number, 1L)
@@ -263,7 +258,7 @@ test_that("xml_find_function_calls works as intended", {
   expect_length(exprs$expressions[[1L]]$xml_find_function_calls("bar"), 0L)
   expect_identical(
     exprs$expressions[[1L]]$xml_find_function_calls("foo"),
-    xml_find_all(exprs$expressions[[1L]]$xml_parsed_content, "//SYMBOL_FUNCTION_CALL[text() = 'foo']")
+    xml_find_all(exprs$expressions[[1L]]$xml_parsed_content, "//SYMBOL_FUNCTION_CALL[text() = 'foo']/parent::expr")
   )
 
   expect_length(exprs$expressions[[2L]]$xml_find_function_calls("foo"), 0L)
@@ -281,7 +276,7 @@ test_that("xml_find_function_calls works as intended", {
   # Also check order is retained:
   expect_identical(
     exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")),
-    xml_find_all(exprs$expressions[[5L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL")
+    xml_find_all(exprs$expressions[[5L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL/parent::expr")
   )
 
   # Check naming and full cache

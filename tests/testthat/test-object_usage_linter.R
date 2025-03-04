@@ -418,7 +418,7 @@ test_that("interprets glue expressions", {
       local_var <- 42
       glue::glue('The answer is {local_var}.')
     }
-  "), "local_var", object_usage_linter(interpret_glue = FALSE))
+  "), "local_var", object_usage_linter(interpret_extensions = NULL))
 
   # call in glue is caught
   expect_lint(
@@ -748,6 +748,9 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
 })
 
 test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
+  linter <- object_usage_linter()
+  lint_msg <- "no visible binding for global variable 'column'"
+
   expect_lint(
     trim_some("
       foo <- function(x) {
@@ -757,12 +760,8 @@ test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
         )
       }
     "),
-    list(
-      message = "no visible binding for global variable 'column'",
-      line_number = 4L,
-      column_number = 22L
-    ),
-    object_usage_linter()
+    list(lint_msg, line_number = 4L, column_number = 22L),
+    linter
   )
 
   expect_lint(
@@ -774,12 +773,8 @@ test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
         )
       }
     "),
-    list(
-      message = "no visible binding for global variable 'column'",
-      line_number = 4L,
-      column_number = 22L
-    ),
-    object_usage_linter()
+    list(lint_msg, line_number = 4L, column_number = 22L),
+    linter
   )
 })
 
@@ -798,53 +793,34 @@ test_that("functional lambda definitions are also caught", {
 })
 
 test_that("messages without location info are repaired", {
+  linter <- object_usage_linter()
+  global_function_msg <- rex::rex("no visible global function definition for", anything)
+  global_variable_msg <- rex::rex("no visible binding for global variable", anything)
+  local_variable_msg <- rex::rex("local variable", anything, "assigned but may not be used")
+
   # regression test for #1986
   expect_lint(
-    trim_some("
-      foo <- function() no_fun()
-    "),
-    list(
-      message = rex::rex("no visible global function definition for", anything),
-      line_number = 1L,
-      column_number = 19L
-    ),
-    object_usage_linter()
+    "foo <- function() no_fun()",
+    list(global_function_msg, line_number = 1L, column_number = 19L),
+    linter
   )
 
   expect_lint(
-    trim_some("
-      foo <- function(a = no_fun()) a
-    "),
-    list(
-      message = rex::rex("no visible global function definition for", anything),
-      line_number = 1L,
-      column_number = 21L
-    ),
-    object_usage_linter()
+    "foo <- function(a = no_fun()) a",
+    list(global_function_msg, line_number = 1L, column_number = 21L),
+    linter
   )
 
   expect_lint(
-    trim_some("
-      foo <- function() no_global
-    "),
-    list(
-      message = rex::rex("no visible binding for global variable", anything),
-      line_number = 1L,
-      column_number = 19L
-    ),
-    object_usage_linter()
+    "foo <- function() no_global",
+    list(global_variable_msg, line_number = 1L, column_number = 19L),
+    linter
   )
 
   expect_lint(
-    trim_some("
-      foo <- function() unused_local <- 42L
-    "),
-    list(
-      message = rex::rex("local variable", anything, "assigned but may not be used"),
-      line_number = 1L,
-      column_number = 19L
-    ),
-    object_usage_linter()
+    "foo <- function() unused_local <- 42L",
+    list(local_variable_msg, line_number = 1L, column_number = 19L),
+    linter
   )
 
   # More complex case with two lints and missing location info
@@ -854,17 +830,79 @@ test_that("messages without location info are repaired", {
         bar()
     "),
     list(
-      list(
-        message = rex::rex("local variable", anything, "assigned but may not be used"),
-        line_number = 1L,
-        column_number = 19L
-      ),
-      list(
-        message = rex::rex("no visible global function definition for", anything),
-        line_number = 2L,
-        column_number = 3L
-      )
+      list(local_variable_msg, line_number = 1L, column_number = 19L),
+      list(global_function_msg, line_number = 2L, column_number = 3L)
     ),
-    object_usage_linter()
+    linter
   )
+})
+
+test_that("globals in scripts are found regardless of assignment operator", {
+  linter <- object_usage_linter()
+
+  expect_lint(
+    trim_some("
+      library(dplyr)
+
+      global_const_eq = 5
+      global_const_la <- 6
+      7 -> global_const_ra
+
+      examplefunction <- function(df) {
+        df %>%
+          select(dist) %>%
+          mutate(power = global_const_eq + global_const_ra + global_const_la)
+      }
+    "),
+    NULL,
+    linter
+  )
+})
+
+test_that("dplyr's .env-specified objects are marked as 'used'", {
+  skip_if_not_installed("dplyr")
+  skip_if_not_installed("rlang")
+  linter <- object_usage_linter()
+
+  expect_lint(
+    trim_some("
+      foo <- function(df) {
+        source <- 1
+        target <- 2
+        unused <- 3
+
+        df %>%
+          dplyr::mutate(
+            from = rlang::.env$source,
+            to = rlang::.env[['target']]
+          )
+      }
+    "),
+    rex::rex("local variable", anything, "unused"),
+    linter
+  )
+})
+
+test_that("interpret_glue is deprecated", {
+  expect_warning(
+    {
+      linter_no <- object_usage_linter(interpret_glue = FALSE)
+    },
+    rex::rex("interpret_glue", anything, "deprecated")
+  )
+  expect_warning(
+    {
+      linter_yes <- object_usage_linter(interpret_glue = TRUE)
+    },
+    rex::rex("interpret_glue", anything, "deprecated")
+  )
+
+  code <- trim_some("
+    fun <- function() {
+      local_var <- 42
+      glue::glue('The answer is {local_var}.')
+    }
+  ")
+  expect_lint(code, "local_var", linter_no)
+  expect_no_lint(code, linter_yes)
 })

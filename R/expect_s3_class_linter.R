@@ -37,11 +37,10 @@ expect_s3_class_linter <- function() {
   # (1) expect_{equal,identical}(class(x), C)
   # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
   expect_equal_identical_xpath <- "
-  parent::expr
-    /following-sibling::expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]
-      and (position() = 1 or preceding-sibling::expr[STR_CONST])
-    ]
+  following-sibling::expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]
+    and (position() = 1 or preceding-sibling::expr[STR_CONST])
+  ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
   "
   # NB: there is no easy way to make an exhaustive list of places where an
@@ -61,8 +60,7 @@ expect_s3_class_linter <- function() {
   ))
   is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
   expect_true_xpath <- glue("
-  parent::expr
-    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
+  following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   ")
 

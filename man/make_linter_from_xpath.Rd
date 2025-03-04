@@ -22,8 +22,8 @@ make_linter_from_function_xpath(
 }
 \arguments{
 \item{xpath}{Character string, an XPath identifying R code to lint.
-For \code{make_linter_from_function_xpath()}, the XPath is relative to the \code{SYMBOL_FUNCTION_CALL} nodes of the
-selected functions.
+For \code{make_linter_from_function_xpath()}, the XPath is relative to the \code{parent::expr} of the
+\code{SYMBOL_FUNCTION_CALL} nodes of the selected functions.
 See \code{\link[xmlparsedata:xml_parse_data]{xmlparsedata::xml_parse_data()}} and \code{\link[=get_source_expressions]{get_source_expressions()}}.}
 
 \item{lint_message}{The message to be included as the \code{message}

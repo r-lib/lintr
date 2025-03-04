@@ -9,7 +9,7 @@ extract_r_source <- function(filename, lines, error = identity) {
   output <- rep.int(NA_character_, length(lines))
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
-  if (inherits(chunks, "error") || inherits(chunks, "lint")) {
+  if (is_error(chunks) || is_lint(chunks)) {
     assign("e", chunks, envir = parent.frame())
     # error, so return empty code
     return(output)
@@ -51,7 +51,7 @@ get_knitr_pattern <- function(filename, lines) {
     ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
     warning = function(cond) {
       if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
-        warning(cond, call. = FALSE)
+        cli_warn(cond) # nocov. No known way to reach here.
       }
       invokeRestart("muffleWarning")
     }
@@ -119,8 +119,8 @@ filter_chunk_end_positions <- function(starts, ends) {
   bad_end_indexes <- grep("starts", names(code_ends), fixed = TRUE)
   if (length(bad_end_indexes) > 0L) {
     bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
-    # This error message is formatted like a parse error
-    stop(sprintf(
+    # This error message is formatted like a parse error; don't use {cli}
+    stop(sprintf( # nolint: undesirable_function_call_linter.
       "<rmd>:%1$d:1: Missing chunk end for chunk (maybe starting at line %1$d).\n",
       bad_start_positions[1L]
     ), call. = FALSE)

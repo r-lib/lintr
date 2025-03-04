@@ -143,6 +143,7 @@ test_that("it ignores exclude coverage lines within start and end", {
 
 test_that("it throws an error if start and end are unpaired", {
   lintr:::read_settings(NULL)
+  error_msg_stem <- "Equal number of line starts and ends expected for exclusion from linting"
 
   t1 <- withr::local_tempfile(lines = trim_some("
     this #TeSt_NoLiNt_StArT
@@ -150,7 +151,7 @@ test_that("it throws an error if start and end are unpaired", {
     a
     test
   "))
-  expect_error(lintr:::parse_exclusions(t1), "but only")
+  expect_error(lintr:::parse_exclusions(t1), error_msg_stem)
 
 
   t2 <- withr::local_tempfile(lines = trim_some("
@@ -159,5 +160,5 @@ test_that("it throws an error if start and end are unpaired", {
     a  #TeSt_NoLiNt_EnD
     test
   "))
-  expect_error(lintr:::parse_exclusions(t2), "but only")
+  expect_error(lintr:::parse_exclusions(t2), error_msg_stem)
 })

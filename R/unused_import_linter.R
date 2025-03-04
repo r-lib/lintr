@@ -1,6 +1,7 @@
 #' Check that imported packages are actually used
 #'
-#' @inheritParams object_usage_linter
+#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#'   which are only used in a glue expression.
 #' @param allow_ns_usage Suppress lints for packages only used via namespace.
 #' This is `FALSE` by default because `pkg::fun()` doesn't require `library(pkg)`.
 #' You can use [requireNamespace("pkg")][requireNamespace()] to ensure a package is
@@ -54,17 +55,15 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
   }
 
   import_xpath <- "
-  parent::expr
-    /parent::expr[
-      expr[2][STR_CONST]
-      or not(SYMBOL_SUB[
-        text() = 'character.only' and
-        following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
-  "
+  parent::expr[
+    expr[2][STR_CONST]
+    or not(SYMBOL_SUB[
+      text() = 'character.only' and
+      following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]"
 
-  xp_used_functions <- "self::SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]"
+  xp_used_functions <- "SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]"
   xp_used_symbols <- paste(
     "//SYMBOL[not(
       parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']

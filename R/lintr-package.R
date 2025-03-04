@@ -8,23 +8,22 @@
 "_PACKAGE"
 
 ## lintr namespace: start
+#' @importFrom cli cli_inform cli_abort cli_warn
 #' @importFrom glue glue glue_collapse
 #' @importFrom rex rex regex re_matches re_substitutes character_class
-#' @importFrom stats na.omit
-#' @importFrom utils capture.output getParseData getTxtProgressBar globalVariables head relist
-#'   setTxtProgressBar tail txtProgressBar
+#' @importFrom stats complete.cases na.omit
+#' @importFrom tools R_user_dir
+#' @importFrom utils capture.output getParseData  globalVariables head relist tail
 #' @importFrom xml2 as_list
 #'   xml_attr xml_children xml_find_all xml_find_chr xml_find_lgl xml_find_num xml_find_first xml_name xml_text
-#' @rawNamespace
-#' if (getRversion() >= "4.0.0") {
-#'   importFrom(tools, R_user_dir)
-#' } else {
-#'   importFrom(backports, R_user_dir)
-#' }
 ## lintr namespace: end
 NULL
 
 # make binding available for mock testing
 # ref: https://testthat.r-lib.org/dev/reference/local_mocked_bindings.html#base-functions
+# nolint start: object_name_linter. These will be copied from base style.
+requireNamespace <- NULL
+system.file <- NULL
 unlink <- NULL
 quit <- NULL
+# nolint end: object_name_linter.

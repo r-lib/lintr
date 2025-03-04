@@ -60,21 +60,40 @@ expect_identical_linter <- function() {
   #   - skip cases like expect_equal(x, 1.02) or the constant vector version
   #     where a numeric constant indicates inexact testing is preferable
   #   - skip calls using dots (`...`); see tests
-  expect_equal_xpath <- "
-  parent::expr[not(
+  non_integer <- glue::glue("
+    NUM_CONST[contains(text(), '.')]
+    or (
+      OP-MINUS
+      and count(expr) = 1
+      and expr[NUM_CONST[contains(text(), '.')]]
+    )
+  ")
+
+  expect_equal_xpath <- glue::glue("
+  self::*[not(
       following-sibling::EQ_SUB
       or following-sibling::expr[
-        expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
-        and expr[NUM_CONST[contains(text(), '.')]]
+        (
+          expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
+          and expr[{non_integer}]
+        ) or (
+          {non_integer}
+        ) or (
+          OP-MINUS
+          and count(expr) = 1
+          and expr[
+            expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
+            and expr[{non_integer}]
+          ]
+        ) or (
+          SYMBOL[text() = '...']
+        )
       ]
-      or following-sibling::expr[NUM_CONST[contains(text(), '.')]]
-      or following-sibling::expr[SYMBOL[text() = '...']]
     )]
     /parent::expr
-  "
+  ")
   expect_true_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
+  following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'identical']]
     /parent::expr
   "
   Linter(linter_level = "expression", function(source_expression) {

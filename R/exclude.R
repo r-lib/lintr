@@ -28,6 +28,11 @@
 #'   "      2. Named elements, where the name specifies a linter, denote exclusion for that linter.",
 #'   "   For convenience, a vector can be used in place of a list whenever it would not introduce ambiguity, e.g.",
 #'   "   a character vector of files to exclude or a vector of lines to exclude.",
+#'   "",
+#'   "   Note also that:",
+#'   "   1. All paths are interpreted as globs ([Sys.glob()]), so that e.g. `*` does pattern expansion.",
+#'   "   2. For `exclusions` provided _via_ a config file, all paths are taken as",
+#'   "      relative _to the config file itself_, not the path where `lint()` is run.",
 #'   NULL
 #' )
 #'
@@ -130,9 +135,12 @@ parse_exclusions <- function(file,
 
   if (length(starts) > 0L) {
     if (length(starts) != length(ends)) {
-      starts_msg <- line_info(starts, type = "start")
-      ends_msg <- line_info(ends, type = "end")
-      stop(file, " has ", starts_msg, " but only ", ends_msg, " for exclusion from linting!", call. = FALSE)
+      starts_msg <- line_info(starts, type = "start") # nolint: object_usage_linter. TODO(#2252).
+      ends_msg <- line_info(ends, type = "end") # nolint: object_usage_linter. TODO(#2252).
+      cli_abort(c(
+        i = "Equal number of line starts and ends expected for exclusion from linting.",
+        x = "{.file {file}} has {.strong {starts_msg}} and {.strong {ends_msg}}."
+      ))
     }
 
     for (i in seq_along(starts)) {
@@ -203,13 +211,11 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
       idxs <- pmatch(excluded_linters, linter_names, duplicates.ok = TRUE)
       matched <- !is.na(idxs)
       if (!all(matched)) {
-        bad <- excluded_linters[!matched]
-        warning(
-          "Could not find linter", if (length(bad) > 1L) "s" else "", " named ",
-          glue_collapse(sQuote(bad), sep = ", ", last = " and "),
-          " in the list of active linters. Make sure the linter is uniquely identified by the given name or prefix.",
-          call. = FALSE
-        )
+        bad <- excluded_linters[!matched] # nolint: object_usage_linter. TODO(#2252).
+        cli_warn(c(
+          x = "Could not find linter{?s} named {.field {bad}} in the list of active linters.",
+          i = "Make sure the linter is uniquely identified by the given name or prefix."
+        ))
       }
       excluded_linters[matched] <- linter_names[idxs[matched]]
     }
@@ -221,24 +227,25 @@ add_exclusions <- function(exclusions, lines, linters_string, exclude_linter_sep
 #' Normalize lint exclusions
 #'
 #' @param x Exclusion specification
-#'  - A character vector of filenames or directories relative to `root`
+#'  - A character vector of filenames or directories relative to `root`. Interpreted as globs, see [Sys.glob()].
 #'  - A named list of integers specifying lines to be excluded per file
 #'  - A named list of named lists specifying linters and lines to be excluded for the linters per file.
 #' @param normalize_path Should the names of the returned exclusion list be normalized paths?
-#' If no, they will be relative to `root`.
+#'   If `FALSE`, they will be relative to `root`.
 #' @param root Base directory for relative filename resolution.
 #' @param pattern If non-NULL, only exclude files in excluded directories if they match
-#' `pattern`. Passed to [list.files][base::list.files] if a directory is excluded.
+#'   `pattern`. Passed to [list.files()] if a directory is excluded.
 #'
 #' @return A named list of file exclusions.
-#' The names of the list specify the filenames to be excluded.
+#'   The names of the list specify the filenames to be excluded.
 #'
 #' Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel `Inf` for
-#' completely excluded files. If the an entry is named, the exclusions only take effect for the linter with the same
-#' name.
+#'   completely excluded files. If the an entry is named, the exclusions only take effect for the linter with
+#'   the same name.
 #'
 #' If `normalize_path` is `TRUE`, file names will be normalized relative to `root`.
-#' Otherwise the paths are left as provided (relative to `root` or absolute).
+#'   Otherwise the paths are left as provided (relative to `root` or absolute). That also means
+#'   existence is not checked.
 #'
 #' @keywords internal
 normalize_exclusions <- function(x, normalize_path = TRUE,
@@ -251,7 +258,6 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   x <- as.list(x)
   unnamed <- !nzchar(names2(x))
   if (any(unnamed)) {
-    # must be character vectors of length 1
     bad <- vapply(
       seq_along(x),
       function(i) {
@@ -261,12 +267,10 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     )
 
     if (any(bad)) {
-      stop(
-        "Full file exclusions must be character vectors of length 1. items: ",
-        toString(which(bad)),
-        " are not!",
-        call. = FALSE
-      )
+      cli_abort(c(
+        i = "Full file exclusions must be {.cls character} vectors of length 1.",
+        x = "Items at the following indices are not: {.val {which(bad)}}."
+      ))
     }
     # Normalize unnamed entries to list(<filename> = list(Inf), ...)
     names(x)[unnamed] <- x[unnamed]
@@ -281,12 +285,10 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     bad <- full_line_exclusions & !are_numeric
 
     if (any(bad)) {
-      stop(
-        "Full line exclusions must be numeric or integer vectors. items: ",
-        toString(which(bad)),
-        " are not!",
-        call. = FALSE
-      )
+      cli_abort(c(
+        i = "Full line exclusions must be {.cls numeric} or {.cls integer} vectors.",
+        x = "Items at the following indices are not: {.val {which(bad)}}."
+      ))
     }
 
     # Normalize list(<filename> = c(<lines>)) to
@@ -297,6 +299,18 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
   paths <- names(x)
   rel_path <- !is_absolute_path(paths)
   paths[rel_path] <- file.path(root, paths[rel_path])
+
+  globbed_paths <- lapply(paths, Sys.glob)
+  n_files <- lengths(globbed_paths)
+  # restore unmatched globs
+  if (!normalize_path) {
+    empty <- n_files == 0L
+    globbed_paths[empty] <- as.list(names(x)[empty])
+    n_files[empty] <- 1L
+  }
+  x <- rep(x, n_files)
+  paths <- unlist(globbed_paths)
+  names(x) <- paths
 
   is_dir <- dir.exists(paths)
   if (any(is_dir)) {
@@ -330,9 +344,8 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     paths[rel_path] <- file.path(root, paths[rel_path])
     names(x) <- paths
     x <- x[file.exists(paths)] # remove exclusions for non-existing files
-    names(x) <- normalizePath(names(x)) # get full path for remaining files
+    names(x) <- normalize_path(names(x)) # get full path for remaining files
   }
-
   remove_line_duplicates(
     remove_linter_duplicates(
       remove_file_duplicates(

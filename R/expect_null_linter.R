@@ -40,13 +40,11 @@ expect_null_linter <- function() {
   #  (1) expect_{equal,identical}(x, NULL) (or NULL, x)
   #  (2) expect_true(is.null(x))
   expect_equal_identical_xpath <- "
-  parent::expr
-    /following-sibling::expr[position() <= 2 and NULL_CONST]
+  following-sibling::expr[position() <= 2 and NULL_CONST]
     /parent::expr
   "
   expect_true_xpath <- "
-  parent::expr
-    /following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.null']]
+  following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.null']]
     /parent::expr
   "
 

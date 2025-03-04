@@ -64,7 +64,6 @@ keyword_quote_linter <- function() {
   # SYMBOL_SUB for backticks, STR_CONST for quoted names
   call_arg_xpath <- glue("
   parent::expr
-    /parent::expr
     /*[(self::SYMBOL_SUB or self::STR_CONST) and {quote_cond}]
   ")
 

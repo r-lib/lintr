@@ -1,18 +1,18 @@
 test_that("other : expressions are fine", {
   linter <- seq_linter()
-  expect_lint("1:10", NULL, linter)
-  expect_lint("2:length(x)", NULL, linter)
-  expect_lint("1:(length(x) || 1)", NULL, linter)
+  expect_no_lint("1:10", linter)
+  expect_no_lint("2:length(x)", linter)
+  expect_no_lint("1:(length(x) || 1)", linter)
 })
 
 test_that("seq_len(...) or seq_along(...) expressions are fine", {
   linter <- seq_linter()
 
-  expect_lint("seq_len(x)", NULL, linter)
-  expect_lint("seq_along(x)", NULL, linter)
+  expect_no_lint("seq_len(x)", linter)
+  expect_no_lint("seq_along(x)", linter)
 
-  expect_lint("seq(2, length(x))", NULL, linter)
-  expect_lint("seq(length(x), 2)", NULL, linter)
+  expect_no_lint("seq(2, length(x))", linter)
+  expect_no_lint("seq(length(x), 2)", linter)
 })
 
 test_that("finds seq(...) expressions", {
@@ -113,8 +113,8 @@ test_that("1L is also bad", {
 
 test_that("reverse seq is ok", {
   linter <- seq_linter()
-  expect_lint("rev(seq_along(x))", NULL, linter)
-  expect_lint("rev(seq_len(nrow(x)))", NULL, linter)
+  expect_no_lint("rev(seq_along(x))", linter)
+  expect_no_lint("rev(seq_len(nrow(x)))", linter)
 
   expect_lint(
     "length(x):1",
@@ -228,4 +228,14 @@ test_that("Message recommends rev() correctly", {
   expect_lint("n():1", rex::rex("Use rev(seq_len(n()))"), linter)
   expect_lint("nrow(x):1", rex::rex("Use rev(seq_len(nrow(...)))"), linter)
   expect_lint("length(x):1", rex::rex("Use rev(seq_along(...))"), linter)
+})
+
+test_that("seq_len(length(x)) should be seq_along(x)", {
+  linter <- seq_linter()
+
+  expect_no_lint("seq_len(length(x) - 1)", linter)
+  expect_no_lint("seq_len(2*length(x))", linter)
+  expect_no_lint("seq_len(foo(length(x)))", linter)
+  expect_lint("seq_len(length(x))", "seq_along", linter)
+  expect_lint("seq_len(length(foo(x)))", "seq_along", linter)
 })

@@ -1,8 +1,7 @@
 test_that("backport_linter produces error when R version misspecified", {
   expect_error(
     lint(text = "numToBits(2)", linters = backport_linter(420L)),
-    "`r_version` must be a R version number, returned by R_system_version(), or a string.",
-    fixed = TRUE
+    "`r_version` must be an R version number"
   )
 })
 
@@ -39,16 +38,25 @@ test_that("backport_linter detects backwards-incompatibility", {
 
   # oldrel specification
   expect_lint(
-    ".pretty(2)",
-    rex::rex(".pretty (R 4.2.0) is not available for dependency R >= 4.1.3."),
+    "R_compiled_by()",
+    rex::rex("R_compiled_by (R 4.3.0) is not available for dependency R >= 4.2.3."),
     backport_linter("oldrel")
   )
 
-  expect_error(backport_linter("oldrel-99"), "`r_version` must be a version number or one of")
+  expect_error(
+    backport_linter("oldrel-99"),
+    "`r_version` is not valid"
+  )
 
   expect_lint(
     "numToBits(2)",
-    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 3.6.3."),
+    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.5."),
+    backport_linter("oldrel-3")
+  )
+  # no interference from namespace-qualification (even of base functions)
+  expect_lint(
+    "base::numToBits(2)",
+    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.5."),
     backport_linter("oldrel-3")
   )
 
@@ -70,7 +78,7 @@ test_that("backport_linter generates expected warnings", {
     {
       l <- lint(tmp, backport_linter("2.0.0"))
     },
-    "version older than 3.0.0",
+    'version older than "3.0.0"',
     fixed = TRUE
   )
   expect_identical(l, lint(tmp, backport_linter("3.0.0")))
