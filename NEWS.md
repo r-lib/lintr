@@ -44,6 +44,11 @@
 * `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` account for S3 class correctly when the generic is assigned with `=` (#2507, @MichaelChirico).
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
+* `T_and_F_symbol_linter()` ignores `T` and `F` used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
+
+### Lint accuracy fixes: removing false negatives
+
+* `todo_comment_linter()` finds comments inside {roxygen2} markup comments (#2447, @MichaelChirico).
 
 ## Notes
 
