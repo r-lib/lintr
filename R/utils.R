@@ -1,3 +1,8 @@
+# backports approach doesn't work since we need this before .onLoad() in names2()
+if (!exists("%||%", "package:base")) {
+  `%||%` <- function(x, y) if (is.null(x)) y else x # nolint: coalesce_linter.
+}
+
 `%==%` <- function(x, y) {
   identical(x, y)
 }
