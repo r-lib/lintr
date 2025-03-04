@@ -9,6 +9,7 @@ with_content_to_parse <- function(content, code) {
   content_env <- new.env()
   content_env$pc <- lapply(source_expressions[["expressions"]], `[[`, "parsed_content")
   content_env$error <- source_expressions$error
+  content_env$warning <- source_expressions$warning
   eval(substitute(code), envir = content_env)
 }
 
@@ -104,16 +105,14 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
-  file <- test_path("dummy_projects", "project", "cp1252.R")
-  lintr:::read_settings(file)
-  expect_null(get_source_expressions(file)$error)
+  proj_dir <- test_path("dummy_projects", "project")
+  withr::local_dir(proj_dir)
+  expect_no_lint(file = "cp1252.R", linters = list())
 })
 
-test_that("Warns if encoding is misspecified", {
-  file <- test_path("dummy_projects", "project", "cp1252.R")
-  lintr:::read_settings(NULL)
-  the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
-  expect_s3_class(the_lint, "lint")
+test_that("Warns if encoding is misspecified, Pt. 1", {
+  proj_dir <- test_path("dummy_projects", "project")
+  withr::local_dir(proj_dir)
 
   lint_msg <- "Invalid multibyte character in parser. Is the encoding correct?"
   if (!isTRUE(l10n_info()[["UTF-8"]])) {
@@ -123,17 +122,21 @@ test_that("Warns if encoding is misspecified", {
     lint_msg <- "unexpected '<'"
   }
 
-  expect_identical(the_lint$linter, "error")
-  expect_identical(the_lint$message, lint_msg)
-  expect_identical(the_lint$line_number, 4L)
+  expect_lint(
+    file = "cp1252.R",
+    parse_settings = FALSE,
+    checks = list(rex::rex(lint_msg), linter = "error", line_number = 4L)
+  )
 
-  file <- test_path("dummy_projects", "project", "cp1252_parseable.R")
-  lintr:::read_settings(NULL)
-  the_lint <- lint(filename = file, parse_settings = FALSE)[[1L]]
-  expect_s3_class(the_lint, "lint")
-  expect_identical(the_lint$linter, "error")
-  expect_identical(the_lint$message, "Invalid multibyte string. Is the encoding correct?")
-  expect_identical(the_lint$line_number, 1L)
+  expect_lint(
+    file = "cp1252_parseable.R",
+    parse_settings = FALSE,
+    checks = list(
+      rex::rex("Invalid multibyte string. Is the encoding correct?"),
+      linter = "error",
+      line_number = 1L
+    )
+  )
 })
 
 test_that("Can extract line number from parser errors", {
@@ -211,7 +214,7 @@ test_that("returned data structure is complete", {
   attr(lines_with_attr, "terminal_newline") <- TRUE
 
   exprs <- get_source_expressions(temp_file)
-  expect_named(exprs, c("expressions", "error", "lines"))
+  expect_named(exprs, c("expressions", "error", "warning", "lines"))
   expect_length(exprs$expressions, length(lines) + 1L)
 
   for (i in seq_along(lines)) {
@@ -448,6 +451,93 @@ test_that("Disallowed embedded null gives parser failure lint", {
   expect_lint(
     "'\\0'",
     rex::rex("Nul character not allowed."),
+    linters = list()
+  )
+})
+
+test_that("parser warnings are captured in output", {
+  with_content_to_parse("1e-3L", {
+    expect_length(warning, 1L)
+    expect_s3_class(warning, "lints")
+  })
+  with_content_to_parse("1e-3L; 1e-3L", {
+    expect_length(warning, 2L)
+  })
+  with_content_to_parse("1e-3L; 1.0L; 1.1L", {
+    expect_length(warning, 3L)
+  })
+  with_content_to_parse("1e-3L\n1.0L\n1.1L", {
+    expect_length(warning, 3L)
+  })
+  with_content_to_parse("1e-3L\n1+1\n1.0L\n2+2\n1.1L", {
+    expect_length(warning, 3L)
+  })
+  with_content_to_parse("1e-3L\nc(", {
+    expect_length(warning, 1L)
+    expect_length(error, 8L)
+  })
+})
+
+test_that("parser warnings generate lints", {
+  expect_lint(
+    "1e-3L",
+    "non-integer value 1e-3L",
+    linters = list()
+  )
+  expect_lint(
+    "1e-3L; 1e-3L",
+    list(
+      list("non-integer value 1e-3L", column_number = 1L),
+      list("non-integer value 1e-3L", column_number = 8L)
+    ),
+    linters = list()
+  )
+  expect_lint(
+    "1e-3L; 1.0L",
+    list(
+      list("non-integer value 1e-3L", column_number = 1L),
+      list("integer literal 1\\.0L", column_number = 8L)
+    ),
+    linters = list()
+  )
+  expect_lint(
+    trim_some("
+      1e-3L
+      1 + 1
+      1.0L
+      2 + 2
+      1.1L
+      3 + 3
+      2.2L
+      4 + 4
+      2.0L
+      5 + 5
+      2e-3L
+      # don't match strictly on regex, use parse tree
+      # 3.0L
+      # 3e-3L
+      # 3.3L
+      '4.0L'
+      '4e-3L'
+      '4.4L'
+    "),
+    list(
+      list("non-integer value 1e-3L", line_number = 1L),
+      list("integer literal 1\\.0L", line_number = 3L),
+      list("integer literal 1.1L contains decimal", line_number = 5L),
+      list("integer literal 2\\.2L contains decimal", line_number = 7L),
+      list("integer literal 2\\.0L", line_number = 9L),
+      list("non-integer value 2e-3L", line_number = 11L)
+    ),
+    linters = list()
+  )
+  # parser catches warning before erroring
+  expect_lint(
+    "1e-3L; c(",
+    list(
+      list("non-integer value 1e-3L", type = "warning"),
+      list("unexpected end of input", type = "error")
+    ),
     linters = list()
   )
 })
