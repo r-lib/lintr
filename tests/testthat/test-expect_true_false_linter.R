@@ -6,6 +6,7 @@ test_that("expect_true_false_linter skips allowed usages", {
   expect_no_lint("expect_equal(x, y, ignore_attr = TRUE)")
 
   expect_no_lint("42 %>% expect_identical(42, ignore_attr = TRUE)", linter)
+  expect_no_lint("42 %>% expect_identical(42, TRUE)", linter)
 
   skip_if_not_r_version("4.1.0")
   expect_no_lint("42 |> expect_identical(42, ignore_attr = TRUE)", linter)
