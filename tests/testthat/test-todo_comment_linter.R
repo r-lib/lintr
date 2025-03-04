@@ -2,8 +2,8 @@ test_that("returns the correct linting", {
   linter <- todo_comment_linter()
   lint_msg <- rex::rex("Remove TODO comments.")
 
-  expect_lint('a <- "you#need#to#fixme"', NULL, linter)
-  expect_lint("# something todo", NULL, linter)
+  expect_no_lint('a <- "you#need#to#fixme"', linter)
+  expect_no_lint("# something todo", linter)
   expect_lint(
     "cat(x) ### fixme",
     list(message = lint_msg, line_number = 1L, column_number = 8L),
@@ -35,7 +35,7 @@ test_that("except_regex= excludes valid TODO", {
   linter <- todo_comment_linter(except_regex = "TODO\\(#[0-9]+\\):")
   lint_msg <- rex::rex("Remove TODO comments.")
 
-  expect_lint("foo() # TODO(#1234): Deprecate foo.", NULL, linter)
+  expect_no_lint("foo() # TODO(#1234): Deprecate foo.", linter)
   # Non-excepted lints
   expect_lint(
     trim_some("
@@ -52,16 +52,14 @@ test_that("except_regex= excludes valid TODO", {
   ")
 
   expect_lint(mixed_lines, list(lint_msg, line_number = 2L), linter)
-  expect_lint(
+  expect_no_lint(
     mixed_lines,
-    NULL,
     todo_comment_linter(except_regex = c("TODO\\(#[0-9]+\\):", "fixme\\(#[0-9]+\\):"))
   )
 
   # ignore captured groups
-  expect_lint(
+  expect_no_lint(
     "# TODO(a)",
-    NULL,
     todo_comment_linter(except_regex = "TODO\\((a|abc)\\)")
   )
 })
