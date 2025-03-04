@@ -19,7 +19,9 @@
 ## New and improved features
 
 * `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
-* `seq_linter()` recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
+* `seq_linter()`:
+   + recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
+   + recommends using `sequence()` instead of `unlist(lapply(ints, seq))` (#2618, @Bisaloo)
 * `undesirable_operator_linter()` lints operators in prefix form, e.g. `` `%%`(x, 2)`` (#1910, @MichaelChirico). Disable this by setting `call_is_undesirable=FALSE`.
 * `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
 * Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
@@ -90,7 +92,6 @@
 
 ## New and improved features
 
-* `seq_linter()` now includes lints to inform about missed opportunities to use the `sequence()` base R function, e.g. `unlist(lapply(ints, seq))` (#2618, @Bisaloo)
 * New function node caching for big efficiency gains to most linters (e.g. overall `lint_package()` improvement of 14-27% and core linting improvement up to 30%; #2357, @AshesITR). Most linters are written around function usage, and XPath performance searching for many functions is poor. The new `xml_find_function_calls()` entry in the `get_source_expressions()` output caches all function call nodes instead. See the vignette on creating linters for more details on how to use it.
 * `Linter()` has a new argument `linter_level=` (default `NA`). This is used by `lint()` to more efficiently check for expression levels than the idiom `if (!is_lint_level(...)) { return(list()) }` (#2351, @AshesITR).
 * New `return_linter()` also has arguments for fine-tuning which functions get linted:
