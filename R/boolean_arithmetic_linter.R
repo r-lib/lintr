@@ -43,7 +43,7 @@ boolean_arithmetic_linter <- function() {
   known_logical_calls <- c(
     "grepl", "str_detect", "nzchar", "startsWith", "endsWith",
     "xor", "is.element", "duplicated",
-    "is.na", "is.nan", "is.finite",
+    "is.na", "is.nan", "is.finite", "is.infinite",
     NULL
   )
   sum_xpath <- glue("
