@@ -1,8 +1,8 @@
 test_that("boolean_arithmetic_linter doesn't block allowed usages", {
   linter <- boolean_arithmetic_linter()
 
-  expect_lint("!any(x == y)", NULL, linter)
-  expect_lint("!any(grepl(pattern, x))", NULL, linter)
+  expect_no_lint("!any(x == y)", linter)
+  expect_no_lint("!any(grepl(pattern, x))", linter)
 })
 
 test_that("boolean_arithmetic_linter requires use of any() or !any()", {
