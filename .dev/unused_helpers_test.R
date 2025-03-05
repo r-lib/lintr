@@ -36,6 +36,7 @@ usages <- subset(usages, !mapply(\(nm, l) grepl(sprintf("\\b%s <-", nm), l), use
 
 # TODO(#2004): can this just come from get_source_expressions(), and/or will
 #   the above linters "just work" once we're roxygen2-aware?
+options(keep.source = TRUE)
 roxy_usage <- character()
 for (robj in roxygen2::parse_package()) {
   for (tag in robj$tags) {
