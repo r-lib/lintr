@@ -8,10 +8,19 @@ pipe_return_linter()
 }
 \description{
 \code{\link[=return]{return()}} inside a magrittr pipeline does not actually execute \code{return()}
-like you'd expect: \verb{\\(x) \{ x \%>\% return(); FALSE \}} will return \code{FALSE}!
-It will technically work "as expected" if this is the final statement
-in the function body, but such usage is misleading. Instead, assign
-the pipe outcome to a variable and return that.
+like you'd expect:
+}
+\details{
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{bad_usage <- function(x) \{
+  x \%>\%
+    return()
+  FALSE
+\}
+}\if{html}{\out{</div>}}
+
+\code{bad_usage(TRUE)} will return \code{FALSE}! It will technically work "as expected"
+if this is the final statement in the function body, but such usage is misleading.
+Instead, assign the pipe outcome to a variable and return that.
 }
 \examples{
 # will produce lints
