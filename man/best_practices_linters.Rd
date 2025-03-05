@@ -17,6 +17,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{any_is_na_linter}}}
 \item{\code{\link{boolean_arithmetic_linter}}}
 \item{\code{\link{class_equals_linter}}}
+\item{\code{\link{coalesce_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{condition_call_linter}}}
 \item{\code{\link{condition_message_linter}}}
