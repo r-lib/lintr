@@ -81,7 +81,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   Linter(linter_level = "file", function(source_expression) {
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
 
-    declared_globals <- try_silently(globalVariables(package = pkg_name %|||% globalenv()))
+    declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
 
     xml <- source_expression$full_xml_parsed_content
 
