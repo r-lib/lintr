@@ -14,6 +14,8 @@ maybe_fuzz_content <- function(file, lines) {
   new_file
 }
 
+# we could also consider just passing any test where no fuzzing takes place,
+#   i.e. letting the other GHA handle whether unfuzzed tests pass as expected.
 fuzz_contents <- function(f) {
   # skip errors for e.g. Rmd files, and ignore warnings.
   #   We could use get_source_expressions(), but with little benefit & much slower.
