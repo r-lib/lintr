@@ -9,7 +9,7 @@ test_that("terminal_close_linter skips allowed cases", {
       return(invisible())
     }
   ")
-  expect_lint(lines, NULL, linter)
+  expect_no_lint(lines, linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -17,7 +17,15 @@ test_that("terminal_close_linter skips allowed cases", {
       return(close)
     }
   ")
-  expect_lint(lines, NULL, linter)
+  expect_no_lint(lines, linter)
+
+  lines <- trim_some("
+    foo <- \\(bar) {
+      close <- bar + 1
+      return(close)
+    }
+  ")
+  expect_no_lint(lines, linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -25,7 +33,7 @@ test_that("terminal_close_linter skips allowed cases", {
       close
     }
   ")
-  expect_lint(lines, NULL, linter)
+  expect_no_lint(lines, linter)
 })
 
 test_that("terminal_close_linter blocks simple cases", {
@@ -70,5 +78,27 @@ test_that("terminal_close_linter blocks simple cases", {
     "),
     list(lint_msg, line_number = 7L, column_number = 3L),
     linter
+  )
+})
+
+test_that("lints vectorize", {
+  expect_lint(
+    trim_some("{
+      foo <- function() {
+        tmp <- file(tempfile())
+        writeLines(letters, tmp)
+        close(tmp)
+      }
+      bar <- \\() {
+        tmp <- file(tempfile())
+        writeLines(letters, tmp)
+        close(tmp)
+      }
+    }"),
+    list(
+      list("close connections", line_number = 5L),
+      list("close connections", line_number = 10L)
+    ),
+    terminal_close_linter()
   )
 })
