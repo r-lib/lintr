@@ -21,28 +21,24 @@ fuzz_contents <- function(f) {
     return(invisible())
   }
 
-  fun_tokens <- c("'\\\\'", "FUNCTION")
-  fun_idx <- which(pd$token %in% fun_tokens)
+  fun_tokens <- c(`'\\\\'` = "\\", `FUNCTION` = "function")
+  fun_idx <- which(pd$token %in% names(fun_tokens))
   n_fun <- length(fun_idx)
 
   if (n_fun == 0L) {
     return(invisible())
   }
 
-  pd$new_token <- NA_character_
-  pd$new_token[fun_idx] <- sample(fun_tokens, n_fun, replace = TRUE)
+  pd$new_text <- NA_character_
+  pd$new_text[fun_idx] <- sample(fun_tokens, n_fun, replace = TRUE)
 
   l <- readLines(f)
 
-  replacement_map <- c(FUNCTION = "\\", `'\\\\'` = "function")
   for (ii in rev(fun_idx)) {
-    if (pd$token[ii] == pd$new_token[ii]) next
-    ptn = rex::rex(
-      start,
-      capture(n_times(anything, pd$col1[ii] - 1L), name = "prefix"),
-      pd$text[ii]
-    )
-    l[pd$line1[ii]] <- rex::re_substitutes(l[pd$line1[ii]], ptn, paste0("\\1", rex::rex(replacement_map[pd$token[ii]])))
+    if (pd$text[ii] == pd$new_text[ii]) next
+    # Tried, with all rex(), hit a bug: https://github.com/r-lib/rex/issues/96
+    ptn = paste0("^(.{", pd$col1[ii] - 1L, "})", rex::rex(pd$text[ii]))
+    l[pd$line1[ii]] <- rex::re_substitutes(l[pd$line1[ii]], ptn, paste0("\\1", rex::rex(pd$new_text[ii])))
   }
 
   writeLines(l, f)
