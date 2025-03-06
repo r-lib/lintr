@@ -1,10 +1,11 @@
 maybe_fuzz_content <- function(file, lines) {
-  new_file <- tempfile()
   if (is.null(file)) {
+    new_file <- tempfile()
     con <- file(new_file, encoding = "UTF-8")
     writeLines(lines, con = con, sep = "\n")
     close(con)
   } else {
+    new_file <- tempfile(fileext = tools::file_ext(file))
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
