@@ -97,3 +97,10 @@ valid_failure <- vapply(
   },
   logical(1L)
 )
+if (!all(valid_failure)) {
+  failures <- failures[!valid_failure]
+  names(failures) <- vapply(failures, `[[`, "test", FUN.VALUE = character(1L))
+  cat("Some fuzzed tests failed unexpectedly!\n")
+  print(failures)
+  stop("Use # nofuzz [start|end] to mark false positives or fix any bugs.")
+}
