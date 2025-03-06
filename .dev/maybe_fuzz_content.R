@@ -14,7 +14,11 @@ maybe_fuzz_content <- function(file, lines) {
 }
 
 fuzz_contents <- function(f) {
-  pd <- getParseData(parse(f, keep.source = TRUE))
+  pd <- tryCatch(getParseData(parse(f, keep.source = TRUE)), error = identity)
+  # e.g. Rmd files. We could use get_source_expressions(), but with little benefit & much slower.
+  if (inherits(pd, "error")) {
+    return(invisible())
+  }
 
   fun_tokens <- c("'\\\\'", "FUNCTION")
   fun_idx <- which(pd$token %in% fun_tokens)
