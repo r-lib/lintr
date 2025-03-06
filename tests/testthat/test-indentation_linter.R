@@ -261,7 +261,6 @@ test_that("function argument indentation works in tidyverse-style", {
     linter
   )
 })
-# nofuzz end
 
 test_that("function argument indentation works in always-hanging-style", {
   linter <- indentation_linter(hanging_indent_style = "always")
@@ -357,6 +356,7 @@ test_that("function argument indentation works in always-hanging-style", {
     linter
   )
 })
+# nofuzz end
 
 test_that("indentation with operators works", {
   linter <- indentation_linter()
