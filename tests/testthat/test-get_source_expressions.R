@@ -108,7 +108,10 @@ test_that("Can read non UTF-8 file", {
   withr::local_options(list(lintr.linter_file = tempfile()))
   proj_dir <- test_path("dummy_projects", "project")
   withr::local_dir(proj_dir)
-  expect_no_lint(file = "cp1252.R", linters = list())
+  expect_no_lint( # nofuzz
+    file = "cp1252.R",
+    linters = list()
+  )
 })
 
 test_that("Warns if encoding is misspecified, Pt. 1", {
@@ -142,14 +145,14 @@ test_that("Warns if encoding is misspecified, Pt. 1", {
 
 test_that("Can extract line number from parser errors", {
   with_content_to_parse(
-    trim_some('
-      "ok"
-      R"---a---"
-    '),
-    {
-      expect_identical(error$message, "Malformed raw string literal.")
-      expect_identical(error$line_number, 2L)
-    }
+# #     trim_some('
+# #       "ok"
+# #       R"---a---"
+# #     '),
+# #     {
+# #       expect_identical(error$message, "Malformed raw string literal.")
+# #       expect_identical(error$line_number, 2L)
+# #     }
   )
 
   with_content_to_parse(

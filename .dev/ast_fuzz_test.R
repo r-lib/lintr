@@ -61,7 +61,7 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
       ))
     }
 
-    comment_range <- Map(`:`,
+    comment_ranges <- Map(`:`,
       as.integer(xml2::xml_attr(comments[start_idx], "line1")),
       as.integer(xml2::xml_attr(comments[end_idx], "line1"))
     )
@@ -69,8 +69,11 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
       test_lines[comment_range] <- paste("#", test_lines[comment_range])
     }
 
-    if (!any(!start_idx & !end_idx)) next
+    if (length(start_idx) > 0L && !any(!start_idx & !end_idx)) next
 
+    # NB: one-line tests line expect_lint(...) # nofuzz are not supported,
+    #   since the comment will attach to the parent test_that() & thus comment
+    #   out the whole unit. Easiest solution is just to spread out those few tests for now.
     comment_range <- as.integer(xml2::xml_attr(nofuzz_line, "line1")):as.integer(xml2::xml_attr(nofuzz_line, "line2"))
     test_lines[comment_range] <- paste("#", test_lines[comment_range])
   }
