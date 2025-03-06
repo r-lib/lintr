@@ -104,7 +104,7 @@ withr::defer(for (restoration in test_restorations) writeLines(restoration$lines
 #   which tests failed (all reports are about successful or skipped tests). probably this is not
 #   the best approach but documentation was not very helpful.
 reporter <- testthat::SummaryReporter$new()
-testthat::test_local(reporter = reporter)
+testthat::test_local(reporter = reporter, stop_on_failure = FALSE)
 
 failures <- reporter$failures$as_list()
 # ignore any test that failed for expected reasons, e.g. some known lint metadata changes
