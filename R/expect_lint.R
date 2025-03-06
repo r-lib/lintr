@@ -47,7 +47,9 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
-  file <- maybe_write_content(file, content)
+  if (is.null(file)) on.exit(unlink(file), add = TRUE)
+on.exit({reset_lang(old_lang); unlink(file)})
+file <- maybe_fuzz_content(file, content)
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
@@ -164,4 +166,48 @@ require_testthat <- function() {
       "{.fun {name}} is designed to work within the {.pkg testthat} testing framework, which could not be loaded."
     )
   }
+}
+maybe_fuzz_content <- function(file, lines) {
+  new_file <- tempfile()
+  if (is.null(file)) {
+    con <- file(new_file, encoding = "UTF-8")
+    writeLines(lines, con = con, sep = "\n")
+    close(con)
+  } else {
+    file.copy(file, new_file, copy.mode = FALSE)
+  }
+
+  fuzz_contents(new_file)
+
+  new_file
+}
+
+fuzz_contents <- function(f) {
+  pd <- getParseData(parse(f, keep.source = TRUE))
+
+  fun_tokens <- c("'\\\\'", "FUNCTION")
+  fun_idx <- which(pd$token %in% fun_tokens)
+  n_fun <- length(fun_idx)
+
+  if (n_fun == 0L) {
+    return(invisible())
+  }
+
+  pd$new_token[fun_idx] <- sample(fun_tokens, length(fun_idx), replace = TRUE)
+
+  l <- readLines(f)
+
+  for (ii in rev(fun_idx)) {
+    if (pd$token[ii] == pd$new_token[ii]) next
+    browser()
+    ptn = paste0("^(.{", pd$col1 - 1L, "})")
+  }
+
+  replacement_map <- c(FUNCTION = "       \\", `'\\\\'` = "function")
+  start <- pd$col1[fun_idx]
+  substr(l[pd$line1[fun_idx]], start, start + nchar("function") - 1L) <- replacement_map[pd$token[fun_idx]]
+
+  writeLines(l, f)
+
+  invisible()
 }
