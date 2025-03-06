@@ -40,4 +40,20 @@ withr::defer({
 
 pkgload::load_all()
 
-testthat::test_dir("tests")
+reporter <- testthat::SummaryReporter$new()
+testthat::test_local(reporter = reporter)
+
+failures <- reporter$failures$as_list()
+valid_failure <- vapply(
+  failures,
+  function(failure) {
+    if (grepl("column_number [0-9]+L? did not match", failure$message)) {
+      return(TRUE)
+    }
+    FALSE
+  },
+  logical(1L)
+)
+for (failure in failures) {
+
+}
