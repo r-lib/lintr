@@ -42,10 +42,23 @@ withr::defer({
 
 pkgload::load_all()
 
+# beware lazy eval: originally tried adding a withr::defer() in each iteration, but
+#   this effectively only runs the last 'defer' expression as the names are only
+#   evaluated at run-time. So instead keep track of all edits in this object.
+# this approach to implementing 'nofuzz' feels painfully manual, but I couldn't
+#   figure out how else to get 'testthat' to give us what we need -- the failures
+#   object in the reporter is frustratingly inconsistent in whether the trace
+#   exists, and even if it does, we'd have to text-mangle to get the corresponding
+#   file names out. Also, the trace 'srcref' happens under keep.source=FALSE,
+#   so we lose any associated comments anyway. even that would not solve the issue
+#   of getting top-level exclusions done for 'nofuzz start|end' ranges, except
+#   maybe if it enabled us to reuse lintr's own exclude() system.
+# therefore we take this approach: pass over the test suite first and comment out
+#   any tests/units that have been marked 'nofuzz'. restore later.
 test_restorations <- list()
 for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = TRUE)) {
   xml <- read_xml(xmlparsedata::xml_parse_data(parse(test_file, keep.source = TRUE)))
-  # parent::* to catch top-level comments (exprlist)
+  # parent::* to catch top-level comments (exprlist). matches one-line nofuzz and start/end ranges.
   nofuzz_lines <- xml_find_all(xml, "//COMMENT[contains(text(), 'nofuzz')]/parent::*")
   if (length(nofuzz_lines) == 0L) next
 
@@ -54,6 +67,7 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
   for (nofuzz_line in nofuzz_lines) {
     comments <- xml_find_all(nofuzz_line, "COMMENT[contains(text(), 'nofuzz')]")
     comment_text <- xml_text(comments)
+    # handle start/end ranges first.
     start_idx <- grep("nofuzz start", comment_text, fixed = TRUE)
     end_idx <- grep("nofuzz end", comment_text, fixed = TRUE)
     if (length(start_idx) != length(end_idx) || any(end_idx < start_idx)) {
@@ -85,10 +99,18 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
 }
 withr::defer(for (restoration in test_restorations) writeLines(restoration$lines, restoration$file))
 
+# for some reason, 'report <- test_dir(...)' did not work -- the resulting object is ~empty.
+#   even 'report <- test_local(...)', which does return an object, lacks any information about
+#   which tests failed (all reports are about successful or skipped tests). probably this is not
+#   the best approach but documentation was not very helpful.
 reporter <- testthat::SummaryReporter$new()
 testthat::test_local(reporter = reporter)
 
 failures <- reporter$failures$as_list()
+# ignore any test that failed for expected reasons, e.g. some known lint metadata changes
+#   about line numbers or the contents of the line. this saves us having to pepper tons of
+#   'nofuzz' comments throughout the suite, as well as getting around the difficulty of injecting
+#   'expect_lint()' with new code to ignore these attributes (this latter we might explore later).
 valid_failure <- vapply(
   failures,
   function(failure) {
