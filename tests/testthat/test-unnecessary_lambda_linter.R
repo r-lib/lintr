@@ -250,13 +250,16 @@ test_that("cases with braces are caught", {
 
 test_that("function shorthand is handled", {
   skip_if_not_r_version("4.1.0")
-
+  linter <- unnecessary_lambda_linter()
+  linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
+  
   expect_lint(
     "lapply(DF, \\(x) sum(x))",
     rex::rex("Pass sum directly as a symbol to lapply()"),
-    unnecessary_lambda_linter()
+    linter
   )
 
+  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get", anything, "sapply(x, foo)")
   expect_lint("sapply(x, \\(xi) foo(xi) == 2)", lint_msg, linter)
   expect_lint("sapply(x, \\(xi) foo(xi) == 'a')", lint_msg, linter)
   expect_lint("sapply(x, \\(xi) foo(xi) == 1 + 2i)", lint_msg, linter)
