@@ -15,8 +15,9 @@ maybe_fuzz_content <- function(file, lines) {
 }
 
 fuzz_contents <- function(f) {
-  pd <- tryCatch(getParseData(parse(f, keep.source = TRUE)), error = identity)
-  # e.g. Rmd files. We could use get_source_expressions(), but with little benefit & much slower.
+  # skip errors for e.g. Rmd files, and ignore warnings.
+  #   We could use get_source_expressions(), but with little benefit & much slower.
+  pd <- tryCatch(getParseData(suppressWarnings(parse(f, keep.source = TRUE))), error = identity)
   if (inherits(pd, "error")) {
     return(invisible())
   }
