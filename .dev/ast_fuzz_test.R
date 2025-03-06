@@ -47,7 +47,7 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
   nofuzz_lines <- xml_find_all(xml, "//COMMENT[contains(text(), 'nofuzz')]/parent::*")
   if (length(nofuzz_lines) == 0L) next
 
-  original <- test_lines <- readLines(test_file)
+  test_original <- test_lines <- readLines(test_file)
 
   for (nofuzz_line in nofuzz_lines) {
     comments <- xml2::xml_find_all(nofuzz_line, "COMMENT[contains(text(), 'nofuzz')]")
@@ -79,9 +79,9 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
   }
 
   writeLines(test_lines, test_file)
-  test_restorations <- c(test_restorations, list(list(file = test_file, lines = original)))
+  test_restorations <- c(test_restorations, list(list(file = test_file, lines = test_original)))
 }
-withr::defer(for (restoration in test_restorations) writeLines(restoration$original, restoration$file))
+withr::defer(for (restoration in test_restorations) writeLines(restoration$lines, restoration$file))
 
 reporter <- testthat::SummaryReporter$new()
 testthat::test_local(reporter = reporter)
@@ -90,10 +90,7 @@ failures <- reporter$failures$as_list()
 valid_failure <- vapply(
   failures,
   function(failure) {
-    if (grepl("column_number [0-9]+L? did not match", failure$message)) {
-      return(TRUE)
-    }
-    if (grepl("ranges list[(].* did not match", failure$message)) {
+    if (grepl('(column_number|ranges|line) .* did not match', failure$message)) {
       return(TRUE)
     }
     FALSE

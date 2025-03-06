@@ -5,7 +5,7 @@ maybe_fuzz_content <- function(file, lines) {
     writeLines(lines, con = con, sep = "\n")
     close(con)
   } else {
-    new_file <- tempfile(fileext = tools::file_ext(file))
+    new_file <- tempfile(fileext = paste0(".", tools::file_ext(file)))
     file.copy(file, new_file, copy.mode = FALSE)
   }
 

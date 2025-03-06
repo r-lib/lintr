@@ -145,14 +145,14 @@ test_that("Warns if encoding is misspecified, Pt. 1", {
 
 test_that("Can extract line number from parser errors", {
   with_content_to_parse(
-# #     trim_some('
-# #       "ok"
-# #       R"---a---"
-# #     '),
-# #     {
-# #       expect_identical(error$message, "Malformed raw string literal.")
-# #       expect_identical(error$line_number, 2L)
-# #     }
+    trim_some('
+      "ok"
+      R"---a---"
+    '),
+    {
+      expect_identical(error$message, "Malformed raw string literal.")
+      expect_identical(error$line_number, 2L)
+    }
   )
 
   with_content_to_parse(
