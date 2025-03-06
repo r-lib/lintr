@@ -24,25 +24,21 @@ fuzz_contents <- function(f) {
     return(invisible())
   }
 
+  pd$new_token <- NA_character_
   pd$new_token[fun_idx] <- sample(fun_tokens, n_fun, replace = TRUE)
 
   l <- readLines(f)
 
-  replacement_map <- c(FUNCTION = "       \\", `'\\\\'` = "function")
+  replacement_map <- c(FUNCTION = "\\", `'\\\\'` = "function")
   for (ii in rev(fun_idx)) {
     if (pd$token[ii] == pd$new_token[ii]) next
-    browser()
     ptn = rex::rex(
       start,
       capture(n_times(anything, pd$col1[ii] - 1L), name = "prefix"),
       pd$text[ii]
     )
-    l[pd$line1[ii]] <- rex::re_substitutes(l[pd$line1[ii]], ptn, replacement_map[pd$token[ii]])
+    l[pd$line1[ii]] <- rex::re_substitutes(l[pd$line1[ii]], ptn, paste0("\\1", rex::rex(replacement_map[pd$token[ii]])))
   }
-
-
-  start <- pd$col1[fun_idx]
-  substr(l[pd$line1[fun_idx]], start, start + nchar("function") - 1L) <- replacement_map[pd$token[fun_idx]]
 
   writeLines(l, f)
 

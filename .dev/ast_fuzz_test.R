@@ -25,8 +25,8 @@ writeLines(
   c(
     head(original, expected_line_idx-1L),
     # overwrite original exit hook to always delete the fuzzed file
-    "on.exit({reset_lang(old_lang); unlink(file)})",
-    "file <- maybe_fuzz_content(file, content)",
+    "  on.exit({reset_lang(old_lang); unlink(file)})",
+    "  file <- maybe_fuzz_content(file, content)",
     tail(original, -expected_line_idx),
     readLines(".dev/maybe_fuzz_content.R")
   ),
