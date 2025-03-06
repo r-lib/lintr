@@ -177,10 +177,10 @@ test_that("calls with top level function definitions are ignored", {
 test_that("object-usage line-numbers are relative to start-of-file", {
   expect_lint(
     trim_some("
-      a <- \\(y) {
+      a <- function(y) {
         y ** 2
       }
-      b <- \\() {
+      b <- function() {
         x
       }
     "),
