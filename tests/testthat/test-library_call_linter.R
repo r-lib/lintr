@@ -220,7 +220,9 @@ test_that("skips allowed usages of library()/character.only=TRUE", {
 
   expect_no_lint("library(data.table)", linter)
   expect_no_lint("function(pkg) library(pkg, character.only = TRUE)", linter)
+  expect_no_lint("\\(pkg) library(pkg, character.only = TRUE)", linter)
   expect_no_lint("function(pkgs) sapply(pkgs, require, character.only = TRUE)", linter)
+  expect_no_lint("\\(pkgs) sapply(pkgs, require, character.only = TRUE)", linter)
 })
 
 test_that("blocks disallowed usages of strings in library()/require()", {

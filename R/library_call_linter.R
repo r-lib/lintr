@@ -111,7 +111,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
       expr[2][STR_CONST]
       or (
         SYMBOL_SUB[text() = 'character.only']
-        and not(ancestor::expr[FUNCTION])
+        and not(ancestor::expr[FUNCTION or OP-LAMBDA])
       )
     ]
   ")
@@ -122,7 +122,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
   //SYMBOL_FUNCTION_CALL[{ xp_text_in_table(bad_indirect_funs) }]
     /parent::expr
     /parent::expr[
-      not(ancestor::expr[FUNCTION])
+      not(ancestor::expr[FUNCTION or OP-LAMBDA])
       and expr[{ call_symbol_cond }]
     ]
   ")
