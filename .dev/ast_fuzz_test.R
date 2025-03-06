@@ -40,6 +40,46 @@ withr::defer({
 
 pkgload::load_all()
 
+test_restorations <- list()
+for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = TRUE)) {
+  xml <- xml2::read_xml(xmlparsedata::xml_parse_data(parse(test_file, keep.source = TRUE)))
+  # parent::* to catch top-level comments (exprlist)
+  nofuzz_lines <- xml_find_all(xml, "//COMMENT[contains(text(), 'nofuzz')]/parent::*")
+  if (length(nofuzz_lines) == 0L) next
+
+  original <- test_lines <- readLines(test_file)
+
+  for (nofuzz_line in nofuzz_lines) {
+    comments <- xml2::xml_find_all(nofuzz_line, "COMMENT[contains(text(), 'nofuzz')]")
+    comment_text <- xml2::xml_text(comments)
+    start_idx <- grep("nofuzz start", comment_text, fixed = TRUE)
+    end_idx <- grep("nofuzz end", comment_text, fixed = TRUE)
+    if (length(start_idx) != length(end_idx) || any(end_idx < start_idx)) {
+      stop(sprintf(
+        "Mismatched '# nofuzz start' (%s), '# nofuzz end' (%s) in %s",
+        toString(start_idx), toString(end_idx), test_file
+      ))
+    }
+
+    comment_range <- Map(`:`,
+      as.integer(xml2::xml_attr(comments[start_idx], "line1")),
+      as.integer(xml2::xml_attr(comments[end_idx], "line1"))
+    )
+    for (comment_range in comment_ranges) {
+      test_lines[comment_range] <- paste("#", test_lines[comment_range])
+    }
+
+    if (!any(!start_idx & !end_idx)) next
+
+    comment_range <- as.integer(xml2::xml_attr(nofuzz_line, "line1")):as.integer(xml2::xml_attr(nofuzz_line, "line2"))
+    test_lines[comment_range] <- paste("#", test_lines[comment_range])
+  }
+
+  writeLines(test_lines, test_file)
+  test_restorations <- c(test_restorations, list(list(file = test_file, lines = original)))
+}
+withr::defer(for (restoration in test_restorations) writeLines(restoration$original, restoration$file))
+
 reporter <- testthat::SummaryReporter$new()
 testthat::test_local(reporter = reporter)
 
@@ -50,10 +90,10 @@ valid_failure <- vapply(
     if (grepl("column_number [0-9]+L? did not match", failure$message)) {
       return(TRUE)
     }
+    if (grepl("ranges list[(].* did not match", failure$message)) {
+      return(TRUE)
+    }
     FALSE
   },
   logical(1L)
 )
-for (failure in failures) {
-
-}
