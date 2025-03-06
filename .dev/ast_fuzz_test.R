@@ -10,6 +10,8 @@
 #   by randomly altering the contents of files encountered
 #   under expect_lint() to swap known equivalencies.
 
+library(xml2)
+
 expect_lint_file <- "R/expect_lint.R"
 
 original <- readLines(expect_lint_file)
@@ -42,7 +44,7 @@ pkgload::load_all()
 
 test_restorations <- list()
 for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = TRUE)) {
-  xml <- xml2::read_xml(xmlparsedata::xml_parse_data(parse(test_file, keep.source = TRUE)))
+  xml <- read_xml(xmlparsedata::xml_parse_data(parse(test_file, keep.source = TRUE)))
   # parent::* to catch top-level comments (exprlist)
   nofuzz_lines <- xml_find_all(xml, "//COMMENT[contains(text(), 'nofuzz')]/parent::*")
   if (length(nofuzz_lines) == 0L) next
@@ -50,8 +52,8 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
   test_original <- test_lines <- readLines(test_file)
 
   for (nofuzz_line in nofuzz_lines) {
-    comments <- xml2::xml_find_all(nofuzz_line, "COMMENT[contains(text(), 'nofuzz')]")
-    comment_text <- xml2::xml_text(comments)
+    comments <- xml_find_all(nofuzz_line, "COMMENT[contains(text(), 'nofuzz')]")
+    comment_text <- xml_text(comments)
     start_idx <- grep("nofuzz start", comment_text, fixed = TRUE)
     end_idx <- grep("nofuzz end", comment_text, fixed = TRUE)
     if (length(start_idx) != length(end_idx) || any(end_idx < start_idx)) {
@@ -62,8 +64,8 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
     }
 
     comment_ranges <- Map(`:`,
-      as.integer(xml2::xml_attr(comments[start_idx], "line1")),
-      as.integer(xml2::xml_attr(comments[end_idx], "line1"))
+      as.integer(xml_attr(comments[start_idx], "line1")),
+      as.integer(xml_attr(comments[end_idx], "line1"))
     )
     for (comment_range in comment_ranges) {
       test_lines[comment_range] <- paste("#", test_lines[comment_range])
@@ -74,7 +76,7 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
     # NB: one-line tests line expect_lint(...) # nofuzz are not supported,
     #   since the comment will attach to the parent test_that() & thus comment
     #   out the whole unit. Easiest solution is just to spread out those few tests for now.
-    comment_range <- as.integer(xml2::xml_attr(nofuzz_line, "line1")):as.integer(xml2::xml_attr(nofuzz_line, "line2"))
+    comment_range <- as.integer(xml_attr(nofuzz_line, "line1")):as.integer(xml_attr(nofuzz_line, "line2"))
     test_lines[comment_range] <- paste("#", test_lines[comment_range])
   }
 
