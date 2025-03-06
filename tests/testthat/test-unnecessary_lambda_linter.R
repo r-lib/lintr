@@ -252,7 +252,7 @@ test_that("function shorthand is handled", {
   skip_if_not_r_version("4.1.0")
   linter <- unnecessary_lambda_linter()
   linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
-  
+
   expect_lint(
     "lapply(DF, \\(x) sum(x))",
     rex::rex("Pass sum directly as a symbol to lapply()"),

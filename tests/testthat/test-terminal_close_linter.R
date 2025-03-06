@@ -20,17 +20,18 @@ test_that("terminal_close_linter skips allowed cases", {
   expect_no_lint(lines, linter)
 
   lines <- trim_some("
-    foo <- \\(bar) {
+    foo <- function(bar) {
       close <- bar + 1
-      return(close)
+      close
     }
   ")
   expect_no_lint(lines, linter)
 
+  skip_if_not_r_version("4.1.0")
   lines <- trim_some("
-    foo <- function(bar) {
+    foo <- \\(bar) {
       close <- bar + 1
-      close
+      return(close)
     }
   ")
   expect_no_lint(lines, linter)
