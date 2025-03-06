@@ -256,6 +256,14 @@ test_that("function shorthand is handled", {
     rex::rex("Pass sum directly as a symbol to lapply()"),
     unnecessary_lambda_linter()
   )
+
+  expect_lint("sapply(x, \\(xi) foo(xi) == 2)", lint_msg, linter)
+  expect_lint("sapply(x, \\(xi) foo(xi) == 'a')", lint_msg, linter)
+  expect_lint("sapply(x, \\(xi) foo(xi) == 1 + 2i)", lint_msg, linter)
+
+  expect_no_lint("sapply(x, \\(xi) foo(xi) == 2)", linter_allow)
+  expect_no_lint("sapply(x, \\(xi) foo(xi) == 'a')", linter_allow)
+  expect_no_lint("sapply(x, \\(xi) foo(xi) == 1 + 2i)", linter_allow)
 })
 
 test_that("lints vectorize", {
