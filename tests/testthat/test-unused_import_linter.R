@@ -1,21 +1,27 @@
 test_that("unused_import_linter lints as expected", {
   linter <- unused_import_linter()
 
-  expect_lint("library(dplyr)\ntibble(a = 1)", NULL, linter)
+  expect_no_lint("library(dplyr)\ntibble(a = 1)", linter)
   # SYMBOL_FUNCTION_CALL usage is detected
-  expect_lint("library(tidyverse)\ntibble(a = 1)", NULL, linter)
+  expect_no_lint("library(tidyverse)\ntibble(a = 1)", linter)
   # SYMBOL usage is detected
-  expect_lint("library(dplyr)\ndo.call(tibble, args = list(a = 1))", NULL, linter)
+  expect_no_lint("library(dplyr)\ndo.call(tibble, args = list(a = 1))", linter)
   # SPECIAL usage is detected
-  expect_lint("library(magrittr)\n1:3 %>% mean()", NULL, linter)
+  expect_no_lint( # nofuzz
+    trim_some("
+      library(magrittr)
+      1:3 %>% mean()
+    "),
+    linter
+  )
   # dataset is detected
-  expect_lint("library(dplyr)\nstarwars", NULL, linter)
-  expect_lint("library(datasets)\nstate.center", NULL, linter)
+  expect_no_lint("library(dplyr)\nstarwars", linter)
+  expect_no_lint("library(datasets)\nstate.center", linter)
 
   # Missing packages are ignored
-  expect_lint("library(not.a.package)\ntibble(a = 1)", NULL, linter)
+  expect_no_lint("library(not.a.package)\ntibble(a = 1)", linter)
   # SYMBOL calls with character.only = TRUE are ignored, even if the argument is a package name
-  expect_lint("library(dplyr, character.only = TRUE)\n1 + 1", NULL, linter)
+  expect_no_lint("library(dplyr, character.only = TRUE)\n1 + 1", linter)
 
   lint_msg <- rex::rex("Package 'dplyr' is attached but never used")
   msg_ns <- rex::rex("Don't attach package 'dplyr', which is only used by namespace.")
@@ -26,11 +32,11 @@ test_that("unused_import_linter lints as expected", {
   expect_lint("library('dplyr', character.only = TRUE)\n1 + 1", lint_msg, linter)
   # ignore namespaced usages by default, but provide custom lint message
   expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", msg_ns, linter)
-  expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", NULL, unused_import_linter(allow_ns_usage = TRUE))
+  expect_no_lint("library(dplyr)\ndplyr::tibble(a = 1)", unused_import_linter(allow_ns_usage = TRUE))
 
   # ignore packages in except_packages
-  expect_lint("library(data.table)\n1 + 1", NULL, linter)
-  expect_lint("library(dplyr)\n1 + 1", NULL, unused_import_linter(except_packages = "dplyr"))
+  expect_no_lint("library(data.table)\n1 + 1", linter)
+  expect_no_lint("library(dplyr)\n1 + 1", unused_import_linter(except_packages = "dplyr"))
 })
 
 test_that("unused_import_linter handles message vectorization", {
@@ -70,6 +76,6 @@ test_that("glue usages are seen", {
 
     glue('{ xml_parse_data() }')
   ")
-  expect_lint(lines, NULL, unused_import_linter())
+  expect_no_lint(lines, unused_import_linter())
   expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
 })

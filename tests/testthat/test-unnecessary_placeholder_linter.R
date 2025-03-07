@@ -5,21 +5,21 @@ patrick::with_parameters_test_that(
   "unnecessary_placeholder_linter skips allowed usages",
   {
     # . used in position other than first --> ok
-    expect_lint(sprintf("x %s foo(y, .)", pipe), NULL, linter)
+    expect_no_lint(sprintf("x %s foo(y, .)", pipe), linter)
     # ditto for nested usage
-    expect_lint(sprintf("x %s foo(y, bar(.))", pipe), NULL, linter)
+    expect_no_lint(sprintf("x %s foo(y, bar(.))", pipe), linter)
     # . used twice --> ok
-    expect_lint(sprintf("x %s foo(., .)", pipe), NULL, linter)
+    expect_no_lint(sprintf("x %s foo(., .)", pipe), linter)
     # . used as a keyword argument --> ok
-    expect_lint(sprintf("x %s foo(arg = .)", pipe), NULL, linter)
+    expect_no_lint(sprintf("x %s foo(arg = .)", pipe), linter)
     # . used inside a scope --> ok
-    expect_lint(sprintf("x %s { foo(arg = .) }", pipe), NULL, linter)
+    expect_no_lint(sprintf("x %s { foo(arg = .) }", pipe), linter)
   },
   .test_name = names(pipes),
   pipe = pipes
 )
 
-patrick::with_parameters_test_that(
+patrick::with_parameters_test_that( # nofuzz
   "unnecessary_placeholder_linter blocks simple disallowed usages",
   {
     expect_lint(
@@ -38,7 +38,7 @@ patrick::with_parameters_test_that(
   pipe = pipes
 )
 
-test_that("lints vectorize", {
+test_that("lints vectorize", { # nofuzz
   lint_msg <- rex::rex("Don't use the placeholder (`.`) when it's not needed")
 
   expect_lint(
