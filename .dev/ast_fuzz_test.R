@@ -123,8 +123,8 @@ valid_failure <- vapply(
   },
   logical(1L)
 )
-if (!all(valid_failure)) {
-  failures <- failures[!valid_failure]
+failures <- failures[!valid_failure]
+if (length(failures) > 0L) {
   names(failures) <- vapply(failures, `[[`, "test", FUN.VALUE = character(1L))
   cat("Some fuzzed tests failed unexpectedly!\n")
   print(failures)
