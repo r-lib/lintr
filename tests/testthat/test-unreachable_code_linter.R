@@ -4,7 +4,7 @@ test_that("unreachable_code_linter works in simple function", {
       return(bar)
     }
   ")
-  expect_lint(lines, NULL, unreachable_code_linter())
+  expect_no_lint(lines, unreachable_code_linter())
 })
 
 test_that("unreachable_code_linter works in sub expressions", {
@@ -70,7 +70,7 @@ test_that("unreachable_code_linter works in sub expressions", {
     }
   ")
 
-  expect_lint(lines, NULL, linter)
+  expect_no_lint(lines, linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -163,7 +163,7 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
     }
   ")
 
-  expect_lint(lines, NULL, linter)
+  expect_no_lint(lines, linter)
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -198,11 +198,11 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
 })
 
 test_that("unreachable_code_linter ignores expressions that aren't functions", {
-  expect_lint("x + 1", NULL, unreachable_code_linter())
+  expect_no_lint("x + 1", unreachable_code_linter())
 })
 
 test_that("unreachable_code_linter ignores anonymous/inline functions", {
-  expect_lint("lapply(rnorm(10), function(x) x + 1)", NULL, unreachable_code_linter())
+  expect_no_lint("lapply(rnorm(10), function(x) x + 1)", unreachable_code_linter())
 })
 
 test_that("unreachable_code_linter passes on multi-line functions", {
@@ -212,7 +212,7 @@ test_that("unreachable_code_linter passes on multi-line functions", {
       return(y)
     }
   ")
-  expect_lint(lines, NULL, unreachable_code_linter())
+  expect_no_lint(lines, unreachable_code_linter())
 })
 
 test_that("unreachable_code_linter ignores comments on the same expression", {
@@ -223,7 +223,7 @@ test_that("unreachable_code_linter ignores comments on the same expression", {
       ) # y^3
     }
   ")
-  expect_lint(lines, NULL, unreachable_code_linter())
+  expect_no_lint(lines, unreachable_code_linter())
 })
 
 test_that("unreachable_code_linter ignores comments on the same line", {
@@ -232,7 +232,7 @@ test_that("unreachable_code_linter ignores comments on the same line", {
       return(y^2) # y^3
     }
   ")
-  expect_lint(lines, NULL, unreachable_code_linter())
+  expect_no_lint(lines, unreachable_code_linter())
 })
 
 test_that("unreachable_code_linter identifies simple unreachable code", {
@@ -349,7 +349,7 @@ test_that("unreachable_code_linter finds code after stop()", {
 test_that("unreachable_code_linter ignores code after foo$stop(), which might be stopping a subprocess, for example", {
   linter <- unreachable_code_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         bar <- get_process()
@@ -357,10 +357,9 @@ test_that("unreachable_code_linter ignores code after foo$stop(), which might be
         TRUE
       }
     "),
-    NULL,
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         bar <- get_process()
@@ -368,7 +367,6 @@ test_that("unreachable_code_linter ignores code after foo$stop(), which might be
         TRUE
       }
     "),
-    NULL,
     linter
   )
 })
@@ -381,7 +379,7 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     lintr.exclude_end = "#\\s*TestNoLintEnd"
   ))
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         do_something
@@ -391,11 +389,10 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
         # TestNoLintEnd
       }
     "),
-    NULL,
     list(linter, one_linter = assignment_linter())
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function() {
         do_something
@@ -405,7 +402,6 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
         # TestNoLintEnd
       }
     "),
-    NULL,
     linter
   )
 })
@@ -593,14 +589,14 @@ test_that("function shorthand is handled", {
 
 test_that("Do not lint inline else after stop", {
 
-  expect_lint("if (x > 3L) stop() else x + 3", NULL, unreachable_code_linter())
+  expect_no_lint("if (x > 3L) stop() else x + 3", unreachable_code_linter())
 })
 
 test_that("Do not lint inline else after stop in inline function", {
   linter <- unreachable_code_linter()
 
-  expect_lint("function(x) if (x > 3L) stop() else x + 3", NULL, linter)
-  expect_lint("function(x) if (x > 3L) { stop() } else {x + 3}", NULL, linter)
+  expect_no_lint("function(x) if (x > 3L) stop() else x + 3", linter)
+  expect_no_lint("function(x) if (x > 3L) { stop() } else {x + 3}", linter)
 })
 
 test_that("Do not lint inline else after stop in inline lambda function", {
@@ -608,8 +604,8 @@ test_that("Do not lint inline else after stop in inline lambda function", {
 
   linter <- unreachable_code_linter()
 
-  expect_lint("\\(x) if (x > 3L) stop() else x + 3", NULL, linter)
-  expect_lint("\\(x){ if (x > 3L) stop() else x + 3 }", NULL, linter)
+  expect_no_lint("\\(x) if (x > 3L) stop() else x + 3", linter)
+  expect_no_lint("\\(x){ if (x > 3L) stop() else x + 3 }", linter)
 })
 
 test_that("allow_comment_regex= works", {
@@ -619,18 +615,17 @@ test_that("allow_comment_regex= works", {
   linter_xxxx <- unreachable_code_linter(allow_comment_regex = "#.*xxxx")
   linter_x1x2 <- unreachable_code_linter(allow_comment_regex = c("#x", "#y"))
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         return(1)
         # nocov end
       }
     "),
-    NULL,
     linter_covr
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         return(1)
@@ -638,22 +633,20 @@ test_that("allow_comment_regex= works", {
         # nocov end
       }
     "),
-    NULL,
     linter_covr
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         return(1)
         # ABCDxxxx
       }
     "),
-    NULL,
     linter_xxxx
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         return(1)
@@ -661,22 +654,20 @@ test_that("allow_comment_regex= works", {
         # ABCDxxxx
       }
     "),
-    NULL,
     linter_xxxx
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         return(1)
         #x
       }
     "),
-    NULL,
     linter_x1x2
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         return(1)
@@ -684,12 +675,11 @@ test_that("allow_comment_regex= works", {
         #yDEF
       }
     "),
-    NULL,
     linter_x1x2
   )
 
   # might contain capture groups, #2678
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         stop('a')
@@ -697,7 +687,6 @@ test_that("allow_comment_regex= works", {
         # ab
       }
     "),
-    NULL,
     unreachable_code_linter(allow_comment_regex = "#\\s*(a|ab|abc)")
   )
 })
@@ -710,18 +699,17 @@ test_that("allow_comment_regex= obeys covr's custom exclusion when set", {
 
   linter_covr <- unreachable_code_linter()
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         return(1)
         # TestNoCovEnd
       }
     "),
-    NULL,
     linter_covr
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function() {
         return(1)
@@ -729,7 +717,6 @@ test_that("allow_comment_regex= obeys covr's custom exclusion when set", {
         # TestNoCovEnd
       }
     "),
-    NULL,
     linter_covr
   )
 })
