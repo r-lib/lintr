@@ -579,6 +579,25 @@ test_that("combined hanging and block indent works", {
     "),
     linter
   )
+
+  # S4 equivalence
+  expect_no_lint(
+    trim_some("
+      http_head(url, ...)@
+        then(function(res) {
+          if (res$status_code < 300) {
+            cli_alert_success()
+          } else {
+            cli_alert_danger()
+          }
+        })@
+        catch(error = function(err) {
+          e <- if (grepl('timed out', err$message)) 'timed out' else 'error'
+          cli_alert_danger()
+        })
+    "),
+    linter
+  )
 })
 
 test_that("hanging_indent_stlye works", {
