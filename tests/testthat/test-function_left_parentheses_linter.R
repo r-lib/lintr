@@ -182,6 +182,19 @@ test_that("newline in character string doesn't trigger false positive (#1963)", 
     list(line_number = 3L, column_number = 6L),
     linter
   )
+
+  expect_lint(
+    trim_some('
+      (
+        foo("
+        ")@bar
+        ()
+      )
+    '),
+    # attach to 'b' in '@bar'
+    list(line_number = 3L, column_number = 6L),
+    linter
+  )
 })
 
 test_that("shorthand functions are handled", {
