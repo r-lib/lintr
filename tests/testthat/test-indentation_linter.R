@@ -403,6 +403,15 @@ test_that("indentation with operators works", {
     "),
     linter
   )
+
+  expect_no_lint(
+    trim_some("
+      abc@
+        def@
+        ghi
+    "),
+    linter
+  )
 })
 
 test_that("indentation with bracket works", {
@@ -572,6 +581,25 @@ test_that("combined hanging and block indent works", {
             cli_alert_danger()
           }
         })$
+        catch(error = function(err) {
+          e <- if (grepl('timed out', err$message)) 'timed out' else 'error'
+          cli_alert_danger()
+        })
+    "),
+    linter
+  )
+
+  # S4 equivalence
+  expect_no_lint(
+    trim_some("
+      http_head(url, ...)@
+        then(function(res) {
+          if (res$status_code < 300) {
+            cli_alert_success()
+          } else {
+            cli_alert_danger()
+          }
+        })@
         catch(error = function(err) {
           e <- if (grepl('timed out', err$message)) 'timed out' else 'error'
           cli_alert_danger()

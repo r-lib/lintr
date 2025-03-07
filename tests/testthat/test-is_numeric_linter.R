@@ -28,7 +28,11 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
   expect_lint("is.integer(x) || is.numeric(x)", lint_msg, linter)
 
   # identical expressions match too
-  expect_lint("is.integer(DT$x) || is.numeric(DT$x)", lint_msg, linter)
+  expect_lint( # nofuzz
+    "is.integer(DT$x) || is.numeric(DT$x)",
+    lint_msg, 
+    linter
+  )
 
   # line breaks don't matter
   lines <- trim_some("

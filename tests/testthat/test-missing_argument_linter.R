@@ -51,6 +51,7 @@ test_that("missing_argument_linter blocks disallowed usages", {
 
   expect_lint("stats::median(1:10, a =)", lint_msga, linter)
   expect_lint("env$get(1:10, a =)", lint_msga, linter)
+  expect_lint("env@get(1:10, a =)", lint_msga, linter)
 
   # Fixes https://github.com/r-lib/lintr/issues/906
   # Comments should be ignored so that missing arguments could be

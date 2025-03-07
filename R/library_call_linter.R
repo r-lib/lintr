@@ -97,7 +97,10 @@ library_call_linter <- function(allow_preamble = TRUE) {
   upfront_call_xpath <- glue("
     //SYMBOL_FUNCTION_CALL[{ attach_call_cond }][last()]
       /preceding::expr
-      /SYMBOL_FUNCTION_CALL[{ unsuppressed_call_cond }][last()]
+      /*[
+        (self::SYMBOL_FUNCTION_CALL or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN])
+        and ({ unsuppressed_call_cond })
+      ][last()]
       /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call_cond }]]
       /parent::expr
   ")

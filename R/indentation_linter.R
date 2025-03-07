@@ -161,7 +161,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
         glue("
           self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
-            /following-sibling::SYMBOL_FUNCTION_CALL
+            /following-sibling::*[
+              self::SYMBOL_FUNCTION_CALL
+              or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN]
+            ]
             /parent::expr
             /following-sibling::expr[1]
             /@line2
@@ -169,7 +172,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         glue("
           self::*[
             {xp_and(paste0('not(self::', paren_tokens_left, ')'))}
-            and not(following-sibling::SYMBOL_FUNCTION_CALL)
+            and not(following-sibling::*[
+              self::SYMBOL_FUNCTION_CALL
+              or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN]
+            ])
           ]
             /following-sibling::*[not(self::COMMENT)][1]
             /@line2
@@ -237,20 +243,19 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     is_hanging <- logical(length(indent_levels))
 
     indent_changes <- xml_find_all(xml, xp_indent_changes)
-    for (change in indent_changes) {
-      change_type <- find_indent_type(change)
-      change_begin <- as.integer(xml_attr(change, "line1")) + 1L
-      change_end <- xml_find_num(change, xp_block_ends)
-      if (isTRUE(change_begin <= change_end)) {
-        to_indent <- seq(from = change_begin, to = change_end)
-        expected_indent_levels[to_indent] <- find_new_indent(
-          current_indent = expected_indent_levels[to_indent],
-          change_type = change_type,
-          indent = indent,
-          hanging_indent = as.integer(xml_attr(change, "col2"))
-        )
-        is_hanging[to_indent] <- change_type == "hanging"
-      }
+    change_types <- vapply(indent_changes, find_indent_type, character(1L))
+    change_begins <- as.integer(xml_attr(indent_changes, "line1")) + 1L
+    change_ends <- xml_find_num(indent_changes, xp_block_ends)
+    col2s <- as.integer(xml_attr(indent_changes, "col2"))
+    for (ii in which(change_begins <= change_ends)) {
+      to_indent <- seq(from = change_begins[ii], to = change_ends[ii])
+      expected_indent_levels[to_indent] <- find_new_indent(
+        current_indent = expected_indent_levels[to_indent],
+        change_type = change_types[ii],
+        indent = indent,
+        hanging_indent = col2s[ii]
+      )
+      is_hanging[to_indent] <- change_types[ii] == "hanging"
     }
 
     in_str_const <- logical(length(indent_levels))
