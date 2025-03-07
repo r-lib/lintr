@@ -55,22 +55,23 @@ test_that("unreachable_code_linter works in sub expressions", {
     linter
   )
 
-  lines <- trim_some("
-    foo <- function(bar) {
-      if (bar) {
-        return(bar) # Test comment
-      }
-      while (bar) {
-        return(bar) # 5 + 3
-      }
-      repeat {
-        return(bar) # Test comment
-      }
+  expect_no_lint( # nofuzz
+    trim_some("
+      foo <- function(bar) {
+        if (bar) {
+          return(bar) # Test comment
+        }
+        while (bar) {
+          return(bar) # 5 + 3
+        }
+        repeat {
+          return(bar) # Test comment
+        }
 
-    }
-  ")
-
-  expect_no_lint(lines, linter)
+      }
+    "),
+    linter
+  )
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -144,26 +145,27 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
     linter
   )
 
-  lines <- trim_some("
-    foo <- function(bar) {
-      if (bar) {
-        break # Test comment
-      } else {
-        next # Test comment
+  expect_no_lint( # nofuzz
+    trim_some("
+      foo <- function(bar) {
+        if (bar) {
+          break # Test comment
+        } else {
+          next # Test comment
+        }
+        while (bar) {
+          next # 5 + 3
+        }
+        repeat {
+          next # Test comment
+        }
+        for(i in 1:3) {
+          break # 5 + 4
+        }
       }
-      while (bar) {
-        next # 5 + 3
-      }
-      repeat {
-        next # Test comment
-      }
-      for(i in 1:3) {
-        break # 5 + 4
-      }
-    }
-  ")
-
-  expect_no_lint(lines, linter)
+    "),
+    linter
+  )
 
   lines <- trim_some("
     foo <- function(bar) {

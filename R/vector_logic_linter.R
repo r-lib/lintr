@@ -77,7 +77,7 @@ vector_logic_linter <- function() {
       and preceding-sibling::*[
         self::IF
         or self::WHILE
-        or self::expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
+        or self::expr/SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']
       ]
     ]
     and not(ancestor::expr[
