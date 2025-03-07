@@ -758,7 +758,7 @@ patrick::with_parameters_test_that(
   )
 )
 
-test_that("allow_functions= works", {
+test_that("allow_functions= works", { # nofuzz '})' break-up by comment
   linter_default <- unnecessary_nesting_linter()
   linter_foo <- unnecessary_nesting_linter(allow_functions = "foo")
   expect_lint("foo(x, {y}, z)", "Reduce the nesting of this statement", linter_default)
