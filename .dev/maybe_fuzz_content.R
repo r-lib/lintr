@@ -14,6 +14,14 @@ maybe_fuzz_content <- function(file, lines) {
   new_file
 }
 
+# skip errors for e.g. Rmd files, and ignore warnings.
+#   We could use get_source_expressions(), but with little benefit & much slower.
+# also avoid over-use of 'nofuzz' induced by some incompatible swaps, e.g. not all '%>%' can be
+#   swapped to '|>' (if '.' is used, or if RHS is not an allowed simple call)
+error_or_parse_data <- function(f) {
+  tryCatch(getParseData(suppressWarnings(parse(f, keep.source = TRUE))), error = identity)
+}
+
 simple_swap_fuzzer <- function(pd_filter, replacements) {
   function(pd, lines) {
     idx <- which(pd_filter(pd))
@@ -49,18 +57,21 @@ pipe_fuzzer <- simple_swap_fuzzer(
 # we could also consider just passing any test where no fuzzing takes place,
 #   i.e. letting the other GHA handle whether unfuzzed tests pass as expected.
 apply_fuzzers <- function(f) {
-  # skip errors for e.g. Rmd files, and ignore warnings.
-  #   We could use get_source_expressions(), but with little benefit & much slower.
-  pd <- tryCatch(getParseData(suppressWarnings(parse(f, keep.source = TRUE))), error = identity)
+  pd <- error_or_parse_data(f)
   if (inherits(pd, "error")) {
     return(invisible())
   }
 
   reparse <- FALSE
-  lines <- readLines(f)
+  unedited <- lines <- readLines(f)
   for (fuzzer in list(function_lambda_fuzzer, pipe_fuzzer)) {
     if (reparse) {
-      pd <- getParseData(parse(f, keep.source = TRUE))
+      pd <- error_or_parse_data(f)
+      if (inherits(pd, "error")) {
+        # our attempted edit failed; restore & abort
+        writeLines(unedited, f)
+        return(invisible())
+      }
       lines <- readLines(f)
     }
     updated_lines <- fuzzer(pd, lines)
