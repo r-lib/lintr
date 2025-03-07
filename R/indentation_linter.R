@@ -161,7 +161,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         glue("self::{paren_tokens_left}/following-sibling::{paren_tokens_right}/preceding-sibling::*[1]/@line2"),
         glue("
           self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))}]
-            /following-sibling::*[self::SYMBOL_FUNCTION_CALL or self::SLOT]
+            /following-sibling::*[
+              self::SYMBOL_FUNCTION_CALL
+              or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN]
+            ]
             /parent::expr
             /following-sibling::expr[1]
             /@line2
@@ -169,7 +172,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         glue("
           self::*[
             {xp_and(paste0('not(self::', paren_tokens_left, ')'))}
-            and not(following-sibling::*[self::SYMBOL_FUNCTION_CALL or self::SLOT])
+            and not(following-sibling::*[
+              self::SYMBOL_FUNCTION_CALL
+              or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN]
+            ])
           ]
             /following-sibling::*[not(self::COMMENT)][1]
             /@line2

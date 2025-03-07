@@ -403,6 +403,15 @@ test_that("indentation with operators works", {
     "),
     linter
   )
+
+  expect_no_lint(
+    trim_some("
+      abc@
+        def@
+        ghi
+    "),
+    linter
+  )
 })
 
 test_that("indentation with bracket works", {
