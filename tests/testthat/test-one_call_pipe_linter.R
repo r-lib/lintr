@@ -69,6 +69,7 @@ test_that("multiple lints are generated correctly", {
   )
 })
 
+# nofuzz start
 test_that("Native pipes are handled as well", {
   skip_if_not_r_version("4.1.0")
 
@@ -97,7 +98,6 @@ test_that("Native pipes are handled as well", {
   )
 })
 
-# nofuzz start
 test_that("one_call_pipe_linter skips data.table chains with native pipe", {
   skip_if_not_r_version("4.3.0")
 

@@ -548,6 +548,7 @@ test_that("code with pipes is handled correctly", {
     linter
   )
 
+  # nofuzz start
   expect_lint(
     trim_some("
       x %>%
@@ -579,6 +580,7 @@ test_that("code with pipes is handled correctly", {
     ),
     linter
   )
+  # nofuzz end
 
   skip_if_not_r_version("4.1.0")
 

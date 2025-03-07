@@ -33,24 +33,22 @@ test_that("returns the correct linting", {
 
   expect_no_lint("blah", linter)
 
+  # nofuzz start
   for (op in ops) {
     expect_no_lint(paste0("1 ", op, " 2"), linter)
     expect_no_lint(paste0("1 ", op, "\n2"), linter)
     expect_no_lint(paste0("1 ", op, "\n 2"), linter)
 
-    expect_lint( # nofuzz
-      paste0("1", op, "2"),
-      lint_msg,
-      linter
-    )
+    expect_lint(paste0("1", op, "2"), lint_msg, linter)
 
     # unary plus and minus can have no space before them
     if (!op %in% ops[1L:2L]) {
-      expect_lint(paste0("1 ", op, "2"), lint_msg, linter) # nofuzz
+      expect_lint(paste0("1 ", op, "2"), lint_msg, linter)
     }
 
     expect_lint(paste0("1", op, " 2"), lint_msg, linter)
   }
+  # nofuzz end
 
   expect_no_lint("b <- 2E+4", linter)
   expect_no_lint("a <- 1e-3", linter)

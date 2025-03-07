@@ -539,7 +539,7 @@ test_that("return_linter handles pipes in control flow", {
   linter <- return_linter(return_style = "explicit")
   lint_msg <- rex::rex("All functions must have an explicit return().")
 
-  expect_no_lint(
+  expect_no_lint( # nofuzz
     trim_some("
       foo <- function(x) {
         if (TRUE) {

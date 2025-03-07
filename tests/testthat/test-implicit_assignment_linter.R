@@ -427,7 +427,7 @@ test_that("allow_scoped skips scoped assignments", {
 test_that("interaction of allow_lazy and allow_scoped", {
   linter <- implicit_assignment_linter(allow_scoped = TRUE, allow_lazy = TRUE)
 
-  expect_nl_lint(
+  expect_no_lint(
     trim_some("
       if (any(idx <- foo()) && BB) {
         stop('Invalid foo() output: ', toString(idx))
