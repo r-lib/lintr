@@ -13,11 +13,21 @@ build_xml_find_function_calls <- function(xml) {
   function_call_cache <- xml_find_all(xml, "//SYMBOL_FUNCTION_CALL/parent::expr")
   names(function_call_cache) <- get_r_string(function_call_cache, "SYMBOL_FUNCTION_CALL")
 
-  function(function_names, keep_names = FALSE) {
+  s4_slot_cache <- xml_find_all(xml, "//SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]")
+  names(s4_slot_cache) <- get_r_string(s4_slot_cache, "SLOT")
+
+  function(function_names, keep_names = FALSE, include_s4_slots = FALSE) {
     if (is.null(function_names)) {
       res <- function_call_cache
     } else {
       res <- function_call_cache[names(function_call_cache) %in% function_names]
+    }
+    if (include_s4_slots) {
+      if (is.null(function_names)) {
+        res <- combine_nodesets(function_call_cache, s4_slot_cache)
+      } else {
+        res <- combine_nodesets(function_call_cache, s4_slot_cache[names(s4_slot_cache) %in% function_names])
+      }
     }
     if (keep_names) res else unname(res)
   }

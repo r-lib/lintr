@@ -50,7 +50,7 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
   ")
 
   Linter(linter_level = "file", function(source_expression) {
-    xml_targets <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
+    xml_targets <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE, include_s4_slots = TRUE)
     xml_targets <- xml_targets[!names(xml_targets) %in% except]
 
     missing_args <- xml_find_all(xml_targets, xpath)
