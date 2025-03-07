@@ -100,7 +100,7 @@ vector_logic_linter <- function() {
       and not(preceding-sibling::OP-LEFT-BRACKET)
       and not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'circular'])
     ]
-    /*[2]
+    /*[not(self::COMMENT)][2]
   "
 
   Linter(linter_level = "expression", function(source_expression) {
