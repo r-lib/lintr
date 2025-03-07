@@ -58,7 +58,11 @@
   + `library_call_linter()`
   + `terminal_close_linter()`
   + `unnecessary_lambda_linter()`
-* `missing_argument_linter()` finds S4 usage like `s4Obj@method(arg = )` (#2820, @MichaelChirico).
+* More consistency on handling `@` extractions (#2820, @MichaelChirico).
+  + `function_left_parentheses_linter()`
+  + `indentation_linter()`
+  + `library_call_linter()`
+  + `missing_argument_linter()`
 
 ## Notes
 
