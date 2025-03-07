@@ -2,30 +2,26 @@ test_that("keyword_quote_linter skips allowed usages", {
   linter <- keyword_quote_linter()
 
   # main use case: c()
-  expect_lint("x <- c(1, 2, 4, 5)", NULL, linter)
-  expect_lint("x <- c(a = 1, 2)", NULL, linter)
-  expect_lint("x <- c(a = 1, b = 2)", NULL, linter)
-  expect_lint("y <- c(`a b` = 1, `c d` = 2)", NULL, linter)
-  expect_lint('y <- c("a b" = 1, "c d" = 2)', NULL, linter)
-  expect_lint("z <- c('a b' = 1, c = 2)", NULL, linter)
+  expect_no_lint("x <- c(1, 2, 4, 5)", linter)
+  expect_no_lint("x <- c(a = 1, 2)", linter)
+  expect_no_lint("x <- c(a = 1, b = 2)", linter)
+  expect_no_lint("y <- c(`a b` = 1, `c d` = 2)", linter)
+  expect_no_lint('y <- c("a b" = 1, "c d" = 2)', linter)
+  expect_no_lint("z <- c('a b' = 1, c = 2)", linter)
 
   # don't catch strings as arguments
-  expect_lint('c(A = "a")', NULL, linter)
+  expect_no_lint('c(A = "a")', linter)
   # don't catch unnamed arguments
-  expect_lint('c(1, 2, "a")', NULL, linter)
+  expect_no_lint('c(1, 2, "a")', linter)
   # don't get thrown off by missing arguments
-  expect_lint("alist(`a b` =)", NULL, linter)
+  expect_no_lint("alist(`a b` =)", linter)
 
   # other use cases: switch() and list()
-  expect_lint("list(a = 1, b = list(c = 2))", NULL, linter)
-  expect_lint("list(`a b` = 1, c = 2:6)", NULL, linter)
+  expect_no_lint("list(a = 1, b = list(c = 2))", linter)
+  expect_no_lint("list(`a b` = 1, c = 2:6)", linter)
 
-  expect_lint("switch(x, a = 1, b = 2)", NULL, linter)
-  expect_lint(
-    "switch(x, `a b` = 1, c = 2:6)",
-    NULL,
-    linter
-  )
+  expect_no_lint("switch(x, a = 1, b = 2)", linter)
+  expect_no_lint("switch(x, `a b` = 1, c = 2:6)", linter)
 })
 
 test_that("keyword_quote_linter blocks simple disallowed usages", {
@@ -59,9 +55,9 @@ test_that("keyword_quote_linter blocks simple disallowed usages", {
 test_that("keyword_quote_linter skips quoting on reserved words", {
   linter <- keyword_quote_linter()
 
-  expect_lint("c(`next` = 1, `while` = 2)", NULL, linter)
-  expect_lint("switch(x, `for` = 3, `TRUE` = 4)", NULL, linter)
-  expect_lint("list('NA' = 5, 'Inf' = 6)", NULL, linter)
+  expect_no_lint("c(`next` = 1, `while` = 2)", linter)
+  expect_no_lint("switch(x, `for` = 3, `TRUE` = 4)", linter)
+  expect_no_lint("list('NA' = 5, 'Inf' = 6)", linter)
 })
 
 test_that("keyword_quote_linter works on more common functions", {
@@ -91,16 +87,16 @@ test_that("keyword_quote_linter blocks quoted assignment targets", {
   expect_lint('"foo bar" <- 1', backtick_msg, linter)
   expect_lint("'foo bar' = 1", backtick_msg, linter)
   # valid choice: use backticks
-  expect_lint("`foo bar` = 1", NULL, linter)
+  expect_no_lint("`foo bar` = 1", linter)
 
   expect_lint('"foo" <- 1', assign_msg, linter)
   expect_lint("'foo' = 1", assign_msg, linter)
   expect_lint("`foo` = 1", assign_msg, linter)
 
   # don't include data.table assignments
-  expect_lint('DT[, "a" := 1]', NULL, linter)
-  expect_lint("DT[, 'a' := 1]", NULL, linter)
-  expect_lint("DT[, `a` := 1]", NULL, linter)
+  expect_no_lint('DT[, "a" := 1]', linter)
+  expect_no_lint("DT[, 'a' := 1]", linter)
+  expect_no_lint("DT[, `a` := 1]", linter)
 
   # include common use cases: [<-/$ methods and infixes
   expect_lint('"$.my_class" <- function(x, key) { }', backtick_msg, linter)
@@ -109,7 +105,7 @@ test_that("keyword_quote_linter blocks quoted assignment targets", {
 
   # right assignment
   expect_lint('1 -> "foo"', assign_msg, linter)
-  expect_lint("1 -> foo", NULL, linter)
+  expect_no_lint("1 -> foo", linter)
   expect_lint('1 -> "a b"', backtick_msg, linter)
 })
 
@@ -124,8 +120,8 @@ test_that("keyword_quote_linter blocks quoted $, @ extractions", { # nofuzz
   expect_lint('x@"foo bar" <- 1', backtick_msg, linter)
   expect_lint("x@'foo bar' = 1", backtick_msg, linter)
   # valid choice: non-syntactic name with backticks
-  expect_lint("x@`foo bar` <- 1", NULL, linter)
-  expect_lint("x@`foo bar` = 1", NULL, linter)
+  expect_no_lint("x@`foo bar` <- 1", linter)
+  expect_no_lint("x@`foo bar` = 1", linter)
 
   expect_lint('x$"foo" <- 1', dollar_msg, linter)
   expect_lint("x$'foo' = 1", dollar_msg, linter)
