@@ -116,7 +116,7 @@ failures <- reporter$failures$as_list()
 valid_failure <- vapply(
   failures,
   function(failure) {
-    if (grepl('(column_number|ranges|line) .* did not match', failure$message)) {
+    if (grepl("(column_number|ranges|line) .* did not match", failure$message)) {
       return(TRUE)
     }
     FALSE
