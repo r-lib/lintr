@@ -9,7 +9,7 @@ maybe_fuzz_content <- function(file, lines) {
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
-  apply_fuzzers(new_file, list(function_lambda_fuzzer, pipe_fuzzer, dollar_at_fuzzer))
+  apply_fuzzers(new_file, list(function_lambda_fuzzer, pipe_fuzzer, dollar_at_fuzzer, comment_injection_fuzzer))
 
   new_file
 }
@@ -58,6 +58,27 @@ dollar_at_fuzzer <- simple_swap_fuzzer(
   \(pd) pd$token %in% c("'$'", "'@'"),
   replacements = c("$", "@")
 )
+
+comment_injection_fuzzer <- function(pd, lines) {
+  terminal_token_idx <- which(pd$terminal & !pd$token == "COMMENT")
+  injection_count <- sample(0:length(terminal_token_idx), 1L)
+
+  if (injection_count == 0L) {
+    return(invisible())
+  }
+
+  terminal_token_idx <- sort(sample(terminal_token_idx, injection_count))
+
+  for (ii in rev(terminal_token_idx)) {
+    line <- lines[pd$line2[ii]]
+    lines[pd$line2[ii]] <- paste0(
+      substr(line, 1L, pd$col2[ii]),
+      "# INJECTED COMMENT\n",
+      substr(line, pd$col2[ii] + 1L, nchar(line))
+    )
+  }
+  lines
+}
 
 # we could also consider just passing any test where no fuzzing takes place,
 #   i.e. letting the other GHA handle whether unfuzzed tests pass as expected.
