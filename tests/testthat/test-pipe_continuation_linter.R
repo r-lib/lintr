@@ -3,19 +3,18 @@ test_that("pipe-continuation correctly handles stand-alone expressions", {
   lint_msg <- rex::rex("Put a space before `%>%` and a new line after it,")
 
   # Expressions without pipes are ignored
-  expect_lint("blah", NULL, linter)
+  expect_no_lint("blah", linter)
 
   # Pipe expressions on a single line are ignored
-  expect_lint("foo %>% bar() %>% baz()", NULL, linter)
+  expect_no_lint("foo %>% bar() %>% baz()", linter)
 
   # Pipe expressions spanning multiple lines with each expression on a line are ignored
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo %>%
         bar() %>%
         baz()
     "),
-    NULL,
     linter
   )
 
@@ -66,13 +65,12 @@ test_that("pipe-continuation linter correctly handles nesting", {
   )
 
   # but no lints here
-  expect_lint(
+  expect_no_lint( # nofuzz. Not valid with '|>'
     trim_some("
       1:4 %>% {
        (.) %>% sum()
       }
     "),
-    NULL,
     linter
   )
 })
@@ -84,14 +82,13 @@ test_that("pipe-continuation linter handles native pipe", {
   lint_msg_native <- rex::rex("Put a space before `|>` and a new line after it,")
   lint_msg_magrittr <- rex::rex("Put a space before `%>%` and a new line after it,")
 
-  expect_lint("foo |> bar() |> baz()", NULL, linter)
-  expect_lint(
+  expect_no_lint("foo |> bar() |> baz()", linter)
+  expect_no_lint(
     trim_some("
       foo |>
         bar() |>
         baz()
     "),
-    NULL,
     linter
   )
   expect_lint(
@@ -161,12 +158,14 @@ local({
         test_data <- diamonds %>% head(10) %>% tail(5)
       })
     "),                      "three inside test_that()",
-    trim_some("
-      {
-        x <- a %>% b %>% c
-        y <- c %>% b %>% a
-      }
-    "),                      "two different single-line pipelines",
+    trim_some( # nofuzz. Native pipe requires calls, not symbols.
+      "
+        {
+          x <- a %>% b %>% c
+          y <- c %>% b %>% a
+        }
+      "
+    ),                      "two different single-line pipelines",
     trim_some("
       my_fun <- function() {
         a %>%
@@ -179,7 +178,7 @@ local({
     "valid nesting is handled",
     # nolint next: unnecessary_nesting_linter. TODO(#2334): Remove this nolint.
     {
-      expect_lint(code_string, NULL, linter)
+      expect_no_lint(code_string, linter)
     },
     .cases = .cases
   )

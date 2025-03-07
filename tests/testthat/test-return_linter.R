@@ -495,6 +495,7 @@ test_that("return_linter allows return()-less namespace hook calls", {
   )
 })
 
+# nofuzz start
 test_that("return_linter correctly handles pipes", {
   linter <- return_linter(return_style = "explicit")
 
@@ -532,6 +533,7 @@ test_that("return_linter correctly handles pipes", {
     linter
   )
 })
+# nofuzz end
 
 test_that("return_linter handles pipes in control flow", {
   linter <- return_linter(return_style = "explicit")

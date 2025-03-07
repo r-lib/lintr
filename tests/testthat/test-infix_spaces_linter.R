@@ -31,28 +31,32 @@ test_that("returns the correct linting", {
   linter <- infix_spaces_linter()
   lint_msg <- rex::rex("Put spaces around all infix operators.")
 
-  expect_lint("blah", NULL, linter)
+  expect_no_lint("blah", linter)
 
   for (op in ops) {
-    expect_lint(paste0("1 ", op, " 2"), NULL, linter)
-    expect_lint(paste0("1 ", op, "\n2"), NULL, linter)
-    expect_lint(paste0("1 ", op, "\n 2"), NULL, linter)
+    expect_no_lint(paste0("1 ", op, " 2"), linter)
+    expect_no_lint(paste0("1 ", op, "\n2"), linter)
+    expect_no_lint(paste0("1 ", op, "\n 2"), linter)
 
-    expect_lint(paste0("1", op, "2"), lint_msg, linter)
+    expect_lint( # nofuzz
+      paste0("1", op, "2"),
+      lint_msg,
+      linter
+    )
 
     # unary plus and minus can have no space before them
     if (!op %in% ops[1L:2L]) {
-      expect_lint(paste0("1 ", op, "2"), lint_msg, linter)
+      expect_lint(paste0("1 ", op, "2"), lint_msg, linter) # nofuzz
     }
 
     expect_lint(paste0("1", op, " 2"), lint_msg, linter)
   }
 
-  expect_lint("b <- 2E+4", NULL, linter)
-  expect_lint("a <- 1e-3", NULL, linter)
-  expect_lint("a[-1]", NULL, linter)
-  expect_lint("a[-1 + 1]", NULL, linter)
-  expect_lint("a[1 + -1]", NULL, linter)
+  expect_no_lint("b <- 2E+4", linter)
+  expect_no_lint("a <- 1e-3", linter)
+  expect_no_lint("a[-1]", linter)
+  expect_no_lint("a[-1 + 1]", linter)
+  expect_no_lint("a[1 + -1]", linter)
 
   expect_lint("fun(a=1)", lint_msg, linter)
 })
@@ -72,26 +76,25 @@ test_that("The three `=` are all linted", {
 test_that("exclude_operators works", {
   lint_msg <- rex::rex("Put spaces around all infix operators.")
 
-  expect_lint("a+b", NULL, infix_spaces_linter(exclude_operators = "+"))
-  expect_lint(
+  expect_no_lint("a+b", infix_spaces_linter(exclude_operators = "+"))
+  expect_no_lint(
     trim_some("
       a+b
       a-b
     "),
-    NULL,
     infix_spaces_linter(exclude_operators = c("+", "-"))
   )
 
   # operators match on text, not hidden node
   expect_lint("a<<-1", lint_msg, infix_spaces_linter(exclude_operators = "<-"))
-  expect_lint("a<<-1", NULL, infix_spaces_linter(exclude_operators = "<<-"))
+  expect_no_lint("a<<-1", infix_spaces_linter(exclude_operators = "<<-"))
   expect_lint("a:=1", lint_msg, infix_spaces_linter(exclude_operators = "<-"))
-  expect_lint("a:=1", NULL, infix_spaces_linter(exclude_operators = ":="))
+  expect_no_lint("a:=1", infix_spaces_linter(exclude_operators = ":="))
   expect_lint("a->>1", lint_msg, infix_spaces_linter(exclude_operators = "->"))
-  expect_lint("a->>1", NULL, infix_spaces_linter(exclude_operators = "->>"))
-  expect_lint("a%any%1", NULL, infix_spaces_linter(exclude_operators = "%%"))
-  expect_lint("function(a=1) { }", NULL, infix_spaces_linter(exclude_operators = "="))
-  expect_lint("foo(a=1)", NULL, infix_spaces_linter(exclude_operators = "="))
+  expect_no_lint("a->>1", infix_spaces_linter(exclude_operators = "->>"))
+  expect_no_lint("a%any%1", infix_spaces_linter(exclude_operators = "%%"))
+  expect_no_lint("function(a=1) { }", infix_spaces_linter(exclude_operators = "="))
+  expect_no_lint("foo(a=1)", infix_spaces_linter(exclude_operators = "="))
 })
 
 # more tests specifically for assignment
@@ -99,23 +102,22 @@ test_that("assignment cases return the correct linting", {
   linter <- infix_spaces_linter()
   lint_msg <- rex::rex("Put spaces around all infix operators.")
 
-  expect_lint("fun(blah =  1)", NULL, linter)
+  expect_no_lint("fun(blah =  1)", linter)
 
-  expect_lint("blah <- 1", NULL, linter)
-  expect_lint("blah = 1", NULL, linter)
+  expect_no_lint("blah <- 1", linter)
+  expect_no_lint("blah = 1", linter)
 
-  expect_lint("\"my  =  variable\" <- 42.0", NULL, linter)
+  expect_no_lint("\"my  =  variable\" <- 42.0", linter)
 
-  expect_lint("if (0 <  1) x <- 42L", NULL, linter)
-  expect_lint(
+  expect_no_lint("if (0 <  1) x <- 42L", linter)
+  expect_no_lint(
     trim_some("
     if (0 < 1) {
       x <- 42L
     }"),
-    NULL,
     linter
   )
-  expect_lint("my = bad = variable = name <- 2.0", NULL, linter)
+  expect_no_lint("my = bad = variable = name <- 2.0", linter)
 
   expect_lint("blah<-  1", lint_msg, linter)
   expect_lint("blah  <-1", lint_msg, linter)
@@ -135,9 +137,9 @@ test_that("infix_spaces_linter can allow >1 spaces optionally", {
 test_that("exception for box::use()", {
   linter <- infix_spaces_linter()
 
-  expect_lint("box::use(a/b)", NULL, linter)
-  expect_lint("box::use(./a/b)", NULL, linter)
-  expect_lint(
+  expect_no_lint("box::use(a/b)", linter)
+  expect_no_lint("box::use(./a/b)", linter)
+  expect_no_lint(
     trim_some("
       box::use(
         a,
@@ -146,7 +148,6 @@ test_that("exception for box::use()", {
         alias = a/b/c[xyz = abc, ...],
       )
     "),
-    NULL,
     linter
   )
 })
@@ -167,8 +168,8 @@ test_that("Rules around missing arguments are respected", {
   linter <- infix_spaces_linter()
   lint_msg <- rex::rex("Put spaces around all infix operators.")
 
-  expect_lint("switch(a = , b = 2)", NULL, linter)
-  expect_lint("alist(missing_arg = )", NULL, linter)
+  expect_no_lint("switch(a = , b = 2)", linter)
+  expect_no_lint("alist(missing_arg = )", linter)
 
   expect_lint("switch(a =, b = 2)", lint_msg, linter)
   expect_lint("alist(missing_arg =)", lint_msg, linter)
@@ -178,7 +179,7 @@ test_that("native pipe is supported", {
   skip_if_not_r_version("4.1.0")
   linter <- infix_spaces_linter()
 
-  expect_lint("a |> foo()", NULL, linter)
+  expect_no_lint("a |> foo()", linter)
   expect_lint("a|>foo()", rex::rex("Put spaces around all infix operators."), linter)
 })
 
@@ -194,19 +195,19 @@ test_that("mixed unary & binary operators aren't mis-lint", {
 })
 
 test_that("parse tags are accepted by exclude_operators", {
-  expect_lint("sum(x, na.rm=TRUE)", NULL, infix_spaces_linter(exclude_operators = "EQ_SUB"))
-  expect_lint("function(x, na.rm=TRUE) { }", NULL, infix_spaces_linter(exclude_operators = "EQ_FORMALS"))
-  expect_lint("x=1", NULL, infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
+  expect_no_lint("sum(x, na.rm=TRUE)", infix_spaces_linter(exclude_operators = "EQ_SUB"))
+  expect_no_lint("function(x, na.rm=TRUE) { }", infix_spaces_linter(exclude_operators = "EQ_FORMALS"))
+  expect_no_lint("x=1", infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
 
   # uses parse_tag
-  expect_lint("1+1", NULL, infix_spaces_linter(exclude_operators = "'+'"))
+  expect_no_lint("1+1", infix_spaces_linter(exclude_operators = "'+'"))
 
   # mixing
   text <- "x=function(a=foo(bar=1)) { }"
   col_assign <- list(column_number = 2L)
   col_formals <- list(column_number = 13L)
   col_sub <- list(column_number = 21L)
-  expect_lint(text, NULL, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS", "EQ_ASSIGN")))
+  expect_no_lint(text, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS", "EQ_ASSIGN")))
   expect_lint(text, col_assign, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_FORMALS")))
   expect_lint(text, col_formals, infix_spaces_linter(exclude_operators = c("EQ_SUB", "EQ_ASSIGN")))
   expect_lint(text, col_sub, infix_spaces_linter(exclude_operators = c("EQ_FORMALS", "EQ_ASSIGN")))

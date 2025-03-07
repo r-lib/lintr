@@ -54,7 +54,9 @@ pkgload::load_all()
 #   of getting top-level exclusions done for 'nofuzz start|end' ranges, except
 #   maybe if it enabled us to reuse lintr's own exclude() system.
 # therefore we take this approach: pass over the test suite first and comment out
-#   any tests/units that have been marked 'nofuzz'. restore later.
+#   any tests/units that have been marked 'nofuzz'. restore later. one consequence
+#   is there's no support for fuzzer-specific exclusion, e.g. we fully disable
+#   the unnecessary_placeholder_linter() tests because |> and _ placeholders differ.
 test_restorations <- list()
 for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = TRUE)) {
   xml <- read_xml(xmlparsedata::xml_parse_data(parse(test_file, keep.source = TRUE)))

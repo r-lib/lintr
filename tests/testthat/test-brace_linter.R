@@ -512,7 +512,7 @@ test_that("code with pipes is handled correctly", {
     trim_some("
       out <- lapply(stuff, function(i) {
         do_something(i)
-      }) %>% unlist
+      }) %>% unlist()
     "),
     linter
   )
