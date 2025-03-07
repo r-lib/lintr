@@ -1,27 +1,27 @@
 test_that("function_left_parentheses_linter skips allowed usages", {
   linter <- function_left_parentheses_linter()
 
-  expect_lint("blah", NULL, linter)
-  expect_lint("print(blah)", NULL, linter)
-  expect_lint('"print"(blah)', NULL, linter)
-  expect_lint("base::print(blah)", NULL, linter)
-  expect_lint('base::"print"(blah)', NULL, linter)
-  expect_lint("base::print(blah, fun(1))", NULL, linter)
-  expect_lint("blah <- function(blah) { }", NULL, linter)
-  expect_lint("(1 + 1)", NULL, linter)
-  expect_lint("( (1 + 1) )", NULL, linter)
-  expect_lint("if (blah) { }", NULL, linter)
-  expect_lint("for (i in j) { }", NULL, linter)
-  expect_lint("1 * (1 + 1)", NULL, linter)
-  expect_lint("!(1 == 1)", NULL, linter)
-  expect_lint("(2 - 1):(3 - 1)", NULL, linter)
-  expect_lint("c(1, 2, 3)[(2 - 1)]", NULL, linter)
-  expect_lint("list(1, 2, 3)[[(2 - 1)]]", NULL, linter)
-  expect_lint("range(10)[(2 - 1):(10 - 1)]", NULL, linter)
-  expect_lint("function(){function(){}}()()", NULL, linter)
-  expect_lint("c(function(){})[1]()", NULL, linter)
-  expect_lint("function(x) (mean(x) + 3)", NULL, linter)
-  expect_lint("\"blah (1)\"", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint("print(blah)", linter)
+  expect_no_lint('"print"(blah)', linter)
+  expect_no_lint("base::print(blah)", linter)
+  expect_no_lint('base::"print"(blah)', linter)
+  expect_no_lint("base::print(blah, fun(1))", linter)
+  expect_no_lint("blah <- function(blah) { }", linter)
+  expect_no_lint("(1 + 1)", linter)
+  expect_no_lint("( (1 + 1) )", linter)
+  expect_no_lint("if (blah) { }", linter)
+  expect_no_lint("for (i in j) { }", linter)
+  expect_no_lint("1 * (1 + 1)", linter)
+  expect_no_lint("!(1 == 1)", linter)
+  expect_no_lint("(2 - 1):(3 - 1)", linter)
+  expect_no_lint("c(1, 2, 3)[(2 - 1)]", linter)
+  expect_no_lint("list(1, 2, 3)[[(2 - 1)]]", linter)
+  expect_no_lint("range(10)[(2 - 1):(10 - 1)]", linter)
+  expect_no_lint("function(){function(){}}()()", linter)
+  expect_no_lint("c(function(){})[1]()", linter)
+  expect_no_lint("function(x) (mean(x) + 3)", linter)
+  expect_no_lint('"blah (1)"', linter)
 })
 
 test_that("function_left_parentheses_linter blocks disallowed usages", {
@@ -168,7 +168,7 @@ test_that("it doesn't produce invalid lints", {
 test_that("newline in character string doesn't trigger false positive (#1963)", {
   linter <- function_left_parentheses_linter()
 
-  expect_lint('foo("\n")$bar()', NULL, linter)
+  expect_no_lint('foo("\n")$bar()', linter)
   # also corrected the lint metadata for similar cases
   expect_lint(
     trim_some('
@@ -189,7 +189,7 @@ test_that("shorthand functions are handled", {
   linter <- function_left_parentheses_linter()
   fun_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function definition.")
 
-  expect_lint("blah <- \\(blah) { }", NULL, linter)
-  expect_lint("\\(){\\(){}}()()", NULL, linter)
+  expect_no_lint("blah <- \\(blah) { }", linter)
+  expect_no_lint("\\(){\\(){}}()()", linter)
   expect_lint("test <- \\ (x) { }", fun_lint_msg, linter)
 })
