@@ -143,7 +143,12 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   purrr_fun_xpath <- glue("
   following-sibling::expr[
     OP-TILDE
-    and expr[OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/{purrr_symbol}]
+    and expr
+      /OP-LEFT-PAREN
+      /following-sibling::expr[1][
+        not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB])
+      ]
+      /{purrr_symbol}
     and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
   ]")
 

@@ -185,6 +185,15 @@ test_that("purrr-style anonymous functions are also caught", {
     rex::rex("Pass foo directly as a symbol to map_vec()"),
     linter
   )
+
+  # adversarial comment
+  expect_no_lint(
+    trim_some("
+      map_dbl(x, ~foo(bar = # comment
+      .x))
+    "),
+    linter
+  )
 })
 
 test_that("cases with braces are caught", {
