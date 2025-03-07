@@ -65,7 +65,7 @@ test_that("pipe-continuation linter correctly handles nesting", {
   )
 
   # but no lints here
-  expect_no_lint( # nofuzz. Not valid with '|>'
+  expect_no_lint(
     trim_some("
       1:4 %>% {
        (.) %>% sum()
@@ -158,7 +158,7 @@ local({
         test_data <- diamonds %>% head(10) %>% tail(5)
       })
     "),                      "three inside test_that()",
-    trim_some( # nofuzz. Native pipe requires calls, not symbols.
+    trim_some(
       "
         {
           x <- a %>% b %>% c

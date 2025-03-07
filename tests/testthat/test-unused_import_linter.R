@@ -7,7 +7,7 @@ test_that("unused_import_linter lints as expected", {
   # SYMBOL usage is detected
   expect_no_lint("library(dplyr)\ndo.call(tibble, args = list(a = 1))", linter)
   # SPECIAL usage is detected
-  expect_no_lint( # nofuzz
+  expect_no_lint(
     trim_some("
       library(magrittr)
       1:3 %>% mean()

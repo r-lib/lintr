@@ -30,7 +30,6 @@ test_that("pipe_return_linter skips allowed usages", {
   expect_no_lint(nested_return_lines, linter)
 })
 
-# nofuzz start
 test_that("pipe_return_linter blocks simple disallowed usages", {
   lines <- trim_some("
     pipeline <- function(x) {
@@ -66,4 +65,3 @@ test_that("lints vectorize", {
     pipe_return_linter()
   )
 })
-# nofuzz end

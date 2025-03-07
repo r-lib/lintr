@@ -33,7 +33,6 @@ test_that("returns the correct linting", {
 
   expect_no_lint("blah", linter)
 
-  # nofuzz start
   for (op in ops) {
     expect_no_lint(paste0("1 ", op, " 2"), linter)
     expect_no_lint(paste0("1 ", op, "\n2"), linter)
@@ -48,7 +47,6 @@ test_that("returns the correct linting", {
 
     expect_lint(paste0("1", op, " 2"), lint_msg, linter)
   }
-  # nofuzz end
 
   expect_no_lint("b <- 2E+4", linter)
   expect_no_lint("a <- 1e-3", linter)

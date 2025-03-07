@@ -1,4 +1,3 @@
-# nofuzz start
 test_that("pipe_call_linter skips allowed usages", {
   linter <- pipe_call_linter()
 
@@ -90,4 +89,3 @@ test_that("Multiple lints give custom messages", {
     pipe_call_linter()
   )
 })
-# nofuzz end

@@ -1,4 +1,3 @@
-# nofuzz start
 linter <- unnecessary_placeholder_linter()
 pipes <- pipes(exclude = "|>")
 
@@ -54,4 +53,3 @@ test_that("lints vectorize", {
     unnecessary_placeholder_linter()
   )
 })
-# nofuzz end

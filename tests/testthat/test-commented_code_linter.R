@@ -87,13 +87,11 @@ test_that("commented_code_linter can detect operators in comments and lint corre
     "%anything%"
   )
 
-  # nofuzz start
   for (op in test_ops) {
     expect_no_lint(paste("i", op, "1", collapse = ""), linter)
     expect_no_lint(paste("# something like i", op, "1", collapse = ""), linter)
     expect_lint(paste("# i", op, "1", collapse = ""), lint_msg, linter)
   }
-  # nofuzz end
 
   skip_if_not_r_version("4.1.0")
 

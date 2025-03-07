@@ -62,22 +62,18 @@ apply_fuzzers <- function(f) {
     return(invisible())
   }
 
-  reparse <- FALSE
   unedited <- lines <- readLines(f)
   for (fuzzer in list(function_lambda_fuzzer, pipe_fuzzer)) {
-    if (reparse) {
-      pd <- error_or_parse_data(f)
-      if (inherits(pd, "error")) {
-        # our attempted edit failed; restore & abort
-        writeLines(unedited, f)
-        return(invisible())
-      }
-      lines <- readLines(f)
-    }
     updated_lines <- fuzzer(pd, lines)
-    reparse <- !is.null(updated_lines)
-    if (!reparse) next # skip some I/O if we can
+    if (is.null(updated_lines)) next # skip some I/O if we can
     writeLines(updated_lines, f)
+    # check if our attempted edit introduced some error
+    pd <- error_or_parse_data(f)
+    if (inherits(pd, "error")) {
+      writeLines(unedited, f)
+      return(invisible())
+    }
+    lines <- readLines(f)
   }
 
   invisible()

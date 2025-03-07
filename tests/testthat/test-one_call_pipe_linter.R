@@ -12,7 +12,6 @@ test_that("one_call_pipe_linter skips allowed usages", {
   expect_no_lint("x %<>% as.character()", linter)
 })
 
-# nofuzz start
 test_that("one_call_pipe_linter blocks simple disallowed usages", {
   linter <- one_call_pipe_linter()
   lint_msg <- rex::rex("Avoid pipe %>% for expressions with only a single call.")
@@ -40,7 +39,6 @@ test_that("one_call_pipe_linter skips data.table chains", {
 
   expect_lint("DT %>% .[[idx]]", lint_msg, linter)
 })
-# nofuzz end
 
 test_that("one_call_pipe_linter treats all pipes equally", {
   linter <- one_call_pipe_linter()
@@ -53,7 +51,7 @@ test_that("one_call_pipe_linter treats all pipes equally", {
 })
 
 test_that("multiple lints are generated correctly", {
-  expect_lint( # nofuzz
+  expect_lint(
     trim_some("{
       a %>% b()
       c %$% d
@@ -69,7 +67,6 @@ test_that("multiple lints are generated correctly", {
   )
 })
 
-# nofuzz start
 test_that("Native pipes are handled as well", {
   skip_if_not_r_version("4.1.0")
 
@@ -114,4 +111,3 @@ test_that("one_call_pipe_linter skips data.table chains with native pipe", {
 
   expect_lint("DT |> _[[idx]]", lint_msg, linter)
 })
-# nofuzz end
