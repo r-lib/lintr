@@ -34,6 +34,30 @@ writeLines(
   ),
   expect_lint_file
 )
+
+# Ensure the fuzzed contents are always visible to facilitate backing out which fuzzed content is at issue
+contents <- readLines(expect_lint_file)
+wrong_number_def_idx <- grep('wrong_number_fmt <- "got %d lints instead of %d%s"', contents, fixed = TRUE)
+wrong_number_use_idx <- grep("sprintf(wrong_number_fmt,", contents, fixed = TRUE)
+if (
+  length(wrong_number_def_idx) != 1L ||
+    length(wrong_number_use_idx) == 0L ||
+    # these lines should be self-contained & have no comments
+    !all(endsWith(contents[wrong_number_use_idx], ")")) ||
+    inherits(tryCatch(parse(text = contents[wrong_number_use_idx]), error = identity), "error")
+) {
+  stop(sprintf(
+    "Please update this workflow -- need wrong_number_fmt to be easily replaced in file '%s'.",
+    expect_lint_file
+  ))
+}
+
+contents[wrong_number_def_idx] <-
+  'wrong_number_fmt <- "got %d lints instead of %d%s\\nFile contents:\\n%s"'
+contents[wrong_number_use_idx] <-
+  gsub("\\)$", ", readChar(file, file.size(file)))", contents[wrong_number_use_idx])
+writeLines(contents, expect_lint_file)
+
 # Not useful in CI but good when running locally.
 withr::defer({
   writeLines(original, expect_lint_file)
@@ -116,7 +140,8 @@ failures <- reporter$failures$as_list()
 valid_failure <- vapply(
   failures,
   function(failure) {
-    if (grepl("(column_number|ranges|line) .* did not match", failure$message)) {
+    # line_number is for the comment injection fuzzer, which adds newlines.
+    if (grepl("(column_number|ranges|line|line_number) .* did not match", failure$message)) {
       return(TRUE)
     }
     FALSE

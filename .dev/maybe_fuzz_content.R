@@ -60,7 +60,9 @@ dollar_at_fuzzer <- simple_swap_fuzzer(
 )
 
 comment_injection_fuzzer <- function(pd, lines) {
-  terminal_token_idx <- which(pd$terminal & !pd$token == "COMMENT")
+  # injecting comment before a call often structurally breaks parsing
+  #   (SYMBOL_FUNCTION_CALL-->SYMBOL), so avoid
+  terminal_token_idx <- which(pd$terminal & !pd$token %in% c("COMMENT", "SYMBOL_FUNCTION_CALL", "SLOT"))
   injection_count <- sample(0:length(terminal_token_idx), 1L)
 
   if (injection_count == 0L) {
