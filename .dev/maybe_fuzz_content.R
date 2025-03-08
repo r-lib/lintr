@@ -75,7 +75,7 @@ comment_injection_fuzzer <- function(pd, lines) {
     line <- lines[pd$line2[ii]]
     lines[pd$line2[ii]] <- paste0(
       substr(line, 1L, pd$col2[ii]),
-      "# INJECTED COMMENT\n",
+      " # INJECTED COMMENT\n",
       substr(line, pd$col2[ii] + 1L, nchar(line))
     )
   }
