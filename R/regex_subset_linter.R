@@ -47,25 +47,20 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 regex_subset_linter <- function() {
-  # parent::expr for LEFT_ASSIGN and RIGHT_ASSIGN, but, strangely,
-  #   parent::equal_assign for EQ_ASSIGN. So just use * as a catchall.
-  # See https://www.w3.org/TR/1999/REC-xpath-19991116/#booleans;
-  #   equality of nodes is based on the string value of the nodes, which
-  #   is basically what we need, i.e., whatever expression comes in
-  #   <expr>[grepl(pattern, <expr>)] matches exactly, e.g. names(x)[grepl(ptn, names(x))].
   xpath_fmt <- "
-  parent::expr[
-    parent::expr[
-      OP-LEFT-BRACKET
-      and not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])
-    ]
-    and expr[position() = {arg_pos} ] = parent::expr/expr[1]
+  self::*[
+    OP-LEFT-BRACKET
+    and not(parent::*[LEFT_ASSIGN or EQ_ASSIGN or RIGHT_ASSIGN])
+    and expr[1] = expr/expr[position() = {arg_pos} ]
   ]"
   grep_xpath <- glue(xpath_fmt, arg_pos = 3L)
   stringr_xpath <- glue(xpath_fmt, arg_pos = 2L)
 
   Linter(linter_level = "expression", function(source_expression) {
-    grep_calls <- source_expression$xml_find_function_calls(c("grepl", "grep"))
+    grep_calls <- xml_parent(xml_parent(
+      source_expression$xml_find_function_calls(c("grepl", "grep"))
+    ))
+    grep_calls <- strip_comments_from_subtree(grep_calls)
     grep_expr <- xml_find_all(grep_calls, grep_xpath)
 
     grep_lints <- xml_nodes_to_lints(
@@ -76,7 +71,10 @@ regex_subset_linter <- function() {
       type = "warning"
     )
 
-    stringr_calls <- source_expression$xml_find_function_calls(c("str_detect", "str_which"))
+    stringr_calls <- xml_parent(xml_parent(
+      source_expression$xml_find_function_calls(c("str_detect", "str_which"))
+    ))
+    stringr_calls <- strip_comments_from_subtree(stringr_calls)
     stringr_expr <- xml_find_all(stringr_calls, stringr_xpath)
 
     stringr_lints <- xml_nodes_to_lints(

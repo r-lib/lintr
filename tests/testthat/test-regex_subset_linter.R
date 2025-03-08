@@ -10,6 +10,16 @@ test_that("regex_subset_linter blocks simple disallowed usages", {
   expect_lint("x[grep(ptn, x)]", lint_msg, linter)
   expect_lint("names(y)[grepl(ptn, names(y), perl = TRUE)]", lint_msg, linter)
   expect_lint("names(foo(y))[grepl(ptn, names(foo(y)), fixed = TRUE)]", lint_msg, linter)
+
+  # adversarial commenting
+  expect_lint(
+    trim_some("
+      names(y #comment
+      )[grepl(ptn, names(y), perl = TRUE)]
+    "),
+    lint_msg,
+    linter
+  )
 })
 
 test_that("regex_subset_linter skips grep/grepl subassignment", {
