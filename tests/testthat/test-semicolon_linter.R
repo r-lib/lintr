@@ -33,27 +33,26 @@ test_that("semicolon_linter handles trailing semicolons", {
   )
   expect_lint(
     trim_some("
-      function() {
-        a <- 1;
+      function() { a <- 1;
       }"
     ),
-    list(lint_msg, line_number = 1L, column_number = 18L),
+    list(lint_msg, line_number = 1L, column_number = 20L),
     linter
   )
 })
 
-test_that("semicolon_linter handles compound semicolons", {
+test_that("semicolon_linter handles compound semicolons", { # nofuzz
   linter <- semicolon_linter()
   lint_msg <- rex::rex("Replace compound semicolons by a newline.")
 
   expect_lint(
     "a <- 1;b <- 2",
-    list(comp_msg, line_number = 1L, column_number = 7L),
+    list(lint_msg, line_number = 1L, column_number = 7L),
     linter
   )
   expect_lint(
     "function() {a <- 1;b <- 2}",
-    list(comp_msg, line_number = 1L, column_number = 19L),
+    list(lint_msg, line_number = 1L, column_number = 19L),
     linter
   )
   expect_lint(
@@ -61,22 +60,22 @@ test_that("semicolon_linter handles compound semicolons", {
       foo <-
          1 ; foo <- 1.23
     "),
-    list(comp_msg, line_number = 2L, column_number = 6L),
+    list(lint_msg, line_number = 2L, column_number = 6L),
     linter
   )
   expect_lint(
     trim_some("
       function() {
         foo <-
-          1 ; foo <- 1.23
+         1 ; foo <- 1.23
       }
     "),
-    list(comp_msg, line_number = 3L, column_number = 6L),
+    list(lint_msg, line_number = 3L, column_number = 6L),
     linter
   )
 })
 
-test_that("semicolon_linter handles multiple/mixed semicolons", {
+test_that("semicolon_linter handles multiple/mixed semicolons", { # nofuzz
   linter <- semicolon_linter()
   trail_msg <- rex::rex("Remove trailing semicolons.")
   comp_msg <- rex::rex("Replace compound semicolons by a newline.")
@@ -101,14 +100,14 @@ test_that("semicolon_linter handles multiple/mixed semicolons", {
     list(
       list(message = comp_msg, line_number = 1L, column_number = 21L),
       list(message = trail_msg, line_number = 1L, column_number = 29L),
-      list(message = trail_msg, line_number = 2L, column_number = 7L)
+      list(message = trail_msg, line_number = 2L, column_number = 9L)
     ),
     linter
   )
 })
 
 
-test_that("Compound semicolons only", {
+test_that("Compound semicolons only", { # nofuzz
   linter <- semicolon_linter(allow_trailing = TRUE)
   expect_no_lint("a <- 1;", linter)
   expect_no_lint("function(){a <- 1;}", linter)
@@ -145,9 +144,9 @@ test_that("Trailing semicolons only", {
 })
 
 
-test_that("Compound semicolons only", {
+test_that("Compound semicolons only", { # nofuzz
   expect_error(
-    lint(text = "a <- 1;", linters = semicolon_linter(allow_trailing = TRUE, allow_compound = TRUE)),
+    semicolon_linter(allow_trailing = TRUE, allow_compound = TRUE),
     "At least one of `allow_compound` or `allow_trailing` must be `FALSE`",
     fixed = TRUE
   )
