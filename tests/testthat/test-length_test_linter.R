@@ -32,6 +32,8 @@ local({
 })
 
 test_that("lints vectorize", {
+  linter <- length_test_linter()
+
   expect_lint(
     trim_some("{
       length(x == y)
@@ -41,6 +43,26 @@ test_that("lints vectorize", {
       list(rex::rex("length(x) == y"), line_number = 2L),
       list(rex::rex("length(y) == z"), line_number = 3L)
     ),
-    length_test_linter()
+    linter
+  )
+
+  expect_lint(
+    trim_some("{
+      length( # comment
+      x       # comment
+      ==      # comment
+      y       # comment
+      )       # comment
+      length( # comment
+      y       # comment
+      ==      # comment
+      z       # comment
+      )
+    }"),
+    list(
+      list(rex::rex("length(x) == y"), line_number = 2L),
+      list(rex::rex("length(y) == z"), line_number = 7L)
+    ),
+    linter
   )
 })
