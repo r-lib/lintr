@@ -89,6 +89,9 @@ literal_coercion_linter <- function() {
       )
       # nocov end
     } else {
+      # Delete COMMENT nodes, being careful that xml2 objects are mutable
+      bad_expr <- clone_xml_(bad_expr)
+      for (comment in xml_find_all(bad_expr, ".//COMMENT")) xml2::xml_remove(comment)
       # duplicate, unless we add 'rlang::' and it wasn't there originally
       coercion_str <- report_str <- xml_text(bad_expr)
       if (any(is_rlang_coercer) && !("package:rlang" %in% search())) {

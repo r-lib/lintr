@@ -191,7 +191,7 @@ local({
   cases <- within(cases, {
     .test_name <- sprintf("(%s, %s)", pipe1, pipe2)
   })
-  patrick::with_parameters_test_that(
+  patrick::with_parameters_test_that( # nofuzz
     "Various pipes are linted correctly",
     expect_lint(
       sprintf("a %s b() %s\n  c()", pipe1, pipe2),

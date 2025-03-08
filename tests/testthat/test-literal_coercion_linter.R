@@ -50,6 +50,18 @@ test_that("no warnings surfaced by running coercion", {
   expect_no_warning(
     expect_lint("as.integer(2147483648)", "Use NA_integer_", linter)
   )
+
+  expect_no_warning(
+    expect_lint(
+      trim_some("
+        as.double(
+          NA # comment
+        )
+      "),
+      "Use NA_real_",
+      linter
+    )
+  )
 })
 
 skip_if_not_installed("tibble")
@@ -81,6 +93,7 @@ patrick::with_parameters_test_that(
 
 skip_if_not_installed("rlang")
 test_that("multiple lints return custom messages", {
+  linter <- literal_coercion_linter()
   expect_lint(
     trim_some("{
       as.integer(1)
@@ -90,7 +103,24 @@ test_that("multiple lints return custom messages", {
       list(rex::rex("Use 1L instead of as.integer(1)"), line_number = 2L),
       list(rex::rex("Use TRUE instead of lgl(1L)"), line_number = 3L)
     ),
-    literal_coercion_linter()
+    linter
+  )
+
+  # also ensure comment remove logic works across several lints
+  expect_lint(
+    trim_some("{
+      as.integer( # comment
+      1           # comment
+      )           # comment
+      lgl(        # comment
+      1L          # comment
+      )           # comment
+    }"),
+    list(
+      list(rex::rex("Use 1L instead of as.integer(1)"), line_number = 2L),
+      list(rex::rex("Use TRUE instead of lgl(1L)"), line_number = 5L)
+    ),
+    linter
   )
 })
 
