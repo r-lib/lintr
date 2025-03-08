@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("returns the correct linting (with default parameters)", {
   linter <- commas_linter()
   msg_after <- rex::rex("Put a space after a comma.")
@@ -25,13 +26,13 @@ test_that("returns the correct linting (with default parameters)", {
     linter
   )
 
-  expect_no_lint("\"fun(1 ,1)\"", linter)
+  expect_no_lint('"fun(1 ,1)"', linter)
   expect_no_lint("a[1, , 2]", linter)
   expect_no_lint("a[1, , 2, , 3]", linter)
 
   expect_no_lint("switch(op, x = foo, y = bar)", linter)
   expect_no_lint("switch(op, x = , y = bar)", linter)
-  expect_no_lint("switch(op, \"x\" = , y = bar)", linter)
+  expect_no_lint('switch(op, "x" = , y = bar)', linter)
   expect_no_lint("switch(op, x = ,\ny = bar)", linter)
 
   expect_lint("switch(op, x = foo , y = bar)", msg_before, linter)
@@ -113,3 +114,4 @@ test_that("returns the correct linting (with 'allow_trailing' set)", {
     linter
   )
 })
+# nofuzz end
