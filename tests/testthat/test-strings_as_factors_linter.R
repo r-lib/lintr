@@ -17,6 +17,18 @@ test_that("strings_as_factors_linter skips allowed usages", {
   # ambiguous cases passes
   expect_no_lint("data.frame(x = c(xx, 'a'))", linter)
   expect_no_lint("data.frame(x = c(foo(y), 'a'))", linter)
+
+  # adversarial comments
+  expect_no_lint(
+    trim_some("
+      data.frame(
+        x = 1:3,
+        row.names # INJECTED COMMENT
+        = c('a', 'b', 'c')
+      )
+    "),
+    strings_as_factors_linter()
+  )
 })
 
 test_that("strings_as_factors_linter blocks simple disallowed usages", {
