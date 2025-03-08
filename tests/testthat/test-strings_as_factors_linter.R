@@ -27,7 +27,7 @@ test_that("strings_as_factors_linter skips allowed usages", {
         = c('a', 'b', 'c')
       )
     "),
-    strings_as_factors_linter()
+    linter
   )
 })
 
