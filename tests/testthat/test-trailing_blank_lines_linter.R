@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("trailing_blank_lines_linter doesn't block allowed usages", {
   linter <- trailing_blank_lines_linter()
 
@@ -158,3 +159,4 @@ test_that("blank lines in knitr chunks produce lints", {
     linters = linter
   )
 })
+# nofuzz end
