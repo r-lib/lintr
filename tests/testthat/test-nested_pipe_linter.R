@@ -156,7 +156,7 @@ test_that("Native pipes are handled as well", {
   )
 })
 
-test_that("lints vectorize", {
+test_that("lints vectorize", { # nofuzz
   lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
   lines <- trim_some("{

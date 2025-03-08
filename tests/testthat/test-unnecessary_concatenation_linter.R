@@ -63,6 +63,16 @@ local({
   )
 })
 
+test_that("logic survives adversarial comments", {
+  expect_no_lint(
+    trim_some('
+      "a" %T>% # comment
+        c("b")
+    '),
+    unnecessary_concatenation_linter()
+  )
+})
+
 test_that("symbolic expressions are allowed, except by request", {
   linter <- unnecessary_concatenation_linter()
   linter_strict <- unnecessary_concatenation_linter(allow_single_expression = FALSE)

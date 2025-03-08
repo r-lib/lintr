@@ -121,7 +121,7 @@ test_that("assignment cases return the correct linting", {
   expect_lint("blah  =1", lint_msg, linter)
 })
 
-test_that("infix_spaces_linter can allow >1 spaces optionally", {
+test_that("infix_spaces_linter can allow >1 spaces optionally", { # nofuzz
   linter <- infix_spaces_linter(allow_multiple_spaces = FALSE)
   lint_msg <- rex::rex("Put exactly one space on each side of infix operators.")
 
