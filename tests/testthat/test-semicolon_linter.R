@@ -1,64 +1,91 @@
-test_that("Lint all semicolons", {
+test_that("semicolon_linter skips allowed usages", {
   linter <- semicolon_linter()
-  trail_msg <- rex::rex("Remove trailing semicolons.")
-  comp_msg <- rex::rex("Replace compound semicolons by a newline.")
 
-  # No semicolon
-  expect_lint("", NULL, linter)
-  expect_lint("a <- 1", NULL, linter)
-  expect_lint("function() {a <- 1}", NULL, linter)
-  expect_lint("a <- \"foo;bar\"", NULL, linter)
-  expect_lint("function() {a <- \"foo;bar\"}", NULL, linter)
-  expect_lint("a <- FALSE # ok; cool!", NULL, linter)
-  expect_lint("function() {\na <- FALSE # ok; cool!\n}", NULL, linter)
+  expect_no_lint("", linter)
+  expect_no_lint("a <- 1", linter)
+  expect_no_lint("function() {a <- 1}", linter)
+  expect_no_lint('a <- "foo;bar"', linter)
+  expect_no_lint('function() {a <- "foo;bar"}', linter)
+  expect_no_lint("a <- FALSE # ok; cool!", linter)
+  expect_no_lint(
+    trim_some("
+      function() {
+        a <- FALSE # ok; cool!
+      }
+    "),
+    linter
+  )
+})
 
-  # Trailing semicolons
+test_that("semicolon_linter handles trailing semicolons", {
+  linter <- semicolon_linter()
+  lint_msg <- rex::rex("Remove trailing semicolons.")
+
   expect_lint(
     "a <- 1;",
-    list(message = trail_msg, line_number = 1L, column_number = 7L),
+    list(lint_msg, line_number = 1L, column_number = 7L),
     linter
   )
   expect_lint(
     "function(){a <- 1;}",
-    list(message = trail_msg, line_number = 1L, column_number = 18L),
+    list(lint_msg, line_number = 1L, column_number = 18L),
     linter
   )
   expect_lint(
-    "a <- 1; \n",
-    list(message = trail_msg, line_number = 1L, column_number = 7L),
+    trim_some("
+      function() {
+        a <- 1;
+      }"
+    ),
+    list(lint_msg, line_number = 1L, column_number = 18L),
     linter
   )
-  expect_lint(
-    "function(){a <- 1; \n}",
-    list(message = trail_msg, line_number = 1L, column_number = 18L),
-    linter
-  )
+})
 
-  # Compound semicolons
+test_that("semicolon_linter handles compound semicolons", {
+  linter <- semicolon_linter()
+  lint_msg <- rex::rex("Replace compound semicolons by a newline.")
+
   expect_lint(
     "a <- 1;b <- 2",
-    list(message = comp_msg, line_number = 1L, column_number = 7L),
+    list(comp_msg, line_number = 1L, column_number = 7L),
     linter
   )
   expect_lint(
-    "function() {a <- 1;b <- 2}\n",
-    list(message = comp_msg, line_number = 1L, column_number = 19L),
+    "function() {a <- 1;b <- 2}",
+    list(comp_msg, line_number = 1L, column_number = 19L),
     linter
   )
   expect_lint(
-    "foo <-\n   1 ; foo <- 1.23",
-    list(message = comp_msg, line_number = 2L, column_number = 6L),
+    trim_some("
+      foo <-
+         1 ; foo <- 1.23
+    "),
+    list(comp_msg, line_number = 2L, column_number = 6L),
     linter
   )
   expect_lint(
-    "function(){\nfoo <-\n   1 ; foo <- 1.23\n}",
-    list(message = comp_msg, line_number = 3L, column_number = 6L),
+    trim_some("
+      function() {
+        foo <-
+          1 ; foo <- 1.23
+      }
+    "),
+    list(comp_msg, line_number = 3L, column_number = 6L),
     linter
   )
+})
 
-  # Multiple, mixed semicolons", {
+test_that("semicolon_linter handles multiple/mixed semicolons", {
+  linter <- semicolon_linter()
+  trail_msg <- rex::rex("Remove trailing semicolons.")
+  comp_msg <- rex::rex("Replace compound semicolons by a newline.")
+
   expect_lint(
-    "a <- 1 ; b <- 2;\nc <- 3;",
+    trim_some("
+      a <- 1 ; b <- 2;
+      c <- 3;
+    "),
     list(
       list(message = comp_msg, line_number = 1L, column_number = 8L),
       list(message = trail_msg, line_number = 1L, column_number = 16L),
@@ -67,7 +94,10 @@ test_that("Lint all semicolons", {
     linter
   )
   expect_lint(
-    "function() { a <- 1 ; b <- 2;\nc <- 3;}",
+    trim_some("
+      function() { a <- 1 ; b <- 2;
+        c <- 3;}
+    "),
     list(
       list(message = comp_msg, line_number = 1L, column_number = 21L),
       list(message = trail_msg, line_number = 1L, column_number = 29L),
@@ -80,19 +110,38 @@ test_that("Lint all semicolons", {
 
 test_that("Compound semicolons only", {
   linter <- semicolon_linter(allow_trailing = TRUE)
-  expect_lint("a <- 1;", NULL, linter)
-  expect_lint("function(){a <- 1;}", NULL, linter)
-  expect_lint("a <- 1; \n", NULL, linter)
-  expect_lint("function(){a <- 1; \n}", NULL, linter)
+  expect_no_lint("a <- 1;", linter)
+  expect_no_lint("function(){a <- 1;}", linter)
+  expect_no_lint(
+    trim_some("
+      function(){a <- 1;
+      }
+    "),
+    linter
+  )
 })
 
 
 test_that("Trailing semicolons only", {
   linter <- semicolon_linter(allow_compound = TRUE)
   expect_lint("a <- 1;b <- 2", NULL, linter)
-  expect_lint("function() {a <- 1;b <- 2}\n", NULL, linter)
-  expect_lint("f <-\n 1 ;f <- 1.23", NULL, linter)
-  expect_lint("function(){\nf <-\n 1 ;f <- 1.23\n}", NULL, linter)
+  expect_no_lint("function() {a <- 1;b <- 2}", linter)
+  expect_no_lint(
+    trim_some("
+      f <-
+       1 ;f <- 1.23
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      function(){
+        f <-
+          1 ;f <- 1.23
+      }
+    "),
+    linter
+  )
 })
 
 
