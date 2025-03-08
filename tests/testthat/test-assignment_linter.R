@@ -66,7 +66,7 @@ test_that("arguments handle <<- and ->/->> correctly", {
   )
 })
 
-test_that("arguments handle trailing assignment operators correctly", {
+test_that("arguments handle trailing assignment operators correctly", { # nofuzz
   linter_default <- assignment_linter()
   linter_no_trailing <- assignment_linter(allow_trailing = FALSE)
   expect_no_lint("x <- y", linter_no_trailing)
