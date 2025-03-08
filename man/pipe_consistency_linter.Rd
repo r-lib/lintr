@@ -4,16 +4,16 @@
 \alias{pipe_consistency_linter}
 \title{Pipe consistency linter}
 \usage{
-pipe_consistency_linter(pipe = c("auto", "\%>\%", "|>"))
+pipe_consistency_linter(pipe = c("|>", "\%>\%", "auto"))
 }
 \arguments{
-\item{pipe}{Which pipe operator is valid (either \code{"\%>\%"} or \code{"|>"}). By default
-(\code{"auto"}), the linter has no preference but will check that each file uses
-only one type of pipe operator.}
+\item{pipe}{Which pipe operator is valid (either \code{"\%>\%"} or \code{"|>"}). The default
+is the native pipe (\verb{|>}). \code{"auto"} will instead
+only enforce consistency, i.e., that in any given file there is only one pipe.}
 }
 \description{
-Check that pipe operators are used consistently by file, or optionally
-specify one valid pipe operator.
+Check that the recommended pipe operator is used, or more conservatively that
+pipes are consistent by file.
 }
 \examples{
 # will produce lints
@@ -29,18 +29,21 @@ lint(
 
 # okay
 lint(
-  text = "1:3 \%>\% mean() \%>\% as.character()",
+  text = "1:3 |> mean() |> as.character()",
   linters = pipe_consistency_linter()
 )
 
 lint(
-  text = "1:3 |> mean() |> as.character()",
-  linters = pipe_consistency_linter()
+  text = "1:3 \%>\% mean() \%>\% as.character()",
+  linters = pipe_consistency_linter("\%>\%")
 )
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr.
+\itemize{
+\item \link{linters} for a complete list of linters available in lintr.
+\item \url{https://style.tidyverse.org/pipes.html#magrittr}
+}
 }
 \section{Tags}{
-\link[=configurable_linters]{configurable}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
+\link[=configurable_linters]{configurable}, \link[=default_linters]{default}, \link[=readability_linters]{readability}, \link[=style_linters]{style}
 }
