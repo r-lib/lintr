@@ -133,7 +133,7 @@ test_that("Native pipes are handled as well", {
   linter_inline <- nested_pipe_linter(allow_inline = FALSE)
   lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
-  expect_lint(
+  expect_lint( # nofuzz
     "bind_rows(a |> select(b), c |> select(b))",
     NULL,
     linter
