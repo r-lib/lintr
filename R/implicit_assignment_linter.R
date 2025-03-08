@@ -82,7 +82,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
   xpath <- glue("
     ({assignments})
       /parent::expr[
-        preceding-sibling::*[2][self::IF or self::WHILE]
+        preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]
         or parent::forcond
         or preceding-sibling::expr/{xpath_exceptions}
         or parent::expr/*[1][self::OP-LEFT-PAREN]

@@ -214,6 +214,22 @@ test_that("implicit_assignment_linter blocks disallowed usages in simple conditi
   expect_lint("while (0L -> x) FALSE", lint_message, linter)
   expect_lint("for (x in y <- 1:10) print(x)", lint_message, linter)
   expect_lint("for (x in 1:10 -> y) print(x)", lint_message, linter)
+
+  # adversarial commenting
+  expect_lint(
+    trim_some("
+      while # comment
+      (x <- 0L) FALSE
+
+      while ( # comment
+      x <- 0L) FALSE
+    "),
+    list(
+      list(lint_message, line_number = 2L),
+      list(lint_message, line_number = 5L)
+    ),
+    linter
+  )
 })
 
 test_that("implicit_assignment_linter blocks disallowed usages in nested conditional statements", {
