@@ -28,6 +28,7 @@ length_test_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("length")
     bad_expr <- xml_find_all(xml_calls, xpath)
+    bad_expr <- strip_comments_from_subtree(bad_expr)
 
     expr_parts <- vapply(
       lapply(bad_expr, xml_find_all, "expr[2]/*[not(self::COMMENT)]"),

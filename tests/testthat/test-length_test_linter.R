@@ -12,6 +12,16 @@ test_that("blocks simple disallowed usages", {
   expect_lint("length(x == 0)", rex::rex(lint_msg_stub, "`length(x) == 0`?"), linter)
   expect_lint("length(x == y)", rex::rex(lint_msg_stub, "`length(x) == y`?"), linter)
   expect_lint("length(x + y == 2)", rex::rex(lint_msg_stub, "`length(x+y) == 2`?"), linter)
+
+  # adversarial comments
+  expect_lint(
+    trim_some("
+      length(x + #
+      y == 2)
+    "),
+    rex::rex(lint_msg_stub, "`length(x+y) == 2`?"),
+    linter
+  )
 })
 
 local({
