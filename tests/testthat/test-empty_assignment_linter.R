@@ -24,6 +24,7 @@ test_that("empty_assignment_linter blocks disallowed usages", {
 
   # newlines also don't matter
   expect_lint("x <- {\n}", lint_msg, linter)
+  expect_lint("x <- { # comment\n}", lint_msg, linter)
 
   # LHS of assignment doesn't matter
   expect_lint("env$obj <- {}", lint_msg, linter)
