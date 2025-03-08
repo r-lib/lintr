@@ -91,10 +91,9 @@ get_content <- function(lines, info) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
+    # put in data.frame-like format
     if (is_node(info)) {
-      info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
-        as.integer(xml_attr(info, attr))
-      })
+      info <- lapply(xml2::xml_attrs(info), as.integer)
     }
 
     lines <- lines[seq(info$line1, info$line2)]
