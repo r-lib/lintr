@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("spaces_left_parentheses_linter skips allowed usages", {
   linter <- spaces_left_parentheses_linter()
 
@@ -111,3 +112,4 @@ test_that("lints vectorize", {
     spaces_left_parentheses_linter()
   )
 })
+# nofuzz end

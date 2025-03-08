@@ -217,7 +217,7 @@ test_that("max_branch_lines= and max_branch_expressions= arguments work", {
   expect_lint(five_expr_three_lines_lines, NULL, max_expr4_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expressions= block over-complex switch() too", {
+test_that("max_branch_lines= and max_branch_expressions= block over-complex switch() too", { # nofuzz
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_lines4_linter <- if_switch_linter(max_branch_lines = 4L)
   max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)

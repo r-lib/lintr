@@ -25,6 +25,17 @@ clone_xml_ <- function(x) {
   xml_find_all(doc, "*")
 }
 
+# caveat: whether this is a copy or not is inconsistent. assume the output is read-only!
+strip_comments_from_subtree <- function(expr) {
+  comments <- xml_find_all(expr, ".//COMMENT")
+  if (length(comments) == 0L) {
+    return(expr)
+  }
+  expr <- clone_xml_(expr)
+  for (comment in xml_find_all(expr, ".//COMMENT")) xml2::xml_remove(comment)
+  expr
+}
+
 safe_parse_to_xml <- function(parsed_content) {
   if (is.null(parsed_content)) {
     return(xml2::xml_missing())

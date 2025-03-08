@@ -62,6 +62,22 @@ test_that("sort_linter produces customized warning message", {
     rex::rex("sort(f(), na.last = TRUE) is better than f()[order(f())]"),
     linter
   )
+
+  expect_lint(
+    trim_some("
+      x[        # comment
+        order(  # comment
+        x       # comment
+        ,       # comment
+        na.last # comment
+        =       # comment
+        FALSE   # comment
+        )       # comment
+      ]
+    "),
+    rex::rex("sort(x, na.last = FALSE)"),
+    linter
+  )
 })
 
 test_that("sort_linter works with multiple lints in a single expression", {

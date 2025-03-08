@@ -69,7 +69,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sort_linter <- function() {
-  non_keyword_arg <- "expr[not(preceding-sibling::*[1][self::EQ_SUB])]"
+  non_keyword_arg <- "expr[not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])]"
   order_xpath <- glue("
   //OP-LEFT-BRACKET
     /following-sibling::expr[1][
@@ -105,6 +105,8 @@ sort_linter <- function() {
       order_expr,
       ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
     ))
+
+    order_expr <- strip_comments_from_subtree(order_expr)
 
     orig_call <- sprintf("%s[%s]", variable, get_r_string(order_expr))
 
