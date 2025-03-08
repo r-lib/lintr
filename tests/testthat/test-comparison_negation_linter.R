@@ -61,3 +61,14 @@ test_that("Lints vectorize", {
     comparison_negation_linter()
   )
 })
+
+test_that("logic survives adversarial comments", {
+  expect_lint(
+    trim_some("
+      !(x #
+      > y)
+    "),
+    rex::rex("Use x <= y, not !(x > y)"),
+    comparison_negation_linter()
+  )
+})
