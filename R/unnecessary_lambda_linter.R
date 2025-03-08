@@ -128,7 +128,11 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
           and not(preceding-sibling::*[1][self::EQ_SUB])
           and not(parent::expr[
             preceding-sibling::expr[not(SYMBOL_FUNCTION_CALL)]
-            or following-sibling::*[not(self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACE)]
+            or following-sibling::*[not(
+              self::OP-RIGHT-PAREN
+              or self::OP-RIGHT-BRACE
+              or self::COMMENT
+            )]
           ])
         ]/SYMBOL
     ]

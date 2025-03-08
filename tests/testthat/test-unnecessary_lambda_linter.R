@@ -255,6 +255,16 @@ test_that("cases with braces are caught", {
   # false positives like #2231, #2247 are avoided with braces too
   expect_no_lint("lapply(x, function(xi) { foo(xi)$bar })", linter)
   expect_no_lint("lapply(x, function(xi) { foo(xi) - 1 })", linter)
+
+  expect_lint(
+    trim_some("
+      lapply(y, function(yi) {
+        print(yi) # comment
+      })
+    "),
+    lint_msg,
+    linter
+  )
 })
 
 test_that("function shorthand is handled", {
