@@ -40,3 +40,14 @@ patrick::with_parameters_test_that(
     "!=, FALSE", "!=", "FALSE"
   )
 )
+
+test_that("logic survives adversarial comments", {
+  expect_lint(
+    trim_some("
+      list(x #
+      == TRUE)
+    "),
+    "==",
+    redundant_equals_linter()
+  )
+})
