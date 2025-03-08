@@ -496,6 +496,21 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
     linter
   )
 
+  # but comments are irrelevant (they should be moved to another anchor)
+  expect_lint(
+    trim_some("
+      if (x && a) {
+        # comment1
+        if (y || b) {
+          1L
+        }
+        # comment2
+      }
+    "),
+    "Combine this `if` statement with the one found at line 1",
+    linter
+  )
+
   expect_no_lint(
     trim_some("
       if (x) {
