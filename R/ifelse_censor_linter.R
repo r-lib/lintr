@@ -49,7 +49,7 @@ ifelse_censor_linter <- function() {
     bad_expr <- xml_find_all(ifelse_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
-    operator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")
+    operator <- xml_find_chr(bad_expr, "string(expr[2]/*[not(self::COMMENT)][2])")
     match_first <- !is.na(xml_find_first(bad_expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
     optimizer <- ifelse((operator %in% c("<", "<=")) == match_first, "pmin", "pmax")
     first_var <- rep_len("x", length(match_first))
