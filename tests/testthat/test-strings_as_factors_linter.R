@@ -23,7 +23,7 @@ test_that("strings_as_factors_linter skips allowed usages", {
     trim_some("
       data.frame(
         x = 1:3,
-        row.names # INJECTED COMMENT
+        row.names # comment
         = c('a', 'b', 'c')
       )
     "),
