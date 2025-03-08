@@ -2,16 +2,16 @@ test_that("comparison_negation_linter skips allowed usages", {
   linter <- comparison_negation_linter()
 
   # doesn't apply to joint statements
-  expect_lint("!(x == y | y == z)", NULL, linter)
+  expect_no_lint("!(x == y | y == z)", linter)
   # don't force de Morgan's laws
-  expect_lint("!(x & y)", NULL, linter)
+  expect_no_lint("!(x & y)", linter)
 
   # naive xpath will include !foo(x) cases
-  expect_lint("!any(x > y)", NULL, linter)
+  expect_no_lint("!any(x > y)", linter)
   # ditto for tidyeval cases
-  expect_lint("!!target == 1 ~ 'target'", NULL, linter)
+  expect_no_lint("!!target == 1 ~ 'target'", linter)
   # ditto for !x[f == g]
-  expect_lint("!passes.test[stage == 1]", NULL, linter)
+  expect_no_lint("!passes.test[stage == 1]", linter)
 })
 
 local({
