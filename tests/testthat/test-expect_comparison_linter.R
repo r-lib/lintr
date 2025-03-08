@@ -49,6 +49,15 @@ test_that("expect_comparison_linter blocks simple disallowed usages", {
     rex::rex("expect_identical(x, y) is better than expect_true(x == y)."),
     linter
   )
+
+  expect_lint(
+    trim_some("
+      expect_true(x # comment
+      == (y == 2))
+    "),
+    rex::rex("expect_identical(x, y) is better than expect_true(x == y)."),
+    expect_comparison_linter()
+  )
 })
 
 test_that("lints vectorize", {
