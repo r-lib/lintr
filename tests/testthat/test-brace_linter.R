@@ -119,6 +119,22 @@ test_that("brace_linter lints braces correctly", {
     linter
   )
 
+  # a comment after '}' is allowed
+  expect_no_lint(
+    trim_some("
+      switch(
+        x,
+        'a' = do_something(x),
+        'b' = do_another(x),
+        {
+          do_first(x)
+          do_second(x)
+        } # comment
+      )
+    "),
+    brace_linter()
+  )
+
   expect_no_lint(
     trim_some("
       fun(
@@ -312,10 +328,12 @@ test_that("brace_linter lints function expressions correctly", {
   expect_no_lint(lines, linter_not_inline)
   expect_no_lint(lines, linter_never)
 
+  # nofuzz start
   expect_lint("function(x) { x + 4 }", msgs_open_close, linter_always)
   expect_lint("function(x) { x + 4 }", msgs_open_close, linter_multi_line)
   expect_lint("function(x) { x + 4 }", msgs_open_close, linter_not_inline)
   expect_lint("function(x) { x + 4 }", msgs_open_close, linter_never)
+  # nofuzz end
   # function_bodies = "always" should only prohibit inline functions with allow_single_line = FALSE (the default):
   expect_no_lint(
     "function(x) { x + 4 }",
@@ -346,6 +364,7 @@ test_that("brace_linter lints function expressions correctly", {
   expect_no_lint(lines, linter_never)
 
   # missing newline after opening brace; closing brace not on sep line
+  # nofuzz start
   lines <- trim_some("
     foo <- function(x) { x +
       4 }
@@ -354,6 +373,7 @@ test_that("brace_linter lints function expressions correctly", {
   expect_lint(lines, msgs_open_close, linter_multi_line)
   expect_lint(lines, msgs_open_close, linter_not_inline)
   expect_lint(lines, msgs_open_close, linter_never)
+  # nofuzz end
 
   # fn body wrapped in additional unneeded parentheses
   lines <- trim_some("
