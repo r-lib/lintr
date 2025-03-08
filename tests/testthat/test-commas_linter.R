@@ -56,8 +56,8 @@ test_that("returns the correct linting (with default parameters)", {
   expect_lint(
     "fun(op    ,bar)",
     list(
-      list(message = msg_before, column_number = 7L, ranges = list(c(7L, 10L))),
-      list(message = msg_after, column_number = 12L, ranges = list(c(12L, 12L)))
+      list(msg_before, column_number = 7L, ranges = list(c(7L, 10L))),
+      list(msg_after, column_number = 12L, ranges = list(c(12L, 12L)))
     ),
     linter
   )
@@ -108,8 +108,8 @@ test_that("returns the correct linting (with 'allow_trailing' set)", {
   expect_lint(
     "fun(op    ,bar)",
     list(
-      list(message = msg_before, column_number = 7L, ranges = list(c(7L, 10L))),
-      list(message = msg_after, column_number = 12L, ranges = list(c(12L, 12L)))
+      list(msg_before, column_number = 7L, ranges = list(c(7L, 10L))),
+      list(msg_after, column_number = 12L, ranges = list(c(12L, 12L)))
     ),
     linter
   )
