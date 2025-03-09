@@ -83,12 +83,11 @@ sort_linter <- function() {
   ")
 
   sorted_xpath <- "
-  parent::expr[not(SYMBOL_SUB)]
-    /parent::expr[
-      (EQ or NE)
-      and expr/expr = expr
-    ]
-  "
+  self::*[
+    (EQ or NE)
+    and expr/expr = expr
+    and not(expr/EQ_SUB)
+  ]"
 
 
   arguments_xpath <-
@@ -134,8 +133,9 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    xml_calls <- source_expression$xml_find_function_calls("sort")
-    sorted_expr <- xml_find_all(xml_calls, sorted_xpath)
+    sort_calls <- xml_parent(xml_parent(source_expression$xml_find_function_calls("sort")))
+    sort_calls <- strip_comments_from_subtree(sort_calls)
+    sorted_expr <- xml_find_all(sort_calls, sorted_xpath)
 
     sorted_op <- xml_text(xml_find_first(sorted_expr, "*[2]"))
     lint_message <- ifelse(

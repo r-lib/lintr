@@ -15,7 +15,7 @@ test_that("sort_linter skips allowed usages", {
 })
 
 
-test_that("sort_linter blocks simple disallowed usages", {
+test_that("sort_linter blocks simple disallowed usages for x[order(x)] cases", {
   linter <- sort_linter()
   lint_message <- rex::rex("sort(", anything, ") is better than")
 
@@ -118,7 +118,7 @@ test_that("sort_linter skips when inputs don't match", {
   expect_lint("sort(foo(x)) == x", NULL, linter)
 })
 
-test_that("sort_linter blocks simple disallowed usages", {
+test_that("sort_linter blocks simple disallowed usages for is.sorted cases", {
   linter <- sort_linter()
   unsorted_msg <- rex::rex("Use is.unsorted(x) to test the unsortedness of a vector.")
   sorted_msg <- rex::rex("Use !is.unsorted(x) to test the sortedness of a vector.")
@@ -133,6 +133,14 @@ test_that("sort_linter blocks simple disallowed usages", {
 
   # expression matching
   expect_lint("sort(foo(x)) == foo(x)", sorted_msg, linter)
+  expect_lint(
+    trim_some("
+      sort(foo(x # comment
+      )) == foo(x)
+    "),
+    sorted_msg,
+    linter
+  )
 })
 
 test_that("lints vectorize", {
