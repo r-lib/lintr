@@ -35,6 +35,16 @@ test_that("coalesce_linter blocks simple disallowed usage", {
 
   expect_lint("if (!is.null(x[1])) x[1] else y", lint_msg_not, linter)
   expect_lint("if (!is.null(foo(x))) foo(x) else y", lint_msg_not, linter)
+
+  # adversarial comments
+  expect_lint(
+    trim_some("
+      if (!is.null(x[1])) x[ # INJECTED COMMENT
+      1] else y
+    "),
+    lint_msg_not,
+    linter
+  )
 })
 
 test_that("coalesce_linter blocks usage with implicit assignment", {
