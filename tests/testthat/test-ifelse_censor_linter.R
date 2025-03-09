@@ -70,8 +70,15 @@ test_that("ifelse_censor_linter blocks simple disallowed usages", {
   expect_lint(
     trim_some("
       ifelse(2 + p + 104 + 1 #comment
-      > ncols, ncols, 2 + p + 104 + 1
-            )
+      > ncols, ncols, 2 + p + 104 + 1)
+    "),
+    rex::rex("pmin(x, y) is preferable to ifelse(x > y, y, x)"),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      ifelse(2 + p + 104 + # comment
+      1 > ncols, ncols, 2 + p + 104 + 1)
     "),
     rex::rex("pmin(x, y) is preferable to ifelse(x > y, y, x)"),
     linter

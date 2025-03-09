@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("spaces_inside_linter skips allowed usages", {
   linter <- spaces_inside_linter()
 
@@ -36,7 +37,7 @@ test_that("spaces_inside_linter skips allowed usages", {
 test_that("spaces_inside_linter blocks diallowed usages", {
   linter <- spaces_inside_linter()
 
-  expect_lint( # nofuzz
+  expect_lint(
     "a[1 ]",
     list(
       "Do not place spaces before square brackets",
@@ -47,7 +48,7 @@ test_that("spaces_inside_linter blocks diallowed usages", {
     linter
   )
 
-  expect_lint( # nofuzz
+  expect_lint(
     "a[[1 ]]",
     list(
       "Do not place spaces before square brackets",
@@ -69,7 +70,7 @@ test_that("spaces_inside_linter blocks diallowed usages", {
     linter
   )
 
-  expect_lint( # nofuzz
+  expect_lint(
     "a[ 1 ]",
     list(
       list(
@@ -88,7 +89,7 @@ test_that("spaces_inside_linter blocks diallowed usages", {
     linter
   )
 
-  expect_lint( # nofuzz
+  expect_lint(
     "a(1 )",
     list(
       "Do not place spaces before parentheses",
@@ -121,7 +122,6 @@ test_that("spaces_inside_linter blocks diallowed usages", {
     linter
   )
 
-  # nofuzz start
   expect_lint(
     "x[[ 1L ]]",
     list(
@@ -181,11 +181,10 @@ test_that("spaces_inside_linter blocks diallowed usages", {
     ),
     linter
   )
-  # nofuzz end
 })
 
 test_that("multi-line expressions have good markers", {
-  expect_lint( # nofuzz
+  expect_lint(
     trim_some("
       ( x |
         y )
@@ -198,7 +197,7 @@ test_that("multi-line expressions have good markers", {
   )
 })
 
-test_that("spaces_inside_linter blocks disallowed usages with a pipe", { # nofuzz
+test_that("spaces_inside_linter blocks disallowed usages with a pipe", {
   skip_if_not_r_version("4.1.0")
 
   linter <- spaces_inside_linter()
@@ -245,3 +244,4 @@ test_that("spaces_inside_linter blocks disallowed usages with a pipe", { # nofuz
 test_that("terminal missing keyword arguments are OK", {
   expect_no_lint("alist(missing_arg = )", spaces_inside_linter())
 })
+# nofuzz end

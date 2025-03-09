@@ -36,16 +36,15 @@
 #' @export
 ifelse_censor_linter <- function() {
   xpath <- glue("
-  following-sibling::expr[
+  self::*[expr[
     (LT or GT or LE or GE)
     and expr[1] = following-sibling::expr
     and expr[2] = following-sibling::expr
-  ]
-    /parent::expr
-  ")
+  ]]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    ifelse_calls <- source_expression$xml_find_function_calls(ifelse_funs)
+    ifelse_calls <- xml_parent(source_expression$xml_find_function_calls(ifelse_funs))
+    ifelse_calls <- strip_comments_from_subtree(ifelse_calls)
     bad_expr <- xml_find_all(ifelse_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
