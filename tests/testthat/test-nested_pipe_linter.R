@@ -15,7 +15,7 @@ test_that("nested_pipe_linter skips allowed usages", {
   )
 
   # pipes fitting on one line can be ignored
-  expect_lint(
+  expect_lint( # nofuzz
     "bind_rows(a %>% select(b), c %>% select(b))",
     NULL,
     linter
@@ -27,7 +27,7 @@ test_that("nested_pipe_linter skips allowed usages", {
   expect_lint("switch(x, a = x, x %>% foo())", NULL, linter)
 
   # inline switch inputs are not linted
-  expect_lint(
+  expect_lint( # nofuzz
     trim_some("
       switch(
         x %>% foo(),

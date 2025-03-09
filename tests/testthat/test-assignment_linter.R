@@ -165,7 +165,7 @@ test_that("arguments handle trailing assignment operators correctly", { # nofuzz
   )
 })
 
-test_that("allow_trailing interacts correctly with comments in braced expressions", {
+test_that("allow_trailing interacts correctly with comments in braced expressions", { # nofuzz
   linter <- assignment_linter(allow_trailing = FALSE)
   expect_no_lint(
     trim_some("
