@@ -218,14 +218,29 @@ test_that("unreachable_code_linter passes on multi-line functions", {
 })
 
 test_that("unreachable_code_linter ignores comments on the same expression", {
-  lines <- trim_some("
-    foo <- function(x) {
-      return(
-        y^2
-      ) # y^3
-    }
-  ")
-  expect_no_lint(lines, unreachable_code_linter())
+  linter <- unreachable_code_linter()
+
+  expect_no_lint(
+    trim_some("
+      foo <- function(x) {
+        return(
+          y^2
+        ) # y^3
+      }
+    "),
+    linter
+  )
+  # the same, commented adversarially
+  expect_no_lint(
+    trim_some("
+      foo <- function(x) # comment
+      {
+        return(y^2)
+        # y^3
+      }
+    "),
+    linter
+  )
 })
 
 test_that("unreachable_code_linter ignores comments on the same line", {
