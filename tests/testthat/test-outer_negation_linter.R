@@ -31,6 +31,16 @@ test_that("outer_negation_linter blocks simple disallowed usages", {
   # catch when all inputs are negated
   expect_lint("any(!x, !y)", not_all_msg, linter)
   expect_lint("all(!x, !y, na.rm = TRUE)", not_any_msg, linter)
+
+  # adversarial comment
+  expect_lint(
+    trim_some("
+      any(!x, na.rm = # comment
+      TRUE)
+    "),
+    not_all_msg,
+    linter
+  )
 })
 
 test_that("outer_negation_linter doesn't trigger on empty calls", {
