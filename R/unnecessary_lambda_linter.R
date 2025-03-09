@@ -125,7 +125,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
         .//expr[
           position() = 2
           and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
-          and not(preceding-sibling::*[1][self::EQ_SUB])
+          and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
           and not(parent::expr[
             preceding-sibling::expr[not(SYMBOL_FUNCTION_CALL)]
             or following-sibling::*[not(

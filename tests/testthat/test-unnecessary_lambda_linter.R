@@ -161,6 +161,15 @@ test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
 
   expect_no_lint("lapply(x, function(xi) data.frame(nm = xi))", linter)
   expect_no_lint("lapply(x, function(xi) return(data.frame(nm = xi)))", linter)
+
+  # adversarially commented
+  expect_no_lint(
+    trim_some("
+      lapply(x, function(xi) data.frame(nm = # INJECTED COMMENT
+      xi))
+    "),
+    linter
+  )
 })
 
 test_that("purrr-style anonymous functions are also caught", {
