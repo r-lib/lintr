@@ -350,13 +350,13 @@ test_that("'unescaped' regex can optionally be skipped", {
 })
 
 local({
+  linter <- fixed_regex_linter()
+  lint_msg <- "This regular expression is static"
   pipes <- pipes(exclude = c("%$%", "%T>%"))
+
   patrick::with_parameters_test_that(
     "linter is pipe-aware",
     {
-      linter <- fixed_regex_linter()
-      lint_msg <- "This regular expression is static"
-
       expect_lint(paste("x", pipe, "grepl(pattern = 'a')"), lint_msg, linter)
       expect_lint(paste("x", pipe, "grepl(pattern = '^a')"), NULL, linter)
       expect_lint(paste("x", pipe, "grepl(pattern = 'a', fixed = TRUE)"), NULL, linter)
@@ -373,5 +373,16 @@ local({
     },
     pipe = pipes,
     .test_name = names(pipes)
+  )
+})
+
+test_that("pipe-aware lint logic survives adversarial comments", {
+  expect_lint(
+    trim_some("
+      x %>%   grepl(pattern = # INJECTED COMMENT
+      'a')
+    "),
+    "This regular expression is static",
+    fixed_regex_linter()
   )
 })
