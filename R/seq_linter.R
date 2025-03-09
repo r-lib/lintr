@@ -126,6 +126,7 @@ seq_linter <- function() {
       xml_find_all(seq_calls, seq_xpath),
       xml_find_all(xml, colon_xpath)
     )
+    seq_expr <- strip_comments_from_subtree(seq_expr)
 
     dot_expr1 <- get_fun(seq_expr, 1L)
     dot_expr2 <- get_fun(seq_expr, 2L)
