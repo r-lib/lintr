@@ -63,6 +63,11 @@ comment_injection_fuzzer <- function(pd, lines) {
   # injecting comment before a call often structurally breaks parsing
   #   (SYMBOL_FUNCTION_CALL-->SYMBOL), so avoid
   terminal_token_idx <- which(pd$terminal & !pd$token %in% c("COMMENT", "SYMBOL_FUNCTION_CALL", "SLOT"))
+  # formula is messy because it's very easy to break parsing, but not easy to exclude the right
+  #   elements from the pd data.frame (easier with XPath ancestor axis). Just skip for now.
+  if (any(pd$token == "'~'")) {
+    return(invisible())
+  }
   injection_count <- sample(0:length(terminal_token_idx), 1L)
 
   if (injection_count == 0L) {
