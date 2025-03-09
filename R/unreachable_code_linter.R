@@ -85,17 +85,15 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
   (
     {expr_after_control}
     |
-    (//FUNCTION | //OP-LAMBDA)[
-      following-sibling::expr[1]/*[not(self::COMMENT)][1][self::OP-LEFT-BRACE]
-    ]
-      /following-sibling::expr[1]
+    (//FUNCTION | //OP-LAMBDA)
+      /following-sibling::expr[1][OP-LEFT-BRACE]
   )
     /expr[expr[1][
       not(OP-DOLLAR or OP-AT)
       and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
     ]]
     /following-sibling::*[
-      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON or self::COMMENT)
+      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
       and (not(self::COMMENT) or @line2 > preceding-sibling::*[not(self::COMMENT)][1]/@line2)
     ][1]
   ")
