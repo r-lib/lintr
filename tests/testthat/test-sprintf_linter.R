@@ -133,12 +133,22 @@ local({
 })
 
 test_that("pipe logic survives adversarial comments", {
+  linter <- sprintf_linter()
+
   expect_no_lint(
     trim_some("
       x |> # comment
       sprintf(fmt = '%s')
     "),
-    sprintf_linter()
+    linter
+  )
+
+  expect_no_lint(
+    trim_some('
+      "%s" %>% # comment
+      sprintf("%s%s")
+    '),
+    linter
   )
 })
 

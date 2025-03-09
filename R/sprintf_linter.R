@@ -43,7 +43,7 @@ sprintf_linter <- function() {
       or self::SPECIAL[{ xp_text_in_table(pipes) }
     ]]
     and (
-      preceding-sibling::*[2]/STR_CONST
+      preceding-sibling::*[not(self::COMMENT)][2]/STR_CONST
       or SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
     )
   ]")
