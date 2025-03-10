@@ -241,7 +241,10 @@ unnecessary_nesting_linter <- function(
   # "un-walk" from the unnecessary IF to the IF with which it should be combined
   corresponding_if_xpath <- "preceding-sibling::IF | parent::expr/preceding-sibling::IF"
 
-  unnecessary_else_brace_xpath <- "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
+  unnecessary_else_brace_xpath <- "
+  //IF/parent::expr[parent::expr[
+    preceding-sibling::ELSE and count(*) - count(COMMENT) - count(OP-LEFT-BRACE) - count(OP-RIGHT-BRACE) = 1
+  ]]"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
