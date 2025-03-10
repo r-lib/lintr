@@ -63,6 +63,7 @@ test_that("sort_linter produces customized warning message", {
     linter
   )
 
+  # comment torture
   expect_lint(
     trim_some("
       x[        # comment
@@ -76,6 +77,15 @@ test_that("sort_linter produces customized warning message", {
       ]
     "),
     rex::rex("sort(x, na.last = FALSE)"),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      f( # comment
+      )[order(f())]
+    "),
+    rex::rex("sort(f(), na.last = TRUE) is better than f()[order(f())]"),
     linter
   )
 })

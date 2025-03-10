@@ -69,16 +69,14 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sort_linter <- function() {
-  non_keyword_arg <- "expr[not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])]"
+  non_keyword_arg <- "expr[position() > 1 and not(preceding-sibling::*[1][self::EQ_SUB])]"
   order_xpath <- glue("
-  //OP-LEFT-BRACKET
+  self::expr[
+    expr[1] = expr/{non_keyword_arg}
+  ]
+    /OP-LEFT-BRACKET
     /following-sibling::expr[1][
-      expr[1][
-        SYMBOL_FUNCTION_CALL[text() = 'order']
-        and count(following-sibling::{non_keyword_arg}) = 1
-        and following-sibling::{non_keyword_arg} =
-          parent::expr[1]/parent::expr[1]/expr[1]
-      ]
+      count({non_keyword_arg}) = 1
     ]
   ")
 
@@ -96,16 +94,16 @@ sort_linter <- function() {
   arg_values_xpath <- glue("{arguments_xpath}/following-sibling::expr[1]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
+    order_calls <- strip_comments_from_subtree(xml_parent(xml_parent(
+      source_expression$xml_find_function_calls("order")
+    )))
 
-    order_expr <- xml_find_all(xml, order_xpath)
+    order_expr <- xml_find_all(order_calls, order_xpath)
 
     variable <- xml_text(xml_find_first(
       order_expr,
       ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
     ))
-
-    order_expr <- strip_comments_from_subtree(order_expr)
 
     orig_call <- sprintf("%s[%s]", variable, get_r_string(order_expr))
 
