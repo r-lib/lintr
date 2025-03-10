@@ -165,7 +165,7 @@ test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
   # adversarially commented
   expect_no_lint(
     trim_some("
-      lapply(x, function(xi) data.frame(nm = # INJECTED COMMENT
+      lapply(x, function(xi) data.frame(nm = # comment
       xi))
     "),
     linter

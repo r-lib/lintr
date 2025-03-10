@@ -106,7 +106,7 @@ test_that("string_boundary_linter blocks disallowed substr()/substring() usage",
   # adversarial comments
   expect_lint(
     trim_some("
-      substring(colnames(x), start, nchar(colnames( # INJECTED COMMENT
+      substring(colnames(x), start, nchar(colnames( # comment
       x))) == 'abc'
     "),
     ends_message,

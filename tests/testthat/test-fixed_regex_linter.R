@@ -379,7 +379,7 @@ local({
 test_that("pipe-aware lint logic survives adversarial comments", {
   expect_lint(
     trim_some("
-      x %>%   grepl(pattern = # INJECTED COMMENT
+      x %>%   grepl(pattern = # comment
       'a')
     "),
     "This regular expression is static",

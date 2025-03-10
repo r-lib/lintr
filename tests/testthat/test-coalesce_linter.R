@@ -39,7 +39,7 @@ test_that("coalesce_linter blocks simple disallowed usage", {
   # adversarial comments
   expect_lint(
     trim_some("
-      if (!is.null(x[1])) x[ # INJECTED COMMENT
+      if (!is.null(x[1])) x[ # comment
       1] else y
     "),
     lint_msg_not,
