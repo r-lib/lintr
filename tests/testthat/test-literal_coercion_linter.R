@@ -37,7 +37,15 @@ test_that("literal_coercion_linter skips allowed rlang usages", {
 })
 
 test_that("literal_coercion_linter skips quoted keyword arguments", {
-  expect_no_lint("as.numeric(foo('a' = 1))", literal_coercion_linter())
+  linter <- literal_coercion_linter()
+  expect_no_lint("as.numeric(foo('a' = 1))", linter)
+  expect_no_lint(
+    trim_some("
+      as.numeric(foo('a' # comment
+      = 1))
+    "),
+    linter
+  )
 })
 
 test_that("no warnings surfaced by running coercion", {

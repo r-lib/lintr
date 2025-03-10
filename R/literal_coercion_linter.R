@@ -61,7 +61,7 @@ literal_coercion_linter <- function() {
     not(OP-DOLLAR or OP-AT)
     and (
       NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
-      or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+      or STR_CONST[not(following-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])]
     )
   "
   xpath <- glue("
