@@ -84,7 +84,8 @@ package_hooks_linter <- function() {
   #   exiting early if not.
   any_hook_xpath <- glue("(//FUNCTION | //OP-LAMBDA)/parent::expr/preceding-sibling::expr/SYMBOL[{ns_calls}]")
 
-  hook_xpath <- sprintf("string(./ancestor::expr/expr/SYMBOL[%s])", ns_calls)
+  # * for '=' assignment
+  hook_xpath <- sprintf("string(./ancestor::*/expr/SYMBOL[%s])", ns_calls)
 
   load_arg_name_xpath <- "
   (//FUNCTION | //OP-LAMBDA)
