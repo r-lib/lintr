@@ -29,6 +29,15 @@ test_that("if_switch_linter blocks simple disallowed usages", {
   expect_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == 'c') 3", lint_msg, linter)
   # expressions are also OK
   expect_lint("if (foo(x) == 'a') 1 else if (foo(x) == 'b') 2 else if (foo(x) == 'c') 3", lint_msg, linter)
+  # including when comments are present
+  expect_lint(
+    trim_some("
+      if (foo(x) == 'a') 1 else if (foo(x # comment
+      ) == 'b') 2 else if (foo(x) == 'c') 3
+    "),
+    lint_msg,
+    linter
+  )
 })
 
 test_that("if_switch_linter handles further nested if/else correctly", {
