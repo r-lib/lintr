@@ -102,7 +102,6 @@ test_that("unreachable_code_linter works in sub expressions", {
     linter
   )
 
-  #debug(linter)
   expect_lint(
     trim_some("
       foo <- function(bar) {
