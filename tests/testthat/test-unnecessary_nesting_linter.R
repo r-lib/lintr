@@ -311,7 +311,7 @@ test_that("unnecessary_nesting_linter passes for multi-line braced expressions",
   )
 })
 
-test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", {
+test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", { # nofuzz
   
   linter <- unnecessary_nesting_linter()
 
