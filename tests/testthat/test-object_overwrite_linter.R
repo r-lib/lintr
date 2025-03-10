@@ -99,9 +99,11 @@ test_that("object_overwrite_linter skips any name assigned at the top level", {
 })
 
 test_that("object_overwrite_linter skips argument names", {
+  
   linter <- object_overwrite_linter()
 
   expect_lint("foo <- function(data) data <- data + 1", NULL, linter)
+  expect_lint("foo <- function(data) data = data + 1", NULL, linter)
 
   expect_lint(
     trim_some("

@@ -63,7 +63,7 @@ test_that("coalesce_linter blocks usage with implicit assignment", { # nofuzz
   expect_lint("if (!is.null(s <- foo(x))) { s } else { y }", lint_msg_not, linter)
 })
 
-test_that("lints vectorize", {
+test_that("lints vectorize", { # nofuzz
   expect_lint(
     trim_some("{
       if (is.null(x)) y else x

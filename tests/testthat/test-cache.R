@@ -420,7 +420,7 @@ test_that("lint with cache uses the provided relative cache directory", { # nofu
   expect_true(dir.exists(path))
 })
 
-test_that("it works outside of a package", {
+test_that("it works outside of a package", { # nofuzz
   linter <- assignment_linter()
 
   local_mocked_bindings(find_package = function(...) NULL)

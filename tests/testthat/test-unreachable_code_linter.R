@@ -450,7 +450,7 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     lintr.exclude_end = "#\\s*TestNoLintEnd"
   ))
 
-  expect_no_lint(
+  expect_no_lint( # nofuzz
     trim_some("
       foo <- function() {
         do_something
