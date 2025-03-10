@@ -9,7 +9,13 @@ maybe_fuzz_content <- function(file, lines) {
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
-  apply_fuzzers(new_file, list(function_lambda_fuzzer, pipe_fuzzer, dollar_at_fuzzer, comment_injection_fuzzer))
+  apply_fuzzers(new_file, fuzzers = list(
+    function_lambda_fuzzer,
+    pipe_fuzzer,
+    dollar_at_fuzzer,
+    comment_injection_fuzzer,
+    assignment_fuzzer
+  ))
 
   new_file
 }
@@ -57,6 +63,11 @@ pipe_fuzzer <- simple_swap_fuzzer(
 dollar_at_fuzzer <- simple_swap_fuzzer(
   \(pd) pd$token %in% c("'$'", "'@'"),
   replacements = c("$", "@")
+)
+
+assignment_fuzzer <- simple_swap_fuzzer(
+  \(pd) (pd$token == "LEFT_ASSIGN" & pd$text == "<-") | pd$token == "EQ_ASSIGN",
+  replacements = c("<-", "=")
 )
 
 comment_injection_fuzzer <- function(pd, lines) {
