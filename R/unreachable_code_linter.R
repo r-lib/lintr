@@ -76,6 +76,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclude_end", "# nocov end")) {
+  # nolint next: object_usage_linter. Used in glue() in statically-difficult fashion to detect.
   expr_after_control <- "
     (//REPEAT | //ELSE | //FOR)/following-sibling::expr[1]
     | (//IF | //WHILE)/following-sibling::expr[2]
@@ -116,7 +117,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
   )
   xpath_next_break_fmt <- "
   ({expr_after_control})
-    /expr[NEXT or BREAK]
+    //expr[NEXT or BREAK]
     /{unreachable_expr_cond}
   "
   xpath_next_break <- paste(
