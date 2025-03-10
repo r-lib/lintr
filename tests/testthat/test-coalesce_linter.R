@@ -47,7 +47,7 @@ test_that("coalesce_linter blocks simple disallowed usage", {
   )
 })
 
-test_that("coalesce_linter blocks usage with implicit assignment", {
+test_that("coalesce_linter blocks usage with implicit assignment", { # nofuzz
   linter <- coalesce_linter()
   lint_msg <- rex::rex("Use x %||% y instead of if (is.null(x))")
   lint_msg_not <- rex::rex("Use x %||% y instead of if (!is.null(x))")

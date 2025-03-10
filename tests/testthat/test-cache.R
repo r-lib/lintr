@@ -406,7 +406,7 @@ test_that("find_new_line returns the correct line if it is after the current lin
 
 #
 
-test_that("lint with cache uses the provided relative cache directory", {
+test_that("lint with cache uses the provided relative cache directory", { # nofuzz
   path <- withr::local_tempdir("my_cache_dir")
   linter <- assignment_linter()
 

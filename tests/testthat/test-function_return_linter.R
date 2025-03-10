@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("function_return_linter skips allowed usages", {
   lines_simple <- trim_some("
     foo <- function(x) {
@@ -96,3 +97,4 @@ test_that("lints vectorize", {
     function_return_linter()
   )
 })
+# nofuzz end
