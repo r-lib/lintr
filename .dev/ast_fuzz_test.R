@@ -131,7 +131,6 @@ withr::defer(for (restoration in test_restorations) writeLines(restoration$lines
 #   the best approach but documentation was not very helpful.
 reporter <- testthat::SummaryReporter$new()
 testthat::test_local(reporter = reporter, stop_on_failure = FALSE)
-# testthat::test_file('tests/testthat/test-brace_linter.R')
 
 failures <- reporter$failures$as_list()
 # ignore any test that failed for expected reasons, e.g. some known lint metadata changes
