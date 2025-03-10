@@ -11,10 +11,10 @@ testthat::test_that("paren_body_linter returns correct lints", {
   expect_lint("for (i in seq_along(1))test", lint_msg, linter)
 
   # A space after the closing parenthesis does not prompt a lint
-  expect_lint("function() test", NULL, linter)
+  expect_no_lint("function() test", linter)
 
   # Symbols after the closing parenthesis of a function call do not prompt a lint
-  expect_lint("head(mtcars)$cyl", NULL, linter)
+  expect_no_lint("head(mtcars)$cyl", linter)
 
   # paren_body_linter returns the correct line number
   expect_lint(
@@ -36,10 +36,10 @@ testthat::test_that("paren_body_linter returns correct lints", {
   )
 
   # paren_body_linter does not lint when the function body is defined on a new line
-  expect_lint("function()\n  test", NULL, linter)
+  expect_no_lint("function()\n  test", linter)
 
   # paren_body_linter does not lint comments
-  expect_lint("#function()test", NULL, linter)
+  expect_no_lint("#function()test", linter)
 
   # multiple lints on the same line
   expect_lint("function()if(TRUE)while(TRUE)test", list(lint_msg, lint_msg, lint_msg), linter)

@@ -3,7 +3,7 @@ test_that("returns the correct linting", {
   linter <- trailing_whitespace_linter()
   lint_msg <- rex::rex("Remove trailing whitespace.")
 
-  expect_lint("blah", NULL, linter)
+  expect_no_lint("blah", linter)
 
   expect_lint(
     "blah <- 1  ",
@@ -36,9 +36,8 @@ test_that("also handles completely empty lines per allow_empty_lines argument", 
     trailing_whitespace_linter(allow_empty_lines = TRUE)
   )
 
-  expect_lint(
+  expect_no_lint(
     "blah <- 1\n  \n'hi'\na <- 2",
-    NULL,
     trailing_whitespace_linter(allow_empty_lines = TRUE)
   )
 })
@@ -47,7 +46,7 @@ test_that("also handles trailing whitespace in string constants", {
   linter <- trailing_whitespace_linter()
   lint_msg <- rex::rex("Remove trailing whitespace.")
 
-  expect_lint("blah <- '  \n  \n'", NULL, linter)
+  expect_no_lint("blah <- '  \n  \n'", linter)
   # Don't exclude past the end of string
   expect_lint(
     "blah <- '  \n  \n'  ",

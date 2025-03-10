@@ -1,20 +1,20 @@
 test_that("outer_negation_linter skips allowed usages", {
   linter <- outer_negation_linter()
 
-  expect_lint("x <- any(y)", NULL, linter)
-  expect_lint("y <- all(z)", NULL, linter)
+  expect_no_lint("x <- any(y)", linter)
+  expect_no_lint("y <- all(z)", linter)
 
   # extended usage of any is not covered
-  expect_lint("any(!a & b)", NULL, linter)
-  expect_lint("all(a | !b)", NULL, linter)
+  expect_no_lint("any(!a & b)", linter)
+  expect_no_lint("all(a | !b)", linter)
 
-  expect_lint("any(a, b)", NULL, linter)
-  expect_lint("all(b, c)", NULL, linter)
-  expect_lint("any(!a, b)", NULL, linter)
-  expect_lint("all(a, !b)", NULL, linter)
-  expect_lint("any(a, !b, na.rm = TRUE)", NULL, linter)
+  expect_no_lint("any(a, b)", linter)
+  expect_no_lint("all(b, c)", linter)
+  expect_no_lint("any(!a, b)", linter)
+  expect_no_lint("all(a, !b)", linter)
+  expect_no_lint("any(a, !b, na.rm = TRUE)", linter)
   # ditto when na.rm is passed quoted
-  expect_lint("any(a, !b, 'na.rm' = TRUE)", NULL, linter)
+  expect_no_lint("any(a, !b, 'na.rm' = TRUE)", linter)
 })
 
 test_that("outer_negation_linter blocks simple disallowed usages", {
@@ -47,9 +47,9 @@ test_that("outer_negation_linter doesn't trigger on empty calls", {
   linter <- outer_negation_linter()
 
   # minimal version of issue
-  expect_lint("any()", NULL, linter)
+  expect_no_lint("any()", linter)
   # closer to what was is practically relevant, as another regression test
-  expect_lint("x %>% any()", NULL, linter)
+  expect_no_lint("x %>% any()", linter)
 })
 
 test_that("lints vectorize", {

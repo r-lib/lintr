@@ -1,8 +1,8 @@
 test_that("ifelse_censor_linter skips allowed usages", {
   linter <- ifelse_censor_linter()
 
-  expect_lint("ifelse(x == 2, x, y)", NULL, linter)
-  expect_lint("ifelse(x > 2, x, y)", NULL, linter)
+  expect_no_lint("ifelse(x == 2, x, y)", linter)
+  expect_no_lint("ifelse(x > 2, x, y)", linter)
 })
 
 test_that("ifelse_censor_linter blocks simple disallowed usages", {

@@ -1,54 +1,50 @@
 test_that("nested_pipe_linter skips allowed usages", {
   linter <- nested_pipe_linter()
 
-  expect_lint("a %>% b() %>% c()", NULL, linter)
+  expect_no_lint("a %>% b() %>% c()", linter)
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo <- function(x) {
         out <- a %>% b()
         return(out)
       }
     "),
-    NULL,
     linter
   )
 
   # pipes fitting on one line can be ignored
-  expect_lint( # nofuzz
+  expect_no_lint( # nofuzz
     "bind_rows(a %>% select(b), c %>% select(b))",
-    NULL,
     linter
   )
 
   # switch outputs are OK
-  expect_lint("switch(x, a = x %>% foo())", NULL, linter)
+  expect_no_lint("switch(x, a = x %>% foo())", linter)
   # final position is an output position
-  expect_lint("switch(x, a = x, x %>% foo())", NULL, linter)
+  expect_no_lint("switch(x, a = x, x %>% foo())", linter)
 
   # inline switch inputs are not linted
-  expect_lint( # nofuzz
+  expect_no_lint( # nofuzz
     trim_some("
       switch(
         x %>% foo(),
         a = x
       )
     "),
-    NULL,
     linter
   )
 })
 
 patrick::with_parameters_test_that(
   "allow_outer_calls defaults are ignored by default",
-  expect_lint(
+  expect_no_lint(
     trim_some(sprintf(outer_call, fmt = "
       %s(
         x %%>%%
           foo()
       )
     ")),
-    NULL,
     nested_pipe_linter()
   ),
   .test_name = c("try", "tryCatch", "withCallingHandlers"),
@@ -114,14 +110,13 @@ test_that("allow_outer_calls= argument works", {
     nested_pipe_linter(allow_outer_calls = character())
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       print(
         x %>%
           foo()
       )
     "),
-    NULL,
     nested_pipe_linter(allow_outer_calls = "print")
   )
 })
@@ -133,9 +128,8 @@ test_that("Native pipes are handled as well", {
   linter_inline <- nested_pipe_linter(allow_inline = FALSE)
   lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
-  expect_lint( # nofuzz
+  expect_no_lint( # nofuzz
     "bind_rows(a |> select(b), c |> select(b))",
-    NULL,
     linter
   )
   expect_lint(

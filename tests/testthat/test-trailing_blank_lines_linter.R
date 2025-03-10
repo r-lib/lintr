@@ -2,13 +2,13 @@
 test_that("trailing_blank_lines_linter doesn't block allowed usages", {
   linter <- trailing_blank_lines_linter()
 
-  expect_lint("blah", NULL, linter)
-  expect_lint("blah <- 1  ", NULL, linter)
-  expect_lint("blah <- 1\nblah", NULL, linter)
-  expect_lint("blah <- 1\nblah\n \n blah", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint("blah <- 1  ", linter)
+  expect_no_lint("blah <- 1\nblah", linter)
+  expect_no_lint("blah <- 1\nblah\n \n blah", linter)
 
   tmp <- withr::local_tempfile(lines = "lm(y ~ x)")
-  expect_lint(file = tmp, checks = NULL, linters = linter)
+  expect_no_lint(file = tmp, linters = linter)
 })
 
 test_that("trailing_blank_lines_linter detects disallowed usages", {

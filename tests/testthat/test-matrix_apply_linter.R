@@ -1,31 +1,31 @@
 test_that("matrix_apply_linter skips allowed usages", {
   linter <- matrix_apply_linter()
 
-  expect_lint("apply(x, 1, prod)", NULL, linter)
+  expect_no_lint("apply(x, 1, prod)", linter)
 
-  expect_lint("apply(x, 1, function(i) sum(i[i > 0]))", NULL, linter)
+  expect_no_lint("apply(x, 1, function(i) sum(i[i > 0]))", linter)
 
   # sum as FUN argument
-  expect_lint("apply(x, 1, f, sum)", NULL, linter)
+  expect_no_lint("apply(x, 1, f, sum)", linter)
 
   # mean() with named arguments other than na.rm is skipped because they are not
   # implemented in colMeans() or rowMeans()
-  expect_lint("apply(x, 1, mean, trim = 0.2)", NULL, linter)
+  expect_no_lint("apply(x, 1, mean, trim = 0.2)", linter)
 })
 
 test_that("matrix_apply_linter is not implemented for complex MARGIN values", {
   linter <- matrix_apply_linter()
 
   # Could be implemented at some point
-  expect_lint("apply(x, seq(2, 4), sum)", NULL, linter)
+  expect_no_lint("apply(x, seq(2, 4), sum)", linter)
 
   # No equivalent
-  expect_lint("apply(x, c(2, 4), sum)", NULL, linter)
+  expect_no_lint("apply(x, c(2, 4), sum)", linter)
 
   # Beyond the scope of static analysis
-  expect_lint("apply(x, m, sum)", NULL, linter)
+  expect_no_lint("apply(x, m, sum)", linter)
 
-  expect_lint("apply(x, 1 + 2:4, sum)", NULL, linter)
+  expect_no_lint("apply(x, 1 + 2:4, sum)", linter)
 })
 
 

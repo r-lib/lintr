@@ -131,9 +131,8 @@ test_that("it does _not_ handle brew", { # nofuzz
 })
 
 test_that("it does _not_ error with inline \\Sexpr", {
-  expect_lint(
+  expect_no_lint(
     "#' text \\Sexpr{1 + 1} more text",
-    NULL,
     default_linters
   )
 })

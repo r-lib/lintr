@@ -1,8 +1,10 @@
 test_that("redundant_equals_linter skips allowed usages", {
+  linter <- redundant_equals_linter()
+
   # comparisons to non-logical constants
-  expect_lint("x == 1", NULL, redundant_equals_linter())
+  expect_no_lint("x == 1", linter)
   # comparison to TRUE as a string
-  expect_lint("x != 'TRUE'", NULL, redundant_equals_linter())
+  expect_no_lint("x != 'TRUE'", linter)
 })
 
 test_that("multiple lints return correct custom messages", {
