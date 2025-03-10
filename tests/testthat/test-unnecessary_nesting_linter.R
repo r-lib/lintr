@@ -257,13 +257,23 @@ test_that("unnecessary_nesting_linter skips one-expression repeat loops", {
 })
 
 test_that("unnecessary_nesting_linter skips one-expression assignments by default", {
+  linter <- unnecessary_nesting_linter()
+
   expect_no_lint(
     trim_some("
       {
         x <- foo()
       }
     "),
-    unnecessary_nesting_linter()
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      {
+        x = foo()
+      }
+    "),
+    linter
   )
 })
 

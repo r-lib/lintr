@@ -183,7 +183,7 @@ unnecessary_nesting_linter <- function(
 
   used_exit_call_xpath <- glue("expr/expr[position() = last()]/{exit_call_expr}")
 
-  assignment_cond <- if (allow_assignment) "expr[LEFT_ASSIGN or RIGHT_ASSIGN]" else "false"
+  assignment_cond <- if (allow_assignment) "*[LEFT_ASSIGN or RIGHT_ASSIGN or EQ_ASSIGN]" else "false"
 
   # several carve-outs of common cases where single-expression braces are OK
   #   - control flow statements: if, for, while, repeat
