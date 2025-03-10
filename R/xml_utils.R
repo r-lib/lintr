@@ -12,6 +12,29 @@ xml2lang <- function(x) {
   str2lang(paste(xml_text(x_strip_comments), collapse = " "))
 }
 
+# TODO(r-lib/xml2#341): Use xml_clone() instead.
+clone_xml_ <- function(x) {
+  tmp_doc <- tempfile()
+  on.exit(unlink(tmp_doc))
+
+  doc <- xml2::xml_new_root("root")
+  for (ii in seq_along(x)) {
+    xml2::write_xml(x[[ii]], tmp_doc)
+    xml2::xml_add_child(doc, xml2::read_xml(tmp_doc))
+  }
+  xml_find_all(doc, "*")
+}
+
+# caveat: whether this is a copy or not is inconsistent. assume the output is read-only!
+strip_comments_from_subtree <- function(expr) {
+  comments <- xml_find_all(expr, ".//COMMENT")
+  if (length(comments) == 0L) {
+    return(expr)
+  }
+  expr <- clone_xml_(expr)
+  for (comment in xml_find_all(expr, ".//COMMENT")) xml2::xml_remove(comment)
+  expr
+}
 
 safe_parse_to_xml <- function(parsed_content) {
   if (is.null(parsed_content)) {

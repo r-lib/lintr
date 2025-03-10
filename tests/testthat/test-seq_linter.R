@@ -97,6 +97,15 @@ test_that("finds 1:length(...) expressions", {
   )
 
   expect_lint(
+    trim_some("
+      mutate(x, .id = 1:n( # comment
+      ))
+    "),
+    lint_msg("seq_len(n())", "1:n(),"),
+    linter
+  )
+
+  expect_lint(
     "x[, .id := 1:.N]",
     lint_msg("seq_len(.N)", "1:.N,"),
     linter

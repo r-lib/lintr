@@ -120,7 +120,7 @@ test_that("it handles asciidoc", {
   )
 })
 
-test_that("it does _not_ handle brew", {
+test_that("it does _not_ handle brew", { # nofuzz
   expect_lint("'<% a %>'\n",
     checks = list(
       regexes[["quotes"]],
@@ -131,9 +131,8 @@ test_that("it does _not_ handle brew", {
 })
 
 test_that("it does _not_ error with inline \\Sexpr", {
-  expect_lint(
+  expect_no_lint(
     "#' text \\Sexpr{1 + 1} more text",
-    NULL,
     default_linters
   )
 })

@@ -104,4 +104,14 @@ test_that("literals in assign() and setGeneric() are checked", {
   expect_lint("assign(x = 'badBadBadBadName', 2, env)", lint_msg, linter)
   expect_lint("assign(envir = 'good_env_name', 'badBadBadBadName', 2)", lint_msg, linter)
   expect_lint("assign(envir = 'good_env_name', x = 'badBadBadBadName', 2)", lint_msg, linter)
+
+  # adversarial comments
+  expect_lint(
+    trim_some("
+      assign(envir = # comment
+      'good_env_name', 'badBadBadBadName', 2)
+    "),
+    lint_msg,
+    linter
+  )
 })

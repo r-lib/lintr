@@ -66,7 +66,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
 
   pipes <- setdiff(magrittr_pipes, "%$%")
   to_pipe_xpath <- glue("
-    ./preceding-sibling::*[1][
+    ./preceding-sibling::*[not(self::COMMENT)][1][
       self::PIPE or
       self::SPECIAL[{ xp_text_in_table(pipes) }]
     ]

@@ -2,42 +2,50 @@ test_that("literal_coercion_linter skips allowed usages", {
   linter <- literal_coercion_linter()
 
   # naive xpath includes the "_f0" here as a literal
-  expect_lint('as.numeric(x$"_f0")', NULL, linter)
-  expect_lint('as.numeric(x@"_f0")', NULL, linter)
+  expect_no_lint('as.numeric(x$"_f0")', linter)
+  expect_no_lint('as.numeric(x@"_f0")', linter)
   # only examine the first method for as.<type> methods
-  expect_lint("as.character(as.Date(x), '%Y%m%d')", NULL, linter)
+  expect_no_lint("as.character(as.Date(x), '%Y%m%d')", linter)
 
   # we are as yet agnostic on whether to prefer literals over coerced vectors
-  expect_lint("as.integer(c(1, 2, 3))", NULL, linter)
+  expect_no_lint("as.integer(c(1, 2, 3))", linter)
   # even more ambiguous for character vectors like here, where quotes are much
   #   more awkward to type than a sequence of numbers
-  expect_lint("as.character(c(1, 2, 3))", NULL, linter)
+  expect_no_lint("as.character(c(1, 2, 3))", linter)
   # not possible to declare raw literals
-  expect_lint("as.raw(c(1, 2, 3))", NULL, linter)
+  expect_no_lint("as.raw(c(1, 2, 3))", linter)
   # also not taking a stand on as.complex(0) vs. 0 + 0i
-  expect_lint("as.complex(0)", NULL, linter)
+  expect_no_lint("as.complex(0)", linter)
   # ditto for as.integer(1e6) vs. 1000000L
-  expect_lint("as.integer(1e6)", NULL, linter)
+  expect_no_lint("as.integer(1e6)", linter)
   # ditto for as.numeric(1:3) vs. c(1, 2, 3)
-  expect_lint("as.numeric(1:3)", NULL, linter)
+  expect_no_lint("as.numeric(1:3)", linter)
 })
 
 test_that("literal_coercion_linter skips allowed rlang usages", {
   linter <- literal_coercion_linter()
 
-  expect_lint("int(1, 2.0, 3)", NULL, linter)
-  expect_lint("chr('e', 'ab', 'xyz')", NULL, linter)
-  expect_lint("lgl(0, 1)", NULL, linter)
-  expect_lint("lgl(0L, 1)", NULL, linter)
-  expect_lint("dbl(1.2, 1e5, 3L, 2E4)", NULL, linter)
+  expect_no_lint("int(1, 2.0, 3)", linter)
+  expect_no_lint("chr('e', 'ab', 'xyz')", linter)
+  expect_no_lint("lgl(0, 1)", linter)
+  expect_no_lint("lgl(0L, 1)", linter)
+  expect_no_lint("dbl(1.2, 1e5, 3L, 2E4)", linter)
   # make sure using namespace (`rlang::`) doesn't create problems
-  expect_lint("rlang::int(1, 2, 3)", NULL, linter)
+  expect_no_lint("rlang::int(1, 2, 3)", linter)
   # even if scalar, carve out exceptions for the following
-  expect_lint("int(1.0e6)", NULL, linter)
+  expect_no_lint("int(1.0e6)", linter)
 })
 
 test_that("literal_coercion_linter skips quoted keyword arguments", {
-  expect_lint("as.numeric(foo('a' = 1))", NULL, literal_coercion_linter())
+  linter <- literal_coercion_linter()
+  expect_no_lint("as.numeric(foo('a' = 1))", linter)
+  expect_no_lint(
+    trim_some("
+      as.numeric(foo('a' # comment
+      = 1))
+    "),
+    linter
+  )
 })
 
 test_that("no warnings surfaced by running coercion", {
@@ -49,6 +57,18 @@ test_that("no warnings surfaced by running coercion", {
 
   expect_no_warning(
     expect_lint("as.integer(2147483648)", "Use NA_integer_", linter)
+  )
+
+  expect_no_warning(
+    expect_lint(
+      trim_some("
+        as.double(
+          NA # comment
+        )
+      "),
+      "Use NA_real_",
+      linter
+    )
   )
 })
 
@@ -81,6 +101,7 @@ patrick::with_parameters_test_that(
 
 skip_if_not_installed("rlang")
 test_that("multiple lints return custom messages", {
+  linter <- literal_coercion_linter()
   expect_lint(
     trim_some("{
       as.integer(1)
@@ -90,7 +111,24 @@ test_that("multiple lints return custom messages", {
       list(rex::rex("Use 1L instead of as.integer(1)"), line_number = 2L),
       list(rex::rex("Use TRUE instead of lgl(1L)"), line_number = 3L)
     ),
-    literal_coercion_linter()
+    linter
+  )
+
+  # also ensure comment remove logic works across several lints
+  expect_lint(
+    trim_some("{
+      as.integer( # comment
+      1           # comment
+      )           # comment
+      lgl(        # comment
+      1L          # comment
+      )           # comment
+    }"),
+    list(
+      list(rex::rex("Use 1L instead of as.integer(1)"), line_number = 2L),
+      list(rex::rex("Use TRUE instead of lgl(1L)"), line_number = 5L)
+    ),
+    linter
   )
 })
 

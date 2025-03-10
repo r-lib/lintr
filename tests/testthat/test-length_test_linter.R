@@ -1,8 +1,8 @@
 test_that("skips allowed usages", {
   linter <- length_test_linter()
 
-  expect_lint("length(x) > 0", NULL, linter)
-  expect_lint("length(DF[key == val, cols])", NULL, linter)
+  expect_no_lint("length(x) > 0", linter)
+  expect_no_lint("length(DF[key == val, cols])", linter)
 })
 
 test_that("blocks simple disallowed usages", {
@@ -12,6 +12,16 @@ test_that("blocks simple disallowed usages", {
   expect_lint("length(x == 0)", rex::rex(lint_msg_stub, "`length(x) == 0`?"), linter)
   expect_lint("length(x == y)", rex::rex(lint_msg_stub, "`length(x) == y`?"), linter)
   expect_lint("length(x + y == 2)", rex::rex(lint_msg_stub, "`length(x+y) == 2`?"), linter)
+
+  # adversarial comments
+  expect_lint(
+    trim_some("
+      length(x + #
+      y == 2)
+    "),
+    rex::rex(lint_msg_stub, "`length(x+y) == 2`?"),
+    linter
+  )
 })
 
 local({
@@ -32,6 +42,8 @@ local({
 })
 
 test_that("lints vectorize", {
+  linter <- length_test_linter()
+
   expect_lint(
     trim_some("{
       length(x == y)
@@ -41,6 +53,26 @@ test_that("lints vectorize", {
       list(rex::rex("length(x) == y"), line_number = 2L),
       list(rex::rex("length(y) == z"), line_number = 3L)
     ),
-    length_test_linter()
+    linter
+  )
+
+  expect_lint(
+    trim_some("{
+      length( # comment
+      x       # comment
+      ==      # comment
+      y       # comment
+      )       # comment
+      length( # comment
+      y       # comment
+      ==      # comment
+      z       # comment
+      )
+    }"),
+    list(
+      list(rex::rex("length(x) == y"), line_number = 2L),
+      list(rex::rex("length(y) == z"), line_number = 7L)
+    ),
+    linter
   )
 })

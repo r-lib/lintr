@@ -1,9 +1,11 @@
 test_that("empty_assignment_linter skips valid usage", {
-  expect_lint("x <- { 3 + 4 }", NULL, empty_assignment_linter())
-  expect_lint("x <- if (x > 1) { 3 + 4 }", NULL, empty_assignment_linter())
+  linter <- empty_assignment_linter()
+
+  expect_no_lint("x <- { 3 + 4 }", linter)
+  expect_no_lint("x <- if (x > 1) { 3 + 4 }", linter)
 
   # also triggers assignment_linter
-  expect_lint("x = { 3 + 4 }", NULL, empty_assignment_linter())
+  expect_no_lint("x = { 3 + 4 }", linter)
 })
 
 test_that("empty_assignment_linter blocks disallowed usages", {
@@ -24,6 +26,7 @@ test_that("empty_assignment_linter blocks disallowed usages", {
 
   # newlines also don't matter
   expect_lint("x <- {\n}", lint_msg, linter)
+  expect_lint("x <- { # comment\n}", lint_msg, linter)
 
   # LHS of assignment doesn't matter
   expect_lint("env$obj <- {}", lint_msg, linter)

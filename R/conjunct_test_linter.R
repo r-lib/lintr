@@ -82,7 +82,8 @@ conjunct_test_linter <- function(allow_named_stopifnot = TRUE,
   following-sibling::expr[1][AND2]
     /parent::expr
   "
-  named_stopifnot_condition <- if (allow_named_stopifnot) "and not(preceding-sibling::*[1][self::EQ_SUB])" else ""
+  named_stopifnot_condition <-
+    if (allow_named_stopifnot) "and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])" else ""
   stopifnot_xpath <- glue("
   following-sibling::expr[1][AND2 {named_stopifnot_condition}]
     /parent::expr

@@ -1,6 +1,8 @@
 test_that("regex_subset_linter skips allowed usages", {
-  expect_lint("y[grepl(ptn, x)]", NULL, regex_subset_linter())
-  expect_lint("x[grepl(ptn, foo(x))]", NULL, regex_subset_linter())
+  linter <- regex_subset_linter()
+
+  expect_no_lint("y[grepl(ptn, x)]", linter)
+  expect_no_lint("x[grepl(ptn, foo(x))]", linter)
 })
 
 test_that("regex_subset_linter blocks simple disallowed usages", {
@@ -10,24 +12,42 @@ test_that("regex_subset_linter blocks simple disallowed usages", {
   expect_lint("x[grep(ptn, x)]", lint_msg, linter)
   expect_lint("names(y)[grepl(ptn, names(y), perl = TRUE)]", lint_msg, linter)
   expect_lint("names(foo(y))[grepl(ptn, names(foo(y)), fixed = TRUE)]", lint_msg, linter)
+
+  # adversarial commenting
+  expect_lint(
+    trim_some("
+      names(y #comment
+      )[grepl(ptn, names(y), perl = TRUE)]
+    "),
+    lint_msg,
+    linter
+  )
 })
 
 test_that("regex_subset_linter skips grep/grepl subassignment", {
   linter <- regex_subset_linter()
 
-  expect_lint("x[grep(ptn, x)] <- ''", NULL, linter)
-  expect_lint("x[grepl(ptn, x)] <- ''", NULL, linter)
-  expect_lint("x[grep(ptn, x, perl = TRUE)] = ''", NULL, linter)
-  expect_lint("'' -> x[grep(ptn, x, ignore.case = TRUE)] = ''", NULL, linter)
+  expect_no_lint("x[grep(ptn, x)] <- ''", linter)
+  expect_no_lint("x[grepl(ptn, x)] <- ''", linter)
+  expect_no_lint("x[grep(ptn, x, perl = TRUE)] = ''", linter)
+  expect_no_lint("'' -> x[grep(ptn, x, ignore.case = TRUE)] = ''", linter)
+
+  expect_no_lint(
+    trim_some("
+      x[grepl(ptn, x) # comment
+      ] <- ''
+    "),
+    linter
+  )
 })
 
 test_that("regex_subset_linter skips allowed usages for stringr equivalents", {
   linter <- regex_subset_linter()
 
-  expect_lint("y[str_detect(x, ptn)]", NULL, linter)
-  expect_lint("x[str_detect(foo(x), ptn)]", NULL, linter)
-  expect_lint("x[str_detect(x, ptn)] <- ''", NULL, linter)
-  expect_lint("x[str_detect(x, ptn)] <- ''", NULL, linter)
+  expect_no_lint("y[str_detect(x, ptn)]", linter)
+  expect_no_lint("x[str_detect(foo(x), ptn)]", linter)
+  expect_no_lint("x[str_detect(x, ptn)] <- ''", linter)
+  expect_no_lint("x[str_detect(x, ptn)] <- ''", linter)
 })
 
 test_that("regex_subset_linter blocks disallowed usages for stringr equivalents", {

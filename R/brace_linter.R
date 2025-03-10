@@ -122,7 +122,7 @@ brace_linter <- function(allow_single_line = FALSE,
     { xp_cond_closed }
     and (
       (@line1 = preceding-sibling::*[1][not(self::OP-LEFT-BRACE)]/@line2)
-      or (@line1 = parent::expr/following-sibling::*[1][not(self::ELSE)]/@line1)
+      or (@line1 = parent::expr/following-sibling::*[not(self::COMMENT)][1][not(self::ELSE)]/@line1)
     )
   ]")
 

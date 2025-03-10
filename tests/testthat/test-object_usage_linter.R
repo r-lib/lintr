@@ -750,6 +750,21 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
     ),
     linter
   )
+
+  # native lambda requires being in an expression to support a comment immediately after
+  expect_lint(
+    trim_some("
+      foo <- \\ # comment
+      (x) {
+        lm(
+          y(w) ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    "no visible",
+    linter
+  )
 })
 
 test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {

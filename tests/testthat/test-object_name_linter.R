@@ -308,6 +308,16 @@ test_that("literals in assign() and setGeneric() are checked", {
   expect_lint("assign(x = 'badName', 2, env)", lint_msg, linter)
   expect_lint("assign(envir = 'good_env_name', 'badName', 2)", lint_msg, linter)
   expect_lint("assign(envir = 'good_env_name', x = 'badName', 2)", lint_msg, linter)
+
+  # adversarial comments
+  expect_lint(
+    trim_some("
+      assign(envir = # comment
+      'good_env_name', 'badName', 2)
+    "),
+    lint_msg,
+    linter
+  )
 })
 
 test_that("generics assigned with '=' or <<- are registered", {
