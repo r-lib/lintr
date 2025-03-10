@@ -61,10 +61,10 @@ writeLines(contents, expect_lint_file)
 # Not useful in CI but good when running locally.
 withr::defer({
   writeLines(original, expect_lint_file)
-  pkgload::load_all()
+  suppressMessages(pkgload::load_all())
 })
 
-pkgload::load_all()
+suppressMessages(pkgload::load_all())
 
 # beware lazy eval: originally tried adding a withr::defer() in each iteration, but
 #   this effectively only runs the last 'defer' expression as the names are only
@@ -129,29 +129,31 @@ withr::defer(for (restoration in test_restorations) writeLines(restoration$lines
 #   even 'report <- test_local(...)', which does return an object, lacks any information about
 #   which tests failed (all reports are about successful or skipped tests). probably this is not
 #   the best approach but documentation was not very helpful.
-reporter <- testthat::SummaryReporter$new()
+reporter <- testthat::ListReporter$new()
 testthat::test_local(reporter = reporter, stop_on_failure = FALSE)
 
-failures <- reporter$failures$as_list()
+all_classes <- unlist(lapply(reporter$get_results(), \(test) lapply(test$results, \(x) class(x)[1L])))
+cat("Summary of test statuses:\n")
+print(table(all_classes))
+
 # ignore any test that failed for expected reasons, e.g. some known lint metadata changes
 #   about line numbers or the contents of the line. this saves us having to pepper tons of
 #   'nofuzz' comments throughout the suite, as well as getting around the difficulty of injecting
 #   'expect_lint()' with new code to ignore these attributes (this latter we might explore later).
-valid_failure <- vapply(
-  failures,
-  function(failure) {
+invalid_failures <- list()
+for (test in reporter$get_results()) {
+  for (res in test$results) {
+    if (!inherits(res, "expectation_failure")) next
+
     # line_number is for the comment injection fuzzer, which adds newlines.
-    if (grepl("(column_number|ranges|line|line_number) .* did not match", failure$message)) {
-      return(TRUE)
-    }
-    FALSE
-  },
-  logical(1L)
-)
-failures <- failures[!valid_failure]
-if (length(failures) > 0L) {
-  names(failures) <- vapply(failures, `[[`, "test", FUN.VALUE = character(1L))
+    if (grepl("(column_number|ranges|line|line_number) .* did not match", res$message)) next
+    invalid_failures <- c(invalid_failures, list(res))
+  }
+}
+
+if (length(invalid_failures) > 0L) {
+  names(invalid_failures) <- vapply(invalid_failures, `[[`, "test", FUN.VALUE = character(1L))
   cat("Some fuzzed tests failed unexpectedly!\n")
-  print(failures)
+  print(invalid_failures)
   stop("Use # nofuzz [start|end] to mark false positives or fix any bugs.")
 }
