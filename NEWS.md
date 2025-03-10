@@ -16,7 +16,7 @@
 
 * `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
 * Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico).
-* `repeat_linter()` no longer errors when `while` is in a column right of `}` (#2828, @MichaelChirico).
+* `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
 
 ## New and improved features
 
@@ -63,7 +63,9 @@
    + `unnecessary_placeholder_linter()`
    + `unreachable_code_linter()` #2827
    + `vector_logic_linter()` #2826
-
+* Assignment with `=` and `<-` are treated as equivalent in more places (#2829, @MichaelChirico). Affected linters are:
+   + `object_overwrite_linter()`
+   + `package_hooks_linter()`
 
 ### New linters
 
@@ -73,7 +75,7 @@
 
 * `unnecessary_nesting_linter()`:
    + Treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
-   + Treats `=` assignment the same as `<-` when deciding to combine consecutive `if()` clauses (#2245, @MichaelChirico).
+   + Treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
 
 * `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
 * `string_boundary_linter()` omits lints of patterns like `\\^` which have an anchor but are not regular expressions (#2636, @MichaelChirico).
