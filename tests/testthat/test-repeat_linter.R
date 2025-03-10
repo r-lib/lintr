@@ -1,4 +1,4 @@
-test_that("test repeat_linter", {
+test_that("repeat_linter works as expected", {
   linter <- repeat_linter()
   msg <- rex::rex("Use 'repeat' instead of 'while (TRUE)' for infinite loops.")
 
@@ -19,9 +19,19 @@ test_that("test repeat_linter", {
       }
     }"),
     list(
-      list(message = msg, line_number = 2L, column_number = 3L, ranges = list(c(3L, 14L))),
-      list(message = msg, line_number = 4L, column_number = 3L, ranges = list(c(3L, 14L)))
+      list(msg, line_number = 2L, column_number = 3L, ranges = list(c(3L, 16L))),
+      list(msg, line_number = 4L, column_number = 3L, ranges = list(c(3L, 16L)))
     ),
+    linter
+  )
+
+  # fix for bad logic about range start/end
+  expect_lint(
+    trim_some("
+                 while
+      (TRUE) { }
+    "),
+    msg,
     linter
   )
 })
