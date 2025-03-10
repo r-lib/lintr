@@ -31,37 +31,37 @@
 * `object_usage_linter()` gains argument `interpret_extensions` to govern which false positive-prone common syntaxes should be checked for used objects (#1472, @MichaelChirico). Currently `"glue"` (renamed from earlier argument `interpret_glue`) and `"rlang"` are supported. The latter newly covers usage of the `.env` pronoun like `.env$key`, where `key` was previously missed as being a used variable.
 * `boolean_arithmetic_linter()` finds many more cases like `sum(x | y) == 0` where the total of a known-logical vector is compared to 0 (#1580, @MichaelChirico).
 * New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
-* General handling of logic around where linters can appear in code has been improved. In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters are:
+* General handling of logic around where linters can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
    + `brace_linter()`
    + `coalesce_linter()`
-   + `comparison_negation_linter()`
-   + `conjunct_test_linter()`
+   + `comparison_negation_linter()` #2826
+   + `conjunct_test_linter()` #2827
    + `empty_assignment_linter()`
-   + `fixed_regex_linter()`
+   + `fixed_regex_linter()` #2827
    + `if_switch_linter()`
-   + `ifelse_censor_linter()`
+   + `ifelse_censor_linter()` #2826
    + `implicit_assignment_linter()`
    + `length_test_linter()`
-   + `literal_coercion_linter()`
-   + `matrix_apply_linter()`
-   + `nzchar_linter()`
-   + `object_length_linter()`
+   + `literal_coercion_linter()` #2824
+   + `matrix_apply_linter()` #2825
+   + `nzchar_linter()` #2826
+   + `object_length_linter()` #2827
+   + `object_name_linter()` #2827
    + `object_usage_linter()`
-   + `object_usage_linter()`
-   + `outer_negation_linter()`
+   + `outer_negation_linter()` #2827
    + `redundant_equals_linter()`
    + `regex_subset_linter()`
    + `seq_linter()`
    + `sort_linter()`
-   + `sprintf_linter()`
+   + `sprintf_linter()` #2827
    + `string_boundary_linter()`
    + `strings_as_factors_linter()`
-   + `unnecessary_concatenation_linter()`
-   + `unnecessary_lambda_linter()`
-   + `unnecessary_nesting_linter()`
+   + `unnecessary_concatenation_linter()` #2827
+   + `unnecessary_lambda_linter()` #2827
+   + `unnecessary_nesting_linter()` #2827
    + `unnecessary_placeholder_linter()`
-   + `unreachable_code_linter()`
-   + `vector_logic_linter()`
+   + `unreachable_code_linter()` #2827
+   + `vector_logic_linter()` #2826
 
 
 ### New linters
