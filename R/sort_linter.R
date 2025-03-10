@@ -69,6 +69,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sort_linter <- function() {
+  # NB: assumes COMMENTs stripped
   non_keyword_arg <- "expr[position() > 1 and not(preceding-sibling::*[1][self::EQ_SUB])]"
   order_xpath <- glue("
   self::expr[
