@@ -163,30 +163,27 @@ test_that("next-line exclusion works", { # nofuzz
   linter <- assignment_linter()
 
   # blanket exclusion works
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN
       x = 1
     "),
-    NULL,
     linter
   )
 
   # specific exclusion works
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN: assignment_linter.
       x = 1
     "),
-    NULL,
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN: assignment.
       x = 1
     "),
-    NULL,
     linter
   )
   expect_lint(

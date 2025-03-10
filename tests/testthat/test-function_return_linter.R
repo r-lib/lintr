@@ -6,7 +6,7 @@ test_that("function_return_linter skips allowed usages", {
       return(x)
     }
   ")
-  expect_lint(lines_simple, NULL, function_return_linter())
+  expect_no_lint(lines_simple, function_return_linter())
 
   # arguably an expression as complicated as this should also be assigned,
   #   but for now that's out of the scope of this linter
@@ -18,7 +18,7 @@ test_that("function_return_linter skips allowed usages", {
       }])
     }
   ")
-  expect_lint(lines_subassignment, NULL, function_return_linter())
+  expect_no_lint(lines_subassignment, function_return_linter())
 })
 
 test_that("function_return_linter blocks simple disallowed usages", {

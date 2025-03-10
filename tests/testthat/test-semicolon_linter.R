@@ -124,7 +124,7 @@ test_that("Compound semicolons only", {
 
 test_that("Trailing semicolons only", {
   linter <- semicolon_linter(allow_compound = TRUE)
-  expect_lint("a <- 1;b <- 2", NULL, linter)
+  expect_no_lint("a <- 1;b <- 2", linter)
   expect_no_lint("function() {a <- 1;b <- 2}", linter)
   expect_no_lint(
     trim_some("
