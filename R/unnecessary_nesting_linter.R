@@ -203,7 +203,7 @@ unnecessary_nesting_linter <- function(
   unnecessary_brace_xpath <- glue("
   //OP-LEFT-BRACE
     /parent::expr[
-      count(expr) = 1
+      count(*) - count(COMMENT) - count(OP-LEFT-BRACE) - count(OP-RIGHT-BRACE) = 1
       and not(preceding-sibling::*[
         self::FUNCTION
         or self::OP-LAMBDA

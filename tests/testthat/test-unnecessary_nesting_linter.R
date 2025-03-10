@@ -283,6 +283,7 @@ test_that("unnecessary_nesting_linter passes for multi-line braced expressions",
 })
 
 test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", {
+  
   linter <- unnecessary_nesting_linter()
 
   expect_no_lint(
@@ -326,6 +327,20 @@ test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", 
         n <- .N - 1
         x[n] < y[n]
       }, j = TRUE, by = x]
+    "),
+    linter
+  )
+
+  # interaction of '=' assignment and 'loose' braces (?)
+  expect_no_lint(
+    trim_some("
+      DT[
+        {
+          n = .N - 1
+          x[n] < y[n]
+        }
+        , j = TRUE, by = x
+      ]
     "),
     linter
   )
