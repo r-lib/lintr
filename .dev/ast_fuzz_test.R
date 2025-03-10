@@ -125,14 +125,15 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
 }
 withr::defer(for (restoration in test_restorations) writeLines(restoration$lines, restoration$file))
 
-# for some reason, 'report <- test_dir(...)' did not work -- the resulting object is ~empty.
-#   even 'report <- test_local(...)', which does return an object, lacks any information about
-#   which tests failed (all reports are about successful or skipped tests). probably this is not
-#   the best approach but documentation was not very helpful.
+# ListReporter pretty essential here -- many other reporters fail to record the information we want,
+#   and/or are overly verbose & reporting all the known-false-positive failures, unsuppressably.
 reporter <- testthat::ListReporter$new()
 testthat::test_local(reporter = reporter, stop_on_failure = FALSE)
 
-all_classes <- unlist(lapply(reporter$get_results(), \(test) lapply(test$results, \(x) class(x)[1L])))
+all_classes <- unlist(lapply(
+  reporter$get_results(),
+  \(test) lapply(test$results, \(x) class(x)[1L])
+))
 cat("Summary of test statuses:\n")
 print(table(all_classes))
 
