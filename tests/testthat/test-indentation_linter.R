@@ -228,7 +228,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
   )
 
   # anchor is correctly found with assignments as well
-  expect_no_lint(
+  expect_no_lint( # nofuzz: assignment
     trim_some("
       test <- function(a = 1L,
                        b = 2L) {
@@ -323,7 +323,7 @@ test_that("function argument indentation works in always-hanging-style", { # nof
   )
 
   # anchor is correctly found with assignments as well
-  expect_no_lint(
+  expect_no_lint( # nofuzz: assignment
     trim_some("
       test <- function(a = 1L,
                        b = 2L) {

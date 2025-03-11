@@ -67,7 +67,8 @@ test_that("arguments handle <<- and ->/->> correctly", {
   )
 })
 
-test_that("arguments handle trailing assignment operators correctly", { # nofuzz: comment_injection
+# fuzzer disable: comment_injection
+test_that("arguments handle trailing assignment operators correctly", {
   linter_default <- assignment_linter()
   linter_no_trailing <- assignment_linter(allow_trailing = FALSE)
   expect_no_lint("x <- y", linter_no_trailing)
@@ -213,6 +214,7 @@ test_that("allow_trailing interacts correctly with comments in braced expression
     linter
   )
 })
+# fuzzer enable: comment_injection
 
 test_that("%<>% throws a lint", {
   expect_lint("x %<>% sum()", "Avoid the assignment pipe %<>%", assignment_linter())

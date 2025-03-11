@@ -177,5 +177,3 @@ if (length(invalid_failures) > 0L) {
   print(invalid_failures)
   stop("Fix any bugs, or use '# nofuzz'/'# fuzzer [dis|en]able' to mark false positives.")
 }
-
-browser()

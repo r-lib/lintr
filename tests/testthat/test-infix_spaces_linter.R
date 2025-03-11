@@ -191,7 +191,7 @@ test_that("mixed unary & binary operators aren't mis-lint", {
   )
 })
 
-test_that("parse tags are accepted by exclude_operators", {
+test_that("parse tags are accepted by exclude_operators", { # nofuzz: assignment
   expect_no_lint("sum(x, na.rm=TRUE)", infix_spaces_linter(exclude_operators = "EQ_SUB"))
   expect_no_lint("function(x, na.rm=TRUE) { }", infix_spaces_linter(exclude_operators = "EQ_FORMALS"))
   expect_no_lint("x=1", infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
