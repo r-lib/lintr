@@ -104,7 +104,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
   )
 })
 
-test_that("lint uses linter names", {
+test_that("lint uses linter names", { # nofuzz
   expect_lint(
     "a = 2",
     list(linter = "bla"),
