@@ -2,12 +2,12 @@
 test_that("any_duplicated_linter skips allowed usages", {
   linter <- any_duplicated_linter()
 
-  expect_lint("x <- any(y)", NULL, linter)
-  expect_lint("y <- duplicated(z)", NULL, linter)
+  expect_no_lint("x <- any(y)", linter)
+  expect_no_lint("y <- duplicated(z)", linter)
 
   # extended usage of any is not covered
-  expect_lint("any(duplicated(y), b)", NULL, linter)
-  expect_lint("any(b, duplicated(y))", NULL, linter)
+  expect_no_lint("any(duplicated(y), b)", linter)
+  expect_no_lint("any(b, duplicated(y))", linter)
 })
 
 test_that("any_duplicated_linter blocks simple disallowed usages", {
@@ -29,12 +29,13 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
 
   # non-matches
   ## different variable
-  expect_lint("length(unique(x)) == length(y)", NULL, linter)
+  expect_no_lint("length(unique(x)) == length(y)", linter)
   ## different table
-  expect_lint("length(unique(DF$x)) == nrow(DT)", NULL, linter)
-  expect_lint("length(unique(l1$DF$x)) == nrow(l2$DF)", NULL, linter)
+  expect_no_lint("length(unique(DF$x)) == nrow(DT)", linter)
+  expect_no_lint("length(unique(l1$DF$x)) == nrow(l2$DF)", linter)
 
   # lintable usage
+  #debug(linter)
   expect_lint("length(unique(x)) == length(x)", lint_msg_x, linter)
   # argument order doesn't matter
   expect_lint("length(x) == length(unique(x))", lint_msg_x, linter)
@@ -43,6 +44,16 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   expect_lint("nrow(DF) == length(unique(DF[['col']]))", lint_msg_df, linter)
   # match with nesting too
   expect_lint("nrow(l$DF) == length(unique(l$DF[['col']]))", lint_msg_df, linter)
+
+  # including under comment torture
+  expect_lint(
+    trim_some("
+      nrow(l$ # comment
+      DF) == length(unique(l$DF[['col']]))
+    "),
+    lint_msg_df,
+    linter
+  )
 
   # !=, <, and > usages are all alternative ways of writing a test for dupes
   #   technically, the direction of > / < matter, but writing

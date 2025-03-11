@@ -169,5 +169,5 @@ if (length(invalid_failures) > 0L) {
   )
   cat(sprintf("%d fuzzed tests failed unexpectedly!\n", length(invalid_failures)))
   print(invalid_failures)
-  stop("Use # nofuzz [start|end] to mark false positives or fix any bugs.")
+  stop("Fix any bugs, or use '# nofuzz'/'# fuzzer [dis|en]able' to mark false positives.")
 }
