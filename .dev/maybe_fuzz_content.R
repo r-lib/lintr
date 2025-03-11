@@ -1,4 +1,11 @@
 maybe_fuzz_content <- function(file, lines) {
+  # some tests (esp. involving encoding) have to be skipped entirely
+  #   since the logic here is not able to copy over relevant configs/settings
+  active_fuzzers <- .fuzzers$active
+  if (length(active_fuzzers) == 0L) {
+    return(file)
+  }
+
   if (is.null(file)) {
     new_file <- tempfile()
     con <- file(new_file, encoding = "UTF-8")
@@ -9,7 +16,7 @@ maybe_fuzz_content <- function(file, lines) {
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
-  apply_fuzzers(new_file, fuzzers = .fuzzers$active)
+  apply_fuzzers(new_file, fuzzers = active_fuzzers)
 
   new_file
 }

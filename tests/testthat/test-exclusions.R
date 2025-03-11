@@ -112,7 +112,7 @@ test_that("#1413: lint_dir properly excludes files", {
 
 test_that("#1442: is_excluded_files works if no global exclusions are specified", { # nofuzz: assignment
   withr::local_options(lintr.linter_file = "lintr_test_config")
-  tmp <- withr::local_tempdir()
+  withr::local_dir(withr::local_tempdir())
 
   writeLines(
     trim_some("
@@ -125,7 +125,7 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
           )
         )
     "),
-    file.path(tmp, "lintr_test_config")
+    "lintr_test_config"
   )
 
   writeLines(
@@ -138,19 +138,19 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
       # long comment
       # comment
     "),
-    file.path(tmp, "bad.R")
+    "bad.R"
   )
 
   # 3 lints: assignment_linter(), quotes_linter() and line_length_linter()
   expect_lint(
-    file = file.path(tmp, "bad.R"),
+    file = "bad.R",
     checks = list(
       list(linter = "assignment_linter", line_number = 1L),
       list(linter = "quotes_linter", line_number = 1L),
       list(linter = "line_length_linter", line_number = 1L)
     )
   )
-  expect_length(lint_dir(tmp), 3L)
+  expect_length(lint_dir(), 3L)
 })
 
 test_that("next-line exclusion works", { # nofuzz: assignment

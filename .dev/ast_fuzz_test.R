@@ -76,30 +76,36 @@ get_str <- \(x) tail(unlist(strsplit(x, ": ", fixed = TRUE)), 1L)
 test_restorations <- list()
 for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = TRUE)) {
   test_lines <- readLines(test_file)
-  one_expr_idx <- grep("# nofuzz:", test_lines)
+  one_expr_idx <- grep("# nofuzz", test_lines)
   range_start_idx <- grep("^\\s*# fuzzer disable:", test_lines)
   if (length(one_expr_idx) == 0L && length(range_start_idx) == 0L) next
 
   test_original <- test_lines
   pd <- getParseData(parse(test_file))
 
-  for (one_line in rev(one_expr_idx)) {
-    end_line <- one_line
-    while (end_line <= length(test_lines) && !can_parse(test_lines[one_line:end_line])) {
+  for (start_line in rev(one_expr_idx)) {
+    end_line <- start_line
+    while (end_line <= length(test_lines) && !can_parse(test_lines[start_line:end_line])) {
       end_line <- end_line + 1L
     }
     if (end_line > length(test_lines)) {
-      stop("Unable to parse any expression starting from line ", one_line)
+      stop("Unable to parse any expression starting from line ", start_line)
     }
-    comment_txt <- subset(pd, line1 == one_line & token == "COMMENT", select = "text", drop = TRUE)
-    deactivated <- get_str(comment_txt)
-    test_lines <- c(
-      head(test_lines, one_line - 1L),
-      sprintf("deactivate_fuzzers('%s')", deactivated),
-      test_lines[one_line:end_line],
-      sprintf("activate_fuzzers('%s')", deactivated),
-      tail(test_lines, -end_line)
-    )
+    comment_txt <- subset(pd, line1 == start_line & token == "COMMENT", select = "text", drop = TRUE)
+    # blanket disable means the test cannot be run. this happens e.g. for tests of encoding
+    #   that are too complicated to deal with in this GHA.
+    if (comment_txt == "# nofuzz") {
+      test_lines[start_line:end_line] <- ""
+    } else {
+      deactivated <- get_str(comment_txt)
+      test_lines <- c(
+        head(test_lines, start_line - 1L),
+        sprintf("deactivate_fuzzers('%s')", deactivated),
+        test_lines[start_line:end_line],
+        sprintf("activate_fuzzers('%s')", deactivated),
+        tail(test_lines, -end_line)
+      )
+    }
   }
 
   if (length(one_expr_idx)) {

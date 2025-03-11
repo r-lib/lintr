@@ -404,8 +404,6 @@ test_that("find_new_line returns the correct line if it is after the current lin
   expect_identical(lintr:::find_new_line(3L, "foobar3", t1), 3L)
 })
 
-#
-
 test_that("lint with cache uses the provided relative cache directory", { # nofuzz: assignment
   path <- withr::local_tempdir("my_cache_dir")
   linter <- assignment_linter()
