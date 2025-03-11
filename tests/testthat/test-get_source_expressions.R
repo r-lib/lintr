@@ -108,7 +108,7 @@ test_that("Can read non UTF-8 file", {
   withr::local_options(list(lintr.linter_file = tempfile()))
   proj_dir <- test_path("dummy_projects", "project")
   withr::local_dir(proj_dir)
-  expect_no_lint( # nofuzz: assignment
+  expect_no_lint( # nofuzz: assignment comment_injection
     file = "cp1252.R",
     linters = list()
   )
