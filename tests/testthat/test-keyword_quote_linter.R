@@ -129,6 +129,16 @@ test_that("keyword_quote_linter blocks quoted $, @ extractions", { # nofuzz: dol
   expect_lint("x@'foo' = 1", at_msg, linter)
   expect_lint("x@`foo` <- 1", at_msg, linter)
   expect_lint("x@`foo` = 1", at_msg, linter)
+
+  # comment torture
+  expect_lint(
+    trim_some("
+      x@ # comment
+      `foo` <- 1
+    "),
+    at_msg,
+    linter
+  )
 })
 
 test_that("multiple lints are generated correctly", { # nofuzz: dollar_at
