@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("returns the correct linting", {
   ops <- c(
     "+",
@@ -236,4 +236,4 @@ test_that("lints vectorize", {
     infix_spaces_linter()
   )
 })
-# nofuzz end
+# fuzzer enable: comment_injection

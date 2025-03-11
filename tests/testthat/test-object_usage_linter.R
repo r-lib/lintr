@@ -883,7 +883,7 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
   skip_if_not_installed("rlang")
   linter <- object_usage_linter()
 
-  expect_lint( # nofuzz
+  expect_lint( # nofuzz: dollar_at
     trim_some("
       foo <- function(df) {
         source <- 1

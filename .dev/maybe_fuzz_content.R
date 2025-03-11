@@ -9,13 +9,7 @@ maybe_fuzz_content <- function(file, lines) {
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
-  apply_fuzzers(new_file, fuzzers = list(
-    function_lambda_fuzzer,
-    pipe_fuzzer,
-    dollar_at_fuzzer,
-    comment_injection_fuzzer,
-    assignment_fuzzer
-  ))
+  apply_fuzzers(new_file, fuzzers = .fuzzers$active)
 
   new_file
 }
@@ -120,5 +114,41 @@ apply_fuzzers <- function(f, fuzzers) {
     lines <- readLines(f)
   }
 
+  invisible()
+}
+
+.fuzzers <- new.env()
+.fuzzers$active <- list(
+  function_lambda = function_lambda_fuzzer,
+  pipe = pipe_fuzzer,
+  dollar_at = dollar_at_fuzzer,
+  comment_injection = comment_injection_fuzzer,
+  assignment = assignment_fuzzer
+)
+.fuzzers$inactive <- list()
+
+deactivate_fuzzers <- function(names_str) {
+  req <- unlist(strsplit(names_str, " ", fixed = TRUE))
+  if (!all(req %in% names(.fuzzers$active))) {
+    stop(sprintf(
+      "Invalid attempt to deactivate fuzzers: '%s'\n  Currently active fuzzers: %s\n  Currently inactive fuzzers: %s",
+      names_str, toString(names(.fuzzers$active)), toString(names(.fuzzers$inactive))
+    ))
+  }
+  .fuzzers$inactive[req] <- .fuzzers$active[req]
+  .fuzzers$active[req] <- NULL
+  invisible()
+}
+
+activate_fuzzers <- function(names_str) {
+  req <- unlist(strsplit(names_str, " ", fixed = TRUE))
+  if (!all(req %in% names(.fuzzers$inactive))) {
+    stop(sprintf(
+      "Invalid attempt to activate fuzzers: '%s'\n  Currently active fuzzers: %s\n  Currently inactive fuzzers: %s",
+      names_str, toString(names(.fuzzers$active)), toString(names(.fuzzers$inactive))
+    ))
+  }
+  .fuzzers$active[req] <- .fuzzers$inactive[req]
+  .fuzzers$inactive[req] <- NULL
   invisible()
 }

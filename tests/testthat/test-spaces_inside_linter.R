@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("spaces_inside_linter skips allowed usages", {
   linter <- spaces_inside_linter()
 
@@ -244,4 +244,4 @@ test_that("spaces_inside_linter blocks disallowed usages with a pipe", {
 test_that("terminal missing keyword arguments are OK", {
   expect_no_lint("alist(missing_arg = )", spaces_inside_linter())
 })
-# nofuzz end
+# fuzzer enable: comment_injection

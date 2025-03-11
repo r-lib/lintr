@@ -104,7 +104,7 @@ test_that("lint() results do not depend on the position of the .lintr", {
   )
 })
 
-test_that("lint uses linter names", { # nofuzz
+test_that("lint uses linter names", { # nofuzz: assignment
   expect_lint(
     "a = 2",
     list(linter = "bla"),
@@ -146,7 +146,7 @@ test_that("lint() results from file or text should be consistent", {
   expect_identical(lint_from_file, lint_from_text)
 })
 
-test_that("exclusions work with custom linter names", { # nofuzz
+test_that("exclusions work with custom linter names", { # nofuzz: assignment
   expect_no_lint(
     "a = 2 # nolint: bla.",
     linters = list(bla = assignment_linter()),

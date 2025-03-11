@@ -311,7 +311,7 @@ test_that("unnecessary_nesting_linter passes for multi-line braced expressions",
   )
 })
 
-test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", { # nofuzz
+test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", {
   
   linter <- unnecessary_nesting_linter()
 
@@ -817,7 +817,7 @@ patrick::with_parameters_test_that(
   )
 )
 
-test_that("allow_functions= works", { # nofuzz '})' break-up by comment
+test_that("allow_functions= works", { # nofuzz: comment_injection
   linter_default <- unnecessary_nesting_linter()
   linter_foo <- unnecessary_nesting_linter(allow_functions = "foo")
   expect_lint("foo(x, {y}, z)", "Reduce the nesting of this statement", linter_default)

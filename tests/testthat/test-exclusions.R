@@ -56,7 +56,7 @@ test_that("it gives the expected error message when there is mismatch between mu
   )
 })
 
-test_that("partial matching works for exclusions but warns if no linter found", { # nofuzz
+test_that("partial matching works for exclusions but warns if no linter found", { # nofuzz: assignment
   lintr:::read_settings(NULL)
 
   expect_warning(
@@ -110,7 +110,7 @@ test_that("#1413: lint_dir properly excludes files", {
   expect_length(lint_dir(tmp), 0L)
 })
 
-test_that("#1442: is_excluded_files works if no global exclusions are specified", {
+test_that("#1442: is_excluded_files works if no global exclusions are specified", { # nofuzz: assignment
   withr::local_options(lintr.linter_file = "lintr_test_config")
   tmp <- withr::local_tempdir()
 
@@ -142,7 +142,7 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
   )
 
   # 3 lints: assignment_linter(), quotes_linter() and line_length_linter()
-  expect_lint( # nofuzz
+  expect_lint(
     file = file.path(tmp, "bad.R"),
     checks = list(
       list(linter = "assignment_linter", line_number = 1L),
@@ -153,7 +153,7 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
   expect_length(lint_dir(tmp), 3L)
 })
 
-test_that("next-line exclusion works", { # nofuzz
+test_that("next-line exclusion works", { # nofuzz: assignment
   withr::local_options(
     lintr.exclude = "# NL",
     lintr.exclude_next = "# NLN",

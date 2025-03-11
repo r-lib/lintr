@@ -55,7 +55,7 @@ test_that("unreachable_code_linter works in sub expressions", {
     linter
   )
 
-  expect_no_lint( # nofuzz
+  expect_no_lint( # nofuzz: comment_injection
     trim_some("
       foo <- function(bar) {
         if (bar) {
@@ -177,7 +177,7 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
     linter
   )
 
-  expect_no_lint( # nofuzz
+  expect_no_lint( # nofuzz: comment_injection
     trim_some("
       foo <- function(bar) {
         if (bar) {
@@ -282,7 +282,7 @@ test_that("unreachable_code_linter passes on multi-line functions", {
   expect_no_lint(lines, unreachable_code_linter())
 })
 
-test_that("unreachable_code_linter ignores comments on the same expression", { # nofuzz
+test_that("unreachable_code_linter ignores comments on the same expression", { # nofuzz: comment_injection
   linter <- unreachable_code_linter()
 
   expect_no_lint(
@@ -297,7 +297,7 @@ test_that("unreachable_code_linter ignores comments on the same expression", { #
   )
 })
 
-test_that("unreachable_code_linter ignores comments on the same line", { # nofuzz
+test_that("unreachable_code_linter ignores comments on the same line", { # nofuzz: comment_injection
   lines <- trim_some("
     foo <- function(x) {
       return(y^2) # y^3
@@ -339,7 +339,7 @@ test_that("unreachable_code_linter finds unreachable comments", {
   )
 })
 
-test_that("unreachable_code_linter finds expressions in the same line", { # nofuzz
+test_that("unreachable_code_linter finds expressions in the same line", { # nofuzz: comment_injection
   msg <- rex::rex("Remove code and comments coming after return() or stop()")
   linter <- unreachable_code_linter()
 
@@ -450,7 +450,7 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     lintr.exclude_end = "#\\s*TestNoLintEnd"
   ))
 
-  expect_no_lint( # nofuzz
+  expect_no_lint( # nofuzz: comment_injection
     trim_some("
       foo <- function() {
         do_something

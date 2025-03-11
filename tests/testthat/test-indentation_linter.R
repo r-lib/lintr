@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("indentation linter flags unindented expressions", {
   linter <- indentation_linter(indent = 2L)
 
@@ -153,7 +153,6 @@ test_that("indentation linter flags improper closing curly braces", {
   )
 })
 
-# nofuzz start
 test_that("function argument indentation works in tidyverse-style", {
   linter <- indentation_linter()
   expect_no_lint(
@@ -263,7 +262,7 @@ test_that("function argument indentation works in tidyverse-style", {
   )
 })
 
-test_that("function argument indentation works in always-hanging-style", {
+test_that("function argument indentation works in always-hanging-style", { # nofuzz: function_lambda
   linter <- indentation_linter(hanging_indent_style = "always")
   expect_no_lint(
     trim_some("
@@ -357,7 +356,6 @@ test_that("function argument indentation works in always-hanging-style", {
     linter
   )
 })
-# nofuzz end
 
 test_that("indentation with operators works", {
   linter <- indentation_linter()
@@ -913,4 +911,4 @@ test_that("for loop gets correct linting", {
     linter
   )
 })
-# nofuzz end
+# fuzzer enable: comment_injection

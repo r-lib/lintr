@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 testthat::test_that("paren_body_linter returns correct lints", {
   linter <- paren_body_linter()
   lint_msg <- rex::rex("Put a space between a right parenthesis and a body expression.")
@@ -96,4 +96,4 @@ test_that("function shorthand is handled", {
 
   expect_lint("\\()test", lint_msg, linter)
 })
-# nofuzz end
+# fuzzer enable: comment_injection

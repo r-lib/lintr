@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: pipe
 test_that("pipe_consistency skips allowed usage", {
   skip_if_not_r_version("4.1.0")
   linter <- pipe_consistency_linter()
@@ -161,4 +161,4 @@ test_that("pipe_consistency_linter works with other magrittr pipes", {
     linter
   )
 })
-# nofuzz end
+# fuzzer enable: pipe

@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: assignment
 test_that("assignment_linter skips allowed usages", {
   linter <- assignment_linter()
 
@@ -67,7 +67,7 @@ test_that("arguments handle <<- and ->/->> correctly", {
   )
 })
 
-test_that("arguments handle trailing assignment operators correctly", {
+test_that("arguments handle trailing assignment operators correctly", { # nofuzz: comment_injection
   linter_default <- assignment_linter()
   linter_no_trailing <- assignment_linter(allow_trailing = FALSE)
   expect_no_lint("x <- y", linter_no_trailing)
@@ -391,4 +391,4 @@ test_that("implicit '<-' assignments inside calls are ignored where top-level '<
   expect_no_lint("for (i in foo(idx <- is.na(y))) which(idx)", linter)
   expect_no_lint("for (i in foo(bar(idx <- is.na(y)))) which(idx)", linter)
 })
-# nofuzz end
+# fuzzer enable: assignment

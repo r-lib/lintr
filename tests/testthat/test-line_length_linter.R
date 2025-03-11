@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("line_length_linter skips allowed usages", {
   linter <- line_length_linter(80L)
 
@@ -72,4 +72,4 @@ test_that("Multiple lints give custom messages", {
     line_length_linter(5L)
   )
 })
-# nofuzz end
+# fuzzer enable: comment_injection

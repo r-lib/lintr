@@ -406,7 +406,7 @@ test_that("find_new_line returns the correct line if it is after the current lin
 
 #
 
-test_that("lint with cache uses the provided relative cache directory", { # nofuzz
+test_that("lint with cache uses the provided relative cache directory", { # nofuzz: assignment
   path <- withr::local_tempdir("my_cache_dir")
   linter <- assignment_linter()
 
@@ -420,7 +420,7 @@ test_that("lint with cache uses the provided relative cache directory", { # nofu
   expect_true(dir.exists(path))
 })
 
-test_that("it works outside of a package", { # nofuzz
+test_that("it works outside of a package", { # nofuzz: assignment
   linter <- assignment_linter()
 
   local_mocked_bindings(find_package = function(...) NULL)
