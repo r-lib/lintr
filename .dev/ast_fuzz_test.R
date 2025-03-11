@@ -92,7 +92,7 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
       stop("Unable to parse any expression starting from line ", one_line)
     }
     comment_txt <- subset(pd, line1 == one_line & token == "COMMENT", select = "text", drop = TRUE)
-    deactivated <- get_str(comment_text)
+    deactivated <- get_str(comment_txt)
     test_lines <- c(
       head(test_lines, one_line - 1L),
       sprintf("deactivate_fuzzers('%s')", deactivated),
@@ -171,3 +171,5 @@ if (length(invalid_failures) > 0L) {
   print(invalid_failures)
   stop("Fix any bugs, or use '# nofuzz'/'# fuzzer [dis|en]able' to mark false positives.")
 }
+
+browser()
