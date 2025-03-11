@@ -157,7 +157,7 @@ for (test in reporter$get_results()) {
 if (length(invalid_failures) > 0L) {
   names(invalid_failures) <- vapply(
     invalid_failures,
-    \(x) sprintf("%s:%s", x$file, x$test)
+    \(x) sprintf("%s:%s", x$file, x$test),
     character(1L)
   )
   cat("Some fuzzed tests failed unexpectedly!\n")
