@@ -143,17 +143,23 @@ print(table(all_classes))
 #   'expect_lint()' with new code to ignore these attributes (this latter we might explore later).
 invalid_failures <- list()
 for (test in reporter$get_results()) {
+  current_file <- test$file
   for (res in test$results) {
     if (!inherits(res, "expectation_failure")) next
 
     # line_number is for the comment injection fuzzer, which adds newlines.
     if (grepl("(column_number|ranges|line|line_number) .* did not match", res$message)) next
+    res$file <- current_file
     invalid_failures <- c(invalid_failures, list(res))
   }
 }
 
 if (length(invalid_failures) > 0L) {
-  names(invalid_failures) <- vapply(invalid_failures, `[[`, "test", FUN.VALUE = character(1L))
+  names(invalid_failures) <- vapply(
+    invalid_failures,
+    \(x) sprintf("%s:%s", x$file, x$test)
+    character(1L)
+  )
   cat("Some fuzzed tests failed unexpectedly!\n")
   print(invalid_failures)
   stop("Use # nofuzz [start|end] to mark false positives or fix any bugs.")
