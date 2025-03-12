@@ -146,7 +146,7 @@ test_that("lint() results from file or text should be consistent", {
   expect_identical(lint_from_file, lint_from_text)
 })
 
-test_that("exclusions work with custom linter names", { # nofuzz: assignment
+test_that("exclusions work with custom linter names", { # nofuzz: assignment comment_injection
   expect_no_lint(
     "a = 2 # nolint: bla.",
     linters = list(bla = assignment_linter()),

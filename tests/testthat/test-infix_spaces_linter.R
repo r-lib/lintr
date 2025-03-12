@@ -213,7 +213,7 @@ test_that("parse tags are accepted by exclude_operators", { # nofuzz: assignment
   expect_lint(text, list(col_formals, col_sub), infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
 })
 
-test_that("lints vectorize", {
+test_that("lints vectorize", { # nofuzz: assignment
   lint_msg <- rex::rex("Put spaces around all infix operators.")
 
   expect_lint(
