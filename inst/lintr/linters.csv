@@ -6,6 +6,7 @@ assignment_linter,style consistency default configurable
 backport_linter,robustness configurable package_development
 boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
+cbind_dataframe_linter,readability efficiency
 class_equals_linter,best_practices robustness consistency
 coalesce_linter,readability consistency best_practices
 commas_linter,style readability default configurable
