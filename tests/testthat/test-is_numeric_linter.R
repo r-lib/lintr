@@ -47,7 +47,7 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
   )
 
   # nor do comments
-  expect_lint(
+  expect_lint( # nofuzz: dollar_at
     trim_some("
       is.integer(DT$ #comment
       x) || is.numeric(DT$x)
