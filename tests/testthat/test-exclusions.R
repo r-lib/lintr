@@ -56,7 +56,7 @@ test_that("it gives the expected error message when there is mismatch between mu
   )
 })
 
-test_that("partial matching works for exclusions but warns if no linter found", { # nofuzz: assignment
+test_that("partial matching works for exclusions but warns if no linter found", { # nofuzz: assignment comment_injection
   lintr:::read_settings(NULL)
 
   expect_warning(

@@ -154,8 +154,7 @@ all_classes <- unlist(lapply(
   reporter$get_results(),
   \(test) lapply(test$results, \(x) class(x)[1L])
 ))
-cat("Summary of test statuses:\n")
-print(table(all_classes))
+print(table(`Summary of test statuses:` = all_classes))
 
 # ignore any test that failed for expected reasons, e.g. some known lint metadata changes
 #   about line numbers or the contents of the line. this saves us having to pepper tons of
