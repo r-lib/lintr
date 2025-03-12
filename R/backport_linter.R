@@ -2,7 +2,8 @@
 #'
 #' Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 #'
-#' @param r_version Minimum R version to test for compatibility
+#' @param r_version Minimum R version to test for compatibility. Defaults to
+#'  the R version currently in use.
 #' @param except Character vector of functions to be excluded from linting.
 #'  Use this to list explicitly defined backports, e.g. those imported from the `{backports}` package or manually
 #'  defined in your package.
