@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: assignment
 test_that("assignment_linter skips allowed usages", {
   linter <- assignment_linter()
 
@@ -67,6 +67,7 @@ test_that("arguments handle <<- and ->/->> correctly", {
   )
 })
 
+# fuzzer disable: comment_injection
 test_that("arguments handle trailing assignment operators correctly", {
   linter_default <- assignment_linter()
   linter_no_trailing <- assignment_linter(allow_trailing = FALSE)
@@ -213,6 +214,7 @@ test_that("allow_trailing interacts correctly with comments in braced expression
     linter
   )
 })
+# fuzzer enable: comment_injection
 
 test_that("%<>% throws a lint", {
   expect_lint("x %<>% sum()", "Avoid the assignment pipe %<>%", assignment_linter())
@@ -391,4 +393,4 @@ test_that("implicit '<-' assignments inside calls are ignored where top-level '<
   expect_no_lint("for (i in foo(idx <- is.na(y))) which(idx)", linter)
   expect_no_lint("for (i in foo(bar(idx <- is.na(y)))) which(idx)", linter)
 })
-# nofuzz end
+# fuzzer enable: assignment

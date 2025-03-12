@@ -120,7 +120,7 @@ test_that("it handles asciidoc", {
   )
 })
 
-test_that("it does _not_ handle brew", { # nofuzz
+test_that("it does _not_ handle brew", { # nofuzz: comment_injection
   expect_lint("'<% a %>'\n",
     checks = list(
       regexes[["quotes"]],

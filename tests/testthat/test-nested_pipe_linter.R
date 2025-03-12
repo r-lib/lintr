@@ -14,7 +14,7 @@ test_that("nested_pipe_linter skips allowed usages", {
   )
 
   # pipes fitting on one line can be ignored
-  expect_no_lint( # nofuzz
+  expect_no_lint( # nofuzz: comment_injection
     "bind_rows(a %>% select(b), c %>% select(b))",
     linter
   )
@@ -25,7 +25,7 @@ test_that("nested_pipe_linter skips allowed usages", {
   expect_no_lint("switch(x, a = x, x %>% foo())", linter)
 
   # inline switch inputs are not linted
-  expect_no_lint( # nofuzz
+  expect_no_lint( # nofuzz: comment_injection
     trim_some("
       switch(
         x %>% foo(),
@@ -128,7 +128,7 @@ test_that("Native pipes are handled as well", {
   linter_inline <- nested_pipe_linter(allow_inline = FALSE)
   lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
-  expect_no_lint( # nofuzz
+  expect_no_lint( # nofuzz: comment_injection
     "bind_rows(a |> select(b), c |> select(b))",
     linter
   )
@@ -150,7 +150,7 @@ test_that("Native pipes are handled as well", {
   )
 })
 
-test_that("lints vectorize", { # nofuzz
+test_that("lints vectorize", { # nofuzz: comment_injection
   lint_msg <- rex::rex("Don't nest pipes inside other calls.")
 
   lines <- trim_some("{

@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: assignment
 test_that("implicit_assignment_linter skips allowed usages", {
   linter <- implicit_assignment_linter()
 
@@ -504,4 +504,4 @@ test_that("call-less '(' mentions avoiding implicit printing", {
     linter
   )
 })
-# nofuzz end
+# fuzzer enable: assignment

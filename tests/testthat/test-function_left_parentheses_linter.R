@@ -7,7 +7,7 @@ test_that("function_left_parentheses_linter skips allowed usages", {
   expect_no_lint("base::print(blah)", linter)
   expect_no_lint('base::"print"(blah)', linter)
   expect_no_lint("base::print(blah, fun(1))", linter)
-  expect_no_lint("blah <- function(blah) { }", linter) # nofuzz
+  expect_no_lint("blah <- function(blah) { }", linter) # nofuzz: comment_injection
   expect_no_lint("(1 + 1)", linter)
   expect_no_lint("( (1 + 1) )", linter)
   expect_no_lint("if (blah) { }", linter)
@@ -18,9 +18,9 @@ test_that("function_left_parentheses_linter skips allowed usages", {
   expect_no_lint("c(1, 2, 3)[(2 - 1)]", linter)
   expect_no_lint("list(1, 2, 3)[[(2 - 1)]]", linter)
   expect_no_lint("range(10)[(2 - 1):(10 - 1)]", linter)
-  expect_no_lint("function(){function(){}}()()", linter) # nofuzz
-  expect_no_lint("c(function(){})[1]()", linter) # nofuzz
-  expect_no_lint("function(x) (mean(x) + 3)", linter) # nofuzz
+  expect_no_lint("function(){function(){}}()()", linter) # nofuzz: comment_injection
+  expect_no_lint("c(function(){})[1]()", linter) # nofuzz: comment_injection
+  expect_no_lint("function(x) (mean(x) + 3)", linter) # nofuzz: comment_injection
   expect_no_lint('"blah (1)"', linter)
 })
 
@@ -197,7 +197,7 @@ test_that("newline in character string doesn't trigger false positive (#1963)", 
   )
 })
 
-test_that("shorthand functions are handled", { # nofuzz
+test_that("shorthand functions are handled", { # nofuzz: comment_injection
   skip_if_not_r_version("4.1.0")
   linter <- function_left_parentheses_linter()
   fun_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function definition.")
