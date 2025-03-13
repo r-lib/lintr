@@ -46,8 +46,16 @@ lint(
   linters = backport_linter("3.2.0", except = "str2lang")
 )
 
+# Version aliases instead of numbers can also be passed to `r_version`
+# lints
 lint(
-  text = "mean(x)",
+  text = "str2lang('x')",
+  linters = backport_linter("3.5.0")
+)
+
+# ok
+lint(
+  text = "str2lang('x')",
   linters = backport_linter("release")
 )
 
