@@ -8,24 +8,24 @@
 #' # will produce lints
 #' lint(
 #'   text = "do.call(cbind.data.frame, x)",
-#'   linters = cbind_dataframe_linter()
+#'   linters = list2df_linter()
 #' )
 #'
 #' # okay
 #' lint(
-#'   text = "list2DF(x)",
-#'   linters = cbind_dataframe_linter()
+#'   text = "list2df(x)",
+#'   linters = list2df_linter()
 #' )
 #'
 #' lint(
 #'   text = "data.frame(list(letters, LETTERS))",
-#'   linters = cbind_dataframe_linter()
+#'   linters = list2df_linter()
 #' )
 #'
-#' @evalRd rd_tags("cbind_dataframe_linter")
+#' @evalRd rd_tags("list2df_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-cbind_dataframe_linter <- make_linter_from_function_xpath(
+list2df_linter <- make_linter_from_function_xpath(
   function_names = "do.call",
   xpath = "./following-sibling::expr[1]/SYMBOL[text() = 'cbind.data.frame']",
   lint_message = paste0(

@@ -44,7 +44,6 @@ The following linters exist:
 \item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
 \item{\code{\link{boolean_arithmetic_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
-\item{\code{\link{cbind_dataframe_linter}} (tags: efficiency, readability)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
 \item{\code{\link{coalesce_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{commas_linter}} (tags: configurable, default, readability, style)}
@@ -89,6 +88,7 @@ The following linters exist:
 \item{\code{\link{lengths_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{library_call_linter}} (tags: best_practices, configurable, readability, style)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
+\item{\code{\link{list2df_linter}} (tags: efficiency, readability)}
 \item{\code{\link{list_comparison_linter}} (tags: best_practices, common_mistakes)}
 \item{\code{\link{literal_coercion_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{matrix_apply_linter}} (tags: efficiency, readability)}
