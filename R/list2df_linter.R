@@ -35,7 +35,7 @@ list2df_linter <- make_linter_from_function_xpath(
   xpath = "./following-sibling::expr[1]/SYMBOL[text() = 'cbind.data.frame']",
   lint_message = paste0(
     "Instead of `do.call(cbind.data.frame, lst)`, use `data.frame(lst)`, ",
-    "or `list2DF(lst)` if available and recyclying is not required"
+    "or `list2DF(lst)` if recyclying is not required"
   ),
   type = "warning",
   level = "expression"
