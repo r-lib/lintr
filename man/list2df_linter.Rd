@@ -19,6 +19,11 @@ lint(
 )
 
 lint(
+  text = "do.call('cbind.data.frame', x)",
+  linters = list2df_linter()
+)
+
+lint(
   text = "do.call(cbind.data.frame, list(a = 1, b = 1:10))",
   linters = list2df_linter()
 )
