@@ -30,13 +30,24 @@
 #' @evalRd rd_tags("list2df_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-list2df_linter <- make_linter_from_function_xpath(
-  function_names = "do.call",
-  xpath = "./following-sibling::expr[1]/SYMBOL[text() = 'cbind.data.frame']",
-  lint_message = paste0(
-    "Instead of `do.call(cbind.data.frame, lst)`, use `data.frame(lst)`, ",
-    "or `list2DF(lst)` if recyclying is not required"
-  ),
-  type = "warning",
-  level = "expression"
-)
+list2df_linter <- function() {
+  xpath <- "following-sibling::expr[1][
+    SYMBOL/text() = 'cbind.data.frame'
+  ]/parent::expr"
+
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+    xml_calls <- source_expression$xml_find_function_calls("do.call")
+
+    bad_expr <- xml_find_all(xml_calls, xpath)
+    xml_nodes_to_lints(
+      bad_expr,
+      source_expression = source_expression,
+      lint_message = paste0(
+        "Instead of `do.call(cbind.data.frame, lst)`, use `data.frame(lst)`, ",
+        "or `list2DF(lst)` if recyclying is not required"
+      ),
+      type = "warning"
+    )
+  })
+}
