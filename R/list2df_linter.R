@@ -12,6 +12,11 @@
 #' )
 #'
 #' lint(
+#'   text = "do.call('cbind.data.frame', x)",
+#'   linters = list2df_linter()
+#' )
+#'
+#' lint(
 #'   text = "do.call(cbind.data.frame, list(a = 1, b = 1:10))",
 #'   linters = list2df_linter()
 #' )
@@ -31,15 +36,14 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 list2df_linter <- function() {
-  xpath <- "following-sibling::expr[1][
-    SYMBOL/text() = 'cbind.data.frame'
-  ]/parent::expr"
-
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     xml_calls <- source_expression$xml_find_function_calls("do.call")
 
-    bad_expr <- xml_find_all(xml_calls, xpath)
+    bad_expr <- xml_calls[
+      get_r_string(xml_calls, "following-sibling::expr[1][SYMBOL or STR_CONST]") == "cbind.data.frame"
+    ]
+
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
