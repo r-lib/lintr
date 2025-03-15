@@ -18,6 +18,11 @@ lint(
   linters = list2df_linter()
 )
 
+lint(
+  text = "do.call(cbind.data.frame, list(a = 1, b = 1:10))",
+  linters = list2df_linter()
+)
+
 # okay
 lint(
   text = "list2df(x)",
@@ -25,7 +30,7 @@ lint(
 )
 
 lint(
-  text = "data.frame(list(letters, LETTERS))",
+  text = "data.frame(list(a = 1, b = 1:10))",
   linters = list2df_linter()
 )
 
