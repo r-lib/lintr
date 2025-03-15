@@ -37,7 +37,6 @@
 #' @export
 list2df_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
     xml_calls <- source_expression$xml_find_function_calls("do.call")
 
     bad_expr <- xml_calls[
