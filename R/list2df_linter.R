@@ -1,8 +1,7 @@
 #' Recommend direct usage of `data.frame()` to create a data.frame from a list
 #'
-#' It is possible to create a data.frame from a list of columns with `data.frame()`
-#' or `list2DF()` (since \R 4.0.0 and if recycling is not required), rather than
-#' iteratively adding columns with `cbind()`.
+#' [list2DF()] is the preferred way to turn a list of columns into a data.frame.
+#'   Note that it doesn't support recycling; if that's required, use [data.frame()].
 #'
 #' @examples
 #' # will produce lints
@@ -46,9 +45,9 @@ list2df_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = paste0(
-        "Instead of `do.call(cbind.data.frame, lst)`, use `data.frame(lst)`, ",
-        "or `list2DF(lst)` if recyclying is not required"
+      lint_message = paste(
+        "Use `list2DF(lst)` instead of `do.call(cbind.data.frame, lst)`.",
+        "If recycling is required, use `data.frame(lst)`."
       ),
       type = "warning"
     )

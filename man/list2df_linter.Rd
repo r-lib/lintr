@@ -7,9 +7,8 @@
 list2df_linter()
 }
 \description{
-It is possible to create a data.frame from a list of columns with \code{data.frame()}
-or \code{list2DF()} (since \R 4.0.0 and if recycling is not required), rather than
-iteratively adding columns with \code{cbind()}.
+\code{\link[=list2DF]{list2DF()}} is the preferred way to turn a list of columns into a data.frame.
+Note that it doesn't support recycling; if that's required, use \code{\link[=data.frame]{data.frame()}}.
 }
 \examples{
 # will produce lints
