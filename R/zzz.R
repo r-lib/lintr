@@ -26,6 +26,7 @@ default_linters <- modify_defaults(
   object_name_linter(),
   object_usage_linter(),
   paren_body_linter(),
+  pipe_consistency_linter(),
   pipe_continuation_linter(),
   quotes_linter(),
   return_linter(),
