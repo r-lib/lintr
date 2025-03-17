@@ -65,7 +65,9 @@
 
 
 <dl><dt id="arg-r-version">r_version<a class="anchor" aria-label="anchor" href="#arg-r-version"></a></dt>
-<dd><p>Minimum R version to test for compatibility</p></dd>
+<dd><p>Minimum R version to test for compatibility. Defaults to
+the R version currently in use. The version can be specified as a version
+number, or as a version alias (such as <code>"devel"</code>, <code>"oldrel"</code>, <code>"oldrel-1"</code>).</p></dd>
 
 
 <dt id="arg-except">except<a class="anchor" aria-label="anchor" href="#arg-except"></a></dt>
@@ -102,6 +104,14 @@ defined in your package.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> str2lang(x)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"deparse1(expr)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">backport_linter</span><span class="op">(</span><span class="st">"3.6.0"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[backport_linter] <span style="font-weight: bold;">deparse1 (R 4.0.0) is not available for dependency R &gt;= 3.6.0.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> deparse1(expr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~~~~</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"trimws(x)"</span>,</span></span>
@@ -111,13 +121,14 @@ defined in your package.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"str2lang(x)"</span>,</span></span>
-<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">backport_linter</span><span class="op">(</span><span class="st">"4.0.0"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">backport_linter</span><span class="op">(</span><span class="st">"3.2.0"</span>, except <span class="op">=</span> <span class="st">"str2lang"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Version aliases instead of numbers can also be passed to `r_version`</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"str2lang(x)"</span>,</span></span>
-<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">backport_linter</span><span class="op">(</span><span class="st">"3.2.0"</span>, except <span class="op">=</span> <span class="st">"str2lang"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"deparse1(expr)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">backport_linter</span><span class="op">(</span><span class="st">"release"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
