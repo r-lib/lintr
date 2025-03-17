@@ -13,7 +13,7 @@ Supports on the fly checking of R code edited with Emacs, Vim, and Sublime Text.
 \code{\link[=lint]{lint()}}, \code{\link[=lint_package]{lint_package()}}, \code{\link[=lint_dir]{lint_dir()}}, \link{linters}
 }
 \author{
-\strong{Maintainer}: Michael Chirico \email{michaelchirico4@gmail.com}
+\strong{Maintainer}: Michael Chirico \email{michaelchirico4@gmail.com} (\href{https://orcid.org/0000-0003-0787-087X}{ORCID})
 
 Authors:
 \itemize{
@@ -23,6 +23,7 @@ Authors:
   \item Kun Ren
   \item Alexander Rosenstock (AshesITR)
   \item Indrajeet Patil \email{patilindrajeet.science@gmail.com} (\href{https://orcid.org/0000-0003-1995-6531}{ORCID}) (@patilindrajeets)
+  \item Hugo Gruson (\href{https://orcid.org/0000-0002-4094-1476}{ORCID})
 }
 
 }
