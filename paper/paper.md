@@ -1,6 +1,6 @@
 ---
 title: "Static Code Analysis for R"
-date: "2025-02-01"
+date: "2025-03-18"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
@@ -53,40 +53,41 @@ link-citations: true
 
 In computer programming, "linting" is the process of analyzing the
 source code to identify possible programming and stylistic problems
-[@enwiki:1260589258] and a linter is a tool used for linting. A linter
-analyzes code to identify potential errors, stylistic issues, or
-deviations from coding standards. It helps ensure consistency,
-readability, and best practices by flagging common mistakes, such as
-syntax errors, unused variables, or improper formatting. Linters are
-essential for improving code quality, preventing bugs, and maintaining a
-clean codebase, especially in collaborative development environments
-[@enwiki:1218663830]. `{lintr}` is an open-source package that provides
-linters for the R programming language, which is an interpreted,
-dynamically-typed programming language [@base2023], and is used by a
-wide range of researchers and data scientists. `{lintr}` can thus act as
-a valuable tool for R users to help improve the quality and reliability
-of their code.
+([Wikipedia contributors, 2024a](#ref-enwiki:1260589258)) and a linter
+is a tool used for linting. A linter analyzes code to identify potential
+errors, stylistic issues, or deviations from coding standards. It helps
+ensure consistency, readability, and best practices by flagging common
+mistakes, such as syntax errors, unused variables, or improper
+formatting. Linters are essential for improving code quality, preventing
+bugs, and maintaining a clean codebase, especially in collaborative
+development environments ([Wikipedia contributors,
+2024b](#ref-enwiki:1218663830)). `{lintr}` is an open-source package
+that provides linters for the R programming language, which is an
+interpreted, dynamically-typed programming language ([R Core Team,
+2023](#ref-base2023)), and is used by a wide range of researchers and
+data scientists. `{lintr}` can thus act as a valuable tool for R users
+to help improve the quality and reliability of their code.
 
 # Features
 
-By default, `{lintr}` enforces the tidyverse style guide
-[@Wickham2023,@Müller2024]. In this respect, it differs from other
-static code analysis tools in R (like `{codetools}` [@Tierney2024]),
-which are not opinionated and don't enforce any particular style of
-writing code, but, rather, check R code for possible problems
-(incidentally, `{lintr}` uses `{codetools}` as a backend for object
-usage linters). Additionally, `{lintr}` is concerned only with R code,
-so code-adjacent text like inline `{roxygen2}` comments
-[@Wickham2024roxy] will not be covered (cf. `{roxylint}`
-[@Kelkhoff2024]).
+By default, `{lintr}` enforces the tidyverse style guide Müller et al.
+([2024](#ref-Müller2024)). In this respect, it differs from other static
+code analysis tools in R (like `{codetools}` ([Tierney,
+2024](#ref-Tierney2024))), which are not opinionated and don't enforce
+any particular style of writing code, but, rather, check R code for
+possible problems (incidentally, `{lintr}` uses `{codetools}` as a
+backend for object usage linters). Additionally, `{lintr}` is concerned
+only with R code, so code-adjacent text like inline `{roxygen2}`
+comments ([Wickham et al., 2024](#ref-Wickham2024roxy)) will not be
+covered (cf. `{roxylint}` ([Kelkhoff, 2024](#ref-Kelkhoff2024))).
 
-As of this writing, `{lintr}` offers 113 linters.
+As of this writing, `{lintr}` offers 114 linters.
 
 ``` r
 library(lintr)
 
 length(all_linters())
-#> [1] 113
+#> [1] 114
 ```
 
 Naturally, we can't discuss all of them here. To see the most up-to-date
@@ -96,7 +97,7 @@ details about all the available linters, we encourage readers to visit
 We will showcase one linter for each kind of common problem found in R
 code.
 
--   **Best practices**
+- **Best practices**
 
 `{lintr}` offers linters that can detect problematic antipatterns and
 suggest alternatives that follow best practices.
@@ -126,7 +127,7 @@ lint(
 #> i No lints found.
 ```
 
--   **Efficiency**
+- **Efficiency**
 
 Sometimes users might not be aware of a more efficient way offered by R
 for carrying out a computation. `{lintr}` offers linters to improve code
@@ -159,12 +160,12 @@ lint(
 #> i No lints found.
 ```
 
--   **Readability**
+- **Readability**
 
 Coders spend significantly more time reading than writing code
-[@mcconnell2004code]. Thus, writing readable code makes the code more
-maintainable and reduces the possibility of introducing bugs stemming
-from a poor understanding of the code.
+([McConnell, 2004](#ref-mcconnell2004code)). Thus, writing readable code
+makes the code more maintainable and reduces the possibility of
+introducing bugs stemming from a poor understanding of the code.
 
 `{lintr}` provides a number of linters that suggest more readable
 alternatives. For example, `comparison_negation_linter()` blocks usages
@@ -192,11 +193,12 @@ lint(
 #> i No lints found.
 ```
 
--   **Tidyverse style**
+- **Tidyverse style**
 
 `{lintr}` also provides linters to enforce the style used throughout the
-`{tidyverse}` [@Wickham2019] ecosystem of R packages. This style of
-coding has been outlined in the tidyverse style guide [@Wickham2023].
+`{tidyverse}` ([Wickham et al., 2019](#ref-Wickham2019)) ecosystem of R
+packages. This style of coding has been outlined in the tidyverse style
+guide ([Wickham, 2023](#ref-Wickham2023)).
 
 For example, the style guide recommends using snake_case for
 identifiers:
@@ -220,7 +222,7 @@ lint(
 #> i No lints found.
 ```
 
--   **Common mistakes**
+- **Common mistakes**
 
 One category of linters helps you detect some common mistakes statically
 and provide early feedback.
@@ -281,10 +283,10 @@ l[names(l) == "x"]
 `{lintr}` is designed for extensibility by allowing users to easily
 create custom linting rules. There are two main ways to customize it:
 
--   Use additional arguments in existing linters. For example, although
-    tidyverse style guide prefers snake_case for identifiers, if a
-    project's conventions require it, the relevant linter can be
-    customized to support it:
+- Use additional arguments in existing linters. For example, although
+  tidyverse style guide prefers snake_case for identifiers, if a
+  project's conventions require it, the relevant linter can be
+  customized to support it:
 
 ``` r
 lint(
@@ -294,16 +296,18 @@ lint(
 #> i No lints found.
 ```
 
--   Create new linters (by leveraging functions like
-    `lintr::make_linter_from_xpath()`) tailored to match project- or
-    organization-specific coding standards.
+- Create new linters (by leveraging functions like
+  `lintr::make_linter_from_xpath()`) tailored to match project- or
+  organization-specific coding standards.
 
-Indeed, `{goodpractice}` [@Padgham2024] bundles a set of custom linters
-that are not part of the default set of `{lintr}` linters, while
-`{box.linters}` [@Basa2024] extends `{lintr}` to support `{box}` modules
-[@Rudolph2024] and `{checklist}` includes linters as one of the strict
-checks for R packages [@Onkelinx2024]. `{flint}` [@Bacher2024] is a
-Rust-backed analogue inspired by `{lintr}` that also provides support
+Indeed, `{goodpractice}` ([Padgham et al., 2024](#ref-Padgham2024))
+bundles a set of custom linters that are not part of the default set of
+`{lintr}` linters, while `{box.linters}` ([Basa & Nowicki,
+2024](#ref-Basa2024)) extends `{lintr}` to support `{box}` modules
+([Rudolph, 2024](#ref-Rudolph2024)) and `{checklist}` includes linters
+as one of the strict checks for R packages ([Onkelinx,
+2024](#ref-Onkelinx2024)). `{flir}` ([Bacher, 2024](#ref-Bacher2024)) is
+a Rust-backed analogue inspired by `{lintr}` that also provides support
 for fixing lints.
 
 # Benefits of using `{lintr}`
@@ -372,3 +376,89 @@ language and we are deeply indebted to them. We are also grateful to all
 contributors to `{lintr}`.
 
 # References {#references .unnumbered}
+
+:::::::::::::::::: {#refs .references .csl-bib-body .hanging-indent entry-spacing="0" line-spacing="2"}
+::: {#ref-Bacher2024 .csl-entry}
+Bacher, E. (2024). *Flint: Find and fix lints in R code*.
+<https://flint.etiennebacher.com>
+:::
+
+::: {#ref-Basa2024 .csl-entry}
+Basa, R. R., & Nowicki, J. (2024). *Box.linters: Linters for 'box'
+modules*. <https://CRAN.R-project.org/package=box.linters>
+:::
+
+::: {#ref-Kelkhoff2024 .csl-entry}
+Kelkhoff, D. (2024). *Roxylint: Lint 'roxygen2'-generated
+documentation*. <https://CRAN.R-project.org/package=roxylint>
+:::
+
+::: {#ref-mcconnell2004code .csl-entry}
+McConnell, S. (2004). *Code complete*. Pearson Education.
+:::
+
+::: {#ref-Müller2024 .csl-entry}
+Müller, K., Walthert, L., & Patil, I. (2024). *Styler: Non-invasive
+pretty printing of r code*. <https://github.com/r-lib/styler>
+:::
+
+::: {#ref-Onkelinx2024 .csl-entry}
+Onkelinx, T. (2024). *Checklist: A thorough and strict set of checks for
+R packages and source code. Version 0.4.0*.
+<https://doi.org/10.5281/zenodo.4028303>
+:::
+
+::: {#ref-Padgham2024 .csl-entry}
+Padgham, M., Marks, K., de Bortoli, D., Csardi, G., Frick, H., Jones,
+O., & Alexander, H. (2024). *Goodpractice: Advice on r package
+building*. <https://docs.ropensci.org/goodpractice/>
+:::
+
+::: {#ref-base2023 .csl-entry}
+R Core Team. (2023). *R: A language and environment for statistical
+computing*. R Foundation for Statistical Computing.
+<https://www.R-project.org/>
+:::
+
+::: {#ref-Rudolph2024 .csl-entry}
+Rudolph, K. (2024). *Box: Write reusable, composable and modular R
+code*. <https://CRAN.R-project.org/package=box>
+:::
+
+::: {#ref-Tierney2024 .csl-entry}
+Tierney, L. (2024). *Codetools: Code analysis tools for r*.
+<https://CRAN.R-project.org/package=codetools>
+:::
+
+::: {#ref-Wickham2023 .csl-entry}
+Wickham, H. (2023). *The tidyverse style guide*.
+<https://style.tidyverse.org/index.html>
+:::
+
+::: {#ref-Wickham2019 .csl-entry}
+Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D.,
+François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M.,
+Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J.,
+Robinson, D., Seidel, D. P., Spinu, V., ... Yutani, H. (2019). Welcome
+to the [tidyverse]{.nocase}. *Journal of Open Source Software*, *4*(43),
+1686. <https://doi.org/10.21105/joss.01686>
+:::
+
+::: {#ref-Wickham2024roxy .csl-entry}
+Wickham, H., Danenberg, P., Csárdi, G., & Eugster, M. (2024). *roxygen2:
+In-line documentation for R*.
+<https://CRAN.R-project.org/package=roxygen2>
+:::
+
+::: {#ref-enwiki:1260589258 .csl-entry}
+Wikipedia contributors. (2024a). *Lint (software) --- Wikipedia, the
+free encyclopedia*.
+<https://en.wikipedia.org/w/index.php?title=Lint_(software)&oldid=1260589258>
+:::
+
+::: {#ref-enwiki:1218663830 .csl-entry}
+Wikipedia contributors. (2024b). *Static program analysis --- Wikipedia,
+the free encyclopedia*.
+<https://en.wikipedia.org/w/index.php?title=Static_program_analysis&oldid=1218663830>
+:::
+::::::::::::::::::
