@@ -7,6 +7,9 @@ test_that("list2df_linter skips allowed usages", {
 
   # Other cbind methods
   expect_no_lint("do.call(cbind, x)", linter)
+
+  # Anonymous function
+  expect_no_lint("do.call(function(x) x, l)", linter)
 })
 
 test_that("list2df_linter blocks simple disallowed usages", {
