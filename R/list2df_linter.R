@@ -45,8 +45,10 @@ list2df_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     xml_calls <- xml_find_all(xml, docall_nolambda_xpath)
+    docall_fun <- get_r_string(xml_calls)
+
     bad_expr <- xml_calls[
-      get_r_string(xml_calls) == "cbind.data.frame"
+      !is.na(docall_fun) & docall_fun == "cbind.data.frame"
     ]
 
     xml_nodes_to_lints(
