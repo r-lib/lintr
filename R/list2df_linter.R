@@ -35,11 +35,18 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 list2df_linter <- function() {
-  Linter(linter_level = "expression", function(source_expression) {
-    xml_calls <- source_expression$xml_find_function_calls("do.call")
 
+  docall_nolambda_xpath <- "
+  //SYMBOL_FUNCTION_CALL[text() = 'do.call']
+    /parent::expr
+    /following-sibling::expr[1][SYMBOL or STR_CONST]
+  "
+
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+    xml_calls <- xml_find_all(xml, docall_nolambda_xpath)
     bad_expr <- xml_calls[
-      get_r_string(xml_calls, "following-sibling::expr[1][SYMBOL or STR_CONST]") == "cbind.data.frame"
+      get_r_string(xml_calls) == "cbind.data.frame"
     ]
 
     xml_nodes_to_lints(
