@@ -302,7 +302,7 @@ Indeed, `{goodpractice}` [@Padgham2024] bundles a set of custom linters
 that are not part of the default set of `{lintr}` linters, while
 `{box.linters}` [@Basa2024] extends `{lintr}` to support `{box}` modules
 [@Rudolph2024] and `{checklist}` includes linters as one of the strict
-checks for R packages [@Onkelinx2024]. `{flint}` [@Bacher2024] is a
+checks for R packages [@Onkelinx2024]. `{flir}` [@Bacher2024] is a
 Rust-backed analogue inspired by `{lintr}` that also provides support
 for fixing lints.
 
