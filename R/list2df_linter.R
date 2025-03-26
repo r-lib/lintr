@@ -49,7 +49,7 @@ list2df_linter <- function() {
     ]
 
     xml_nodes_to_lints(
-      xml_find_all(bad_expr, "./parent::expr[1]"),
+      xml2::xml_parent(bad_expr),
       source_expression = source_expression,
       lint_message = paste(
         "Use `list2DF(lst)` instead of `do.call(cbind.data.frame, lst)`.",
