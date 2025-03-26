@@ -36,19 +36,16 @@
 #' @export
 list2df_linter <- function() {
 
-  docall_nolambda_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'do.call']
-    /parent::expr
-    /following-sibling::expr[1][SYMBOL or STR_CONST]
-  "
-
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    xml_calls <- xml_find_all(xml, docall_nolambda_xpath)
-    docall_fun <- get_r_string(xml_calls)
+    xml_calls <- source_expression$xml_find_function_calls("do.call")
 
-    bad_expr <- xml_calls[
-      !is.na(docall_fun) & docall_fun == "cbind.data.frame"
+    xml_calls_nolambda <- xml_find_all(
+      xml_calls,
+      "./following-sibling::expr[1][SYMBOL or STR_CONST]"
+    )
+
+    bad_expr <- xml_calls_nolambda[
+      get_r_string(xml_calls_nolambda) == "cbind.data.frame"
     ]
 
     xml_nodes_to_lints(
