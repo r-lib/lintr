@@ -22,6 +22,7 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{length_test_linter}}}
 \item{\code{\link{lengths_linter}}}
+\item{\code{\link{list2df_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{matrix_apply_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}

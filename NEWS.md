@@ -33,6 +33,7 @@
 
 ### New linters
 
+* `lint2df_linter()` encourages the use of the `list2DF()` function, or the `data.frame()` function when recycling is required, over the slower and less readable `do.call(cbind.data.frame, )` alternative (#2834, @Bisaloo).
 * `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.
 
 ### Lint accuracy fixes: removing false positives
@@ -303,7 +304,7 @@
 
 ## Bug fixes
 
-* `linters_with_tags()` now includes the previously missing spaces around "and" when listing missing linters advertised by `available_linters()`. 
+* `linters_with_tags()` now includes the previously missing spaces around "and" when listing missing linters advertised by `available_linters()`.
   This error message may appear e.g. when you update lintr to a version with new linters but don't restart your R session (#1946, @Bisaloo)
 
 * `fixed_regex_linter()` is more robust to errors stemming from unrecognized escapes (#1545, #1845, @IndrajeetPatil).
@@ -357,7 +358,7 @@
   the style guide on handling this case awaits clarification: https://github.com/tidyverse/style/issues/191.
   (#1346, @MichaelChirico)
 
-* `undesirable_function_linter()` and `undesirable_operator_linter()` now produce an error 
+* `undesirable_function_linter()` and `undesirable_operator_linter()` now produce an error
   if empty vector of undesirable functions or operators is provided (#1867, @IndrajeetPatil).
 
 * New linters which are also included as defaults (see "New linters" for more details):
@@ -411,7 +412,7 @@
 
 * `all_linters()` function provides an easy way to access all available linters (#1843, @IndrajeetPatil)
 
-* `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil). 
+* `missing_argument_linter()` allows missing arguments in `quote()` calls (#1889, @IndrajeetPatil).
 
 * `get_source_expressions()` correctly extracts indented code chunks from R Markdown documents, which helps avoid spurious lints related to whitespace (#1945, @MichaelChirico). The convention taken is that, within each chunk, all code is anchored relative to the leftmost non-whitespace column.
 
@@ -452,7 +453,7 @@
 
 * `indentation_linter()` for checking that the indentation conforms to 2-space Tidyverse-style (@AshesITR and @dgkf, #1411, #1792, #1898).
 
-* `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single 
+* `unnecessary_nested_if_linter()` for checking unnecessary nested `if` statements where a single
   `if` statement with appropriate conditional expression would suffice (@IndrajeetPatil and @AshesITR, #1778).
 
 * `implicit_assignment_linter()` for checking implicit assignments in function calls (@IndrajeetPatil and @AshesITR, #1777).
@@ -473,17 +474,17 @@
   `marginformat` from {tufte} or `theorem` from {bookdown}, note that those engines must be registered
   in {knitr} prior to running `lint()` in order for {lintr} to behave as expected, i.e., they should be
   shown as part of `knitr::knit_engines$get()`.
-  
+
   For {tufte} and {bookdown} in particular, one only needs to load the package namespace to accomplish
   this (i.e., minimally `loadNamespace("tufte")` or `loadNamespace("bookdown")`, respectively, will
   register those packages' custom engines; since `library()` also runs `loadNamespace()`, running
   `library()` will also work). Note further that {tufte} only added this code to their `.onLoad()` recently
   after our request to do so (see https://github.com/rstudio/tufte/issues/117). Therefore, ensure you're using a
   more recent version to get the behavior described here for {tufte}.
-  
+
   More generally, there is no requirement that `loadNamespace()` will register a package's custom {knitr}
   engines, so you may need to work with other package authors to figure out a solution for other engines.
-  
+
   Thanks to Yihui and other developers for their helpful discussions around this issue (#797, @IndrajeetPatil).
 
 * The output of `lint()` and `Lint()` gain S3 class `"list"` to assist with S3 dispatch (#1494, @MichaelChirico)
@@ -508,23 +509,23 @@ works when passed to the `styles` parameter (#1924, @hedsnz).
 
 ## Changes to defaults
 
-* `brace_linter()` allows opening curly braces on a new line when there is 
+* `brace_linter()` allows opening curly braces on a new line when there is
   a comment ending the preceding line (#1433 and #1434, @IndrajeetPatil).
 
-* `seq_linter()` produces lint for `seq(...)`, since it also cannot properly 
+* `seq_linter()` produces lint for `seq(...)`, since it also cannot properly
   handle empty edge cases (#1468, @IndrajeetPatil).
 
-* `seq_linter()` additionally lints on `1:n()` (from {dplyr}) 
+* `seq_linter()` additionally lints on `1:n()` (from {dplyr})
   and `1:.N` (from {data.table}) (#1396, @IndrajeetPatil).
 
-* `literal_coercion_linter()` lints {rlang}'s atomic vector constructors 
-  (i.e., `int()`, `chr()`, `lgl()`, and `dbl()`) if the argument is a scalar 
+* `literal_coercion_linter()` lints {rlang}'s atomic vector constructors
+  (i.e., `int()`, `chr()`, `lgl()`, and `dbl()`) if the argument is a scalar
   (#1437, @IndrajeetPatil).
 
-* `redundant_ifelse_linter()`'s lint message correctly suggests negation when 
+* `redundant_ifelse_linter()`'s lint message correctly suggests negation when
   the `yes` condition is `0` (#1432, @IndrajeetPatil).
 
-* `seq_linter()` provides more specific replacement code in lint message 
+* `seq_linter()` provides more specific replacement code in lint message
   (#1475, @IndrajeetPatil).
 
 ## New and improved features
@@ -536,8 +537,8 @@ works when passed to the `styles` parameter (#1924, @hedsnz).
 * New `function_argument_linter()` to enforce that arguments with defaults appear last in function declarations,
   see the [Tidyverse design guide](https://design.tidyverse.org/required-no-defaults.html) (#450, @AshesITR).
 
-* New `allow_trailing` argument added to `assignment_linter()` to check when assignment operators are at the 
-  end of a line, and the value is on the following line (#1491, @ashbaldry) 
+* New `allow_trailing` argument added to `assignment_linter()` to check when assignment operators are at the
+  end of a line, and the value is on the following line (#1491, @ashbaldry)
 
 * New `sarif_output()` function to output lints to SARIF output (#1424, @shaopeng-gh)
 
@@ -548,15 +549,15 @@ works when passed to the `styles` parameter (#1924, @hedsnz).
 
 * `object_length_linter()` does not fail in case there are dependencies with no exports (e.g. data-only packages) (#1424, #1509, @IndrajeetPatil).
 * `get_source_expressions()` no longer fails on R files that match a knitr pattern (#743, #879, #1406, @AshesITR).
-* Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).  
+* Parse error lints now appear with the linter name `"error"` instead of `NA` (#1405, @AshesITR).
   Also, linting no longer runs if the `source_expressions` contain invalid string data that would cause error messages
-  in other linters. 
+  in other linters.
   in other linters.
 * Prevent `lint()` from hanging on Rmd files with some syntax errors (#1443, @MichaelChirico).
-* `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, #1415, @AshesITR).  
+* `get_source_expressions()` no longer omits trailing non-code lines from knitr files (#1400, #1415, @AshesITR).
   This fixes the location information for `trailing_blank_lines_linter()` in RMarkdown documents without terminal
   newlines.
-* The `vignette("lintr")` incorrectly cited `exclude` as the key for setting file exclusions in `.lintr` when it is 
+* The `vignette("lintr")` incorrectly cited `exclude` as the key for setting file exclusions in `.lintr` when it is
   actually `exclusions`. (#1401, @AshesITR)
 * Fixed file exclusion detection in `lint_dir()` so it no longer errors if there are multiple exclusions or no global
   exclusions configured for a single file (#1413, #1442, @AshesITR).
@@ -566,9 +567,9 @@ works when passed to the `styles` parameter (#1924, @hedsnz).
 * The minimum needed version for soft dependency `{withr}` has been bumped to `2.5.0`
   (#1404, @IndrajeetPatil).
 * Changed the deprecation warning for `with_defaults()` to also mention `modify_defaults()` (#1438, @AshesITR).
-* Quarto files (`.qmd`) were supported out of the box. The documentation and the 
+* Quarto files (`.qmd`) were supported out of the box. The documentation and the
   testing infrastructure are updated to reflect this (#1486, @IndrajeetPatil).
-  
+
 # lintr 3.0.0
 
 ## Breaking changes
@@ -680,7 +681,7 @@ works when passed to the `styles` parameter (#1924, @hedsnz).
      (#914, @MichaelChirico).
    + Add an exception for `/` usage in `box::use()` declarations (#1087, @klmr).
 * `line_length_linter()`: place the source marker at the margin of the affected line to improve user experience
-  during de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR).* 
+  during de-linting -- just press <kbd>Return</kbd> (#735, @AshesITR).*
 * `no_tab_linter()`: use more reliable matching (e.g., excluding matches found in comments; #441, @russHyde).
 * `object_length_linter()`: correctly detect generics and only count the implementation class towards the length.
   This prevents false positive lints in the case of long generic names, e.g.
@@ -750,7 +751,7 @@ works when passed to the `styles` parameter (#1924, @hedsnz).
   @AshesITR).
 * `duplicate_argument_linter()` similarly checks that there are no duplicate arguments supplied to function calls (#850,
   @renkun-ken).
-* `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, #1152, @renkun-ken and 
+* `missing_argument_linter()` to check for empty (missing) arguments in function calls (#563, #1152, @renkun-ken and
   @AshesITR).
 * `missing_package_linter()` to check if packages in calls to `library()` and friends
   are missing (#536, #1037, @renkun-ken and @MichaelChirico).
