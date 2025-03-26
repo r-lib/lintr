@@ -27,11 +27,12 @@ test_that("lints vectorize", {
     trim_some("{
       cbind(a, b)
       do.call(cbind.data.frame, x)
+      do.call(function(x) x, l)
       do.call('cbind.data.frame', y)
     }"),
     list(
       list(lint_message, line_number = 3L),
-      list(lint_message, line_number = 4L)
+      list(lint_message, line_number = 5L)
     ),
     list2df_linter()
   )
