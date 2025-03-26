@@ -31,8 +31,8 @@ test_that("lints vectorize", {
       do.call('cbind.data.frame', y)
     }"),
     list(
-      list(lint_message, line_number = 3L),
-      list(lint_message, line_number = 5L)
+      list(lint_message, line_number = 3L, column_number = 3L),
+      list(lint_message, line_number = 5L, column_number = 3L)
     ),
     list2df_linter()
   )
