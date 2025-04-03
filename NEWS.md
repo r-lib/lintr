@@ -19,6 +19,7 @@
 
 ## New and improved features
 
+* `{lintr}` now has an associated paper at the [Journal of Open Source Software](https://doi.org/10.21105/joss.07240) that you can use to cite the package if you use it in a paper - see citation("lintr") for details.
 * `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
 * `seq_linter()`:
    + recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
