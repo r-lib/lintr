@@ -57,6 +57,7 @@
 
 ## Notes
 
+* `{lintr}` now has an associated paper at the [Journal of Open Source Software](https://doi.org/10.21105/joss.07240) that you can use to cite the package if you use it in a paper - see citation("lintr") for details.
 * `expect_lint_free()` and other functions that rely on the {testthat} framework now have a consistent error message. (#2585, @F-Noelle).
 * `unnecessary_nesting_linter()` gives a more specific lint message identifying:
    + the unmatched "exit call" that prompts the recommendation to reduce nesting (#2316, @MichaelChirico).
