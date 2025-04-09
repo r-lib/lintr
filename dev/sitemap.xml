@@ -95,6 +95,7 @@
 <url><loc>https://lintr.r-lib.org/dev/reference/linters_with_tags.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/lintr-deprecated.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/lintr-package.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/list2df_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/list_comparison_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/literal_coercion_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/make_linter_from_xpath.html</loc></url>
