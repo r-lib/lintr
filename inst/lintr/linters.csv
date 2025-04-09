@@ -52,6 +52,7 @@ length_test_linter,common_mistakes efficiency
 lengths_linter,efficiency readability best_practices
 library_call_linter,style best_practices readability configurable
 line_length_linter,style readability default configurable
+list2df_linter,readability efficiency
 list_comparison_linter,best_practices common_mistakes
 literal_coercion_linter,best_practices consistency efficiency
 matrix_apply_linter,readability efficiency

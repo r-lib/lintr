@@ -132,6 +132,7 @@ Collate:
     'linter_tags.R'
     'lintr-deprecated.R'
     'lintr-package.R'
+    'list2df_linter.R'
     'list_comparison_linter.R'
     'literal_coercion_linter.R'
     'make_linter_from_regex.R'
