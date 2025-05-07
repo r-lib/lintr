@@ -2,7 +2,8 @@ test_that("fixed_regex_linter skips allowed usages", {
   linter <- fixed_regex_linter()
 
   expect_no_lint("gsub('^x', '', y)", linter)
-  expect_no_lint("grep('x$', '', y)", linter)
+  expect_no_lint("grep('x$', y)", linter)
+  expect_no_lint("grepv('x$', y)", linter)
   expect_no_lint("sub('[a-zA-Z]', '', y)", linter)
   expect_no_lint("grepl(fmt, y)", linter)
   expect_no_lint(R"{regexec('\\s', '', y)}", linter)
@@ -36,6 +37,7 @@ test_that("fixed_regex_linter blocks simple disallowed usages", {
   expect_lint("gregexpr('a-z', y)", lint_msg, linter)
   expect_lint(R"{regexec('\\$', x)}", lint_msg, linter)
   expect_lint("grep('\n', x)", lint_msg, linter)
+  expect_lint("grepv('\n', x)", lint_msg, linter)
 
   # naming the argument doesn't matter (if it's still used positionally)
   expect_lint("gregexpr(pattern = 'a-z', y)", lint_msg, linter)
