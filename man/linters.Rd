@@ -17,17 +17,17 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (63 linters)}
+\item{\link[=best_practices_linters]{best_practices} (64 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (11 linters)}
 \item{\link[=configurable_linters]{configurable} (44 linters)}
-\item{\link[=consistency_linters]{consistency} (32 linters)}
+\item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (25 linters)}
-\item{\link[=efficiency_linters]{efficiency} (29 linters)}
+\item{\link[=efficiency_linters]{efficiency} (30 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=readability_linters]{readability} (64 linters)}
+\item{\link[=readability_linters]{readability} (66 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (17 linters)}
 \item{\link[=style_linters]{style} (40 linters)}
@@ -45,6 +45,7 @@ The following linters exist:
 \item{\code{\link{boolean_arithmetic_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
+\item{\code{\link{coalesce_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{commas_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{commented_code_linter}} (tags: best_practices, default, readability, style)}
 \item{\code{\link{comparison_negation_linter}} (tags: consistency, readability)}
@@ -87,6 +88,7 @@ The following linters exist:
 \item{\code{\link{lengths_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{library_call_linter}} (tags: best_practices, configurable, readability, style)}
 \item{\code{\link{line_length_linter}} (tags: configurable, default, readability, style)}
+\item{\code{\link{list2df_linter}} (tags: efficiency, readability)}
 \item{\code{\link{list_comparison_linter}} (tags: best_practices, common_mistakes)}
 \item{\code{\link{literal_coercion_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{matrix_apply_linter}} (tags: efficiency, readability)}
