@@ -7,9 +7,8 @@
 regex_subset_linter()
 }
 \description{
-Using \code{value = TRUE} in \code{\link[=grep]{grep()}} returns the subset of the input that matches
-the pattern, e.g. \code{grep("[a-m]", letters, value = TRUE)} will return the
-first 13 elements (\code{a} through \code{m}).
+Using \code{\link[=grepv]{grepv()}} returns the subset of the input that matches the pattern,
+e.g. \code{grepv("[a-m]", letters)} will return the first 13 elements (\code{a} through \code{m}).
 }
 \details{
 \code{letters[grep("[a-m]", letters)]} and \code{letters[grepl("[a-m]", letters)]}
@@ -21,12 +20,12 @@ namely \code{str_subset()}, which should be preferred to versions using
 }
 \section{Exceptions}{
 
-Note that \code{x[grep(pattern, x)]} and \code{grep(pattern, x, value = TRUE)}
-are not \emph{completely} interchangeable when \code{x} is not character
-(most commonly, when \code{x} is a factor), because the output of the
-latter will be a character vector while the former remains a factor.
-It still may be preferable to refactor such code, as it may be faster
-to match the pattern on \code{levels(x)} and use that to subset instead.
+Note that \code{x[grep(pattern, x)]} and \code{grepv(pattern, x)} are not
+\emph{completely} interchangeable when \code{x} is not character (most commonly,
+when \code{x} is a factor), because the output of the latter will be a
+character vector while the former remains a factor. It still may be
+preferable to refactor such code, as it may be faster to match the
+pattern on \code{levels(x)} and use that to subset instead.
 }
 
 \examples{
@@ -43,7 +42,7 @@ lint(
 
 # okay
 lint(
-  text = "grep(pattern, x, value = TRUE)",
+  text = "grepv(pattern, x)",
   linters = regex_subset_linter()
 )
 
