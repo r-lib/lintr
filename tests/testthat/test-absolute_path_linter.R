@@ -52,28 +52,6 @@ test_that("is_absolute_path", {
   expect_identical(f(x), y)
 })
 
-
-test_that("is_relative_path", {
-  f <- lintr:::is_relative_path
-
-  x <- character()
-  y <- logical()
-  expect_identical(f(x), y)
-
-  x <- c("/",   "c:\\", "~/",  "foo", "http://rseek.org/", "'./'")
-  y <- c(FALSE, FALSE,  FALSE, FALSE, FALSE,               FALSE)
-  expect_identical(f(x), y)
-
-  x <- c("/foo", "foo/", "foo/bar", "foo//bar", "./foo", "../foo")
-  y <- c(FALSE,  TRUE,   TRUE,      TRUE,       TRUE,    TRUE)
-  expect_identical(f(x), y)
-
-  x <- c("\\\\", "\\foo", "foo\\", "foo\\bar", ".\\foo", "..\\foo", ".",  "..", "../")
-  y <- c(FALSE,  FALSE,   TRUE,    TRUE,       TRUE,     TRUE,      TRUE, TRUE, TRUE)
-  expect_identical(f(x), y)
-})
-
-
 test_that("is_path", {
   f <- lintr:::is_path
 

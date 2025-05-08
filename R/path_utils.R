@@ -57,10 +57,6 @@ is_root_path <- function(path) {
   re_matches(path, root_path_regex)
 }
 
-is_relative_path <- function(path) {
-  re_matches(path, relative_path_regex)
-}
-
 is_path <- function(path) {
   re_matches(path, path_regex)
 }

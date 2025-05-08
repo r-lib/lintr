@@ -45,3 +45,8 @@ jobs:
         run: |
           callr::rscript(".dev/defunct_linters_test.R")
         shell: Rscript {0}
+
+      - name: Ensure any objects in the namespace are actually needed
+        run: |
+          callr::rscript(".dev/unused_helpers_test.R")
+        shell: Rscript {0}
