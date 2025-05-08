@@ -39,6 +39,7 @@ my_metric <- function(x)
   sum(x) + prod(x)
 
 # no_tab
+# pipe_consistency
 # pipe_continuation
 # seq_linter
 # spaces_inside
