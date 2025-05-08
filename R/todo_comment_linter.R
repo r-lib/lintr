@@ -48,9 +48,11 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 todo_comment_linter <- function(todo = c("todo", "fixme"), except_regex = NULL) {
-  todo_comment_regex <- rex(one_or_more("#"), any_spaces, or(todo))
-  valid_todo_regex <-
-    if (!is.null(except_regex)) paste0("#+", rex::shortcuts$any_spaces, "(?:", paste(except_regex, collapse = "|"), ")")
+  todo_comment_regex <- rex(one_or_more("#"), maybe("'"), any_spaces, or(todo))
+  valid_todo_regex <- NULL
+  if (!is.null(except_regex)) {
+    valid_todo_regex <- paste0("#+'?", rex::shortcuts$any_spaces, "(?:", paste(except_regex, collapse = "|"), ")")
+  }
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
