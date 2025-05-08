@@ -1,6 +1,7 @@
 #' Require usage of direct methods for subsetting strings via regex
 #'
-#' Using [grepv()] returns the subset of the input that matches the pattern,
+# TODO(R>=4.5.0): Just use [grepv()] directly. Need this while ?grepv doesn't exist.
+#' Using [`grepv()`][grep] returns the subset of the input that matches the pattern,
 #'   e.g. `grepv("[a-m]", letters)` will return the first 13 elements (`a` through `m`).
 #'
 #' `letters[grep("[a-m]", letters)]` and `letters[grepl("[a-m]", letters)]`

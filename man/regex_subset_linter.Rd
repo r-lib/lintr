@@ -7,7 +7,7 @@
 regex_subset_linter()
 }
 \description{
-Using \code{\link[=grepv]{grepv()}} returns the subset of the input that matches the pattern,
+Using \code{\link[=grep]{grepv()}} returns the subset of the input that matches the pattern,
 e.g. \code{grepv("[a-m]", letters)} will return the first 13 elements (\code{a} through \code{m}).
 }
 \details{
