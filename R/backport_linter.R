@@ -2,7 +2,9 @@
 #'
 #' Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 #'
-#' @param r_version Minimum R version to test for compatibility
+#' @param r_version Minimum R version to test for compatibility. Defaults to
+#'  the R version currently in use. The version can be specified as a version
+#'  number, or as a version alias (such as `"devel"`, `"oldrel"`, `"oldrel-1"`).
 #' @param except Character vector of functions to be excluded from linting.
 #'  Use this to list explicitly defined backports, e.g. those imported from the `{backports}` package or manually
 #'  defined in your package.
@@ -19,6 +21,11 @@
 #'   linters = backport_linter("3.2.0")
 #' )
 #'
+#' lint(
+#'   text = "deparse1(expr)",
+#'   linters = backport_linter("3.6.0")
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "trimws(x)",
@@ -27,12 +34,13 @@
 #'
 #' lint(
 #'   text = "str2lang(x)",
-#'   linters = backport_linter("4.0.0")
+#'   linters = backport_linter("3.2.0", except = "str2lang")
 #' )
 #'
+#' # Version aliases instead of numbers can also be passed to `r_version`
 #' lint(
-#'   text = "str2lang(x)",
-#'   linters = backport_linter("3.2.0", except = "str2lang")
+#'   text = "deparse1(expr)",
+#'   linters = backport_linter("release")
 #' )
 #'
 #' @evalRd rd_tags("backport_linter")

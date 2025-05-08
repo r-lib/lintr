@@ -84,3 +84,27 @@ test_that("execution without testthat gives the right errors", {
   expect_error(expect_no_lint(), lint_msg("expect_no_lint"))
   expect_error(expect_lint_free(), lint_msg("expect_lint_free"))
 })
+
+test_that("lint order can be ignored", {
+  linters <- list(assignment_linter(), infix_spaces_linter())
+  expected <- lapply(linters, function(l) list(linter = attr(l, "name")))
+  expect_success(expect_lint("a=1", expected, linters, ignore_order = TRUE))
+  expect_success(expect_lint("a=1", rev(expected), linters, ignore_order = TRUE))
+
+  lines <- trim_some("
+    a=1
+    b=2
+  ")
+  expected <- list(list(line_number = 1L), list(line_number = 2L))
+  expect_success(expect_lint(lines, expected, assignment_linter(), ignore_order = TRUE))
+  expect_success(expect_lint(lines, rev(expected), assignment_linter(), ignore_order = TRUE))
+
+  # a fuzz test, since base R doesn't have a trivial way to do permutations
+  expected <- list(
+    list(linter = "assignment_linter", line_number = 1L),
+    list(linter = "assignment_linter", line_number = 2L),
+    list(linter = "infix_spaces_linter", line_number = 1L),
+    list(linter = "infix_spaces_linter", line_number = 2L)
+  )
+  expect_success(expect_lint(lines, expected[sample.int(4L)], linters, ignore_order = TRUE))
+})

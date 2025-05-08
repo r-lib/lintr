@@ -291,6 +291,14 @@ default_settings <- NULL
 settings <- new.env(parent = emptyenv())
 
 # nocov start
+logical_env <- function(x, unset = "") {
+  res <- as.logical(Sys.getenv(x, unset = unset))
+  if (is.na(res)) {
+    return(NULL)
+  }
+  res
+}
+
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op_lintr <- list(
@@ -320,7 +328,7 @@ settings <- new.env(parent = emptyenv())
     exclude_linter_sep = rex(any_spaces, ",", any_spaces),
     exclusions = list(),
     cache_directory = R_user_dir("lintr", "cache"),
-    error_on_lint = logical_env("LINTR_ERROR_ON_LINT") %||% FALSE
+    error_on_lint = logical_env("LINTR_ERROR_ON_LINT", unset = FALSE)
   ))
 
   reset_settings()
