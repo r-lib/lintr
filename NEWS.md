@@ -10,8 +10,8 @@
    + `linter=` argument of `Lint()`.
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
-* The default for `pipe_consistency_linter()` is changed from `"auto"` (require one pipe style, either magrittr or native) to `"|>"` (R native pipe required) to coincide with the same change in the Tidyverse Style Guide (#2707, @MichaelChirico).
 * Argument `interpret_glue` to `object_usage_linter()` is deprecated in favor of the more general `interpret_extensions`, in which `"glue"` is present by default (#1472, @MichaelChirico). See the description below.
+* The default for `pipe_consistency_linter()` is changed from `"auto"` (require one pipe style, either magrittr or native) to `"|>"` (R native pipe required) to coincide with the same change in the Tidyverse Style Guide (#2707, @MichaelChirico).
 
 ## Bug fixes
 
