@@ -30,22 +30,28 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 boolean_arithmetic_linter <- function() {
-  # TODO(#1580): sum() cases x %in% y, A [&|] B, !A, is.na/is.nan/is.finite/is.infinite/is.element
   # TODO(#1581): extend to include all()-alike expressions
-  zero_expr <- "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
-  one_expr <- "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
+  zero_expr <- "(EQ or NE or GT or LE) and expr/NUM_CONST[text() = '0' or text() = '0L']"
+  one_expr <- "(LT or GE) and expr/NUM_CONST[text() = '1' or text() = '1L']"
   length_xpath <- glue("
   parent::expr
     /parent::expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
+      expr/SYMBOL_FUNCTION_CALL[text() = 'length']
       and parent::expr[ ({zero_expr}) or ({one_expr})]
     ]
   ")
+  known_logical_calls <- c(
+    "grepl", "str_detect", "nzchar", "startsWith", "endsWith",
+    "xor", "is.element", "duplicated",
+    "is.na", "is.nan", "is.finite", "is.infinite",
+    NULL
+  )
   sum_xpath <- glue("
   parent::expr[
     expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
-      or (EQ or NE or GT or LT or GE or LE)
+      expr/SYMBOL_FUNCTION_CALL[{xp_text_in_table(known_logical_calls)}]
+      or (EQ or NE or GT or LT or GE or LE or AND or OR or OP-EXCLAMATION)
+      or SPECIAL[text() = '%in%' or text() = '%chin%']
     ]
     and parent::expr[ ({zero_expr}) or ({one_expr})]
   ]")

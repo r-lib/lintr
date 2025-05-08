@@ -262,7 +262,7 @@ strip_names <- function(x) {
 #' @return A character vector of symbols (variables, infix operators, and
 #'   function calls) found in glue calls under `expr`.
 #' @noRd
-extract_glued_symbols <- function(expr, interpret_glue) {
+extract_glued_symbols <- function(expr, interpret_glue = TRUE) {
   if (!isTRUE(interpret_glue)) {
     return(character())
   }
