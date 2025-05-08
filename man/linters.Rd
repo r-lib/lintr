@@ -22,7 +22,7 @@ The following tags exist:
 \item{\link[=configurable_linters]{configurable} (44 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (25 linters)}
+\item{\link[=default_linters]{default} (26 linters)}
 \item{\link[=efficiency_linters]{efficiency} (30 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
@@ -111,7 +111,7 @@ The following linters exist:
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
 \item{\code{\link{paste_linter}} (tags: best_practices, configurable, consistency)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
-\item{\code{\link{pipe_consistency_linter}} (tags: configurable, readability, style)}
+\item{\code{\link{pipe_consistency_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
 \item{\code{\link{pipe_return_linter}} (tags: best_practices, common_mistakes)}
 \item{\code{\link{print_linter}} (tags: best_practices, consistency)}
