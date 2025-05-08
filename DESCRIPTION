@@ -4,14 +4,17 @@ Version: 3.2.0.9000
 Authors@R: c(
     person("Jim", "Hester", , role = "aut"),
     person("Florent", "Angly", role = "aut",
-           comment = "fangly"),
+           comment = c(GitHub = "fangly")),
     person("Russ", "Hyde", role = "aut"),
-    person("Michael", "Chirico", email = "michaelchirico4@gmail.com", role = c("aut", "cre")),
+    person("Michael", "Chirico", email = "michaelchirico4@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0787-087X")),
     person("Kun", "Ren", role = "aut"),
     person("Alexander", "Rosenstock", role = "aut",
-           comment = "AshesITR"),
-    person("Indrajeet", "Patil", , "patilindrajeet.science@gmail.com", role = "aut",
-           comment = c(ORCID = "0000-0003-1995-6531", Twitter = "@patilindrajeets"))
+           comment = c(GitHub = "AshesITR")),
+    person("Indrajeet", "Patil", email = "patilindrajeet.science@gmail.com", role = "aut",
+           comment = c(ORCID = "0000-0003-1995-6531")),
+    person("Hugo", "Gruson", role = "aut",
+           comment = c(ORCID = "0000-0002-4094-1476"))
   )
 Description: Checks adherence to a given style, syntax errors and possible
     semantic issues.  Supports on the fly checking of R code edited with
@@ -129,6 +132,7 @@ Collate:
     'linter_tags.R'
     'lintr-deprecated.R'
     'lintr-package.R'
+    'list2df_linter.R'
     'list_comparison_linter.R'
     'literal_coercion_linter.R'
     'make_linter_from_regex.R'

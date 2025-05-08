@@ -122,6 +122,7 @@ read_config_file <- function(config_file, call = parent.frame()) {
             )
           }
         )
+        # https://adv-r.hadley.nz/conditions.html
         setting_value <- withCallingHandlers(
           tryCatch(
             eval(parsed_setting),
@@ -151,6 +152,7 @@ read_config_file <- function(config_file, call = parent.frame()) {
       )
     }
   }
+  # https://adv-r.hadley.nz/conditions.html
   withCallingHandlers(
     tryCatch(
       load_config(config_file),
@@ -269,7 +271,7 @@ validate_named_exclusion <- function(exclusions, idx) {
 lintr_option <- function(setting, default = NULL) getOption(paste0("lintr.", setting), default)
 
 get_setting <- function(setting, config, defaults) {
-  lintr_option(setting) %|||% config[[setting]] %|||% defaults[[setting]]
+  lintr_option(setting) %||% config[[setting]] %||% defaults[[setting]]
 }
 
 reset_settings <- function() list2env(default_settings, envir = settings)

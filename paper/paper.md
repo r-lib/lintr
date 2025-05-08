@@ -1,44 +1,44 @@
 ---
 title: "Static Code Analysis for R"
-date: "2025-02-01"
+date: "2025-04-01"
 tags: ["R", "linter", "tidyverse"]
 authors:
   - name: Jim Hester
     affiliation: 1
     orcid: 0000-0002-2739-7082
   - name: Florent Angly
-    affiliation: 6
+    affiliation: 2
     orcid: 0000-0002-8999-0738
   - name: Michael Chirico
-    affiliation: 2
+    affiliation: 3
     orcid: 0000-0003-0787-087X
   - name: Russ Hyde
-    affiliation: 5
+    affiliation: 4
     orcid: ~
   - name: Ren Kun
-    affiliation: 7
+    affiliation: 5
     orcid: ~
   - name: Indrajeet Patil
     orcid: 0000-0003-1995-6531
-    affiliation: 4
+    affiliation: 6
   - name: Alexander Rosenstock
-    affiliation: 3
+    affiliation: 7
     orcid: ~
 affiliations:
   - index: 1
     name: Netflix
   - index: 2
-    name: Google
-  - index: 3
-    name: Mathematisches Institut der Heinrich-Heine-Universität Düsseldorf
-  - index: 4
-    name: Carl Zeiss AG, Germany
-  - index: 5
-    name: Jumping Rivers
-  - index: 6
     name: The University of Queensland
-  - index: 7
+  - index: 3
+    name: Google
+  - index: 4
+    name: Jumping Rivers
+  - index: 5
     name: Unknown
+  - index: 6
+    name: Carl Zeiss AG, Germany
+  - index: 7
+    name: Mathematisches Institut der Heinrich-Heine-Universität Düsseldorf
 output: 
     md_document:
       variant: "markdown"
@@ -302,7 +302,7 @@ Indeed, `{goodpractice}` [@Padgham2024] bundles a set of custom linters
 that are not part of the default set of `{lintr}` linters, while
 `{box.linters}` [@Basa2024] extends `{lintr}` to support `{box}` modules
 [@Rudolph2024] and `{checklist}` includes linters as one of the strict
-checks for R packages [@Onkelinx2024]. `{flint}` [@Bacher2024] is a
+checks for R packages [@Onkelinx2024]. `{flir}` [@Bacher2024] is a
 Rust-backed analogue inspired by `{lintr}` that also provides support
 for fixing lints.
 

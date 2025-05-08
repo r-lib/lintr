@@ -109,5 +109,6 @@ pkg_name <- function(path = find_package()) {
   if (is.null(path)) {
     return(NULL)
   }
-  read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
+  nm <- read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
+  if (!is.na(nm)) nm
 }
