@@ -32,7 +32,7 @@ function_linter <- undesirable_function_linter(internal_names[!is_operator])
 usages <- as.data.frame(suppressWarnings(lint_dir("R", linters = list(operator_linter, function_linter))))
 usages$used_call <- gsub('.*["`]([^"`]*)["`].*', "\\1", usages$message)
 # TODO(#2815): these should be excluded by the linter itself
-usages <- subset(usages, !mapply(\(nm, l) grepl(sprintf("\\b%s <-", nm), l), rex::rex(used_call), line))
+usages <- subset(usages, !mapply(\(nm, l) grepl(sprintf("\\b%s <-", rex::rex(nm)), l), used_call, line))
 
 # TODO(#2004): can this just come from get_source_expressions(), and/or will
 #   the above linters "just work" once we're roxygen2-aware?
