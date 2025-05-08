@@ -14,7 +14,7 @@ internal_names <- setdiff(
 )
 
 # .__global__, etc. 
-internal_names <- grep("^[.]__", internal_names, invert = TRUE, value = TRUE)
+internal_names <- grepv("^[.]__", internal_names, invert = TRUE)
 # other generic R names
 internal_names <- setdiff(internal_names, c(".onLoad", ".onAttach", ".packageName"))
 # known false positives
