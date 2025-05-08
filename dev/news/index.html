@@ -90,7 +90,10 @@
 <li>recommends using <code><a href="https://rdrr.io/r/base/sequence.html" class="external-link">sequence()</a></code> instead of <code>unlist(lapply(ints, seq))</code> (<a href="https://github.com/r-lib/lintr/issues/2618" class="external-link">#2618</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>)</li>
 </ul></li>
 <li>
-<code><a href="../reference/undesirable_operator_linter.html">undesirable_operator_linter()</a></code> lints operators in prefix form, e.g. <code>`%%`(x, 2)</code> (<a href="https://github.com/r-lib/lintr/issues/1910" class="external-link">#1910</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Disable this by setting <code>call_is_undesirable=FALSE</code>.</li>
+<code><a href="../reference/undesirable_operator_linter.html">undesirable_operator_linter()</a></code>:
+<ul><li>Lints operators in prefix form, e.g. <code>`%%`(x, 2)</code> (<a href="https://github.com/r-lib/lintr/issues/1910" class="external-link">#1910</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Disable this by setting <code>call_is_undesirable=FALSE</code>.</li>
+<li>Accepts unnamed entries, treating them as undesirable operators, e.g. <code>undesirable_operator_linter("%%")</code> (<a href="https://github.com/r-lib/lintr/issues/2536" class="external-link">#2536</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></li>
 <li>
 <code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> handles <code>for</code> un-braced for loops correctly (<a href="https://github.com/r-lib/lintr/issues/2564" class="external-link">#2564</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>Setting <code>exclusions</code> supports globs like <code>knitr*</code> to exclude files/directories with a pattern (<a href="https://github.com/r-lib/lintr/issues/1554" class="external-link">#1554</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
@@ -104,6 +107,8 @@
 <code><a href="../reference/boolean_arithmetic_linter.html">boolean_arithmetic_linter()</a></code> finds many more cases like <code>sum(x | y) == 0</code> where the total of a known-logical vector is compared to 0 (<a href="https://github.com/r-lib/lintr/issues/1580" class="external-link">#1580</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/expect_lint.html">expect_lint()</a></code> has a new argument <code>ignore_order</code> (default <code>FALSE</code>), which, if <code>TRUE</code>, allows the <code>checks=</code> to be provided in arbitary order vs. how <code><a href="../reference/lint.html">lint()</a></code> produces them (<a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/undesirable_function_linter.html">undesirable_function_linter()</a></code> accepts unnamed entries, treating them as undesirable functions, e.g. <code>undesirable_function_linter("sum")</code> (<a href="https://github.com/r-lib/lintr/issues/2536" class="external-link">#2536</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>

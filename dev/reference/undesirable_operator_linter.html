@@ -71,10 +71,15 @@
 
 
 <dl><dt id="arg-op">op<a class="anchor" aria-label="anchor" href="#arg-op"></a></dt>
-<dd><p>Named character vector. <code>names(op)</code> correspond to undesirable operators,
-while the values give a description of why the operator is undesirable.
-If <code>NA</code>, no additional information is given in the lint message. Defaults to
-<a href="default_undesirable_functions.html">default_undesirable_operators</a>. To make small customizations to this list,
+<dd><p>Character vector of undesirable operators. Input can be any of three types:</p><ul><li><p>Unnamed entries must be a character string specifying an undesirable operator.</p></li>
+<li><p>For named entries, the name specifies the undesirable operator.</p><ul><li><p>If the entry is a character string, it is used as a description of
+why a given operator is undesirable</p></li>
+<li><p>Otherwise, entries should be missing (<code>NA</code>)
+A generic message that the named operator is undesirable is used if no
+specific description is provided.
+Input can also be a list of character strings for convenience.</p></li>
+</ul></li>
+</ul><p>Defaults to <a href="default_undesirable_functions.html">default_undesirable_operators</a>. To make small customizations to this list,
 use <code><a href="modify_defaults.html">modify_defaults()</a></code>.</p></dd>
 
 
@@ -123,6 +128,14 @@ for prefix-style usage of the operators provided in <code>op</code>?</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> `:::`(utils, hasName)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"mtcars$wt"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">undesirable_operator_linter</span><span class="op">(</span><span class="st">"$"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:7: </span><span style="color: #BB00BB;">warning: </span>[undesirable_operator_linter] <span style="font-weight: bold;">Avoid undesirable operator `$`.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mtcars$wt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       ^</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="st">"a &lt;- log(10)"</span>,</span></span>
@@ -148,6 +161,12 @@ for prefix-style usage of the operators provided in <code>op</code>?</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:1: </span><span style="color: #BB00BB;">warning: </span>[undesirable_operator_linter] <span style="font-weight: bold;">Avoid undesirable operator `:::`. It accesses non-exported functions inside packages. Code relying on these is likely to break in future versions of the package because the functions are not part of the public interface and may be changed or removed by the maintainers without notice. Use public functions via `::` instead.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> `:::`(utils, hasName)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ^~~~~</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">'mtcars[["wt"]]'</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">undesirable_operator_linter</span><span class="op">(</span><span class="st">"$"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
