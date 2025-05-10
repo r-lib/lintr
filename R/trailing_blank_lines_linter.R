@@ -50,11 +50,13 @@ trailing_blank_lines_linter <- function() {
 
     if (identical(source_expression$terminal_newline, FALSE)) { # could use isFALSE, but needs backports
       last_line <- tail(source_expression$file_lines, 1L)
+      line_width <- nchar(last_line)
+      if (is.na(line_width)) line_width <- 0L
 
       lints[[length(lints) + 1L]] <- Lint(
         filename = source_expression$filename,
         line_number = length(source_expression$file_lines),
-        column_number = (nchar(last_line) %||% 0L) + 1L,
+        column_number = line_width + 1L,
         type = "style",
         message = "Add a terminal newline.",
         line = last_line

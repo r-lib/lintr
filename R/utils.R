@@ -1,10 +1,7 @@
-`%||%` <- function(x, y) {
-  is_atomic_and_missing <- is.atomic(x[[1L]]) && is.na(x[[1L]])
-  if (is.null(x) || length(x) == 0L || is_atomic_and_missing) {
-    y
-  } else {
-    x
-  }
+# TODO(R>=4.4.0): remove this.
+# NB: {backports} approach doesn't work since we need this before .onLoad() in names2()
+if (!exists("%||%", "package:base")) {
+  `%||%` <- function(x, y) if (is.null(x)) y else x # nolint: coalesce_linter.
 }
 
 `%==%` <- function(x, y) {
@@ -102,14 +99,6 @@ get_content <- function(lines, info) {
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
   paste(lines, collapse = "\n")
-}
-
-logical_env <- function(x) {
-  res <- as.logical(Sys.getenv(x))
-  if (is.na(res)) {
-    return(NULL)
-  }
-  res
 }
 
 try_silently <- function(expr) {

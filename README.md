@@ -4,6 +4,7 @@
 [![codecov.io](https://codecov.io/gh/r-lib/lintr/branch/main/graphs/badge.svg)](https://app.codecov.io/gh/r-lib/lintr?branch=main)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/lintr)](https://cran.r-project.org/package=lintr)
 [![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.07240/status.svg)](https://doi.org/10.21105/joss.07240)
 
 `{lintr}` provides [static code analysis for R](https://en.wikipedia.org/wiki/Static_program_analysis). It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action. Watch lintr in action in the following animation:
 

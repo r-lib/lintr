@@ -1,0 +1,56 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Hester
+  given-names: Jim
+  orcid: "https://orcid.org/0000-0002-2739-7082"
+- family-names: Angly
+  given-names: Florent
+  orcid: "https://orcid.org/0000-0002-8999-0738"
+- family-names: Chirico
+  given-names: Michael
+  orcid: "https://orcid.org/0000-0003-0787-087X"
+- family-names: Hyde
+  given-names: Russ
+- family-names: Kun
+  given-names: Ren
+- family-names: Patil
+  given-names: Indrajeet
+  orcid: "https://orcid.org/0000-0003-1995-6531"
+- family-names: Rosenstock
+  given-names: Alexander
+doi: 10.5281/zenodo.15090477
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Hester
+    given-names: Jim
+    orcid: "https://orcid.org/0000-0002-2739-7082"
+  - family-names: Angly
+    given-names: Florent
+    orcid: "https://orcid.org/0000-0002-8999-0738"
+  - family-names: Chirico
+    given-names: Michael
+    orcid: "https://orcid.org/0000-0003-0787-087X"
+  - family-names: Hyde
+    given-names: Russ
+  - family-names: Kun
+    given-names: Ren
+  - family-names: Patil
+    given-names: Indrajeet
+    orcid: "https://orcid.org/0000-0003-1995-6531"
+  - family-names: Rosenstock
+    given-names: Alexander
+  date-published: 2025-04-03
+  doi: 10.21105/joss.07240
+  issn: 2475-9066
+  issue: 108
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 7240
+  title: Static Code Analysis for R
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.07240"
+  volume: 10
+title: Static Code Analysis for R
