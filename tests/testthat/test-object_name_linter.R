@@ -309,3 +309,21 @@ test_that("literals in assign() and setGeneric() are checked", {
   expect_lint("assign(envir = 'good_env_name', 'badName', 2)", lint_msg, linter)
   expect_lint("assign(envir = 'good_env_name', x = 'badName', 2)", lint_msg, linter)
 })
+
+test_that("generics assigned with '=' or <<- are registered", {
+  linter <- object_name_linter()
+
+  expect_no_lint(
+    trim_some("
+      f = function(x) {
+        UseMethod('f')
+      }
+      g <<- function(x) {
+        UseMethod('f')
+      }
+      f.default <- function(x) {}
+      g.default <- function(x) {}
+    "),
+    linter
+  )
+})

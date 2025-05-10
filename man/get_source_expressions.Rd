@@ -50,6 +50,7 @@ XML nodes from \code{full_xml_parsed_content} with specified function names.}
 }
 }
 \item{error}{A \code{Lint} object describing any parsing error.}
+\item{warning}{A \code{lints} object describing any parsing warning.}
 \item{lines}{The \code{\link[=readLines]{readLines()}} output for this file.}
 }
 }
