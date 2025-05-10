@@ -82,6 +82,7 @@ get_source_expressions <- function(filename, lines = NULL) {
   names(source_expression$lines) <- seq_along(source_expression$lines)
   source_expression$content <- get_content(source_expression$lines)
   parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
+  is_unreliable_lint <- is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input"
 
   # Currently no way to distinguish the source of the warning
   #   from the message itself, so we just grep the source for the
