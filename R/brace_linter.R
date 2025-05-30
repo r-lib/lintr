@@ -9,6 +9,7 @@
 #'  - Either both or neither branch in `if`/`else` use curly braces, i.e., either both branches use `{...}` or neither
 #'    does.
 #'  - Function bodies are wrapped in curly braces.
+#'  - [testthat::test_that()]'s `code=` argument must be wrapped in braces.
 #'
 #' @param allow_single_line If `TRUE`, allow an open and closed curly pair on the same line.
 #' @param function_bodies When to require function bodies to be wrapped in curly braces. One of
@@ -27,6 +28,11 @@
 #' writeLines("if (TRUE) {\n return(1) }")
 #' lint(
 #'   text = "if (TRUE) {\n return(1) }",
+#'   linters = brace_linter()
+#' )
+#'
+#' lint(
+#'   text = "test_that('my test', expect_identical(foo(), 1))",
 #'   linters = brace_linter()
 #' )
 #'
@@ -49,6 +55,12 @@
 #'   text = "if (TRUE) { return(1) }",
 #'   linters = brace_linter(allow_single_line = TRUE)
 #' )
+#'
+#' lint(
+#'   text = "test_that('my test', { expect_identical(foo(), 1) })",
+#'   linters = brace_linter()
+#' )
+#'
 #' @evalRd rd_tags("brace_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
@@ -172,8 +184,11 @@ brace_linter <- function(allow_single_line = FALSE,
   ]
   "
 
+  xp_unbraced_test_that <- "following-sibling::expr[2][not(OP-LEFT-BRACE)]"
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    testthat_xml <- source_expression$xml_find_function_calls("test_that")
 
     lints <- list()
 
@@ -231,6 +246,15 @@ brace_linter <- function(allow_single_line = FALSE,
         xml_find_all(xml, xp_if_else_match_brace),
         source_expression = source_expression,
         lint_message = "Either both or neither branch in `if`/`else` should use curly braces."
+      )
+    )
+
+    lints <- c(
+      lints,
+      xml_nodes_to_lints(
+        xml_find_all(testthat_xml, xp_unbraced_test_that),
+        source_expression = source_expression,
+        lint_message = "test_that()'s code= argument requires braces to get accurate source hints"
       )
     )
 

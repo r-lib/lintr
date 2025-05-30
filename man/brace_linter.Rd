@@ -32,6 +32,7 @@ Perform various style checks related to placement and spacing of curly braces:
 \item Either both or neither branch in \code{if}/\verb{else} use curly braces, i.e., either both branches use \code{{...}} or neither
 does.
 \item Function bodies are wrapped in curly braces.
+\item \code{\link[testthat:test_that]{testthat::test_that()}}'s \verb{code=} argument must be wrapped in braces.
 }
 }
 \examples{
@@ -44,6 +45,11 @@ lint(
 writeLines("if (TRUE) {\n return(1) }")
 lint(
   text = "if (TRUE) {\n return(1) }",
+  linters = brace_linter()
+)
+
+lint(
+  text = "test_that('my test', expect_identical(foo(), 1))",
   linters = brace_linter()
 )
 
@@ -66,6 +72,12 @@ lint(
   text = "if (TRUE) { return(1) }",
   linters = brace_linter(allow_single_line = TRUE)
 )
+
+lint(
+  text = "test_that('my test', { expect_identical(foo(), 1) })",
+  linters = brace_linter()
+)
+
 }
 \seealso{
 \itemize{
