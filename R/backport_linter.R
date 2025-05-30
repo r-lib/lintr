@@ -139,7 +139,21 @@ normalize_r_version <- function(r_version) {
 # devel NEWS https://cran.rstudio.com/doc/manuals/r-devel/NEWS.html
 # release NEWS https://cran.r-project.org/doc/manuals/r-release/NEWS.html
 backports <- list(
-  `4.4.0` = character(), # need character() entries for oldrel specifications
+  `4.6.0` = character(),
+  `4.5.0` = c(
+    # base
+    "grepv", "use",
+    # stats
+    "qr.influence",
+    # tools
+    "check_packages_urls", "check_package_dois",
+    "CRAN_current_db", "CRAN_aliases_db", "CRAN_rdxrefs_db", "CRAN_archive_db", "CRAN_authors_db",
+    "R", "parse_URI_reference",
+    "base_aliases_db", "base_rdxrefs_db",
+    "sha256sum"
+  ),
+  `4.4.3` = character(), # need character() entries for oldrel specifications
+  `4.4.0` = character(),
   `4.3.3` = character(),
   `4.3.0` = c("R_compiled_by", "array2DF"),
   `4.2.3` = character(),
