@@ -166,11 +166,6 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
   lines
 }
 
-# nocov start
-# support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {}
-# nocov end
-
 # see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
 #   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.
 platform_independent_order <- function(x) order(tolower(x), method = "radix")
