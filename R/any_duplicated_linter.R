@@ -19,6 +19,11 @@
 #'   linters = any_duplicated_linter()
 #' )
 #'
+#' lint(
+#'   text = "DT[, uniqueN(col) == .N]",
+#'   linters = any_duplicated_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "anyDuplicated(x)",
@@ -27,6 +32,11 @@
 #'
 #' lint(
 #'   text = "anyDuplicated(x) == 0L",
+#'   linters = any_duplicated_linter()
+#' )
+#'
+#' lint(
+#'   text = "anyDuplicated(DT, by = 'col') == 0L",
 #'   linters = any_duplicated_linter()
 #' )
 #'
