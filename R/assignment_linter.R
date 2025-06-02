@@ -143,14 +143,15 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
   )
   if (!is.null(op_xpath_parts)) {
-    # NB: Also used, essentially, in implicit_assignment_linter. Keep in sync.
-    implicit_assignment_xpath <- "
-      [not(parent::expr[
-        preceding-sibling::*[2][self::IF or self::WHILE]
-        or parent::forcond
-        or parent::expr/*[1][self::OP-LEFT-PAREN]
-      ])]
-    "
+    implicit_assignment_xpath <- "[not(ancestor::expr[
+      preceding-sibling::*[
+        self::expr/SYMBOL_FUNCTION_CALL
+        or self::IF
+        or self::WHILE
+        or self::IN
+      ]
+      and not(descendant-or-self::expr/*[1][self::OP-LEFT-PAREN])
+    ])]"
     op_xpath <- paste0(op_xpath_parts, implicit_assignment_xpath, collapse = " | ")
   } else {
     op_xpath <- NULL

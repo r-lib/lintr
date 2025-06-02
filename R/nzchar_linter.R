@@ -75,7 +75,7 @@ nzchar_linter <- function() {
   )
 
   # nchar(., type="width") not strictly compatible with nzchar
-  # unsure allowNA compatible, so allow it just in case (see TODO in tests)
+  # nchar(., allowNA=TRUE) neither
   nchar_xpath <- glue("
   parent::expr
     /parent::expr[

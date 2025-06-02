@@ -45,6 +45,13 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
+  parse_settings <- !inline_data && isTRUE(parse_settings)
+
+  if (parse_settings) {
+    read_settings(filename)
+    on.exit(reset_settings(), add = TRUE)
+  }
+
   lines <- get_lines(filename, text)
 
   if (needs_tempfile) {
@@ -57,11 +64,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   filename <- normalize_path(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
-
-  if (isTRUE(parse_settings)) {
-    read_settings(filename)
-    on.exit(reset_settings(), add = TRUE)
-  }
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
@@ -81,12 +83,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lints <- list()
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
-      if (is_lint_level(expr, "expression")) {
-        necessary_linters <- expression_linter_names
-      } else {
-        necessary_linters <- file_linter_names
-      }
-      for (linter in necessary_linters) {
+      for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
         # use withCallingHandlers for friendlier failures on unexpected linter errors
         lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
@@ -101,7 +98,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     }
   }
 
-  lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
+  lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
   lints <- reorder_lints(flatten_lints(lints))
   class(lints) <- c("lints", "list")
 
@@ -670,13 +667,22 @@ fill_with <- function(character = " ", length = 1L) {
   paste(collapse = "", rep.int(character, length))
 }
 
-maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
+maybe_append_condition_lints <- function(lints, source_expression, lint_cache, filename) {
+  error <- source_expression$error
   if (is_lint(error)) {
     error$linter <- "error"
     lints[[length(lints) + 1L]] <- error
 
     if (!is.null(lint_cache)) {
       cache_lint(lint_cache, list(filename = filename, content = ""), "error", error)
+    }
+  }
+  for (l in source_expression$warning) {
+    l$linter <- "parser_warning_linter"
+    lints[[length(lints) + 1L]] <- l
+
+    if (!is.null(lint_cache)) {
+      cache_lint(lint_cache, list(filename = filename, content = ""), "parser_warning_linter", l)
     }
   }
   lints
@@ -699,4 +705,12 @@ zap_temp_filename <- function(res, needs_tempfile) {
     }
   }
   res
+}
+
+necessary_linters <- function(expr, expression_linter_names, file_linter_names) {
+  if (is_lint_level(expr, "expression")) {
+    expression_linter_names
+  } else {
+    file_linter_names
+  }
 }
