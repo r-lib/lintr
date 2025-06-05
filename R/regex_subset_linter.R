@@ -71,8 +71,10 @@ regex_subset_linter <- function() {
     grep_lints <- xml_nodes_to_lints(
       grep_expr,
       source_expression = source_expression,
-      lint_message =
+      lint_message = paste(
         "Prefer grepv(pattern, x, ...) over x[grep(pattern, x, ...)] and x[grepl(pattern, x, ...)].",
+        "Code required to run on R versions before 4.5.0 can use grep(pattern, x, ..., value = TRUE)."
+      ),
       type = "warning"
     )
 
