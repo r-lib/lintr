@@ -39,6 +39,7 @@
 * `boolean_arithmetic_linter()` finds many more cases like `sum(x | y) == 0` where the total of a known-logical vector is compared to 0 (#1580, @MichaelChirico).
 * `expect_lint()` has a new argument `ignore_order` (default `FALSE`), which, if `TRUE`, allows the `checks=` to be provided in arbitary order vs. how `lint()` produces them (@MichaelChirico).
 * `undesirable_function_linter()` accepts unnamed entries, treating them as undesirable functions, e.g. `undesirable_function_linter("sum")` (#2536, @MichaelChirico).
+* `any_duplicated_linter()` is extended to recognize some usages from {dplyr} and {data.table} that could be replaced by `anyDuplicated()`, e.g. `n_distinct(col) == n()` or `uniqueN(col) == .N` (#2482, @MichaelChirico).
 * `brace_linter()` requires `test_that()`'s `code=` argument to have curly braces (#2292, @MichaelChirico).
 
 ### New linters
