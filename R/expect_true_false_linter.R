@@ -32,10 +32,14 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_true_false_linter <- function() {
-  xpath <- "
-  following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
+  pipe_cond <- glue("parent::expr/parent::expr[PIPE or SPECIAL[{xp_text_in_table(magrittr_pipes)}]]")
+  xpath <- glue("
+  following-sibling::expr[
+    NUM_CONST[text() = 'TRUE' or text() = 'FALSE']
+    and position() <= 2 - count({pipe_cond})
+  ]
     /parent::expr
-  "
+  ")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("expect_equal", "expect_identical"))
