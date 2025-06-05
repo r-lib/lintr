@@ -109,6 +109,8 @@
 <code><a href="../reference/expect_lint.html">expect_lint()</a></code> has a new argument <code>ignore_order</code> (default <code>FALSE</code>), which, if <code>TRUE</code>, allows the <code>checks=</code> to be provided in arbitary order vs. how <code><a href="../reference/lint.html">lint()</a></code> produces them (<a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/undesirable_function_linter.html">undesirable_function_linter()</a></code> accepts unnamed entries, treating them as undesirable functions, e.g. <code>undesirable_function_linter("sum")</code> (<a href="https://github.com/r-lib/lintr/issues/2536" class="external-link">#2536</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/any_duplicated_linter.html">any_duplicated_linter()</a></code> is extended to recognize some usages from {dplyr} and {data.table} that could be replaced by <code><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">anyDuplicated()</a></code>, e.g. <code>n_distinct(col) == n()</code> or <code>uniqueN(col) == .N</code> (<a href="https://github.com/r-lib/lintr/issues/2482" class="external-link">#2482</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
