@@ -75,6 +75,10 @@
 * The description in `?paste_linter` of `allow_file_path=` has been corrected (#2675, @MichaelChirico). In particular, `allow_file_path="never"` is the most strict form, `allow_file_path="always"` is the most lax form.
 * `comment_token` is removed from settings. This was a vestige of the now-defunct support for posting GitHub comments.
 
+## New linters
+
+* `complex_conditional_linter()` for encouraging refactoring of complex conditional expressions (like `if (x > 0 && y < 0 || z == 0)`) via well-named abstractions (#2676, @IndrajeetPatil).
+
 # lintr 3.2.0
 
 ## Deprecations & breaking changes
@@ -160,6 +164,7 @@
 * `pipe_return_linter()` for discouraging usage of `return()` inside a {magrittr} pipeline (part of #884, @MichaelChirico).
 * `one_call_pipe_linter()` for discouraging one-step pipelines like `x |> as.character()` (#2330 and part of #884, @MichaelChirico).
 * `object_overwrite_linter()` for discouraging re-use of upstream package exports as local variables (#2344, #2346 and part of #884, @MichaelChirico and @AshesITR).
+* `complex_conditional_linter()` for encouraging refactoring of complex conditional expressions (like `if (x > 0 && y < 0 || z == 0)`) via well-named abstractions (#2676, @IndrajeetPatil).
 
 ### Lint accuracy fixes: removing false positives
 
