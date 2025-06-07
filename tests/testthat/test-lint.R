@@ -233,3 +233,30 @@ test_that("Linter() input is validated", {
 test_that("typo in argument name gives helpful error", {
   expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: `litners`")
 })
+
+
+test_that("gitlab_output() writes expected report", {
+  skip_if_not_installed("jsonlite")
+
+  tmpfile <- withr::local_tempfile()
+  gitlab_output(lint(text = "x<-1"), filename = tmpfile)
+
+  expect_identical(
+    jsonlite::read_json(tmpfile),
+    list(
+      list(
+        description = "Put spaces around all infix operators.",
+        check_name = "infix_spaces_linter",
+        fingerprint = "6acf9b56964a2f69af4ac265f85d01db67e00a7a",
+        location =
+          list(
+            path = "<text>",
+            lines = list(
+              begin = 1L
+            )
+          ),
+        severity = "info"
+      )
+    )
+  )
+})
