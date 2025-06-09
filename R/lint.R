@@ -673,18 +673,17 @@ gitlab_output <- function(lints, filename = "lintr_results.json") {
   # Format
   # (copied from https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format)
   # ==============================
-  # description	String	A human-readable description of the code quality violation.
-  # check_name	String	A unique name representing the check, or rule, associated
-  #                     with this violation.
-  # fingerprint	String	A unique fingerprint to identify this specific code
-  #                     quality violation, such as a hash of its contents.
-  # location.path	String	The file containing the code quality violation,
-  #                       expressed as a relative path in the repository.
-  #                       Do not prefix with ./.
-  # location.lines.begin or location.positions.begin.line	Integer
-  #       The line on which the code quality violation occurred.
-  # severity	String	The severity of the violation, can be one of
-  #                   info, minor, major, critical, or blocker.
+  # description          String   A human-readable description of the code quality violation.
+  # check_name           String   A unique name representing the check, or rule, associated with this violation.
+  # fingerprint          String   A unique fingerprint to identify this specific code quality violation, such as a hash
+  #                               of its contents.
+  # location.path        String   The file containing the code quality violation, expressed as a relative path in the
+  #                               repository. Do not prefix with ./.
+  # location.lines.begin
+  # -or-                 Integer  The line on which the code quality violation occurred.
+  # location.positions.begin.line
+  #       
+  # severity             String   The severity of the violation, can be one of info, minor, major, critical, or blocker.
 
   # Gitlab format as R data structure
   res <-
