@@ -239,7 +239,7 @@ test_that("gitlab_output() writes expected report", {
   skip_if_not_installed("jsonlite")
 
   tmpfile <- withr::local_tempfile()
-  gitlab_output(lint(text = "x<-1"), filename = tmpfile)
+  gitlab_output(lint(text = "x<-1", linters = infix_spaces_linter()), filename = tmpfile)
 
   expect_identical(
     jsonlite::read_json(tmpfile),
