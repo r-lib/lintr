@@ -248,13 +248,7 @@ test_that("gitlab_output() writes expected report", {
         description = "Put spaces around all infix operators.",
         check_name = "infix_spaces_linter",
         fingerprint = "eb7cc117e8616bd8170fe6aa29e8b0ae849ac6c7",
-        location =
-          list(
-            path = "<text>",
-            lines = list(
-              begin = 1L
-            )
-          ),
+        location = list(path = "<text>", lines = list(begin = 1L)),
         severity = "info"
       )
     )
