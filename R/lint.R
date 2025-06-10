@@ -696,20 +696,18 @@ gitlab_output <- function(lints, filename = "lintr_results.json") {
             description = message,
             check_name = linter,
             fingerprint =  digest::digest(line, algo = "sha1"),
-            location =
-              list(
-                path = filename,
-                lines = list(
-                  begin = line_number
-                )
-              ),
-            severity =
-              switch(type,
-                style = "info",
-                error = "blocker",
-                warning = "major",
-                "info"
+            location = list(
+              path = filename,
+              lines = list(
+                begin = line_number
               )
+            ),
+            severity = switch(type,
+              style = "info",
+              error = "blocker",
+              warning = "major",
+              "info"
+            )
           )
         )
       }
