@@ -2,7 +2,7 @@
 % Please edit documentation in R/lint.R
 \name{gitlab_output}
 \alias{gitlab_output}
-\title{Gitlab Report for lint results}
+\title{GitLab Report for lint results}
 \usage{
 gitlab_output(lints, filename = "lintr_results.json")
 }
@@ -13,12 +13,12 @@ gitlab_output(lints, filename = "lintr_results.json")
 }
 \description{
 Generate a report of the linting results using the
-\href{https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format}{Gitlab} format.
+\href{https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format}{GitLab} format.
 }
 \details{
 lintr only supports three severity types ("style", "warning", and "error")
-while the Gitlab format supports five ("info", "minor", "major", "critical",
+while the GitLab format supports five ("info", "minor", "major", "critical",
 and "blocker"). The types "style", "warning", and "error" are mapped to
-the Gitlab types "info", "major", and "blocker", respectively. The Gitlab
+the GitLab types "info", "major", and "blocker", respectively. The GitLab
 types "minor" and "critical" are ignored.
 }
