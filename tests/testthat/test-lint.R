@@ -244,7 +244,7 @@ test_that("gitlab_output() writes expected report", {
   gitlab_output(lint(text = "", linters = infix_spaces_linter()), filename = tmpfile)
   expect_match(
     readLines(tmpfile),
-    "\\s*\\[\\s*\\]\\s*"
+    R"(\s*\[\s*\]\s*)"
   )
 
   # single lint
