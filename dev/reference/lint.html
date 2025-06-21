@@ -183,25 +183,19 @@ unintelligible error messages from other linters.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a = 123</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ^</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:8: </span><span style="color: #0000BB;">style: </span>[implicit_integer_linter] <span style="font-weight: bold;">Use 123L or 123.0 to avoid implicit integers.</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a = 123</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ~~~^</span>
 <span class="r-in"><span><span class="fu">lint</span><span class="op">(</span>text <span class="op">=</span> <span class="st">"a = 123"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:3: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a = 123</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ^</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:8: </span><span style="color: #0000BB;">style: </span>[implicit_integer_linter] <span style="font-weight: bold;">Use 123L or 123.0 to avoid implicit integers.</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a = 123</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ~~~^</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># linting a file</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"a=1"</span>, <span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">lint</span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpKY71oq/file1e8311f9af7e:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmplIZ6Xt/file1ddbdae984a:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use one of &lt;-, &lt;&lt;- for assignment, not =.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpKY71oq/file1e8311f9af7e:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmplIZ6Xt/file1ddbdae984a:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
