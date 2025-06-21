@@ -45,9 +45,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
-  parse_settings <- !inline_data && isTRUE(parse_settings)
 
-  if (parse_settings) {
+  if (isTRUE(parse_settings)) {
     read_settings(filename)
     on.exit(reset_settings(), add = TRUE)
   }

@@ -233,3 +233,11 @@ test_that("Linter() input is validated", {
 test_that("typo in argument name gives helpful error", {
   expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: `litners`")
 })
+
+test_that("settings are picked up under lint(text=)", {
+  .lintr <- withr::local_tempfile(lines = "linters: list(assignment_linter())")
+  withr::local_options(lintr.linter_file = .lintr)
+
+  # lint '=', but not the operator spacing
+  expect_length(lint(text = "a=1"), 1L)
+})
