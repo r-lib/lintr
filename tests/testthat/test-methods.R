@@ -69,14 +69,14 @@ test_that("as.data.frame.lints", {
 })
 
 test_that("summary.lints() works (no lints)", {
-  no_lints <- lint("x <- 1\n", linters = assignment_linter())
+  no_lints <- lint("x <- 1\n", linters = assignment_linter(), parse_settings = FALSE)
   no_lint_summary <- summary(no_lints)
   expect_s3_class(no_lint_summary, "data.frame")
   expect_identical(nrow(no_lint_summary), 0L)
 })
 
 test_that("summary.lints() works (lints found)", {
-  has_lints <- lint("x = 1\n", linters = assignment_linter())
+  has_lints <- lint("x = 1\n", linters = assignment_linter(), parse_settings = FALSE)
   has_lint_summary <- summary(has_lints)
 
   expect_s3_class(has_lint_summary, "data.frame")

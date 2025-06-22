@@ -107,7 +107,7 @@ test_that("Multi-byte character truncated by parser is ignored", {
 test_that("Can read non UTF-8 file", {
   proj_dir <- test_path("dummy_projects", "project")
   withr::local_dir(proj_dir)
-  expect_no_lint(file = "cp1252.R", linters = list())
+  expect_no_lint(file = "cp1252.R", linters = list(), parse_settings = FALSE)
 })
 
 test_that("Warns if encoding is misspecified, Pt. 1", {
