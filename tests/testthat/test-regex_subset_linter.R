@@ -5,7 +5,7 @@ test_that("regex_subset_linter skips allowed usages", {
 
 test_that("regex_subset_linter blocks simple disallowed usages", {
   linter <- regex_subset_linter()
-  lint_msg <- rex::rex("Prefer grep(pattern, x, ..., value = TRUE)")
+  lint_msg <- rex::rex("Prefer grepv(pattern, x, ...)")
 
   expect_lint("x[grep(ptn, x)]", lint_msg, linter)
   expect_lint("names(y)[grepl(ptn, names(y), perl = TRUE)]", lint_msg, linter)
