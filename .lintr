@@ -38,6 +38,7 @@ linters: all_linters(
       `<<-` = NULL
     )),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
+    cyclocomp_linter = if (requireNamespace("cyclocomp", quietly = TRUE)) cyclocomp_linter(),
     absolute_path_linter = NULL,
     library_call_linter = NULL,
     nonportable_path_linter = NULL,
