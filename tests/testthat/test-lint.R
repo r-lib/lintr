@@ -261,7 +261,7 @@ test_that("gitlab_output() writes expected report", {
   )
 
   # two lints
-  gitlab_output(lint(text = c("x<-1", "x<-1"), linters = infix_spaces_linter()), filename = tmpfile)
+  gitlab_output(lint(text = c("x<-1", "y<-1"), linters = infix_spaces_linter()), filename = tmpfile)
   expect_identical(
     jsonlite::read_json(tmpfile),
     list(list(
@@ -273,7 +273,7 @@ test_that("gitlab_output() writes expected report", {
     ), list(
       description = "Put spaces around all infix operators.",
       check_name = "infix_spaces_linter",
-      fingerprint = "eb7cc117e8616bd8170fe6aa29e8b0ae849ac6c7",
+      fingerprint = "c20bd2090d08e3a5c12d670f5763ad43d233fe05",
       location = list(path = "<text>", lines = list(begin = 2L)),
       severity = "info"
     ))
