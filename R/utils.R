@@ -1,10 +1,7 @@
-# TODO(#2768): possibly just use %||% instead
-`%|||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
-    y
-  } else {
-    x
-  }
+# TODO(R>=4.4.0): remove this.
+# NB: {backports} approach doesn't work since we need this before .onLoad() in names2()
+if (!exists("%||%", "package:base")) {
+  `%||%` <- function(x, y) if (is.null(x)) y else x # nolint: coalesce_linter.
 }
 
 `%==%` <- function(x, y) {
@@ -84,7 +81,7 @@ auto_names <- function(x) {
 
 # The following functions is from dplyr
 names2 <- function(x) {
-  names(x) %|||% rep("", length(x))
+  names(x) %||% rep("", length(x))
 }
 
 get_content <- function(lines, info) {
@@ -168,11 +165,6 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
   attr(lines, "terminal_newline") <- terminal_newline
   lines
 }
-
-# nocov start
-# support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {}
-# nocov end
 
 # see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
 #   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.
