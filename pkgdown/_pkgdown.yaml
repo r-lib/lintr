@@ -54,6 +54,7 @@ reference:
       - Lint
       - checkstyle_output
       - sarif_output
+      - gitlab_output
       - clear_cache
       - get_source_expressions
       - parse_exclusions
