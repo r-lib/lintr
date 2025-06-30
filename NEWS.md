@@ -28,7 +28,9 @@
 * `seq_linter()`:
    + recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
    + recommends using `sequence()` instead of `unlist(lapply(ints, seq))` (#2618, @Bisaloo)
-* `undesirable_operator_linter()` lints operators in prefix form, e.g. `` `%%`(x, 2)`` (#1910, @MichaelChirico). Disable this by setting `call_is_undesirable=FALSE`.
+* `undesirable_operator_linter()`:
+   + Lints operators in prefix form, e.g. `` `%%`(x, 2)`` (#1910, @MichaelChirico). Disable this by setting `call_is_undesirable=FALSE`.
+   + Accepts unnamed entries, treating them as undesirable operators, e.g. `undesirable_operator_linter("%%")` (#2536, @MichaelChirico).
 * `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
 * Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
 * `get_source_expression()` captures warnings emitted by the R parser (currently always for mis-specified literal integers like `1.1L`) and `lint()` returns them as lints (#2065, @MichaelChirico).
@@ -37,6 +39,11 @@
 * `object_usage_linter()` gains argument `interpret_extensions` to govern which false positive-prone common syntaxes should be checked for used objects (#1472, @MichaelChirico). Currently `"glue"` (renamed from earlier argument `interpret_glue`) and `"rlang"` are supported. The latter newly covers usage of the `.env` pronoun like `.env$key`, where `key` was previously missed as being a used variable.
 * `boolean_arithmetic_linter()` finds many more cases like `sum(x | y) == 0` where the total of a known-logical vector is compared to 0 (#1580, @MichaelChirico).
 * `expect_lint()` has a new argument `ignore_order` (default `FALSE`), which, if `TRUE`, allows the `checks=` to be provided in arbitary order vs. how `lint()` produces them (@MichaelChirico).
+* `undesirable_function_linter()` accepts unnamed entries, treating them as undesirable functions, e.g. `undesirable_function_linter("sum")` (#2536, @MichaelChirico).
+* `any_duplicated_linter()` is extended to recognize some usages from {dplyr} and {data.table} that could be replaced by `anyDuplicated()`, e.g. `n_distinct(col) == n()` or `uniqueN(col) == .N` (#2482, @MichaelChirico).
+* New `gitlab_output()` function to output lints to GitLab format (#2858, @lschneiderbauer)
+* `brace_linter()` requires `test_that()`'s `code=` argument to have curly braces (#2292, @MichaelChirico).
+* `fixed_regex_linter()` recognizes usage of the new (R 4.5.0) `grepv()` wrapper of `grep()`; `regex_subset_linter()` also recommends `grepv()` alternatives (#2855, @MichaelChirico).
 
 ### New linters
 
@@ -56,6 +63,7 @@
 * `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` account for S3 class correctly when the generic is assigned with `=` (#2507, @MichaelChirico).
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
+* `expect_true_false_linter()` is pipe-aware, so that `42 |> expect_identical(x, ignore_attr = TRUE)` no longer lints (#1520, @MichaelChirico).
 * `T_and_F_symbol_linter()` ignores `T` and `F` used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
