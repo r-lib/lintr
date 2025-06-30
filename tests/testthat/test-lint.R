@@ -121,13 +121,13 @@ test_that("lint() results from file or text should be consistent", {
   file <- normalize_path(file)
 
   lint_from_file <- lint(file, linters = linters)
-  lint_from_lines <- lint(linters = linters, text = lines)
-  lint_from_text <- lint(linters = linters, text = text)
+  lint_from_lines <- lint(linters = linters, text = lines, parse_settings = FALSE)
+  lint_from_text <- lint(linters = linters, text = text, parse_settings = FALSE)
 
   # Remove file before linting to ensure that lint works and do not
   # assume that file exists when both filename and text are supplied.
   expect_identical(unlink(file), 0L)
-  lint_from_text2 <- lint(file, linters = linters, text = text)
+  lint_from_text2 <- lint(file, linters = linters, text = text, parse_settings = FALSE)
 
   expect_length(lint_from_file, 2L)
   expect_length(lint_from_lines, 2L)
@@ -205,12 +205,12 @@ test_that("old compatibility usage errors", {
   )
 
   expect_error(
-    lint("a <- 1\n", linters = function(two, arguments) NULL),
+    lint("a <- 1\n", linters = function(two, arguments) NULL, parse_settings = FALSE),
     error_msg
   )
 
   expect_error(
-    lint("a <- 1\n", linters = "equals_na_linter"),
+    lint("a <- 1\n", linters = "equals_na_linter", parse_settings = FALSE),
     error_msg
   )
 })
@@ -233,7 +233,6 @@ test_that("Linter() input is validated", {
 test_that("typo in argument name gives helpful error", {
   expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: `litners`")
 })
-
 
 test_that("gitlab_output() writes expected report", {
   skip_if_not_installed("jsonlite")
@@ -278,4 +277,12 @@ test_that("gitlab_output() writes expected report", {
       severity = "info"
     ))
   )
+})
+
+test_that("settings are picked up under lint(text=)", {
+  .lintr <- withr::local_tempfile(lines = "linters: list(assignment_linter())")
+  withr::local_options(lintr.linter_file = .lintr)
+
+  # lint '=', but not the operator spacing
+  expect_length(lint(text = "a=1"), 1L)
 })
