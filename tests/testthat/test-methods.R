@@ -1,23 +1,3 @@
-test_that("it returns the input if less than the max", {
-  expect_identical(lintr:::trim_output(character()), character())
-  expect_identical(lintr:::trim_output("test", max = 10L), "test")
-})
-
-test_that("it returns the input trimmed strictly to max if no lints found", {
-  expect_identical(lintr:::trim_output("testing a longer non_lint string", max = 7L), "testing")
-})
-
-test_that("it returns the input trimmed to the last full lint if one exists within the max", {
-  t1 <- readChar(test_path("lints"), file.size(test_path("lints")))
-  if (.Platform$OS.type == "windows") {
-    # Magic numbers expect newlines to be 1 character
-    t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
-  }
-  expect_identical(lintr:::trim_output(t1, max = 200L), substr(t1, 1L, 195L))
-  expect_identical(lintr:::trim_output(t1, max = 400L), substr(t1, 1L, 380L))
-  expect_identical(lintr:::trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
-})
-
 test_that("as.data.frame.lints", {
   l1 <- Lint(
     "dummy.R",

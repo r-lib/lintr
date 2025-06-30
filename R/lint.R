@@ -648,6 +648,73 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
 }
 
+#' GitLab Report for lint results
+#'
+#' Generate a report of the linting results using the
+#' [GitLab](https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format) format.
+#'
+#' @details
+#' lintr only supports three severity types ("style", "warning", and "error")
+#' while the GitLab format supports five ("info", "minor", "major", "critical",
+#' and "blocker"). The types "style", "warning", and "error" are mapped to
+#' the GitLab types "info", "major", and "blocker", respectively. The GitLab
+#' types "minor" and "critical" are ignored.
+#'
+#' @param lints The linting results
+#' @param filename The file name of the output report
+#' @export
+gitlab_output <- function(lints, filename = "lintr_results.json") {
+  stopifnot(inherits(lints, "lints"))
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    cli_abort("{.pkg jsonlite} is required to produce Gitlab reports. Please install to continue.") # nocov
+  }
+
+  # Format
+  # (copied from https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format)
+  # ==============================
+  # description          String   A human-readable description of the code quality violation.
+  # check_name           String   A unique name representing the check, or rule, associated with this violation.
+  # fingerprint          String   A unique fingerprint to identify this specific code quality violation, such as a hash
+  #                               of its contents.
+  # location.path        String   The file containing the code quality violation, expressed as a relative path in the
+  #                               repository. Do not prefix with ./.
+  # location.lines.begin
+  # -or-                 Integer  The line on which the code quality violation occurred.
+  # location.positions.begin.line
+  #
+  # severity             String   The severity of the violation, can be one of info, minor, major, critical, or blocker.
+
+  # Gitlab format as R data structure
+  res <-
+    lapply(
+      lints,
+      function(lint) {
+        with(
+          lint,
+          list(
+            description = message,
+            check_name = linter,
+            fingerprint =  digest::digest(line, algo = "sha1"),
+            location = list(
+              path = filename,
+              lines = list(
+                begin = line_number
+              )
+            ),
+            severity = switch(type,
+              style = "info",
+              error = "blocker",
+              warning = "major",
+              "info"
+            )
+          )
+        )
+      }
+    )
+
+  write(jsonlite::toJSON(res, pretty = TRUE, auto_unbox = TRUE), filename)
+}
+
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   maximum <- max(column_number, unlist(ranges))
 
