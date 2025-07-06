@@ -672,6 +672,8 @@ test_that("messages without a quoted name are caught", {
 
 # See #1914
 test_that("symbols in formulas aren't treated as 'undefined global'", {
+  linter <- object_usage_linter()
+
   expect_lint(
     trim_some("
       foo <- function(x) {
@@ -686,7 +688,7 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
       line_number = 4L,
       column_number = 21L
     ),
-    object_usage_linter()
+    linter
   )
 
   # neither on the RHS
@@ -704,7 +706,7 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
       line_number = 4L,
       column_number = 21L
     ),
-    object_usage_linter()
+    linter
   )
 
   # nor in nested expressions
@@ -722,7 +724,7 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
       line_number = 4L,
       column_number = 21L
     ),
-    object_usage_linter()
+    linter
   )
 
   # nor as a call
@@ -743,7 +745,7 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
       line_number = 4L,
       column_number = 21L
     ),
-    object_usage_linter()
+    linter
   )
 })
 
