@@ -1,19 +1,19 @@
+# nofuzz start
 test_that("pipe_consistency skips allowed usage", {
   skip_if_not_r_version("4.1.0")
   linter <- pipe_consistency_linter()
 
-  expect_lint("1:3 %>% mean() %>% as.character()", NULL, linter)
-  expect_lint("1:3 |> mean() |> as.character()", NULL, linter)
+  expect_no_lint("1:3 %>% mean() %>% as.character()", linter)
+  expect_no_lint("1:3 |> mean() |> as.character()", linter)
   # With no pipes
-  expect_lint("x <- 1:5", NULL, linter)
+  expect_no_lint("x <- 1:5", linter)
   # Across multiple lines
-  expect_lint(
+  expect_no_lint(
     trim_some("
       1:3 %>%
         mean() %>%
         as.character()
     "),
-    NULL,
     linter
   )
 })
@@ -96,9 +96,8 @@ test_that("pipe_consistency_linter works with |> argument", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     "1:3 |> mean() |> as.character()",
-    NULL,
     linter
   )
 
@@ -134,11 +133,7 @@ test_that("pipe_consistency_linter works with %>% argument", {
     linter
   )
 
-  expect_lint(
-    "1:3 %>% mean() %>% as.character()",
-    NULL,
-    linter
-  )
+  expect_no_lint("1:3 %>% mean() %>% as.character()", linter)
 
   expect_lint(
     trim_some("
@@ -156,7 +151,7 @@ test_that("pipe_consistency_linter works with other magrittr pipes", {
   linter <- pipe_consistency_linter()
   expected_message <- rex::rex("Stick to one pipe operator; found 1 instances of %>% and 1 instances of |>.")
 
-  expect_lint("1:3 %>% mean() %T% print()", NULL, linter)
+  expect_no_lint("1:3 %>% mean() %T% print()", linter)
   expect_lint(
     "1:3 |> mean() %T>% print()",
     list(
@@ -166,3 +161,4 @@ test_that("pipe_consistency_linter works with other magrittr pipes", {
     linter
   )
 })
+# nofuzz end

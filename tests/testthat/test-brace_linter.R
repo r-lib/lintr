@@ -8,13 +8,13 @@ test_that("brace_linter lints braces correctly", {
   )
 
   linter <- brace_linter()
-  expect_lint("blah", NULL, linter)
-  expect_lint("a <- function() {\n}", NULL, linter)
-  expect_lint("a <- function() {  \n}", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint("a <- function() {\n}", linter)
+  expect_no_lint("a <- function() {  \n}", linter)
 
   expect_lint("a <- function() { 1 }", list(open_curly_msg, closed_curly_msg), linter)
   # allowed by allow_single_line
-  expect_lint("a <- function() { 1 }", NULL, brace_linter(allow_single_line = TRUE))
+  expect_no_lint("a <- function() { 1 }", brace_linter(allow_single_line = TRUE))
 
   expect_lint(
     trim_some("
@@ -51,30 +51,28 @@ test_that("brace_linter lints braces correctly", {
   )
 
   # }) is allowed
-  expect_lint("eval(bquote({\n...\n}))", NULL, linter)
+  expect_no_lint("eval(bquote({\n...\n}))", linter)
   # }] is too
-  expect_lint("df[, {\n...\n}]", NULL, linter)
+  expect_no_lint("df[, {\n...\n}]", linter)
 
   # }, is allowed
-  expect_lint(
+  expect_no_lint(
     trim_some("
       fun({
         statements
       }, param)"),
-    NULL,
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       fun(function(a) {
         statements
       }, param)"),
-    NULL,
     linter
   )
 
   # ,<\n>{ is allowed
-  expect_lint(
+  expect_no_lint(
     trim_some("
       switch(
         x,
@@ -86,12 +84,11 @@ test_that("brace_linter lints braces correctly", {
         }
       )
     "),
-    NULL,
     linter
   )
 
   # a comment before ,<\n>{ is allowed
-  expect_lint(
+  expect_no_lint(
     trim_some("
       switch(
         x,
@@ -103,12 +100,11 @@ test_that("brace_linter lints braces correctly", {
         }
       )
     "),
-    NULL,
     linter
   )
 
   # a comment before <\n>{ is allowed
-  expect_lint(
+  expect_no_lint(
     trim_some("
       switch(stat,
       o = {
@@ -120,11 +116,10 @@ test_that("brace_linter lints braces correctly", {
       }
     )
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       fun(
         'This is very very very long text.',
@@ -134,12 +129,11 @@ test_that("brace_linter lints braces correctly", {
         }
       )
     "),
-    NULL,
     linter
   )
 
   # (\n{ is allowed optionally
-  expect_lint(
+  expect_no_lint(
     trim_some("
       tryCatch(
         {
@@ -149,14 +143,13 @@ test_that("brace_linter lints braces correctly", {
         }
       )
     "),
-    NULL,
     linter
   )
 
   # {{ }} is allowed
-  expect_lint("{{ x }}", NULL, linter)
+  expect_no_lint("{{ x }}", linter)
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       pkg_name <- function(path = find_package()) {
         if (is.null(path)) {
@@ -166,7 +159,6 @@ test_that("brace_linter lints braces correctly", {
         }
       }
     "),
-    NULL,
     linter
   )
 
@@ -185,13 +177,12 @@ test_that("brace_linter lints braces correctly", {
   expect_lint("a <- function()\n\t{\n  1 \n}", open_curly_msg, linter)
 
   # trailing comments are allowed
-  expect_lint(
+  expect_no_lint(
     trim_some('
       if ("P" != "NP") { # what most people expect
         print("Cryptomania is possible")
       }
     '),
-    NULL,
     linter
   )
 })
@@ -236,10 +227,9 @@ test_that("brace_linter lints spaces before open braces", {
   )
 
   # should ignore strings and comments, as in regexes:
-  expect_lint("grepl('(iss){2}', 'Mississippi')", NULL, linter)
-  expect_lint(
+  expect_no_lint("grepl('(iss){2}', 'Mississippi')", linter)
+  expect_no_lint(
     "x <- 123 # don't flag (paren){brace} if inside a comment",
-    NULL,
     linter
   )
   # should not be thrown when the brace lies on subsequent line
@@ -258,8 +248,8 @@ test_that("brace_linter lints spaces before open braces", {
 
 test_that("brace_linter lints else correctly", {
   linter <- brace_linter()
-  expect_lint("if (TRUE) 1 else 2", NULL, linter)
-  expect_lint("if (TRUE) 1", NULL, linter)
+  expect_no_lint("if (TRUE) 1 else 2", linter)
+  expect_no_lint("if (TRUE) 1", linter)
 
   lines_brace <- trim_some("
     if (TRUE) {
@@ -268,7 +258,7 @@ test_that("brace_linter lints else correctly", {
       2
     }
   ")
-  expect_lint(lines_brace, NULL, linter)
+  expect_no_lint(lines_brace, linter)
 
   # such usage is also not allowed by the style guide, but test anyway
   lines_unbrace <- trim_some("
@@ -279,7 +269,7 @@ test_that("brace_linter lints else correctly", {
         2
     }
   ")
-  expect_lint(lines_unbrace, NULL, linter)
+  expect_no_lint(lines_unbrace, linter)
 
   lines <- trim_some("
     foo <- function(x) {
@@ -380,8 +370,8 @@ test_that("brace_linter lints function expressions correctly", {
 test_that("brace_linter lints if/else matching braces correctly", {
   linter <- brace_linter()
 
-  expect_lint("if (TRUE) 1 else 2", NULL, linter)
-  expect_lint("if (TRUE) 1", NULL, linter)
+  expect_no_lint("if (TRUE) 1 else 2", linter)
+  expect_no_lint("if (TRUE) 1", linter)
 
   lines_brace <- trim_some("
     if (TRUE) {
@@ -390,7 +380,7 @@ test_that("brace_linter lints if/else matching braces correctly", {
       2
     }
   ")
-  expect_lint(lines_brace, NULL, linter)
+  expect_no_lint(lines_brace, linter)
 
   # such usage is also not allowed by the style guide, but test anyway
   lines_unbrace <- trim_some("
@@ -401,7 +391,7 @@ test_that("brace_linter lints if/else matching braces correctly", {
         2
     }
   ")
-  expect_lint(lines_unbrace, NULL, linter)
+  expect_no_lint(lines_unbrace, linter)
 
   # else if is OK
   lines_else_if <- trim_some("
@@ -413,7 +403,7 @@ test_that("brace_linter lints if/else matching braces correctly", {
      3
     }
   ")
-  expect_lint(lines_else_if, NULL, linter)
+  expect_no_lint(lines_else_if, linter)
 
   lines_if <- trim_some("
     foo <- function(x) {
@@ -444,13 +434,17 @@ test_that("brace_linter lints if/else matching braces correctly", {
 
 # Keep up to date with https://github.com/tidyverse/style/issues/191
 test_that("empty brace expressions are always allowed inline", {
-  expect_lint("while (FALSE) {}", NULL, brace_linter())
-  expect_lint("while (FALSE) { }", NULL, brace_linter())
+  linter <- brace_linter()
+  linter_allow <- brace_linter(allow_single_line = TRUE)
+  lint_msg <- rex::rex("Opening curly braces")
+
+  expect_no_lint("while (FALSE) {}", linter)
+  expect_no_lint("while (FALSE) { }", linter)
   # only applies when `{` is "attached" to the preceding token on the same line
-  expect_lint("while (FALSE)\n{}", rex::rex("Opening curly braces"), brace_linter())
-  expect_lint("while (FALSE)\n{ }", rex::rex("Opening curly braces"), brace_linter())
-  expect_lint("while (FALSE) {}", NULL, brace_linter(allow_single_line = TRUE))
-  expect_lint("while (FALSE) { }", NULL, brace_linter(allow_single_line = TRUE))
+  expect_lint("while (FALSE)\n{}", lint_msg, linter)
+  expect_lint("while (FALSE)\n{ }", lint_msg, linter)
+  expect_no_lint("while (FALSE) {}", linter_allow)
+  expect_no_lint("while (FALSE) { }", linter_allow)
 })
 
 test_that("formula syntax is linted properly", {
@@ -458,7 +452,7 @@ test_that("formula syntax is linted properly", {
   lint_msg_open <- rex::rex("Opening curly braces should never go on their own line")
   lint_msg_closed <- rex::rex("Closing curly-braces should always be on their own line")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       map(
         .x = 1:4,
@@ -466,7 +460,6 @@ test_that("formula syntax is linted properly", {
                 .x + 1
               }
       )"),
-    NULL,
     linter
   )
 
@@ -515,35 +508,32 @@ test_that("code with pipes is handled correctly", {
   lint_msg_open <- rex::rex("Opening curly braces should never go on their own line")
   lint_msg_closed <- rex::rex("Closing curly-braces should always be on their own line")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       out <- lapply(stuff, function(i) {
         do_something(i)
-      }) %>% unlist
+      }) %>% unlist()
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       1:4 %!>% {
           sum(.)
         }
     "),
-    NULL,
     linter
   )
 
   # %>%\n{ is allowed
-  expect_lint(
+  expect_no_lint(
     trim_some("
       1:4 %T>%
         {
           sum(.)
         }
     "),
-    NULL,
     linter
   )
 
@@ -592,13 +582,12 @@ test_that("code with pipes is handled correctly", {
 
   skip_if_not_r_version("4.1.0")
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       out <- lapply(stuff, function(i) {
         do_something(i)
       }) |> unlist()
     "),
-    NULL,
     linter
   )
 
@@ -615,7 +604,7 @@ test_that("function shorthand is treated like 'full' function", {
   skip_if_not_r_version("4.1.0")
   linter <- brace_linter()
 
-  expect_lint("a <- \\() {  \n}", NULL, linter)
+  expect_no_lint("a <- \\() {  \n}", linter)
   expect_lint(
     trim_some("
       x <- \\()
