@@ -296,7 +296,7 @@ get_imported_symbols <- function(xml, lint_hook) {
       getNamespaceExports(imported_pkgs[[i]]),
       error = function(e) {
         pkg <- imported_pkgs[[i]]
-        lint_node <- xml_parent(import_exprs[[i]])
+        lint_node <- xml2::xml_parent(import_exprs[[i]])
         lint_msg <- paste0("Could not find exported symbols for package \"", pkg, "\" in library ",
                            toString(shQuote(.libPaths())), ". This may lead to false positives.")
         lint_hook(lint_node, lint_msg)
