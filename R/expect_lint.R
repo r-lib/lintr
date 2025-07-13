@@ -48,8 +48,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
   on.exit(reset_lang(old_lang))
 
   if (is.null(file)) on.exit(unlink(file), add = TRUE)
-  # NB: the lint consistency fuzz suite anchors on the below line.
-  file <- maybe_write_content(file, content)
+  file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
