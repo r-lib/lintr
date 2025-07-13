@@ -147,7 +147,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
         line_based_match <- xml_find_first(
           fun_assignment,
-          glue::glue_data(res[i,], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
+          glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
         )
         if (is.na(line_based_match)) fun_assignment else line_based_match
       })
@@ -256,7 +256,7 @@ parse_check_usage <- function(expression,
     ))
   }
   # nocov end
-  res <- res[!is_missing,]
+  res <- res[!is_missing, ]
 
   res$line1 <- ifelse(
     nzchar(res$line1),
@@ -297,8 +297,10 @@ get_imported_symbols <- function(xml, lint_hook) {
       error = function(e) {
         pkg <- imported_pkgs[[i]]
         lint_node <- xml2::xml_parent(import_exprs[[i]])
+        # nolint start: undesirable_function_name. .libPaths() is neccessary here.
         lint_msg <- paste0("Could not find exported symbols for package \"", pkg, "\" in library ",
                            toString(shQuote(.libPaths())), ". This may lead to false positives.")
+        # nolint end
         lint_hook(lint_node, lint_msg)
         character()
       }

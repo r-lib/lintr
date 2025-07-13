@@ -887,15 +887,15 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
 
 test_that("interpret_glue is deprecated", {
   expect_warning(
-  {
-    linter_no <- object_usage_linter(interpret_glue = FALSE)
-  },
+    {
+      linter_no <- object_usage_linter(interpret_glue = FALSE)
+    },
     rex::rex("interpret_glue", anything, "deprecated")
   )
   expect_warning(
-  {
-    linter_yes <- object_usage_linter(interpret_glue = TRUE)
-  },
+    {
+      linter_yes <- object_usage_linter(interpret_glue = TRUE)
+    },
     rex::rex("interpret_glue", anything, "deprecated")
   )
 
