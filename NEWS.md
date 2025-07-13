@@ -43,6 +43,7 @@
 * New `gitlab_output()` function to output lints to GitLab format (#2858, @lschneiderbauer)
 * `brace_linter()` requires `test_that()`'s `code=` argument to have curly braces (#2292, @MichaelChirico).
 * `fixed_regex_linter()` recognizes usage of the new (R 4.5.0) `grepv()` wrapper of `grep()`; `regex_subset_linter()` also recommends `grepv()` alternatives (#2855, @MichaelChirico).
+* `object_usage_linter()` lints missing packages that may cause false positives (#2872, @AshesITR)
 
 ### New linters
 
