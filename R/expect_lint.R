@@ -62,11 +62,11 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
-  lint_fmt <- function() if (n_lints > 0L) paste(c("", lints), collapse = "\n") else ""
+  lint_str <- if (n_lints) paste(c("", lints), collapse = "\n") else ""
 
   wrong_number_fmt <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
-    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_fmt())
+    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
     return(testthat::expect(n_lints %==% 0L, msg))
   }
 
@@ -76,7 +76,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   checks[] <- lapply(checks, fix_names, "message")
 
   if (n_lints != length(checks)) {
-    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_fmt())
+    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
     return(testthat::expect(FALSE, msg))
   }
 
