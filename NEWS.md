@@ -17,6 +17,7 @@
 
 * `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
 * Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico). Thanks also to @bastistician for detecting a regression caused by the initial change for users of Emacs (#2847).
+* `assignment_linter()` no longer errors if `"%<>%"` is an allowed operator (#2850, @AshesITR).
 
 ## Changes to default linters
 
