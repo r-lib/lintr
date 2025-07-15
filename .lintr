@@ -45,9 +45,7 @@ linters: all_linters(
     strings_as_factors_linter = NULL,
     todo_comment_linter = NULL,
     # exclude; we use customized version above
-    undesirable_function_linter = NULL,
-    # TODO(#2327): Enable this.
-    unreachable_code_linter = NULL
+    undesirable_function_linter = NULL
   )
 exclusions: list(
     "inst/doc/creating_linters.R" = 1L,
