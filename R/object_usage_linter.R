@@ -297,10 +297,12 @@ get_imported_symbols <- function(xml, lint_hook) {
       error = function(e) {
         pkg <- imported_pkgs[[i]]
         lint_node <- xml2::xml_parent(import_exprs[[i]])
-        # nolint start: undesirable_function_name. .libPaths() is neccessary here.
-        lint_msg <- paste0("Could not find exported symbols for package \"", pkg, "\" in library ",
-                           toString(shQuote(.libPaths())), ". This may lead to false positives.")
-        # nolint end
+        lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is neccessary here.
+        lib_noun <- if (length(lib_paths) == 1L) "library" else "libraries"
+        lint_msg <- paste0(
+          "Could not find exported symbols for package \"", pkg, "\" in ", lib_noun, " ",
+          toString(shQuote(lib_paths)), ". This may lead to false positives."
+        )
         lint_hook(lint_node, lint_msg)
         character()
       }
