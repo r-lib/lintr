@@ -1,8 +1,8 @@
 #' Require usage of direct methods for subsetting strings via regex
 #'
-#' Using `value = TRUE` in [grep()] returns the subset of the input that matches
-#'   the pattern, e.g. `grep("[a-m]", letters, value = TRUE)` will return the
-#'   first 13 elements (`a` through `m`).
+# TODO(R>=4.5.0): Just use [grepv()] directly. Need this while ?grepv doesn't exist.
+#' Using [`grepv()`][grep] returns the subset of the input that matches the pattern,
+#'   e.g. `grepv("[a-m]", letters)` will return the first 13 elements (`a` through `m`).
 #'
 #' `letters[grep("[a-m]", letters)]` and `letters[grepl("[a-m]", letters)]`
 #'   both return the same thing, but more circuitously and more verbosely.
@@ -12,12 +12,12 @@
 #'   `str_detect()` and `str_which()`.
 #'
 #' @section Exceptions:
-#'   Note that `x[grep(pattern, x)]` and `grep(pattern, x, value = TRUE)`
-#'   are not _completely_ interchangeable when `x` is not character
-#'   (most commonly, when `x` is a factor), because the output of the
-#'   latter will be a character vector while the former remains a factor.
-#'   It still may be preferable to refactor such code, as it may be faster
-#'   to match the pattern on `levels(x)` and use that to subset instead.
+#'   Note that `x[grep(pattern, x)]` and `grepv(pattern, x)` are not
+#'    _completely_ interchangeable when `x` is not character (most commonly,
+#'   when `x` is a factor), because the output of the latter will be a
+#'   character vector while the former remains a factor. It still may be
+#'   preferable to refactor such code, as it may be faster to match the
+#'   pattern on `levels(x)` and use that to subset instead.
 #'
 #' @evalRd rd_tags("regex_subset_linter")
 #'
@@ -35,7 +35,7 @@
 #'
 #' # okay
 #' lint(
-#'   text = "grep(pattern, x, value = TRUE)",
+#'   text = "grepv(pattern, x)",
 #'   linters = regex_subset_linter()
 #' )
 #'
@@ -71,8 +71,10 @@ regex_subset_linter <- function() {
     grep_lints <- xml_nodes_to_lints(
       grep_expr,
       source_expression = source_expression,
-      lint_message =
-        "Prefer grep(pattern, x, ..., value = TRUE) over x[grep(pattern, x, ...)] and x[grepl(pattern, x, ...)].",
+      lint_message = paste(
+        "Prefer grepv(pattern, x, ...) over x[grep(pattern, x, ...)] and x[grepl(pattern, x, ...)].",
+        "Code required to run on R versions before 4.5.0 can use grep(pattern, x, ..., value = TRUE)."
+      ),
       type = "warning"
     )
 
