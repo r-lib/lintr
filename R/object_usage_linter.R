@@ -296,7 +296,7 @@ get_imported_symbols <- function(xml, library_lint_hook) {
       getNamespaceExports(pkg),
       error = function(e) {
         lint_node <- xml2::xml_parent(expr)
-        lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is neccessary here.
+        lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is necessary here.
         lib_noun <- if (length(lib_paths) == 1L) "library" else "libraries"
         lint_msg <- paste0(
           "Could not find exported symbols for package \"", pkg, "\" in ", lib_noun, " ",
