@@ -101,6 +101,7 @@ clone_and_lint <- function(repo_url) {
 
   start_time <- proc.time()
   on.exit(repo_data[.(repo_url), elapsed := (proc.time() - start_time)["elapsed"]])
+  outer <- environment()
   warnings <- character()
   withCallingHandlers(
     tryCatch(
@@ -117,7 +118,7 @@ clone_and_lint <- function(repo_url) {
       }
     ),
     warning = function(cond) {
-      warnings <<- c(warnings, conditionMessage(cond))
+      outer$warnings <- c(warnings, conditionMessage(cond))
       invokeRestart("muffleWarning")
     }
   )

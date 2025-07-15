@@ -87,8 +87,9 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
 
     # Catch missing packages and report them as lints
     library_lints <- list()
+    outer <- environment()
     library_lint_hook <- function(lint_node, lint_msg) {
-      library_lints[[length(library_lints) + 1L]] <<- xml_nodes_to_lints(
+      outer$library_lints[[length(library_lints) + 1L]] <- xml_nodes_to_lints(
         lint_node, source_expression = source_expression, lint_message = lint_msg, type = "warning"
       )
     }
