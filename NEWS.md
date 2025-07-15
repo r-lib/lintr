@@ -44,6 +44,7 @@
 * New `gitlab_output()` function to output lints to GitLab format (#2858, @lschneiderbauer)
 * `brace_linter()` requires `test_that()`'s `code=` argument to have curly braces (#2292, @MichaelChirico).
 * `fixed_regex_linter()` recognizes usage of the new (R 4.5.0) `grepv()` wrapper of `grep()`; `regex_subset_linter()` also recommends `grepv()` alternatives (#2855, @MichaelChirico).
+* `line_length_linter()` has a new argument `ignore_string_bodies` (defaulting to `FALSE`) which governs whether the contents of multi-line string bodies should be linted (#856, @MichaelChirico). We think the biggest use case for this is writing SQL in R strings, especially in cases where the recommended string with for SQL & R differ.
 
 ### New linters
 
