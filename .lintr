@@ -32,11 +32,6 @@ linters: all_linters(
       ),
       symbol_is_undesirable = FALSE
     ),
-    undesirable_operator_linter(modify_defaults(
-      defaults = default_undesirable_operators,
-      `:::` = NULL,
-      `<<-` = NULL
-    )),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
     absolute_path_linter = NULL,
     library_call_linter = NULL,

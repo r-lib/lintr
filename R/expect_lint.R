@@ -93,16 +93,17 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   }
 
   local({
-    itr <- 0L
+    itr_env <- new.env(parent = emptyenv())
+    itr_env$itr <- 0L
     # valid fields are those from Lint(), plus 'linter'
     lint_fields <- c(names(formals(Lint)), "linter")
     Map(
       function(lint, check) {
-        itr <<- itr + 1L
+        itr_env$itr <- itr_env$itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
             cli_abort(c(
-              x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+              x = "Check {.val {itr_env$itr}} has an invalid field: {.field {field}}.",
               i = "Valid fields are: {.field {lint_fields}}."
             ))
           }
@@ -110,7 +111,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
           value <- lint[[field]]
           msg <- sprintf(
             "check #%d: %s %s did not match %s",
-            itr, field, deparse(value), deparse(check)
+            itr_env$itr, field, deparse(value), deparse(check)
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
           ok <- if (field == "message") {
