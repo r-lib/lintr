@@ -93,13 +93,13 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   }
 
   local({
-    outer <- environment()
+    outer_env <- environment() # nolint: object_usage. False positive in codetools::checkUsage().
     itr <- 0L
     # valid fields are those from Lint(), plus 'linter'
     lint_fields <- c(names(formals(Lint)), "linter")
     Map(
       function(lint, check) {
-        outer$itr <- itr + 1L
+        outer_env$itr <- itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
             cli_abort(c(

@@ -21,13 +21,13 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
-  outer <- environment()
+  outer_env <- environment() # nolint: object_usage. False positive in codetools::checkUsage().
   res <- list()
   itr <- 1L
   assign_item <- function(x) {
     if (inherits(x, class)) {
-      outer$res[[itr]] <- x
-      outer$itr <- itr + 1L
+      outer_env$res[[itr]] <- x
+      outer_env$itr <- itr + 1L
     } else if (is.list(x)) {
       lapply(x, assign_item)
     }
@@ -150,13 +150,13 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
-  outer <- environment()
+  outer_env <- environment() # nolint: object_usage. False positive in codetools::checkUsage().
   terminal_newline <- TRUE
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),
     warning = function(w) {
       if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        outer$terminal_newline <- FALSE
+        outer_env$terminal_newline <- FALSE
         invokeRestart("muffleWarning")
       }
     }

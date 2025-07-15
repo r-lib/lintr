@@ -86,10 +86,10 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     xml <- source_expression$full_xml_parsed_content
 
     # Catch missing packages and report them as lints
+    outer_env <- environment() # nolint: object_usage. False positive in codetools::checkUsage().
     library_lints <- list()
-    outer <- environment()
     library_lint_hook <- function(lint_node, lint_msg) {
-      outer$library_lints[[length(library_lints) + 1L]] <- xml_nodes_to_lints(
+      outer_env$library_lints[[length(library_lints) + 1L]] <- xml_nodes_to_lints(
         lint_node, source_expression = source_expression, lint_message = lint_msg, type = "warning"
       )
     }
