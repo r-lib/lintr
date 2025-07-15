@@ -80,6 +80,7 @@
    + the specific `if()` statement that can be combined with the linted one (#1891, @MichaelChirico).
 * The description in `?paste_linter` of `allow_file_path=` has been corrected (#2675, @MichaelChirico). In particular, `allow_file_path="never"` is the most strict form, `allow_file_path="always"` is the most lax form.
 * `comment_token` is removed from settings. This was a vestige of the now-defunct support for posting GitHub comments.
+* `unreachable_code_linter()` is now used to lint the lintr package itself (#2881).
 
 # lintr 3.2.0
 
