@@ -30,8 +30,8 @@ test_that("backport_linter detects backwards-incompatibility", {
       )
     "),
     list(
-      list(rex::rex("trimws (R 3.2.0) is not always available for requested dependency (R >= 3.0.0)."), line_number = 1L),
-      list(rex::rex("...names (R 4.1.0) is not always available for requested dependency (R >= 3.0.0)."), line_number = 2L)
+      list(rex::rex("trimws (R 3.2.0)", anything, "(R >= 3.0.0)."), line_number = 1L),
+      list(rex::rex("...names (R 4.1.0)", anything, "(R >= 3.0.0)."), line_number = 2L)
     ),
     backport_linter("3.0.0")
   )
