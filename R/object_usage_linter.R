@@ -154,7 +154,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       })
 
       c(
-        library_lints,
+        outer_env$library_lints,
         xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
       )
     })

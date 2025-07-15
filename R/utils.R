@@ -151,7 +151,7 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
   outer_env <- environment()
-  terminal_newline <- TRUE
+  outer_env$terminal_newline <- TRUE
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),
     warning = function(w) {
