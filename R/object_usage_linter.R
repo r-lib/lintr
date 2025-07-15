@@ -86,7 +86,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     xml <- source_expression$full_xml_parsed_content
 
     # Catch missing packages and report them as lints
-    outer_env <- environment()
+    outer_env <- new.env(parent = emptyenv())
     outer_env$library_lints <- list()
     library_lint_hook <- function(lint_node, lint_msg) {
       outer_env$library_lints[[length(outer_env$library_lints) + 1L]] <- xml_nodes_to_lints(

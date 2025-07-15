@@ -21,7 +21,7 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
-  outer_env <- environment()
+  outer_env <- new.env(parent = emptyenv())
   outer_env$res <- list()
   outer_env$itr <- 1L
   assign_item <- function(x) {
@@ -150,7 +150,7 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
-  outer_env <- environment()
+  outer_env <- new.env(parent = emptyenv())
   outer_env$terminal_newline <- TRUE
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),

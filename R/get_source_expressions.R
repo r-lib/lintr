@@ -660,7 +660,7 @@ fix_tab_columns <- function(parse_content, tab_cols) {
 }
 
 tab_offsets <- function(tab_columns) {
-  outer_env <- environment()
+  outer_env <- new.env(parent = emptyenv())
   outer_env$cum_offset <- 0L
   vapply(
     tab_columns - 1L,

@@ -101,8 +101,8 @@ clone_and_lint <- function(repo_url) {
 
   start_time <- proc.time()
   on.exit(repo_data[.(repo_url), elapsed := (proc.time() - start_time)["elapsed"]])
-  outer_env <- environment()
-  warnings <- character()
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$warnings <- character()
   withCallingHandlers(
     tryCatch(
       {
@@ -122,8 +122,8 @@ clone_and_lint <- function(repo_url) {
       invokeRestart("muffleWarning")
     }
   )
-  if (length(warnings) > 0L) {
-    writeLines(warnings, file.path(out_dir, paste0(package, ".warnings")))
+  if (length(outer_env$warnings) > 0L) {
+    writeLines(outer_env$warnings, file.path(out_dir, paste0(package, ".warnings")))
   }
 }
 

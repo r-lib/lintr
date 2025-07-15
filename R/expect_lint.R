@@ -93,7 +93,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   }
 
   local({
-    itr_env <- environment()
+    itr_env <- new.env(parent = emptyenv())
     itr_env$itr <- 0L
     # valid fields are those from Lint(), plus 'linter'
     lint_fields <- c(names(formals(Lint)), "linter")
