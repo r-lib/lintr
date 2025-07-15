@@ -118,7 +118,7 @@ clone_and_lint <- function(repo_url) {
       }
     ),
     warning = function(cond) {
-      outer_env$warnings <- c(warnings, conditionMessage(cond))
+      outer_env$warnings <- c(outer_env$warnings, conditionMessage(cond))
       invokeRestart("muffleWarning")
     }
   )
