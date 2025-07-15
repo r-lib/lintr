@@ -291,12 +291,11 @@ get_imported_symbols <- function(xml, lint_hook) {
   import_exprs <- xml_find_all(xml, import_exprs_xpath)
   imported_pkgs <- get_r_string(import_exprs)
 
-  unlist(lapply(seq_along(import_exprs), function(i) {
+  unlist(mapply(pkg = imported_pkgs, expr = import_exprs, function(pkg, expr) {
     tryCatch(
-      getNamespaceExports(imported_pkgs[[i]]),
+      getNamespaceExports(pkg),
       error = function(e) {
-        pkg <- imported_pkgs[[i]]
-        lint_node <- xml2::xml_parent(import_exprs[[i]])
+        lint_node <- xml2::xml_parent(expr)
         lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is neccessary here.
         lib_noun <- if (length(lib_paths) == 1L) "library" else "libraries"
         lint_msg <- paste0(
