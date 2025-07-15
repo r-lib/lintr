@@ -118,6 +118,8 @@
 <code><a href="../reference/brace_linter.html">brace_linter()</a></code> requires <code>test_that()</code>’s <code>code=</code> argument to have curly braces (<a href="https://github.com/r-lib/lintr/issues/2292" class="external-link">#2292</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> recognizes usage of the new (R 4.5.0) <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepv()</a></code> wrapper of <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep()</a></code>; <code><a href="../reference/regex_subset_linter.html">regex_subset_linter()</a></code> also recommends <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepv()</a></code> alternatives (<a href="https://github.com/r-lib/lintr/issues/2855" class="external-link">#2855</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> lints missing packages that may cause false positives (<a href="https://github.com/r-lib/lintr/issues/2872" class="external-link">#2872</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>)</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
