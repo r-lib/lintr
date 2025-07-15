@@ -34,7 +34,6 @@ linters: all_linters(
     ),
     undesirable_operator_linter(modify_defaults(
       defaults = default_undesirable_operators,
-      `:::` = NULL,
       `<<-` = NULL
     )),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
