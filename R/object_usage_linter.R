@@ -291,7 +291,7 @@ get_imported_symbols <- function(xml, library_lint_hook) {
   import_exprs <- xml_find_all(xml, import_exprs_xpath)
   imported_pkgs <- get_r_string(import_exprs)
 
-  unlist(mapply(pkg = imported_pkgs, expr = import_exprs, function(pkg, expr) {
+  unlist(Map(pkg = imported_pkgs, expr = import_exprs, function(pkg, expr) {
     tryCatch(
       getNamespaceExports(pkg),
       error = function(e) {
@@ -300,7 +300,7 @@ get_imported_symbols <- function(xml, library_lint_hook) {
         lib_noun <- if (length(lib_paths) == 1L) "library" else "libraries"
         lint_msg <- paste0(
           "Could not find exported symbols for package \"", pkg, "\" in ", lib_noun, " ",
-          toString(shQuote(lib_paths)), ". This may lead to false positives."
+          toString(shQuote(lib_paths)), " (", conditionMessage(e), "). This may lead to false positives."
         )
         library_lint_hook(lint_node, lint_msg)
         character()
