@@ -40,7 +40,7 @@ function_lambda_fuzzer <- function(pd, lines) {
 apply_fuzzers <- function(f) {
   # skip errors for e.g. Rmd files, and ignore warnings.
   #   We could use get_source_expressions(), but with little benefit & much slower.
-  pd <- tryCatch(getParseData(suppressWarnings(parse(f, keep.source = TRUE))), error = identity)
+  pd <- tryCatch(getParseData(suppressWarnings(parse(f, keep.source = TRUE, encoding = "UTF-8"))), error = identity)
   if (inherits(pd, "error")) {
     return(invisible())
   }
