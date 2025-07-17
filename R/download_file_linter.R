@@ -16,19 +16,9 @@
 #'   linters = download_file_linter()
 #' )
 #'
-#' lint(
-#'   text = "download.file(x = my_url, , , , 'w')",
-#'   linters = download_file_linter()
-#' )
-#'
 #' # okay
 #' lint(
 #'   text = "download.file(x = my_url, mode = 'wb')",
-#'   linters = download_file_linter()
-#' )
-#'
-#' lint(
-#'   text = "download.file(x = my_url, , , , 'wb')",
 #'   linters = download_file_linter()
 #' )
 #'
@@ -43,12 +33,11 @@ download_file_linter <- function() {
     # 3 options:
     # - no explicit value for mode
     # - mode = "a" or mode = "w"
-    # - similar as previous but specified by position
+    # - similar as previous but specified by position (not covered yet)
     xml_calls_no_mode <- xml_find_all(
       xml_calls,
       "parent::expr[1][
         not(SYMBOL_SUB[text() = 'mode'])
-        and count(OP-COMMA) < 4
       ]"
     )
 
@@ -60,16 +49,8 @@ download_file_linter <- function() {
       ]"
     )
 
-    xml_calls_bad_mode_by_position <- xml_find_all(
-      xml_calls,
-      "parent::expr[1][
-        count(SYMBOL_SUB[text() = 'mode']) = 0
-        and OP-COMMA[4]/following-sibling::expr[1]/STR_CONST[not(contains(text(), 'b'))]
-      ]"
-    )
-
     xml_nodes_to_lints(
-      combine_nodesets(xml_calls_no_mode, xml_calls_bad_mode_by_name, xml_calls_bad_mode_by_position),
+      combine_nodesets(xml_calls_no_mode, xml_calls_bad_mode_by_name),
       source_expression = source_expression,
       lint_message = paste(
         "download.file() should use mode = 'wb' (or 'ab') rather than mode = 'w' (or 'a') for portability on Windows."

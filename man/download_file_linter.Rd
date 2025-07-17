@@ -23,19 +23,9 @@ lint(
   linters = download_file_linter()
 )
 
-lint(
-  text = "download.file(x = my_url, , , , 'w')",
-  linters = download_file_linter()
-)
-
 # okay
 lint(
   text = "download.file(x = my_url, mode = 'wb')",
-  linters = download_file_linter()
-)
-
-lint(
-  text = "download.file(x = my_url, , , , 'wb')",
   linters = download_file_linter()
 )
 

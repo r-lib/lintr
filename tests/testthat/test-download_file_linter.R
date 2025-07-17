@@ -4,10 +4,6 @@ test_that("download_file_linter skips allowed usages", {
   expect_no_lint("download.file(x, mode = 'wb')", linter)
   expect_no_lint("download.file(x, mode = 'ab')", linter)
 
-  # mode specified by position
-  expect_no_lint("download.file(x, , , , 'wb')", linter)
-  expect_no_lint("download.file(x, , , , 'ab')", linter)
-
   # 'w' or 'a' but passed to different arguments
   expect_no_lint("download.file(x, destfile = 'w', mode = 'wb')", linter)
   expect_no_lint("download.file(x, mode = 'wb', method = 'internal', quiet = TRUE, 'w')", linter)
@@ -23,9 +19,6 @@ test_that("download_file_linter blocks simple disallowed usages", {
   # Case 2: non-portable mode specified by name
   expect_lint("download.file(x, mode = 'w')", lint_message, linter)
   expect_lint("download.file(x, mode = 'a')", lint_message, linter)
-
-  # Case 3: non-portable mode specified by position
-  expect_lint("download.file(x, , , , mode = 'w')", lint_message, linter)
 
   # 'wb' passed to different argument
   expect_lint("download.file(x, mode = 'w', method = 'internal', quiet = TRUE, 'wb')", lint_message, linter)
