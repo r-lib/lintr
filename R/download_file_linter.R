@@ -54,12 +54,10 @@ download_file_linter <- function() {
 
     xml_calls_bad_mode_by_name <- xml_find_all(
       xml_calls,
-      glue(
-        "parent::expr[1][
-          SYMBOL_SUB[text() = 'mode'
-          and following-sibling::expr[1]/STR_CONST[not(contains(text(), 'b'))]]
-        ]"
-      )
+      "parent::expr[1][
+        SYMBOL_SUB[text() = 'mode'
+        and following-sibling::expr[1]/STR_CONST[not(contains(text(), 'b'))]]
+      ]"
     )
 
     xml_calls_bad_mode_by_position <- xml_find_all(
