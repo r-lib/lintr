@@ -11,7 +11,6 @@ test_that("download_file_linter skips allowed usages", {
   # 'w' or 'a' but passed to different arguments
   expect_no_lint("download.file(x, destfile = 'w', mode = 'wb')", linter)
   expect_no_lint("download.file(x, mode = 'wb', method = 'internal', quiet = TRUE, 'w')", linter)
-
 })
 
 test_that("download_file_linter blocks simple disallowed usages", {
@@ -30,6 +29,7 @@ test_that("download_file_linter blocks simple disallowed usages", {
 
   # 'wb' passed to different argument
   expect_lint("download.file(x, mode = 'w', method = 'internal', quiet = TRUE, 'wb')", lint_message, linter)
+  expect_lint("download.file(cacheOK = TRUE, destfile, method, quiet, x = 'wb')", lint_message, linter)
 })
 
 test_that("lints vectorize", {
