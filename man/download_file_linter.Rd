@@ -7,8 +7,8 @@
 download_file_linter()
 }
 \description{
-\code{mode = "w"} or \code{mode = "a"} in \code{download.file()} can generate broken files
-on Windows. Instead, \code{?download.file()} recommends the usage of \code{mode = "wb"}
+\code{mode = "w"} (the default) or \code{mode = "a"} in \code{download.file()} can generate broken files
+on Windows. Instead, \code{\link[utils:download.file]{utils::download.file()}} recommends the usage of \code{mode = "wb"}
 and \code{mode = "ab"}.
 }
 \examples{

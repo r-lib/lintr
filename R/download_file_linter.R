@@ -1,7 +1,7 @@
 #' Recommend usage of a portable `mode` value in [download.file()]
 #'
-#' `mode = "w"` or `mode = "a"` in `download.file()` can generate broken files
-#' on Windows. Instead, `?download.file()` recommends the usage of `mode = "wb"`
+#' `mode = "w"` (the default) or `mode = "a"` in `download.file()` can generate broken files
+#' on Windows. Instead, [utils::download.file()] recommends the usage of `mode = "wb"`
 #' and `mode = "ab"`.
 #'
 #' @examples
