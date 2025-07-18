@@ -28,35 +28,38 @@
 download_file_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml_calls <- source_expression$xml_find_function_calls("download.file")
+    download_file_calls <- source_expression$xml_find_function_calls("download.file")
 
-    # 3 options:
-    # - no explicit value for mode
-    # - mode = "a" or mode = "w"
-    # - similar as previous but specified by position (not covered yet)
-    xml_calls_no_mode <- xml_find_all(
-      xml_calls,
-      "parent::expr[1][
-        not(SYMBOL_SUB[text() = 'mode'])
-      ]"
+    download_file_mode <- get_r_string(
+      download_file_calls,
+      "parent::expr[1]/
+        SYMBOL_SUB[text() = 'mode']/
+        following-sibling::expr[1]/STR_CONST
+      "
     )
 
-    xml_calls_bad_mode_by_name <- xml_find_all(
-      xml_calls,
-      "parent::expr[1][
-        SYMBOL_SUB[text() = 'mode'
-        and following-sibling::expr[1]/STR_CONST[not(contains(text(), 'b'))]]
-      ]"
-    )
+    implicit_mode <- is.na(download_file_mode)
 
-    xml_nodes_to_lints(
-      combine_nodesets(xml_calls_no_mode, xml_calls_bad_mode_by_name),
+    implicit_mode_lint <- xml_nodes_to_lints(
+      download_file_calls[implicit_mode],
       source_expression = source_expression,
-      lint_message = paste(
-        "download.file() should use mode = 'wb' (or 'ab') rather than mode = 'w' (or 'a') for portability on Windows."
+      lint_message = "download.file() should use mode = 'wb' or ('ab') rather than relying on the default mode = 'w'.",
+      type = "warning"
+    )
+
+    wrong_mode <- !implicit_mode & download_file_mode %in% c("a", "w")
+
+    explicit_wrong_mode_lint <- xml_nodes_to_lints(
+      download_file_calls[wrong_mode],
+      source_expression = source_expression,
+      lint_message = sprintf(
+        "download.file() should use mode = '%1$sb' rather than mode = '%1$s' for portability on Windows.",
+        download_file_mode[wrong_mode]
       ),
       type = "warning"
     )
+
+    c(implicit_mode_lint, explicit_wrong_mode_lint)
   })
 
 }
