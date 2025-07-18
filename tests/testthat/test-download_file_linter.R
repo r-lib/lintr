@@ -26,15 +26,11 @@ test_that("download_file_linter blocks simple disallowed usages", {
 })
 
 test_that("lints vectorize", {
-  lint_message <- rex::rex("download.file() should use mode = 'wb' (or 'ab')")
-
   expect_lint(
-    trim_some(
-      "{
+    trim_some("{
       download.file(x, mode = 'w')
       download.file(y, mode = 'a')
-    }"
-    ),
+    }"),
     list(
       list(
         rex::rex("download.file() should use mode = 'wb'"),
