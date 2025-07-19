@@ -2,7 +2,7 @@
 % Please edit documentation in R/download_file_linter.R
 \name{download_file_linter}
 \alias{download_file_linter}
-\title{Recommend usage of a portable \code{mode} value in \code{\link[=download.file]{download.file()}}}
+\title{Recommend usage of a portable \code{mode} value for downloading files}
 \usage{
 download_file_linter()
 }
