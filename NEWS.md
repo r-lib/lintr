@@ -72,6 +72,10 @@ files in Windows (#2882, @Bisaloo).
 ### Lint accuracy fixes: removing false negatives
 
 * `todo_comment_linter()` finds comments inside {roxygen2} markup comments (#2447, @MichaelChirico).
+* Linters with logic around function declarations consistently include the R 4.0.0 shorthand `\()` (#2818, continuation of earlier #2190, @MichaelChirico).
+  + `library_call_linter()`
+  + `terminal_close_linter()`
+  + `unnecessary_lambda_linter()`
 
 ## Notes
 
