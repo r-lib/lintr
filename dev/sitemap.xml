@@ -45,6 +45,7 @@
 <url><loc>https://lintr.r-lib.org/dev/reference/default_settings.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/default_undesirable_functions.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/deprecated_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/download_file_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/duplicate_argument_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/efficiency_linters.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/empty_assignment_linter.html</loc></url>
