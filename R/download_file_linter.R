@@ -40,14 +40,36 @@ download_file_linter <- function() {
 
     implicit_mode <- is.na(download_file_mode)
 
+    # According to download.file() documentation, mode is ignored when method
+    # is "curl" or "wget" so if it's explicitly specified, we should let the
+    # user know they might not get the desired effect
+    download_file_method <- get_r_string(
+      download_file_calls,
+      "parent::expr[1]/
+        SYMBOL_SUB[text() = 'method']/
+        following-sibling::expr[1]/STR_CONST
+      "
+    )
+    no_mode_method <- !is.na(download_file_method) & download_file_method %in% c("wget", "curl")
+
+    ignored_mode_lint <- xml_nodes_to_lints(
+      download_file_calls[!implicit_mode & no_mode_method],
+      source_expression = source_expression,
+      lint_message = sprintf(
+        "mode argument value is ignored for download.file(method = '%s').",
+        download_file_method[no_mode_method]
+      ),
+      type = "warning"
+    )
+
     implicit_mode_lint <- xml_nodes_to_lints(
-      download_file_calls[implicit_mode],
+      download_file_calls[implicit_mode & !no_mode_method],
       source_expression = source_expression,
       lint_message = "download.file() should use mode = 'wb' or ('ab') rather than relying on the default mode = 'w'.",
       type = "warning"
     )
 
-    wrong_mode <- !implicit_mode & download_file_mode %in% c("a", "w")
+    wrong_mode <- !implicit_mode & !no_mode_method & download_file_mode %in% c("a", "w")
 
     explicit_wrong_mode_lint <- xml_nodes_to_lints(
       download_file_calls[wrong_mode],
@@ -59,7 +81,7 @@ download_file_linter <- function() {
       type = "warning"
     )
 
-    c(implicit_mode_lint, explicit_wrong_mode_lint)
+    c(implicit_mode_lint, ignored_mode_lint, explicit_wrong_mode_lint)
   })
 
 }

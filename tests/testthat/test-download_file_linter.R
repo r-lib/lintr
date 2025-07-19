@@ -7,6 +7,10 @@ test_that("download_file_linter skips allowed usages", {
   # 'w' or 'a' but passed to different arguments
   expect_no_lint("download.file(x, destfile = 'w', mode = 'wb')", linter)
   expect_no_lint("download.file(x, mode = 'wb', method = 'internal', quiet = TRUE, 'w')", linter)
+
+  # if mode = "wget" or "curl", mode is ignored so we don't lint on the default
+  expect_no_lint("download.file(x, method = 'curl')", linter)
+  expect_no_lint("download.file(x, method = 'wget')", linter)
 })
 
 test_that("download_file_linter blocks simple disallowed usages", {
@@ -23,6 +27,11 @@ test_that("download_file_linter blocks simple disallowed usages", {
   # 'wb' passed to different argument
   expect_lint("download.file(x, mode = 'w', method = 'internal', quiet = TRUE, 'wb')", lint_message, linter)
   expect_lint("download.file(cacheOK = TRUE, destfile, method, quiet, x = 'wb')", lint_message, linter)
+
+  # mode explicitly specified with a method that ignores it
+  lint_message <- rex::rex("mode argument value is ignored")
+  expect_lint("download.file(x, method = 'wget', mode = 'w')", lint_message, linter)
+  expect_lint("download.file(x, method = 'curl', mode = 'wb')", lint_message, linter)
 })
 
 test_that("lints vectorize", {
@@ -30,6 +39,7 @@ test_that("lints vectorize", {
     trim_some("{
       download.file(x, mode = 'w')
       download.file(y, mode = 'a')
+      download.file(z, mode = 'wb', method = 'curl')
     }"),
     list(
       list(
@@ -39,6 +49,10 @@ test_that("lints vectorize", {
       list(
         rex::rex("download.file() should use mode = 'ab'"),
         line_number = 3L
+      ),
+      list(
+        rex::rex("mode argument value is ignored"),
+        line_number = 4L
       )
     ),
     download_file_linter()
