@@ -10,6 +10,7 @@ download_file_linter()
 \code{mode = "w"} (the default) or \code{mode = "a"} in \code{download.file()} can generate broken files
 on Windows. Instead, \code{\link[utils:download.file]{utils::download.file()}} recommends the usage of \code{mode = "wb"}
 and \code{mode = "ab"}.
+If \code{method = "curl"} or \code{method = "wget"}, no \code{mode} should be provided as it will be ignored.
 }
 \examples{
 # will produce lints
@@ -23,9 +24,19 @@ lint(
   linters = download_file_linter()
 )
 
+lint(
+  text = "download.file(x = my_url, method = 'curl', mode = 'wb')",
+  linters = download_file_linter()
+)
+
 # okay
 lint(
   text = "download.file(x = my_url, mode = 'wb')",
+  linters = download_file_linter()
+)
+
+lint(
+  text = "download.file(x = my_url, method = 'curl')",
   linters = download_file_linter()
 )
 
