@@ -11,6 +11,9 @@ test_that("download_file_linter skips allowed usages", {
   # if mode = "wget" or "curl", mode is ignored so we don't lint on the default
   expect_no_lint("download.file(x, method = 'curl')", linter)
   expect_no_lint("download.file(x, method = 'wget')", linter)
+
+  expect_no_lint("download.file(x, method = 'internal', mode = 'wb')", linter)
+  expect_no_lint("download.file(x, method = method, mode = 'wb')", linter)
 })
 
 test_that("download_file_linter blocks simple disallowed usages", {
@@ -19,10 +22,12 @@ test_that("download_file_linter blocks simple disallowed usages", {
 
   # Case 1: implicit default (mode = "w")
   expect_lint("download.file(x)", lint_message, linter)
+  expect_lint("download.file(x, method = 'internal')", lint_message, linter)
 
   # Case 2: non-portable mode specified by name
   expect_lint("download.file(x, mode = 'w')", lint_message, linter)
   expect_lint("download.file(x, mode = 'a')", lint_message, linter)
+  expect_lint("download.file(x, method = method, mode = 'w')", lint_message, linter)
 
   # 'wb' passed to different argument
   expect_lint("download.file(x, mode = 'w', method = 'internal', quiet = TRUE, 'wb')", lint_message, linter)
