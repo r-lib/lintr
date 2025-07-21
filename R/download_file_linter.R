@@ -3,6 +3,7 @@
 #' `mode = "w"` (the default) or `mode = "a"` in `download.file()` can generate broken files
 #' on Windows. Instead, [utils::download.file()] recommends the usage of `mode = "wb"`
 #' and `mode = "ab"`.
+#' If `method = "curl"` or `method = "wget"`, no `mode` should be provided as it will be ignored.
 #'
 #' @examples
 #' # will produce lints
@@ -16,9 +17,19 @@
 #'   linters = download_file_linter()
 #' )
 #'
+#' lint(
+#'   text = "download.file(x = my_url, method = 'curl', mode = 'wb')",
+#'   linters = download_file_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "download.file(x = my_url, mode = 'wb')",
+#'   linters = download_file_linter()
+#' )
+#'
+#' lint(
+#'   text = "download.file(x = my_url, method = 'curl')",
 #'   linters = download_file_linter()
 #' )
 #'
