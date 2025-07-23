@@ -2,7 +2,7 @@
 #'
 #' [all.equal()] returns `TRUE` in the absence of differences but return a
 #' character string (not `FALSE`) in the presence of differences.
-#' Usage of `all.equal()` without wrapping it is `isTRUE()` in `if` clauses, or
+#' Usage of `all.equal()` without wrapping it in `isTRUE()` in `if` clauses, or
 #' preceded by the negation operator `!`, are thus likely to generate unexpected
 #' errors if the compared objects have differences.
 #' An alternative is to use `identical()` to compare vector of strings or when

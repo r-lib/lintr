@@ -9,7 +9,7 @@ all_equal_linter()
 \description{
 \code{\link[=all.equal]{all.equal()}} returns \code{TRUE} in the absence of differences but return a
 character string (not \code{FALSE}) in the presence of differences.
-Usage of \code{all.equal()} without wrapping it is \code{isTRUE()} in \code{if} clauses, or
+Usage of \code{all.equal()} without wrapping it in \code{isTRUE()} in \code{if} clauses, or
 preceded by the negation operator \code{!}, are thus likely to generate unexpected
 errors if the compared objects have differences.
 An alternative is to use \code{identical()} to compare vector of strings or when
