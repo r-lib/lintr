@@ -13,6 +13,7 @@ test_that("all_equal_linter() blocks simple disallowed usages", {
 
   expect_lint("if (all.equal(a, b)) message('equal')", lint_message, linter)
   expect_lint("!all.equal(a, b)", lint_message, linter)
+  expect_lint("while (all.equal(a, b)) message('equal')", lint_message, linter)
 })
 
 test_that("lints vectorize", {

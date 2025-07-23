@@ -39,17 +39,17 @@ all_equal_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     all_equal_calls <- source_expression$xml_find_function_calls("all.equal")
 
-    in_if <- xml_find_all(
+    dangerous_unwrapped_all_equal <- xml_find_all(
       all_equal_calls,
-      "parent::expr[preceding-sibling::IF]"
-    )
-    negated <- xml_find_all(
-      all_equal_calls,
-      "parent::expr[preceding-sibling::OP-EXCLAMATION]"
+      "parent::expr[
+        preceding-sibling::OP-EXCLAMATION
+        or preceding-sibling::IF
+        or preceding-sibling::WHILE
+      ]"
     )
 
     xml_nodes_to_lints(
-      combine_nodesets(in_if, negated),
+      dangerous_unwrapped_all_equal,
       source_expression = source_expression,
       lint_message = "Wrap all.equal() in isTRUE(), or replace it by identical() if no tolerance is required.",
       type = "warning"
