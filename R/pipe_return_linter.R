@@ -1,10 +1,19 @@
 #' Block usage of return() in magrittr pipelines
 #'
 #' [return()] inside a magrittr pipeline does not actually execute `return()`
-#'   like you'd expect: `\(x) { x %>% return(); FALSE }` will return `FALSE`!
-#'   It will technically work "as expected" if this is the final statement
-#'   in the function body, but such usage is misleading. Instead, assign
-#'   the pipe outcome to a variable and return that.
+#'   like you'd expect:
+#'
+#'   ```r
+#'   bad_usage <- function(x) {
+#'     x %>%
+#'       return()
+#'     FALSE
+#'   }
+#'   ```
+#'
+#'   `bad_usage(TRUE)` will return `FALSE`! It will technically work "as expected"
+#'   if this is the final statement in the function body, but such usage is misleading.
+#'   Instead, assign the pipe outcome to a variable and return that.
 #'
 #' @examples
 #' # will produce lints

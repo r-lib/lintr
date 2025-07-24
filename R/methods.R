@@ -85,39 +85,6 @@ print.lints <- function(x, ...) {
   invisible(x)
 }
 
-trim_output <- function(x, max = 65535L) {
-  # if x is less than the max, just return it
-  if (length(x) <= 0L || nchar(x) <= max) {
-    return(x)
-  }
-
-  # otherwise trim x to the max, then search for the lint starts
-  x <- substr(x, 1L, max)
-
-  re <- rex(
-    "[", except_some_of(":"), ":", numbers, ":", numbers, ":", "]",
-    "(", except_some_of(")"), ")",
-    space,
-    "*", or("style", "warning", "error"), ":", "*",
-    except_some_of("\r\n"), newline,
-    except_some_of("\r\n"), newline,
-    except_some_of("\r\n"), newline,
-    except_some_of("\r\n"), newline,
-    except_some_of("\r\n"), newline
-  )
-
-  lint_starts <- re_matches(x, re, global = TRUE, locations = TRUE)[[1L]]
-
-  # if at least one lint ends before the cutoff, cutoff there, else just use
-  # the cutoff
-  last_end <- lint_starts[NROW(lint_starts), "end"]
-  if (!is.na(last_end)) {
-    substr(x, 1L, last_end)
-  } else {
-    x
-  }
-}
-
 #' @export
 names.lints <- function(x, ...) {
   vapply(x, `[[`, character(1L), "filename")
@@ -177,7 +144,7 @@ summary.lints <- function(object, ...) {
   tbl <- table(filenames, types)
   filenames <- rownames(tbl)
   res <- as.data.frame.matrix(tbl, row.names = NULL)
-  res$filenames <- filenames %|||% character()
+  res$filenames <- filenames %||% character()
   nms <- colnames(res)
   res[order(res$filenames), c("filenames", nms[nms != "filenames"])]
 }

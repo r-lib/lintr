@@ -13,13 +13,13 @@ test_that("backport_linter detects backwards-incompatibility", {
 
   expect_lint(
     "numToBits(2)",
-    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.0."),
+    rex::rex("numToBits (R 4.1.0) is not always available for requested dependency (R >= 4.0.0)."),
     backport_linter("4.0.0")
   )
   # symbols as well as calls
   expect_lint(
     "lapply(1:10, numToBits)",
-    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.0."),
+    rex::rex("numToBits (R 4.1.0) is not always available for requested dependency (R >= 4.0.0)."),
     backport_linter("4.0.0")
   )
 
@@ -30,16 +30,16 @@ test_that("backport_linter detects backwards-incompatibility", {
       )
     "),
     list(
-      list(rex::rex("trimws (R 3.2.0) is not available for dependency R >= 3.0.0."), line_number = 1L),
-      list(rex::rex("...names (R 4.1.0) is not available for dependency R >= 3.0.0."), line_number = 2L)
+      list(rex::rex("trimws (R 3.2.0)", anything, "(R >= 3.0.0)."), line_number = 1L),
+      list(rex::rex("...names (R 4.1.0)", anything, "(R >= 3.0.0)."), line_number = 2L)
     ),
     backport_linter("3.0.0")
   )
 
   # oldrel specification
   expect_lint(
-    "R_compiled_by()",
-    rex::rex("R_compiled_by (R 4.3.0) is not available for dependency R >= 4.2.3."),
+    "grepv()",
+    rex::rex("grepv (R 4.5.0) is not always available for requested dependency (R >= 4.4.3)."),
     backport_linter("oldrel")
   )
 
@@ -50,14 +50,14 @@ test_that("backport_linter detects backwards-incompatibility", {
 
   expect_lint(
     "numToBits(2)",
-    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.5."),
-    backport_linter("oldrel-3")
+    rex::rex("numToBits (R 4.1.0) is not always available for requested dependency (R >= 4.0.5)."),
+    backport_linter("oldrel-5")
   )
   # no interference from namespace-qualification (even of base functions)
   expect_lint(
     "base::numToBits(2)",
-    rex::rex("numToBits (R 4.1.0) is not available for dependency R >= 4.0.5."),
-    backport_linter("oldrel-3")
+    rex::rex("numToBits (R 4.1.0) is not always available for requested dependency (R >= 4.0.5)."),
+    backport_linter("oldrel-5")
   )
 
   # except is honored

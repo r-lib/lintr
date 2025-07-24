@@ -81,12 +81,21 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   Linter(linter_level = "file", function(source_expression) {
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
 
-    declared_globals <- try_silently(globalVariables(package = pkg_name %|||% globalenv()))
+    declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
 
     xml <- source_expression$full_xml_parsed_content
 
+    # Catch missing packages and report them as lints
+    outer_env <- new.env(parent = emptyenv())
+    outer_env$library_lints <- list()
+    library_lint_hook <- function(lint_node, lint_msg) {
+      outer_env$library_lints[[length(outer_env$library_lints) + 1L]] <- xml_nodes_to_lints(
+        lint_node, source_expression = source_expression, lint_message = lint_msg, type = "warning"
+      )
+    }
+
     # run the following at run-time, not "compile" time to allow package structure to change
-    env <- make_check_env(pkg_name, xml)
+    env <- make_check_env(pkg_name, xml, library_lint_hook)
 
     fun_assignments <- xml_find_all(xml, xpath_function_assignment)
 
@@ -144,12 +153,15 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         if (is.na(line_based_match)) fun_assignment else line_based_match
       })
 
-      xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
+      c(
+        outer_env$library_lints,
+        xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
+      )
     })
   })
 }
 
-make_check_env <- function(pkg_name, xml) {
+make_check_env <- function(pkg_name, xml, library_lint_hook) {
   if (!is.null(pkg_name)) {
     parent_env <- try_silently(getNamespace(pkg_name))
   }
@@ -160,7 +172,7 @@ make_check_env <- function(pkg_name, xml) {
 
   symbols <- c(
     get_assignment_symbols(xml),
-    get_imported_symbols(xml)
+    get_imported_symbols(xml, library_lint_hook)
   )
 
   # Just assign them an empty function
@@ -264,7 +276,7 @@ parse_check_usage <- function(expression,
   res
 }
 
-get_imported_symbols <- function(xml) {
+get_imported_symbols <- function(xml, library_lint_hook) {
   import_exprs_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
     /parent::expr
@@ -280,10 +292,20 @@ get_imported_symbols <- function(xml) {
   import_exprs <- xml_find_all(xml, import_exprs_xpath)
   imported_pkgs <- get_r_string(import_exprs)
 
-  unlist(lapply(imported_pkgs, function(pkg) {
+  unlist(Map(pkg = imported_pkgs, expr = import_exprs, function(pkg, expr) {
     tryCatch(
       getNamespaceExports(pkg),
-      error = function(e) character()
+      error = function(e) {
+        lint_node <- xml2::xml_parent(expr)
+        lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is necessary here.
+        lib_noun <- if (length(lib_paths) == 1L) "library" else "libraries"
+        lint_msg <- paste0(
+          "Could not find exported symbols for package \"", pkg, "\" in ", lib_noun, " ",
+          toString(shQuote(lib_paths)), " (", conditionMessage(e), "). This may lead to false positives."
+        )
+        library_lint_hook(lint_node, lint_msg)
+        character()
+      }
     )
   }))
 }
