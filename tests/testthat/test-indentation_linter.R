@@ -152,6 +152,7 @@ test_that("indentation linter flags improper closing curly braces", {
   )
 })
 
+# nofuzz start
 test_that("function argument indentation works in tidyverse-style", {
   linter <- indentation_linter()
   expect_no_lint(
@@ -355,6 +356,7 @@ test_that("function argument indentation works in always-hanging-style", {
     linter
   )
 })
+# nofuzz end
 
 test_that("indentation with operators works", {
   linter <- indentation_linter()

@@ -50,15 +50,8 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
-  if (is.null(file)) {
-    file <- tempfile()
-    on.exit(unlink(file), add = TRUE)
-    local({
-      con <- base::file(file, encoding = "UTF-8")
-      on.exit(close(con))
-      writeLines(content, con = con, sep = "\n")
-    })
-  }
+  if (is.null(file)) on.exit(unlink(file), add = TRUE)
+  file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
@@ -135,6 +128,17 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
 expect_no_lint <- function(content, ..., file = NULL, language = "en") {
   require_testthat()
   expect_lint(content, NULL, ..., file = file, language = language)
+}
+
+maybe_write_content <- function(file, lines) {
+  if (!is.null(file)) {
+    return(file)
+  }
+  tmp <- tempfile()
+  con <- file(tmp, encoding = "UTF-8")
+  on.exit(close(con))
+  writeLines(lines, con = con, sep = "\n")
+  tmp
 }
 
 #' Test that the package is lint free
