@@ -57,13 +57,19 @@
 #' @export
 condition_call_linter <- function(display_call = FALSE) {
   call_xpath <- glue::glue("
-    following-sibling::expr/STR_CONST
+    following-sibling::expr[
+      STR_CONST
+      or expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
+    ]
     and following-sibling::SYMBOL_SUB[text() = 'call.']
       /following-sibling::expr[1]
       /NUM_CONST[text() = '{!display_call}']
   ")
   no_call_xpath <- "
-    following-sibling::expr/STR_CONST
+    following-sibling::expr[
+      STR_CONST
+      or expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
+    ]
     and parent::expr[not(SYMBOL_SUB[text() = 'call.'])]
   "
 
