@@ -30,7 +30,7 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
   # identical expressions match too
   expect_lint( # nofuzz
     "is.integer(DT$x) || is.numeric(DT$x)",
-    lint_msg, 
+    lint_msg,
     linter
   )
 
