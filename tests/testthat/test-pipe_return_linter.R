@@ -6,7 +6,7 @@ test_that("pipe_return_linter skips allowed usages", {
       filter(str > 5) %>%
       summarize(str = sum(str))
   ")
-  expect_lint(normal_pipe_lines, NULL, linter)
+  expect_no_lint(normal_pipe_lines, linter)
 
   normal_function_lines <- trim_some("
     pipeline <- function(x) {
@@ -16,7 +16,7 @@ test_that("pipe_return_linter skips allowed usages", {
       return(out)
     }
   ")
-  expect_lint(normal_function_lines, NULL, linter)
+  expect_no_lint(normal_function_lines, linter)
 
   nested_return_lines <- trim_some("
     pipeline <- function(x) {
@@ -27,7 +27,7 @@ test_that("pipe_return_linter skips allowed usages", {
       return(x_squared)
     }
   ")
-  expect_lint(nested_return_lines, NULL, linter)
+  expect_no_lint(nested_return_lines, linter)
 })
 
 test_that("pipe_return_linter blocks simple disallowed usages", {
