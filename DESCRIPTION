@@ -88,6 +88,7 @@ Collate:
     'cyclocomp_linter.R'
     'declared_functions.R'
     'deprecated.R'
+    'download_file_linter.R'
     'duplicate_argument_linter.R'
     'empty_assignment_linter.R'
     'equals_na_linter.R'
