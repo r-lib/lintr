@@ -643,7 +643,7 @@ test_that("respects `skip_with` argument for `with()` expressions", {
 })
 
 test_that("missing libraries don't cause issue", {
-  expect_no_lint(
+  expect_lint(
     trim_some("
       library(a.a.a.z.z.z)
       foo <- function() {
