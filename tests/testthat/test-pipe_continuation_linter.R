@@ -158,14 +158,12 @@ local({
         test_data <- diamonds %>% head(10) %>% tail(5)
       })
     "),                      "three inside test_that()",
-    trim_some(
-      "
-        {
-          x <- a %>% b %>% c
-          y <- c %>% b %>% a
-        }
-      "
-    ),                      "two different single-line pipelines",
+    trim_some("
+      {
+        x <- a %>% b %>% c
+        y <- c %>% b %>% a
+      }
+    "),                      "two different single-line pipelines",
     trim_some("
       my_fun <- function() {
         a %>%
