@@ -247,7 +247,6 @@ test_that("used symbols are detected correctly", {
   )
 
 
-
   # regression #1322
   expect_silent(expect_no_lint("assign('x', 42)", object_usage_linter()))
 })
@@ -652,6 +651,10 @@ test_that("missing libraries don't cause issue", {
         a
       }
     "),
+    list(
+      "Could not find exported symbols for package \"a.a.a.z.z.z\"",
+      line_number = 1L
+    ),
     object_usage_linter()
   )
 })

@@ -26,6 +26,7 @@ default_linters <- modify_defaults(
   object_name_linter(),
   object_usage_linter(),
   paren_body_linter(),
+  pipe_consistency_linter(),
   pipe_continuation_linter(),
   quotes_linter(),
   return_linter(),
@@ -308,9 +309,6 @@ logical_env <- function(x, unset = "") {
 
   # R>=4.1.0: ...names
   backports::import(pkgname, "...names")
-
-  # R>=4.4.0: %||%
-  backports::import(pkgname, "%||%")
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,

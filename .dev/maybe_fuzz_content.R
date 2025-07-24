@@ -70,13 +70,13 @@ apply_fuzzers <- function(f, fuzzers) {
   unedited <- lines <- readLines(f)
   for (fuzzer in fuzzers) {
     updated_lines <- fuzzer(pd, lines)
-    if (is.null(updated_lines)) next # skip some I/O if we can
+    if (is.null(updated_lines) || identical(unedited, updated_lines)) next # skip some I/O if we can
     writeLines(updated_lines, f)
-    # check if our attempted edit introduced some error
+    # check if our attempted edit introduced some error; skip applying this fuzzer only if so
     pd <- error_or_parse_data(f)
     if (inherits(pd, "error")) {
-      writeLines(unedited, f)
-      return(invisible())
+      writeLines(lines, f)
+      next
     }
     lines <- readLines(f)
   }

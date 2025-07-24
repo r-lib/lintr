@@ -316,10 +316,7 @@ test_that("implicit_assignment_linter works as expected with pipes and walrus op
   linter <- implicit_assignment_linter()
 
   expect_no_lint("data %>% mutate(a := b)", linter)
-  expect_no_lint(
-    "dt %>% .[, z := x + y]",
-    linter
-  )
+  expect_no_lint("dt %>% .[, z := x + y]", linter)
   expect_no_lint("data %<>% mutate(a := b)", linter)
 
   expect_no_lint("DT[i, x := i]", linter)
