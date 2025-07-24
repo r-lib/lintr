@@ -65,7 +65,7 @@ apply_fuzzers <- function(f) {
   unedited <- lines <- readLines(f)
   for (fuzzer in list(function_lambda_fuzzer, pipe_fuzzer)) {
     updated_lines <- fuzzer(pd, lines)
-    if (is.null(updated_lines)) next # skip some I/O if we can
+    if (is.null(updated_lines) || identical(unedited, updated_lines)) next # skip some I/O if we can
     writeLines(updated_lines, f)
     # check if our attempted edit introduced some error
     pd <- error_or_parse_data(f)
