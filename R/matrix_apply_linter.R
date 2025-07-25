@@ -114,7 +114,7 @@ matrix_apply_linter <- function() {
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = sprintf("Use %1$s rather than %2$s", recos, get_r_string(bad_expr)),
+      lint_message = sprintf("Use %1$s rather than %2$s", recos, xml_text(bad_expr)),
       type = "warning"
     )
   })
