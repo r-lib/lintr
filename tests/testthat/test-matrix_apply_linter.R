@@ -61,6 +61,15 @@ test_that("matrix_apply_linter simple disallowed usages", {
 
   expect_lint("apply(x, 2:4, mean)", lint_message, linter)
 
+  expect_lint(
+    trim_some("
+      apply(x, 2, #comment
+      mean)
+    "),
+    lint_message,
+    linter
+  )
+
 })
 
 test_that("matrix_apply_linter recommendation includes na.rm if present in original call", {
