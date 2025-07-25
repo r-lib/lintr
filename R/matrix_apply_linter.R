@@ -101,7 +101,6 @@ matrix_apply_linter <- function() {
     variable <- xml_text(xml_find_all(bad_expr, variable_xpath))
 
     fun <- xml_text(xml_find_all(bad_expr, fun_xpath))
-    fun <- tools::toTitleCase(fun)
 
     margin <- xml_find_all(bad_expr, margin_xpath)
 
@@ -109,12 +108,10 @@ matrix_apply_linter <- function() {
       xml_find_first(bad_expr, "SYMBOL_SUB[text() = 'na.rm']/following-sibling::expr")
     )
 
-    recos <- Map(craft_colsums_rowsums_msg, variable, margin, fun, narm_val)
-
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = sprintf("Use %1$s rather than %2$s", recos, xml_text(bad_expr)),
+      lint_message = Map(craft_colsums_rowsums_msg, variable, margin, fun, narm_val),
       type = "warning"
     )
   })
@@ -147,6 +144,9 @@ craft_colsums_rowsums_msg <- function(variable, margin, fun, narm_val) {
   } else {
     narm <- ""
   }
+  current <- glue("apply({variable}, {xml_text(margin)}, {fun}{narm})")
+
+  fun <- tools::toTitleCase(fun)
 
   if (identical(l1, 1L)) {
     reco <- glue("row{fun}s({variable}{narm}, dims = {l2})")
@@ -159,7 +159,7 @@ craft_colsums_rowsums_msg <- function(variable, margin, fun, narm_val) {
   }
 
   # It's easier to remove this after the fact, rather than having never ending if/elses
-  reco <- gsub(", dims = 1", "", reco, fixed = TRUE)
+  recommended <- gsub(", dims = 1", "", reco, fixed = TRUE)
 
-  reco
+  sprintf("Use %1$s rather than %2$s", recommended, current)
 }
