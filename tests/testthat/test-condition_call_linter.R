@@ -1,19 +1,23 @@
 test_that("condition_call_linter skips allowed usages", {
   linter <- condition_call_linter()
 
-  expect_lint("stop('test', call. = FALSE)", NULL, linter)
+  expect_no_lint("stop('test', call. = FALSE)", linter)
+  expect_no_lint("stop(test)", linter)
+  expect_no_lint("stop(errorCondition('test'))", linter)
 
   # works even with multiple arguments
-  expect_lint("stop('this is a', 'test', call. = FALSE)", NULL, linter)
+  expect_no_lint("stop('this is a', 'test', call. = FALSE)", linter)
 
   linter <- condition_call_linter(display_call = TRUE)
 
-  expect_lint("stop('test', call. = TRUE)", NULL, linter)
+  expect_no_lint("stop('test', call. = TRUE)", linter)
+  expect_no_lint("stop(test)", linter)
 
   linter <- condition_call_linter(display_call = NA)
 
-  expect_lint("stop('test', call. = TRUE)", NULL, linter)
-  expect_lint("stop('test', call. = FALSE)", NULL, linter)
+  expect_no_lint("stop('test', call. = TRUE)", linter)
+  expect_no_lint("stop('test', call. = FALSE)", linter)
+  expect_no_lint("stop(test)", linter)
 })
 
 patrick::with_parameters_test_that(
@@ -41,8 +45,8 @@ patrick::with_parameters_test_that(
 test_that("lints vectorize", {
   expect_lint(
     trim_some("{
-      stop(e)
-      warning(w)
+      stop('e')
+      warning('w')
     }"),
     list(
       list("stop", line_number = 2L),

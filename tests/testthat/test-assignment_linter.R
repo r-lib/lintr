@@ -215,6 +215,9 @@ test_that("allow_trailing interacts correctly with comments in braced expression
 
 test_that("%<>% throws a lint", {
   expect_lint("x %<>% sum()", "Avoid the assignment pipe %<>%", assignment_linter())
+  # regression test for #2850
+  expect_lint("a <- 42", "Use %<>% for assignment", assignment_linter(operator = "%<>%"))
+
   expect_no_lint("x %<>% sum()", assignment_linter(operator = "%<>%"))
 
   # interaction with allow_trailing
