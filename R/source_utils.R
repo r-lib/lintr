@@ -18,15 +18,20 @@ build_xml_find_function_calls <- function(xml) {
 
   function(function_names, keep_names = FALSE, include_s4_slots = FALSE) {
     if (is.null(function_names)) {
-      res <- function_call_cache
-    } else {
-      res <- function_call_cache[names(function_call_cache) %in% function_names]
-    }
-    if (include_s4_slots) {
-      if (is.null(function_names)) {
+      if (include_s4_slots) {
         res <- combine_nodesets(function_call_cache, s4_slot_cache)
       } else {
-        res <- combine_nodesets(function_call_cache, s4_slot_cache[names(s4_slot_cache) %in% function_names])
+        res <- function_call_cache
+      }
+    } else {
+      include_function_idx <- names(function_call_cache) %in% function_names
+      if (include_s4_slots) {
+        res <- combine_nodesets(
+          function_call_cache[include_function_idx],
+          s4_slot_cache[names(s4_slot_cache) %in% function_names]
+        )
+      } else {
+        res <- function_call_cache[include_function_idx]
       }
     }
     if (keep_names) res else unname(res)
