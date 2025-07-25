@@ -56,22 +56,23 @@
 #'   - <https://design.tidyverse.org/err-call.html>>
 #' @export
 condition_call_linter <- function(display_call = FALSE) {
+
+  str_fct <- c("sprintf", "gettextf", "paste", "paste0", "format", "tr_")
+  str_literal_or_fct <- glue::glue("
+    STR_CONST
+    or expr/SYMBOL_FUNCTION_CALL[ { xp_text_in_table(str_fct) }]
+  ")
+
   call_xpath <- glue::glue("
-    following-sibling::expr[
-      STR_CONST
-      or expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
-    ]
+    following-sibling::expr[ {str_literal_or_fct} ]
     and following-sibling::SYMBOL_SUB[text() = 'call.']
       /following-sibling::expr[1]
       /NUM_CONST[text() = '{!display_call}']
   ")
-  no_call_xpath <- "
-    following-sibling::expr[
-      STR_CONST
-      or expr/SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
-    ]
+  no_call_xpath <- glue::glue("
+    following-sibling::expr[ {str_literal_or_fct} ]
     and parent::expr[not(SYMBOL_SUB[text() = 'call.'])]
-  "
+  ")
 
   if (is.na(display_call)) {
     call_cond <- no_call_xpath
