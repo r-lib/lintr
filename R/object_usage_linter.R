@@ -74,7 +74,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   #   foo <- \ #comment
   #     (x) x
   # is technically valid, but won't parse unless the lambda is in a bigger expression (here '<-').
-  #   the same doesn't apply to 'function'.
+  #   the same doesn't apply to 'function'. I have suggested this could stop parsing which would
+  #   make our lives easier, eventually: https://bugs.r-project.org/show_bug.cgi?id=18924
   xpath_unsafe_lambda <- "OP-LAMBDA[@line1 = following-sibling::*[1][self::COMMENT]/@line1]"
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
