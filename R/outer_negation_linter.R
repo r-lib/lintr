@@ -44,7 +44,7 @@ outer_negation_linter <- function() {
       not(expr[
         position() > 1
         and not(OP-EXCLAMATION)
-        and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
+        and not(preceding-sibling::*[1][self::EQ_SUB])
       ])
     ]
   "
