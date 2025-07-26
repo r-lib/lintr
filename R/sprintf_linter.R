@@ -30,10 +30,6 @@ sprintf_linter <- function() {
   fmt_by_name_xpath <- "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
   call_xpath <- glue::glue("
   parent::expr[
-    (
-      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
-      or {fmt_by_name_xpath}
-    ) and
     not(expr/SYMBOL[text() = '...'])
   ]")
 
