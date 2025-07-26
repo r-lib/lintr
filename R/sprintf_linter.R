@@ -27,7 +27,6 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
-  fmt_by_name_xpath <- "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
   call_xpath <- glue::glue("
   parent::expr[
     not(expr/SYMBOL[text() = '...'])
@@ -99,7 +98,10 @@ sprintf_linter <- function() {
     sprintf_calls <- xml_find_all(xml_calls, call_xpath)
     in_pipeline <- !is.na(xml_find_first(sprintf_calls, in_pipe_xpath))
 
-    fmt_by_name <- get_r_string(sprintf_calls, fmt_by_name_xpath)
+    fmt_by_name <- get_r_string(
+      sprintf_calls,
+      "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
+    )
     fmt_by_pos <- get_r_string(
       sprintf_calls,
       "OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST"
