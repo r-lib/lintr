@@ -25,6 +25,7 @@ patrick::with_parameters_test_that(
     expect_lint(paste0(call_name, "('hello', 1)"), "constant", linter)
 
     expect_lint(paste0(call_name, "('hello')"), "constant", linter)
+    expect_lint(paste0(call_name, "('%%')"), "constant", linter)
 
     expect_lint(
       paste0(call_name, "('hello %d', 'a')"),
