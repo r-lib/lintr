@@ -132,7 +132,7 @@ This setting is found by taking the first valid result from the following locati
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[1]]$filename</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmprIsUka/file1d3c27bde4cf"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp0bL7Hg/file1d313b36a07f"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[1]]$line</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
@@ -159,21 +159,33 @@ This setting is found by taking the first valid result from the following locati
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] &lt;expr line1="1" col1="1" line2="1" col2="6" start="12" end="17"&gt;\n  &lt;expr ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[1]]$xml_find_function_calls</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (function_names, keep_names = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (function_names, keep_names = FALSE, include_s4_slots = FALSE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     if (is.null(function_names)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         res &lt;- function_call_cache</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (include_s4_slots) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- combine_nodesets(function_call_cache, s4_slot_cache)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- function_call_cache</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         res &lt;- function_call_cache[names(function_call_cache) %in% </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             function_names]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         include_function_idx &lt;- names(function_call_cache) %in% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             function_names</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (include_s4_slots) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- combine_nodesets(function_call_cache[include_function_idx], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 s4_slot_cache[names(s4_slot_cache) %in% function_names])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- function_call_cache[include_function_idx]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     if (keep_names) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         res</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     else unname(res)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55df5e749a58&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55df5f98d940&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55d62bb45270&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55d62858d9b0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[1]]$content</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x &lt;- 1"</span>
@@ -181,7 +193,7 @@ This setting is found by taking the first valid result from the following locati
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[2]]$filename</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmprIsUka/file1d3c27bde4cf"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp0bL7Hg/file1d313b36a07f"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[2]]$line</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
@@ -212,21 +224,33 @@ This setting is found by taking the first valid result from the following locati
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] &lt;expr line1="2" col1="1" line2="2" col2="10" start="23" end="32"&gt;\n  &lt;exp ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[2]]$xml_find_function_calls</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (function_names, keep_names = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (function_names, keep_names = FALSE, include_s4_slots = FALSE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     if (is.null(function_names)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         res &lt;- function_call_cache</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (include_s4_slots) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- combine_nodesets(function_call_cache, s4_slot_cache)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- function_call_cache</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         res &lt;- function_call_cache[names(function_call_cache) %in% </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             function_names]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         include_function_idx &lt;- names(function_call_cache) %in% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             function_names</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (include_s4_slots) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- combine_nodesets(function_call_cache[include_function_idx], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 s4_slot_cache[names(s4_slot_cache) %in% function_names])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- function_call_cache[include_function_idx]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     if (keep_names) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         res</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     else unname(res)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55df5e749a58&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55df5f989400&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55d62bb45270&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55d628589038&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[2]]$content</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "y &lt;- x + 1"</span>
@@ -234,7 +258,7 @@ This setting is found by taking the first valid result from the following locati
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[3]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[3]]$filename</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmprIsUka/file1d3c27bde4cf"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp0bL7Hg/file1d313b36a07f"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[3]]$file_lines</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            1            2 </span>
@@ -274,21 +298,33 @@ This setting is found by taking the first valid result from the following locati
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] &lt;expr line1="2" col1="1" line2="2" col2="10" start="23" end="32"&gt;\n  &lt;exp ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[3]]$xml_find_function_calls</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (function_names, keep_names = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (function_names, keep_names = FALSE, include_s4_slots = FALSE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     if (is.null(function_names)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         res &lt;- function_call_cache</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (include_s4_slots) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- combine_nodesets(function_call_cache, s4_slot_cache)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- function_call_cache</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         res &lt;- function_call_cache[names(function_call_cache) %in% </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             function_names]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         include_function_idx &lt;- names(function_call_cache) %in% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             function_names</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (include_s4_slots) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- combine_nodesets(function_call_cache[include_function_idx], </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 s4_slot_cache[names(s4_slot_cache) %in% function_names])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             res &lt;- function_call_cache[include_function_idx]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     if (keep_names) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         res</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     else unname(res)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55df5e749a58&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55df5f9854a8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55d62bb45270&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55d628577d30&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $expressions[[3]]$terminal_newline</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>

@@ -120,6 +120,7 @@
 <code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> recognizes usage of the new (R 4.5.0) <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepv()</a></code> wrapper of <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep()</a></code>; <code><a href="../reference/regex_subset_linter.html">regex_subset_linter()</a></code> also recommends <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepv()</a></code> alternatives (<a href="https://github.com/r-lib/lintr/issues/2855" class="external-link">#2855</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> lints missing packages that may cause false positives (<a href="https://github.com/r-lib/lintr/issues/2872" class="external-link">#2872</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>)</li>
+<li>New argument <code>include_s4_slots</code> for the <code>xml_find_function_calls()</code> entry in the <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> to govern whether calls of the form <code>s4Obj@fun()</code> are included in the result (<a href="https://github.com/r-lib/lintr/issues/2820" class="external-link">#2820</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
@@ -163,6 +164,12 @@
 <ul><li><code><a href="../reference/library_call_linter.html">library_call_linter()</a></code></li>
 <li><code><a href="../reference/terminal_close_linter.html">terminal_close_linter()</a></code></li>
 <li><code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code></li>
+</ul></li>
+<li>More consistency on handling <code>@</code> extractions (<a href="https://github.com/r-lib/lintr/issues/2820" class="external-link">#2820</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).
+<ul><li><code><a href="../reference/function_left_parentheses_linter.html">function_left_parentheses_linter()</a></code></li>
+<li><code><a href="../reference/indentation_linter.html">indentation_linter()</a></code></li>
+<li><code><a href="../reference/library_call_linter.html">library_call_linter()</a></code></li>
+<li><code><a href="../reference/missing_argument_linter.html">missing_argument_linter()</a></code></li>
 </ul></li>
 </ul></div>
 </div>
