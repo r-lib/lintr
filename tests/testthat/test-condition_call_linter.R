@@ -28,6 +28,8 @@ patrick::with_parameters_test_that(
 
     expect_lint(paste0(call_name, "('test')"), lint_message, linter)
     expect_lint(paste0(call_name, "('test', call. = TRUE)"), lint_message, linter)
+    expect_lint(paste0(call_name, "(sprintf('test'))"), lint_message, linter)
+    expect_lint(paste0(call_name, "(gettextf('test'))"), lint_message, linter)
 
     linter <- condition_call_linter(display_call = TRUE)
     lint_message <- rex::rex(call_name, anything, "to display the call")
