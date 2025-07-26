@@ -102,16 +102,13 @@ sprintf_linter <- function() {
       sprintf_calls,
       "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
     )
-    fmt_by_pos <- get_r_string(
-      sprintf_calls,
-      "OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST"
-    )
-    fmt_by_pos_piped <- get_r_string(
-      sprintf_calls,
-      "preceding-sibling::*[2]/STR_CONST"
+    fmt_by_pos <- ifelse(
+      in_pipeline,
+      get_r_string(sprintf_calls, "preceding-sibling::*[2]/STR_CONST"),
+      get_r_string(sprintf_calls, "OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST")
     )
 
-    fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, ifelse(in_pipeline, fmt_by_pos_piped, fmt_by_pos))
+    fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, fmt_by_pos)
     constant_fmt <- !is.na(fmt) & !grepl("%[^%]", fmt)
 
     constant_fmt_lint <- xml_nodes_to_lints(
