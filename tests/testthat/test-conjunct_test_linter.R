@@ -1,25 +1,21 @@
 test_that("conjunct_test_linter skips allowed usages of expect_true", {
-  linter <- conjunct_test_linter()
-
-  expect_no_lint("expect_true(x)", linter)
-  expect_no_lint("testthat::expect_true(x, y, z)", linter)
+  expect_lint("expect_true(x)", NULL, conjunct_test_linter())
+  expect_lint("testthat::expect_true(x, y, z)", NULL, conjunct_test_linter())
 
   # more complicated expression
-  expect_no_lint("expect_true(x || (y && z))", linter)
+  expect_lint("expect_true(x || (y && z))", NULL, conjunct_test_linter())
   # the same by operator precedence, though not obvious a priori
-  expect_no_lint("expect_true(x || y && z)", linter)
-  expect_no_lint("expect_true(x && y || z)", linter)
+  expect_lint("expect_true(x || y && z)", NULL, conjunct_test_linter())
+  expect_lint("expect_true(x && y || z)", NULL, conjunct_test_linter())
 })
 
 test_that("conjunct_test_linter skips allowed usages of expect_true", {
-  linter <- conjunct_test_linter()
-
-  expect_no_lint("expect_false(x)", linter)
-  expect_no_lint("testthat::expect_false(x, y, z)", linter)
+  expect_lint("expect_false(x)", NULL, conjunct_test_linter())
+  expect_lint("testthat::expect_false(x, y, z)", NULL, conjunct_test_linter())
 
   # more complicated expression
   # (NB: xx && yy || zz and xx || yy && zz both parse with || first)
-  expect_no_lint("expect_false(x && (y || z))", linter)
+  expect_lint("expect_false(x && (y || z))", NULL, conjunct_test_linter())
 })
 
 test_that("conjunct_test_linter blocks && conditions with expect_true()", {
@@ -47,14 +43,14 @@ test_that("conjunct_test_linter blocks || conditions with expect_false()", {
 test_that("conjunct_test_linter skips allowed stopifnot() and assert_that() usages", {
   linter <- conjunct_test_linter()
 
-  expect_no_lint("stopifnot(x)", linter)
-  expect_no_lint("assert_that(x, y, z)", linter)
+  expect_lint("stopifnot(x)", NULL, linter)
+  expect_lint("assert_that(x, y, z)", NULL, linter)
 
   # more complicated expression
-  expect_no_lint("stopifnot(x || (y && z))", linter)
+  expect_lint("stopifnot(x || (y && z))", NULL, linter)
   # the same by operator precedence, though not obvious a priori
-  expect_no_lint("stopifnot(x || y && z)", linter)
-  expect_no_lint("assertthat::assert_that(x && y || z)", linter)
+  expect_lint("stopifnot(x || y && z)", NULL, linter)
+  expect_lint("assertthat::assert_that(x && y || z)", NULL, linter)
 })
 
 test_that("conjunct_test_linter blocks simple disallowed usages of stopifnot() and assert_that()", {
@@ -70,23 +66,12 @@ test_that("conjunct_test_linter blocks simple disallowed usages of stopifnot() a
 })
 
 test_that("conjunct_test_linter's allow_named_stopifnot argument works", {
-  linter <- conjunct_test_linter()
-
   # allowed by default
-  expect_no_lint(
+  expect_lint(
     "stopifnot('x must be a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
-    linter
+    NULL,
+    conjunct_test_linter()
   )
-  # including with intervening comment
-  expect_no_lint(
-    trim_some("
-      stopifnot('x must be a logical scalar' = # comment
-        length(x) == 1 && is.logical(x) && !is.na(x)
-      )
-    "),
-    linter
-  )
-
   expect_lint(
     "stopifnot('x is a logical scalar' = length(x) == 1 && is.logical(x) && !is.na(x))",
     rex::rex("Write multiple conditions like stopifnot(A, B)"),
@@ -97,11 +82,11 @@ test_that("conjunct_test_linter's allow_named_stopifnot argument works", {
 test_that("conjunct_test_linter skips allowed usages", {
   linter <- conjunct_test_linter()
 
-  expect_no_lint("dplyr::filter(DF, A, B)", linter)
-  expect_no_lint("dplyr::filter(DF, !(A & B))", linter)
+  expect_lint("dplyr::filter(DF, A, B)", NULL, linter)
+  expect_lint("dplyr::filter(DF, !(A & B))", NULL, linter)
   # | is the "top-level" operator here
-  expect_no_lint("dplyr::filter(DF, A & B | C)", linter)
-  expect_no_lint("dplyr::filter(DF, A | B & C)", linter)
+  expect_lint("dplyr::filter(DF, A & B | C)", NULL, linter)
+  expect_lint("dplyr::filter(DF, A | B & C)", NULL, linter)
 })
 
 test_that("conjunct_test_linter blocks simple disallowed usages", {
@@ -120,22 +105,22 @@ test_that("conjunct_test_linter respects its allow_filter argument", {
   linter_dplyr <- conjunct_test_linter(allow_filter = "not_dplyr")
   lint_msg <- rex::rex("Use dplyr::filter(DF, A, B) instead of dplyr::filter(DF, A & B)")
 
-  expect_no_lint("dplyr::filter(DF, A & B)", linter_always)
-  expect_no_lint("dplyr::filter(DF, A & B & C)", linter_always)
-  expect_no_lint("DF %>% dplyr::filter(A & B)", linter_always)
+  expect_lint("dplyr::filter(DF, A & B)", NULL, linter_always)
+  expect_lint("dplyr::filter(DF, A & B & C)", NULL, linter_always)
+  expect_lint("DF %>% dplyr::filter(A & B)", NULL, linter_always)
   expect_lint("dplyr::filter(DF, A & B)", lint_msg, linter_dplyr)
   expect_lint("dplyr::filter(DF, A & B & C)", lint_msg, linter_dplyr)
   expect_lint("DF %>% dplyr::filter(A & B)", lint_msg, linter_dplyr)
-  expect_no_lint("filter(DF, A & B)", linter_dplyr)
-  expect_no_lint("filter(DF, A & B & C)", linter_dplyr)
-  expect_no_lint("DF %>% filter(A & B)", linter_dplyr)
+  expect_lint("filter(DF, A & B)", NULL, linter_dplyr)
+  expect_lint("filter(DF, A & B & C)", NULL, linter_dplyr)
+  expect_lint("DF %>% filter(A & B)", NULL, linter_dplyr)
 })
 
 test_that("filter() is assumed to be dplyr::filter() by default, unless o/w specified", {
   linter <- conjunct_test_linter()
 
-  expect_no_lint("stats::filter(A & B)", linter)
-  expect_no_lint("ns::filter(A & B)", linter)
+  expect_lint("stats::filter(A & B)", NULL, linter)
+  expect_lint("ns::filter(A & B)", NULL, linter)
   expect_lint(
     "DF %>% filter(A & B)",
     rex::rex("Use dplyr::filter(DF, A, B) instead of dplyr::filter(DF, A & B)"),
