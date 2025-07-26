@@ -40,10 +40,6 @@ sprintf_linter <- function() {
   pipes <- setdiff(magrittr_pipes, "%$%")
   in_pipe_xpath <- glue("self::expr[
     preceding-sibling::*[1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
-    and (
-      preceding-sibling::*[2]/STR_CONST
-      or {fmt_by_name_xpath}
-    )
   ]")
 
   is_missing <- function(x) is.symbol(x) && !nzchar(x)
