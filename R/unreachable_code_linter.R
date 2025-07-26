@@ -76,33 +76,55 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclude_end", "# nocov end")) {
+  # nolint next: object_usage_linter. Used in glue() in statically-difficult fashion to detect.
   expr_after_control <- "
     (//REPEAT | //ELSE | //FOR)/following-sibling::expr[1]
     | (//IF | //WHILE)/following-sibling::expr[2]
   "
+
+  unreachable_expr_cond_ws <- "
+  following-sibling::*[
+    not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON or self::ELSE or preceding-sibling::ELSE)
+    and (not(self::COMMENT) or @line2 > preceding-sibling::*[not(self::COMMENT)][1]/@line2)
+  ][1]"
+  # when a semicolon is present, the condition is a bit different due to <exprlist> nodes
+  unreachable_expr_cond_sc <- "
+  parent::exprlist[OP-SEMICOLON]
+    /following-sibling::*[
+      not(self::OP-RIGHT-BRACE)
+      and (not(self::COMMENT) or @line1 > preceding-sibling::exprlist/expr/@line2)
+    ][1]
+  "
+
   # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
-  xpath_return_stop <- glue("
+  xpath_return_stop_fmt <- "
   (
     {expr_after_control}
-    | (//FUNCTION | //OP-LAMBDA)[following-sibling::expr[1]/*[1][self::OP-LEFT-BRACE]]/following-sibling::expr[1]
+    |
+    (//FUNCTION | //OP-LAMBDA)
+      /following-sibling::expr[OP-LEFT-BRACE][last()]
   )
-    /expr[expr[1][
+    //expr[expr[1][
       not(OP-DOLLAR or OP-AT)
       and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
     ]]
-    /following-sibling::*[
-      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
-      and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
-    ][1]
-  ")
-  xpath_next_break <- glue("
+    /{unreachable_expr_cond}
+  "
+  xpath_return_stop <- paste(
+    glue(xpath_return_stop_fmt, unreachable_expr_cond = unreachable_expr_cond_ws),
+    glue(xpath_return_stop_fmt, unreachable_expr_cond = unreachable_expr_cond_sc),
+    sep = " | "
+  )
+  xpath_next_break_fmt <- "
   ({expr_after_control})
-    /expr[NEXT or BREAK]
-    /following-sibling::*[
-      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
-      and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
-    ][1]
-  ")
+    //expr[NEXT or BREAK]
+    /{unreachable_expr_cond}
+  "
+  xpath_next_break <- paste(
+    glue(xpath_next_break_fmt, unreachable_expr_cond = unreachable_expr_cond_ws),
+    glue(xpath_next_break_fmt, unreachable_expr_cond = unreachable_expr_cond_sc),
+    sep = " | "
+  )
 
   xpath_if_while <- "
     (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]
