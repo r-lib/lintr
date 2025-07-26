@@ -27,8 +27,7 @@ clone_xml_ <- function(x) {
 
 # caveat: whether this is a copy or not is inconsistent. assume the output is read-only!
 strip_comments_from_subtree <- function(expr) {
-  comments <- xml_find_first(expr, ".//COMMENT")
-  if (length(comments) == 0L) {
+  if (length(xml_find_first(expr, ".//COMMENT")) == 0L) {
     return(expr)
   }
   expr <- clone_xml_(expr)
