@@ -101,15 +101,39 @@ sprintf_linter <- function() {
   Linter(linter_level = "file", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
     sprintf_calls <- xml_find_all(xml_calls, call_xpath)
+    in_pipeline <- !is.na(xml_find_first(sprintf_calls, in_pipe_xpath))
 
-    sprintf_warning <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
+    fmt_by_name <- get_r_string(sprintf_calls, fmt_by_name_xpath)
+    fmt_by_pos <- get_r_string(
+      sprintf_calls,
+      "OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST"
+    )
+    fmt_by_pos_piped <- get_r_string(
+      sprintf_calls,
+      "preceding-sibling::*[2]/STR_CONST"
+    )
+
+    fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, ifelse(in_pipeline, fmt_by_pos_piped, fmt_by_pos))
+    constant_fmt <- !is.na(fmt) & !grepl("%[^%]", fmt)
+
+    constant_fmt_lint <- xml_nodes_to_lints(
+      sprintf_calls[constant_fmt],
+      source_expression = source_expression,
+      lint_message = "A constant string is used and the sprintf call can be removed",
+      type = "warning"
+    )
+
+    templated_sprintf_calls <- sprintf_calls[!constant_fmt & !is.na(fmt)]
+    sprintf_warning <- vapply(templated_sprintf_calls, capture_sprintf_warning, character(1L))
 
     has_warning <- !is.na(sprintf_warning)
-    xml_nodes_to_lints(
-      sprintf_calls[has_warning],
+    invalid_sprintf_lint <- xml_nodes_to_lints(
+      templated_sprintf_calls[has_warning],
       source_expression = source_expression,
       lint_message = sprintf_warning[has_warning],
       type = "warning"
     )
+
+    c(constant_fmt_lint, invalid_sprintf_lint)
   })
 }
