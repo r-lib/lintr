@@ -4,7 +4,6 @@ patrick::with_parameters_test_that(
     linter <- sprintf_linter()
 
     # NB: using paste0, not sprintf, to avoid escaping '%d' in sprint fmt=
-    expect_lint(paste0(call_name, "('hello')"), NULL, linter)
     expect_lint(paste0(call_name, "('hello %d', 1)"), NULL, linter)
     expect_lint(paste0(call_name, "('hello %d', x)"), NULL, linter)
     expect_lint(paste0(call_name, "('hello %d', x + 1)"), NULL, linter)
@@ -23,7 +22,9 @@ patrick::with_parameters_test_that(
     linter <- sprintf_linter()
     unused_arg_msg <- if (getRversion() >= "4.1.0") "one argument not used by format" else NULL
 
-    expect_lint(paste0(call_name, "('hello', 1)"), unused_arg_msg, linter)
+    expect_lint(paste0(call_name, "('hello', 1)"), "constant", linter)
+
+    expect_lint(paste0(call_name, "('hello')"), "constant", linter)
 
     expect_lint(
       paste0(call_name, "('hello %d', 'a')"),
