@@ -10,7 +10,7 @@ test_that("linter returns correct linting", {
     list(message = msg_assign, line_number = 1L, column_number = 3L),
     linter
   )
-  expect_lint(
+  expect_lint( # nofuzz
     "data$parsed == c(1, 2)",
     list(message = msg_dollar, line_number = 1L, column_number = 5L),
     linter

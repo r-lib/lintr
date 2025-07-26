@@ -9,7 +9,7 @@ maybe_fuzz_content <- function(file, lines) {
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
-  apply_fuzzers(new_file)
+  apply_fuzzers(new_file, list(function_lambda_fuzzer, pipe_fuzzer, dollar_at_fuzzer))
 
   new_file
 }
@@ -54,16 +54,21 @@ pipe_fuzzer <- simple_swap_fuzzer(
   replacements = c("%>%", "|>")
 )
 
+dollar_at_fuzzer <- simple_swap_fuzzer(
+  \(pd) pd$token %in% c("'$'", "'@'"),
+  replacements = c("$", "@")
+)
+
 # we could also consider just passing any test where no fuzzing takes place,
 #   i.e. letting the other GHA handle whether unfuzzed tests pass as expected.
-apply_fuzzers <- function(f) {
+apply_fuzzers <- function(f, fuzzers) {
   pd <- error_or_parse_data(f)
   if (inherits(pd, "error")) {
     return(invisible())
   }
 
   unedited <- lines <- readLines(f)
-  for (fuzzer in list(function_lambda_fuzzer, pipe_fuzzer)) {
+  for (fuzzer in fuzzers) {
     updated_lines <- fuzzer(pd, lines)
     if (is.null(updated_lines) || identical(unedited, updated_lines)) next # skip some I/O if we can
     writeLines(updated_lines, f)

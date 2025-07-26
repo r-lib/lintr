@@ -206,6 +206,17 @@ test_that("allow_preamble applies as intended", {
   expect_no_lint(lines, linter_preamble)
   expect_lint(lines, list(list(line_number = 2L), list(line_number = 3L)), linter_no_preamble)
 
+  # allow S4 operation to precede library() as well, equivalently to other function calls
+  lines <- trim_some("
+    opts_chunk@set(eval = FALSE)
+    library(dplyr)
+    suppressPackageStartupMessages(library(knitr))
+
+    print(letters)
+  ")
+  expect_no_lint(lines, linter_preamble)
+  expect_lint(lines, list(list(line_number = 2L), list(line_number = 3L)), linter_no_preamble)
+
   lines <- trim_some("
     fun()
     library(moreFun)
