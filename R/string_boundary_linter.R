@@ -1,4 +1,4 @@
-#' Require usage of `startsWith()` and `endsWith()` over `grepl()`/`substr()` versions
+	#' Require usage of `startsWith()` and `endsWith()` over `grepl()`/`substr()` versions
 #'
 #' [startsWith()] is used to detect fixed initial substrings; it is more
 #'   readable and more efficient than equivalents using [grepl()] or [substr()].
@@ -132,8 +132,6 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
   substr_arg2_xpath <- "string(./expr[expr[1][SYMBOL_FUNCTION_CALL]]/expr[3])"
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
     lints <- list()
 
     str_detect_lint_data <- get_regex_lint_data(
