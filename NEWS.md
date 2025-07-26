@@ -53,6 +53,7 @@
    + `comparison_negation_linter()` #2826
    + `conjunct_test_linter()` #2827
    + `empty_assignment_linter()`
+   + `expect_comparison_linter()`
    + `fixed_regex_linter()` #2827
    + `if_switch_linter()`
    + `ifelse_censor_linter()` #2826
