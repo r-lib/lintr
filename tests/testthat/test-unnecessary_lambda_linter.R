@@ -161,6 +161,15 @@ test_that("unnecessary_lambda_linter doesn't apply to keyword args", {
 
   expect_no_lint("lapply(x, function(xi) data.frame(nm = xi))", linter)
   expect_no_lint("lapply(x, function(xi) return(data.frame(nm = xi)))", linter)
+
+  # adversarially commented
+  expect_no_lint(
+    trim_some("
+      lapply(x, function(xi) data.frame(nm = # comment
+      xi))
+    "),
+    linter
+  )
 })
 
 test_that("purrr-style anonymous functions are also caught", {
@@ -183,6 +192,15 @@ test_that("purrr-style anonymous functions are also caught", {
   expect_lint(
     "purrr::map_vec(x, ~foo(.x, y))",
     rex::rex("Pass foo directly as a symbol to map_vec()"),
+    linter
+  )
+
+  # adversarial comment
+  expect_no_lint(
+    trim_some("
+      map_dbl(x, ~foo(bar = # comment
+      .x))
+    "),
     linter
   )
 })
@@ -246,6 +264,16 @@ test_that("cases with braces are caught", {
   # false positives like #2231, #2247 are avoided with braces too
   expect_no_lint("lapply(x, function(xi) { foo(xi)$bar })", linter)
   expect_no_lint("lapply(x, function(xi) { foo(xi) - 1 })", linter)
+
+  expect_lint(
+    trim_some("
+      lapply(y, function(yi) {
+        print(yi) # comment
+      })
+    "),
+    lint_msg,
+    linter
+  )
 })
 
 test_that("function shorthand is handled", {
