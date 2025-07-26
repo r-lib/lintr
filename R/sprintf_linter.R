@@ -27,21 +27,22 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
-  call_xpath <- "
+  fmt_by_name_xpath <- "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
+  call_xpath <- glue::glue("
   parent::expr[
     (
-      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
-      SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+      OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST
+      or {fmt_by_name_xpath}
     ) and
     not(expr/SYMBOL[text() = '...'])
-  ]"
+  ]")
 
   pipes <- setdiff(magrittr_pipes, "%$%")
   in_pipe_xpath <- glue("self::expr[
     preceding-sibling::*[1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
     and (
       preceding-sibling::*[2]/STR_CONST
-      or SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
+      or {fmt_by_name_xpath}
     )
   ]")
 
