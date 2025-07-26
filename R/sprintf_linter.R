@@ -32,10 +32,10 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sprintf_linter <- function() {
-  call_xpath <- glue::glue("
+  call_xpath <- "
   parent::expr[
     not(expr/SYMBOL[text() = '...'])
-  ]")
+  ]"
 
   pipes <- setdiff(magrittr_pipes, "%$%")
   in_pipe_xpath <- glue("self::expr[
