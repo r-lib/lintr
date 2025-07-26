@@ -152,6 +152,7 @@ test_that("indentation linter flags improper closing curly braces", {
   )
 })
 
+# nofuzz start
 test_that("function argument indentation works in tidyverse-style", {
   linter <- indentation_linter()
   expect_no_lint(
@@ -355,6 +356,7 @@ test_that("function argument indentation works in always-hanging-style", {
     linter
   )
 })
+# nofuzz end
 
 test_that("indentation with operators works", {
   linter <- indentation_linter()
@@ -397,6 +399,15 @@ test_that("indentation with operators works", {
     trim_some("
       abc$
         def$
+        ghi
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      abc@
+        def@
         ghi
     "),
     linter
@@ -570,6 +581,25 @@ test_that("combined hanging and block indent works", {
             cli_alert_danger()
           }
         })$
+        catch(error = function(err) {
+          e <- if (grepl('timed out', err$message)) 'timed out' else 'error'
+          cli_alert_danger()
+        })
+    "),
+    linter
+  )
+
+  # S4 equivalence
+  expect_no_lint(
+    trim_some("
+      http_head(url, ...)@
+        then(function(res) {
+          if (res$status_code < 300) {
+            cli_alert_success()
+          } else {
+            cli_alert_danger()
+          }
+        })@
         catch(error = function(err) {
           e <- if (grepl('timed out', err$message)) 'timed out' else 'error'
           cli_alert_danger()

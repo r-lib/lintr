@@ -93,7 +93,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # NB: this includes 0+3 and TRUE+FALSE, which are also fine.
   inner_comparison_xpath <- glue("
   parent::expr
-    /expr[FUNCTION]
+    /expr[FUNCTION or OP-LAMBDA]
     /expr[
       ({ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) })
       and expr[

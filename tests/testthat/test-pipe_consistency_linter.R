@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("pipe_consistency skips allowed usage", {
   skip_if_not_r_version("4.1.0")
   linter <- pipe_consistency_linter()
@@ -209,3 +210,4 @@ test_that("simply enforcing a consistent style is supported", {
     linter
   )
 })
+# nofuzz end
