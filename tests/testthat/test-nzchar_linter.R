@@ -33,13 +33,22 @@ test_that("nzchar_linter skips as appropriate for other nchar args", {
 
 test_that("nzchar_linter blocks simple disallowed usages", {
   linter <- nzchar_linter()
-  lint_msg_quote <- rex::rex('Use !nzchar(x) instead of x == ""')
-  lint_msg_nchar <- rex::rex("Use nzchar() instead of comparing nchar(x) to 0")
+  lint_msg <- rex::rex("Use !nzchar(x) instead of nchar(x) == 0")
 
-  expect_lint("which(x == '')", lint_msg_quote, linter)
+  expect_lint("which(x == '')", rex::rex('Use !nzchar(x) instead of x == ""'), linter)
   expect_lint("any(nchar(x) >= 0)", rex::rex("nchar(x) >= 0 is always true, maybe you want nzchar(x)?"), linter)
-  expect_lint("all(nchar(x) == 0L)", rex::rex("Use !nzchar(x) instead of nchar(x) == 0"), linter)
+  expect_lint("all(nchar(x) == 0L)", lint_msg, linter)
   expect_lint("sum(0.0 < nchar(x))", rex::rex("Use nzchar(x) instead of nchar(x) > 0"), linter)
+
+  # adversarial comment
+  expect_lint(
+    trim_some("
+      all(nchar(x) #comment
+      == 0L)
+    "),
+    lint_msg,
+    linter
+  )
 })
 
 test_that("nzchar_linter skips comparison to '' in if/while statements", {
