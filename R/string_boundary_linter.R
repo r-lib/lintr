@@ -1,4 +1,4 @@
-	#' Require usage of `startsWith()` and `endsWith()` over `grepl()`/`substr()` versions
+#' Require usage of `startsWith()` and `endsWith()` over `grepl()`/`substr()` versions
 #'
 #' [startsWith()] is used to detect fixed initial substrings; it is more
 #'   readable and more efficient than equivalents using [grepl()] or [substr()].
