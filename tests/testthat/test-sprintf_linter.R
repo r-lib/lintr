@@ -25,7 +25,10 @@ patrick::with_parameters_test_that(
     expect_lint(paste0(call_name, "('hello', 1)"), "constant", linter)
 
     expect_lint(paste0(call_name, "('hello')"), "constant", linter)
-    expect_lint(paste0(call_name, "('%%')"), "constant", linter)
+    expect_lint(paste0(call_name, "('100%% automated')"), "constant", linter)
+    expect_lint(paste0(call_name, "('100%%%% automated')"), "constant", linter)
+    expect_lint(paste0(call_name, "('100%%%s')"), "too few", linter)
+    expect_lint(paste0(call_name, "('100%%%%s', x)"), "constant", linter)
 
     expect_lint(
       paste0(call_name, "('hello %d', 'a')"),
@@ -73,10 +76,10 @@ test_that("edge cases are detected correctly", {
       sprintf(
         'test fmt %s', # this is a comment
         2
-      )
-    "),
-    NULL,
-    linter
+        )
+        "),
+        NULL,
+        linter
   )
 
   # dots
@@ -95,6 +98,8 @@ test_that("edge cases are detected correctly", {
 
   # #2131: xml2lang stripped necessary whitespace
   expect_no_lint("sprintf('%s', if (A) '' else y)", linter)
+
+  expect_no_lint("sprintf('100%%%s', x)", linter)
 })
 
 local({
@@ -115,7 +120,7 @@ local({
       # Nested pipes
       expect_lint(
         paste("'%%sb'", pipe, "sprintf('%s')", pipe, "sprintf('a')"),
-        if (getRversion() >= "4.1.0") list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = unused_arg_msg),
+        if (getRversion() >= "4.1.0") list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = "constant"),
         linter
       )
       expect_lint(
@@ -133,6 +138,7 @@ local({
     .test_name = names(pipes)
   )
 })
+
 
 test_that("lints vectorize", {
   skip_if_not_r_version("4.1.0")
