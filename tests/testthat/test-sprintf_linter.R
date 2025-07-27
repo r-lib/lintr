@@ -71,15 +71,14 @@ test_that("edge cases are detected correctly", {
   linter <- sprintf_linter()
 
   # works with multi-line sprintf and comments
-  expect_lint(
+  expect_no_lint(
     trim_some("
       sprintf(
         'test fmt %s', # this is a comment
         2
-        )
-        "),
-        NULL,
-        linter
+      )
+    "),
+    linter
   )
 
   # dots
@@ -138,7 +137,6 @@ local({
     .test_name = names(pipes)
   )
 })
-
 
 test_that("lints vectorize", {
   skip_if_not_r_version("4.1.0")
