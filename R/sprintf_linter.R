@@ -116,10 +116,15 @@ sprintf_linter <- function() {
     fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, fmt_by_pos)
     constant_fmt <- !is.na(fmt) & !grepl("%", gsub("%%", "", fmt, fixed = TRUE), fixed = TRUE)
 
+    fct_name <- xml_text(xml_find_all(
+      sprintf_calls,
+      "expr/SYMBOL_FUNCTION_CALL[1]/text()"
+    ))
+
     constant_fmt_lint <- xml_nodes_to_lints(
       sprintf_calls[constant_fmt],
       source_expression = source_expression,
-      lint_message = "A constant string is used and the sprintf call can be removed",
+      lint_message = sprintf("A constant string is used and the %s call can be removed", fct_name[constant_fmt]),
       type = "warning"
     )
 
