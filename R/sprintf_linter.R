@@ -126,7 +126,7 @@ sprintf_linter <- function() {
     constant_fmt_lint <- xml_nodes_to_lints(
       sprintf_calls[constant_fmt],
       source_expression = source_expression,
-      lint_message = sprintf("A constant string is used and the %s call can be removed", fct_name[constant_fmt]),
+      lint_message = sprintf("%s call can be removed when a constant string is provided.", fct_name[constant_fmt]),
       type = "warning"
     )
 
