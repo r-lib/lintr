@@ -255,11 +255,11 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
       }
     "),
     list(
-      list(line_number = 4L, message = msg),
-      list(line_number = 7L, message = msg),
-      list(line_number = 11L, message = msg),
-      list(line_number = 15L, message = msg),
-      list(line_number = 19L, message = msg)
+      list(line_number = 4L, message = next_msg),
+      list(line_number = 7L, message = break_msg),
+      list(line_number = 11L, message = break_msg),
+      list(line_number = 15L, message = next_msg),
+      list(line_number = 19L, message = break_msg)
     ),
     linter
   )
