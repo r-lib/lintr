@@ -154,6 +154,8 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
       | parent::exprlist//expr[NEXT or BREAK]
       | preceding-sibling::expr[NEXT or BREAK]
     "))
+    terminal_node <-
+      ifelse(terminal_node %in% c("return", "stop"), paste0(terminal_node, "()"), paste0("`", terminal_node, "`"))
 
     lints_after_terminal_node <- xml_nodes_to_lints(
       expr_after_terminal_node,
