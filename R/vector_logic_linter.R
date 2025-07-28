@@ -77,7 +77,7 @@ vector_logic_linter <- function() {
       and preceding-sibling::*[
         self::IF
         or self::WHILE
-        or self::expr[SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']]
+        or self::expr/SYMBOL_FUNCTION_CALL[text() = 'expect_true' or text() = 'expect_false']
       ]
     ]
     and not(ancestor::expr[
@@ -100,7 +100,7 @@ vector_logic_linter <- function() {
       and not(preceding-sibling::OP-LEFT-BRACKET)
       and not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'circular'])
     ]
-    /*[2]
+    /*[not(self::COMMENT)][2]
   "
 
   Linter(linter_level = "expression", function(source_expression) {

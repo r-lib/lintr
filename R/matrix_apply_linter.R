@@ -97,6 +97,7 @@ matrix_apply_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("apply")
     bad_expr <- xml_find_all(xml_calls, xpath)
+    bad_expr <- strip_comments_from_subtree(bad_expr)
 
     variable <- xml_text(xml_find_all(bad_expr, variable_xpath))
 
