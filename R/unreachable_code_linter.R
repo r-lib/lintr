@@ -135,12 +135,6 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     expr[vapply(expr, xml2::xml_length, integer(1L)) != 0L]
   }
 
-  drop_valid_comments <- function(expr, valid_comment_re) {
-    is_valid_comment <- xml2::xml_name(expr) == "COMMENT" &
-      re_matches_logical(xml_text(expr), valid_comment_re)
-    expr[!is_valid_comment]
-  }
-
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
@@ -149,6 +143,11 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     allow_comment_regex <- paste(union(allow_comment_regex, settings$exclude_end), collapse = "|")
 
     expr_after_terminal_node <- xml_find_all(xml, xpath_after_terminal_node)
+
+    is_valid_comment <- xml2::xml_name(expr_after_terminal_node) == "COMMENT" &
+      re_matches_logical(xml_text(expr_after_terminal_node), valid_comment_re)
+
+    expr_after_terminal_node <- expr_after_terminal_node[!is_valid_comment]
     terminal_node <- xml_text(xml_find_first(expr_after_terminal_node, "
       parent::exprlist//expr/expr[SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
       | preceding-sibling::expr/expr[SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
@@ -157,7 +156,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     "))
 
     lints_after_terminal_node <- xml_nodes_to_lints(
-      drop_valid_comments(expr_after_terminal_node, allow_comment_regex),
+      expr_after_terminal_node,
       source_expression = source_expression,
       lint_message = sprintf("Remove code and comments coming after %s.", terminal_node),
       type = "warning"
