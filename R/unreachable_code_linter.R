@@ -145,7 +145,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     expr_after_terminal_node <- xml_find_all(xml, xpath_after_terminal_node)
 
     is_valid_comment <- xml2::xml_name(expr_after_terminal_node) == "COMMENT" &
-      re_matches_logical(xml_text(expr_after_terminal_node), valid_comment_re)
+      re_matches_logical(xml_text(expr_after_terminal_node), allow_comment_regex)
 
     expr_after_terminal_node <- expr_after_terminal_node[!is_valid_comment]
     terminal_node <- xml_text(xml_find_first(expr_after_terminal_node, "
