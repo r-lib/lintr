@@ -81,6 +81,25 @@ test_that("edge cases are detected correctly", {
     linter
   )
 
+  expect_no_lint(
+    trim_some("
+      'test fmt %s' |>   # this is a pipe comment
+        sprintf(         # this is an opening comment
+          2              # this is a mid-call comment
+        )
+    "),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      'test fmt' |>   # this is a pipe comment
+        sprintf()
+    "),
+    "constant",
+    linter
+  )
+
   # dots
   expect_no_lint("sprintf('%d %d, %d', id, ...)", linter)
 

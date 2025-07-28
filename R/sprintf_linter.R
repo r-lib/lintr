@@ -38,9 +38,11 @@ sprintf_linter <- function() {
   ]"
 
   pipes <- setdiff(magrittr_pipes, "%$%")
-  in_pipe_xpath <- glue("self::expr[
-    preceding-sibling::*[1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
-  ]")
+  in_pipe_xpath <- glue(
+    "self::expr[
+      preceding-sibling::*[not(self::COMMENT)][1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
+    ]"
+  )
 
   is_missing <- function(x) is.symbol(x) && !nzchar(x)
 
@@ -86,7 +88,7 @@ sprintf_linter <- function() {
       arg_idx <- 2L:length(parsed_expr)
       parsed_expr[arg_idx + 1L] <- parsed_expr[arg_idx]
       names(parsed_expr)[arg_idx + 1L] <- arg_names[arg_idx]
-      parsed_expr[[2L]] <- xml2lang(xml_find_first(xml, "preceding-sibling::*[2]"))
+      parsed_expr[[2L]] <- xml2lang(xml_find_first(xml, "preceding-sibling::*[not(self::COMMENT)][2]"))
       names(parsed_expr)[2L] <- ""
     }
     parsed_expr <- zap_extra_args(parsed_expr)
@@ -109,7 +111,7 @@ sprintf_linter <- function() {
     )
     fmt_by_pos <- ifelse(
       in_pipeline,
-      get_r_string(sprintf_calls, "preceding-sibling::*[2]/STR_CONST"),
+      get_r_string(sprintf_calls, "preceding-sibling::*[not(self::COMMENT)][2]/STR_CONST"),
       get_r_string(sprintf_calls, "OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST")
     )
 
