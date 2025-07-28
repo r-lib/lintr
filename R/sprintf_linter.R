@@ -118,10 +118,7 @@ sprintf_linter <- function() {
     fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, fmt_by_pos)
     constant_fmt <- !is.na(fmt) & !grepl("%", gsub("%%", "", fmt, fixed = TRUE), fixed = TRUE)
 
-    fct_name <- xml_text(xml_find_all(
-      sprintf_calls,
-      "expr/SYMBOL_FUNCTION_CALL[1]/text()"
-    ))
+    fct_name <- xp_call_name(sprintf_calls)
 
     constant_fmt_lint <- xml_nodes_to_lints(
       sprintf_calls[constant_fmt],
