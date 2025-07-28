@@ -149,9 +149,9 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
 
     expr_after_terminal_node <- expr_after_terminal_node[!is_valid_comment]
     terminal_node <- xml_text(xml_find_first(expr_after_terminal_node, "
-      parent::exprlist//expr/expr[SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
+      preceding-sibling::exprlist//expr/expr[SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
       | preceding-sibling::expr/expr[SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
-      | parent::exprlist//expr[NEXT or BREAK]
+      | preceding-sibling::exprlist//expr[NEXT or BREAK]
       | preceding-sibling::expr[NEXT or BREAK]
     "))
     terminal_node <-
