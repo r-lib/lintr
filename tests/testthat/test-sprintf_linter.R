@@ -4,7 +4,6 @@ patrick::with_parameters_test_that(
     linter <- sprintf_linter()
 
     # NB: using paste0, not sprintf, to avoid escaping '%d' in sprint fmt=
-    expect_no_lint(paste0(call_name, "('hello')"), linter)
     expect_no_lint(paste0(call_name, "('hello %d', 1)"), linter)
     expect_no_lint(paste0(call_name, "('hello %d', x)"), linter)
     expect_no_lint(paste0(call_name, "('hello %d', x + 1)"), linter)
@@ -23,7 +22,13 @@ patrick::with_parameters_test_that(
     linter <- sprintf_linter()
     unused_arg_msg <- if (getRversion() >= "4.1.0") "one argument not used by format" else NULL
 
-    expect_lint(paste0(call_name, "('hello', 1)"), unused_arg_msg, linter)
+    expect_lint(paste0(call_name, "('hello', 1)"), "constant", linter)
+
+    expect_lint(paste0(call_name, "('hello')"), "constant", linter)
+    expect_lint(paste0(call_name, "('100%% automated')"), "constant", linter)
+    expect_lint(paste0(call_name, "('100%%%% automated')"), "constant", linter)
+    expect_lint(paste0(call_name, "('100%%%s')"), "too few", linter)
+    expect_lint(paste0(call_name, "('100%%%%s', x)"), "constant", linter)
 
     expect_lint(
       paste0(call_name, "('hello %d', 'a')"),
@@ -76,6 +81,25 @@ test_that("edge cases are detected correctly", {
     linter
   )
 
+  expect_no_lint(
+    trim_some("
+      'test fmt %s' |>   # this is a pipe comment
+        sprintf(         # this is an opening comment
+          2              # this is a mid-call comment
+        )
+    "),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      'test fmt' |>   # this is a pipe comment
+        sprintf()
+    "),
+    "constant",
+    linter
+  )
+
   # dots
   expect_no_lint("sprintf('%d %d, %d', id, ...)", linter)
 
@@ -92,6 +116,8 @@ test_that("edge cases are detected correctly", {
 
   # #2131: xml2lang stripped necessary whitespace
   expect_no_lint("sprintf('%s', if (A) '' else y)", linter)
+
+  expect_no_lint("sprintf('100%%%s', x)", linter)
 })
 
 local({
@@ -112,7 +138,7 @@ local({
       # Nested pipes
       expect_lint(
         paste("'%%sb'", pipe, "sprintf('%s')", pipe, "sprintf('a')"),
-        if (getRversion() >= "4.1.0") list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = unused_arg_msg),
+        if (getRversion() >= "4.1.0") list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = "constant"),
         linter
       )
       expect_lint(
