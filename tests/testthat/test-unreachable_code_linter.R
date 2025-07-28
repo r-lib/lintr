@@ -139,7 +139,8 @@ test_that("unreachable_code_linter works in sub expressions", {
 
 test_that("unreachable_code_linter works with next and break in sub expressions", {
   linter <- unreachable_code_linter()
-  msg <- rex::rex("Remove code and comments coming after `next`")
+  next_msg <- rex::rex("Remove code and comments coming after `next`")
+  break_msg <- rex::rex("Remove code and comments coming after `break`")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -168,11 +169,11 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
   expect_lint(
     lines,
     list(
-      list(line_number = 4L, message = msg),
-      list(line_number = 7L, message = msg),
-      list(line_number = 10L, message = msg),
-      list(line_number = 15L, message = msg),
-      list(line_number = 18L, message = msg)
+      list(line_number = 4L, message = next_msg),
+      list(line_number = 7L, message = break_msg),
+      list(line_number = 10L, message = next_msg),
+      list(line_number = 15L, message = next_msg),
+      list(line_number = 18L, message = break_msg)
     ),
     linter
   )
@@ -219,11 +220,11 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
       }
     "),
     list(
-      list(line_number = 3L, message = msg),
-      list(line_number = 5L, message = msg),
-      list(line_number = 8L, message = msg),
-      list(line_number = 11L, message = msg),
-      list(line_number = 14L, message = msg)
+      list(line_number = 3L, message = next_msg),
+      list(line_number = 5L, message = break_msg),
+      list(line_number = 8L, message = break_msg),
+      list(line_number = 11L, message = next_msg),
+      list(line_number = 14L, message = break_msg)
     ),
     linter
   )
@@ -412,7 +413,7 @@ test_that("unreachable_code_linter finds code after stop()", {
   ")
   expect_lint(
     lines,
-    rex::rex("Remove code and comments coming after return()"),
+    rex::rex("Remove code and comments coming after stop()"),
     unreachable_code_linter()
   )
 })
