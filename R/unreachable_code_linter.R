@@ -76,7 +76,6 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclude_end", "# nocov end")) {
-  # nolint next: object_usage_linter. Used in glue() in statically-difficult fashion to detect.
   expr_after_control <- "
     (//REPEAT | //ELSE | //FOR)/following-sibling::expr[1]
     | (//IF | //WHILE)/following-sibling::expr[2]
@@ -96,38 +95,24 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     ][1]
   "
 
+  terminal_fun_expr <-
+    "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[OP-LEFT-BRACE][last()]"
+
   # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
-  xpath_return_stop_fmt <- "
-  (
-    {expr_after_control}
-    |
-    (//FUNCTION | //OP-LAMBDA)
-      /following-sibling::expr[OP-LEFT-BRACE][last()]
-  )
-    //expr[expr[1][
-      not(OP-DOLLAR or OP-AT)
-      and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
-    ]]
-    /{unreachable_expr_cond}
-  "
-  xpath_return_stop <- paste(
-    glue(xpath_return_stop_fmt, unreachable_expr_cond = unreachable_expr_cond_ws),
-    glue(xpath_return_stop_fmt, unreachable_expr_cond = unreachable_expr_cond_sc),
-    sep = " | "
-  )
-  xpath_next_break_fmt <- "
-  ({expr_after_control})
-    //expr[NEXT or BREAK]
-    /{unreachable_expr_cond}
-  "
-  xpath_next_break <- paste(
-    glue(xpath_next_break_fmt, unreachable_expr_cond = unreachable_expr_cond_ws),
-    glue(xpath_next_break_fmt, unreachable_expr_cond = unreachable_expr_cond_sc),
-    sep = " | "
-  )
+  terminal_call_cond <- "expr[1][
+    not(OP-DOLLAR or OP-AT)
+    and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
+  ]"
+
+  xpath_after_terminal_node <- glue("
+    ({expr_after_control} | {terminal_fun_expr})//expr[{terminal_call_cond}]/{unreachable_expr_cond_ws}
+    | ({expr_after_control} | {terminal_fun_expr})//expr[{terminal_call_cond}]/{unreachable_expr_cond_sc}
+    | ({expr_after_control})//expr[NEXT or BREAK]/{unreachable_expr_cond_ws}
+    | ({expr_after_control})//expr[NEXT or BREAK]/{unreachable_expr_cond_sc}
+  ")
 
   xpath_if_while <- "
-    (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]
+    (//IF | //WHILE)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]
       /parent::expr
   "
 
@@ -163,21 +148,18 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     # also build with '|', not rex::rex(or(.)), the latter which will double-escape the regex.
     allow_comment_regex <- paste(union(allow_comment_regex, settings$exclude_end), collapse = "|")
 
-    expr_return_stop <- xml_find_all(xml, xpath_return_stop)
+    expr_after_terminal_node <- xml_find_all(xml, xpath_after_terminal_node)
+    terminal_node <- xml_text(xml_find_first(expr_after_terminal_node, "
+      parent::exprlist//expr/expr[SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
+      | preceding-sibling::expr/expr[SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']]
+      | parent::exprlist//expr[NEXT or BREAK]
+      | preceding-sibling::expr[NEXT or BREAK]
+    "))
 
-    lints_return_stop <- xml_nodes_to_lints(
-      drop_valid_comments(expr_return_stop, allow_comment_regex),
+    lints_after_terminal_node <- xml_nodes_to_lints(
+      drop_valid_comments(expr_after_terminal_node, allow_comment_regex),
       source_expression = source_expression,
-      lint_message = "Remove code and comments coming after return() or stop().",
-      type = "warning"
-    )
-
-    expr_next_break <- xml_find_all(xml, xpath_next_break)
-
-    lints_next_break <- xml_nodes_to_lints(
-      drop_valid_comments(expr_next_break, allow_comment_regex),
-      source_expression = source_expression,
-      lint_message = "Remove code and comments coming after `next` or `break`.",
+      lint_message = sprintf("Remove code and comments coming after %s.", terminal_node),
       type = "warning"
     )
 
@@ -199,6 +181,6 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
       type = "warning"
     )
 
-    c(lints_return_stop, lints_next_break, lints_if_while, lints_else)
+    c(lints_after_terminal_node, lints_if_while, lints_else)
   })
 }
