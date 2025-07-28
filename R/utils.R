@@ -85,7 +85,7 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
-get_content <- function(lines, info, known_safe = TRUE) {
+get_content <- function(lines, info, needs_braces = FALSE) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
@@ -98,7 +98,7 @@ get_content <- function(lines, info, known_safe = TRUE) {
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
-  if (!known_safe) lines <- c("{", lines, "}")
+  if (needs_braces) lines <- c("{", lines, "}")
   paste(lines, collapse = "\n")
 }
 

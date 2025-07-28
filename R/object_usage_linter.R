@@ -70,7 +70,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     | //SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][{fun_node}]
   ")
 
-  # code like:content
+  # code like:
   #   foo <- \ #comment
   #     (x) x
   # is technically valid, but won't parse unless the lambda is in a bigger expression (here '<-').
@@ -110,8 +110,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
 
     lapply(fun_assignments, function(fun_assignment) {
       # this will mess with the source line numbers. but I don't think anybody cares.
-      known_safe <- is.na(xml_find_first(fun_assignment, xpath_unsafe_lambda))
-      code <- get_content(lines = source_expression$content, fun_assignment, known_safe = known_safe)
+      needs_braces <- !is.na(xml_find_first(fun_assignment, xpath_unsafe_lambda))
+      code <- get_content(lines = source_expression$content, fun_assignment, needs_braces = needs_braces)
       fun <- try_silently(eval(
         envir = env,
         parse(
