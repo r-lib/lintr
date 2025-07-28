@@ -157,6 +157,26 @@ local({
   )
 })
 
+test_that("pipe logic survives adversarial comments", {
+  linter <- sprintf_linter()
+
+  expect_no_lint(
+    trim_some("
+      x |> # comment
+      sprintf(fmt = '%s')
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some('
+      "%s" %>% # comment
+      sprintf("%s%s")
+    '),
+    linter
+  )
+})
+
 test_that("lints vectorize", {
   skip_if_not_r_version("4.1.0")
 
