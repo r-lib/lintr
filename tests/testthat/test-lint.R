@@ -286,9 +286,9 @@ test_that("explicit parse_settings=TRUE works for inline data", {
   withr::local_options(list(lintr.linter_file = .lintr))
 
   lint_str <- "a=1\n" # assignment lints, but not infix_spaces
-  foo.R <- withr::local_tempfile(lines = lint_str)
+  foo <- withr::local_tempfile(lines = lint_str)
 
-  expect_length(lint(foo.R, parse_settings = TRUE), 1L)
+  expect_length(lint(foo, parse_settings = TRUE), 1L)
   expect_length(lint(text = lint_str, parse_settings = TRUE), 1L)
   expect_length(lint(lint_str, parse_settings = TRUE), 1L)
 })
