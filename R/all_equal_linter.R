@@ -20,6 +20,11 @@
 #'   linters = all_equal_linter()
 #' )
 #'
+#' lint(
+#'   text = 'isFALSE(all.equal(a, b))',
+#'   linters = all_equal_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = 'if (isTRUE(all.equal(a, b))) message("equal")',
@@ -28,6 +33,11 @@
 #'
 #' lint(
 #'   text = '!identical(a, b)',
+#'   linters = all_equal_linter()
+#' )
+#'
+#' lint(
+#'   text = "!isTRUE(all.equal(a, b))",
 #'   linters = all_equal_linter()
 #' )
 #'
@@ -48,11 +58,25 @@ all_equal_linter <- function() {
       ]"
     )
 
-    xml_nodes_to_lints(
+    unwrapped_all_equal_lints <- xml_nodes_to_lints(
       dangerous_unwrapped_all_equal,
       source_expression = source_expression,
       lint_message = "Wrap all.equal() in isTRUE(), or replace it by identical() if no tolerance is required.",
       type = "warning"
     )
+
+    is_false_all_equal <- xml_find_all(
+      all_equal_calls,
+      "parent::expr[preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL/text() = 'isFALSE']"
+    )
+
+    is_false_all_equal_lints <- xml_nodes_to_lints(
+      is_false_all_equal,
+      source_expression = source_expression,
+      lint_message = "Use !isTRUE() to check for differences in all.equal(). isFALSE(all.equal()) always returns FALSE.",
+      type = "warning"
+    )
+
+    c(unwrapped_all_equal_lints, is_false_all_equal_lints)
   })
 }

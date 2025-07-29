@@ -27,6 +27,11 @@ lint(
   linters = all_equal_linter()
 )
 
+lint(
+  text = 'isFALSE(all.equal(a, b))',
+  linters = all_equal_linter()
+)
+
 # okay
 lint(
   text = 'if (isTRUE(all.equal(a, b))) message("equal")',
@@ -35,6 +40,11 @@ lint(
 
 lint(
   text = '!identical(a, b)',
+  linters = all_equal_linter()
+)
+
+lint(
+  text = "!isTRUE(all.equal(a, b))",
   linters = all_equal_linter()
 )
 
