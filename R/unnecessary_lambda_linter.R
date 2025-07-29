@@ -93,7 +93,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # NB: this includes 0+3 and TRUE+FALSE, which are also fine.
   inner_comparison_xpath <- glue("
   parent::expr
-    /expr[FUNCTION]
+    /expr[FUNCTION or OP-LAMBDA]
     /expr[
       ({ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) })
       and expr[
@@ -125,10 +125,14 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
         .//expr[
           position() = 2
           and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
-          and not(preceding-sibling::*[1][self::EQ_SUB])
+          and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
           and not(parent::expr[
             preceding-sibling::expr[not(SYMBOL_FUNCTION_CALL)]
-            or following-sibling::*[not(self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACE)]
+            or following-sibling::*[not(
+              self::OP-RIGHT-PAREN
+              or self::OP-RIGHT-BRACE
+              or self::COMMENT
+            )]
           ])
         ]/SYMBOL
     ]
@@ -143,7 +147,12 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   purrr_fun_xpath <- glue("
   following-sibling::expr[
     OP-TILDE
-    and expr[OP-LEFT-PAREN/following-sibling::expr[1][not(preceding-sibling::*[2][self::SYMBOL_SUB])]/{purrr_symbol}]
+    and expr
+      /OP-LEFT-PAREN
+      /following-sibling::expr[1][
+        not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB])
+      ]
+      /{purrr_symbol}
     and not(expr/OP-LEFT-PAREN/following-sibling::expr[position() > 1]//{purrr_symbol})
   ]")
 
