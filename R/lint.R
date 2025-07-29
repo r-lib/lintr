@@ -77,7 +77,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     return(exclude(lints, lines = lines, linter_names = names(linters), ...))
   }
 
-  lints <- lint_impl_(linters, lint_cache, source_expressions)
+  lints <- lint_impl_(linters, lint_cache, filename, source_expressions)
 
   lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
   lints <- reorder_lints(flatten_lints(lints))
@@ -92,7 +92,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   zap_temp_filename(res, needs_tempfile)
 }
 
-lint_impl_ <- function(linters, lint_cache, source_expressions) {
+lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
   if (is_tainted(source_expressions$lines)) {
     return(list())
   }
