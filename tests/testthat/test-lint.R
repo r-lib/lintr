@@ -279,3 +279,16 @@ test_that("gitlab_output() writes expected report", {
     ))
   )
 })
+
+test_that("explicit parse_settings=TRUE works for inline data", {
+  withr::local_dir(tempdir())
+  .lintr <- withr::local_tempfile(lines = "linters: list(assignment_linter())")
+  withr::local_options(list(lintr.linter_file = .lintr))
+
+  lint_str <- "a=1\n" # assignment lints, but not infix_spaces
+  foo.R <- withr::local_tempfile(lines = lint_str)
+
+  expect_length(lint(foo.R, parse_settings = TRUE), 1L)
+  expect_length(lint(text = lint_str, parse_settings = TRUE), 1L)
+  expect_length(lint(lint_str, parse_settings = TRUE), 1L)
+})
