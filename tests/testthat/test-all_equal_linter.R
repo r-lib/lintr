@@ -11,10 +11,11 @@ test_that("all_equal_linter() skips allowed usages", {
 
 test_that("all_equal_linter() blocks simple disallowed usages", {
   linter <- all_equal_linter()
-  lint_message <- rex::rex("Wrap all.equal() in isTRUE()")
-
-  expect_lint("if (all.equal(a, b)) message('equal')", lint_message, linter)
+  lint_message <- rex::rex("Wrap all.equal() in isTRUE().")
   expect_lint("if (all.equal(a, b, tolerance = 1e-3)) message('equal')", lint_message, linter)
+
+  lint_message <- rex::rex("Wrap all.equal() in isTRUE(), or replace it by identical()")
+  expect_lint("if (all.equal(a, b)) message('equal')", lint_message, linter)
   expect_lint("!all.equal(a, b)", lint_message, linter)
   expect_lint("while (all.equal(a, b)) message('equal')", lint_message, linter)
 

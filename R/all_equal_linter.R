@@ -58,10 +58,18 @@ all_equal_linter <- function() {
       ]"
     )
 
+    has_tolerance_arg <- !is.na(
+      xml_find_first(dangerous_unwrapped_all_equal, "SYMBOL_SUB[text() = 'tolerance']")
+    )
+
     unwrapped_all_equal_lints <- xml_nodes_to_lints(
       dangerous_unwrapped_all_equal,
       source_expression = source_expression,
-      lint_message = "Wrap all.equal() in isTRUE(), or replace it by identical() if no tolerance is required.",
+      lint_message = ifelse(
+        has_tolerance_arg,
+        "Wrap all.equal() in isTRUE().",
+        "Wrap all.equal() in isTRUE(), or replace it by identical() if no tolerance is required."
+      ),
       type = "warning"
     )
 
