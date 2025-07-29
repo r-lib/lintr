@@ -97,7 +97,10 @@ library_call_linter <- function(allow_preamble = TRUE) {
   upfront_call_xpath <- glue("
     //SYMBOL_FUNCTION_CALL[{ attach_call_cond }][last()]
       /preceding::expr
-      /SYMBOL_FUNCTION_CALL[{ unsuppressed_call_cond }][last()]
+      /*[
+        (self::SYMBOL_FUNCTION_CALL or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN])
+        and ({ unsuppressed_call_cond })
+      ][last()]
       /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call_cond }]]
       /parent::expr
   ")
@@ -111,7 +114,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
       expr[2][STR_CONST]
       or (
         SYMBOL_SUB[text() = 'character.only']
-        and not(ancestor::expr[FUNCTION])
+        and not(ancestor::expr[FUNCTION or OP-LAMBDA])
       )
     ]
   ")
@@ -122,7 +125,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
   //SYMBOL_FUNCTION_CALL[{ xp_text_in_table(bad_indirect_funs) }]
     /parent::expr
     /parent::expr[
-      not(ancestor::expr[FUNCTION])
+      not(ancestor::expr[FUNCTION or OP-LAMBDA])
       and expr[{ call_symbol_cond }]
     ]
   ")

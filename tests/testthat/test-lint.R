@@ -233,3 +233,49 @@ test_that("Linter() input is validated", {
 test_that("typo in argument name gives helpful error", {
   expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: `litners`")
 })
+
+
+test_that("gitlab_output() writes expected report", {
+  skip_if_not_installed("jsonlite")
+
+  tmpfile <- withr::local_tempfile()
+
+  # zero lints: we expect an empty json array
+  gitlab_output(lint(text = "", linters = infix_spaces_linter()), filename = tmpfile)
+  expect_match(
+    readLines(tmpfile),
+    R"(\s*\[\s*\]\s*)"
+  )
+
+  # single lint
+  gitlab_output(lint(text = "x<-1", linters = infix_spaces_linter()), filename = tmpfile)
+  expect_identical(
+    jsonlite::read_json(tmpfile),
+    list(list(
+      description = "Put spaces around all infix operators.",
+      check_name = "infix_spaces_linter",
+      fingerprint = "eb7cc117e8616bd8170fe6aa29e8b0ae849ac6c7",
+      location = list(path = "<text>", lines = list(begin = 1L)),
+      severity = "info"
+    ))
+  )
+
+  # two lints
+  gitlab_output(lint(text = c("x<-1", "y<-1"), linters = infix_spaces_linter()), filename = tmpfile)
+  expect_identical(
+    jsonlite::read_json(tmpfile),
+    list(list(
+      description = "Put spaces around all infix operators.",
+      check_name = "infix_spaces_linter",
+      fingerprint = "eb7cc117e8616bd8170fe6aa29e8b0ae849ac6c7",
+      location = list(path = "<text>", lines = list(begin = 1L)),
+      severity = "info"
+    ), list(
+      description = "Put spaces around all infix operators.",
+      check_name = "infix_spaces_linter",
+      fingerprint = "c20bd2090d08e3a5c12d670f5763ad43d233fe05",
+      location = list(path = "<text>", lines = list(begin = 2L)),
+      severity = "info"
+    ))
+  )
+})

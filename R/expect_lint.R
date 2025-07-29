@@ -50,15 +50,8 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
-  if (is.null(file)) {
-    file <- tempfile()
-    on.exit(unlink(file), add = TRUE)
-    local({
-      con <- base::file(file, encoding = "UTF-8")
-      on.exit(close(con))
-      writeLines(content, con = con, sep = "\n")
-    })
-  }
+  if (is.null(file)) on.exit(unlink(file), add = TRUE)
+  file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
@@ -93,16 +86,17 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   }
 
   local({
-    itr <- 0L
+    itr_env <- new.env(parent = emptyenv())
+    itr_env$itr <- 0L
     # valid fields are those from Lint(), plus 'linter'
     lint_fields <- c(names(formals(Lint)), "linter")
     Map(
       function(lint, check) {
-        itr <<- itr + 1L
+        itr_env$itr <- itr_env$itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
             cli_abort(c(
-              x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+              x = "Check {.val {itr_env$itr}} has an invalid field: {.field {field}}.",
               i = "Valid fields are: {.field {lint_fields}}."
             ))
           }
@@ -110,7 +104,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
           value <- lint[[field]]
           msg <- sprintf(
             "check #%d: %s %s did not match %s",
-            itr, field, deparse(value), deparse(check)
+            itr_env$itr, field, deparse(value), deparse(check)
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
           ok <- if (field == "message") {
@@ -134,6 +128,17 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
 expect_no_lint <- function(content, ..., file = NULL, language = "en") {
   require_testthat()
   expect_lint(content, NULL, ..., file = file, language = language)
+}
+
+maybe_write_content <- function(file, lines) {
+  if (!is.null(file)) {
+    return(file)
+  }
+  tmp <- tempfile()
+  con <- file(tmp, encoding = "UTF-8")
+  on.exit(close(con))
+  writeLines(lines, con = con, sep = "\n")
+  tmp
 }
 
 #' Test that the package is lint free
