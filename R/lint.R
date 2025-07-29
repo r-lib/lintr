@@ -77,7 +77,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     return(exclude(lints, lines = lines, linter_names = names(linters), ...))
   }
 
-  lints <- lint_impl(linters, lint_cache, source_expression$lines, source_expression$expressions)
+  lints <- lint_impl_(linters, lint_cache, source_expression$lines, source_expression$expressions)
 
   lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
   lints <- reorder_lints(flatten_lints(lints))
