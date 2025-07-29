@@ -61,7 +61,7 @@ literal_coercion_linter <- function() {
     not(OP-DOLLAR or OP-AT)
     and (
       NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
-      or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+      or STR_CONST[not(following-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])]
     )
   "
   xpath <- glue("
@@ -89,6 +89,7 @@ literal_coercion_linter <- function() {
       )
       # nocov end
     } else {
+      bad_expr <- strip_comments_from_subtree(bad_expr)
       # duplicate, unless we add 'rlang::' and it wasn't there originally
       coercion_str <- report_str <- xml_text(bad_expr)
       if (any(is_rlang_coercer) && !("package:rlang" %in% search())) {

@@ -1,21 +1,21 @@
 test_that("commented_code_linter skips allowed usages", {
   linter <- commented_code_linter()
 
-  expect_lint("blah", NULL, linter)
-  expect_lint("#' blah <- 1", NULL, linter)
-  expect_lint("a <- 1\n# comment without code", NULL, linter)
-  expect_lint("a <- 1\n## whatever", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint("#' blah <- 1", linter)
+  expect_no_lint("a <- 1\n# comment without code", linter)
+  expect_no_lint("a <- 1\n## whatever", linter)
 
-  expect_lint("TRUE", NULL, linter)
-  expect_lint("#' @examples", NULL, linter)
-  expect_lint("#' foo(1) # list(1)", NULL, linter) # comment in roxygen block ignored
-  expect_lint("1+1 # gives 2", NULL, linter)
-  expect_lint("# Non-existent:", NULL, linter)
-  expect_lint("# 1-a", NULL, linter) # "-" removed from code operators
-  expect_lint('1+1  # for example cat("123")', NULL, linter)
+  expect_no_lint("TRUE", linter)
+  expect_no_lint("#' @examples", linter)
+  expect_no_lint("#' foo(1) # list(1)", linter) # comment in roxygen block ignored
+  expect_no_lint("1+1 # gives 2", linter)
+  expect_no_lint("# Non-existent:", linter)
+  expect_no_lint("# 1-a", linter) # "-" removed from code operators
+  expect_no_lint('1+1  # for example cat("123")', linter)
 
   # regression test for #451
-  expect_lint("c('#a#' = 1)", NULL, linter)
+  expect_no_lint("c('#a#' = 1)", linter)
 })
 
 test_that("commented_code_linter blocks disallowed usages", {
@@ -88,8 +88,8 @@ test_that("commented_code_linter can detect operators in comments and lint corre
   )
 
   for (op in test_ops) {
-    expect_lint(paste("i", op, "1", collapse = ""), NULL, linter)
-    expect_lint(paste("# something like i", op, "1", collapse = ""), NULL, linter)
+    expect_no_lint(paste("i", op, "1", collapse = ""), linter)
+    expect_no_lint(paste("# something like i", op, "1", collapse = ""), linter)
     expect_lint(paste("# i", op, "1", collapse = ""), lint_msg, linter)
   }
 })

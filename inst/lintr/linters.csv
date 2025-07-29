@@ -18,6 +18,7 @@ consecutive_assertion_linter,style readability consistency
 consecutive_mutate_linter,consistency readability configurable efficiency
 consecutive_stopifnot_linter,defunct
 cyclocomp_linter,style readability best_practices configurable
+download_file_linter,common_mistakes best_practices robustness
 duplicate_argument_linter,correctness common_mistakes configurable
 empty_assignment_linter,readability best_practices
 equals_na_linter,robustness correctness common_mistakes default

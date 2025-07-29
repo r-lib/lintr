@@ -17,8 +17,8 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (64 linters)}
-\item{\link[=common_mistakes_linters]{common_mistakes} (11 linters)}
+\item{\link[=best_practices_linters]{best_practices} (65 linters)}
+\item{\link[=common_mistakes_linters]{common_mistakes} (12 linters)}
 \item{\link[=configurable_linters]{configurable} (44 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
@@ -29,7 +29,7 @@ The following tags exist:
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
 \item{\link[=readability_linters]{readability} (66 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
-\item{\link[=robustness_linters]{robustness} (17 linters)}
+\item{\link[=robustness_linters]{robustness} (18 linters)}
 \item{\link[=style_linters]{style} (40 linters)}
 \item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }
@@ -55,6 +55,7 @@ The following linters exist:
 \item{\code{\link{consecutive_assertion_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{consecutive_mutate_linter}} (tags: configurable, consistency, efficiency, readability)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, readability, style)}
+\item{\code{\link{download_file_linter}} (tags: best_practices, common_mistakes, robustness)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{empty_assignment_linter}} (tags: best_practices, readability)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}

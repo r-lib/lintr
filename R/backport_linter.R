@@ -74,7 +74,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
     bad_versions <- unname(backport_index[all_names])
 
     lint_message <- sprintf(
-      "%s (R %s) is not available for dependency R >= %s.",
+      "%s (R %s) is not always available for requested dependency (R >= %s).",
       all_names,
       bad_versions,
       r_version

@@ -43,8 +43,8 @@ test_that("warnings occur only for deprecated linters", {
 
   expect_silent(linters_with_tags(tags = NULL))
   num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
-  deprecation_warns_seen <- 0L
-  outer_env <- environment()
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$deprecation_warns_seen <- 0L
   expect_silent({
     withCallingHandlers(
       linters_with_tags(tags = "deprecated", exclude_tags = NULL),
@@ -58,7 +58,7 @@ test_that("warnings occur only for deprecated linters", {
       }
     )
   })
-  expect_identical(deprecation_warns_seen, num_deprecated_linters)
+  expect_identical(outer_env$deprecation_warns_seen, num_deprecated_linters)
 })
 
 test_that("available_linters matches the set of linters available from lintr", {
