@@ -93,11 +93,7 @@ test_that("doesn't produce a warning", {
     }
   ")
 
-  expect_no_warning(lint(
-    text = complex_lines,
-    linters = spaces_left_parentheses_linter(),
-    parse_settings = FALSE
-  ))
+  expect_no_warning(lint(text = complex_lines, linters = spaces_left_parentheses_linter()))
 })
 
 test_that("lints vectorize", {
