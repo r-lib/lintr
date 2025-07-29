@@ -105,9 +105,13 @@ test_that("Multi-byte character truncated by parser is ignored", {
 })
 
 test_that("Can read non UTF-8 file", {
+  withr::local_options(list(lintr.linter_file = tempfile()))
   proj_dir <- test_path("dummy_projects", "project")
   withr::local_dir(proj_dir)
-  expect_no_lint(file = "cp1252.R", linters = list())
+  expect_no_lint( # nofuzz
+    file = "cp1252.R",
+    linters = list()
+  )
 })
 
 test_that("Warns if encoding is misspecified, Pt. 1", {
@@ -251,7 +255,14 @@ test_that("returned data structure is complete", {
 })
 
 test_that("xml_find_function_calls works as intended", {
-  lines <- c("foo()", "bar()", "foo()", "{ foo(); foo(); bar() }")
+  lines <- c(
+    "foo()",
+    "bar()",
+    "foo()",
+    "s4Obj@baz()",
+    "{ foo(); foo(); bar(); s4Obj@baz() }",
+    NULL
+  )
   temp_file <- withr::local_tempfile(lines = lines)
 
   exprs <- get_source_expressions(temp_file)
@@ -266,29 +277,39 @@ test_that("xml_find_function_calls works as intended", {
   expect_length(exprs$expressions[[2L]]$xml_find_function_calls("foo"), 0L)
   expect_length(exprs$expressions[[2L]]$xml_find_function_calls("bar"), 1L)
 
-  expect_length(exprs$expressions[[4L]]$xml_find_function_calls("foo"), 2L)
-  expect_length(exprs$expressions[[4L]]$xml_find_function_calls("bar"), 1L)
-  expect_length(exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar")), 3L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("foo"), 2L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("bar"), 1L)
+  expect_length(exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")), 3L)
 
   # file-level source expression contains all function calls
-  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("foo"), 4L)
-  expect_length(exprs$expressions[[5L]]$xml_find_function_calls("bar"), 2L)
-  expect_length(exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")), 6L)
+  expect_length(exprs$expressions[[6L]]$xml_find_function_calls("foo"), 4L)
+  expect_length(exprs$expressions[[6L]]$xml_find_function_calls("bar"), 2L)
+  expect_length(exprs$expressions[[6L]]$xml_find_function_calls(c("foo", "bar")), 6L)
 
   # Also check order is retained:
   expect_identical(
-    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar")),
-    xml_find_all(exprs$expressions[[5L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL/parent::expr")
+    exprs$expressions[[6L]]$xml_find_function_calls(c("foo", "bar")),
+    xml_find_all(exprs$expressions[[6L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL/parent::expr")
   )
 
   # Check naming and full cache
   expect_identical(
-    exprs$expressions[[5L]]$xml_find_function_calls(NULL),
-    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar"))
+    exprs$expressions[[6L]]$xml_find_function_calls(NULL),
+    exprs$expressions[[6L]]$xml_find_function_calls(c("foo", "bar"))
   )
   expect_named(
-    exprs$expressions[[4L]]$xml_find_function_calls(c("foo", "bar"), keep_names = TRUE),
+    exprs$expressions[[5L]]$xml_find_function_calls(c("foo", "bar"), keep_names = TRUE),
     c("foo", "foo", "bar")
+  )
+
+  # include_s4_slots
+  expect_identical(
+    exprs$expressions[[6L]]$xml_find_function_calls(NULL, include_s4_slots = TRUE),
+    exprs$expressions[[6L]]$xml_find_function_calls(c("foo", "bar", "baz"), include_s4_slots = TRUE)
+  )
+  expect_named(
+    exprs$expressions[[5L]]$xml_find_function_calls(NULL, keep_names = TRUE, include_s4_slots = TRUE),
+    c("foo", "foo", "bar", "baz")
   )
 })
 

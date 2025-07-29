@@ -17,6 +17,8 @@
 
 * `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
 * Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico).
+* `assignment_linter()` no longer errors if `"%<>%"` is an allowed operator (#2850, @AshesITR).
+* `condition_call_linter()` no longer covers cases where the object type in the ellipsis cannot be determined with certainty (#2888, #2890, @Bisaloo). In particular, this fixes the known false positive of custom conditions created via `errorCondition()` or `warningCondition()` not being compatible with the `call.` argument in `stop()` or `warning()`.
 
 ## Changes to default linters
 
@@ -43,9 +45,14 @@
 * New `gitlab_output()` function to output lints to GitLab format (#2858, @lschneiderbauer)
 * `brace_linter()` requires `test_that()`'s `code=` argument to have curly braces (#2292, @MichaelChirico).
 * `fixed_regex_linter()` recognizes usage of the new (R 4.5.0) `grepv()` wrapper of `grep()`; `regex_subset_linter()` also recommends `grepv()` alternatives (#2855, @MichaelChirico).
+* `object_usage_linter()` lints missing packages that may cause false positives (#2872, @AshesITR)
+* New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
+* `sprintf_linter()` lints `sprintf()` and `gettextf()` calls when a constant string is passed to `fmt` (#2894, @Bisaloo).
 
 ### New linters
 
+* `download_file_linter()` encourages the use of `mode = "wb"` (or `mode = "ab"`) when using `download.file()`, rather than `mode = "w"` or `mode = "a"`, as the latter can produce broken
+files in Windows (#2882, @Bisaloo).
 * `lint2df_linter()` encourages the use of the `list2DF()` function, or the `data.frame()` function when recycling is required, over the slower and less readable `do.call(cbind.data.frame, )` alternative (#2834, @Bisaloo).
 * `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.
 
@@ -68,6 +75,15 @@
 ### Lint accuracy fixes: removing false negatives
 
 * `todo_comment_linter()` finds comments inside {roxygen2} markup comments (#2447, @MichaelChirico).
+* Linters with logic around function declarations consistently include the R 4.0.0 shorthand `\()` (#2818, continuation of earlier #2190, @MichaelChirico).
+  + `library_call_linter()`
+  + `terminal_close_linter()`
+  + `unnecessary_lambda_linter()`
+* More consistency on handling `@` extractions (#2820, @MichaelChirico).
+  + `function_left_parentheses_linter()`
+  + `indentation_linter()`
+  + `library_call_linter()`
+  + `missing_argument_linter()`
 
 ## Notes
 
