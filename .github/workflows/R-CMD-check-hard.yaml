@@ -61,16 +61,6 @@ jobs:
             any::withr
           needs: check
 
-      - name: disable-suggested-linters
-        run: |
-          config <- read.dcf(".lintr")
-          linters <- as.list(str2lang(config[, "linters"]))
-          linters = as.call(c(linters, list(cyclocomp_linter = NULL)))
-          config[, "linters"] <- paste(format(linters), collapse = "\n")
-          write.dcf(config, ".lintr")
-
-        shell: Rscript {0}
-
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
