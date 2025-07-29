@@ -291,4 +291,7 @@ test_that("explicit parse_settings=TRUE works for inline data", {
   expect_length(lint(foo, parse_settings = TRUE), 1L)
   expect_length(lint(text = lint_str, parse_settings = TRUE), 1L)
   expect_length(lint(lint_str, parse_settings = TRUE), 1L)
+
+  # parse_settings=TRUE default not picked up
+  expect_length(lint(text = lint_str), 2L)
 })
