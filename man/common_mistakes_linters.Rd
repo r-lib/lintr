@@ -12,6 +12,7 @@ Linters highlighting common mistakes, such as duplicate arguments.
 \section{Linters}{
 The following linters are tagged with 'common_mistakes':
 \itemize{
+\item{\code{\link{download_file_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{length_test_linter}}}

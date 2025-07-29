@@ -220,7 +220,7 @@ object_name_xpath <- local({
   ]"
 
   # either an argument supplied positionally, i.e., not like 'arg = val', or the call <expr>
-  not_kwarg_cond <- "not(preceding-sibling::*[1][self::EQ_SUB])"
+  not_kwarg_cond <- "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])"
 
   glue(xp_strip_comments("
   //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]
@@ -262,7 +262,7 @@ strip_names <- function(x) {
 #' @return A character vector of symbols (variables, infix operators, and
 #'   function calls) found in glue calls under `expr`.
 #' @noRd
-extract_glued_symbols <- function(expr, interpret_glue) {
+extract_glued_symbols <- function(expr, interpret_glue = TRUE) {
   if (!isTRUE(interpret_glue)) {
     return(character())
   }

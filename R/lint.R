@@ -45,6 +45,13 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
+  parse_settings <- !inline_data && isTRUE(parse_settings)
+
+  if (parse_settings) {
+    read_settings(filename)
+    on.exit(reset_settings(), add = TRUE)
+  }
+
   lines <- get_lines(filename, text)
 
   if (needs_tempfile) {
@@ -57,11 +64,6 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   filename <- normalize_path(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
-
-  if (isTRUE(parse_settings)) {
-    read_settings(filename)
-    on.exit(reset_settings(), add = TRUE)
-  }
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
@@ -81,12 +83,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lints <- list()
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
-      if (is_lint_level(expr, "expression")) {
-        necessary_linters <- expression_linter_names
-      } else {
-        necessary_linters <- file_linter_names
-      }
-      for (linter in necessary_linters) {
+      for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
         # use withCallingHandlers for friendlier failures on unexpected linter errors
         lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
@@ -101,7 +98,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     }
   }
 
-  lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
+  lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
   lints <- reorder_lints(flatten_lints(lints))
   class(lints) <- c("lints", "list")
 
@@ -652,6 +649,73 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
 }
 
+#' GitLab Report for lint results
+#'
+#' Generate a report of the linting results using the
+#' [GitLab](https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format) format.
+#'
+#' @details
+#' lintr only supports three severity types ("style", "warning", and "error")
+#' while the GitLab format supports five ("info", "minor", "major", "critical",
+#' and "blocker"). The types "style", "warning", and "error" are mapped to
+#' the GitLab types "info", "major", and "blocker", respectively. The GitLab
+#' types "minor" and "critical" are ignored.
+#'
+#' @param lints The linting results
+#' @param filename The file name of the output report
+#' @export
+gitlab_output <- function(lints, filename = "lintr_results.json") {
+  stopifnot(inherits(lints, "lints"))
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    cli_abort("{.pkg jsonlite} is required to produce Gitlab reports. Please install to continue.") # nocov
+  }
+
+  # Format
+  # (copied from https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format)
+  # ==============================
+  # description          String   A human-readable description of the code quality violation.
+  # check_name           String   A unique name representing the check, or rule, associated with this violation.
+  # fingerprint          String   A unique fingerprint to identify this specific code quality violation, such as a hash
+  #                               of its contents.
+  # location.path        String   The file containing the code quality violation, expressed as a relative path in the
+  #                               repository. Do not prefix with ./.
+  # location.lines.begin
+  # -or-                 Integer  The line on which the code quality violation occurred.
+  # location.positions.begin.line
+  #
+  # severity             String   The severity of the violation, can be one of info, minor, major, critical, or blocker.
+
+  # Gitlab format as R data structure
+  res <-
+    lapply(
+      lints,
+      function(lint) {
+        with(
+          lint,
+          list(
+            description = message,
+            check_name = linter,
+            fingerprint =  digest::digest(line, algo = "sha1"),
+            location = list(
+              path = filename,
+              lines = list(
+                begin = line_number
+              )
+            ),
+            severity = switch(type,
+              style = "info",
+              error = "blocker",
+              warning = "major",
+              "info"
+            )
+          )
+        )
+      }
+    )
+
+  write(jsonlite::toJSON(res, pretty = TRUE, auto_unbox = TRUE), filename)
+}
+
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   maximum <- max(column_number, unlist(ranges))
 
@@ -670,13 +734,22 @@ fill_with <- function(character = " ", length = 1L) {
   paste(collapse = "", rep.int(character, length))
 }
 
-maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
+maybe_append_condition_lints <- function(lints, source_expression, lint_cache, filename) {
+  error <- source_expression$error
   if (is_lint(error)) {
     error$linter <- "error"
     lints[[length(lints) + 1L]] <- error
 
     if (!is.null(lint_cache)) {
       cache_lint(lint_cache, list(filename = filename, content = ""), "error", error)
+    }
+  }
+  for (l in source_expression$warning) {
+    l$linter <- "parser_warning_linter"
+    lints[[length(lints) + 1L]] <- l
+
+    if (!is.null(lint_cache)) {
+      cache_lint(lint_cache, list(filename = filename, content = ""), "parser_warning_linter", l)
     }
   }
   lints
@@ -699,4 +772,12 @@ zap_temp_filename <- function(res, needs_tempfile) {
     }
   }
   res
+}
+
+necessary_linters <- function(expr, expression_linter_names, file_linter_names) {
+  if (is_lint_level(expr, "expression")) {
+    expression_linter_names
+  } else {
+    file_linter_names
+  }
 }

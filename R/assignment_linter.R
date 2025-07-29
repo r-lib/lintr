@@ -143,14 +143,15 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
   )
   if (!is.null(op_xpath_parts)) {
-    # NB: Also used, essentially, in implicit_assignment_linter. Keep in sync.
-    implicit_assignment_xpath <- "
-      [not(parent::expr[
-        preceding-sibling::*[2][self::IF or self::WHILE]
-        or parent::forcond
-        or parent::expr/*[1][self::OP-LEFT-PAREN]
-      ])]
-    "
+    implicit_assignment_xpath <- "[not(ancestor::expr[
+      preceding-sibling::*[
+        self::expr/SYMBOL_FUNCTION_CALL
+        or self::IF
+        or self::WHILE
+        or self::IN
+      ]
+      and not(descendant-or-self::expr/*[1][self::OP-LEFT-PAREN])
+    ])]"
     op_xpath <- paste0(op_xpath_parts, implicit_assignment_xpath, collapse = " | ")
   } else {
     op_xpath <- NULL
@@ -164,21 +165,21 @@ assignment_linter <- function(operator = c("<-", "<<-"),
       op_expr <- xml_find_all(xml, op_xpath)
 
       op_text <- xml_text(op_expr)
+      allowed_op_list <- if (length(operator) > 1L) paste("one of", toString(operator)) else operator
       op_lint_message_fmt <- rep(
-        sprintf(
-          "Use %s for assignment, not %%s.",
-          if (length(operator) > 1L) paste("one of", toString(operator)) else operator
-        ),
+        "Use %s for assignment, not %s.",
         length(op_text)
       )
       if (no_cascading) {
         op_lint_message_fmt[op_text %in% c("<<-", "->>")] <-
-          "Replace %s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
+          "Replace %2$s by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior."
       }
       op_lint_message_fmt[op_text == "%<>%"] <-
-        "Avoid the assignment pipe %s; prefer pipes and assignment in separate steps."
+        "Avoid the assignment pipe %2$s; prefer pipes and assignment in separate steps."
 
-      op_lint_message <- sprintf(op_lint_message_fmt, op_text)
+      # suppress "one argument not used by format" warnings for the special cased messages that don't include
+      # allowed_op_list.
+      op_lint_message <- suppressWarnings(sprintf(op_lint_message_fmt, allowed_op_list, op_text))
       lints <- xml_nodes_to_lints(op_expr, source_expression, op_lint_message, type = "style")
     }
 

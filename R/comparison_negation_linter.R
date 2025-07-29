@@ -65,13 +65,13 @@ comparison_negation_linter <- function() {
 
     bad_expr <- xml_find_all(xml, xpath)
 
-    comparator_node <- xml_find_first(bad_expr, "expr/expr/*[2]")
+    comparator_node <- xml_find_first(bad_expr, "expr/expr/*[not(self::COMMENT)][2]")
     comparator_name <- xml_name(comparator_node)
 
     # "typical" case is assumed to be !(x == y), so try that first, and back
     #   up to the less nested case. there may be a cleaner way to do this...
     unnested <- !comparator_name %in% names(comparator_inverses)
-    comparator_node[unnested] <- xml_find_first(bad_expr[unnested], "expr/*[2]")
+    comparator_node[unnested] <- xml_find_first(bad_expr[unnested], "expr/*[not(self::COMMENT)][2]")
     comparator_name[unnested] <- xml_name(comparator_node[unnested])
 
     comparator_text <- xml_text(comparator_node)

@@ -77,7 +77,7 @@
 fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # regular expression pattern is the first argument
   pos_1_regex_funs <- c(
-    "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
+    "grep", "grepv", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
   )
 
   # regular expression pattern is the second argument
@@ -120,7 +120,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
         and not({ in_pipe_cond })
       ) or (
         STR_CONST
-        and preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
+        and preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB/text() = 'pattern']
       )
     ]
   ")

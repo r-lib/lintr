@@ -4,9 +4,9 @@
 #' * `expect_lint` asserts that specified lints are generated.
 #' * `expect_no_lint` asserts that no lints are generated.
 #'
-#' @param content a character vector for the file content to be linted, each vector element representing a line of
-#' text.
-#' @param checks checks to be performed:
+#' @param content A character vector for the file content to be linted, each vector element representing a line of
+#'   text.
+#' @param checks Checks to be performed:
 #' \describe{
 #'   \item{NULL}{check that no lints are returned.}
 #'   \item{single string or regex object}{check that the single lint returned has a matching message.}
@@ -16,11 +16,14 @@
 #'     corresponding named list (as described in the point above).}
 #' }
 #' Named vectors are also accepted instead of named lists, but this is a compatibility feature that
-#' is not recommended for new code.
-#' @param ... arguments passed to [lint()], e.g. the linters or cache to use.
-#' @param file if not `NULL`, read content from the specified file rather than from `content`.
-#' @param language temporarily override Rs `LANGUAGE` envvar, controlling localization of base R error messages.
-#' This makes testing them reproducible on all systems irrespective of their native R language setting.
+#'   is not recommended for new code.
+#' @param ... Arguments passed to [lint()], e.g. the linters or cache to use.
+#' @param file If not `NULL`, read content from the specified file rather than from `content`.
+#' @param language Temporarily override Rs `LANGUAGE` envvar, controlling localization of base R error messages.
+#'   This makes testing them reproducible on all systems irrespective of their native R language setting.
+#' @param ignore_order Logical, default `FALSE`. If `TRUE`, the order of the `checks` does not matter, e.g.
+#'   lints with higher line numbers can come before those with lower line numbers, and the order of linters
+#'   affecting the same line is also irrelevant.
 #' @return `NULL`, invisibly.
 #' @examples
 #' # no expected lint
@@ -41,21 +44,14 @@
 #'   trailing_blank_lines_linter()
 #' )
 #' @export
-expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
+expect_lint <- function(content, checks, ..., file = NULL, language = "en", ignore_order = FALSE) {
   require_testthat()
 
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
-  if (is.null(file)) {
-    file <- tempfile()
-    on.exit(unlink(file), add = TRUE)
-    local({
-      con <- base::file(file, encoding = "UTF-8")
-      on.exit(close(con))
-      writeLines(content, con = con, sep = "\n")
-    })
-  }
+  if (is.null(file)) on.exit(unlink(file), add = TRUE)
+  file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
 
   lints <- lint(file, ...)
   n_lints <- length(lints)
@@ -77,17 +73,30 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
     return(testthat::expect(FALSE, msg))
   }
 
+  if (ignore_order) {
+    lint_order <- with(as.data.frame(lints), order(line_number, column_number, linter))
+    lints <- lints[lint_order]
+
+    check_order <- order(
+      vapply(checks, function(x) x$line_number %||% 0L, FUN.VALUE = integer(1L)),
+      vapply(checks, function(x) x$column_number %||% 0L, FUN.VALUE = integer(1L)),
+      vapply(checks, function(x) x$linter %||% "", FUN.VALUE = character(1L))
+    )
+    checks <- checks[check_order]
+  }
+
   local({
-    itr <- 0L
-    # keep 'linter' as a field even if we remove the deprecated argument from Lint() in the future
-    lint_fields <- unique(c(names(formals(Lint)), "linter"))
+    itr_env <- new.env(parent = emptyenv())
+    itr_env$itr <- 0L
+    # valid fields are those from Lint(), plus 'linter'
+    lint_fields <- c(names(formals(Lint)), "linter")
     Map(
       function(lint, check) {
-        itr <<- itr + 1L
+        itr_env$itr <- itr_env$itr + 1L
         lapply(names(check), function(field) {
           if (!field %in% lint_fields) {
             cli_abort(c(
-              x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+              x = "Check {.val {itr_env$itr}} has an invalid field: {.field {field}}.",
               i = "Valid fields are: {.field {lint_fields}}."
             ))
           }
@@ -95,7 +104,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
           value <- lint[[field]]
           msg <- sprintf(
             "check #%d: %s %s did not match %s",
-            itr, field, deparse(value), deparse(check)
+            itr_env$itr, field, deparse(value), deparse(check)
           )
           # deparse ensures that NULL, list(), etc are handled gracefully
           ok <- if (field == "message") {
@@ -119,6 +128,17 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en") {
 expect_no_lint <- function(content, ..., file = NULL, language = "en") {
   require_testthat()
   expect_lint(content, NULL, ..., file = file, language = language)
+}
+
+maybe_write_content <- function(file, lines) {
+  if (!is.null(file)) {
+    return(file)
+  }
+  tmp <- tempfile()
+  con <- file(tmp, encoding = "UTF-8")
+  on.exit(close(con))
+  writeLines(lines, con = con, sep = "\n")
+  tmp
 }
 
 #' Test that the package is lint free

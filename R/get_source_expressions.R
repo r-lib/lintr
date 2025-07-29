@@ -51,6 +51,7 @@
 #'   }
 #'   }
 #'   \item{error}{A `Lint` object describing any parsing error.}
+#'   \item{warning}{A `lints` object describing any parsing warning.}
 #'   \item{lines}{The [readLines()] output for this file.}
 #' }
 #'
@@ -67,16 +68,12 @@ get_source_expressions <- function(filename, lines = NULL) {
   old_lang <- set_lang("en")
   on.exit(reset_lang(old_lang))
 
-  source_expression$lines <- if (is.null(lines)) {
-    read_lines(filename)
-  } else {
-    lines
-  }
+  source_expression$lines <- lines %||% read_lines(filename)
 
   # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   terminal_newline <- !isFALSE(attr(source_expression$lines, "terminal_newline", exact = TRUE))
 
-  e <- NULL
+  e <- w <- NULL
   source_expression$lines <- extract_r_source(
     filename = source_expression$filename,
     lines = source_expression$lines,
@@ -86,46 +83,44 @@ get_source_expressions <- function(filename, lines = NULL) {
   source_expression$content <- get_content(source_expression$lines)
   parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
 
+  # Currently no way to distinguish the source of the warning
+  #   from the message itself, so we just grep the source for the
+  #   exact string generating the warning; de-dupe in case of
+  #   multiple exact matches like '1e-3L; 1e-3L'.
+  # See https://bugs.r-project.org/show_bug.cgi?id=18863.
+  w <- lint_parse_warnings(w, parsed_content, source_expression)
+
   if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
     # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
-    expressions <- list()
-  } else {
-    top_level_map <- generate_top_level_map(parsed_content)
-    xml_parsed_content <- safe_parse_to_xml(parsed_content)
-
-    expressions <- lapply(
-      X = top_level_expressions(parsed_content),
-      FUN = get_single_source_expression,
-      parsed_content,
-      source_expression,
-      filename,
-      top_level_map
-    )
-
-    if (!is.null(xml_parsed_content) && !is.na(xml_parsed_content)) {
-      expression_xmls <- lapply(
-        xml_find_all(xml_parsed_content, "/exprlist/*"),
-        function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
-      )
-      for (i in seq_along(expressions)) {
-        expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
-        expressions[[i]]$xml_find_function_calls <- build_xml_find_function_calls(expression_xmls[[i]])
-      }
-    }
-
-    # add global expression
-    expressions[[length(expressions) + 1L]] <- list(
-      filename = filename,
-      file_lines = source_expression$lines,
-      content = source_expression$lines,
-      full_parsed_content = parsed_content,
-      full_xml_parsed_content = xml_parsed_content,
-      xml_find_function_calls = build_xml_find_function_calls(xml_parsed_content),
-      terminal_newline = terminal_newline
-    )
+    return(list(expressions = list(), error = e, warning = w, lines = source_expression$lines))
   }
 
-  list(expressions = expressions, error = e, lines = source_expression$lines)
+  top_level_map <- generate_top_level_map(parsed_content)
+  xml_parsed_content <- safe_parse_to_xml(parsed_content)
+
+  expressions <- lapply(
+    X = top_level_expressions(parsed_content),
+    FUN = get_single_source_expression,
+    parsed_content,
+    source_expression,
+    filename,
+    top_level_map
+  )
+
+  expressions <- maybe_append_expression_xml(expressions, xml_parsed_content)
+
+  # add global expression
+  expressions[[length(expressions) + 1L]] <- list(
+    filename = filename,
+    file_lines = source_expression$lines,
+    content = source_expression$lines,
+    full_parsed_content = parsed_content,
+    full_xml_parsed_content = xml_parsed_content,
+    xml_find_function_calls = build_xml_find_function_calls(xml_parsed_content),
+    terminal_newline = terminal_newline
+  )
+
+  list(expressions = expressions, error = e, warning = w, lines = source_expression$lines)
 }
 
 lint_parse_error <- function(e, source_expression) {
@@ -156,6 +151,56 @@ lint_parse_error <- function(e, source_expression) {
   # an error that does not use R_ParseErrorMsg
   lint_parse_error_nonstandard(e, source_expression)
 }
+
+#' Currently no way to distinguish the source of the warning
+#'   from the message itself, so we just grep the source for the
+#'   exact string generating the warning; de-dupe in case of
+#'   multiple exact matches like '1e-3L; 1e-3L'
+#' @noRd
+lint_parse_warnings <- function(w, parsed_content, source_expression) {
+  if (!length(w)) {
+    return(w)
+  }
+  flatten_lints(lapply(unique(w), lint_parse_warning, parsed_content, source_expression))
+}
+
+#' The set of parser warnings seems pretty stable, but as
+#'   long as they don't generate sourceref hints, we're
+#'   stuck with this somewhat-manual approach.
+#' @noRd
+lint_parse_warning <- function(w, parsed_content, source_expression) {
+  for (lint_re in parser_warning_regexes) {
+    bad_txt <- re_matches(w, lint_re)$txt[1L]
+    # at most one regex matches the warning
+    if (is.na(bad_txt)) {
+      next
+    } else {
+      break
+    }
+  }
+  # use the parse tree to avoid baroque matches to comments, strings
+  hits <- parsed_content[with(parsed_content, token == "NUM_CONST" & text == bad_txt), ]
+  lapply(seq_len(nrow(hits)), function(ii) {
+    Lint(
+      filename = source_expression$filename,
+      line_number = hits$line1[ii],
+      column_number = hits$col1[ii],
+      type = "warning",
+      message = w,
+      line = source_expression$lines[[as.character(hits$line1[ii])]],
+      ranges = list(c(hits$col1[ii], hits$col2[ii]))
+    )
+  })
+}
+
+parser_warning_regexes <- list(
+  int_with_decimal =
+    rex("integer literal ", capture(anything, name = "txt"), " contains decimal; using numeric value"),
+  nonint_with_l =
+    rex("non-integer value ", capture(anything, name = "txt"), " qualified with L; using numeric value"),
+  unneeded_decimal =
+    rex("integer literal ", capture(anything, name = "txt"), " contains unnecessary decimal point")
+)
 
 #' Ensure a string is valid for printing
 #'
@@ -495,13 +540,21 @@ get_single_source_expression <- function(loc,
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 
-  parsed_content <- tryCatch(
-    parse(
-      text = source_expression$content,
-      srcfile = source_expression,
-      keep.source = TRUE
+  env <- parent.frame() # nolint: object_usage_linter. Used below.
+  # https://adv-r.hadley.nz/conditions.html
+  parsed_content <- withCallingHandlers(
+    tryCatch(
+      parse(
+        text = source_expression$content,
+        srcfile = source_expression,
+        keep.source = TRUE
+      ),
+      error = error
     ),
-    error = error
+    warning = function(w) {
+      env$w <- c(env$w, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
   )
 
   if (is_error(parsed_content) || is_lint(parsed_content)) {
@@ -523,6 +576,21 @@ get_source_expression <- function(source_expression, error = identity) {
 
   source_expression$parsed_content <- parsed_content
   fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_expression)), source_expression$lines)
+}
+
+maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
+  if (is.null(xml_parsed_content) || is.na(xml_parsed_content)) {
+    return(expressions)
+  }
+  expression_xmls <- lapply(
+    xml_find_all(xml_parsed_content, "/exprlist/*"),
+    function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
+  )
+  for (i in seq_along(expressions)) {
+    expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
+    expressions[[i]]$xml_find_function_calls <- build_xml_find_function_calls(expression_xmls[[i]])
+  }
+  expressions
 }
 
 get_newline_locs <- function(x) {
@@ -592,13 +660,14 @@ fix_tab_columns <- function(parse_content, tab_cols) {
 }
 
 tab_offsets <- function(tab_columns) {
-  cum_offset <- 0L
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$cum_offset <- 0L
   vapply(
     tab_columns - 1L,
     function(tab_idx) {
       # nolint next: object_overwrite_linter. 'offset' is a perfect name here.
-      offset <- 7L - (tab_idx + cum_offset) %% 8L # using a tab width of 8 characters
-      cum_offset <<- cum_offset + offset
+      offset <- 7L - (tab_idx + outer_env$cum_offset) %% 8L # using a tab width of 8 characters
+      outer_env$cum_offset <- outer_env$cum_offset + offset
       offset
     },
     integer(1L),

@@ -39,7 +39,7 @@
 #' @export
 terminal_close_linter <- make_linter_from_xpath(
   xpath = "
-  //FUNCTION
+  (//FUNCTION | //OP-LAMBDA)
     /following-sibling::expr
     /expr[last()][
       expr/SYMBOL_FUNCTION_CALL[text() = 'close']

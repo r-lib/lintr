@@ -1,10 +1,10 @@
 test_that("assignment_linter skips allowed usages", {
   linter <- assignment_linter()
 
-  expect_lint("blah", NULL, linter)
-  expect_lint("blah <- 1", NULL, linter)
-  expect_lint("blah<-1", NULL, linter)
-  expect_lint("fun(blah=1)", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint("blah <- 1", linter)
+  expect_no_lint("blah<-1", linter)
+  expect_no_lint("fun(blah=1)", linter)
 })
 
 test_that("assignment_linter blocks disallowed usages", {
@@ -35,7 +35,7 @@ test_that("arguments handle <<- and ->/->> correctly", {
   expect_lint("1 ->> blah", lint_msg_right, assignment_linter(operator = "<-"))
 
   # <<- is only blocked optionally
-  expect_lint("1 <<- blah", NULL, linter)
+  expect_no_lint("1 <<- blah", linter)
   expect_lint(
     "1 <<- blah",
     rex::rex("Replace <<- by assigning to a specific environment"),
@@ -43,8 +43,8 @@ test_that("arguments handle <<- and ->/->> correctly", {
   )
 
   # blocking -> can be disabled
-  expect_lint("1 -> blah", NULL, linter_yes_right)
-  expect_lint("1 ->> blah", NULL, linter_yes_right)
+  expect_no_lint("1 -> blah", linter_yes_right)
+  expect_no_lint("1 ->> blah", linter_yes_right)
   # we can also differentiate '->' and '->>'
   expect_lint(
     "1 ->> blah",
@@ -69,8 +69,8 @@ test_that("arguments handle <<- and ->/->> correctly", {
 test_that("arguments handle trailing assignment operators correctly", {
   linter_default <- assignment_linter()
   linter_no_trailing <- assignment_linter(allow_trailing = FALSE)
-  expect_lint("x <- y", NULL, linter_no_trailing)
-  expect_lint("foo(bar = 1)", NULL, linter_no_trailing)
+  expect_no_lint("x <- y", linter_no_trailing)
+  expect_no_lint("foo(bar = 1)", linter_no_trailing)
 
   expect_lint(
     trim_some("
@@ -116,7 +116,7 @@ test_that("arguments handle trailing assignment operators correctly", {
       gather(measure, value, -Species) %>%
       arrange(-value)
   ")
-  expect_lint(pipe_left_string, NULL, linter_default)
+  expect_no_lint(pipe_left_string, linter_default)
   expect_lint(pipe_left_string, rex::rex("<- should not be trailing"), linter_no_trailing)
 
   pipe_right_string <- trim_some("
@@ -167,7 +167,7 @@ test_that("arguments handle trailing assignment operators correctly", {
 
 test_that("allow_trailing interacts correctly with comments in braced expressions", {
   linter <- assignment_linter(allow_trailing = FALSE)
-  expect_lint(
+  expect_no_lint(
     trim_some("
     {
       x <- 1
@@ -175,18 +175,16 @@ test_that("allow_trailing interacts correctly with comments in braced expression
       y <- 2
     }
     "),
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
     {
       x <- '#x'
       y <- '#y'
     }
     "),
-    NULL,
     linter
   )
 
@@ -201,7 +199,7 @@ test_that("allow_trailing interacts correctly with comments in braced expression
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
     {
       x <- '
@@ -211,14 +209,16 @@ test_that("allow_trailing interacts correctly with comments in braced expression
       '
     }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("%<>% throws a lint", {
   expect_lint("x %<>% sum()", "Avoid the assignment pipe %<>%", assignment_linter())
-  expect_lint("x %<>% sum()", NULL, assignment_linter(operator = "%<>%"))
+  # regression test for #2850
+  expect_lint("a <- 42", "Use %<>% for assignment", assignment_linter(operator = "%<>%"))
+
+  expect_no_lint("x %<>% sum()", assignment_linter(operator = "%<>%"))
 
   # interaction with allow_trailing
   expect_lint(
@@ -257,31 +257,29 @@ test_that("assignment operator can be toggled", {
   any_linter <- assignment_linter(operator = "any")
   lint_message <- rex("Use = for assignment, not")
 
-  expect_lint("a = 1", NULL, eq_linter)
-  expect_lint("a = 1", NULL, any_linter)
+  expect_no_lint("a = 1", eq_linter)
+  expect_no_lint("a = 1", any_linter)
 
   expect_lint("a <- 1", lint_message, eq_linter)
-  expect_lint("a <- 1", NULL, any_linter)
+  expect_no_lint("a <- 1", any_linter)
 
   expect_lint("a = 1; b <- 2", lint_message, eq_linter)
-  expect_lint("a = 1; b <- 2", NULL, any_linter)
+  expect_no_lint("a = 1; b <- 2", any_linter)
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo = function() {
         a = 1
       }
     "),
-    NULL,
     eq_linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo = function() {
         a = 1
       }
     "),
-    NULL,
     any_linter
   )
 
@@ -294,27 +292,32 @@ test_that("assignment operator can be toggled", {
     list(lint_message, line_number = 2L),
     eq_linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo = function() {
         a <- 1
       }
     "),
-    NULL,
     any_linter
   )
 
-  expect_lint("if ({a = TRUE}) 1", NULL, eq_linter)
-  expect_lint("if ({a = TRUE}) 1", NULL, any_linter)
+  expect_no_lint("if ({a = TRUE}) 1", eq_linter)
+  expect_no_lint("if ({a = TRUE}) 1", any_linter)
 
-  expect_lint("if (a <- TRUE) 1", NULL, eq_linter)
-  expect_lint("if (a <- TRUE) 1", NULL, any_linter)
+  expect_no_lint("if (a <- TRUE) 1", eq_linter)
+  expect_no_lint("if (a <- TRUE) 1", any_linter)
 
-  expect_lint("for (ii in {a = TRUE}) 1", NULL, eq_linter)
-  expect_lint("for (ii in {a = TRUE}) 1", NULL, any_linter)
+  expect_no_lint("while ({a = TRUE}) 1", eq_linter)
+  expect_no_lint("while ({a = TRUE}) 1", any_linter)
 
-  expect_lint("for (ii in a <- TRUE) 1", NULL, eq_linter)
-  expect_lint("for (ii in a <- TRUE) 1", NULL, any_linter)
+  expect_no_lint("while (a <- TRUE) 1", eq_linter)
+  expect_no_lint("while (a <- TRUE) 1", any_linter)
+
+  expect_no_lint("for (ii in {a = TRUE}) 1", eq_linter)
+  expect_no_lint("for (ii in {a = TRUE}) 1", any_linter)
+
+  expect_no_lint("for (ii in a <- TRUE) 1", eq_linter)
+  expect_no_lint("for (ii in a <- TRUE) 1", any_linter)
 
   expect_lint(
     trim_some("
@@ -376,4 +379,17 @@ test_that("Deprecated arguments error as intended", {
   expect_error(regexp = "allow_cascading_assign", assignment_linter(allow_cascading_assign = FALSE))
   expect_error(regexp = "allow_right_assign", assignment_linter(allow_right_assign = TRUE))
   expect_error(regexp = "allow_pipe_assign", assignment_linter(allow_pipe_assign = TRUE))
+})
+
+test_that("implicit '<-' assignments inside calls are ignored where top-level '<-' is disallowed", {
+  linter <- assignment_linter(operator = "=")
+
+  expect_no_lint("if (any(idx <- is.na(y))) which(idx)", linter)
+  expect_no_lint("if (any(foo(idx <- is.na(y)))) which(idx)", linter)
+
+  expect_no_lint("while (any(idx <- is.na(y))) break", linter)
+  expect_no_lint("while (any(foo(idx <- is.na(y)))) break", linter)
+
+  expect_no_lint("for (i in foo(idx <- is.na(y))) which(idx)", linter)
+  expect_no_lint("for (i in foo(bar(idx <- is.na(y)))) which(idx)", linter)
 })

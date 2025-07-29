@@ -1,9 +1,7 @@
-`%||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
-    y
-  } else {
-    x
-  }
+# TODO(R>=4.4.0): remove this.
+# NB: {backports} approach doesn't work since we need this before .onLoad() in names2()
+if (!exists("%||%", "package:base")) {
+  `%||%` <- function(x, y) if (is.null(x)) y else x # nolint: coalesce_linter.
 }
 
 `%==%` <- function(x, y) {
@@ -23,18 +21,19 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
-  res <- list()
-  itr <- 1L
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$res <- list()
+  outer_env$itr <- 1L
   assign_item <- function(x) {
     if (inherits(x, class)) {
-      res[[itr]] <<- x
-      itr <<- itr + 1L
+      outer_env$res[[outer_env$itr]] <- x
+      outer_env$itr <- outer_env$itr + 1L
     } else if (is.list(x)) {
       lapply(x, assign_item)
     }
   }
   assign_item(x)
-  res
+  outer_env$res
 }
 
 fix_names <- function(x, default) {
@@ -103,14 +102,6 @@ get_content <- function(lines, info) {
   paste(lines, collapse = "\n")
 }
 
-logical_env <- function(x) {
-  res <- as.logical(Sys.getenv(x))
-  if (is.na(res)) {
-    return(NULL)
-  }
-  res
-}
-
 try_silently <- function(expr) {
   suppressWarnings(
     suppressMessages(
@@ -159,12 +150,13 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
-  terminal_newline <- TRUE
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$terminal_newline <- TRUE
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),
     warning = function(w) {
-      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        terminal_newline <<- FALSE
+      if (grepl("incomplete final line found on", conditionMessage(w), fixed = TRUE)) {
+        outer_env$terminal_newline <- FALSE
         invokeRestart("muffleWarning")
       }
     }
@@ -172,14 +164,9 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
   lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
   lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
   Encoding(lines) <- "UTF-8"
-  attr(lines, "terminal_newline") <- terminal_newline
+  attr(lines, "terminal_newline") <- outer_env$terminal_newline
   lines
 }
-
-# nocov start
-# support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {}
-# nocov end
 
 # see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
 #   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.

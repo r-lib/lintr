@@ -7,6 +7,7 @@ backport_linter,robustness configurable package_development
 boolean_arithmetic_linter,efficiency best_practices readability
 brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
+coalesce_linter,readability consistency best_practices
 commas_linter,style readability default configurable
 commented_code_linter,style readability best_practices default
 comparison_negation_linter,readability consistency
@@ -17,6 +18,7 @@ consecutive_assertion_linter,style readability consistency
 consecutive_mutate_linter,consistency readability configurable efficiency
 consecutive_stopifnot_linter,defunct
 cyclocomp_linter,style readability best_practices configurable
+download_file_linter,common_mistakes best_practices robustness
 duplicate_argument_linter,correctness common_mistakes configurable
 empty_assignment_linter,readability best_practices
 equals_na_linter,robustness correctness common_mistakes default
@@ -51,6 +53,7 @@ length_test_linter,common_mistakes efficiency
 lengths_linter,efficiency readability best_practices
 library_call_linter,style best_practices readability configurable
 line_length_linter,style readability default configurable
+list2df_linter,readability efficiency
 list_comparison_linter,best_practices common_mistakes
 literal_coercion_linter,best_practices consistency efficiency
 matrix_apply_linter,readability efficiency
@@ -74,7 +77,7 @@ package_hooks_linter,style correctness package_development
 paren_body_linter,style readability default
 paste_linter,best_practices consistency configurable
 pipe_call_linter,style readability
-pipe_consistency_linter,style readability configurable
+pipe_consistency_linter,default style readability configurable
 pipe_continuation_linter,style readability default
 pipe_return_linter,best_practices common_mistakes
 print_linter,best_practices consistency
