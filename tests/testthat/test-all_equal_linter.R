@@ -7,6 +7,8 @@ test_that("all_equal_linter() skips allowed usages", {
 
   expect_no_lint("if (isTRUE(all.equal(a, b))) message('equal')", linter)
   expect_no_lint("if (!isTRUE(all.equal(a, b))) message('different')", linter)
+
+  expect_no_lint("if (A) all.equal(x, y)", linter)
 })
 
 test_that("all_equal_linter() blocks simple disallowed usages", {
