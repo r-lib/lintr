@@ -9,7 +9,9 @@ backport_linter(r_version = getRversion(), except = character())
 \arguments{
 \item{r_version}{Minimum R version to test for compatibility. Defaults to
 the R version currently in use. The version can be specified as a version
-number, or as a version alias (such as \code{"devel"}, \code{"oldrel"}, \code{"oldrel-1"}).}
+number, or as a version alias (such as \code{"devel"}, \code{"oldrel"}, \code{"oldrel-1"}).
+It can also be \code{"auto"} to use the minimum R version declared in the
+\code{DESCRIPTION} file of R packages.}
 
 \item{except}{Character vector of functions to be excluded from linting.
 Use this to list explicitly defined backports, e.g. those imported from the \code{{backports}} package or manually
