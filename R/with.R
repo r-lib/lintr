@@ -34,8 +34,8 @@ modify_defaults <- function(defaults, ...) {
   if (missing(defaults)) {
     cli_abort("{.arg defaults} is a required argument, but is missing.")
   }
-  if (!is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    cli_abort("{.arg defaults} must be a named list, not {.obj_type_friendly {defaults}}.")
+  if (!(is.list(defaults) || is.environment(defaults)) || !all(nzchar(names2(defaults)))) {
+    cli_abort("{.arg defaults} must be a named list or environment, not {.obj_type_friendly {defaults}}.")
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -53,7 +53,8 @@ modify_defaults <- function(defaults, ...) {
   }
 
   is.na(vals) <- nms == vals
-  defaults[nms] <- vals
+  for (ii in seq_along(nms)) defaults[[nms[ii]]] <- vals[[ii]]
+  if (is.environment(defaults)) defaults <- as.list(defaults)
 
   res <- defaults[!vapply(defaults, is.null, logical(1L))]
   res <- res[platform_independent_order(names(res))]
@@ -95,7 +96,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
   if (!is.character(tags) && !is.null(tags)) {
     cli_abort("{.arg tags} must be a character vector, or {.code NULL}, not {.obj_type_friendly {tags}}.")
   }
-  tagged_linters <- list()
+  tagged_linter_env <- new.env()
 
   for (package in packages) {
     pkg_ns <- loadNamespace(package)
@@ -109,18 +110,14 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
           i = "These are advertised by {.fn available_linters}, but are not exported by package {.pkg {package}}."
         ))
       }
-      linter_factories <- mget(available$linter, envir = pkg_ns)
-      linters <- Map(
-        call_linter_factory,
-        linter_factory = linter_factories,
-        linter_name = names(linter_factories),
-        MoreArgs = list(package = package)
-      )
-      tagged_linters <- c(tagged_linters, linters)
+      for (linter in available$linter) {
+        linter_factory <- get(linter, envir = pkg_ns, inherits = FALSE)
+        delayedAssign(linter, call_linter_factory(linter_factory, linter, package), assign.env = tagged_linter_env)
+      }
     }
   }
 
-  modify_defaults(..., defaults = tagged_linters)
+  modify_defaults(..., defaults = tagged_linter_env)
 }
 
 #' Create a linter configuration based on all available linters
