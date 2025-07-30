@@ -120,6 +120,8 @@ normalize_r_version <- function(r_version) {
     ))
 
     r_version <- R_system_version(available_patches[selected_patch])
+  } else if (identical(r_version, "auto")) {
+    r_version <- min_r_version()
   } else if (is.character(r_version)) {
     r_version <- R_system_version(r_version, strict = TRUE)
   } else if (!inherits(r_version, "R_system_version")) {
