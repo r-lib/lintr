@@ -97,10 +97,16 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
   }
   tagged_linters <- list()
 
+  dots <- list(...)
+  exclude_idx <- vapply(dots, is.null, logical(1L))
+  excluded_linters <- names(dots)[exclude_idx]
+  dots <- dots[!exclude_idx]
+
   for (package in packages) {
     pkg_ns <- loadNamespace(package)
     ns_exports <- getNamespaceExports(pkg_ns)
     available <- available_linters(packages = package, tags = tags, exclude_tags = exclude_tags)
+    available <- available[!available$linter %in% excluded_linters, ]
     if (nrow(available) > 0L) {
       if (!all(available$linter %in% ns_exports)) {
         missing_linters <- setdiff(available$linter, ns_exports) # nolint: object_usage_linter. TODO(#2252).
@@ -120,7 +126,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
     }
   }
 
-  modify_defaults(..., defaults = tagged_linters)
+  do.call(modify_defaults, c(list(defaults = tagged_linters), dots))
 }
 
 #' Create a linter configuration based on all available linters
