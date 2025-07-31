@@ -51,6 +51,7 @@
 
 ### New linters
 
+* `all_equal_linter()` warns about incorrect use of `all.equal()` in `if` clauses or preceded by `!` (#2885, @Bisaloo).
 * `download_file_linter()` encourages the use of `mode = "wb"` (or `mode = "ab"`) when using `download.file()`, rather than `mode = "w"` or `mode = "a"`, as the latter can produce broken
 files in Windows (#2882, @Bisaloo).
 * `lint2df_linter()` encourages the use of the `list2DF()` function, or the `data.frame()` function when recycling is required, over the slower and less readable `do.call(cbind.data.frame, )` alternative (#2834, @Bisaloo).
