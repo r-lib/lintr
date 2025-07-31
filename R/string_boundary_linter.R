@@ -116,31 +116,22 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     list(lint_expr = expr[should_lint], lint_type = lint_type)
   }
 
+  string_comparison_xpath <- "self::*[(EQ or NE) and expr/STR_CONST]"
   substr_xpath <- glue("
-  (//EQ | //NE)
-    /parent::expr[
-      expr[STR_CONST]
-      and expr[
-        expr[1][SYMBOL_FUNCTION_CALL[text() = 'substr' or text() = 'substring']]
-        and expr[
-          (
-            position() = 3
-            and NUM_CONST[text() = '1' or text() = '1L']
-          ) or (
-            position() = 4
-            and expr[1][SYMBOL_FUNCTION_CALL[text() = 'nchar']]
-            and expr[position() = 2] = preceding-sibling::expr[2]
-          )
-        ]
-      ]
-    ]
-  ")
+  self::*[expr/expr[
+    (
+      position() = 3
+      and NUM_CONST[text() = '1' or text() = '1L']
+    ) or (
+      position() = 4
+      and expr[1][SYMBOL_FUNCTION_CALL[text() = 'nchar']]
+      and expr[position() = 2] = preceding-sibling::expr[2]
+    )
+  ]]")
 
   substr_arg2_xpath <- "string(./expr[expr[1][SYMBOL_FUNCTION_CALL]]/expr[3])"
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-
     lints <- list()
 
     str_detect_lint_data <- get_regex_lint_data(
@@ -168,7 +159,12 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       ))
     }
 
-    substr_expr <- xml_find_all(xml, substr_xpath)
+    substr_calls <- xml_parent(xml_parent(
+      source_expression$xml_find_function_calls(c("substr", "substring"))
+    ))
+    is_str_comparison <- !is.na(xml_find_first(substr_calls, string_comparison_xpath))
+    substr_calls <- strip_comments_from_subtree(substr_calls[is_str_comparison])
+    substr_expr <- xml_find_all(substr_calls, substr_xpath)
     substr_one <- xml_find_chr(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
     substr_lint_message <- paste(
       ifelse(
