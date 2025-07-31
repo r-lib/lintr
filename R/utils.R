@@ -85,20 +85,20 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
-get_content <- function(lines, info) {
+get_content <- function(lines, info, known_safe = TRUE) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
+    # put in data.frame-like format
     if (is_node(info)) {
-      info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
-        as.integer(xml_attr(info, attr))
-      })
+      info <- lapply(xml2::xml_attrs(info), as.integer)
     }
 
     lines <- lines[seq(info$line1, info$line2)]
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
+  if (!known_safe) lines <- c("{", lines, "}")
   paste(lines, collapse = "\n")
 }
 
