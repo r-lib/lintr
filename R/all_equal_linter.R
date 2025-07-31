@@ -80,10 +80,8 @@ all_equal_linter <- function() {
     is_false_all_equal_lints <- xml_nodes_to_lints(
       is_false_all_equal,
       source_expression = source_expression,
-      lint_message = paste(
-        "Use !isTRUE() to check for differences in all.equal().",
-        "isFALSE(all.equal()) always returns FALSE."
-      ),
+      lint_message =
+        "Use !isTRUE() to check for differences in all.equal(). isFALSE(all.equal()) always returns FALSE.",
       type = "warning"
     )
 
