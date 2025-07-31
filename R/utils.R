@@ -228,8 +228,12 @@ get_r_string <- function(s, xpath = NULL) {
       s <- xml_find_chr(s, sprintf("string(%s)", xpath))
     }
   }
-  # parse() skips "" elements --> offsets the length of the output,
-  #   but NA in --> NA out
+  r_string_from_parse_text(s)
+}
+
+# parse() skips "" elements --> offsets the length of the output,
+#   but NA in --> NA out
+r_string_from_parse_text <- function(s) {
   is.na(s) <- !nzchar(s)
   out <- as.character(parse(text = s, keep.source = FALSE))
   is.na(out) <- is.na(s)
