@@ -15,6 +15,7 @@
 <url><loc>https://lintr.r-lib.org/dev/reference/Linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/T_and_F_symbol_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/absolute_path_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/dev/reference/all_equal_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/all_linters.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/any_duplicated_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/dev/reference/any_is_na_linter.html</loc></url>

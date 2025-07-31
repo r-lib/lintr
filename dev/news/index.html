@@ -128,6 +128,8 @@
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
+<code><a href="../reference/all_equal_linter.html">all_equal_linter()</a></code> warns about incorrect use of <code><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal()</a></code> in <code>if</code> clauses or preceded by <code>!</code> (<a href="https://github.com/r-lib/lintr/issues/2885" class="external-link">#2885</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
+<li>
 <code><a href="../reference/download_file_linter.html">download_file_linter()</a></code> encourages the use of <code>mode = "wb"</code> (or <code>mode = "ab"</code>) when using <code><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file()</a></code>, rather than <code>mode = "w"</code> or <code>mode = "a"</code>, as the latter can produce broken files in Windows (<a href="https://github.com/r-lib/lintr/issues/2882" class="external-link">#2882</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
 <li>
 <code>lint2df_linter()</code> encourages the use of the <code><a href="https://rdrr.io/r/base/list2DF.html" class="external-link">list2DF()</a></code> function, or the <code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame()</a></code> function when recycling is required, over the slower and less readable <code>do.call(cbind.data.frame, )</code> alternative (<a href="https://github.com/r-lib/lintr/issues/2834" class="external-link">#2834</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
