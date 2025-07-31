@@ -71,6 +71,7 @@ files in Windows (#2882, @Bisaloo).
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
 * `expect_true_false_linter()` is pipe-aware, so that `42 |> expect_identical(x, ignore_attr = TRUE)` no longer lints (#1520, @MichaelChirico).
 * `T_and_F_symbol_linter()` ignores `T` and `F` used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
+* `implicit_assignment_linter()` with `allow_scoped=TRUE` doesn't lint for `if (a <- 1) print(a)` (#2913, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
