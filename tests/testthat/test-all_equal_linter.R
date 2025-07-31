@@ -33,11 +33,12 @@ test_that("lints vectorize", {
       all.equal(a, b)
       !all.equal(a, b)
       !isTRUE(all.equal(a, b))
-      if (all.equal(a, b)) message('equal')
+      if ( # test
+        all.equal(a, b)) message('equal')
     }"),
     list(
       list(lint_message, line_number = 3L),
-      list(lint_message, line_number = 5L)
+      list(lint_message, line_number = 6L)
     ),
     all_equal_linter()
   )

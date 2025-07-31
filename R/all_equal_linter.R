@@ -52,9 +52,8 @@ all_equal_linter <- function() {
     dangerous_unwrapped_all_equal <- xml_find_all(
       all_equal_calls,
       "parent::expr[
-        preceding-sibling::OP-EXCLAMATION
-        or preceding-sibling::IF
-        or preceding-sibling::WHILE
+        preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]
+        or preceding-sibling::*[not(self::COMMENT)][1][self::OP-EXCLAMATION]
       ]"
     )
 
