@@ -161,6 +161,8 @@
 <code><a href="../reference/expect_true_false_linter.html">expect_true_false_linter()</a></code> is pipe-aware, so that <code>42 |&gt; expect_identical(x, ignore_attr = TRUE)</code> no longer lints (<a href="https://github.com/r-lib/lintr/issues/1520" class="external-link">#1520</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/T_and_F_symbol_linter.html">T_and_F_symbol_linter()</a></code> ignores <code>T</code> and <code>F</code> used as symbols in formulas (<code>y ~ T + F</code>), which can represent variables in data not controlled by the author (<a href="https://github.com/r-lib/lintr/issues/2637" class="external-link">#2637</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code> with <code>allow_scoped=TRUE</code> doesn’t lint for <code>if (a &lt;- 1) print(a)</code> (<a href="https://github.com/r-lib/lintr/issues/2913" class="external-link">#2913</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level4">
 <h4 id="lint-accuracy-fixes-removing-false-negatives-development-version">Lint accuracy fixes: removing false negatives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-negatives-development-version"></a></h4>
