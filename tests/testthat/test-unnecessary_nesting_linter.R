@@ -496,6 +496,21 @@ test_that("unnecessary_nesting_linter skips allowed usages", {
     linter
   )
 
+  # but comments are irrelevant (they should be moved to another anchor)
+  expect_lint(
+    trim_some("
+      if (x && a) {
+        # comment1
+        if (y || b) {
+          1L
+        }
+        # comment2
+      }
+    "),
+    "Combine this `if` statement with the one found at line 1",
+    linter
+  )
+
   expect_no_lint(
     trim_some("
       if (x) {
@@ -758,7 +773,7 @@ patrick::with_parameters_test_that(
   )
 )
 
-test_that("allow_functions= works", {
+test_that("allow_functions= works", { # nofuzz '})' break-up by comment
   linter_default <- unnecessary_nesting_linter()
   linter_foo <- unnecessary_nesting_linter(allow_functions = "foo")
   expect_lint("foo(x, {y}, z)", "Reduce the nesting of this statement", linter_default)

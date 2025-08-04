@@ -94,7 +94,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
   }
   if (allow_scoped) {
     # force 2nd preceding to ensure we're in the loop condition, not the loop expression
-    in_branch_cond <- "ancestor::expr[preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]]"
+    in_branch_cond <- "ancestor-or-self::expr[preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]]"
     xpath <- paste0(
       xpath,
       # _if_ we're in an IF/WHILE branch, lint if the assigned SYMBOL appears anywhere later on.

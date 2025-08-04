@@ -220,7 +220,7 @@ object_name_xpath <- local({
   ]"
 
   # either an argument supplied positionally, i.e., not like 'arg = val', or the call <expr>
-  not_kwarg_cond <- "not(preceding-sibling::*[1][self::EQ_SUB])"
+  not_kwarg_cond <- "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])"
 
   glue(xp_strip_comments("
   //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]

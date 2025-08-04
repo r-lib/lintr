@@ -257,19 +257,6 @@ parse_check_usage <- function(expression,
     )
   )
 
-  # nocov start
-  is_missing <- is.na(res$message)
-  if (any(is_missing)) {
-    # TODO(#2474): Remove this.
-    missing_msg <- vals[is_missing][[1L]] # nolint: object_usage_linter. TODO(#2252).
-    cli_warn(c(
-      x = "Couldn't parse usage message {.str {missing_msg}}. Ignoring {.val {sum(is_missing)}} usage warnings.",
-      i = "Please report a possible bug at {.url https://github.com/r-lib/lintr/issues}."
-    ))
-  }
-  # nocov end
-  res <- res[!is_missing, ]
-
   res$line1 <- ifelse(
     nzchar(res$line1),
     as.integer(res$line1) + start_line - 1L,

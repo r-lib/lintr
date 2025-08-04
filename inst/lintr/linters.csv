@@ -1,5 +1,6 @@
 linter,tags
 absolute_path_linter,robustness best_practices configurable
+all_equal_linter,common_mistakes robustness
 any_duplicated_linter,efficiency best_practices
 any_is_na_linter,efficiency best_practices
 assignment_linter,style consistency default configurable

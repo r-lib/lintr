@@ -402,6 +402,9 @@ test_that("allow_scoped skips scoped assignments", {
     lint_message,
     linter
   )
+
+  expect_no_lint("if (a <- 1) print(a)", linter)
+
   # only applies to the branch condition itself -- within the branch, still lint
   expect_lint(
     trim_some("
