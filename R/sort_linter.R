@@ -85,11 +85,10 @@ sort_linter <- function() {
   sorted_xpath <- "
   parent::expr[not(SYMBOL_SUB)]
     /parent::expr[
-      (EQ or NE)
+      (EQ or NE or expr/SYMBOL_FUNCTION_CALL/text() = 'identical')
       and expr/expr = expr
     ]
   "
-
 
   arguments_xpath <-
     ".//SYMBOL_SUB[text() = 'method' or text() = 'decreasing' or text() = 'na.last']"
