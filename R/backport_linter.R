@@ -124,6 +124,13 @@ normalize_r_version <- function(r_version) {
     r_version <- R_system_version(available_patches[selected_patch])
   } else if (identical(r_version, "auto")) {
     r_version <- min_r_version()
+    if (is.na(r_version)) {
+      cli_warn(c(
+        x = "No DESCRIPTION file or no specified minimum R version could be found.",
+        i = "Setting {.arg r_version} to the currently running R version (R {getRversion()})."
+      ))
+      r_version <- getRversion()
+    }
   } else if (is.character(r_version)) {
     r_version <- R_system_version(r_version, strict = TRUE)
   } else if (!inherits(r_version, "R_system_version")) {
