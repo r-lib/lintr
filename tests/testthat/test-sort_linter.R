@@ -120,7 +120,7 @@ test_that("sort_linter blocks simple disallowed usages", {
 
   # expression matching
   expect_lint("sort(foo(x)) == foo(x)", sorted_msg, linter)
-  expect_lint("identical(foo(x), sort(foo(x))", sorted_msg, linter)
+  expect_lint("identical(foo(x), sort(foo(x)))", sorted_msg, linter)
 })
 
 test_that("lints vectorize", {

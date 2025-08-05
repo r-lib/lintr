@@ -85,7 +85,14 @@ sort_linter <- function() {
   sorted_xpath <- "
   parent::expr[not(SYMBOL_SUB)]
     /parent::expr[
-      (EQ or NE or expr/SYMBOL_FUNCTION_CALL/text() = 'identical')
+      (EQ or NE)
+      and expr/expr = expr
+    ]
+  "
+  sorted_identical_xpath <- "
+  parent::expr[not(SYMBOL_SUB)]
+    /parent::expr[
+      expr/SYMBOL_FUNCTION_CALL[text() = 'identical']
       and expr/expr = expr
     ]
   "
@@ -141,8 +148,22 @@ sort_linter <- function() {
       "Use is.unsorted(x) to test the unsortedness of a vector."
     )
 
+    sorted_identical_expr <- xml_find_all(xml_calls, sorted_identical_xpath)
+    is_negated <- !is.na(
+      xml_find_first(sorted_identical_expr, "preceding-sibling::*[not(self::COMMENT)][1][self::OP-EXCLAMATION]")
+    )
+
+    lint_message <- c(
+      lint_message,
+      ifelse(
+        is_negated,
+        "Use is.unsorted(x) to test the unsortedness of a vector.",
+        "Use !is.unsorted(x) to test the sortedness of a vector."
+      )
+    )
+
     sorted_lints <- xml_nodes_to_lints(
-      sorted_expr,
+      combine_nodesets(sorted_expr, sorted_identical_expr),
       source_expression = source_expression,
       lint_message = lint_message,
       type = "warning"
