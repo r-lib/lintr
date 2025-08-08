@@ -33,7 +33,7 @@
 empty_assignment_linter <- make_linter_from_xpath(
   # for some reason, the parent in the `=` case is <equal_assign>, not <expr>, hence parent::expr
   xpath = "
-  //OP-LEFT-BRACE[following-sibling::*[1][self::OP-RIGHT-BRACE]]
+  //OP-LEFT-BRACE[following-sibling::*[not(self::COMMENT)][1][self::OP-RIGHT-BRACE]]
     /parent::expr[
       preceding-sibling::LEFT_ASSIGN
       or preceding-sibling::EQ_ASSIGN

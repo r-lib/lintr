@@ -191,8 +191,6 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
   # NB: IF AND {...} AND ELSE/... implies >= 3 equality conditions are present
   # .//expr/IF/...: the expr in `==` that's _not_ the STR_CONST
   # not(preceding::IF): prevent nested matches which might be incorrect globally
-  # not(. != .): don't match if there are _any_ expr which _don't_ match the top
-  #   expr
   if_xpath <- glue("
   //IF
     /parent::expr[
@@ -203,21 +201,27 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
         and {equal_str_cond}
         and ELSE/following-sibling::expr[IF and {equal_str_cond}]
       ]
-      and not(
-        .//expr/IF/following-sibling::{equal_str_cond}/expr[not(STR_CONST)]
-          != expr[1][EQ]/expr[not(STR_CONST)]
-      )
       and not({ max_lines_cond })
     ]
   ")
+
+  # not(. != .): don't match if there are _any_ expr which _don't_ match the top expr
+  equality_test_cond <- glue("self::*[
+    .//expr/IF/following-sibling::{equal_str_cond}/expr[not(STR_CONST)]
+      != expr[1][EQ]/expr[not(STR_CONST)]
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, if_xpath)
+    expr_all_equal <- is.na(xml_find_first(
+      strip_comments_from_subtree(bad_expr),
+      equality_test_cond
+    ))
 
     lints <- xml_nodes_to_lints(
-      bad_expr,
+      bad_expr[expr_all_equal],
       source_expression = source_expression,
       lint_message = paste(
         "Prefer switch() statements over repeated if/else equality tests,",
