@@ -48,6 +48,7 @@
 * `object_usage_linter()` lints missing packages that may cause false positives (#2872, @AshesITR)
 * New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls when a constant string is passed to `fmt` (#2894, @Bisaloo).
+* `use_lintr()` adds the created `.lintr` file to the `.Rbuildignore` if run in a package (#1805, @MEO265).
 
 ### New linters
 
@@ -161,6 +162,7 @@ files in Windows (#2882, @Bisaloo).
 * `expect_no_lint()` was added as new function to cover the typical use case of expecting no lint message, akin to the recent {testthat} functions like `expect_no_warning()` (#2580, @F-Noelle).
 * `lint()` and friends emit a message if no lints are found (#2643, @IndrajeetPatil).
 * `commented_code_linter()` can detect commented code that ends with a pipe (#2671, @jcken95)
+
 
 ### New linters
 
