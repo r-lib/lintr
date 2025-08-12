@@ -18,11 +18,10 @@
 #' @evalRd rd_tags("length_levels_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-length_levels_linter <- make_linter_from_xpath(
+length_levels_linter <- make_linter_from_function_xpath(
+  function_names = "levels",
   xpath = "
-  //SYMBOL_FUNCTION_CALL[text() = 'levels']
-    /parent::expr
-    /parent::expr
+  parent::expr
     /parent::expr[expr/SYMBOL_FUNCTION_CALL[text() = 'length']]
   ",
   lint_message = "nlevels(x) is better than length(levels(x))."

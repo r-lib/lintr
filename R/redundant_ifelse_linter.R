@@ -45,37 +45,31 @@
 #' @export
 redundant_ifelse_linter <- function(allow10 = FALSE) {
   tf_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-    /parent::expr
-    /parent::expr[
-      expr[position() <= 4 and NUM_CONST[text() = 'TRUE']]
-      and expr[position() <= 4 and NUM_CONST[text() = 'FALSE']]
-      and (
-        count(expr) = 4
-        or expr[5]/NUM_CONST[text() = 'NA']
-      )
-    ]
-  ")
+  parent::expr[
+    expr[position() <= 4 and NUM_CONST[text() = 'TRUE']]
+    and expr[position() <= 4 and NUM_CONST[text() = 'FALSE']]
+    and (
+      count(expr) = 4
+      or expr[5]/NUM_CONST[text() = 'NA']
+    )
+  ]")
 
   num_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-    /parent::expr
-    /parent::expr[
-      expr[position() <= 4 and NUM_CONST[text() = '1' or text() = '1L']]
-      and expr[position() <= 4 and NUM_CONST[text() = '0' or text() = '0L']]
-      and (
-        count(expr) = 4
-        or expr[5]/NUM_CONST[text() = 'NA' or text() = 'NA_integer_' or text() = 'NA_real_']
-      )
-    ]
-  ")
+  parent::expr[
+    expr[position() <= 4 and NUM_CONST[text() = '1' or text() = '1L']]
+    and expr[position() <= 4 and NUM_CONST[text() = '0' or text() = '0L']]
+    and (
+      count(expr) = 4
+      or expr[5]/NUM_CONST[text() = 'NA' or text() = 'NA_integer_' or text() = 'NA_real_']
+    )
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    xml_targets <- source_expression$xml_find_function_calls(ifelse_funs)
+
     lints <- list()
 
-    tf_expr <- xml_find_all(xml, tf_xpath)
+    tf_expr <- xml_find_all(xml_targets, tf_xpath)
     matched_call <- xp_call_name(tf_expr)
     # [1] call; [2] logical condition
     first_arg <- xml_find_chr(tf_expr, "string(expr[3]/NUM_CONST)")
@@ -87,7 +81,7 @@ redundant_ifelse_linter <- function(allow10 = FALSE) {
     lints <- c(lints, xml_nodes_to_lints(tf_expr, source_expression, tf_message, type = "warning"))
 
     if (!allow10) {
-      num_expr <- xml_find_all(xml, num_xpath)
+      num_expr <- xml_find_all(xml_targets, num_xpath)
       matched_call <- xp_call_name(num_expr)
       # [1] call; [2] logical condition
       first_arg <- xml_find_chr(num_expr, "string(expr[3]/NUM_CONST)")

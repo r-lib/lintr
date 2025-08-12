@@ -30,14 +30,8 @@
 #' @evalRd rd_tags("lengths_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-lengths_linter <- local({
-  loop_funs <- c("sapply", "vapply", "map_int", "map_dbl")
-  make_linter_from_xpath(
-    xpath = glue("
-    //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(loop_funs)} ]
-      /parent::expr
-      /parent::expr[expr/SYMBOL[text() = 'length']]
-    "),
-    lint_message = "Use lengths() to find the length of each element in a list."
-  )
-})
+lengths_linter <- make_linter_from_function_xpath(
+  function_names = c("sapply", "vapply", "map_int", "map_dbl"),
+  xpath = "parent::expr[expr/SYMBOL[text() = 'length']]",
+  lint_message = "Use lengths() to find the length of each element in a list."
+)

@@ -1,6 +1,6 @@
 #' Require usage of `!any(x)` over `all(!x)`, `!all(x)` over `any(!x)`
 #'
-#' `any(!x)` is logically equivalent to `!any(x)`; ditto for the equivalence of
+#' `any(!x)` is logically equivalent to `!all(x)`; ditto for the equivalence of
 #'   `all(!x)` and `!any(x)`. Negating after aggregation only requires inverting
 #'   one logical value, and is typically more readable.
 #'
@@ -39,22 +39,19 @@ outer_negation_linter <- function() {
   # NB: requirement that count(expr)>1 is to prevent any() from linting
   #   e.g. in magrittr pipelines.
   xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'any' or text() = 'all']
-    /parent::expr[following-sibling::expr]
+  self::*[following-sibling::expr]
     /parent::expr[
       not(expr[
         position() > 1
         and not(OP-EXCLAMATION)
-        and not(preceding-sibling::*[1][self::EQ_SUB])
+        and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
       ])
     ]
   "
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls(c("any", "all"))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
     inverse_call <- ifelse(matched_call == "any", "all", "any")

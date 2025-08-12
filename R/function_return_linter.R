@@ -55,10 +55,8 @@
 #' @evalRd rd_tags("function_return_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-function_return_linter <- make_linter_from_xpath(
-  xpath = "
-  //SYMBOL_FUNCTION_CALL[text() = 'return']
-    /parent::expr/parent::expr/expr[LEFT_ASSIGN or RIGHT_ASSIGN]
-  ",
+function_return_linter <- make_linter_from_function_xpath(
+  function_names = "return",
+  xpath = "parent::expr/expr[LEFT_ASSIGN or RIGHT_ASSIGN]",
   lint_message = "Move the assignment outside of the return() clause, or skip assignment altogether."
 )

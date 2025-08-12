@@ -46,11 +46,11 @@
 #' @export
 literal_coercion_linter <- function() {
   rlang_coercers <- c("lgl", "int", "dbl", "chr")
-  coercers <- xp_text_in_table(c(
+  coercers <- c(
     # base coercers
     paste0("as.", c("logical", "integer", "numeric", "double", "character")),
     rlang_coercers
-  ))
+  )
 
   # notes for clarification:
   #  - as.integer(1e6) is arguably easier to read than 1000000L
@@ -61,23 +61,18 @@ literal_coercion_linter <- function() {
     not(OP-DOLLAR or OP-AT)
     and (
       NUM_CONST[not(contains(translate(text(), 'E', 'e'), 'e'))]
-      or STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+      or STR_CONST[not(following-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])]
     )
   "
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {coercers} ]
-    /parent::expr
-    /parent::expr[
-      count(expr) = 2
-      and expr[2][ {not_extraction_or_scientific} ]
-    ]
-  ")
+  parent::expr[
+    count(expr) = 2
+    and expr[2][ {not_extraction_or_scientific} ]
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls(coercers)
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     coercer <- xp_call_name(bad_expr)
     # tiptoe around the fact that we don't require {rlang}
@@ -94,17 +89,21 @@ literal_coercion_linter <- function() {
       )
       # nocov end
     } else {
+      bad_expr <- strip_comments_from_subtree(bad_expr)
       # duplicate, unless we add 'rlang::' and it wasn't there originally
       coercion_str <- report_str <- xml_text(bad_expr)
       if (any(is_rlang_coercer) && !("package:rlang" %in% search())) {
         needs_prefix <- is_rlang_coercer & !startsWith(coercion_str, "rlang::")
         coercion_str[needs_prefix] <- paste0("rlang::", coercion_str[needs_prefix])
       }
-      # the linter logic & rlang requirement should ensure that it's safe to run eval() here
-      # TODO(michaelchirico): this recommends '1' to replace as.numeric(1), where our
-      #   own implicit_integer_linter(), if active, would require this to be 1.0. Should
-      #   we recommend this instead, or offer it as an alternative?
-      literal_equivalent_str <- vapply(str2expression(coercion_str), function(expr) deparse1(eval(expr)), character(1L))
+      # the linter logic & rlang requirement should ensure that it's safe to run eval() here;
+      #   suppressWarnings() is for cases like 'as.integer("a")' which have an NA result, #2566.
+      # TODO(#2473): Avoid a recommendation like '1' that clashes with implicit_integer_linter().
+      literal_equivalent_str <- vapply(
+        str2expression(coercion_str),
+        function(expr) deparse1(suppressWarnings(eval(expr))),
+        character(1L)
+      )
       lint_message <- sprintf(
         "Use %s instead of %s, i.e., use literals directly where possible, instead of coercion.",
         literal_equivalent_str, report_str

@@ -1,23 +1,3 @@
-test_that("it returns the input if less than the max", {
-  expect_identical(lintr:::trim_output(character()), character())
-  expect_identical(lintr:::trim_output("test", max = 10L), "test")
-})
-
-test_that("it returns the input trimmed strictly to max if no lints found", {
-  expect_identical(lintr:::trim_output("testing a longer non_lint string", max = 7L), "testing")
-})
-
-test_that("it returns the input trimmed to the last full lint if one exists within the max", {
-  t1 <- readChar(test_path("lints"), file.size(test_path("lints")))
-  if (.Platform$OS.type == "windows") {
-    # Magic numbers expect newlines to be 1 character
-    t1 <- gsub("\r\n", "\n", t1, fixed = TRUE)
-  }
-  expect_identical(lintr:::trim_output(t1, max = 200L), substr(t1, 1L, 195L))
-  expect_identical(lintr:::trim_output(t1, max = 400L), substr(t1, 1L, 380L))
-  expect_identical(lintr:::trim_output(t1, max = 2000L), substr(t1, 1L, 1930L))
-})
-
 test_that("as.data.frame.lints", {
   l1 <- Lint(
     "dummy.R",
@@ -56,14 +36,13 @@ test_that("as.data.frame.lints", {
   expect_s3_class(df, "data.frame")
 
   exp <- data.frame(
-    filename = rep("dummy.R", 2L),
+    filename = "dummy.R",
     line_number = c(1L, 2L),
     column_number = c(1L, 6L),
     type = c("style", "error"),
     message = c("", "Under no circumstances is the use of foobar allowed."),
     line = c("", "a <- 1"),
-    linter = c(NA_character_, NA_character_), # These are assigned in lint() now.
-    stringsAsFactors = FALSE
+    linter = NA_character_ # These are assigned in lint() now.
   )
 
   expect_identical(df, exp)
@@ -97,6 +76,13 @@ test_that("print.lint works", {
   expect_output(print(l), "  1:length(x)", fixed = TRUE)
 })
 
+test_that("print.lint works with empty lints", {
+  withr::local_options(list(lintr.rstudio_source_markers = FALSE))
+  l <- lint(text = "1L")
+
+  expect_message(print(l), "No lints found", fixed = TRUE)
+})
+
 test_that("print.lint works for inline data, even in RStudio", {
   l <- lint("x = 1\n")
 
@@ -128,7 +114,7 @@ test_that("print.lints works", {
 
   tmp <- withr::local_tempfile()
   stopifnot(file.create(tmp))
-  expect_invisible(print(lint(tmp)))
+  expect_message(expect_invisible(print(lint(tmp))), "No lints found")
 })
 
 test_that("split.lint works as intended", {

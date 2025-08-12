@@ -24,22 +24,34 @@
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #'   linting is being done ad hoc.
 #'
-#' @aliases lint_file
-# TODO(next release after 3.0.0): remove the alias
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' f <- withr::local_tempfile(lines = "a=1", fileext = "R")
-#' lint(f)                # linting a file
-#' lint("a = 123\n")      # linting inline-code
-#' lint(text = "a = 123") # linting inline-code
+#' @examples
+#' # linting inline-code
+#' lint("a = 123\n")
+#' lint(text = "a = 123")
+#'
+#' # linting a file
+#' f <- tempfile()
+#' writeLines("a=1", f)
+#' lint(f)
+#' unlink(f)
 #'
 #' @export
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
-  check_dots(...names(), c("exclude", "parse_exclusions"))
+  # TODO(#2502): Remove this workaround.
+  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
+  check_dots(dot_names, c("exclude", "parse_exclusions"))
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
+  parse_settings <- !inline_data && isTRUE(parse_settings)
+
+  if (parse_settings) {
+    read_settings(filename)
+    on.exit(reset_settings(), add = TRUE)
+  }
+
   lines <- get_lines(filename, text)
 
   if (needs_tempfile) {
@@ -50,13 +62,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     close(con)
   }
 
-  filename <- normalizePath(filename, mustWork = !inline_data) # to ensure a unique file in cache
+  filename <- normalize_path(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
-
-  if (isTRUE(parse_settings)) {
-    read_settings(filename)
-    on.exit(reset_settings(), add = TRUE)
-  }
 
   linters <- define_linters(linters)
   linters <- Map(validate_linter_object, linters, names(linters))
@@ -76,24 +83,22 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lints <- list()
   if (!is_tainted(source_expressions$lines)) {
     for (expr in source_expressions$expressions) {
-      if (is_lint_level(expr, "expression")) {
-        necessary_linters <- expression_linter_names
-      } else {
-        necessary_linters <- file_linter_names
-      }
-      for (linter in necessary_linters) {
+      for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
         # use withCallingHandlers for friendlier failures on unexpected linter errors
         lints[[length(lints) + 1L]] <- withCallingHandlers(
           get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
           error = function(cond) {
-            stop("Linter '", linter, "' failed in ", filename, ": ", conditionMessage(cond), call. = FALSE)
+            cli_abort(
+              "Linter {.fn linter} failed in {.file {filename}}:",
+              parent = cond
+            )
           }
         )
       }
     }
   }
 
-  lints <- maybe_append_error_lint(lints, source_expressions$error, lint_cache, filename)
+  lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
   lints <- reorder_lints(flatten_lints(lints))
   class(lints) <- c("lints", "list")
 
@@ -113,9 +118,9 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 #' @param exclusions exclusions for [exclude()], relative to the package path.
 #' @param pattern pattern for files, by default it will take files with any of the extensions
 #' .R, .Rmd, .qmd, .Rnw, .Rhtml, .Rrst, .Rtex, .Rtxt allowing for lowercase r (.r, ...).
-#' @param show_progress Logical controlling whether to show linting progress with a simple text
-#'   progress bar _via_ [utils::txtProgressBar()]. The default behavior is to show progress in
-#'   [interactive()] sessions not running a testthat suite.
+#' @param show_progress Logical controlling whether to show linting progress with
+#'   [cli::cli_progress_along()]. The default behavior is to show progress in [interactive()] sessions
+#'   not running a testthat suite.
 #'
 #' @examples
 #' if (FALSE) {
@@ -139,7 +144,9 @@ lint_dir <- function(path = ".", ...,
                      pattern = "(?i)[.](r|rmd|qmd|rnw|rhtml|rrst|rtex|rtxt)$",
                      parse_settings = TRUE,
                      show_progress = NULL) {
-  check_dots(...names(), c("lint", "exclude", "parse_exclusions"))
+  # TODO(#2502): Remove this workaround.
+  dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
+  check_dots(dot_names, c("lint", "exclude", "parse_exclusions"))
 
   if (isTRUE(parse_settings)) {
     read_settings(path)
@@ -156,9 +163,10 @@ lint_dir <- function(path = ".", ...,
     pattern = pattern
   )
 
-  # normalizePath ensures names(exclusions) and files have the same names for the same files.
+  # normalize_path ensures names(exclusions) and files have the same names for the same files.
+  # It also ensures all paths have forward slash
   # Otherwise on windows, files might incorrectly not be excluded in to_exclude
-  files <- normalizePath(dir(
+  files <- normalize_path(dir(
     path,
     pattern = pattern,
     recursive = TRUE,
@@ -174,24 +182,31 @@ lint_dir <- function(path = ".", ...,
     return(lints)
   }
 
-  pb <- if (isTRUE(show_progress)) {
-    txtProgressBar(max = length(files), style = 3L)
+  if (isTRUE(show_progress)) {
+    # nocov start. Only displays after >=2 seconds;
+    #   we get ample testing interactively, so don't slow down tests just for coverage.
+    lints <- lapply(
+      # NB: This cli API is experimental (https://github.com/r-lib/cli/issues/709)
+      cli::cli_progress_along(files, name = "Running linters"),
+      function(idx) {
+        lint(files[idx], ..., parse_settings = FALSE, exclusions = exclusions)
+      }
+    )
+    # nocov end
+  } else {
+    lints <- lapply(
+      files,
+      function(file) { # nolint: unnecessary_lambda_linter.
+        lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
+      }
+    )
   }
 
-  lints <- flatten_lints(lapply(
-    files,
-    function(file) {
-      maybe_report_progress(pb)
-      lint(file, ..., parse_settings = FALSE, exclusions = exclusions)
-    }
-  ))
-
-  if (!is.null(pb)) close(pb)
-
+  lints <- flatten_lints(lints)
   lints <- reorder_lints(lints)
 
   if (relative_path) {
-    path <- normalizePath(path, mustWork = FALSE)
+    path <- normalize_path(path, mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {
@@ -233,15 +248,17 @@ lint_package <- function(path = ".", ...,
                          parse_settings = TRUE,
                          show_progress = NULL) {
   if (length(path) > 1L) {
-    stop("Only linting one package at a time is supported.", call. = FALSE)
+    cli_abort(c(
+      x = "Only linting one package at a time is supported.",
+      i = "Instead, {.val {length(path)}} package paths were provided."
+    ))
   }
   pkg_path <- find_package(path)
 
   if (is.null(pkg_path)) {
-    warning(
-      sprintf("Didn't find any R package searching upwards from '%s'.", normalizePath(path)),
-      call. = FALSE
-    )
+    cli_warn(c(
+      i = "Didn't find any R package searching upwards from {.file {normalize_path(path)}}"
+    ))
     return(NULL)
   }
 
@@ -265,7 +282,7 @@ lint_package <- function(path = ".", ...,
   )
 
   if (isTRUE(relative_path)) {
-    path <- normalizePath(pkg_path, mustWork = FALSE)
+    path <- normalize_path(pkg_path, mustWork = FALSE)
     lints[] <- lapply(
       lints,
       function(x) {
@@ -330,34 +347,10 @@ validate_linter_object <- function(linter, name) {
   if (is_linter(linter)) {
     return(linter)
   }
-  if (!is.function(linter)) {
-    stop(gettextf(
-      "Expected '%s' to be a function of class 'linter', not a %s of class '%s'",
-      name, typeof(linter), class(linter)[[1L]]
-    ), call. = FALSE)
-  }
-  if (is_linter_factory(linter)) {
-    what <- "Passing linters as variables"
-    alternative <- "a call to the linters (see ?linters)"
-  } else {
-    what <- "The use of linters of class 'function'"
-    alternative <- "linters classed as 'linter' (see ?Linter)"
-  }
-  lintr_deprecated(
-    what = what, alternative = alternative, version = "3.0.0",
-    type = "",
-    signal = "stop"
-  )
-}
-
-is_linter_factory <- function(fun) {
-  # A linter factory is a function whose last call is to Linter()
-  bdexpr <- body(fun)
-  # covr internally transforms each call into if (TRUE) { covr::count(...); call }
-  while (is.call(bdexpr) && (bdexpr[[1L]] == "{" || (bdexpr[[1L]] == "if" && bdexpr[[2L]] == "TRUE"))) {
-    bdexpr <- bdexpr[[length(bdexpr)]]
-  }
-  is.call(bdexpr) && identical(bdexpr[[1L]], as.name("Linter"))
+  cli_abort(c(
+    i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
+    x = "Instead, it is {.obj_type_friendly {linter}}."
+  ))
 }
 
 reorder_lints <- function(lints) {
@@ -380,36 +373,13 @@ reorder_lints <- function(lints) {
 #' @param message message used to describe the lint error
 #' @param line code source where the lint occurred
 #' @param ranges a list of ranges on the line that should be emphasized.
-#' @param linter deprecated. No longer used.
 #' @return an object of class `c("lint", "list")`.
 #' @name lint-s3
 #' @export
 Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: object_name.
                  type = c("style", "warning", "error"),
-                 message = "", line = "", ranges = NULL, linter = "") {
-  if (!missing(linter)) {
-    lintr_deprecated(
-      what = "Using the `linter` argument of `Lint()`",
-      version = "3.0.0",
-      type = "",
-      signal = "stop"
-    )
-  }
-
-  if (length(line) != 1L || !is.character(line)) {
-    stop("`line` must be a string.", call. = FALSE)
-  }
-  max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
-  if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
-    stop(sprintf(
-      "`column_number` must be an integer between 0 and nchar(line) + 1 (%d). It was %s.",
-      max_col, column_number
-    ), call. = FALSE)
-  }
-  if (!is_number(line_number) || line_number < 1L) {
-    stop(sprintf("`line_number` must be a positive integer. It was %s.", line_number), call. = FALSE)
-  }
-  check_ranges(ranges, max_col)
+                 message = "", line = "", ranges = NULL) {
+  validate_lint_object(message, line, line_number, column_number, ranges)
 
   type <- match.arg(type)
 
@@ -427,6 +397,31 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   obj
 }
 
+# nolint next: cyclocomp_linter. Sequence of checks + early returns.
+validate_lint_object <- function(message, line, line_number, column_number, ranges) {
+  if (length(message) != 1L || !is.character(message)) {
+    cli_abort("{.arg message} must be a character string")
+  }
+  if (is.object(message)) {
+    cli_abort("{.arg message} must be a simple string, but has class {.cls {class(message)}}")
+  }
+  if (length(line) != 1L || !is.character(line)) {
+    cli_abort("{.arg line} must be a character string.")
+  }
+  max_col <- max(nchar(line) + 1L, 1L, na.rm = TRUE)
+  if (!is_number(column_number) || column_number < 0L || column_number > max_col) {
+    cli_abort("
+      {.arg column_number} must be an integer between {.val {0}} and {.val {max_col}} ({.code nchar(line) + 1}),
+      not {.obj_type_friendly {column_number}}.
+    ")
+  }
+  if (!is_number(line_number) || line_number < 1L) {
+    cli_abort("{.arg line_number} must be a positive integer, not {.obj_type_friendly {line_number}}.")
+  }
+  check_ranges(ranges, max_col)
+  invisible()
+}
+
 is_number <- function(number, n = 1L) {
   length(number) == n && is.numeric(number) && !anyNA(number)
 }
@@ -437,28 +432,35 @@ is_valid_range <- function(range, max_col) {
     range[[2L]] <= max_col
 }
 
-check_ranges <- function(ranges, max_col) {
+check_ranges <- function(ranges, max_col, call = parent.frame()) {
   if (is.null(ranges)) {
     return()
   }
   if (!is.list(ranges)) {
-    stop("`ranges` must be NULL or a list.", call. = FALSE)
+    cli_abort(
+      "{.arg ranges} must be {.code NULL} or a list, not {.obj_type_friendly {ranges}}.",
+      call = call
+    )
   }
 
   for (range in ranges) {
     if (!is_number(range, 2L)) {
-      stop("`ranges` must only contain length 2 integer vectors without NAs.", call. = FALSE)
+      cli_abort(
+        "{.arg ranges} must only contain integer vectors of length 2 without {.code NA}s.",
+        call = call
+      )
     } else if (!is_valid_range(range, max_col)) {
-      stop(sprintf(
-        "All entries in `ranges` must satisfy 0 <= range[1L] <= range[2L] <= nchar(line) + 1 (%d).", max_col
-      ), call. = FALSE)
+      cli_abort(
+        "{.arg ranges} must satisfy {.val {0}} <= range[1L] <= range[2L] <= {.val {max_col}} (nchar(line) + 1).",
+        call = call
+      )
     }
   }
 }
 
 rstudio_source_markers <- function(lints) {
   if (!requireNamespace("rstudioapi", quietly = TRUE)) {
-    stop("'rstudioapi' is required for rstudio_source_markers().", call. = FALSE) # nocov
+    cli_abort("{.pkg rstudioapi} is required for {.fn rstudio_source_markers}.") # nocov
   }
 
   # package path will be NULL unless it is a relative path
@@ -551,14 +553,14 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 #' @export
 sarif_output <- function(lints, filename = "lintr_results.sarif") {
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("'jsonlite' is required to produce SARIF reports, please install to continue.", call. = FALSE) # nocov
+    cli_abort("{.pkg jsonlite} is required to produce SARIF reports. Please install to continue.") # nocov
   }
 
   # package path will be `NULL` unless it is a relative path
   package_path <- attr(lints, "path")
 
   if (is.null(package_path)) {
-    stop("Package path needs to be a relative path.", call. = FALSE)
+    cli_abort("Package path needs to be a relative path.")
   }
 
   # setup template
@@ -647,6 +649,73 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
 }
 
+#' GitLab Report for lint results
+#'
+#' Generate a report of the linting results using the
+#' [GitLab](https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format) format.
+#'
+#' @details
+#' lintr only supports three severity types ("style", "warning", and "error")
+#' while the GitLab format supports five ("info", "minor", "major", "critical",
+#' and "blocker"). The types "style", "warning", and "error" are mapped to
+#' the GitLab types "info", "major", and "blocker", respectively. The GitLab
+#' types "minor" and "critical" are ignored.
+#'
+#' @param lints The linting results
+#' @param filename The file name of the output report
+#' @export
+gitlab_output <- function(lints, filename = "lintr_results.json") {
+  stopifnot(inherits(lints, "lints"))
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    cli_abort("{.pkg jsonlite} is required to produce Gitlab reports. Please install to continue.") # nocov
+  }
+
+  # Format
+  # (copied from https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format)
+  # ==============================
+  # description          String   A human-readable description of the code quality violation.
+  # check_name           String   A unique name representing the check, or rule, associated with this violation.
+  # fingerprint          String   A unique fingerprint to identify this specific code quality violation, such as a hash
+  #                               of its contents.
+  # location.path        String   The file containing the code quality violation, expressed as a relative path in the
+  #                               repository. Do not prefix with ./.
+  # location.lines.begin
+  # -or-                 Integer  The line on which the code quality violation occurred.
+  # location.positions.begin.line
+  #
+  # severity             String   The severity of the violation, can be one of info, minor, major, critical, or blocker.
+
+  # Gitlab format as R data structure
+  res <-
+    lapply(
+      lints,
+      function(lint) {
+        with(
+          lint,
+          list(
+            description = message,
+            check_name = linter,
+            fingerprint =  digest::digest(line, algo = "sha1"),
+            location = list(
+              path = filename,
+              lines = list(
+                begin = line_number
+              )
+            ),
+            severity = switch(type,
+              style = "info",
+              error = "blocker",
+              warning = "major",
+              "info"
+            )
+          )
+        )
+      }
+    )
+
+  write(jsonlite::toJSON(res, pretty = TRUE, auto_unbox = TRUE), filename)
+}
+
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
   maximum <- max(column_number, unlist(ranges))
 
@@ -662,29 +731,25 @@ highlight_string <- function(message, column_number = NULL, ranges = NULL) {
 }
 
 fill_with <- function(character = " ", length = 1L) {
-  paste0(collapse = "", rep.int(character, length))
+  paste(collapse = "", rep.int(character, length))
 }
 
-has_positional_logical <- function(dots) {
-  length(dots) > 0L &&
-    is.logical(dots[[1L]]) &&
-    !nzchar(names2(dots)[1L])
-}
-
-maybe_report_progress <- function(pb) {
-  if (is.null(pb)) {
-    return(invisible())
-  }
-  setTxtProgressBar(pb, getTxtProgressBar(pb) + 1L)
-}
-
-maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
-  if (inherits(error, "lint")) {
+maybe_append_condition_lints <- function(lints, source_expression, lint_cache, filename) {
+  error <- source_expression$error
+  if (is_lint(error)) {
     error$linter <- "error"
     lints[[length(lints) + 1L]] <- error
 
     if (!is.null(lint_cache)) {
       cache_lint(lint_cache, list(filename = filename, content = ""), "error", error)
+    }
+  }
+  for (l in source_expression$warning) {
+    l$linter <- "parser_warning_linter"
+    lints[[length(lints) + 1L]] <- l
+
+    if (!is.null(lint_cache)) {
+      cache_lint(lint_cache, list(filename = filename, content = ""), "parser_warning_linter", l)
     }
   }
   lints
@@ -707,4 +772,12 @@ zap_temp_filename <- function(res, needs_tempfile) {
     }
   }
   res
+}
+
+necessary_linters <- function(expr, expression_linter_names, file_linter_names) {
+  if (is_lint_level(expr, "expression")) {
+    expression_linter_names
+  } else {
+    file_linter_names
+  }
 }

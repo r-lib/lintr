@@ -81,16 +81,13 @@
 nested_ifelse_linter <- function() {
   # NB: land on the nested (inner) call, not the outer call, and throw a lint with the inner call's name
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)}]
-    /parent::expr
-    /following-sibling::expr[expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]]]
-  ")
+  following-sibling::expr[
+    expr[1]/SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls(ifelse_funs)
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
     lint_message <- paste(

@@ -12,6 +12,11 @@
 #'   linters = sprintf_linter()
 #' )
 #'
+#' lint(
+#'   text = 'sprintf("hello")',
+#'   linters = sprintf_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = 'sprintf("hello %s %s %d", x, y, z)',
@@ -28,25 +33,16 @@
 #' @export
 sprintf_linter <- function() {
   call_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'sprintf' or text() = 'gettextf']
-    /parent::expr
-    /parent::expr[
-      (
-        OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST or
-        SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
-      ) and
-      not(expr/SYMBOL[text() = '...'])
-    ]
-  "
+  parent::expr[
+    not(expr/SYMBOL[text() = '...'])
+  ]"
 
   pipes <- setdiff(magrittr_pipes, "%$%")
-  in_pipe_xpath <- glue("self::expr[
-    preceding-sibling::*[1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
-    and (
-      preceding-sibling::*[2]/STR_CONST
-      or SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST
-    )
-  ]")
+  in_pipe_xpath <- glue(
+    "self::expr[
+      preceding-sibling::*[not(self::COMMENT)][1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
+    ]"
+  )
 
   is_missing <- function(x) is.symbol(x) && !nzchar(x)
 
@@ -92,7 +88,7 @@ sprintf_linter <- function() {
       arg_idx <- 2L:length(parsed_expr)
       parsed_expr[arg_idx + 1L] <- parsed_expr[arg_idx]
       names(parsed_expr)[arg_idx + 1L] <- arg_names[arg_idx]
-      parsed_expr[[2L]] <- xml2lang(xml_find_first(xml, "preceding-sibling::*[2]"))
+      parsed_expr[[2L]] <- xml2lang(xml_find_first(xml, "preceding-sibling::*[not(self::COMMENT)][2]"))
       names(parsed_expr)[2L] <- ""
     }
     parsed_expr <- zap_extra_args(parsed_expr)
@@ -105,19 +101,43 @@ sprintf_linter <- function() {
   }
 
   Linter(linter_level = "file", function(source_expression) {
-    xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
+    xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
+    sprintf_calls <- xml_find_all(xml_calls, call_xpath)
+    in_pipeline <- !is.na(xml_find_first(sprintf_calls, in_pipe_xpath))
 
-    sprintf_calls <- xml_find_all(xml, call_xpath)
+    fmt_by_name <- get_r_string(
+      sprintf_calls,
+      "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
+    )
+    fmt_by_pos <- ifelse(
+      in_pipeline,
+      get_r_string(sprintf_calls, "preceding-sibling::*[not(self::COMMENT)][2]/STR_CONST"),
+      get_r_string(sprintf_calls, "OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST")
+    )
 
-    sprintf_warning <- vapply(sprintf_calls, capture_sprintf_warning, character(1L))
+    fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, fmt_by_pos)
+    constant_fmt <- !is.na(fmt) & !grepl("%", gsub("%%", "", fmt, fixed = TRUE), fixed = TRUE)
+
+    fct_name <- xp_call_name(sprintf_calls)
+
+    constant_fmt_lint <- xml_nodes_to_lints(
+      sprintf_calls[constant_fmt],
+      source_expression = source_expression,
+      lint_message = sprintf("%s call can be removed when a constant string is provided.", fct_name[constant_fmt]),
+      type = "warning"
+    )
+
+    templated_sprintf_calls <- sprintf_calls[!constant_fmt & !is.na(fmt)]
+    sprintf_warning <- vapply(templated_sprintf_calls, capture_sprintf_warning, character(1L))
 
     has_warning <- !is.na(sprintf_warning)
-    xml_nodes_to_lints(
-      sprintf_calls[has_warning],
+    invalid_sprintf_lint <- xml_nodes_to_lints(
+      templated_sprintf_calls[has_warning],
       source_expression = source_expression,
       lint_message = sprintf_warning[has_warning],
       type = "warning"
     )
+
+    c(constant_fmt_lint, invalid_sprintf_lint)
   })
 }

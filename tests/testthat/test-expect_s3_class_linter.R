@@ -60,14 +60,6 @@ test_that("expect_s3_class_linter blocks simple disallowed usages", {
     rex::rex("expect_s3_class(x, k) is better than expect_true(is.<k>(x))"),
     linter
   )
-
-  # TODO(michaelchirico): consider more carefully which sorts of class(x) %in% . and
-  #   . %in% class(x) calls should be linted
-  #> expect_lint(
-  #>   "expect_true('lm' %in% class(x))",
-  #>   "expect_s3_class\\(x, k\\) is better than expect_equal\\(class\\(x\\), k",
-  #>   expect_s3_class_linter
-  #> )
 })
 
 local({

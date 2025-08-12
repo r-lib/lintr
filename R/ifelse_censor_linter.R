@@ -36,24 +36,19 @@
 #' @export
 ifelse_censor_linter <- function() {
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-    /parent::expr
-    /following-sibling::expr[
-      (LT or GT or LE or GE)
-      and expr[1] = following-sibling::expr
-      and expr[2] = following-sibling::expr
-    ]
-    /parent::expr
-  ")
+  self::*[expr[
+    (LT or GT or LE or GE)
+    and expr[1] = following-sibling::expr
+    and expr[2] = following-sibling::expr
+  ]]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    ifelse_calls <- xml_parent(source_expression$xml_find_function_calls(ifelse_funs))
+    ifelse_calls <- strip_comments_from_subtree(ifelse_calls)
+    bad_expr <- xml_find_all(ifelse_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
-    operator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")
+    operator <- xml_find_chr(bad_expr, "string(expr[2]/*[not(self::COMMENT)][2])")
     match_first <- !is.na(xml_find_first(bad_expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
     optimizer <- ifelse((operator %in% c("<", "<=")) == match_first, "pmin", "pmax")
     first_var <- rep_len("x", length(match_first))

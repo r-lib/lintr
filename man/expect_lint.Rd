@@ -2,15 +2,25 @@
 % Please edit documentation in R/expect_lint.R
 \name{expect_lint}
 \alias{expect_lint}
+\alias{expect_no_lint}
 \title{Lint expectation}
 \usage{
-expect_lint(content, checks, ..., file = NULL, language = "en")
+expect_lint(
+  content,
+  checks,
+  ...,
+  file = NULL,
+  language = "en",
+  ignore_order = FALSE
+)
+
+expect_no_lint(content, ..., file = NULL, language = "en")
 }
 \arguments{
-\item{content}{a character vector for the file content to be linted, each vector element representing a line of
+\item{content}{A character vector for the file content to be linted, each vector element representing a line of
 text.}
 
-\item{checks}{checks to be performed:
+\item{checks}{Checks to be performed:
 \describe{
 \item{NULL}{check that no lints are returned.}
 \item{single string or regex object}{check that the single lint returned has a matching message.}
@@ -22,22 +32,30 @@ corresponding named list (as described in the point above).}
 Named vectors are also accepted instead of named lists, but this is a compatibility feature that
 is not recommended for new code.}
 
-\item{...}{arguments passed to \code{\link[=lint]{lint()}}, e.g. the linters or cache to use.}
+\item{...}{Arguments passed to \code{\link[=lint]{lint()}}, e.g. the linters or cache to use.}
 
-\item{file}{if not \code{NULL}, read content from the specified file rather than from \code{content}.}
+\item{file}{If not \code{NULL}, read content from the specified file rather than from \code{content}.}
 
-\item{language}{temporarily override Rs \code{LANGUAGE} envvar, controlling localization of base R error messages.
+\item{language}{Temporarily override Rs \code{LANGUAGE} envvar, controlling localization of base R error messages.
 This makes testing them reproducible on all systems irrespective of their native R language setting.}
+
+\item{ignore_order}{Logical, default \code{FALSE}. If \code{TRUE}, the order of the \code{checks} does not matter, e.g.
+lints with higher line numbers can come before those with lower line numbers, and the order of linters
+affecting the same line is also irrelevant.}
 }
 \value{
 \code{NULL}, invisibly.
 }
 \description{
-This is an expectation function to test that the lints produced by \code{lint} satisfy a number of checks.
+These are expectation functions to test specified linters on sample code in the \code{testthat} testing framework.
+\itemize{
+\item \code{expect_lint} asserts that specified lints are generated.
+\item \code{expect_no_lint} asserts that no lints are generated.
+}
 }
 \examples{
 # no expected lint
-expect_lint("a", NULL, trailing_blank_lines_linter())
+expect_no_lint("a", trailing_blank_lines_linter())
 
 # one expected lint
 expect_lint("a\n", "trailing blank", trailing_blank_lines_linter())

@@ -1,8 +1,8 @@
 test_that("ifelse_censor_linter skips allowed usages", {
   linter <- ifelse_censor_linter()
 
-  expect_lint("ifelse(x == 2, x, y)", NULL, linter)
-  expect_lint("ifelse(x > 2, x, y)", NULL, linter)
+  expect_no_lint("ifelse(x == 2, x, y)", linter)
+  expect_no_lint("ifelse(x > 2, x, y)", linter)
 })
 
 test_that("ifelse_censor_linter blocks simple disallowed usages", {
@@ -56,13 +56,30 @@ test_that("ifelse_censor_linter blocks simple disallowed usages", {
   )
 
   # more complicated expression still matches
-  lines <- trim_some("
-    ifelse(2 + p + 104 + 1 > ncols,
-           ncols, 2 + p + 104 + 1
-           )
-  ")
   expect_lint(
-    lines,
+    trim_some("
+      ifelse(2 + p + 104 + 1 > ncols,
+            ncols, 2 + p + 104 + 1
+            )
+    "),
+    rex::rex("pmin(x, y) is preferable to ifelse(x > y, y, x)"),
+    linter
+  )
+
+  # including with comments
+  expect_lint(
+    trim_some("
+      ifelse(2 + p + 104 + 1 #comment
+      > ncols, ncols, 2 + p + 104 + 1)
+    "),
+    rex::rex("pmin(x, y) is preferable to ifelse(x > y, y, x)"),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      ifelse(2 + p + 104 + # comment
+      1 > ncols, ncols, 2 + p + 104 + 1)
+    "),
     rex::rex("pmin(x, y) is preferable to ifelse(x > y, y, x)"),
     linter
   )
@@ -81,6 +98,3 @@ test_that("lints vectorize", {
     ifelse_censor_linter()
   )
 })
-
-# TODO(michaelchirico): how easy would it be to strip parens when considering lint?
-#   e.g. ifelse(x < (kMaxIndex - 1), x, kMaxIndex - 1)

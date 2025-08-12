@@ -15,7 +15,6 @@ g <- function(x) {
 # commented_code
 # some <- commented("out code")
 
-# cyclocomp
 # equals_na
 # brace_linter
 # indentation
@@ -40,6 +39,7 @@ my_metric <- function(x)
   sum(x) + prod(x)
 
 # no_tab
+# pipe_consistency
 # pipe_continuation
 # seq_linter
 # spaces_inside

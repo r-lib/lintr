@@ -49,13 +49,13 @@
 #' @export
 available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "deprecated") {
   if (!is.character(packages)) {
-    stop("`packages` must be a character vector.", call. = FALSE)
+    cli_abort("{.arg packages} must be a {.cls character} vector.")
   }
   if (!is.null(tags) && !is.character(tags)) {
-    stop("`tags` must be a character vector.", call. = FALSE)
+    cli_abort("{.arg tags} must be a {.cls character} vector.")
   }
   if (!is.null(exclude_tags) && !is.character(exclude_tags)) {
-    stop("`exclude_tags` must be a character vector.", call. = FALSE)
+    cli_abort("{.arg exclude_tags} must be a {.cls character} vector.")
   }
 
   # any tags specified explicitly will not be excluded (#1959)
@@ -82,11 +82,7 @@ available_linters <- function(packages = "lintr", tags = NULL, exclude_tags = "d
 }
 
 build_available_linters <- function(available, package, tags, exclude_tags) {
-  available_df <- data.frame(
-    linter = available[["linter"]],
-    package,
-    stringsAsFactors = FALSE
-  )
+  available_df <- data.frame(linter = available[["linter"]], package)
   available_df$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
   if (!is.null(tags)) {
     matches_tags <- vapply(available_df$tags, function(linter_tags) any(linter_tags %in% tags), logical(1L))
@@ -108,7 +104,7 @@ build_available_linters <- function(available, package, tags, exclude_tags) {
 #' `data.frame` constructors don't handle zero-row list-columns properly, so supply `tags` afterwards.
 #' @noRd
 empty_linters <- function() {
-  empty_df <- data.frame(linter = character(), package = character(), stringsAsFactors = FALSE)
+  empty_df <- data.frame(linter = character(), package = character())
   empty_df$tags <- list()
   empty_df
 }
@@ -117,13 +113,10 @@ validate_linter_db <- function(available, package) {
   # Check that the csv file contains two character columns, named 'linter' and 'tags'.
   # Otherwise, fallback to an empty data frame.
   if (!all(c("linter", "tags") %in% colnames(available))) {
-    warning(
-      "`linters.csv` must contain the columns 'linter' and 'tags'.\nPackage '",
-      package, "' is missing ",
-      paste0("'", setdiff(c("linter", "tags"), names(available)), "'", collapse = " and "),
-      ".",
-      call. = FALSE
-    )
+    cli_warn(c(
+      i = "{.file linters.csv} must contain the columns {.val {c('linter', 'tags')}}.",
+      x = "Package {.pkg package} is missing {.str {setdiff(c('linter', 'tags'), names(available))}}."
+    ))
     return(FALSE)
   }
   nrow(available) > 0L
@@ -153,7 +146,7 @@ rd_tags <- function(linter_name) {
   linters <- available_linters(exclude_tags = NULL)
   tags <- platform_independent_sort(linters[["tags"]][[match(linter_name, linters[["linter"]])]])
   if (length(tags) == 0L) {
-    stop("tags are required, but found none for ", linter_name, call. = FALSE)
+    cli_abort("Tags are required, but found none for {.fn {linter_name}}.")
   }
 
   c(
@@ -172,17 +165,17 @@ rd_linters <- function(tag_name) {
   linters <- available_linters(tags = tag_name)
   tagged <- platform_independent_sort(linters[["linter"]])
   if (length(tagged) == 0L) {
-    stop("No linters found associated with tag ", tag_name, call. = FALSE)
+    section_body <- paste0("There are not currently any linters tagged with '", tag_name, "'.")
+  } else {
+    section_body <- c(
+      paste0("The following linters are tagged with '", tag_name, "':"),
+      "\\itemize{",
+      paste0("\\item{\\code{\\link{", tagged, "}}}"),
+      "}"
+    )
   }
 
-  c(
-    "\\section{Linters}{",
-    paste0("The following linters are tagged with '", tag_name, "':"),
-    "\\itemize{",
-    paste0("\\item{\\code{\\link{", tagged, "}}}"),
-    "}", # itemize
-    "}" # section
-  )
+  c("\\section{Linters}{", section_body, "}")
 }
 
 #' Generate Rd fragment for the main help page, listing all tags

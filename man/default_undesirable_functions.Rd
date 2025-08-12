@@ -28,13 +28,13 @@ Use \code{\link[=modify_defaults]{modify_defaults()}} to produce a custom list.
 \details{
 The following functions are sometimes regarded as undesirable:
 \itemize{
+\item \code{\link[=.libPaths]{.libPaths()}} As an alternative, use \code{\link[withr:with_libpaths]{withr::with_libpaths()}} for a temporary change instead of permanently modifying the library location.
 \item \code{\link[=attach]{attach()}} As an alternative, use roxygen2's @importFrom statement in packages, or \code{::} in scripts. \code{\link[=attach]{attach()}} modifies the global search path.
 \item \code{\link[=browser]{browser()}} As an alternative, remove this likely leftover from debugging. It pauses execution when run.
 \item \code{\link[=debug]{debug()}} As an alternative, remove this likely leftover from debugging. It traps a function and causes execution to pause when that function is run.
 \item \code{\link[=debugcall]{debugcall()}} As an alternative, remove this likely leftover from debugging. It traps a function and causes execution to pause when that function is run.
 \item \code{\link[=debugonce]{debugonce()}} As an alternative, remove this likely leftover from debugging. It traps a function and causes execution to pause when that function is run.
 \item \code{\link[=detach]{detach()}} As an alternative, avoid modifying the global search path. Detaching environments from the search path is rarely necessary in production code.
-\item \code{\link[=.libPaths]{.libPaths()}} As an alternative, use \code{\link[withr:with_libpaths]{withr::with_libpaths()}} for a temporary change instead of permanently modifying the library location.
 \item \code{\link[=library]{library()}} As an alternative, use roxygen2's @importFrom statement in packages and \code{::} in scripts, instead of modifying the global search path.
 \item \code{\link[=mapply]{mapply()}} As an alternative, use \code{\link[=Map]{Map()}} to guarantee a list is returned and simplify accordingly.
 \item \code{\link[=options]{options()}} As an alternative, use \code{\link[withr:with_options]{withr::with_options()}} for a temporary change instead of permanently modifying the session options.
@@ -54,8 +54,8 @@ The following functions are sometimes regarded as undesirable:
 
 The following operators are sometimes regarded as undesirable:
 \itemize{
-\item \code{\link[base:assignOps]{<<-}} As an alternative, It assigns outside the current environment in a way that can be hard to reason about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment with \code{\link[=assign]{assign()}}. Recall that you can create an environment at the desired scope with \code{\link[=new.env]{new.env()}}.
-\item \code{\link[base:assignOps]{<<-}} As an alternative, It assigns outside the current environment in a way that can be hard to reason about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment with \code{\link[=assign]{assign()}}. Recall that you can create an environment at the desired scope with \code{\link[=new.env]{new.env()}}.
-\item \code{\link[base:ns-dblcolon]{:::}} As an alternative, It accesses non-exported functions inside packages. Code relying on these is likely to break in future versions of the package because the functions are not part of the public interface and may be changed or removed by the maintainers without notice. Use public functions via \code{::} instead.
+\item \code{\link[base:assignOps]{<<-}}. It assigns outside the current environment in a way that can be hard to reason about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment with \code{\link[=assign]{assign()}}. Recall that you can create an environment at the desired scope with \code{\link[=new.env]{new.env()}}.
+\item \code{\link[base:ns-dblcolon]{:::}}. It accesses non-exported functions inside packages. Code relying on these is likely to break in future versions of the package because the functions are not part of the public interface and may be changed or removed by the maintainers without notice. Use public functions via \code{::} instead.
+\item \code{\link[base:assignOps]{<<-}}. It assigns outside the current environment in a way that can be hard to reason about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment with \code{\link[=assign]{assign()}}. Recall that you can create an environment at the desired scope with \code{\link[=new.env]{new.env()}}.
 }
 }

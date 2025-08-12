@@ -47,19 +47,17 @@ yoda_test_linter <- function() {
   "
   pipes <- setdiff(magrittr_pipes, c("%$%", "%<>%"))
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical' or text() = 'expect_setequal']
-    /parent::expr
-    /following-sibling::expr[1][ {const_condition} ]
+  following-sibling::expr[1][ {const_condition} ]
     /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]])]
   ")
 
   second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(
+      source_expression$xml_find_function_calls(c("expect_equal", "expect_identical", "expect_setequal")),
+      xpath
+    )
 
     matched_call <- xp_call_name(bad_expr)
     second_const <- xml_find_first(bad_expr, second_const_xpath)

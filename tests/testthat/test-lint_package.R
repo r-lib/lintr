@@ -80,7 +80,7 @@ test_that(
 
     # Add a .lintr that excludes the whole of `abc.R` and the first line of
     # `jkl.R` (and remove it on finishing this test)
-    local_config(pkg_path, "exclusions: list('R/abc.R', 'R/jkl.R' = 1)")
+    local_config("exclusions: list('R/abc.R', 'R/jkl.R' = 1)", pkg_path)
 
     expected_lines <- c("mno = 789", "x = 1:4")
     lints_from_outside <- lint_package(
@@ -186,8 +186,8 @@ test_that(
     on.exit(unlink(file.path(pkg_path, ".github"), recursive = TRUE), add = TRUE)
 
     local_config(
-      file.path(pkg_path, ".github", "linters"),
       "linters: linters_with_defaults(quotes_linter(\"'\"))",
+      file.path(pkg_path, ".github", "linters"),
       filename = "lintr_test_config"
     )
 
@@ -211,7 +211,7 @@ test_that("package using .lintr.R config lints correctly", {
   # config has bad R syntax
   expect_error(
     lint_package(test_path("dummy_packages", "RConfigInvalid")),
-    "Malformed config file, ensure it is valid R syntax",
+    "Malformed config file (lintr_test_config.R), ensure it is valid R syntax",
     fixed = TRUE
   )
 
@@ -219,7 +219,7 @@ test_that("package using .lintr.R config lints correctly", {
   withr::local_options(lintr.linter_file = "lintr_test_config_extraneous")
   expect_warning(
     expect_length(lint_package(r_config_pkg), 2L),
-    "Found unused settings in config",
+    "Found unused settings in config file",
     fixed = TRUE
   )
 
@@ -243,7 +243,7 @@ test_that("lintr need not be attached for .lintr.R configs to use lintr function
   } else {
     rscript <- file.path(R.home("bin"), "Rscript")
   }
-  expect_identical(
+  expect_identical( # nofuzz
     system2(rscript, c("-e", shQuote(exprs)), stdout = TRUE),
     "infix_spaces_linter|any_duplicated_linter"
   )

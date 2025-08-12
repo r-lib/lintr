@@ -46,11 +46,6 @@
 #' @evalRd rd_tags("keyword_quote_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-# TODO(michaelchirico): offer a stricter version of this that
-#   requires backticks to be used for non-syntactic names (i.e., not quotes).
-#   Here are the relevant xpaths:
-#   //expr[expr[SYMBOL_FUNCTION_CALL]]/SYMBOL_SUB[starts-with(text(), '`')]
-#   //expr[expr[SYMBOL_FUNCTION_CALL]]/STR_CONST[{is_quoted(text())}]
 keyword_quote_linter <- function() {
   # Check if a string could be assigned as an R variable.
   #
@@ -68,9 +63,7 @@ keyword_quote_linter <- function() {
   )
   # SYMBOL_SUB for backticks, STR_CONST for quoted names
   call_arg_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL
-    /parent::expr
-    /parent::expr
+  parent::expr
     /*[(self::SYMBOL_SUB or self::STR_CONST) and {quote_cond}]
   ")
 
@@ -96,9 +89,9 @@ keyword_quote_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    xml_calls <- source_expression$xml_find_function_calls(NULL)
 
-    call_arg_expr <- xml_find_all(xml, call_arg_xpath)
+    call_arg_expr <- xml_find_all(xml_calls, call_arg_xpath)
 
     invalid_call_quoting <- is_valid_r_name(get_r_string(call_arg_expr))
 

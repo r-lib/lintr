@@ -19,10 +19,11 @@ The result of this function is meant to be passed to the \code{linters} argument
 or to be put in your configuration file.
 }
 \examples{
-\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # When using interactively you will usually pass the result onto `lint` or `lint_package()`
-f <- withr::local_tempfile(lines = "my_slightly_long_variable_name <- 2.3", fileext = "R")
+f <- tempfile()
+writeLines("my_slightly_long_variable_name <- 2.3", f)
 lint(f, linters = linters_with_defaults(line_length_linter = line_length_linter(120L)))
+unlink(f)
 
 # the default linter list with a different line length cutoff
 my_linters <- linters_with_defaults(line_length_linter = line_length_linter(120L))
@@ -39,7 +40,7 @@ my_linters <- linters_with_defaults(
 
 # checking the included linters
 names(my_linters)
-\dontshow{\}) # examplesIf}
+
 }
 \seealso{
 \itemize{

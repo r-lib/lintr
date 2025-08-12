@@ -47,7 +47,8 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
   #   because it allows the xpath to be the same for both FUNCTION and SYMBOL_FUNCTION_CALL.
   #   Further, write 4 separate XPaths because the 'range_end_xpath' differs for these two nodes.
   bad_line_fun_xpath <- "(//FUNCTION | //OP-LAMBDA)[@line1 != following-sibling::OP-LEFT-PAREN/@line1]"
-  bad_line_call_xpath <- "//SYMBOL_FUNCTION_CALL[@line1 != parent::expr/following-sibling::OP-LEFT-PAREN/@line1]"
+  bad_line_call_xpath <-
+    "(//SYMBOL_FUNCTION_CALL | //SLOT)[@line1 != parent::expr/following-sibling::OP-LEFT-PAREN/@line1]"
   bad_col_fun_xpath <- "(//FUNCTION | //OP-LAMBDA)[
     @line1 = following-sibling::OP-LEFT-PAREN/@line1
     and @col2 != following-sibling::OP-LEFT-PAREN/@col1 - 1
@@ -59,7 +60,6 @@ function_left_parentheses_linter <- function() { # nolint: object_length.
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_line_fun_exprs <- xml_find_all(xml, bad_line_fun_xpath)
     bad_line_fun_lints <- xml_nodes_to_lints(

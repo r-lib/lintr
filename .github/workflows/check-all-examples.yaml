@@ -9,9 +9,9 @@
 
 on:
   push:
-    branches: [main, master]
+    branches: main
   pull_request:
-    branches: [main, master]
+    branches: main
 
 name: check-all-examples
 
@@ -32,11 +32,13 @@ jobs:
         with:
           pak-version: devel
           extra-packages: |
-            any::devtools
+            any::pkgload
             local::.
 
       - name: Run examples
         run: |
           options(crayon.enabled = TRUE)
-          devtools::run_examples(fresh = TRUE, run_dontrun = TRUE, run_donttest = TRUE)
+          pkgload::load_all()
+          setwd("man")
+          for (rd in list.files(pattern = "\\.Rd")) pkgload::run_example(rd, run_dontrun = TRUE, run_donttest = TRUE, quiet = TRUE)
         shell: Rscript {0}

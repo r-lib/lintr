@@ -8,7 +8,7 @@
 ^\.Rproj\.user$
 ^\.idea$
 ^\.dev$
-^\.devcontainers$
+^\.devcontainer$
 ^\.lintr$
 ^\.lintr_new$
 ^wercker\.yml$
@@ -23,9 +23,16 @@
 ^bench$
 ^tests/testthat/dummy_packages/package/[.]Rbuildignore$
 ^tests/testthat/dummy_packages/cp1252/[.]Rbuildignore$
+testthat-problems[.]rds$
 ^_pkgdown\.yaml$
 ^docs$
 ^pkgdown$
-^vignettes/[^-]+.gif$
+# large files not needed for CRAN
+^man/figures/logo[.]png$
+# keep '-still.gif' compact versions
+^vignettes/.*([^l]|[^l]l|[^i]ll|[^t]ill|[^s]till)[.]gif$
 ^CRAN-SUBMISSION$
 ^CODE_OF_CONDUCT\.md$
+^paper$
+^LICENSE\.md$
+^CITATION.cff$

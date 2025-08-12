@@ -22,7 +22,7 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{inner_combine_linter}}}
 \item{\code{\link{length_test_linter}}}
 \item{\code{\link{lengths_linter}}}
-\item{\code{\link{list_comparison_linter}}}
+\item{\code{\link{list2df_linter}}}
 \item{\code{\link{literal_coercion_linter}}}
 \item{\code{\link{matrix_apply_linter}}}
 \item{\code{\link{nested_ifelse_linter}}}
@@ -38,8 +38,6 @@ The following linters are tagged with 'efficiency':
 \item{\code{\link{seq_linter}}}
 \item{\code{\link{sort_linter}}}
 \item{\code{\link{string_boundary_linter}}}
-\item{\code{\link{undesirable_function_linter}}}
-\item{\code{\link{undesirable_operator_linter}}}
 \item{\code{\link{unnecessary_concatenation_linter}}}
 \item{\code{\link{unnecessary_lambda_linter}}}
 \item{\code{\link{vector_logic_linter}}}

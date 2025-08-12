@@ -92,7 +92,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
   }
   if (length(regexes) > 0L) {
     if (!is.character(regexes)) {
-      stop("`regexes` must be a character vector.", call. = FALSE)
+      cli_abort("{.arg regexes} must be a {.cls character} vector.")
     }
     rx_names <- names2(regexes)
     missing_name <- !nzchar(rx_names)
@@ -102,7 +102,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     style_list <- c(style_list, as.list(regexes))
   }
   if (length(style_list) == 0L) {
-    stop("At least one style must be specified using `styles` or `regexes`.", call. = FALSE)
+    cli_abort("At least one style must be specified using {.arg styles} or {.arg regexes}.")
   }
 
   lint_message <- paste0(
@@ -112,7 +112,6 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     assignments <- xml_find_all(xml, object_name_xpath)
 
@@ -147,13 +146,8 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 }
 
 check_style <- function(nms, style, generics = character()) {
-  conforming <- re_matches(nms, style)
+  conforming <- re_matches_logical(nms, style)
 
-  # style has capture group(s)
-  if (is.data.frame(conforming)) {
-    # if any group is missing, all groups are missing, so just check the first column
-    conforming <- !is.na(conforming[[1L]])
-  }
   # mark empty or NA names as conforming
   conforming <- is.na(nms) | !nzchar(nms) | conforming
 
@@ -173,25 +167,6 @@ check_style <- function(nms, style, generics = character()) {
     conforming[!conforming][is_special] <- TRUE
   }
   conforming
-}
-
-# see ?".onLoad", ?Startup, and ?quit. Remove leading dot to match behavior of strip_names().
-#   All of .onLoad, .onAttach, and .onUnload are used in base packages,
-#   and should be caught in is_base_function; they're included here for completeness / stability
-#   (they don't strictly _have_ to be defined in base, so could in principle be removed).
-#   .Last.sys and .First.sys are part of base itself, so aren't included here.
-special_funs <- c(
-  ".onLoad",
-  ".onAttach",
-  ".onUnload",
-  ".onDetach",
-  ".Last.lib",
-  ".First",
-  ".Last"
-)
-
-is_special_function <- function(x) {
-  x %in% special_funs
 }
 
 loweralnum <- rex(one_of(lower, digit))

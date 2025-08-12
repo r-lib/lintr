@@ -27,7 +27,7 @@ patrick::with_parameters_test_that(
   "equals_na_linter blocks disallowed usages for all combinations of operators and types of NAs",
   expect_lint(
     paste("x", operation, type_na),
-    rex::rex("Use is.na for comparisons to NA (not == or != or %in%)"),
+    rex::rex("Use is.na() instead of x ", operation, " NA"),
     equals_na_linter()
   ),
   .cases = tibble::tribble(
@@ -52,15 +52,31 @@ patrick::with_parameters_test_that(
 
 test_that("equals_na_linter blocks disallowed usages in edge cases", {
   linter <- equals_na_linter()
-  lint_msg <- rex::rex("Use is.na for comparisons to NA (not == or != or %in%)")
+  lint_msg_part <- "Use is.na() instead of x "
 
   # missing spaces around operators
-  expect_lint("x==NA", list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
-  expect_lint("x!=NA", list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
+  expect_lint(
+    "x==NA",
+    list(message = rex::rex(lint_msg_part, "== NA"), line_number = 1L, column_number = 1L),
+    linter
+  )
+  expect_lint(
+    "x!=NA",
+    list(message = rex::rex(lint_msg_part, "!= NA"), line_number = 1L, column_number = 1L),
+    linter
+  )
 
   # order doesn't matter
-  expect_lint("NA == x", list(message = lint_msg, line_number = 1L, column_number = 1L), linter)
+  expect_lint(
+    "NA == x",
+    list(message = rex::rex(lint_msg_part, "== NA"), line_number = 1L, column_number = 1L),
+    linter
+  )
 
   # correct line number for multiline code
-  expect_lint("x ==\nNA", list(line_number = 1L, column_number = 1L, ranges = list(c(1L, 4L))), linter)
+  expect_lint(
+    "x ==\nNA",
+    list(line_number = 1L, column_number = 1L, ranges = list(c(1L, 4L))),
+    linter
+  )
 })

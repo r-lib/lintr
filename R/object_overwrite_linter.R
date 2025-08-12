@@ -52,11 +52,12 @@
 #'  - <https://style.tidyverse.org/syntax.html#object-names>
 #' @export
 object_overwrite_linter <- function(
-    packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices"),
-    allow_names = character()) {
+  packages = c("base", "stats", "utils", "tools", "methods", "graphics", "grDevices"),
+  allow_names = character()
+) {
   for (package in packages) {
     if (!requireNamespace(package, quietly = TRUE)) {
-      stop("Package '", package, "' is not available.", call. = FALSE)
+      cli_abort("Package {.pkg {package}} is required, but not available.")
     }
   }
   pkg_exports <- lapply(
@@ -66,8 +67,7 @@ object_overwrite_linter <- function(
   )
   pkg_exports <- data.frame(
     package = rep(packages, lengths(pkg_exports)),
-    name = unlist(pkg_exports),
-    stringsAsFactors = FALSE
+    name = unlist(pkg_exports)
   )
 
   # Take the first among duplicate names, e.g. 'plot' resolves to base::plot, not graphics::plot
@@ -95,7 +95,6 @@ object_overwrite_linter <- function(
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     assigned_exprs <- xml_find_all(xml, xpath_assignments)
     assigned_symbols <- get_r_string(assigned_exprs, "SYMBOL|STR_CONST")

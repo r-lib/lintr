@@ -97,7 +97,10 @@ library_call_linter <- function(allow_preamble = TRUE) {
   upfront_call_xpath <- glue("
     //SYMBOL_FUNCTION_CALL[{ attach_call_cond }][last()]
       /preceding::expr
-      /SYMBOL_FUNCTION_CALL[{ unsuppressed_call_cond }][last()]
+      /*[
+        (self::SYMBOL_FUNCTION_CALL or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN])
+        and ({ unsuppressed_call_cond })
+      ][last()]
       /following::expr[SYMBOL_FUNCTION_CALL[{ attach_call_cond }]]
       /parent::expr
   ")
@@ -111,7 +114,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
       expr[2][STR_CONST]
       or (
         SYMBOL_SUB[text() = 'character.only']
-        and not(ancestor::expr[FUNCTION])
+        and not(ancestor::expr[FUNCTION or OP-LAMBDA])
       )
     ]
   ")
@@ -122,7 +125,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
   //SYMBOL_FUNCTION_CALL[{ xp_text_in_table(bad_indirect_funs) }]
     /parent::expr
     /parent::expr[
-      not(ancestor::expr[FUNCTION])
+      not(ancestor::expr[FUNCTION or OP-LAMBDA])
       and expr[{ call_symbol_cond }]
     ]
   ")
@@ -147,7 +150,6 @@ library_call_linter <- function(allow_preamble = TRUE) {
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     upfront_call_expr <- xml_find_all(xml, upfront_call_xpath)
 
@@ -209,10 +211,10 @@ library_call_linter <- function(allow_preamble = TRUE) {
 
     consecutive_suppress_expr <- xml_find_all(xml, consecutive_suppress_xpath)
     consecutive_suppress_call_text <- xp_call_name(consecutive_suppress_expr)
-    consecutive_suppress_message <- glue(
-      "Unify consecutive calls to {consecutive_suppress_call_text}(). ",
+    consecutive_suppress_message <- paste0(
+      "Unify consecutive calls to ", consecutive_suppress_call_text, "(). ",
       "You can do so by writing all of the calls in one braced expression ",
-      "like {consecutive_suppress_call_text}({{...}})."
+      "like ", consecutive_suppress_call_text, "({...})."
     )
     consecutive_suppress_lints <- xml_nodes_to_lints(
       consecutive_suppress_expr,

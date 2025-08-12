@@ -21,8 +21,6 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 list_comparison_linter <- function() {
-  # TODO(michaelchirico): extend to cases where using simplify=FALSE implies a
-  #   list output, e.g. with sapply, replicate, mapply.
   list_mapper_alternatives <- c(
     lapply = "vapply(x, FUN, character(1L))",
     map = "map_chr(x, FUN)",
@@ -33,17 +31,13 @@ list_comparison_linter <- function() {
   # NB: anchor to the comparison expr so that we can easily include the comparator
   #   in the lint message.
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[{ xp_text_in_table(names(list_mapper_alternatives)) }]
-    /parent::expr
-    /parent::expr
+  parent::expr
     /parent::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls(names(list_mapper_alternatives))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     list_mapper <- xp_call_name(bad_expr, depth = 2L)
 

@@ -130,13 +130,12 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
 
   drop_valid_comments <- function(expr, valid_comment_re) {
     is_valid_comment <- xml2::xml_name(expr) == "COMMENT" &
-      re_matches(xml_text(expr), valid_comment_re)
+      re_matches_logical(xml_text(expr), valid_comment_re)
     expr[!is_valid_comment]
   }
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     # run here because 'settings$exclude_end' may not be set correctly at "compile time".
     # also build with '|', not rex::rex(or(.)), the latter which will double-escape the regex.

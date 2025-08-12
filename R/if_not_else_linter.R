@@ -71,21 +71,18 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
   ")
 
   ifelse_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {xp_text_in_table(ifelse_funs)} ]
-    /parent::expr
-    /parent::expr[expr[
-      position() = 2
-      and OP-EXCLAMATION
-      and not(expr[
-        OP-EXCLAMATION
-        or expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(exceptions) }]
-      ])
-    ]]
-  ")
+  parent::expr[expr[
+    position() = 2
+    and OP-EXCLAMATION
+    and not(expr[
+      OP-EXCLAMATION
+      or expr/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(exceptions) }]
+    ])
+  ]]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    ifelse_calls <- source_expression$xml_find_function_calls(ifelse_funs)
 
     if_expr <- xml_find_all(xml, if_xpath)
     if_lints <- xml_nodes_to_lints(
@@ -95,7 +92,7 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
       type = "warning"
     )
 
-    ifelse_expr <- xml_find_all(xml, ifelse_xpath)
+    ifelse_expr <- xml_find_all(ifelse_calls, ifelse_xpath)
     ifelse_call <- xp_call_name(ifelse_expr)
     ifelse_lints <- xml_nodes_to_lints(
       ifelse_expr,

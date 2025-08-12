@@ -1,11 +1,11 @@
 #' Pipe consistency linter
 #'
-#' Check that pipe operators are used consistently by file, or optionally
-#' specify one valid pipe operator.
+#' Check that the recommended pipe operator is used, or more conservatively that
+#'   pipes are consistent by file.
 #'
-#' @param pipe Which pipe operator is valid (either `"%>%"` or `"|>"`). By default
-#' (`"auto"`), the linter has no preference but will check that each file uses
-#' only one type of pipe operator.
+#' @param pipe Which pipe operator is valid (either `"%>%"` or `"|>"`). The default
+#'   is the native pipe (`|>`). `"auto"` will instead
+#'   only enforce consistency, i.e., that in any given file there is only one pipe.
 #'
 #' @examples
 #' # will produce lints
@@ -21,18 +21,20 @@
 #'
 #' # okay
 #' lint(
-#'   text = "1:3 %>% mean() %>% as.character()",
+#'   text = "1:3 |> mean() |> as.character()",
 #'   linters = pipe_consistency_linter()
 #' )
 #'
 #' lint(
-#'   text = "1:3 |> mean() |> as.character()",
-#'   linters = pipe_consistency_linter()
+#'   text = "1:3 %>% mean() %>% as.character()",
+#'   linters = pipe_consistency_linter("%>%")
 #' )
 #' @evalRd rd_tags("pipe_consistency_linter")
-#' @seealso [linters] for a complete list of linters available in lintr.
+#' @seealso
+#'  - [linters] for a complete list of linters available in lintr.
+#'  - <https://style.tidyverse.org/pipes.html#magrittr>
 #' @export
-pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
+pipe_consistency_linter <- function(pipe = c("|>", "%>%", "auto")) {
   pipe <- match.arg(pipe)
 
   xpath_magrittr <- glue("//SPECIAL[{ xp_text_in_table(magrittr_pipes) }]")
@@ -40,7 +42,6 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     match_magrittr <- xml_find_all(xml, xpath_magrittr)
     match_native <- xml_find_all(xml, xpath_native)
@@ -52,8 +53,8 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
       xml_nodes_to_lints(
         xml = c(match_magrittr, match_native),
         source_expression = source_expression,
-        lint_message = glue(
-          "Stick to one pipe operator; found {n_magrittr} instances of %>% and {n_native} instances of |>."
+        lint_message = paste(
+          "Stick to one pipe operator; found", n_magrittr, "instances of %>% and", n_native, "instances of |>."
         ),
         type = "style"
       )
@@ -65,10 +66,11 @@ pipe_consistency_linter <- function(pipe = c("auto", "%>%", "|>")) {
         type = "style"
       )
     } else if (pipe == "|>" && n_magrittr > 0L) {
+      lint_message <- sprintf("Use the |> pipe operator instead of the %s pipe operator.", xml_text(match_magrittr))
       xml_nodes_to_lints(
         xml = match_magrittr,
         source_expression = source_expression,
-        lint_message = "Use the |> pipe operator instead of the %>% pipe operator.",
+        lint_message = lint_message,
         type = "style"
       )
     } else {

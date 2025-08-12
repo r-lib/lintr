@@ -1,6 +1,5 @@
 test_that("GitHub Actions functionality works", {
-  # imitate being on GHA whether or not we are
-  withr::local_envvar(list(GITHUB_ACTIONS = "true"))
+  withr::local_envvar(list(GITHUB_ACTIONS = "true", IN_PKGDOWN = "false"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
 
@@ -9,12 +8,10 @@ test_that("GitHub Actions functionality works", {
 })
 
 test_that("GitHub Actions functionality works in a subdirectory", {
-  # imitate being on GHA whether or not we are
   pkg_path <- test_path("dummy_packages", "assignmentLinter")
   withr::local_envvar(list(GITHUB_ACTIONS = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE, lintr.github_annotation_project_dir = pkg_path)
 
-  lintr:::read_settings(NULL)
   l <- lint_package(
     pkg_path,
     linters = list(assignment_linter()),
@@ -26,36 +23,40 @@ test_that("GitHub Actions functionality works in a subdirectory", {
   )
 })
 
-test_that("GitHub Actions - linting on error works", {
-  # imitate being on GHA whether or not we are
-  withr::local_envvar(list(GITHUB_ACTIONS = "true", LINTR_ERROR_ON_LINT = "true"))
+patrick::with_parameters_test_that(
+  "GitHub Actions - error on lint works",
+  {
+    withr::local_envvar(list(GITHUB_ACTIONS = "true", IN_PKGDOWN = "", LINTR_ERROR_ON_LINT = env_var_value))
+    withr::local_options(lintr.rstudio_source_markers = FALSE)
+    tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
+
+    l <- lint(tmp)
+
+    local_mocked_bindings(quit = function(...) cat("Tried to quit.\n"))
+    expect_output(print(l), "::warning file", fixed = TRUE)
+  },
+  env_var_value = list("T", "true")
+)
+
+patrick::with_parameters_test_that(
+  "GitHub Actions - env var for error on lint is converted to logical",
+  {
+    withr::local_envvar(list(GITHUB_ACTIONS = "true", LINTR_ERROR_ON_LINT = env_var_value))
+    withr::local_options(lintr.rstudio_source_markers = FALSE)
+    tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
+
+    l <- lint(tmp)
+
+    expect_output(print(l), "::warning file", fixed = TRUE)
+  },
+  env_var_value = list("", "F", NA, NULL)
+)
+
+test_that("GitHub Actions log is skipped in pkgdown websites", {
+  withr::local_envvar(list(GITHUB_ACTIONS = "true", IN_PKGDOWN = "true"))
   withr::local_options(lintr.rstudio_source_markers = FALSE)
   tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
 
-  l <- lint(tmp)
-
-  local_mocked_bindings(quit = function(...) cat("Tried to quit.\n"))
-  expect_output(print(l), "::warning file", fixed = TRUE)
-})
-
-test_that("Printing works for Travis", {
-  withr::local_envvar(list(GITHUB_ACTIONS = "false", TRAVIS_REPO_SLUG = "test/repo", LINTR_COMMENT_BOT = "true"))
-  withr::local_options(lintr.rstudio_source_markers = FALSE)
-  tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
-
-  l <- lint(tmp)
-
-  local_mocked_bindings(github_comment = function(x, ...) cat(x, "\n"))
-  expect_output(print(l), "*warning:*", fixed = TRUE)
-})
-
-test_that("Printing works for Wercker", {
-  withr::local_envvar(list(GITHUB_ACTIONS = "false", WERCKER_GIT_BRANCH = "test/repo", LINTR_COMMENT_BOT = "true"))
-  withr::local_options(lintr.rstudio_source_markers = FALSE)
-  tmp <- withr::local_tempfile(lines = "x <- 1:nrow(y)")
-
-  l <- lint(tmp)
-
-  local_mocked_bindings(github_comment = function(x, ...) cat(x, "\n"))
-  expect_output(print(l), "*warning:*", fixed = TRUE)
+  l <- lint(tmp, linters = seq_linter())
+  expect_output(print(l), "warning: [seq_linter]", fixed = TRUE)
 })

@@ -37,12 +37,10 @@ expect_s3_class_linter <- function() {
   # (1) expect_{equal,identical}(class(x), C)
   # (2) expect_true(is.<class>(x)) and expect_true(inherits(x, C))
   expect_equal_identical_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
-    /parent::expr
-    /following-sibling::expr[
-      expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]
-      and (position() = 1 or preceding-sibling::expr[STR_CONST])
-    ]
+  following-sibling::expr[
+    expr[1][SYMBOL_FUNCTION_CALL[text() = 'class']]
+    and (position() = 1 or preceding-sibling::expr[STR_CONST])
+  ]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label' or text() = 'expected.label'])]
   "
   # NB: there is no easy way to make an exhaustive list of places where an
@@ -62,18 +60,18 @@ expect_s3_class_linter <- function() {
   ))
   is_class_call <- xp_text_in_table(c(is_s3_class_calls, "inherits"))
   expect_true_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_true']
-    /parent::expr
-    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
+  following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[ {is_class_call} ]]]
     /parent::expr[not(SYMBOL_SUB[text() = 'info' or text() = 'label'])]
   ")
-  xpath <- paste(expect_equal_identical_xpath, "|", expect_true_xpath)
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    expect_equal_identical_calls <- source_expression$xml_find_function_calls(c("expect_equal", "expect_identical"))
+    expect_true_calls <- source_expression$xml_find_function_calls("expect_true")
 
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- combine_nodesets(
+      xml_find_all(expect_equal_identical_calls, expect_equal_identical_xpath),
+      xml_find_all(expect_true_calls, expect_true_xpath)
+    )
     matched_function <- xp_call_name(bad_expr)
     msg <- ifelse(
       matched_function %in% c("expect_equal", "expect_identical"),

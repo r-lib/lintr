@@ -1,9 +1,7 @@
-`%||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
-    y
-  } else {
-    x
-  }
+# TODO(R>=4.4.0): remove this.
+# NB: {backports} approach doesn't work since we need this before .onLoad() in names2()
+if (!exists("%||%", "package:base")) {
+  `%||%` <- function(x, y) if (is.null(x)) y else x # nolint: coalesce_linter.
 }
 
 `%==%` <- function(x, y) {
@@ -23,18 +21,19 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
-  res <- list()
-  itr <- 1L
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$res <- list()
+  outer_env$itr <- 1L
   assign_item <- function(x) {
     if (inherits(x, class)) {
-      res[[itr]] <<- x
-      itr <<- itr + 1L
+      outer_env$res[[outer_env$itr]] <- x
+      outer_env$itr <- outer_env$itr + 1L
     } else if (is.list(x)) {
       lapply(x, assign_item)
     }
   }
   assign_item(x)
-  res
+  outer_env$res
 }
 
 fix_names <- function(x, default) {
@@ -72,7 +71,7 @@ auto_names <- function(x) {
     if (is_linter(x)) {
       attr(x, "name", exact = TRUE)
     } else {
-      paste(deparse(x, 500L), collapse = " ")
+      deparse1(x)
     }
   }
   defaults <- vapply(x[empty], default_name, character(1L), USE.NAMES = FALSE)
@@ -84,17 +83,6 @@ auto_names <- function(x) {
 # The following functions is from dplyr
 names2 <- function(x) {
   names(x) %||% rep("", length(x))
-}
-
-safe_parse_to_xml <- function(parsed_content) {
-  if (is.null(parsed_content)) {
-    return(xml2::xml_missing())
-  }
-  tryCatch(
-    xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)),
-    # use xml_missing so that code doesn't always need to condition on XML existing
-    error = function(e) xml2::xml_missing()
-  )
 }
 
 get_content <- function(lines, info) {
@@ -111,23 +99,7 @@ get_content <- function(lines, info) {
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
-  paste0(collapse = "\n", lines)
-}
-
-logical_env <- function(x) {
-  res <- as.logical(Sys.getenv(x))
-  if (is.na(res)) {
-    return(NULL)
-  }
-  res
-}
-
-# from ?chartr
-rot <- function(ch, k = 13L) {
-  p0 <- function(...) paste(c(...), collapse = "")
-  alphabet <- c(letters, LETTERS, " '")
-  idx <- seq_len(k)
-  chartr(p0(alphabet), p0(c(alphabet[-idx], alphabet[idx])), ch)
+  paste(lines, collapse = "\n")
 }
 
 try_silently <- function(expr) {
@@ -141,7 +113,7 @@ try_silently <- function(expr) {
 # interface to work like options() or setwd() -- returns the old value for convenience
 set_lang <- function(new_lang) {
   old_lang <- Sys.getenv("LANGUAGE", unset = NA)
-  Sys.setenv(LANGUAGE = new_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
+  Sys.setenv(LANGUAGE = new_lang) # nolint: undesirable_function_name. Avoiding {withr} dep in pkg.
   old_lang
 }
 # handle the logic of either unsetting if it was previously unset, or resetting
@@ -149,7 +121,7 @@ reset_lang <- function(old_lang) {
   if (is.na(old_lang)) {
     Sys.unsetenv("LANGUAGE")
   } else {
-    Sys.setenv(LANGUAGE = old_lang) # nolint: undesirable_function. Avoiding {withr} dep in pkg.
+    Sys.setenv(LANGUAGE = old_lang) # nolint: undesirable_function_name. Avoiding {withr} dep in pkg.
   }
 }
 
@@ -167,7 +139,7 @@ reset_lang <- function(old_lang) {
 #' @export
 Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
-    stop("`fun` must be a function taking exactly one argument.", call. = FALSE)
+    cli_abort("{.arg fun} must be a function taking exactly one argument.")
   }
   linter_level <- match.arg(linter_level)
   force(name)
@@ -178,12 +150,13 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
-  terminal_newline <- TRUE
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$terminal_newline <- TRUE
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),
     warning = function(w) {
-      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        terminal_newline <<- FALSE
+      if (grepl("incomplete final line found on", conditionMessage(w), fixed = TRUE)) {
+        outer_env$terminal_newline <- FALSE
         invokeRestart("muffleWarning")
       }
     }
@@ -191,28 +164,32 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
   lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
   lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
   Encoding(lines) <- "UTF-8"
-  attr(lines, "terminal_newline") <- terminal_newline
+  attr(lines, "terminal_newline") <- outer_env$terminal_newline
   lines
 }
 
-# nocov start
-# support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {
-}
-# nocov end
-
-# see issue #923 -- some locales ignore _ when running sort(), others don't.
-#   we want to consistently treat "_" < "n" = "N"
-platform_independent_order <- function(x) order(tolower(gsub("_", "0", x, fixed = TRUE)))
+# see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
+#   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.
+platform_independent_order <- function(x) order(tolower(x), method = "radix")
 platform_independent_sort <- function(x) x[platform_independent_order(x)]
+
+#' re_matches with type-stable logical output
+#' TODO(r-lib/rex#94): Use re_matches() option directly & deprecate this.
+#' @noRd
+re_matches_logical <- function(x, regex, ...) {
+  res <- re_matches(x, regex, ...)
+  if (is.data.frame(res)) {
+    res <- complete.cases(res)
+  }
+  res
+}
 
 #' Extract text from `STR_CONST` nodes
 #'
 #' Convert `STR_CONST` `text()` values into R strings. This is useful to account for arbitrary
-#'  character literals valid since R 4.0, e.g. `R"------[hello]------"`, which is parsed in
-#'  R as `"hello"`. It is quite cumbersome to write XPaths allowing for strings like this,
-#'  so whenever your linter logic requires testing a `STR_CONST` node's value, use this
-#'  function.
+#'  character literals, e.g. `R"------[hello]------"`, which is parsed in R as `"hello"`.
+#'  It is quite cumbersome to write XPaths allowing for strings like this, so whenever your
+#'  linter logic requires testing a `STR_CONST` node's value, use this function.
 #' NB: this is also properly vectorized on `s`, and accepts a variety of inputs. Empty inputs
 #'  will become `NA` outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
 #'
@@ -221,23 +198,29 @@ platform_independent_sort <- function(x) x[platform_independent_order(x)]
 #'   and `xpath` is specified, it is extracted with [xml2::xml_find_chr()].
 #' @param xpath An XPath, passed on to [xml2::xml_find_chr()] after wrapping with `string()`.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' tmp <- withr::local_tempfile(lines = "c('a', 'b')")
+#' @examples
+#' tmp <- tempfile()
+#' writeLines("c('a', 'b')", tmp)
 #' expr_as_xml <- get_source_expressions(tmp)$expressions[[1L]]$xml_parsed_content
 #' writeLines(as.character(expr_as_xml))
-#' get_r_string(expr_as_xml, "expr[2]") # "a"
-#' get_r_string(expr_as_xml, "expr[3]") # "b"
+#' get_r_string(expr_as_xml, "expr[2]")
+#' get_r_string(expr_as_xml, "expr[3]")
+#' unlink(tmp)
 #'
-#' # more importantly, extract strings under R>=4 raw strings
-#' @examplesIf getRversion() >= "4.0.0"
-#' tmp4.0 <- withr::local_tempfile(lines = "c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')")
-#' expr_as_xml4.0 <- get_source_expressions(tmp4.0)$expressions[[1L]]$xml_parsed_content
-#' writeLines(as.character(expr_as_xml4.0))
-#' get_r_string(expr_as_xml4.0, "expr[2]") # "a\\b"
-#' get_r_string(expr_as_xml4.0, "expr[3]") # "a\\\"'\"\\b"
+#' # more importantly, extract raw strings correctly
+#' tmp_raw <- tempfile()
+#' writeLines("c(R'(a\\b)', R'--[a\\\"\'\"\\b]--')", tmp_raw)
+#' expr_as_xml_raw <- get_source_expressions(tmp_raw)$expressions[[1L]]$xml_parsed_content
+#' writeLines(as.character(expr_as_xml_raw))
+#' get_r_string(expr_as_xml_raw, "expr[2]")
+#' get_r_string(expr_as_xml_raw, "expr[3]")
+#' unlink(tmp_raw)
 #'
 #' @export
 get_r_string <- function(s, xpath = NULL) {
+  if (length(s) == 0L) {
+    return(character())
+  }
   if (is_node(s) || is_nodeset(s)) {
     if (is.null(xpath)) {
       s <- xml_text(s)
@@ -253,22 +236,13 @@ get_r_string <- function(s, xpath = NULL) {
   out
 }
 
-#' str2lang, but for xml children.
-#'
-#' [xml2::xml_text()] is deceptively close to obviating this helper, but it collapses
-#'   text across lines. R is _mostly_ whitespace-agnostic, so this only matters in some edge cases,
-#'   in particular when there are comments within an expression (`<expr>` node). See #1919.
-#'
-#' @noRd
-xml2lang <- function(x) {
-  x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
-  str2lang(paste(xml_text(x_strip_comments), collapse = " "))
-}
-
 is_linter <- function(x) inherits(x, "linter")
+is_lint <- function(x) inherits(x, "lint")
+
+is_error <- function(x) inherits(x, "error")
 
 is_tainted <- function(lines) {
-  inherits(tryCatch(nchar(lines), error = identity), "error")
+  is_error(tryCatch(nchar(lines), error = identity))
 }
 
 #' Check that the entries in ... are valid
@@ -283,9 +257,13 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
   if (all(is_valid)) {
     return(invisible())
   }
-  stop(
-    "Found unknown arguments in ...: ", toString(dot_names[!is_valid]), ".\n",
-    "Check for typos and see ?", ref_help, " for valid arguments.",
-    call. = FALSE
-  )
+  invalid_args <- dot_names[!is_valid] # nolint: object_usage_linter. TODO(#2252).
+  cli_abort(c(
+    x = "Found unknown arguments in `...`: {.arg {invalid_args}}.",
+    i = "Check for typos and see ?{ref_help} for valid arguments."
+  ))
+}
+
+cli_abort_internal <- function(...) {
+  cli_abort(..., .internal = TRUE) # nocov
 }

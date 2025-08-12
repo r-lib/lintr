@@ -8,7 +8,7 @@ has_rproj <- function(path) {
 }
 
 find_package <- function(path, allow_rproj = FALSE, max_depth = 2L) {
-  path <- normalizePath(path, mustWork = !allow_rproj)
+  path <- normalize_path(path, mustWork = !allow_rproj)
   if (allow_rproj) {
     found <- function(path) has_description(path) || has_rproj(path)
   } else {
@@ -68,14 +68,14 @@ find_config <- function(filename) {
     dirname(filename)
   }
 
-  path <- normalizePath(path, mustWork = FALSE)
+  path <- normalize_path(path, mustWork = FALSE)
 
   # NB: This vector specifies a priority order for where to find the configs,
   # i.e. the first location where a config exists is chosen and configs which
   # may exist in subsequent directories are ignored
   file_locations <- c(
     # Local (incl. parent) directories
-    find_local_config(path, basename(linter_file)),
+    find_local_config(path, linter_file),
     # User directory
     # cf: rstudio@bc9b6a5 SessionRSConnect.R#L32
     file.path(Sys.getenv("HOME", unset = "~"), linter_file),
@@ -109,5 +109,6 @@ pkg_name <- function(path = find_package()) {
   if (is.null(path)) {
     return(NULL)
   }
-  read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
+  nm <- read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
+  if (!is.na(nm)) nm
 }

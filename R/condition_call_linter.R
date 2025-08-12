@@ -4,12 +4,12 @@
 #' recommendation of the tidyverse design guide regarding displaying error
 #' calls.
 #'
-#' @param display_call Logical specifying expected behaviour regarding `call.`
+#' @param display_call Logical specifying expected behavior regarding `call.`
 #' argument in conditions.
-#'   - `NA` forces providing `call.=` but ignores its value (this can be used in
+#'   - `NA` forces providing `call. =` but ignores its value (this can be used in
 #'     cases where you expect a mix of `call. = FALSE` and `call. = TRUE`)
-#'   - lints `call. = FALSE`
-#'   - forces `call. = FALSE` (lints `call. = TRUE` or missing `call.=` value)
+#'   - `TRUE` lints `call. = FALSE`
+#'   - `FALSE` forces `call. = FALSE` (lints `call. = TRUE` or missing `call. =` value)
 #'
 #'
 #' @examples
@@ -56,12 +56,23 @@
 #'   - <https://design.tidyverse.org/err-call.html>>
 #' @export
 condition_call_linter <- function(display_call = FALSE) {
+
+  str_fct <- c("sprintf", "gettextf", "paste", "paste0", "format", "tr_")
+  str_literal_or_fct <- glue::glue("
+    STR_CONST
+    or expr/SYMBOL_FUNCTION_CALL[ { xp_text_in_table(str_fct) }]
+  ")
+
   call_xpath <- glue::glue("
-    following-sibling::SYMBOL_SUB[text() = 'call.']
+    following-sibling::expr[ {str_literal_or_fct} ]
+    and following-sibling::SYMBOL_SUB[text() = 'call.']
       /following-sibling::expr[1]
       /NUM_CONST[text() = '{!display_call}']
   ")
-  no_call_xpath <- "parent::expr[not(SYMBOL_SUB[text() = 'call.'])]"
+  no_call_xpath <- glue::glue("
+    following-sibling::expr[ {str_literal_or_fct} ]
+    and parent::expr[not(SYMBOL_SUB[text() = 'call.'])]
+  ")
 
   if (is.na(display_call)) {
     call_cond <- no_call_xpath
@@ -77,17 +88,12 @@ condition_call_linter <- function(display_call = FALSE) {
     msg_fmt <- "Use %s(., call. = FALSE) not to display the call in an error message."
   }
 
-  xpath <- glue::glue("
-    //SYMBOL_FUNCTION_CALL[text() = 'stop' or text() = 'warning']
-      /parent::expr[{call_cond}]
-      /parent::expr
-  ")
+  xpath <- glue::glue("./self::*[{call_cond}]/parent::expr")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    xml_calls <- source_expression$xml_find_function_calls(c("stop", "warning"))
 
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

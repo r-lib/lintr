@@ -29,7 +29,6 @@ The following linters are tagged with 'default':
 \item{\code{\link{brace_linter}}}
 \item{\code{\link{commas_linter}}}
 \item{\code{\link{commented_code_linter}}}
-\item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{function_left_parentheses_linter}}}
 \item{\code{\link{indentation_linter}}}
@@ -39,6 +38,7 @@ The following linters are tagged with 'default':
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_usage_linter}}}
 \item{\code{\link{paren_body_linter}}}
+\item{\code{\link{pipe_consistency_linter}}}
 \item{\code{\link{pipe_continuation_linter}}}
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{return_linter}}}

@@ -11,6 +11,9 @@ test_that("expect_comparison_linter skips allowed usages", {
 
   # expect_gt() and friends don't have an info= argument
   expect_lint("expect_true(x > y, info = 'x is bigger than y yo')", NULL, linter)
+
+  # expect_true() used incorrectly, and as executed the first argument is not a lint
+  expect_lint("expect_true(is.count(n_draws), n_draws > 1)", NULL, linter)
 })
 
 test_that("expect_comparison_linter blocks simple disallowed usages", {

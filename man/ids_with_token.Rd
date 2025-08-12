@@ -5,9 +5,9 @@
 \alias{with_id}
 \title{Get parsed IDs by token}
 \usage{
-ids_with_token(source_expression, value, fun = `==`, source_file = NULL)
+ids_with_token(source_expression, value, fun = `==`)
 
-with_id(source_expression, id, source_file)
+with_id(source_expression, id)
 }
 \arguments{
 \item{source_expression}{A list of source expressions, the result of a call to \code{\link[=get_source_expressions]{get_source_expressions()}},
@@ -25,8 +25,6 @@ For example:
 
 \item{fun}{For additional flexibility, a function to search for in
 the \code{token} column of \code{parsed_content}. Typically \code{==} or \code{\%in\%}.}
-
-\item{source_file}{(DEPRECATED) Same as \code{source_expression}. Will be removed.}
 
 \item{id}{Integer. The index corresponding to the desired row
 of \code{parsed_content}.}
@@ -48,10 +46,11 @@ conjunction with \code{ids_with_token} to iterate over rows containing desired t
 
 }}
 \examples{
-\dontshow{if (requireNamespace("withr", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+tmp <- tempfile()
+writeLines(c("x <- 1", "y <- x + 1"), tmp)
 source_exprs <- get_source_expressions(tmp)
 ids_with_token(source_exprs$expressions[[1L]], value = "SYMBOL")
 with_id(source_exprs$expressions[[1L]], 2L)
-\dontshow{\}) # examplesIf}
+unlink(tmp)
+
 }

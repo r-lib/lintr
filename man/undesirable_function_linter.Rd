@@ -10,18 +10,28 @@ undesirable_function_linter(
 )
 }
 \arguments{
-\item{fun}{Named character vector. \code{names(fun)} correspond to undesirable functions,
-while the values give a description of why the function is undesirable.
-If \code{NA}, no additional information is given in the lint message. Defaults to
-\link{default_undesirable_functions}. To make small customizations to this list,
+\item{fun}{Character vector of undesirable function names. Input can be any of three types:
+\itemize{
+\item Unnamed entries must be a character string specifying an undesirable function.
+\item For named entries, the name specifies the undesirable function.
+\itemize{
+\item If the entry is a character string, it is used as a description of
+why a given function is undesirable
+\item Otherwise, entries should be missing (\code{NA})
+A generic message that the named function is undesirable is used if no
+specific description is provided.
+Input can also be a list of character strings for convenience.
+}
+}
+
+Defaults to \link{default_undesirable_functions}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
 
 \item{symbol_is_undesirable}{Whether to consider the use of an undesirable function
 name as a symbol undesirable or not.}
 }
 \description{
-Report the use of undesirable functions (e.g. \code{\link[base:function]{base::return()}}, \code{\link[base:options]{base::options()}}, or
-\code{\link[base:lapply]{base::sapply()}}) and suggest an alternative.
+Report the use of undesirable functions and suggest an alternative.
 }
 \examples{
 # defaults for which functions are considered undesirable
@@ -48,6 +58,12 @@ lint(
   linters = undesirable_function_linter(fun = c("dir" = NA))
 )
 
+
+lint(
+  text = 'dir <- "path/to/a/directory"',
+  linters = undesirable_function_linter(fun = "dir")
+)
+
 # okay
 lint(
   text = "vapply(x, mean, FUN.VALUE = numeric(1))",
@@ -64,10 +80,15 @@ lint(
   linters = undesirable_function_linter(fun = c("dir" = NA), symbol_is_undesirable = FALSE)
 )
 
+lint(
+  text = 'dir <- "path/to/a/directory"',
+  linters = undesirable_function_linter(fun = "dir", symbol_is_undesirable = FALSE)
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
 }

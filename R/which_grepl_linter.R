@@ -19,11 +19,10 @@
 #' @evalRd rd_tags("which_grepl_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-which_grepl_linter <- make_linter_from_xpath(
+which_grepl_linter <- make_linter_from_function_xpath(
+  function_names = "grepl",
   xpath = "
-  //SYMBOL_FUNCTION_CALL[text() = 'grepl']
-    /parent::expr
-    /parent::expr
+  parent::expr
     /parent::expr[expr/SYMBOL_FUNCTION_CALL[text() = 'which']]
   ",
   lint_message = "grep(pattern, x) is better than which(grepl(pattern, x))."

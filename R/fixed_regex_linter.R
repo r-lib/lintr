@@ -76,12 +76,12 @@
 #' @export
 fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # regular expression pattern is the first argument
-  pos_1_regex_funs <- xp_text_in_table(c(
-    "grep", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
-  ))
+  pos_1_regex_funs <- c(
+    "grep", "grepv", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
+  )
 
   # regular expression pattern is the second argument
-  pos_2_regex_funs <- xp_text_in_table(c(
+  pos_2_regex_funs <- c(
     # base functions.
     "strsplit",
     # data.table functions.
@@ -95,7 +95,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     "str_remove", "str_remove_all", "str_replace", "str_replace_all",
     "str_split", "str_starts", "str_subset",
     "str_view", "str_view_all", "str_which"
-  ))
+  )
 
   pipes <- setdiff(magrittr_pipes, c("%$%", "%T>%"))
   in_pipe_cond <- glue("
@@ -105,14 +105,13 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
 
   # NB: strsplit doesn't have an ignore.case argument
   # NB: we intentionally exclude cases like gsub(x, c("a" = "b")), where "b" is fixed
-  xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[ {pos_1_regex_funs} ]
-    /parent::expr[
-      not(following-sibling::SYMBOL_SUB[
-        (text() = 'fixed' or text() = 'ignore.case')
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
+  pos_1_xpath <- glue("
+  self::*[
+    not(following-sibling::SYMBOL_SUB[
+      (text() = 'fixed' or text() = 'ignore.case')
+      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]
     /following-sibling::expr[
       (
         position() = 1
@@ -121,17 +120,17 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
         and not({ in_pipe_cond })
       ) or (
         STR_CONST
-        and preceding-sibling::*[2][self::SYMBOL_SUB/text() = 'pattern']
+        and preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB/text() = 'pattern']
       )
     ]
-  |
-  //SYMBOL_FUNCTION_CALL[ {pos_2_regex_funs} ]
-    /parent::expr[
-      not(following-sibling::SYMBOL_SUB[
-        text() = 'fixed'
-        and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
+  ")
+  pos_2_xpath <- glue("
+  self::*[
+    not(following-sibling::SYMBOL_SUB[
+      text() = 'fixed'
+      and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]
     /following-sibling::expr[
       position() = 2 - count({ in_pipe_cond })
       and STR_CONST
@@ -140,10 +139,12 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    patterns <- xml_find_all(xml, xpath)
+    pos_1_calls <- source_expression$xml_find_function_calls(pos_1_regex_funs)
+    pos_2_calls <- source_expression$xml_find_function_calls(pos_2_regex_funs)
+    patterns <- combine_nodesets(
+      xml_find_all(pos_1_calls, pos_1_xpath),
+      xml_find_all(pos_2_calls, pos_2_xpath)
+    )
     pattern_strings <- get_r_string(patterns)
 
     is_static <- is_not_regex(pattern_strings, allow_unescaped)

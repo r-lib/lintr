@@ -26,6 +26,28 @@
 #'   linters = matrix_apply_linter()
 #' )
 #'
+#' # okay
+#' lint(
+#'   text = "rowSums(x)",
+#'   linters = matrix_apply_linter()
+#' )
+#'
+#' lint(
+#'   text = "colSums(x)",
+#'   linters = matrix_apply_linter()
+#' )
+#'
+#' lint(
+#'   text = "colSums(x, na.rm = TRUE)",
+#'   linters = matrix_apply_linter()
+#' )
+#'
+#' lint(
+#'   text = "rowSums(colSums(x), dims = 3)",
+#'   linters = matrix_apply_linter()
+#' )
+#'
+#'
 #' @evalRd rd_tags("matrix_apply_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -36,12 +58,10 @@ matrix_apply_linter <- function() {
   #
   # Currently supported values for MARGIN: scalar numeric and vector of contiguous values created by : (OP-COLON)
   sums_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'apply']
-    /parent::expr
-    /following-sibling::expr[
-      NUM_CONST or OP-COLON/preceding-sibling::expr[NUM_CONST]/following-sibling::expr[NUM_CONST]
-      and (position() = 2)
-    ]
+  following-sibling::expr[
+    NUM_CONST or OP-COLON/preceding-sibling::expr[NUM_CONST]/following-sibling::expr[NUM_CONST]
+    and (position() = 2)
+  ]
     /following-sibling::expr[
       SYMBOL[text() = 'sum']
       and (position() = 1)
@@ -52,12 +72,10 @@ matrix_apply_linter <- function() {
   # Since mean() is a generic, we make sure that we only lint cases with arguments
   # supported by colMeans() and rowMeans(), i.e., na.rm
   means_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'apply']
-    /parent::expr
-    /following-sibling::expr[
-      NUM_CONST or OP-COLON/preceding-sibling::expr[NUM_CONST]/following-sibling::expr[NUM_CONST]
-      and (position() = 2)
-    ]
+  following-sibling::expr[
+    NUM_CONST or OP-COLON/preceding-sibling::expr[NUM_CONST]/following-sibling::expr[NUM_CONST]
+    and (position() = 2)
+  ]
     /following-sibling::expr[
       SYMBOL[text() = 'mean']
       and (position() = 1)
@@ -77,10 +95,9 @@ matrix_apply_linter <- function() {
   fun_xpath <- "expr[position() = 4]"
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls("apply")
+    bad_expr <- xml_find_all(xml_calls, xpath)
+    bad_expr <- strip_comments_from_subtree(bad_expr)
 
     variable <- xml_text(xml_find_all(bad_expr, variable_xpath))
 

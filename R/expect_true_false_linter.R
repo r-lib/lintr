@@ -32,18 +32,18 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_true_false_linter <- function() {
-  xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'expect_equal' or text() = 'expect_identical']
+  pipe_cond <- glue("parent::expr/parent::expr[PIPE or SPECIAL[{xp_text_in_table(magrittr_pipes)}]]")
+  xpath <- glue("
+  following-sibling::expr[
+    NUM_CONST[text() = 'TRUE' or text() = 'FALSE']
+    and position() <= 2 - count({pipe_cond})
+  ]
     /parent::expr
-    /following-sibling::expr[position() <= 2 and NUM_CONST[text() = 'TRUE' or text() = 'FALSE']]
-    /parent::expr
-  "
+  ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls(c("expect_equal", "expect_identical"))
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     # NB: use expr/$node, not expr[$node], to exclude other things (especially ns:: parts of the call)
     call_name <- xp_call_name(bad_expr, condition = "starts-with(text(), 'expect_')")

@@ -61,15 +61,3 @@ test_that("lints vectorize", {
     yoda_test_linter()
   )
 })
-
-# TODO(michaelchirico): Should this be extended to RUnit tests? It seems yes,
-#   but the argument names in RUnit (inherited from base all.equal()) are a bit
-#   confusing, e.g. `checkEqual(target=, current=)`. From the name, one might
-#   reasonably conclude 'expected' comes first, and 'actual' comes second.
-# TODO(michaelchirico): What sorts of combinations of literals can be included?
-#   e.g. expect_equal(c(1, 2), x) is a yoda test; is expect_equal(c(x, 1), y)?
-#   clearly it's not true for general f() besides c(). What about other
-#   constructors of literals? data.frame(), data.table(), tibble(), ...?
-# TODO(michaelchirico): The logic could also be extended to "tests" inside regular
-#   code, not just test suites, e.g. `if (2 == x)`, `while(3 <= x)`,
-#   `stopifnot('a' == foo(y))`.

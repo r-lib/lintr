@@ -4,14 +4,31 @@
 \alias{undesirable_operator_linter}
 \title{Undesirable operator linter}
 \usage{
-undesirable_operator_linter(op = default_undesirable_operators)
+undesirable_operator_linter(
+  op = default_undesirable_operators,
+  call_is_undesirable = TRUE
+)
 }
 \arguments{
-\item{op}{Named character vector. \code{names(op)} correspond to undesirable operators,
-while the values give a description of why the operator is undesirable.
-If \code{NA}, no additional information is given in the lint message. Defaults to
-\link{default_undesirable_operators}. To make small customizations to this list,
+\item{op}{Character vector of undesirable operators. Input can be any of three types:
+\itemize{
+\item Unnamed entries must be a character string specifying an undesirable operator.
+\item For named entries, the name specifies the undesirable operator.
+\itemize{
+\item If the entry is a character string, it is used as a description of
+why a given operator is undesirable
+\item Otherwise, entries should be missing (\code{NA})
+A generic message that the named operator is undesirable is used if no
+specific description is provided.
+Input can also be a list of character strings for convenience.
+}
+}
+
+Defaults to \link{default_undesirable_operators}. To make small customizations to this list,
 use \code{\link[=modify_defaults]{modify_defaults()}}.}
+
+\item{call_is_undesirable}{Logical, default \code{TRUE}. Should lints also be produced
+for prefix-style usage of the operators provided in \code{op}?}
 }
 \description{
 Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
@@ -32,6 +49,16 @@ lint(
   linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
 )
 
+lint(
+  text = "`:::`(utils, hasName)",
+  linters = undesirable_operator_linter()
+)
+
+lint(
+  text = "mtcars$wt",
+  linters = undesirable_operator_linter("$")
+)
+
 # okay
 lint(
   text = "a <- log(10)",
@@ -47,10 +74,20 @@ lint(
   linters = undesirable_operator_linter(op = c("$" = "As an alternative, use the `[[` accessor."))
 )
 
+lint(
+  text = "`:::`(utils, hasName)",
+  linters = undesirable_operator_linter(call_is_undesirable = FALSE)
+)
+
+lint(
+  text = 'mtcars[["wt"]]',
+  linters = undesirable_operator_linter("$")
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}, \link[=style_linters]{style}
 }

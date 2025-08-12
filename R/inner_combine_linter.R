@@ -6,6 +6,13 @@
 #'   preferred so that the most expensive part of the operation ([as.Date()])
 #'   is applied only once.
 #'
+#' Note that [strptime()] has one idiosyncrasy to be aware of, namely that
+#'   auto-detected `format=` is set by the first matching input, which means
+#'   that a case like `c(as.POSIXct("2024-01-01"), as.POSIXct("2024-01-01 01:02:03"))`
+#'   gives different results to `as.POSIXct(c("2024-01-01", "2024-01-01 01:02:03"))`.
+#'   This false positive is rare; a workaround where possible is to use
+#'   consistent formatting, i.e., `"2024-01-01 00:00:00"` in the example.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
@@ -36,10 +43,7 @@ inner_combine_linter <- function() {
     "sqrt", "abs"
   )
 
-  # TODO(michaelchirico): the need to spell out specific arguments is pretty brittle,
-  #   but writing the xpath for the alternative case was proving too tricky.
-  #   It's messy enough as is -- it may make sense to take another pass at
-  #   writing the xpath from scratch to see if it can't be simplified.
+  # TODO(#2468): Try and make this XPath less brittle/more extensible.
 
   # See ?as.Date, ?as.POSIXct. tryFormats is not explicitly in any default
   #   POSIXct method, but it is in as.Date.character and as.POSIXlt.character --
@@ -77,17 +81,14 @@ inner_combine_linter <- function() {
     lubridate_args_cond
   )
   xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'c']
-    /parent::expr[count(following-sibling::expr) > 1]
+  self::*[count(following-sibling::expr) > 1]
     /following-sibling::expr[1][ {c_expr_cond} ]
     /parent::expr
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    xml_calls <- source_expression$xml_find_function_calls("c")
+    bad_expr <- xml_find_all(xml_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr, depth = 2L)
     lint_message <- paste(

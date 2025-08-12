@@ -24,6 +24,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{if_not_else_linter}}}
+\item{\code{\link{if_switch_linter}}}
 \item{\code{\link{implicit_assignment_linter}}}
 \item{\code{\link{implicit_integer_linter}}}
 \item{\code{\link{indentation_linter}}}
@@ -43,6 +44,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{quotes_linter}}}
 \item{\code{\link{redundant_ifelse_linter}}}
 \item{\code{\link{return_linter}}}
+\item{\code{\link{scalar_in_linter}}}
 \item{\code{\link{semicolon_linter}}}
 \item{\code{\link{string_boundary_linter}}}
 \item{\code{\link{todo_comment_linter}}}

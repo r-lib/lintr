@@ -2,22 +2,25 @@
 #'
 #' Check that there are no trailing blank lines in source code.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
+#' @examples
 #' # will produce lints
-#' f <- withr::local_tempfile(lines = "x <- 1\n")
-#' readLines(f)
+#' f <- tempfile()
+#' cat("x <- 1\n\n", file = f)
+#' writeLines(readChar(f, file.size(f)))
 #' lint(
 #'   filename = f,
 #'   linters = trailing_blank_lines_linter()
 #' )
+#' unlink(f)
 #'
 #' # okay
-#' f <- withr::local_tempfile(lines = "x <- 1")
-#' readLines(f)
+#' cat("x <- 1\n", file = f)
+#' writeLines(readChar(f, file.size(f)))
 #' lint(
 #'   filename = f,
 #'   linters = trailing_blank_lines_linter()
 #' )
+#' unlink(f)
 #'
 #' @evalRd rd_tags("trailing_blank_lines_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
@@ -47,11 +50,13 @@ trailing_blank_lines_linter <- function() {
 
     if (identical(source_expression$terminal_newline, FALSE)) { # could use isFALSE, but needs backports
       last_line <- tail(source_expression$file_lines, 1L)
+      line_width <- nchar(last_line)
+      if (is.na(line_width)) line_width <- 0L
 
       lints[[length(lints) + 1L]] <- Lint(
         filename = source_expression$filename,
         line_number = length(source_expression$file_lines),
-        column_number = (nchar(last_line) %||% 0L) + 1L,
+        column_number = line_width + 1L,
         type = "style",
         message = "Add a terminal newline.",
         line = last_line

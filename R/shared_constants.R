@@ -34,6 +34,7 @@ rx_static_token <- local({
 rx_unescaped_regex <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), end))
 rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
 rx_first_static_token <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
+rx_escapable_tokens <- "^${}().*+?|[]\\<>=:;/_-!@#%&,~"
 
 #' Determine whether a regex pattern actually uses regex patterns
 #'
@@ -95,19 +96,17 @@ get_fixed_string <- function(static_regex) {
 #'
 #' @noRd
 get_token_replacement <- function(token_content, token_type) {
-  if (token_type == "trivial_char_group") {
+  if (token_type == "trivial_char_group") { # otherwise, char_escape
     token_content <- substr(token_content, start = 2L, stop = nchar(token_content) - 1L)
     if (startsWith(token_content, "\\")) { # escape within trivial char group
       get_token_replacement(token_content, "char_escape")
     } else {
       token_content
     }
-  } else { # char_escape token
-    if (re_matches(token_content, rex("\\", one_of("^${}().*+?|[]\\<>=:;/_-!@#%&,~")))) {
-      substr(token_content, start = 2L, stop = nchar(token_content))
-    } else {
-      eval(parse(text = paste0('"', token_content, '"')))
-    }
+  } else if (re_matches(token_content, rex("\\", one_of(rx_escapable_tokens)))) {
+    substr(token_content, start = 2L, stop = nchar(token_content))
+  } else {
+    eval(parse(text = paste0('"', token_content, '"')))
   }
 }
 
@@ -116,7 +115,7 @@ get_token_replacement <- function(token_content, token_type) {
 #   r_string gives the operator as you would write it in R code.
 
 # styler: off
-infix_metadata <- data.frame(stringsAsFactors = FALSE, matrix(byrow = TRUE, ncol = 2L, c(
+infix_metadata <- data.frame(matrix(byrow = TRUE, ncol = 2L, c(
   "OP-PLUS",         "+",
   "OP-MINUS",        "-",
   "OP-TILDE",        "~",
@@ -201,24 +200,48 @@ object_name_xpath <- local({
   #   the complicated nested assignment available for symbols
   #   is not possible for strings, though we do still have to
   #   be aware of cases like 'a$"b" <- 1'.
-  xp_assignment_target_fmt <- paste0(
-    "not(parent::expr[OP-DOLLAR or OP-AT])",
-    "and %1$s::expr[",
-    " following-sibling::LEFT_ASSIGN",
-    " or preceding-sibling::RIGHT_ASSIGN",
-    " or following-sibling::EQ_ASSIGN",
-    "]",
-    "and not(%1$s::expr[",
-    " preceding-sibling::OP-LEFT-BRACKET",
-    " or preceding-sibling::LBB",
-    "])"
-  )
+  xp_assignment_target_fmt <- "
+    not(parent::expr[OP-DOLLAR or OP-AT])
+    and %1$s::expr[
+      following-sibling::LEFT_ASSIGN%2$s
+      or preceding-sibling::RIGHT_ASSIGN
+      or following-sibling::EQ_ASSIGN
+    ]
+    and not(%1$s::expr[
+     preceding-sibling::OP-LEFT-BRACKET
+     or preceding-sibling::LBB
+    ])
+  "
 
-  glue("
-  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor')} ]
-  |  //STR_CONST[ {sprintf(xp_assignment_target_fmt, 'parent')} ]
+  # strings on LHS of := are only checked if they look like data.table usage DT[, "a" := ...]
+  dt_walrus_cond <- "[
+    text() != ':='
+    or parent::expr/preceding-sibling::OP-LEFT-BRACKET
+  ]"
+
+  # either an argument supplied positionally, i.e., not like 'arg = val', or the call <expr>
+  not_kwarg_cond <- "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])"
+
+  glue(xp_strip_comments("
+  //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]
+  |  //STR_CONST[
+      ({sprintf(xp_assignment_target_fmt, 'parent', dt_walrus_cond)})
+      or parent::expr
+        /preceding-sibling::expr[1]
+        /SYMBOL_FUNCTION_CALL[text() = 'setGeneric']
+      (: x= argument is the first positional argument, if not given as x= :)
+      or parent::expr[
+        (
+          ({not_kwarg_cond})
+          and count(preceding-sibling::expr[{not_kwarg_cond}]) = 1
+        )
+        or preceding-sibling::SYMBOL_SUB[1][text() = 'x']
+      ]
+        /preceding-sibling::expr[last()]
+        /SYMBOL_FUNCTION_CALL[text() = 'assign']
+     ]
   |  //SYMBOL_FORMALS
-  ")
+  "))
 })
 
 # Remove quotes or other things from names
@@ -239,22 +262,11 @@ strip_names <- function(x) {
 #' @return A character vector of symbols (variables, infix operators, and
 #'   function calls) found in glue calls under `expr`.
 #' @noRd
-extract_glued_symbols <- function(expr, interpret_glue) {
+extract_glued_symbols <- function(expr, interpret_glue = TRUE) {
   if (!isTRUE(interpret_glue)) {
     return(character())
   }
-  # TODO support more glue functions
-  # Package glue:
-  #  - glue_sql
-  #  - glue_safe
-  #  - glue_col
-  #  - glue_data
-  #  - glue_data_sql
-  #  - glue_data_safe
-  #  - glue_data_col
-  #
-  # Package stringr:
-  #  - str_interp
+  # TODO(#2448): support more glue functions
   # NB: position() > 1 because position=1 is <expr><SYMBOL_FUNCTION_CALL>
   glue_call_xpath <- "
     descendant::SYMBOL_FUNCTION_CALL[text() = 'glue']
@@ -268,7 +280,7 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 
   glued_symbols <- new.env(parent = emptyenv())
   for (glue_call in glue_calls) {
-    # TODO(michaelchirico): consider dropping tryCatch() here if we're more confident in our logic
+    # TODO(#2475): Drop tryCatch().
     parsed_call <-
       tryCatch(xml2lang(glue_call), error = unexpected_glue_parse_error, warning = unexpected_glue_parse_error)
     parsed_call[[".envir"]] <- glued_symbols
@@ -280,14 +292,18 @@ extract_glued_symbols <- function(expr, interpret_glue) {
 }
 
 unexpected_glue_parse_error <- function(cond) {
-  stop("Unexpected failure to parse glue call, please report: ", conditionMessage(cond), call. = FALSE) # nocov
+  # nocov start
+  cli_abort(c(
+    x = "Unexpected failure to parse glue call.",
+    i = "Please report: {conditionMessage(cond)}"
+  ))
+  # nocov end
 }
 glue_parse_failure_warning <- function(cond) {
-  warning(
-    "Evaluating glue expression while testing for local variable usage failed: ", conditionMessage(cond),
-    "\nPlease ensure correct glue syntax, e.g., matched delimiters.",
-    call. = FALSE
-  )
+  cli_warn(c(
+    x = "Evaluating glue expression while testing for local variable usage failed: {conditionMessage(cond)}",
+    i = "Please ensure correct glue syntax, e.g., matched delimiters."
+  ))
   NULL
 }
 glue_symbol_extractor <- function(text, envir, data) {
@@ -309,3 +325,22 @@ purrr_mappers <- c(
   "map_raw", "map_lgl", "map_int", "map_dbl", "map_chr", "map_vec",
   "map_df", "map_dfr", "map_dfc"
 )
+
+# see ?".onLoad", ?Startup, and ?quit.
+#   All of .onLoad, .onAttach, and .onUnload are used in base packages,
+#   and should be caught in is_base_function; they're included here for completeness / stability
+#   (they don't strictly _have_ to be defined in base, so could in principle be removed).
+#   .Last.sys and .First.sys are part of base itself, so aren't included here.
+special_funs <- c(
+  ".onLoad",
+  ".onAttach",
+  ".onUnload",
+  ".onDetach",
+  ".Last.lib",
+  ".First",
+  ".Last"
+)
+
+is_special_function <- function(x) {
+  x %in% special_funs
+}

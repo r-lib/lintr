@@ -36,27 +36,36 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_is_na_linter <- function() {
-  xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'any']
-    /parent::expr
-    /following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
+  any_xpath <- "
+  following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.na']]]
     /parent::expr[
       count(expr) = 2
       or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
     ]
   "
 
+  in_xpath <- "//SPECIAL[text() = '%in%']/preceding-sibling::expr[NUM_CONST[starts-with(text(), 'NA')]]"
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+    xml_calls <- source_expression$xml_find_function_calls("any")
 
-    bad_expr <- xml_find_all(xml, xpath)
-
-    xml_nodes_to_lints(
-      bad_expr,
+    any_expr <- xml_find_all(xml_calls, any_xpath)
+    any_lints <- xml_nodes_to_lints(
+      any_expr,
       source_expression = source_expression,
       lint_message = "anyNA(x) is better than any(is.na(x)).",
       type = "warning"
     )
+
+    in_expr <- xml_find_all(xml, in_xpath)
+    in_lints <- xml_nodes_to_lints(
+      in_expr,
+      source_expression = source_expression,
+      lint_message = "anyNA(x) is better than NA %in% x.",
+      type = "warning"
+    )
+
+    c(any_lints, in_lints)
   })
 }

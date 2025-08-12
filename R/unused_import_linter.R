@@ -1,6 +1,7 @@
 #' Check that imported packages are actually used
 #'
-#' @inheritParams object_usage_linter
+#' @param interpret_glue If `TRUE`, interpret [glue::glue()] calls to avoid false positives caused by local variables
+#'   which are only used in a glue expression.
 #' @param allow_ns_usage Suppress lints for packages only used via namespace.
 #' This is `FALSE` by default because `pkg::fun()` doesn't require `library(pkg)`.
 #' You can use [requireNamespace("pkg")][requireNamespace()] to ensure a package is
@@ -54,19 +55,16 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
   }
 
   import_xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-    /parent::expr
-    /parent::expr[
-      expr[2][STR_CONST]
-      or not(SYMBOL_SUB[
-        text() = 'character.only' and
-        following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
-      ])
-    ]
-  "
+  parent::expr[
+    expr[2][STR_CONST]
+    or not(SYMBOL_SUB[
+      text() = 'character.only' and
+      following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
+    ])
+  ]"
 
+  xp_used_functions <- "SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]"
   xp_used_symbols <- paste(
-    "//SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]",
     "//SYMBOL[not(
       parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
     )]",
@@ -76,9 +74,11 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
+    library_calls <- source_expression$xml_find_function_calls(c("library", "require"))
+    all_calls <- source_expression$xml_find_function_calls(NULL)
 
-    import_exprs <- xml_find_all(xml, import_xpath)
+    import_exprs <- xml_find_all(library_calls, import_xpath)
+
     if (length(import_exprs) == 0L) {
       return(list())
     }
@@ -87,6 +87,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
 
     used_symbols <- unique(c(
+      xml_text(xml_find_all(all_calls, xp_used_functions)),
       xml_text(xml_find_all(xml, xp_used_symbols)),
       extract_glued_symbols(xml, interpret_glue = interpret_glue)
     ))
@@ -107,8 +108,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
       logical(1L)
     )
 
-    # TODO(michaelchirico): instead of vectorizing over packages,
-    #   xml_find_all SYMBOL_PACKAGE namespaces and check imported_pkgs %in%
+    # TODO(#2480): Only call //SYMBOL_PACKAGE once.
     is_ns_used <- vapply(
       imported_pkgs,
       function(pkg) {

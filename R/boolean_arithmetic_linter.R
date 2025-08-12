@@ -30,41 +30,44 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 boolean_arithmetic_linter <- function() {
-  # TODO(#1580): sum() cases x %in% y, A [&|] B, !A, is.na/is.nan/is.finite/is.infinite/is.element
   # TODO(#1581): extend to include all()-alike expressions
-  zero_expr <- "(EQ or NE or GT or LE) and expr[NUM_CONST[text() = '0' or text() = '0L']]"
-  one_expr <- "(LT or GE) and expr[NUM_CONST[text() = '1' or text() = '1L']]"
+  zero_expr <- "(EQ or NE or GT or LE) and expr/NUM_CONST[text() = '0' or text() = '0L']"
+  one_expr <- "(LT or GE) and expr/NUM_CONST[text() = '1' or text() = '1L']"
   length_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'which' or text() = 'grep']
-    /parent::expr
-    /parent::expr
+  parent::expr
     /parent::expr[
-      expr[SYMBOL_FUNCTION_CALL[text() = 'length']]
+      expr/SYMBOL_FUNCTION_CALL[text() = 'length']
       and parent::expr[ ({zero_expr}) or ({one_expr})]
     ]
   ")
+  known_logical_calls <- c(
+    "grepl", "str_detect", "nzchar", "startsWith", "endsWith",
+    "xor", "is.element", "duplicated",
+    "is.na", "is.nan", "is.finite", "is.infinite",
+    NULL
+  )
   sum_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'sum']
-    /parent::expr
-    /parent::expr[
-      expr[
-        expr[SYMBOL_FUNCTION_CALL[text() = 'grepl']]
-        or (EQ or NE or GT or LT or GE or LE)
-      ] and parent::expr[ ({zero_expr}) or ({one_expr})]
+  parent::expr[
+    expr[
+      expr/SYMBOL_FUNCTION_CALL[{xp_text_in_table(known_logical_calls)}]
+      or (EQ or NE or GT or LT or GE or LE or AND or OR or OP-EXCLAMATION)
+      or SPECIAL[text() = '%in%' or text() = '%chin%']
     ]
-  ")
-  any_xpath <- paste(length_xpath, "|", sum_xpath)
+    and parent::expr[ ({zero_expr}) or ({one_expr})]
+  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    any_expr <- xml_find_all(xml, any_xpath)
+    length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))
+    sum_calls <- source_expression$xml_find_function_calls("sum")
+    any_expr <- c(
+      xml_find_all(length_calls, length_xpath),
+      xml_find_all(sum_calls, sum_xpath)
+    )
 
     xml_nodes_to_lints(
       any_expr,
       source_expression = source_expression,
-      # TODO(michaelchirico): customize this?
+      # TODO(#2464): customize this?
       lint_message = paste(
         "Use any() to express logical aggregations.",
         "For example, replace length(which(x == y)) == 0 with !any(x == y)."

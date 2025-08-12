@@ -31,28 +31,28 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 consecutive_assertion_linter <- function() {
-  xpath <- "
-  //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
-    /parent::expr
-    /parent::expr[
-      expr[1]/SYMBOL_FUNCTION_CALL = following-sibling::expr[1]/expr[1]/SYMBOL_FUNCTION_CALL
-    ]
-  |
-  //SYMBOL_FUNCTION_CALL[text() = 'assert_that']
-    /parent::expr
-    /parent::expr[
-      not(SYMBOL_SUB[text() = 'msg'])
-      and not(following-sibling::expr[1]/SYMBOL_SUB[text() = 'msg'])
-      and expr[1]/SYMBOL_FUNCTION_CALL = following-sibling::expr[1]/expr[1]/SYMBOL_FUNCTION_CALL
-    ]
-  "
+  # annoying expr-but-not-really nodes
+  next_expr <- "following-sibling::*[self::expr or self::expr_or_assign_or_help or self::equal_assign][1]"
+
+  stopifnot_xpath <- glue("
+  parent::expr[
+    expr[1]/SYMBOL_FUNCTION_CALL = {next_expr}/expr[1]/SYMBOL_FUNCTION_CALL
+  ]")
+  assert_that_xpath <- glue("
+  parent::expr[
+    not(SYMBOL_SUB[text() = 'msg'])
+    and not(following-sibling::expr[1]/SYMBOL_SUB[text() = 'msg'])
+    and expr[1]/SYMBOL_FUNCTION_CALL = {next_expr}/expr[1]/SYMBOL_FUNCTION_CALL
+  ]")
 
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
-    xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
-
-    bad_expr <- xml_find_all(xml, xpath)
+    stopifnot_calls <- source_expression$xml_find_function_calls("stopifnot")
+    assert_that_calls <- source_expression$xml_find_function_calls("assert_that")
+    bad_expr <- combine_nodesets(
+      xml_find_all(stopifnot_calls, stopifnot_xpath),
+      xml_find_all(assert_that_calls, assert_that_xpath)
+    )
 
     matched_function <- xp_call_name(bad_expr)
     xml_nodes_to_lints(

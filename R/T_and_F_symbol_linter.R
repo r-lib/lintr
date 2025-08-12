@@ -35,18 +35,22 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
   symbol_xpath <- "//SYMBOL[
     (text() = 'T' or text() = 'F')
     and not(parent::expr[OP-DOLLAR or OP-AT])
+    and (
+      not(ancestor::expr[OP-TILDE])
+      or parent::expr/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]
+    )
   ]"
   assignment_xpath <-
     "parent::expr[following-sibling::LEFT_ASSIGN or preceding-sibling::RIGHT_ASSIGN or following-sibling::EQ_ASSIGN]"
 
-  usage_xpath <- sprintf("%s[not(%s)]", symbol_xpath, assignment_xpath)
-  assignment_xpath <- sprintf("%s[%s]", symbol_xpath, assignment_xpath)
+  usage_xpath <- glue("{symbol_xpath}[not({assignment_xpath})]")
+  assignment_xpath <- glue("{symbol_xpath}[{assignment_xpath}]")
 
   replacement_map <- c(T = "TRUE", F = "FALSE")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
+
     bad_usage <- xml_find_all(xml, usage_xpath)
     bad_assignment <- xml_find_all(xml, assignment_xpath)
 

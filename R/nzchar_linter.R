@@ -6,7 +6,9 @@
 #'
 #' One crucial difference is in the default handling of `NA_character_`, i.e.,
 #'   missing strings. `nzchar(NA_character_)` is `TRUE`, while `NA_character_ == ""`
-#'   and `nchar(NA_character_) == 0` are both `NA`.
+#'   and `nchar(NA_character_) == 0` are both `NA`. Therefore, for strict
+#'   compatibility, use `nzchar(x, keepNA = TRUE)`. If the input is known to be
+#'   complete (no missing entries), this argument can be dropped for conciseness.
 #'
 #' @examples
 #' # will produce lints
@@ -22,14 +24,12 @@
 #'
 #' # okay
 #' lint(
-#'   text = "x[nchar(x) > 1]",
+#'   text = "x[!nzchar(x, keepNA = TRUE)]",
 #'   linters = nzchar_linter()
 #' )
 #'
-#' # nzchar()'s primary benefit is for vector input;
-#' #   for guaranteed-scalar cases like if() conditions, comparing to "" is OK.
 #' lint(
-#'   text = "if (x == '') y",
+#'   text = "x[nzchar(x, keepNA = TRUE)]",
 #'   linters = nzchar_linter()
 #' )
 #'
@@ -55,7 +55,7 @@ nzchar_linter <- function() {
         ])
         or ancestor-or-self::expr[
           (
-            preceding-sibling::expr[SYMBOL_FUNCTION_CALL]
+            preceding-sibling::expr/SYMBOL_FUNCTION_CALL
             or preceding-sibling::OP-LEFT-BRACKET
           ) and not(
             descendant-or-self::expr[IF or WHILE]
@@ -65,26 +65,42 @@ nzchar_linter <- function() {
     ]
   ")
 
+  comparison_msg_map <- c(
+    GT = 'Use nzchar(x) instead of x > "". ',
+    NE = 'Use nzchar(x) instead of x != "". ',
+    LE = 'Use !nzchar(x) instead of x <= "". ',
+    EQ = 'Use !nzchar(x) instead of x == "". ',
+    GE = 'x >= "" is always true, maybe you want nzchar(x)? ',
+    LT = 'x < "" is always false, maybe you want !nzchar(x)? '
+  )
+
   # nchar(., type="width") not strictly compatible with nzchar
-  # unsure allowNA compatible, so allow it just in case (see TODO in tests)
+  # nchar(., allowNA=TRUE) neither
   nchar_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'nchar']
-    /parent::expr
-    /parent::expr
+  parent::expr
     /parent::expr[
       ({ xp_or(comparator_nodes) })
-      and not(expr[SYMBOL_SUB[
+      and not(expr/SYMBOL_SUB[
         (
           text() = 'type'
-          and following-sibling::expr[1][STR_CONST[contains(text(), 'width')]]
+          and following-sibling::expr[1]/STR_CONST[contains(text(), 'width')]
         ) or (
           text() = 'allowNA'
-          and following-sibling::expr[1][NUM_CONST[text() = 'TRUE']]
+          and following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']
         )
-      ]])
-      and expr[NUM_CONST[text() = '0' or text() = '0L' or text() = '0.0']]
+      ])
+      and expr/NUM_CONST[text() = '0' or text() = '0L' or text() = '0.0']
     ]
   ")
+
+  nchar_msg_map <- c(
+    GT = "Use nzchar(x) instead of nchar(x) > 0. ",
+    NE = "Use nzchar(x) instead of nchar(x) != 0. ",
+    LE = "Use !nzchar(x) instead of nchar(x) <= 0. ",
+    EQ = "Use !nzchar(x) instead of nchar(x) == 0. ",
+    GE = "nchar(x) >= 0 is always true, maybe you want nzchar(x)? ",
+    LT = "nchar(x) < 0 is always false, maybe you want !nzchar(x)? "
+  )
 
   keepna_note <- paste(
     "Whenever missing data is possible,",
@@ -92,31 +108,48 @@ nzchar_linter <- function() {
     "nzchar(NA) is TRUE by default."
   )
 
+  # For ordered operators like '>', we need to give the message for
+  #   its "opposite" (not inverse) if the bad usage is on the RHS,
+  #   e.g. 0 < nchar(x) has to be treated as nchar(x) > 0.
+  op_for_msg <- function(expr, const) {
+    op <- xml_name(xml_find_first(expr, "*[not(self::COMMENT)][2]"))
+    maybe_needs_flip <-
+      !is.na(xml_find_first(expr, sprintf("*[not(self::COMMENT)][1][%s]", const)))
+
+    ordered_ops <- c("GT", "GE", "LE", "LT")
+    ordered_idx <- match(op, ordered_ops)
+
+    needs_flip <- maybe_needs_flip & !is.na(ordered_idx)
+    # un-benchmarked, but should be faster (though less readable) as
+    # > ordered_ops[5L - ordered_idx[needs_flip]]
+    op[needs_flip] <- rev(ordered_ops)[ordered_idx[needs_flip]]
+    op
+  }
+
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
 
     comparison_expr <- xml_find_all(xml, comparison_xpath)
+    comparison_op <- op_for_msg(comparison_expr, const = "STR_CONST")
     comparison_lints <- xml_nodes_to_lints(
       comparison_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        'Use nzchar() instead of comparing strings to "".',
-        "Note that if x is a factor, you'll have use ",
-        'as.character() to replicate an implicit conversion that happens in x == "".',
+      lint_message = paste0(
+        comparison_msg_map[comparison_op],
+        "Note that unlike nzchar(), ", comparison_op, " coerces to character, ",
+        "so you'll have to use as.character() if x is a factor. ",
         keepna_note
       ),
       type = "warning"
     )
 
-    nchar_expr <- xml_find_all(xml, nchar_xpath)
+    xml_calls <- source_expression$xml_find_function_calls("nchar")
+    nchar_expr <- xml_find_all(xml_calls, nchar_xpath)
+    nchar_op <- op_for_msg(nchar_expr, const = "NUM_CONST")
     nchar_lints <- xml_nodes_to_lints(
       nchar_expr,
       source_expression = source_expression,
-      lint_message = paste(
-        "Use nzchar() instead of comparing nchar(x) to 0.",
-        keepna_note
-      ),
+      lint_message = paste0(nchar_msg_map[nchar_op], keepna_note),
       type = "warning"
     )
 

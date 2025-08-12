@@ -66,7 +66,7 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
 
   pipes <- setdiff(magrittr_pipes, "%$%")
   to_pipe_xpath <- glue("
-    ./preceding-sibling::*[1][
+    ./preceding-sibling::*[not(self::COMMENT)][1][
       self::PIPE or
       self::SPECIAL[{ xp_text_in_table(pipes) }]
     ]
@@ -87,26 +87,22 @@ unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { #
     )
   }
   call_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'c']
-    /parent::expr
-    /parent::expr[
-      not(EQ_SUB)
-      and ( {xp_or(zero_arg_cond, one_arg_cond)} )
-    ]
-  ")
+  parent::expr[
+    not(EQ_SUB)
+    and ( {xp_or(zero_arg_cond, one_arg_cond)} )
+  ]")
   num_args_xpath <- "count(./expr) - 1"
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    if (is.null(xml)) return(list())
-    c_calls <- xml_find_all(xml, call_xpath)
+    xml_calls <- source_expression$xml_find_function_calls("c")
+    c_calls <- xml_find_all(xml_calls, call_xpath)
 
     # bump count(args) by 1 if inside a pipeline
     num_args <- as.integer(xml_find_num(c_calls, num_args_xpath)) +
       as.integer(!is.na(xml_find_first(c_calls, to_pipe_xpath)))
     # NB: the xpath guarantees num_args is 0, 1, or 2. 2 comes
     #   in "a" %>% c("b").
-    # TODO(michaelchirico): can we handle this all inside the XPath with reasonable concision?
+    # TODO(#2476): Push this logic back into the XPath.
     is_unneeded <- num_args <= 1L
     c_calls <- c_calls[is_unneeded]
     num_args <- num_args[is_unneeded]

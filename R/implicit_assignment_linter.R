@@ -94,7 +94,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
   }
   if (allow_scoped) {
     # force 2nd preceding to ensure we're in the loop condition, not the loop expression
-    in_branch_cond <- "ancestor::expr[preceding-sibling::*[2][self::IF or self::WHILE]]"
+    in_branch_cond <- "ancestor-or-self::expr[preceding-sibling::*[2][self::IF or self::WHILE]]"
     xpath <- paste0(
       xpath,
       # _if_ we're in an IF/WHILE branch, lint if the assigned SYMBOL appears anywhere later on.
@@ -102,22 +102,25 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     )
   }
 
+  implicit_message <- paste(
+    "Avoid implicit assignments in function calls.",
+    "For example, instead of `if (x <- 1L) { ... }`, write `x <- 1L; if (x) { ... }`."
+  )
+
+  print_message <- "Call print() explicitly instead of relying on implicit printing behavior via '('."
+
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
     bad_expr <- xml_find_all(xml, xpath)
 
-    lint_message <- paste(
-      "Avoid implicit assignments in function calls.",
-      "For example, instead of `if (x <- 1L) { ... }`, write `x <- 1L; if (x) { ... }`."
-    )
+    print_only <- !is.na(xml_find_first(bad_expr, "parent::expr[parent::exprlist and *[1][self::OP-LEFT-PAREN]]"))
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = lint_message,
+      lint_message = ifelse(print_only, print_message, implicit_message),
       type = "warning"
     )
   })

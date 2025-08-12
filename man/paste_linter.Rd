@@ -18,18 +18,16 @@ paste_linter(
 \code{paste()} and \code{paste0()} with \code{collapse = ", "} is not linted.}
 
 \item{allow_file_path}{String, one of \code{"never"}, \code{"double_slash"}, or \code{"always"}; \code{"double_slash"} by default.
-If \code{"never"}, usage of \code{paste()} and \code{paste0()} to construct file paths is not linted. If \code{"double_slash"},
+If \code{"always"}, usage of \code{paste()} and \code{paste0()} to construct file paths is not linted. If \code{"double_slash"},
 strings containing consecutive forward slashes will not lint. The main use case here is for URLs -- "paths" like
 \code{"https://"} will not induce lints, since constructing them with \code{file.path()} might be deemed unnatural.
-Lastly, if \code{"always"}, strings with consecutive forward slashes will also lint. Note that \code{"//"} is never linted
+Lastly, if \code{"never"}, strings with consecutive forward slashes will also lint. Note that \code{"//"} is never linted
 when it comes at the beginning or end of the input, to avoid requiring empty inputs like
 \code{file.path("", ...)} or \code{file.path(..., "")}.}
 }
 \description{
 The following issues are linted by default by this linter
 (see arguments for which can be de-activated optionally):
-}
-\details{
 \enumerate{
 \item Block usage of \code{\link[=paste]{paste()}} with \code{sep = ""}. \code{\link[=paste0]{paste0()}} is a faster, more concise alternative.
 \item Block usage of \code{paste()} or \code{paste0()} with \code{collapse = ", "}. \code{\link[=toString]{toString()}} is a direct
@@ -72,6 +70,11 @@ lint(
   linters = paste_linter(allow_file_path = "never")
 )
 
+lint(
+  text = 'paste0(x, collapse = "")',
+  linters = paste_linter()
+)
+
 # okay
 lint(
   text = 'paste0("a", "b")',
@@ -110,6 +113,11 @@ lint(
 
 lint(
   text = 'paste0("http://site.com/", path)',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste(x, collapse = "")',
   linters = paste_linter()
 )
 

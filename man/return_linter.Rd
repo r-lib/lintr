@@ -8,7 +8,8 @@ return_linter(
   return_style = c("implicit", "explicit"),
   allow_implicit_else = TRUE,
   return_functions = NULL,
-  except = NULL
+  except = NULL,
+  except_regex = NULL
 )
 }
 \arguments{
@@ -19,7 +20,8 @@ explicitly supplied.}
 
 \item{allow_implicit_else}{Logical, default \code{TRUE}. If \code{FALSE}, functions with a terminal
 \code{if} clause must always have an \verb{else} clause, making the \code{NULL} alternative explicit
-if necessary.}
+if necessary. Similarly, functions with terminal \code{\link[=switch]{switch()}} statements must have an
+explicit default case.}
 
 \item{return_functions}{Character vector of functions that are accepted as terminal calls
 when \code{return_style = "explicit"}. These are in addition to exit functions
@@ -27,10 +29,11 @@ from base that are always allowed: \code{\link[=stop]{stop()}}, \code{\link[=q]{
 \code{tryInvokeRestart()}, \code{\link[=UseMethod]{UseMethod()}}, \code{\link[=NextMethod]{NextMethod()}}, \code{\link[=standardGeneric]{standardGeneric()}},
 \code{\link[=callNextMethod]{callNextMethod()}}, \code{\link[=.C]{.C()}}, \code{\link[=.Call]{.Call()}}, \code{\link[=.External]{.External()}}, and \code{\link[=.Fortran]{.Fortran()}}.}
 
-\item{except}{Character vector of functions that are not checked when
+\item{except, except_regex}{Character vector of functions that are not checked when
 \code{return_style = "explicit"}. These are in addition to namespace hook functions
 that are never checked: \code{.onLoad()}, \code{.onUnload()}, \code{.onAttach()}, \code{.onDetach()},
-\code{.Last.lib()}, \code{.First()} and \code{.Last()}.}
+\code{.Last.lib()}, \code{.First()} and \code{.Last()}. \code{except} matches function names exactly,
+while \code{except_regex} does exclusion by pattern matching with \code{\link[rex:re_matches]{rex::re_matches()}}.}
 }
 \description{
 This linter checks functions' \code{\link[=return]{return()}} expressions.

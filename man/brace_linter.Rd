@@ -4,10 +4,21 @@
 \alias{brace_linter}
 \title{Brace linter}
 \usage{
-brace_linter(allow_single_line = FALSE)
+brace_linter(
+  allow_single_line = FALSE,
+  function_bodies = c("multi_line", "always", "not_inline", "never")
+)
 }
 \arguments{
-\item{allow_single_line}{if \code{TRUE}, allow an open and closed curly pair on the same line.}
+\item{allow_single_line}{If \code{TRUE}, allow an open and closed curly pair on the same line.}
+
+\item{function_bodies}{When to require function bodies to be wrapped in curly braces. One of
+\itemize{
+\item \code{"always"} to require braces around all function bodies, including inline functions,
+\item \code{"not_inline"} to require braces when a function body does not start on the same line as its signature,
+\item \code{"multi_line"} (the default) to require braces when a function definition spans multiple lines,
+\item \code{"never"} to never require braces in function bodies.
+}}
 }
 \description{
 Perform various style checks related to placement and spacing of curly braces:
@@ -20,7 +31,8 @@ Perform various style checks related to placement and spacing of curly braces:
 \item Closing curly braces in \code{if} conditions are on the same line as the corresponding \verb{else}.
 \item Either both or neither branch in \code{if}/\verb{else} use curly braces, i.e., either both branches use \code{{...}} or neither
 does.
-\item Functions spanning multiple lines use curly braces.
+\item Function bodies are wrapped in curly braces.
+\item \code{\link[testthat:test_that]{testthat::test_that()}}'s \verb{code=} argument must be wrapped in braces.
 }
 }
 \examples{
@@ -33,6 +45,11 @@ lint(
 writeLines("if (TRUE) {\n return(1) }")
 lint(
   text = "if (TRUE) {\n return(1) }",
+  linters = brace_linter()
+)
+
+lint(
+  text = "test_that('my test', expect_identical(foo(), 1))",
   linters = brace_linter()
 )
 
@@ -55,6 +72,12 @@ lint(
   text = "if (TRUE) { return(1) }",
   linters = brace_linter(allow_single_line = TRUE)
 )
+
+lint(
+  text = "test_that('my test', { expect_identical(foo(), 1) })",
+  linters = brace_linter()
+)
+
 }
 \seealso{
 \itemize{

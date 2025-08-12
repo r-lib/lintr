@@ -37,12 +37,10 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
-  attach_pkg_xpath <- glue("
-  //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-    /parent::expr
-    /following-sibling::expr
+  attach_pkg_xpath <- "
+  following-sibling::expr
     /*[self::SYMBOL or self::STR_CONST]
-  ")
+  "
 
   namespace_xpath <- glue("
   //SYMBOL_PACKAGE[{ xp_text_in_table(invalid_backends) }]
@@ -74,9 +72,11 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
   Linter(linter_level = "file", function(source_expression) {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
-    if (is.null(xml)) return(list())
 
-    attach_str <- get_r_string(xml_find_all(xml, attach_pkg_xpath))
+    attach_str <- get_r_string(xml_find_all(
+      source_expression$xml_find_function_calls(c("library", "require")),
+      attach_pkg_xpath
+    ))
     if (any(invalid_backends %in% attach_str)) {
       return(list())
     }

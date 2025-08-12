@@ -3,19 +3,18 @@ test_that("pipe-continuation correctly handles stand-alone expressions", {
   lint_msg <- rex::rex("Put a space before `%>%` and a new line after it,")
 
   # Expressions without pipes are ignored
-  expect_lint("blah", NULL, linter)
+  expect_no_lint("blah", linter)
 
   # Pipe expressions on a single line are ignored
-  expect_lint("foo %>% bar() %>% baz()", NULL, linter)
+  expect_no_lint("foo %>% bar() %>% baz()", linter)
 
   # Pipe expressions spanning multiple lines with each expression on a line are ignored
-  expect_lint(
+  expect_no_lint(
     trim_some("
       foo %>%
         bar() %>%
         baz()
     "),
-    NULL,
     linter
   )
 
@@ -66,13 +65,12 @@ test_that("pipe-continuation linter correctly handles nesting", {
   )
 
   # but no lints here
-  expect_lint(
+  expect_no_lint(
     trim_some("
       1:4 %>% {
        (.) %>% sum()
       }
     "),
-    NULL,
     linter
   )
 })
@@ -84,14 +82,13 @@ test_that("pipe-continuation linter handles native pipe", {
   lint_msg_native <- rex::rex("Put a space before `|>` and a new line after it,")
   lint_msg_magrittr <- rex::rex("Put a space before `%>%` and a new line after it,")
 
-  expect_lint("foo |> bar() |> baz()", NULL, linter)
-  expect_lint(
+  expect_no_lint("foo |> bar() |> baz()", linter)
+  expect_no_lint(
     trim_some("
       foo |>
         bar() |>
         baz()
     "),
-    NULL,
     linter
   )
   expect_lint(
@@ -138,55 +135,50 @@ test_that("pipe-continuation linter handles native pipe", {
 
 local({
   linter <- pipe_continuation_linter()
-  valid_code <- c(
-    # all on one line
+  .cases <- tibble::tribble(
+    ~code_string,            ~.test_name,
     trim_some("
       my_fun <- function() {
         a %>% b()
       }
-    "),
+    "),                      "two on one line",
     trim_some("
       my_fun <- function() {
         a %>% b() %>% c()
       }
-    "),
+    "),                      "three on one line",
     trim_some("
       with(
         diamonds,
         x %>% head(10) %>% tail(5)
       )
-    "),
+    "),                      "three inside with()",
     trim_some("
       test_that('blah', {
         test_data <- diamonds %>% head(10) %>% tail(5)
       })
-    "),
-
-    # two different single-line pipelines
+    "),                      "three inside test_that()",
     trim_some("
       {
         x <- a %>% b %>% c
         y <- c %>% b %>% a
       }
-    "),
-
-    # at most one pipe-character per line
+    "),                      "two different single-line pipelines",
     trim_some("
       my_fun <- function() {
         a %>%
           b() %>%
           c()
       }
-    ")
+    "),                      "at most one pipe-character per line"
   )
   patrick::with_parameters_test_that(
     "valid nesting is handled",
     # nolint next: unnecessary_nesting_linter. TODO(#2334): Remove this nolint.
     {
-      expect_lint(code_string, NULL, linter)
+      expect_no_lint(code_string, linter)
     },
-    .test_name = valid_code,
-    code_string = valid_code
+    .cases = .cases
   )
 })
 

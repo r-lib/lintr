@@ -4,10 +4,12 @@
 \alias{read_settings}
 \title{Read lintr settings}
 \usage{
-read_settings(filename)
+read_settings(filename, call = parent.frame())
 }
 \arguments{
 \item{filename}{Source file to be linted.}
+
+\item{call}{Passed to malformed to ensure linear trace.}
 }
 \description{
 Lintr searches for settings for a given source file in the following order:
@@ -25,7 +27,7 @@ or the environment variable \code{R_LINTR_LINTER_FILE}
 This file is a DCF file, see \code{\link[base:dcf]{base::read.dcf()}} for details.
 Here is an example of a \code{.lintr} file:
 
-\if{html}{\out{<div class="sourceCode dcf">}}\preformatted{linters: linters_with_defaults(
+\if{html}{\out{<div class="sourceCode">}}\preformatted{linters: linters_with_defaults(
     any_duplicated_linter(),
     any_is_na_linter(),
     backport_linter("oldrel-4", except = c("R_user_dir", "str2lang")),

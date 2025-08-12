@@ -9,13 +9,15 @@
 #'   means an individual expression, while `"file"` means all expressions
 #'   in the current file are available.
 #'
-#' @examplesIf requireNamespace("withr", quietly = TRUE)
-#' tmp <- withr::local_tempfile(lines = c("x <- 1", "y <- x + 1"))
+#' @examples
+#' tmp <- tempfile()
+#' writeLines(c("x <- 1", "y <- x + 1"), tmp)
 #' source_exprs <- get_source_expressions(tmp)
 #' is_lint_level(source_exprs$expressions[[1L]], level = "expression")
 #' is_lint_level(source_exprs$expressions[[1L]], level = "file")
 #' is_lint_level(source_exprs$expressions[[3L]], level = "expression")
 #' is_lint_level(source_exprs$expressions[[3L]], level = "file")
+#' unlink(tmp)
 #'
 #' @export
 is_lint_level <- function(source_expression, level = c("expression", "file")) {
@@ -26,7 +28,7 @@ is_lint_level <- function(source_expression, level = c("expression", "file")) {
 
 #' Determine whether a linter needs to run for a given source_expression level
 #'
-#' Used by [lint()] to avoid unneccessary calls to linters.
+#' Used by [lint()] to avoid unnecessary calls to linters.
 #'
 #' @param linter A linter.
 #' @param level Which level of expression is being tested? `"expression"`

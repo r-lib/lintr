@@ -29,11 +29,10 @@
 #' @evalRd rd_tags("stopifnot_all_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-stopifnot_all_linter <- make_linter_from_xpath(
+stopifnot_all_linter <- make_linter_from_function_xpath(
+  function_names = "stopifnot",
   xpath = "
-  //SYMBOL_FUNCTION_CALL[text() = 'stopifnot']
-    /parent::expr
-    /parent::expr
+  parent::expr
     /expr[expr/SYMBOL_FUNCTION_CALL[text() = 'all']]
   ",
   lint_message = paste(
