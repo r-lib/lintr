@@ -42,5 +42,36 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
     )
   )
   write.dcf(the_config, config_file, width = Inf)
+
+  pkg_path <- find_package(path)
+
+  if (is.null(pkg_path)) {
+    return(invisible(config_file))
+  }
+
+  rbuildignore_path <- file.path(pkg_path, ".Rbuildignore")
+  rel_path <- substring(
+    config_file,
+    first = nchar(pkg_path) + 2L,
+    last = nchar(config_file)
+  )
+  escaped_config_path <- rex::rex(start, rel_path, end)
+
+  if (!file.exists(rbuildignore_path)) {
+    writeLines(escaped_config_path, rbuildignore_path)
+    cli_inform("Added {.val {escaped_config_file}} to {.file {rbuildignore_path}}.")
+    return(invisible(config_file))
+  }
+
+  ignored <- readLines(rbuildignore_path, warn = FALSE)
+
+  if (escaped_config_path %in% ignored) {
+    cli_inform("Configuration file {.val {escaped_config_file}} is already ignored in {.file {rbuildignore_path}}.")
+    return(invisible(config_file))
+  }
+
+  writeLines(c(ignored, escaped_config_path), rbuildignore_path)
+  cli_inform("Added {.val {escaped_config_file}} to {.file {rbuildignore_path}}.")
+
   invisible(config_file)
 }
