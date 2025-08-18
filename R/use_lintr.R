@@ -50,11 +50,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   }
 
   rbuildignore_path <- file.path(pkg_path, ".Rbuildignore")
-  rel_path <- substring(
-    config_file,
-    first = nchar(pkg_path) + 2L,
-    last = nchar(config_file)
-  )
+  rel_path <- gsub(paste0(pkg_path, "/"), "", config_file, fixed = TRUE)
   escaped_config_path <- rex::rex(start, rel_path, end)
 
   if (!file.exists(rbuildignore_path)) {
