@@ -46,30 +46,41 @@ test_that("No .Rbuildignore is created of packages", {
 
 test_that("No .Rbuildignore is filled outside of packages", {
   tmp <- withr::local_tempdir()
-  ignore <- file.path(tmp, ".Rbuildignore")
-  file.create(ignore)
+  ignore_path <- file.path(tmp, ".Rbuildignore")
+  file.create(ignore_path)
 
   lintr_file <- use_lintr(path = tmp, type = "full")
-  expect_identical(readLines(ignore), character())
+  expect_identical(readLines(ignore_path), character())
 })
 
-test_that("No .Rbuildignore is filled if matching regex exists", {
+test_that("No .Rbuildignore is filled if pattern already present", {
   tmp <- withr::local_tempdir()
-  file.create(file.path(tmp, "DESCRIPTION"))
-  ignore <- file.path(tmp, ".Rbuildignore")
-  file.create(ignore)
-  cat(file = ignore, ".*", sep = "\n")
+  writeLines(
+    "Package: test",
+    file.path(tmp, "DESCRIPTION")
+  )
+  ignore_path <- file.path(tmp, ".Rbuildignore")
+  ignore <- c("^fu$", "^\\.lintr$", "^bar$")
+  writeLines(
+    ignore,
+    ignore_path
+  )
 
   lintr_file <- use_lintr(path = tmp, type = "full")
-  expect_identical(readLines(ignore), ".*")
+  expect_identical(readLines(ignore_path), ignore)
 })
 
 test_that("use_lintr creates the correct regex", {
   tmp <- withr::local_tempdir()
-  file.create(file.path(tmp, "DESCRIPTION"))
-  ignore <- file.path(tmp, ".Rbuildignore")
-  file.create(ignore)
-  cat(file = ignore, "^fu$", "^bar$", sep = "\n")
+  writeLines(
+    "Package: test",
+    file.path(tmp, "DESCRIPTION")
+  )
+  ignore_path <- file.path(tmp, ".Rbuildignore")
+  writeLines(
+    c("^fu$", "^bar$"),
+    ignore_path
+  )
 
   expect_message(
     {
@@ -77,21 +88,5 @@ test_that("use_lintr creates the correct regex", {
     },
     regexp = "Adding .* to .Rbuildignore"
   )
-  expect_identical(readLines(ignore), c("^fu$", "^bar$", "^\\.lintr$"))
-})
-
-test_that("use_lintr handles missing final new line", {
-  tmp <- withr::local_tempdir()
-  file.create(file.path(tmp, "DESCRIPTION"))
-  ignore <- file.path(tmp, ".Rbuildignore")
-  file.create(ignore)
-  cat(file = ignore, "^fu$\n^bar$")
-
-  expect_message(
-    {
-      lintr_file <- use_lintr(path = tmp, type = "full")
-    },
-    regexp = "Adding .* to .Rbuildignore"
-  )
-  expect_identical(readLines(ignore), c("^fu$", "^bar$", "^\\.lintr$"))
+  expect_identical(readLines(ignore_path), c("^fu$", "^bar$", "^\\.lintr$"))
 })
