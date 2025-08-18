@@ -86,7 +86,7 @@ test_that("use_lintr creates the correct regex", {
     {
       lintr_file <- use_lintr(path = tmp, type = "full")
     },
-    regexp = "Adding .* to .Rbuildignore"
+    regexp = rex::rex("Added ^\\.lintr$ to `.Rbuildignore`")
   )
   expect_identical(readLines(ignore_path), c("^fu$", "^bar$", "^\\.lintr$"))
 })
