@@ -48,7 +48,6 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
   if (is.null(pkg_path)) {
     return(invisible(config_file))
   }
-  cli_inform("Detected package root at {.path {pkg_path}}.")
 
   rbuildignore_path <- file.path(pkg_path, ".Rbuildignore")
   rel_path <- xfun::relative_path(config_file, pkg_path)
