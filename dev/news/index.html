@@ -125,6 +125,8 @@
 <li>New argument <code>include_s4_slots</code> for the <code>xml_find_function_calls()</code> entry in the <code><a href="../reference/get_source_expressions.html">get_source_expressions()</a></code> to govern whether calls of the form <code>s4Obj@fun()</code> are included in the result (<a href="https://github.com/r-lib/lintr/issues/2820" class="external-link">#2820</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/sprintf_linter.html">sprintf_linter()</a></code> lints <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf()</a></code> and <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">gettextf()</a></code> calls when a constant string is passed to <code>fmt</code> (<a href="https://github.com/r-lib/lintr/issues/2894" class="external-link">#2894</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
+<li>
+<code><a href="../reference/use_lintr.html">use_lintr()</a></code> adds the created <code>.lintr</code> file to the <code>.Rbuildignore</code> if run in a package (<a href="https://github.com/r-lib/lintr/issues/2926" class="external-link">#2926</a>, initial work by <a href="https://github.com/MEO265" class="external-link">@MEO265</a>, finalized by <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>
