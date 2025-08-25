@@ -65,7 +65,7 @@ expect_comparison_linter <- function() {
     xml_calls <- source_expression$xml_find_function_calls("expect_true")
     bad_expr <- xml_find_all(xml_calls, xpath)
 
-    comparator <- xml_find_chr(bad_expr, "string(expr[2]/*[2])")
+    comparator <- xml_find_chr(bad_expr, "string(expr[2]/*[not(self::COMMENT)][2])")
     expectation <- comparator_expectation_map[comparator]
     lint_message <- sprintf("%s(x, y) is better than expect_true(x %s y).", expectation, comparator)
     xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, type = "warning")

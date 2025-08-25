@@ -1,21 +1,21 @@
 test_that("sort_linter skips allowed usages", {
   linter <- sort_linter()
 
-  expect_lint("order(y)", NULL, linter)
+  expect_no_lint("order(y)", linter)
 
-  expect_lint("y[order(x)]", NULL, linter)
+  expect_no_lint("y[order(x)]", linter)
 
   # If another function is intercalated, don't fail
-  expect_lint("x[c(order(x))]", NULL, linter)
+  expect_no_lint("x[c(order(x))]", linter)
 
-  expect_lint("x[order(y, x)]", NULL, linter)
-  expect_lint("x[order(x, y)]", NULL, linter)
+  expect_no_lint("x[order(y, x)]", linter)
+  expect_no_lint("x[order(x, y)]", linter)
   # pretty sure this never makes sense, but test anyway
-  expect_lint("x[order(y, na.last = x)]", NULL, linter)
+  expect_no_lint("x[order(y, na.last = x)]", linter)
 })
 
 
-test_that("sort_linter blocks simple disallowed usages", {
+test_that("sort_linter blocks simple disallowed usages for x[order(x)] cases", {
   linter <- sort_linter()
   lint_message <- rex::rex("sort(", anything, ") is better than")
 
@@ -62,6 +62,32 @@ test_that("sort_linter produces customized warning message", {
     rex::rex("sort(f(), na.last = TRUE) is better than f()[order(f())]"),
     linter
   )
+
+  # comment torture
+  expect_lint(
+    trim_some("
+      x[        # comment
+        order(  # comment
+        x       # comment
+        ,       # comment
+        na.last # comment
+        =       # comment
+        FALSE   # comment
+        )       # comment
+      ]
+    "),
+    rex::rex("sort(x, na.last = FALSE)"),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      f( # comment
+      )[order(f())]
+    "),
+    rex::rex("sort(f(), na.last = TRUE) is better than f()[order(f())]"),
+    linter
+  )
 })
 
 test_that("sort_linter works with multiple lints in a single expression", {
@@ -89,20 +115,20 @@ test_that("sort_linter skips usages calling sort arguments", {
   linter <- sort_linter()
 
   # any arguments to sort --> not compatible
-  expect_lint("sort(x, decreasing = TRUE) == x", NULL, linter)
-  expect_lint("sort(x, na.last = TRUE) != x", NULL, linter)
-  expect_lint("sort(x, method_arg = TRUE) == x", NULL, linter)
+  expect_no_lint("sort(x, decreasing = TRUE) == x", linter)
+  expect_no_lint("sort(x, na.last = TRUE) != x", linter)
+  expect_no_lint("sort(x, method_arg = TRUE) == x", linter)
 })
 
 test_that("sort_linter skips when inputs don't match", {
   linter <- sort_linter()
 
-  expect_lint("sort(x) == y", NULL, linter)
-  expect_lint("sort(x) == foo(x)", NULL, linter)
-  expect_lint("sort(foo(x)) == x", NULL, linter)
+  expect_no_lint("sort(x) == y", linter)
+  expect_no_lint("sort(x) == foo(x)", linter)
+  expect_no_lint("sort(foo(x)) == x", linter)
 })
 
-test_that("sort_linter blocks simple disallowed usages", {
+test_that("sort_linter blocks simple disallowed usages for is.sorted cases", {
   linter <- sort_linter()
   unsorted_msg <- rex::rex("Use is.unsorted(x) to test the unsortedness of a vector.")
   sorted_msg <- rex::rex("Use !is.unsorted(x) to test the sortedness of a vector.")
@@ -117,6 +143,14 @@ test_that("sort_linter blocks simple disallowed usages", {
 
   # expression matching
   expect_lint("sort(foo(x)) == foo(x)", sorted_msg, linter)
+  expect_lint(
+    trim_some("
+      sort(foo(x # comment
+      )) == foo(x)
+    "),
+    sorted_msg,
+    linter
+  )
 })
 
 test_that("lints vectorize", {
