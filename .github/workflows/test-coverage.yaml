@@ -24,6 +24,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          install-quarto: false
           extra-packages: any::covr, any::xml2
           needs: coverage
 
