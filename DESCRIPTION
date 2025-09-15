@@ -35,6 +35,7 @@ Imports:
     rex,
     stats,
     utils,
+    xfun,
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.5)
 Suggests:
@@ -51,7 +52,7 @@ Suggests:
     withr (>= 2.5.0)
 Enhances:
     data.table
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 Config/Needs/website: tidyverse/tidytemplate
 Config/Needs/development: pkgload, testthat, patrick
@@ -68,6 +69,7 @@ Collate:
     'absolute_path_linter.R'
     'actions.R'
     'addins.R'
+    'all_equal_linter.R'
     'any_duplicated_linter.R'
     'any_is_na_linter.R'
     'assignment_linter.R'
