@@ -23,6 +23,8 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          install-quarto: false
 
       - name: Ensure equivalent code generates equivalent lints
         run: |
