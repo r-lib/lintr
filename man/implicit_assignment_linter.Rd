@@ -22,7 +22,7 @@ within that branch, are skipped.}
 }
 \description{
 Assigning inside function calls makes the code difficult to read, and should
-be avoided, except for functions that capture side-effects (e.g. \code{\link[=capture.output]{capture.output()}}).
+be avoided, except for functions that capture side-effects (e.g. \code{\link[utils:capture.output]{utils::capture.output()}}).
 }
 \examples{
 # will produce lints

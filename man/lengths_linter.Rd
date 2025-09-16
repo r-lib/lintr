@@ -7,7 +7,7 @@
 lengths_linter()
 }
 \description{
-\code{\link[=lengths]{lengths()}} is a function that was added to base R in version 3.2.0 to
+\code{\link[base:lengths]{base::lengths()}} is a function that was added to base R in version 3.2.0 to
 get the length of each element of a list. It is equivalent to
 \code{sapply(x, length)}, but faster and more readable.
 }
