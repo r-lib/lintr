@@ -5,7 +5,7 @@
 #'   `expect_true(A); expect_true(B)` is better than `expect_true(A && B)`, and
 #'   `expect_false(A); expect_false(B)` is better than `expect_false(A || B)`.
 #'
-#' Similar reasoning applies to `&&` usage inside [stopifnot()] and `assertthat::assert_that()` calls.
+#' Similar reasoning applies to `&&` usage inside [base::stopifnot()] and `assertthat::assert_that()` calls.
 #'
 #' Relatedly, `dplyr::filter(DF, A & B)` is the same as `dplyr::filter(DF, A, B)`, but the latter will be more readable
 #'   / easier to format for long conditions. Note that this linter assumes usages of `filter()` are `dplyr::filter()`;
