@@ -1,7 +1,7 @@
 #' Avoid implicit assignment in function calls
 #'
 #' Assigning inside function calls makes the code difficult to read, and should
-#' be avoided, except for functions that capture side-effects (e.g. [capture.output()]).
+#' be avoided, except for functions that capture side-effects (e.g. [utils::capture.output()]).
 #'
 #' @param except A character vector of functions to be excluded from linting.
 #' @param allow_lazy logical, default `FALSE`. If `TRUE`, assignments that only

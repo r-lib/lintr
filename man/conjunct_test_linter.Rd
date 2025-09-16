@@ -24,7 +24,7 @@ For readability of test outputs, testing only one thing per call to
 \verb{expect_false(A); expect_false(B)} is better than \code{expect_false(A || B)}.
 }
 \details{
-Similar reasoning applies to \code{&&} usage inside \code{\link[=stopifnot]{stopifnot()}} and \code{assertthat::assert_that()} calls.
+Similar reasoning applies to \code{&&} usage inside \code{\link[base:stopifnot]{base::stopifnot()}} and \code{assertthat::assert_that()} calls.
 
 Relatedly, \code{dplyr::filter(DF, A & B)} is the same as \code{dplyr::filter(DF, A, B)}, but the latter will be more readable
 / easier to format for long conditions. Note that this linter assumes usages of \code{filter()} are \code{dplyr::filter()};

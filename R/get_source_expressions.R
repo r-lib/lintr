@@ -274,7 +274,7 @@ lint_parse_error_r43 <- function(e, source_expression) {
 
 #' Convert a R < 4.3.0 standard parse error message into a lint
 #'
-#' @param message_info Match of the structured parse error message regex, matched in [lint_parse_error()]
+#' @param message_info Match of the structured parse error message regex, matched in `lint_parse_error()`
 #' @param source_expression The source expression that generated the parse error
 #'
 #' @return A [Lint()] based on text mining of the error message captured by `message_info`,

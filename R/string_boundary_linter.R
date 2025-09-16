@@ -1,11 +1,11 @@
 #' Require usage of `startsWith()` and `endsWith()` over `grepl()`/`substr()` versions
 #'
-#' [startsWith()] is used to detect fixed initial substrings; it is more
+#' [base::startsWith()] is used to detect fixed initial substrings; it is more
 #'   readable and more efficient than equivalents using [grepl()] or [substr()].
 #'   c.f. `startsWith(x, "abc")`, `grepl("^abc", x)`,
 #'   `substr(x, 1L, 3L) == "abc"`.
 #'
-#' Ditto for using [endsWith()] to detect fixed terminal substrings.
+#' Ditto for using [base::endsWith()] to detect fixed terminal substrings.
 #'
 #' Note that there is a difference in behavior between how `grepl()` and `startsWith()`
 #'   (and `endsWith()`) handle missing values. In particular, for `grepl()`, `NA` inputs
