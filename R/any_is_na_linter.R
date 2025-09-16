@@ -1,6 +1,5 @@
 #' Require usage of `anyNA(x)` over `any(is.na(x))`
 #'
-# TODO(#2929): roxygen2 apparent bug means we must use base::, but ideally we wouldn't
 #' [base::anyNA()] exists as a replacement for `any(is.na(x))` which is more efficient
 #'   for simple objects, and is at worst equally efficient.
 #'   Therefore, it should be used in all situations instead of the latter.
