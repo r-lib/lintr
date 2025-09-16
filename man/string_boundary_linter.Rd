@@ -13,13 +13,13 @@ are ignored. Some authors may prefer the conciseness offered by \code{grepl()} w
 with \code{startsWith()} or \code{endsWith()}.}
 }
 \description{
-\code{\link[=startsWith]{startsWith()}} is used to detect fixed initial substrings; it is more
+\code{\link[base:startsWith]{base::startsWith()}} is used to detect fixed initial substrings; it is more
 readable and more efficient than equivalents using \code{\link[=grepl]{grepl()}} or \code{\link[=substr]{substr()}}.
 c.f. \code{startsWith(x, "abc")}, \code{grepl("^abc", x)},
 \code{substr(x, 1L, 3L) == "abc"}.
 }
 \details{
-Ditto for using \code{\link[=endsWith]{endsWith()}} to detect fixed terminal substrings.
+Ditto for using \code{\link[base:startsWith]{base::endsWith()}} to detect fixed terminal substrings.
 
 Note that there is a difference in behavior between how \code{grepl()} and \code{startsWith()}
 (and \code{endsWith()}) handle missing values. In particular, for \code{grepl()}, \code{NA} inputs
