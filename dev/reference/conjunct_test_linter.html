@@ -89,7 +89,7 @@ and <code>"always"</code> means no calls to <code><a href="https://rdrr.io/r/sta
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Similar reasoning applies to <code>&amp;&amp;</code> usage inside <code><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot()</a></code> and <code>assertthat::assert_that()</code> calls.</p>
+    <p>Similar reasoning applies to <code>&amp;&amp;</code> usage inside <code><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">base::stopifnot()</a></code> and <code>assertthat::assert_that()</code> calls.</p>
 <p>Relatedly, <code>dplyr::filter(DF, A &amp; B)</code> is the same as <code>dplyr::filter(DF, A, B)</code>, but the latter will be more readable
 / easier to format for long conditions. Note that this linter assumes usages of <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> are <code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code>;
 if you're using another function named <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code>, e.g. <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">stats::filter()</a></code>, please namespace-qualify it to avoid

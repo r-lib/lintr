@@ -78,7 +78,7 @@ calls must follow consecutively after the first one.</p></dd>
 <li><p>Block usage of argument <code>character.only</code>, in particular
 for loading packages in a loop.</p></li>
 <li><p>Block consecutive calls to <code>suppressMessages(library(.))</code>
-in favor of using <code><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages()</a></code> only once to suppress
+in favor of using <code><a href="https://rdrr.io/pkg/backports/man/suppressWarnings.html" class="external-link">backports::suppressMessages()</a></code> only once to suppress
 messages from all <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> calls. Ditto <code><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages()</a></code>.</p></li>
 </ul></div>
     <div class="section level2">
