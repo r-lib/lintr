@@ -60,7 +60,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   wrong_number_fmt <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
     if (n_lints != 0L) {
-      testthat::fail(sprintf(wrong_number_fmt, n_lints, 0L, lint_str))
+      return(testthat::fail(sprintf(wrong_number_fmt, n_lints, 0L, lint_str)))
     }
     return(testthat::succeed())
   }
@@ -170,7 +170,7 @@ expect_lint_free <- function(...) {
   }
 
   if (has_lints) {
-    testthat::fail(paste0("Not lint free\n", lint_output))
+    return(testthat::fail(paste0("Not lint free\n", lint_output)))
   }
   testthat::succeed()
 }
