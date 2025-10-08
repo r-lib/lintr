@@ -97,7 +97,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
 
       itr_env$itr <- itr_env$itr + 1L
 
-      for (field in names(check)) {        
+      for (field in names(check)) {
         if (!field %in% lint_fields) {
           cli_abort(c(
             x = "Check {.val {itr_env$itr}} has an invalid field: {.field {field}}.",
@@ -166,11 +166,10 @@ expect_lint_free <- function(...) {
     lint_output <- format(lints)
   }
 
-  if (!has_lints) {
-    testthat::succeed()
-  } else {
+  if (has_lints) {
     testthat::fail(paste0("Not lint free\n", lint_output))
   }
+  testthat::succeed()
 }
 
 # Helper function to check if testthat is installed.
