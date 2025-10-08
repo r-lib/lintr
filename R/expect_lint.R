@@ -85,45 +85,47 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
     checks <- checks[check_order]
   }
 
-  local({
-    itr_env <- new.env(parent = emptyenv())
-    itr_env$itr <- 0L
-    # valid fields are those from Lint(), plus 'linter'
-    lint_fields <- c(names(formals(Lint)), "linter")
-
-    for (i in seq_along(lints)) {
-      lint <- lints[[i]]
-      check <- checks[[i]]
-
-      itr_env$itr <- itr_env$itr + 1L
-
-      for (field in names(check)) {
-        if (!field %in% lint_fields) {
-          cli_abort(c(
-            x = "Check {.val {itr_env$itr}} has an invalid field: {.field {field}}.",
-            i = "Valid fields are: {.field {lint_fields}}."
-          ))
-        }
-        check_field <- check[[field]]
-        value <- lint[[field]]
-        msg <- sprintf(
-          "check #%d: %s %s did not match %s",
-          itr_env$itr, field, deparse(value), deparse(check)
-        )
-        # deparse ensures that NULL, list(), etc are handled gracefully
-        ok <- if (field == "message") {
-          re_matches_logical(value, check_field)
-        } else {
-          isTRUE(all.equal(value, check_field))
-        }
-        if (!ok) {
-          return(testthat::fail(msg))
-        }
-      }
-    }
-  })
+  expect_lint_impl_(lints, checks)
 
   testthat::succeed()
+}
+
+#' NB: must _not_ succeed(), should only fail() or abort()
+#' @noRd
+expect_lint_impl_ <- function(lints, checks) {
+  itr <- 0L
+  # valid fields are those from Lint(), plus 'linter'
+  lint_fields <- c(names(formals(Lint)), "linter")
+
+  for (i in seq_along(lints)) {
+    lint <- lints[[i]]
+    check <- checks[[i]]
+
+    itr <- itr + 1L
+
+    for (field in names(check)) {
+      if (!field %in% lint_fields) {
+        cli_abort(c(
+          x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+          i = "Valid fields are: {.field {lint_fields}}."
+        ))
+      }
+      check_field <- check[[field]]
+      value <- lint[[field]]
+      ok <- if (field == "message") {
+        re_matches_logical(value, check_field)
+      } else {
+        isTRUE(all.equal(value, check_field))
+      }
+      if (!ok) {
+        return(testthat::fail(sprintf(
+          "check #%d: %s %s did not match %s",
+          # deparse ensures that NULL, list(), etc are handled gracefully
+          itr, field, deparse(value), deparse(check)
+        )))
+      }
+    }
+  }
 }
 
 #' @rdname expect_lint
