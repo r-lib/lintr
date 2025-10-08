@@ -45,7 +45,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
-  parse_settings <- !inline_data && isTRUE(parse_settings)
+  parse_settings <- (!inline_data || !missing(parse_settings)) && isTRUE(parse_settings)
 
   if (parse_settings) {
     read_settings(filename)
@@ -77,26 +77,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     return(exclude(lints, lines = lines, linter_names = names(linters), ...))
   }
 
-  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
-  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
-
-  lints <- list()
-  if (!is_tainted(source_expressions$lines)) {
-    for (expr in source_expressions$expressions) {
-      for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
-        # use withCallingHandlers for friendlier failures on unexpected linter errors
-        lints[[length(lints) + 1L]] <- withCallingHandlers(
-          get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
-          error = function(cond) {
-            cli_abort(
-              "Linter {.fn linter} failed in {.file {filename}}:",
-              parent = cond
-            )
-          }
-        )
-      }
-    }
-  }
+  lints <- lint_impl_(linters, lint_cache, filename, source_expressions)
 
   lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
   lints <- reorder_lints(flatten_lints(lints))
@@ -109,6 +90,33 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   # simplify filename if inline
   zap_temp_filename(res, needs_tempfile)
+}
+
+lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
+  if (is_tainted(source_expressions$lines)) {
+    return(list())
+  }
+
+  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
+  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+
+  lints <- list()
+  for (expr in source_expressions$expressions) {
+    for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
+      # use withCallingHandlers for friendlier failures on unexpected linter errors
+      lints[[length(lints) + 1L]] <- withCallingHandlers(
+        get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
+        error = function(cond) {
+          cli_abort(
+            "Linter {.fn linter} failed in {.file {filename}}:",
+            parent = cond
+          )
+        }
+      )
+    }
+  }
+
+  lints
 }
 
 #' @param path For the base directory of the project (for `lint_dir()`) or
