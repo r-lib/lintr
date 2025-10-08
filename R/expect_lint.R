@@ -59,8 +59,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
 
   wrong_number_fmt <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
-    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
-    return(testthat::expect(n_lints %==% 0L, msg))
+    if (n_lints != 0L) {
+      testthat::fail(sprintf(wrong_number_fmt, n_lints, 0L, lint_str))
+    }
+    return(testthat::succeed())
   }
 
   if (!is.list(checks) || !is.null(names(checks))) { # vector or named list
@@ -69,8 +71,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   checks[] <- lapply(checks, fix_names, "message")
 
   if (n_lints != length(checks)) {
-    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
-    return(testthat::fail(msg))
+    return(testthat::fail(sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)))
   }
 
   if (ignore_order) {
