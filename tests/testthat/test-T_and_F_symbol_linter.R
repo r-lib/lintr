@@ -7,6 +7,7 @@ test_that("T_and_F_symbol_linter skips allowed usages", {
   expect_no_lint("y ~ T + F", linter)
   expect_no_lint("y ~ x + I(T^2)", linter)
   expect_no_lint("y ~ foo(T, F)", linter)
+  expect_no_lint("T[1]", linter)
 })
 
 test_that("T_and_F_symbol_linter blocks disallowed usages", {

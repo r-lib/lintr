@@ -36,7 +36,7 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
     (text() = 'T' or text() = 'F')
     and not(parent::expr[OP-DOLLAR or OP-AT])
     and (
-      not(ancestor::expr[OP-TILDE])
+      not(ancestor::expr[OP-TILDE or OP-LEFT-BRACKET])
       or parent::expr/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]
     )
   ]"
