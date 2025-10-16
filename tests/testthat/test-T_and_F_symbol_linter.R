@@ -8,6 +8,7 @@ test_that("T_and_F_symbol_linter skips allowed usages", {
   expect_no_lint("y ~ x + I(T^2)", linter)
   expect_no_lint("y ~ foo(T, F)", linter)
   expect_no_lint("T[1]", linter)
+  expect_no_lint("T[[1]]", linter)
 })
 
 test_that("T_and_F_symbol_linter blocks disallowed usages", {
@@ -33,6 +34,8 @@ test_that("T_and_F_symbol_linter blocks disallowed usages", {
   expect_lint("DF$bool <- T", msg_true, linter)
   expect_lint("S4@bool <- T", msg_true, linter)
   expect_lint("sum(x, na.rm = T)", msg_true, linter)
+  expect_lint("x[T]", msg_true, linter)
+  expect_lint("x[, cols, drop = T]", msg_true, linter)
   expect_lint("y ~ foo(x, arg = T)", msg_true, linter)
   expect_lint(
     trim_some("

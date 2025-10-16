@@ -35,8 +35,10 @@ T_and_F_symbol_linter <- function() { # nolint: object_name.
   symbol_xpath <- "//SYMBOL[
     (text() = 'T' or text() = 'F')
     and not(parent::expr[OP-DOLLAR or OP-AT])
+    and not(parent::expr/following-sibling::OP-LEFT-BRACKET
+            or parent::expr/following-sibling::LBB)
     and (
-      not(ancestor::expr[OP-TILDE or OP-LEFT-BRACKET])
+      not(ancestor::expr[OP-TILDE])
       or parent::expr/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]
     )
   ]"
