@@ -92,6 +92,9 @@ modify_defaults <- function(defaults, ...) {
 #' }
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
+  if (missing(tags)) {
+    cli_abort("{.arg tags} was not specified. Available tags: {available_tags()}")
+  }
   if (!is.character(tags) && !is.null(tags)) {
     cli_abort("{.arg tags} must be a character vector, or {.code NULL}, not {.obj_type_friendly {tags}}.")
   }
