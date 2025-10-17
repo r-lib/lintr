@@ -1,9 +1,9 @@
 test_that("empty_assignment_linter skips valid usage", {
-  expect_lint("x <- { 3 + 4 }", NULL, empty_assignment_linter())
-  expect_lint("x <- if (x > 1) { 3 + 4 }", NULL, empty_assignment_linter())
+  expect_no_lint("x <- { 3 + 4 }", empty_assignment_linter())
+  expect_no_lint("x <- if (x > 1) { 3 + 4 }", empty_assignment_linter())
 
   # also triggers assignment_linter
-  expect_lint("x = { 3 + 4 }", NULL, empty_assignment_linter())
+  expect_no_lint("x = { 3 + 4 }", empty_assignment_linter())
 })
 
 test_that("empty_assignment_linter blocks disallowed usages", {

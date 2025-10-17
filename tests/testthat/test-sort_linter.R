@@ -1,17 +1,17 @@
 test_that("sort_linter skips allowed usages", {
   linter <- sort_linter()
 
-  expect_lint("order(y)", NULL, linter)
+  expect_no_lint("order(y)", linter)
 
-  expect_lint("y[order(x)]", NULL, linter)
+  expect_no_lint("y[order(x)]", linter)
 
   # If another function is intercalated, don't fail
-  expect_lint("x[c(order(x))]", NULL, linter)
+  expect_no_lint("x[c(order(x))]", linter)
 
-  expect_lint("x[order(y, x)]", NULL, linter)
-  expect_lint("x[order(x, y)]", NULL, linter)
+  expect_no_lint("x[order(y, x)]", linter)
+  expect_no_lint("x[order(x, y)]", linter)
   # pretty sure this never makes sense, but test anyway
-  expect_lint("x[order(y, na.last = x)]", NULL, linter)
+  expect_no_lint("x[order(y, na.last = x)]", linter)
 })
 
 
@@ -82,24 +82,23 @@ test_that("sort_linter works with multiple lints in a single expression", {
     ),
     linter
   )
-
 })
 
 test_that("sort_linter skips usages calling sort arguments", {
   linter <- sort_linter()
 
   # any arguments to sort --> not compatible
-  expect_lint("sort(x, decreasing = TRUE) == x", NULL, linter)
-  expect_lint("sort(x, na.last = TRUE) != x", NULL, linter)
-  expect_lint("sort(x, method_arg = TRUE) == x", NULL, linter)
+  expect_no_lint("sort(x, decreasing = TRUE) == x", linter)
+  expect_no_lint("sort(x, na.last = TRUE) != x", linter)
+  expect_no_lint("sort(x, method_arg = TRUE) == x", linter)
 })
 
 test_that("sort_linter skips when inputs don't match", {
   linter <- sort_linter()
 
-  expect_lint("sort(x) == y", NULL, linter)
-  expect_lint("sort(x) == foo(x)", NULL, linter)
-  expect_lint("sort(foo(x)) == x", NULL, linter)
+  expect_no_lint("sort(x) == y", linter)
+  expect_no_lint("sort(x) == foo(x)", linter)
+  expect_no_lint("sort(foo(x)) == x", linter)
 })
 
 test_that("sort_linter blocks simple disallowed usages", {

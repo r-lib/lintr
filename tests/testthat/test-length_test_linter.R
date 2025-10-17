@@ -1,8 +1,8 @@
 test_that("skips allowed usages", {
   linter <- length_test_linter()
 
-  expect_lint("length(x) > 0", NULL, linter)
-  expect_lint("length(DF[key == val, cols])", NULL, linter)
+  expect_no_lint("length(x) > 0", linter)
+  expect_no_lint("length(DF[key == val, cols])", linter)
 })
 
 test_that("blocks simple disallowed usages", {

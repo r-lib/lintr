@@ -444,7 +444,7 @@ patrick::with_parameters_test_that(
     expression <- expressions[[expression_idx]]
     is_valid_linter_level <-
       (is_linter_level(linter, "expression") && is_lint_level(expression, "expression")) ||
-      (is_linter_level(linter, "file") && is_lint_level(expression, "file"))
+        (is_linter_level(linter, "file") && is_lint_level(expression, "file"))
     if (is_valid_linter_level) {
       expect_no_warning({
         lints <- linter(expression)

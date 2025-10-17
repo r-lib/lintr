@@ -1,38 +1,30 @@
 test_that("spaces_inside_linter skips allowed usages", {
   linter <- spaces_inside_linter()
 
-  expect_lint("blah", NULL, linter)
-  expect_lint("print(blah)", NULL, linter)
-  expect_lint("base::print(blah)", NULL, linter)
-  expect_lint("a[, ]", NULL, linter)
-  expect_lint("a[1]", NULL, linter)
-  expect_lint("fun(\na[1]\n  )", NULL, linter)
-  expect_lint("a(, )", NULL, linter)
-  expect_lint("a(,)", NULL, linter)
-  expect_lint("a(1)", NULL, linter)
-  expect_lint('"a( 1 )"', NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint("print(blah)", linter)
+  expect_no_lint("base::print(blah)", linter)
+  expect_no_lint("a[, ]", linter)
+  expect_no_lint("a[1]", linter)
+  expect_no_lint("fun(\na[1]\n  )", linter)
+  expect_no_lint("a(, )", linter)
+  expect_no_lint("a(,)", linter)
+  expect_no_lint("a(1)", linter)
+  expect_no_lint('"a( 1 )"', linter)
 
   # trailing comments are OK (#636)
-  expect_lint(
-    trim_some("
+  expect_no_lint(trim_some("
       or( #code
         x, y
       )
-    "),
-    NULL,
-    linter
-  )
+    "), linter)
 
-  expect_lint(
-    trim_some("
+  expect_no_lint(trim_some("
       fun(      # this is another comment
         a = 42, # because 42 is always the answer
         b = Inf
       )
-    "),
-    NULL,
-    linter
-  )
+    "), linter)
 })
 
 test_that("spaces_inside_linter blocks diallowed usages", {
@@ -243,5 +235,5 @@ test_that("spaces_inside_linter blocks disallowed usages with a pipe", {
 })
 
 test_that("terminal missing keyword arguments are OK", {
-  expect_lint("alist(missing_arg = )", NULL, spaces_inside_linter())
+  expect_no_lint("alist(missing_arg = )", spaces_inside_linter())
 })
