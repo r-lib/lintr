@@ -2,7 +2,7 @@
 % Please edit documentation in R/length_test_linter.R
 \name{length_test_linter}
 \alias{length_test_linter}
-\title{Check for a common mistake where length is applied in the wrong place}
+\title{Check for a common mistake where length/nrow/ncol/NROW/NCOL is applied in the wrong place}
 \usage{
 length_test_linter()
 }

@@ -1,33 +1,64 @@
 test_that("skips allowed usages", {
   linter <- length_test_linter()
 
-  expect_lint("length(x) > 0", NULL, linter)
-  expect_lint("length(DF[key == val, cols])", NULL, linter)
+  expect_no_lint("length(x) > 0", linter)
+  expect_no_lint("length(DF[key == val, cols])", linter)
+  expect_no_lint("nrow(x) > 0", linter)
+  expect_no_lint("nrow(DF[key == val, cols])", linter)
+  expect_no_lint("ncol(x) > 0", linter)
+  expect_no_lint("ncol(DF[key == val, cols])", linter)
+  expect_no_lint("NROW(x) > 0", linter)
+  expect_no_lint("NROW(DF[key == val, cols])", linter)
+  expect_no_lint("NCOL(x) > 0", linter)
+  expect_no_lint("NCOL(DF[key == val, cols])", linter)
 })
 
-test_that("blocks simple disallowed usages", {
+local({
   linter <- length_test_linter()
   lint_msg_stub <- rex::rex("Checking the length of a logical vector is likely a mistake. Did you mean ")
+  funs <- c(length = "length", nrow = "nrow", ncol = "ncol", NROW = "NROW", NCOL = "NCOL")
 
-  expect_lint("length(x == 0)", rex::rex(lint_msg_stub, "`length(x) == 0`?"), linter)
-  expect_lint("length(x == y)", rex::rex(lint_msg_stub, "`length(x) == y`?"), linter)
-  expect_lint("length(x + y == 2)", rex::rex(lint_msg_stub, "`length(x+y) == 2`?"), linter)
+  patrick::with_parameters_test_that(
+    "blocks simple disallowed usages",
+    {
+      expect_lint(
+          paste0(fun, "(x == 0)"),
+          rex::rex(lint_msg_stub, "`", fun, "(x) == 0`?"),
+          linter
+      )
+      expect_lint(
+          paste0(fun, "(x == y)"),
+          rex::rex(lint_msg_stub, "`", fun, "(x) == y`?"),
+          linter
+      )
+      expect_lint(
+          paste0(fun, "(x + y == 2)"),
+          rex::rex(lint_msg_stub, "`", fun, "(x+y) == 2`?"),
+          linter
+      )
+    },
+    fun = funs,
+    .test_name = names(fun)
+  )
 })
 
 local({
   ops <- c(lt = "<", lte = "<=", gt = ">", gte = ">=", eq = "==", neq = "!=")
+  funs <- rep(c(length = "length", nrow = "nrow", ncol = "ncol", NROW = "NROW", NCOL = "NCOL"),
+              each = length(ops))
+  ops <- rep(ops, length(unique(funs)))
   linter <- length_test_linter()
-  lint_msg_stub <- rex::rex("Checking the length of a logical vector is likely a mistake. Did you mean ")
 
   patrick::with_parameters_test_that(
     "all logical operators detected",
     expect_lint(
-      paste("length(x", op, "y)"),
-      rex::rex("`length(x) ", op, " y`?"),
+      paste0(fun, "(x ", op, " y)"),
+      rex::rex("`", fun, "(x) ", op, " y`?"),
       linter
     ),
+    fun = funs,
     op = ops,
-    .test_name = names(ops)
+    .test_name = paste(names(ops), names(funs))
   )
 })
 
