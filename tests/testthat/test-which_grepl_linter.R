@@ -1,6 +1,6 @@
 test_that("which_grepl_linter skips allowed usages", {
   # this _could_ be combined as p1|p2, but often it's cleaner to read this way
-  expect_lint("which(grepl(p1, x) | grepl(p2, x))", NULL, which_grepl_linter())
+  expect_no_lint("which(grepl(p1, x) | grepl(p2, x))", which_grepl_linter())
 })
 
 test_that("which_grepl_linter blocks simple disallowed usages", {
