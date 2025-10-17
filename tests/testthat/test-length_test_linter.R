@@ -21,19 +21,19 @@ local({
     {
       lint_msg_stub <- sprintf("Checking the %s of a logical vector is likely a mistake. Did you mean ", fun)
       expect_lint(
-          paste0(fun, "(x == 0)"),
-          rex::rex(lint_msg_stub, "`", fun, "(x) == 0`?"),
-          linter
+        paste0(fun, "(x == 0)"),
+        rex::rex(lint_msg_stub, "`", fun, "(x) == 0`?"),
+        linter
       )
       expect_lint(
-          paste0(fun, "(x == y)"),
-          rex::rex(lint_msg_stub, "`", fun, "(x) == y`?"),
-          linter
+        paste0(fun, "(x == y)"),
+        rex::rex(lint_msg_stub, "`", fun, "(x) == y`?"),
+        linter
       )
       expect_lint(
-          paste0(fun, "(x + y == 2)"),
-          rex::rex(lint_msg_stub, "`", fun, "(x+y) == 2`?"),
-          linter
+        paste0(fun, "(x + y == 2)"),
+        rex::rex(lint_msg_stub, "`", fun, "(x+y) == 2`?"),
+        linter
       )
     },
     fun = c("length", "nrow", "ncol", "NROW", "NCOL")
