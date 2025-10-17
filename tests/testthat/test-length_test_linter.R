@@ -13,49 +13,42 @@ test_that("skips allowed usages", {
   expect_no_lint("NCOL(DF[key == val, cols])", linter)
 })
 
-local({
-  linter <- length_test_linter()
+patrick::with_parameters_test_that(
+  "blocks simple disallowed usages",
+  {
+    linter <- length_test_linter()
+    lint_msg_stub <- sprintf("Checking the %s of a logical vector is likely a mistake. Did you mean ", fun)
+    expect_lint(
+      paste0(fun, "(x == 0)"),
+      rex::rex(lint_msg_stub, "`", fun, "(x) == 0`?"),
+      linter
+    )
+    expect_lint(
+      paste0(fun, "(x == y)"),
+      rex::rex(lint_msg_stub, "`", fun, "(x) == y`?"),
+      linter
+    )
+    expect_lint(
+      paste0(fun, "(x + y == 2)"),
+      rex::rex(lint_msg_stub, "`", fun, "(x+y) == 2`?"),
+      linter
+    )
+  },
+  fun = c("length", "nrow", "ncol", "NROW", "NCOL")
+)
 
-  patrick::with_parameters_test_that(
-    "blocks simple disallowed usages",
-    {
-      lint_msg_stub <- sprintf("Checking the %s of a logical vector is likely a mistake. Did you mean ", fun)
-      expect_lint(
-        paste0(fun, "(x == 0)"),
-        rex::rex(lint_msg_stub, "`", fun, "(x) == 0`?"),
-        linter
-      )
-      expect_lint(
-        paste0(fun, "(x == y)"),
-        rex::rex(lint_msg_stub, "`", fun, "(x) == y`?"),
-        linter
-      )
-      expect_lint(
-        paste0(fun, "(x + y == 2)"),
-        rex::rex(lint_msg_stub, "`", fun, "(x+y) == 2`?"),
-        linter
-      )
-    },
+patrick::with_parameters_test_that(
+  "all logical operators detected",
+  expect_lint(
+    sprintf("%s(x %s y)", fun, op),
+    rex::rex("`", fun, "(x) ", op, " y`?"),
+    length_test_linter()
+  ),
+  .cases = expand.grid(
+    op = c("<", "<=", ">", ">=", "==", "!="),
     fun = c("length", "nrow", "ncol", "NROW", "NCOL")
   )
-})
-
-local({
-  cases <- expand.grid(op = c("<", "<=", ">", ">=", "==", "!="),
-                       fun = c("length", "nrow", "ncol", "NROW", "NCOL"))
-  cases$.test_name <- with(cases, paste(fun, op))
-  linter <- length_test_linter()
-
-  patrick::with_parameters_test_that(
-    "all logical operators detected",
-    expect_lint(
-      paste0(fun, "(x ", op, " y)"),
-      rex::rex("`", fun, "(x) ", op, " y`?"),
-      linter
-    ),
-    .cases = cases
-  )
-})
+)
 
 test_that("lints vectorize", {
   expect_lint(
