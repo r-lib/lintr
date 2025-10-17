@@ -2,7 +2,7 @@
 % Please edit documentation in R/length_test_linter.R
 \name{length_test_linter}
 \alias{length_test_linter}
-\title{Check for a common mistake where length/nrow/ncol/NROW/NCOL is applied in the wrong place}
+\title{Check for a common mistake where a size check like 'length' is applied in the wrong place}
 \usage{
 length_test_linter()
 }
@@ -11,10 +11,23 @@ Usage like \code{length(x == 0)} is a mistake. If you intended to check \code{x}
 use \code{length(x) == 0}. Other mistakes are possible, but running \code{length()} on the
 outcome of a logical comparison is never the best choice.
 }
+\details{
+The linter also checks for similar usage with \code{nrow()}, \code{ncol()}, \code{NROW()}, and \code{NCOL()}.
+}
 \examples{
 # will produce lints
 lint(
   text = "length(x == 0)",
+  linters = length_test_linter()
+)
+
+lint(
+  text = "nrow(x > 0) || ncol(x > 0)",
+  linters = length_test_linter()
+)
+
+lint(
+  text = "NROW(x == 1) && NCOL(y == 1)",
   linters = length_test_linter()
 )
 
@@ -23,6 +36,17 @@ lint(
   text = "length(x) > 0",
   linters = length_test_linter()
 )
+
+lint(
+  text = "nrow(x) > 0 || ncol(x) > 0",
+  linters = length_test_linter()
+)
+
+lint(
+  text = "NROW(x) == 1 && NCOL(y) == 1",
+  linters = length_test_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.

@@ -15,12 +15,11 @@ test_that("skips allowed usages", {
 
 local({
   linter <- length_test_linter()
-  lint_msg_stub <- rex::rex("Checking the length of a logical vector is likely a mistake. Did you mean ")
-  funs <- c(length = "length", nrow = "nrow", ncol = "ncol", NROW = "NROW", NCOL = "NCOL")
 
   patrick::with_parameters_test_that(
     "blocks simple disallowed usages",
     {
+      lint_msg_stub <- sprintf("Checking the %s of a logical vector is likely a mistake. Did you mean ", fun)
       expect_lint(
           paste0(fun, "(x == 0)"),
           rex::rex(lint_msg_stub, "`", fun, "(x) == 0`?"),
@@ -37,16 +36,14 @@ local({
           linter
       )
     },
-    fun = funs,
-    .test_name = names(fun)
+    fun = c("length", "nrow", "ncol", "NROW", "NCOL")
   )
 })
 
 local({
-  ops <- c(lt = "<", lte = "<=", gt = ">", gte = ">=", eq = "==", neq = "!=")
-  funs <- rep(c(length = "length", nrow = "nrow", ncol = "ncol", NROW = "NROW", NCOL = "NCOL"),
-              each = length(ops))
-  ops <- rep(ops, length(unique(funs)))
+  cases <- expand.grid(op = c("<", "<=", ">", ">=", "==", "!="),
+                       fun = c("length", "nrow", "ncol", "NROW", "NCOL"))
+  cases$.test_name <- with(cases, paste(fun, op))
   linter <- length_test_linter()
 
   patrick::with_parameters_test_that(
@@ -56,9 +53,7 @@ local({
       rex::rex("`", fun, "(x) ", op, " y`?"),
       linter
     ),
-    fun = funs,
-    op = ops,
-    .test_name = paste(names(ops), names(funs))
+    .cases = cases
   )
 })
 
