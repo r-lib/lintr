@@ -44,7 +44,7 @@ test_that("if_switch_linter handles further nested if/else correctly", {
   #   whole if/else chain is "tainted" / non-switch()-recommended.
   #   (technically, switch can work here, but the semantics are opaque)
   expect_no_lint(
-    "if (x %in% c('a', 'e', 'f')) 1 else if (x == 'b') 2 else if (x == 'c') 3 else if (x == 'd') 4", 
+    "if (x %in% c('a', 'e', 'f')) 1 else if (x == 'b') 2 else if (x == 'c') 3 else if (x == 'd') 4",
     linter
   )
 })
