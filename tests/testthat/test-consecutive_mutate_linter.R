@@ -1,19 +1,19 @@
 test_that("consecutive_mutate_linter skips allowed usages", {
   linter <- consecutive_mutate_linter()
 
-  expect_lint("DF %>% mutate(x = 1)", NULL, linter)
+  expect_no_lint("DF %>% mutate(x = 1)", linter)
 
   # intervening expression
-  expect_lint("DF %>% mutate(x = 1) %>% filter(x > 2) %>% mutate(y = 2)", NULL, linter)
+  expect_no_lint("DF %>% mutate(x = 1) %>% filter(x > 2) %>% mutate(y = 2)", linter)
 
   # pipeline starts with mutate()
-  expect_lint("mutate(DF, x = 1) %>% arrange(y) %>% mutate(z = 2)", NULL, linter)
+  expect_no_lint("mutate(DF, x = 1) %>% arrange(y) %>% mutate(z = 2)", linter)
 
   # new dplyr: .keep and .by arguments are ignored
-  expect_lint("DF %>% mutate(a = 1) %>% mutate(a = a / sum(a), .by = b)", NULL, linter)
-  expect_lint("DF %>% mutate(a = 1) %>% mutate(a = b, .keep = 'none')", NULL, linter)
-  expect_lint("DF %>% mutate(a = a / sum(a), .by = b) %>% mutate(c = 1)", NULL, linter)
-  expect_lint("DF %>% mutate(a = 1, .keep = 'none') %>% mutate(a = a + 1)", NULL, linter)
+  expect_no_lint("DF %>% mutate(a = 1) %>% mutate(a = a / sum(a), .by = b)", linter)
+  expect_no_lint("DF %>% mutate(a = 1) %>% mutate(a = b, .keep = 'none')", linter)
+  expect_no_lint("DF %>% mutate(a = a / sum(a), .by = b) %>% mutate(c = 1)", linter)
+  expect_no_lint("DF %>% mutate(a = 1, .keep = 'none') %>% mutate(a = a + 1)", linter)
 })
 
 patrick::with_parameters_test_that(
@@ -21,59 +21,38 @@ patrick::with_parameters_test_that(
   {
     linter <- consecutive_mutate_linter(invalid_backends = backend)
 
-    expect_lint(
-      trim_some(glue::glue("
+    expect_no_lint(trim_some(glue::glue("
         library({backend})
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")),
-      NULL,
-      linter
-    )
+      ")), linter)
 
-    expect_lint(
-      trim_some(glue::glue("
+    expect_no_lint(trim_some(glue::glue("
         require('{backend}')
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")),
-      NULL,
-      linter
-    )
+      ")), linter)
 
-    expect_lint(
-      trim_some(glue("
+    expect_no_lint(trim_some(glue("
         conn %>%
           tbl({backend}::sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")),
-      NULL,
-      linter
-    )
+      ")), linter)
 
-    expect_lint(
-      trim_some(glue("
+    expect_no_lint(trim_some(glue("
         conn %>%
           tbl({backend}:::sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")),
-      NULL,
-      linter
-    )
+      ")), linter)
 
-    expect_lint(
-      trim_some(glue("
+    expect_no_lint(trim_some(glue("
         #' @import {backend}
         NULL
 
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")),
-      NULL,
-      linter
-    )
+      ")), linter)
 
-    expect_lint(
-      trim_some(glue("
+    expect_no_lint(trim_some(glue("
         #' @importFrom {backend} sql
         NULL
 
@@ -81,10 +60,7 @@ patrick::with_parameters_test_that(
           tbl(sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")),
-      NULL,
-      linter
-    )
+      ")), linter)
   },
   .test_name = c("dbplyr", "custom.backend"),
   backend = c("dbplyr", "custom.backend")
@@ -135,11 +111,11 @@ test_that("consecutive_mutate_linter blocks simple disallowed usages", {
 test_that("'parallel' calls are not linted", {
   linter <- consecutive_mutate_linter()
 
-  expect_lint("foo(mutate(DF1, x = 1), mutate(DF2, y = 2))", NULL, linter)
+  expect_no_lint("foo(mutate(DF1, x = 1), mutate(DF2, y = 2))", linter)
 
-  expect_lint("foo(DF1 %>% mutate(x = 1), DF2 %>% mutate(y = 2))", NULL, linter)
+  expect_no_lint("foo(DF1 %>% mutate(x = 1), DF2 %>% mutate(y = 2))", linter)
 
-  expect_lint("DF1 %>% mutate(x = 1) %>% inner_join(DF2 %>% mutate(y = 2))", NULL, linter)
+  expect_no_lint("DF1 %>% mutate(x = 1) %>% inner_join(DF2 %>% mutate(y = 2))", linter)
 })
 
 test_that("native pipe is linted", {

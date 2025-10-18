@@ -178,32 +178,20 @@ test_that("next-line exclusion works", {
   linter <- assignment_linter()
 
   # blanket exclusion works
-  expect_lint(
-    trim_some("
+  expect_no_lint(trim_some("
       # NLN
       x = 1
-    "),
-    NULL,
-    linter
-  )
+    "), linter)
 
   # specific exclusion works
-  expect_lint(
-    trim_some("
+  expect_no_lint(trim_some("
       # NLN: assignment_linter.
       x = 1
-    "),
-    NULL,
-    linter
-  )
-  expect_lint(
-    trim_some("
+    "), linter)
+  expect_no_lint(trim_some("
       # NLN: assignment.
       x = 1
-    "),
-    NULL,
-    linter
-  )
+    "), linter)
   expect_lint(
     trim_some("
       # NLN: line_length_linter.

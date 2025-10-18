@@ -131,11 +131,7 @@ test_that("it does _not_ handle brew", {
 })
 
 test_that("it does _not_ error with inline \\Sexpr", {
-  expect_lint(
-    "#' text \\Sexpr{1 + 1} more text",
-    NULL,
-    default_linters
-  )
+  expect_no_lint("#' text \\Sexpr{1 + 1} more text", default_linters)
 })
 
 test_that("it does lint .Rmd or .qmd file with malformed input", {

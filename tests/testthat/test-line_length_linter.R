@@ -1,8 +1,8 @@
 test_that("line_length_linter skips allowed usages", {
   linter <- line_length_linter(80L)
 
-  expect_lint("blah", NULL, linter)
-  expect_lint(strrep("x", 80L), NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint(strrep("x", 80L), linter)
 })
 
 test_that("line_length_linter blocks disallowed usages", {
@@ -37,7 +37,7 @@ test_that("line_length_linter blocks disallowed usages", {
 
   linter <- line_length_linter(20L)
   lint_msg <- rex::rex("Lines should not be more than 20 characters. This line is 22 characters.")
-  expect_lint(strrep("a", 20L), NULL, linter)
+  expect_no_lint(strrep("a", 20L), linter)
   expect_lint(
     strrep("a", 22L),
     list(
