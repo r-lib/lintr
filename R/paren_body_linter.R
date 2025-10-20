@@ -36,7 +36,6 @@ paren_body_linter <- make_linter_from_xpath(
       or preceding-sibling::OP-LAMBDA
       or preceding-sibling::IF
       or preceding-sibling::WHILE
-      or preceding-sibling::OP-LAMBDA
     )
   ]
     /following-sibling::expr[1]
