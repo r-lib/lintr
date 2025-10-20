@@ -45,7 +45,7 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
       column_number = source_expression[["column"]][1L],
       type = "style",
       message = sprintf(
-        "The cyclomatic complexity of this expression is %d, which exceeds the limit of %d. %s",
+        "Reduce the cyclomatic complexity of this expression from %d to at most %d. %s",
         complexity, complexity_limit,
         "Consider replacing high-complexity sections like loops and branches with helper functions."
       ),
