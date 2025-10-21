@@ -87,6 +87,11 @@ lint(
 )
 
 lint(
+  text = 'expression(paste("a", "b", sep = ""))',
+  linters = paste_linter()
+)
+
+lint(
   text = 'toString(c("a", "b"))',
   linters = paste_linter()
 )

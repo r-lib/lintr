@@ -75,6 +75,11 @@
 #' )
 #'
 #' lint(
+#'   text = 'expression(paste("a", "b", sep = ""))',
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
 #'   text = 'toString(c("a", "b"))',
 #'   linters = paste_linter()
 #' )
@@ -118,7 +123,8 @@ paste_linter <- function(allow_empty_sep = FALSE,
   check_file_paths <- allow_file_path %in% c("double_slash", "never")
 
   paste_sep_xpath <- "
-  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]
+    and not(parent::*/preceding::expr/SYMBOL_FUNCTION_CALL[text() = 'expression'])]
     /parent::expr
   "
 
