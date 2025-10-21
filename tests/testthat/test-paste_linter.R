@@ -29,6 +29,12 @@ test_that("paste_linter blocks simple disallowed usages for sep=''", {
     rex::rex('paste0(...) is better than paste(..., sep = "").'),
     paste_linter()
   )
+
+  expect_lint(
+    "c(expression(2), paste('a', 'b', sep = ''))",
+    rex::rex('paste0(...) is better than paste(..., sep = "").'),
+    paste_linter()
+  )
 })
 
 test_that("paste_linter skips allowed usages for collapse=', '", {
