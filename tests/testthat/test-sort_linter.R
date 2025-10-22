@@ -12,6 +12,10 @@ test_that("sort_linter skips allowed usages", {
   expect_no_lint("x[order(x, y)]", linter)
   # pretty sure this never makes sense, but test anyway
   expect_no_lint("x[order(y, na.last = x)]", linter)
+
+  # is.unsorted false positives
+  expect_no_lint("identical(sort(x), y)", linter)
+  expect_no_lint("identical(sort(foo(x)), x)", linter)
 })
 
 
