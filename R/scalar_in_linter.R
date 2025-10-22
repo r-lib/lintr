@@ -1,7 +1,10 @@
 #' Block usage like x %in% "a"
 #'
 #' `vector %in% set` is appropriate for matching a vector to a set, but if
-#'   that set has size 1, `==` is more appropriate.
+#'   that set has size 1, `==` is more appropriate. However, if `vector` has
+#'   also size 1 and can be `NA`, the use of `==` should be accompanied by extra
+#'   protection for the missing case (for example, `isTRUE(NA == "arg")` or
+#'   `!is.na(x) && x == "arg"`).
 #'
 #' `scalar %in% vector` is OK, because the alternative (`any(vector == scalar)`)
 #'   is more circuitous & potentially less clear.
@@ -46,7 +49,8 @@ scalar_in_linter <- function(in_operators = NULL) {
     in_op <- xml_find_chr(bad_expr, "string(SPECIAL)")
     lint_msg <- paste0(
       "Use comparison operators (e.g. ==, !=, etc.) to match length-1 scalars instead of ", in_op, ". ",
-      "Note that comparison operators preserve NA where ", in_op, " does not."
+      "Note that if x can be NA, x == 'arg' is NA whereas x ", in_op, " 'arg' is FALSE, ",
+      "so consider extra protection for the missing case in your code."
     )
 
     xml_nodes_to_lints(
