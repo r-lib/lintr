@@ -12,7 +12,10 @@ e.g. \code{{data.table}}'s \verb{\%chin\%} operator.}
 }
 \description{
 \code{vector \%in\% set} is appropriate for matching a vector to a set, but if
-that set has size 1, \code{==} is more appropriate.
+that set has size 1, \code{==} is more appropriate. However, if \code{vector} has
+also size 1 and can be \code{NA}, the use of \code{==} should be accompanied by extra
+protection for the missing case (for example, \code{isTRUE(NA == "arg")} or
+\code{!is.na(x) && x == "arg"}).
 }
 \details{
 \code{scalar \%in\% vector} is OK, because the alternative (\code{any(vector == scalar)})
