@@ -1,17 +1,17 @@
 test_that("sort_linter skips allowed usages", {
   linter <- sort_linter()
 
-  expect_lint("order(y)", NULL, linter)
+  expect_no_lint("order(y)", linter)
 
-  expect_lint("y[order(x)]", NULL, linter)
+  expect_no_lint("y[order(x)]", linter)
 
   # If another function is intercalated, don't fail
-  expect_lint("x[c(order(x))]", NULL, linter)
+  expect_no_lint("x[c(order(x))]", linter)
 
-  expect_lint("x[order(y, x)]", NULL, linter)
-  expect_lint("x[order(x, y)]", NULL, linter)
+  expect_no_lint("x[order(y, x)]", linter)
+  expect_no_lint("x[order(x, y)]", linter)
   # pretty sure this never makes sense, but test anyway
-  expect_lint("x[order(y, na.last = x)]", NULL, linter)
+  expect_no_lint("x[order(y, na.last = x)]", linter)
 })
 
 
