@@ -76,6 +76,7 @@ files in Windows (#2882, @Bisaloo).
 * `T_and_F_symbol_linter()` ignores `T` and `F` used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
 * `T_and_F_symbol_linter()` ignores `T` and `F` if followed by `[` or `[[` (#2944, @mcol).
 * `implicit_assignment_linter()` with `allow_scoped=TRUE` doesn't lint for `if (a <- 1) print(a)` (#2913, @MichaelChirico).
+* `paste_linter()` doesn't lint `expression(paste(., sep = ""))` (#2945, @mcol).
 
 ### Lint accuracy fixes: removing false negatives
 
