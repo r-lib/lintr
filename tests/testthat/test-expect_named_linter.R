@@ -2,17 +2,17 @@ test_that("expect_named_linter skips allowed usages", {
   linter <- expect_named_linter()
 
   # colnames(), rownames(), and dimnames() tests are not equivalent
-  expect_lint("expect_equal(colnames(x), 'a')", NULL, linter)
-  expect_lint("expect_equal(rownames(x), 'a')", NULL, linter)
-  expect_lint("expect_equal(dimnames(x), 'a')", NULL, linter)
+  expect_no_lint("expect_equal(colnames(x), 'a')", linter)
+  expect_no_lint("expect_equal(rownames(x), 'a')", linter)
+  expect_no_lint("expect_equal(dimnames(x), 'a')", linter)
 
-  expect_lint("expect_equal(nrow(x), 4L)", NULL, linter)
+  expect_no_lint("expect_equal(nrow(x), 4L)", linter)
   # NB: also applies to tinytest, but it's sufficient to test testthat
-  expect_lint("testthat::expect_equal(nrow(x), 4L)", NULL, linter)
+  expect_no_lint("testthat::expect_equal(nrow(x), 4L)", linter)
 
   # only check the first argument. yoda tests in the second argument will be
   #   missed, but there are legitimate uses of names() in argument 2
-  expect_lint("expect_equal(colnames(x), names(y))", NULL, linter)
+  expect_no_lint("expect_equal(colnames(x), names(y))", linter)
 })
 
 test_that("expect_named_linter blocks simple disallowed usages", {

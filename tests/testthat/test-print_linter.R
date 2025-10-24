@@ -1,8 +1,8 @@
 test_that("print_linter skips allowed usages", {
   linter <- print_linter()
 
-  expect_lint("print(x)", NULL, linter)
-  expect_lint("print(foo(x))", NULL, linter)
+  expect_no_lint("print(x)", linter)
+  expect_no_lint("print(foo(x))", linter)
 })
 
 test_that("print_linter blocks disallowed usages", {

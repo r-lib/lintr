@@ -1,5 +1,5 @@
 test_that("stopifnot_all_linter skips allowed usages", {
-  expect_lint("stopifnot(all(x) || any(y))", NULL, stopifnot_all_linter())
+  expect_no_lint("stopifnot(all(x) || any(y))", stopifnot_all_linter())
 })
 
 test_that("stopifnot_all_linter blocks simple disallowed usages", {

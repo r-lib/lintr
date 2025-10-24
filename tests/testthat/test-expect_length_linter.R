@@ -1,18 +1,18 @@
 test_that("expect_length_linter skips allowed usages", {
   linter <- expect_length_linter()
 
-  expect_lint("expect_equal(nrow(x), 4L)", NULL, linter)
+  expect_no_lint("expect_equal(nrow(x), 4L)", linter)
   # NB: also applies to tinytest, but it's sufficient to test testthat
-  expect_lint("testthat::expect_equal(nrow(x), 4L)", NULL, linter)
+  expect_no_lint("testthat::expect_equal(nrow(x), 4L)", linter)
 
   # only check the first argument. yoda tests in the second argument will be
   #   missed, but there are legitimate uses of length() in argument 2
-  expect_lint("expect_equal(nrow(x), length(y))", NULL, linter)
+  expect_no_lint("expect_equal(nrow(x), length(y))", linter)
 
   # expect_length() doesn't have info= or label= arguments
-  expect_lint("expect_equal(length(x), n, info = 'x should have size n')", NULL, linter)
-  expect_lint("expect_equal(length(x), n, label = 'x size')", NULL, linter)
-  expect_lint("expect_equal(length(x), n, expected.label = 'target size')", NULL, linter)
+  expect_no_lint("expect_equal(length(x), n, info = 'x should have size n')", linter)
+  expect_no_lint("expect_equal(length(x), n, label = 'x size')", linter)
+  expect_no_lint("expect_equal(length(x), n, expected.label = 'target size')", linter)
 })
 
 test_that("expect_length_linter blocks simple disallowed usages", {

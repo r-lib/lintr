@@ -2,21 +2,21 @@ test_that("expect_s3_class_linter skips allowed usages", {
   linter <- expect_s3_class_linter()
 
   # expect_s3_class doesn't have an inverted version
-  expect_lint("expect_true(!inherits(x, 'class'))", NULL, linter)
+  expect_no_lint("expect_true(!inherits(x, 'class'))", linter)
   # NB: also applies to tinytest, but it's sufficient to test testthat
-  expect_lint("testthat::expect_true(!inherits(x, 'class'))", NULL, linter)
+  expect_no_lint("testthat::expect_true(!inherits(x, 'class'))", linter)
 
   # other is.<x> calls are not suitable for expect_s3_class in particular
-  expect_lint("expect_true(is.na(x))", NULL, linter)
+  expect_no_lint("expect_true(is.na(x))", linter)
 
   # case where expect_s3_class() *could* be used but we don't enforce
-  expect_lint("expect_true(is.data.table(x))", NULL, linter)
+  expect_no_lint("expect_true(is.data.table(x))", linter)
 
   # expect_s3_class() doesn't have info= or label= arguments
-  expect_lint("expect_equal(class(x), k, info = 'x should have class k')", NULL, linter)
-  expect_lint("expect_equal(class(x), k, label = 'x class')", NULL, linter)
-  expect_lint("expect_equal(class(x), k, expected.label = 'target class')", NULL, linter)
-  expect_lint("expect_true(is.data.frame(x), info = 'x should be a data.frame')", NULL, linter)
+  expect_no_lint("expect_equal(class(x), k, info = 'x should have class k')", linter)
+  expect_no_lint("expect_equal(class(x), k, label = 'x class')", linter)
+  expect_no_lint("expect_equal(class(x), k, expected.label = 'target class')", linter)
+  expect_no_lint("expect_true(is.data.frame(x), info = 'x should be a data.frame')", linter)
 })
 
 test_that("expect_s3_class_linter blocks simple disallowed usages", {
