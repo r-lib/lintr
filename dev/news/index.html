@@ -129,6 +129,8 @@
 <code><a href="../reference/use_lintr.html">use_lintr()</a></code> adds the created <code>.lintr</code> file to the <code>.Rbuildignore</code> if run in a package (<a href="https://github.com/r-lib/lintr/issues/2926" class="external-link">#2926</a>, initial work by <a href="https://github.com/MEO265" class="external-link">@MEO265</a>, finalized by <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
 <li>
 <code><a href="../reference/length_test_linter.html">length_test_linter()</a></code> is extended to check incorrect usage of <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow()</a></code>, <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol()</a></code>, <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NROW()</a></code>, <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">NCOL()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2933" class="external-link">#2933</a>, <a href="https://github.com/mcol" class="external-link">@mcol</a>).</li>
+<li>
+<code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code> gains argument <code>allow_paren_print</code> to disable lints for the use of <code>(</code> for auto-printing (<a href="https://github.com/r-lib/lintr/issues/2962" class="external-link">#2962</a>, <a href="https://github.com/TimTaylor" class="external-link">@TimTaylor</a>).</li>
 </ul><div class="section level4">
 <h4 id="new-linters-development-version">New linters<a class="anchor" aria-label="anchor" href="#new-linters-development-version"></a></h4>
 <ul><li>

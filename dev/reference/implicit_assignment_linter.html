@@ -63,7 +63,8 @@ be avoided, except for functions that capture side-effects (e.g. <code><a href="
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">implicit_assignment_linter</span><span class="op">(</span></span>
 <span>  except <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bquote"</span>, <span class="st">"expression"</span>, <span class="st">"expr"</span>, <span class="st">"quo"</span>, <span class="st">"quos"</span>, <span class="st">"quote"</span><span class="op">)</span>,</span>
 <span>  allow_lazy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  allow_scoped <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  allow_scoped <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  allow_paren_print <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -84,6 +85,11 @@ trigger conditionally (e.g. in the RHS of <code>&amp;&amp;</code> or <code>||</c
 <dd><p>Logical, default <code>FALSE</code>. If <code>TRUE</code>, "scoped assignments",
 where the object is assigned in the statement beginning a branch and used only
 within that branch, are skipped.</p></dd>
+
+
+<dt id="arg-allow-paren-print">allow_paren_print<a class="anchor" aria-label="anchor" href="#arg-allow-paren-print"></a></dt>
+<dd><p>Logical, default <code>FALSE</code>. If <code>TRUE</code>, assignments using
+<code>(</code> for auto-printing at the top-level are not linted.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -116,6 +122,15 @@ within that branch, are skipped.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:6: </span><span style="color: #BB00BB;">warning: </span>[implicit_assignment_linter] <span style="font-weight: bold;">Avoid implicit assignments in function calls. For example, instead of `if (x &lt;- 1L) { ... }`, write `x &lt;- 1L; if (x) { ... }`.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mean(x &lt;- 1:4)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      ^~~~~~~~</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"(x &lt;- 1)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">implicit_assignment_linter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">&lt;text&gt;:1:2: </span><span style="color: #BB00BB;">warning: </span>[implicit_assignment_linter] <span style="font-weight: bold;">Call print() explicitly instead of relying on implicit printing behavior via '('.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (x &lt;- 1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ^~~~~~</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># okay</span></span></span>
 <span class="r-in"><span><span class="va">lines</span> <span class="op">&lt;-</span> <span class="st">"x &lt;- 1L\nif (x) TRUE"</span></span></span>
@@ -156,6 +171,12 @@ within that branch, are skipped.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  text <span class="op">=</span> <span class="va">lines</span>,</span></span>
 <span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">implicit_assignment_linter</span><span class="op">(</span>allow_scoped <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="lint.html">lint</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  text <span class="op">=</span> <span class="st">"(x &lt;- 1)"</span>,</span></span>
+<span class="r-in"><span>  linters <span class="op">=</span> <span class="fu">implicit_assignment_linter</span><span class="op">(</span>allow_paren_print <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No lints found.</span>
 <span class="r-in"><span></span></span>
