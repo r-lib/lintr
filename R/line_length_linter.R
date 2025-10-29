@@ -66,11 +66,28 @@ is_in_string_body <- function(parse_data, max_length, long_idx) {
   if (all(str_data$line1 == str_data$line2)) {
     return(rep(FALSE, length(long_idx)))
   }
+  # right delimiter just ends at 'col2', but 'col1' takes some sleuthing
+  str_data$line1_width <- nchar(vapply(
+    strsplit(str_data$text, "\n", fixed = TRUE),
+    function(x) x[1L],
+    FUN.VALUE = character(1L),
+    USE.NAMES = FALSE
+  ))
+  str_data$col1_end <- str_data$col1 + str_data$line1_width
   vapply(
     long_idx,
     function(line) {
       # strictly inside a multi-line string body
-      any(str_data$line1 < line & str_data$line2 > line)
+      if (any(str_data$line1 < line & str_data$line2 > line)) {
+        return(TRUE)
+      }
+      on_line1_idx <- str_data$line1 == line
+      if (any(on_line1_idx)) {
+        return(max(str_data$col1_end[on_line1_idx]) <= max_length)
+      }
+      # use parse data to capture possible trailing expressions on this line
+      on_line2_idx <- parse_data$line2 == line
+      any(on_line2_idx) && max(parse_data$col2[on_line2_idx]) <= max_length
     },
     logical(1L)
   )
