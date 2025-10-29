@@ -153,4 +153,7 @@ test_that("string bodies can be ignored", {
     lint_msg,
     linter
   )
+
+  expect_lint('"short" # 15!!!', lint_msg, linter)
+  expect_lint('foo("a", long_)', lint_msg, linter)
 })
