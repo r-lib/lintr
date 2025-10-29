@@ -8,7 +8,7 @@ implicit_assignment_linter(
   except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
   allow_lazy = FALSE,
   allow_scoped = FALSE,
-  allow_print = FALSE
+  allow_paren_print = FALSE
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ trigger conditionally (e.g. in the RHS of \code{&&} or \code{||} expressions) ar
 where the object is assigned in the statement beginning a branch and used only
 within that branch, are skipped.}
 
-\item{allow_print}{Logical, default \code{FALSE}. If \code{TRUE}, using \code{(} for auto-printing
+\item{allow_parent_print}{Logical, default \code{FALSE}. If \code{TRUE}, using \code{(} for auto-printing
 at the top-level is not linted.}
 }
 \description{
@@ -79,7 +79,7 @@ lint(
 
 lint(
   text = "(x <- 1)",
-  linters = implicit_assignment_linter(allow_print = TRUE)
+  linters = implicit_assignment_linter(allow_paren_print = TRUE)
 )
 
 }

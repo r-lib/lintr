@@ -9,7 +9,7 @@
 #' @param allow_scoped Logical, default `FALSE`. If `TRUE`, "scoped assignments",
 #'   where the object is assigned in the statement beginning a branch and used only
 #'   within that branch, are skipped.
-#' @param allow_print Logical, default `FALSE`. If `TRUE`, using `(` for auto-printing
+#' @param allow_parent_print Logical, default `FALSE`. If `TRUE`, using `(` for auto-printing
 #'   at the top-level is not linted.
 #'
 #' @examples
@@ -63,7 +63,7 @@
 #'
 #' lint(
 #'   text = "(x <- 1)",
-#'   linters = implicit_assignment_linter(allow_print = TRUE)
+#'   linters = implicit_assignment_linter(allow_paren_print = TRUE)
 #' )
 #'
 #' @evalRd rd_tags("implicit_assignment_linter")
@@ -75,7 +75,7 @@
 implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
                                        allow_lazy = FALSE,
                                        allow_scoped = FALSE,
-                                       allow_print = FALSE) {
+                                       allow_paren_print = FALSE) {
   stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
@@ -130,7 +130,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     bad_expr <- xml_find_all(xml, xpath)
 
     print_only <- !is.na(xml_find_first(bad_expr, "parent::expr[parent::exprlist and *[1][self::OP-LEFT-PAREN]]"))
-    if (allow_print) {
+    if (allow_paren_print) {
       bad_expr <- bad_expr[!print_only]
     }
 
