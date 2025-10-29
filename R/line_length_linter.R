@@ -14,6 +14,12 @@
 #'   linters = line_length_linter(length = 20L)
 #' )
 #'
+#' # the trailing ' is counted towards line length, so this still lints
+#' lint(
+#'   text = "'a long single-line string'",
+#'   linters = line_length_linter(length = 15L, ignore_string_bodies = TRUE)
+#' )
+#'
 #' lines <- paste(
 #'   "query <- '",
 #'   "  SELECT *",
@@ -32,6 +38,20 @@
 #' lint(
 #'   text = strrep("x", 21L),
 #'   linters = line_length_linter(length = 40L)
+#' )
+#'
+#' lines <- paste(
+#'   "paste(",
+#'   "  'a long',",
+#'   "  'single-line',",
+#'   "  'string'",
+#'   ")",
+#'   sep = "\n"
+#' )
+#' writeLines(lines)
+#' lint(
+#'   text = lines,
+#'   linters = line_length_linter(length = 15L, ignore_string_bodies = TRUE)
 #' )
 #'
 #' lines <- paste(
