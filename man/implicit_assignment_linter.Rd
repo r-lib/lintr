@@ -7,7 +7,8 @@
 implicit_assignment_linter(
   except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
   allow_lazy = FALSE,
-  allow_scoped = FALSE
+  allow_scoped = FALSE,
+  allow_paren_print = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,9 @@ trigger conditionally (e.g. in the RHS of \code{&&} or \code{||} expressions) ar
 \item{allow_scoped}{Logical, default \code{FALSE}. If \code{TRUE}, "scoped assignments",
 where the object is assigned in the statement beginning a branch and used only
 within that branch, are skipped.}
+
+\item{allow_paren_print}{Logical, default \code{FALSE}. If \code{TRUE}, using \code{(} for auto-printing
+at the top-level is not linted.}
 }
 \description{
 Assigning inside function calls makes the code difficult to read, and should
@@ -35,6 +39,12 @@ lint(
   text = "mean(x <- 1:4)",
   linters = implicit_assignment_linter()
 )
+
+lint(
+  text = "(x <- 1)",
+  linters = implicit_assignment_linter()
+)
+
 
 # okay
 lines <- "x <- 1L\nif (x) TRUE"
@@ -65,6 +75,11 @@ writeLines(lines)
 lint(
   text = lines,
   linters = implicit_assignment_linter(allow_scoped = TRUE)
+)
+
+lint(
+  text = "(x <- 1)",
+  linters = implicit_assignment_linter(allow_paren_print = TRUE)
 )
 
 }
