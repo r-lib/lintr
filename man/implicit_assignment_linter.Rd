@@ -21,8 +21,8 @@ trigger conditionally (e.g. in the RHS of \code{&&} or \code{||} expressions) ar
 where the object is assigned in the statement beginning a branch and used only
 within that branch, are skipped.}
 
-\item{allow_paren_print}{Logical, default \code{FALSE}. If \code{TRUE}, using \code{(} for auto-printing
-at the top-level is not linted.}
+\item{allow_paren_print}{Logical, default \code{FALSE}. If \code{TRUE}, assignments using
+\code{(} for auto-printing at the top-level are not linted.}
 }
 \description{
 Assigning inside function calls makes the code difficult to read, and should

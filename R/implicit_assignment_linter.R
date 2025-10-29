@@ -9,8 +9,8 @@
 #' @param allow_scoped Logical, default `FALSE`. If `TRUE`, "scoped assignments",
 #'   where the object is assigned in the statement beginning a branch and used only
 #'   within that branch, are skipped.
-#' @param allow_paren_print Logical, default `FALSE`. If `TRUE`, using `(` for auto-printing
-#'   at the top-level is not linted.
+#' @param allow_paren_print Logical, default `FALSE`. If `TRUE`, assignments using
+#'   `(` for auto-printing at the top-level are not linted.
 #'
 #' @examples
 #' # will produce lints
