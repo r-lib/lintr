@@ -23,10 +23,38 @@ lint(
   linters = line_length_linter(length = 20L)
 )
 
+lines <- paste(
+  "query <- '",
+  "  SELECT *",
+  "  FROM MyTable",
+  "  WHERE profit > 0",
+  "'",
+  sep = "\n"
+)
+writeLines(lines)
+lint(
+  text = lines,
+  linters = line_length_linter(length = 10L)
+)
+
 # okay
 lint(
   text = strrep("x", 21L),
   linters = line_length_linter(length = 40L)
+)
+
+lines <- paste(
+  "query <- '",
+  "  SELECT *",
+  "  FROM MyTable",
+  "  WHERE profit > 0",
+  "'",
+  sep = "\n"
+)
+writeLines(lines)
+lint(
+  text = lines,
+  linters = line_length_linter(length = 10L, ignore_string_bodies = TRUE)
 )
 
 }
