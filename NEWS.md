@@ -51,6 +51,7 @@
 * `use_lintr()` adds the created `.lintr` file to the `.Rbuildignore` if run in a package (#2926, initial work by @MEO265, finalized by @Bisaloo).
 * `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
 * `length_test_linter()` is extended to check incorrect usage of `nrow()`, `ncol()`, `NROW()`, `NCOL()` (#2933, @mcol).
+* `implicit_assignment_linter()` gains argument `allow_paren_print` to disable lints for the use of `(` for auto-printing (#2962, @TimTaylor).
 
 ### New linters
 
