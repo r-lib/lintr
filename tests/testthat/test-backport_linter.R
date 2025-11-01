@@ -7,9 +7,9 @@ test_that("backport_linter produces error when R version misspecified", {
 
 test_that("backport_linter detects backwards-incompatibility", {
   # default should be current R version; all of these are included on our dependency
-  expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter())
-  expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter("release"))
-  expect_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", NULL, backport_linter("devel"))
+  expect_no_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", backport_linter())
+  expect_no_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", backport_linter("release"))
+  expect_no_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", backport_linter("devel"))
 
   expect_lint(
     "numToBits(2)",
@@ -61,14 +61,10 @@ test_that("backport_linter detects backwards-incompatibility", {
   )
 
   # except is honored
-  expect_lint(
-    trim_some("
+  expect_no_lint(trim_some("
       numToBits(2)
       R_user_dir('mypkg')
-    "),
-    NULL,
-    backport_linter("3.0.0", except = c("numToBits", "R_user_dir"))
-  )
+    "), backport_linter("3.0.0", except = c("numToBits", "R_user_dir")))
 })
 
 test_that("backport_linter generates expected warnings", {
