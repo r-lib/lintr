@@ -171,7 +171,7 @@ test_that("package_hooks_linter blocks attaching namespaces", {
   )
 })
 
-test_that("package_hooks_linter skips valid .onDetach() and .Last.lib()", {
+test_that("package_hooks_linter skips valid .onDetach(), .Last.lib(), and .onUnload()", {
   linter <- package_hooks_linter()
 
   expect_lint(".onDetach <- function(lib) { }", NULL, linter)
@@ -179,6 +179,9 @@ test_that("package_hooks_linter skips valid .onDetach() and .Last.lib()", {
 
   expect_lint(".Last.lib <- function(lib) { }", NULL, linter)
   expect_lint(".Last.lib <- function(libname) { }", NULL, linter)
+
+  expect_no_lint(".onUnload <- function(lib) { }", linter)
+  expect_no_lint(".onUnload <- function(libpath) { }", linter)
 })
 
 test_that("package_hooks_linter catches usage of library.dynam.unload()", {
@@ -195,14 +198,10 @@ test_that("package_hooks_linter catches usage of library.dynam.unload()", {
     linter
   )
   # expected usage is in .onUnload
-  expect_lint(
-    ".onUnload <- function(lib) { library.dynam.unload() }",
-    NULL,
-    linter
-  )
+  expect_no_lint(".onUnload <- function(lib) { library.dynam.unload() }", linter)
 })
 
-test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.lib()", {
+test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.lib()/.onUnload()", {
   linter <- package_hooks_linter()
   lint_msg_part <- " should take one argument starting with 'lib'"
 
@@ -214,6 +213,11 @@ test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.
   expect_lint(
     ".Last.lib <- function(yyy) { }",
     rex::rex(".Last.lib()", lint_msg_part),
+    linter
+  )
+  expect_lint(
+    ".onUnload <- function(pkg) { }",
+    rex::rex(".onUnload()", lint_msg_part),
     linter
   )
 
@@ -232,6 +236,21 @@ test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.
   expect_lint(
     ".onDetach <- function(...) { }",
     rex::rex(".onDetach()", lint_msg_part),
+    linter
+  )
+  expect_lint(
+    ".onUnload <- function() { }",
+    rex::rex(".onUnload()", lint_msg_part),
+    linter
+  )
+  expect_lint(
+    ".onUnload <- function(lib, pkg) { }",
+    rex::rex(".onUnload()", lint_msg_part),
+    linter
+  )
+  expect_lint(
+    ".onUnload <- function(...) { }",
+    rex::rex(".onUnload()", lint_msg_part),
     linter
   )
 })
@@ -265,6 +284,12 @@ test_that("function shorthand is handled", {
     rex::rex(".onDetach() should take one argument starting with 'lib'."),
     linter
   )
+  expect_lint(
+    ".onUnload <- \\() { }",
+    rex::rex(".onUnload() should take one argument starting with 'lib'."),
+    linter
+  )
+  expect_no_lint(".onUnload <- \\(libpath) { }", linter)
 })
 
 test_that("lints vectorize", {
@@ -276,6 +301,18 @@ test_that("lints vectorize", {
     list(
       list(".onLoad", line_number = 2L),
       list(".onAttach", line_number = 3L)
+    ),
+    package_hooks_linter()
+  )
+
+  expect_lint(
+    trim_some("{
+      .onDetach <- function(xxx) { }
+      .onUnload <- function(yyy) { }
+    }"),
+    list(
+      list(".onDetach", line_number = 2L),
+      list(".onUnload", line_number = 3L)
     ),
     package_hooks_linter()
   )
