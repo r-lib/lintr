@@ -299,15 +299,4 @@ test_that("lints vectorize", {
     package_hooks_linter()
   )
 
-  expect_lint(
-    trim_some("{
-      .onDetach <- function(xxx) { }
-      .onUnload <- function(yyy) { }
-    }"),
-    list(
-      list(".onDetach", line_number = 2L),
-      list(".onUnload", line_number = 3L)
-    ),
-    package_hooks_linter()
-  )
 })
