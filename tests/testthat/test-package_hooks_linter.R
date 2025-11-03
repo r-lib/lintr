@@ -171,7 +171,7 @@ test_that("package_hooks_linter blocks attaching namespaces", {
   )
 })
 
-test_that("package_hooks_linter skips valid .onDetach(), .Last.lib(), and .onUnload()", {
+test_that("package_hooks_linter skips valid 'teardown' hooks", {
   linter <- package_hooks_linter()
 
   expect_lint(".onDetach <- function(lib) { }", NULL, linter)
