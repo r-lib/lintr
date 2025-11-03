@@ -201,7 +201,7 @@ test_that("package_hooks_linter catches usage of library.dynam.unload()", {
   expect_no_lint(".onUnload <- function(lib) { library.dynam.unload() }", linter)
 })
 
-test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.lib()/.onUnload()", {
+test_that("package_hooks_linter detects bad argument names in 'teardown' hooks", {
   linter <- package_hooks_linter()
   lint_msg_part <- " should take one argument starting with 'lib'"
 
