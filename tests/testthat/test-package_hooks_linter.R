@@ -298,5 +298,4 @@ test_that("lints vectorize", {
     ),
     package_hooks_linter()
   )
-
 })
