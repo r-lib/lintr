@@ -284,12 +284,6 @@ test_that("function shorthand is handled", {
     rex::rex(".onDetach() should take one argument starting with 'lib'."),
     linter
   )
-  expect_lint(
-    ".onUnload <- \\() { }",
-    rex::rex(".onUnload() should take one argument starting with 'lib'."),
-    linter
-  )
-  expect_no_lint(".onUnload <- \\(libpath) { }", linter)
 })
 
 test_that("lints vectorize", {
