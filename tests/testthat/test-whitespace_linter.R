@@ -1,24 +1,22 @@
 test_that("whitespace_linter skips allowed usages", {
   linter <- whitespace_linter()
 
-  expect_lint("blah", NULL, linter)
-  expect_lint("  blah", NULL, linter)
-  expect_lint("  blah", NULL, linter)
-  expect_lint("#\tblah", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint("  blah", linter)
+  expect_no_lint("  blah", linter)
+  expect_no_lint("#\tblah", linter)
 })
 
 test_that("whitespace_linter skips allowed tab usages inside strings", {
   linter <- whitespace_linter()
 
-  expect_lint(
+  expect_no_lint(
     'lint_msg <- "dont flag tabs if\tthey are inside a string."',
-    NULL,
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     'lint_msg <- "dont flag tabs if\n\tthey are inside multiline strings."',
-    NULL,
     linter
   )
 })

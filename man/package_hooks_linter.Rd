@@ -7,7 +7,7 @@
 package_hooks_linter()
 }
 \description{
-Check various common "gotchas" in \code{\link[=.onLoad]{.onLoad()}}, \code{\link[=.onAttach]{.onAttach()}}, \code{\link[=.Last.lib]{.Last.lib()}}, and \code{\link[=.onDetach]{.onDetach()}}
+Check various common "gotchas" in \code{\link[=.onLoad]{.onLoad()}}, \code{\link[=.onAttach]{.onAttach()}}, \code{\link[=.Last.lib]{.Last.lib()}}, \code{\link[=.onDetach]{.onDetach()}}, and \code{\link[=.onUnload]{.onUnload()}}
 namespace hooks that will cause \verb{R CMD check} issues. See Writing R Extensions for details.
 }
 \details{
@@ -18,7 +18,7 @@ namespace hooks that will cause \verb{R CMD check} issues. See Writing R Extensi
 \code{require()}, \code{library()}, or \code{installed.packages()}.
 \item \code{.Last.lib()} and \code{.onDetach()} shouldn't call \code{\link[=library.dynam.unload]{library.dynam.unload()}}.
 \item \code{.onLoad()} and \code{.onAttach()} should take two arguments, with names matching \verb{^lib} and \verb{^pkg};
-\code{.Last.lib()} and \code{.onDetach()} should take one argument with name matching \verb{^lib}.
+\code{.Last.lib()}, \code{.onDetach()}, and \code{.onUnload()} should take one argument with name matching \verb{^lib}.
 }
 }
 \examples{
@@ -38,6 +38,11 @@ lint(
   linters = package_hooks_linter()
 )
 
+lint(
+  text = ".onUnload <- function() { }",
+  linters = package_hooks_linter()
+)
+
 # okay
 lint(
   text = ".onLoad <- function(lib, pkg) { }",
@@ -51,6 +56,11 @@ lint(
 
 lint(
   text = ".onDetach <- function(lib) { }",
+  linters = package_hooks_linter()
+)
+
+lint(
+  text = ".onUnload <- function(libpath) { }",
   linters = package_hooks_linter()
 )
 

@@ -60,6 +60,7 @@ coalesce_linter <- function() {
   parent::expr[
     preceding-sibling::OP-EXCLAMATION
     and parent::expr/preceding-sibling::IF
+    and parent::expr/following-sibling::ELSE
     and (
       expr[2] = parent::expr/following-sibling::expr[1]
       or expr[2] = parent::expr/following-sibling::{braced_expr_cond}

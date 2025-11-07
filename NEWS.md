@@ -20,6 +20,7 @@
 * Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico). Thanks also to @bastistician for detecting a regression caused by the initial change for users of Emacs (#2847).
 * `assignment_linter()` no longer errors if `"%<>%"` is an allowed operator (#2850, @AshesITR).
 * `condition_call_linter()` no longer covers cases where the object type in the ellipsis cannot be determined with certainty (#2888, #2890, @Bisaloo). In particular, this fixes the known false positive of custom conditions created via `errorCondition()` or `warningCondition()` not being compatible with the `call.` argument in `stop()` or `warning()`.
+* `package_hooks_linter()` now validates `.onUnload()` hook signatures, requiring exactly one argument starting with 'lib' (#2940, @emmanuel-ferdman).
 
 ## Changes to default linters
 
@@ -49,13 +50,17 @@
 * `object_usage_linter()` lints missing packages that may cause false positives (#2872, @AshesITR)
 * New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls when a constant string is passed to `fmt` (#2894, @Bisaloo).
+* `use_lintr()` adds the created `.lintr` file to the `.Rbuildignore` if run in a package (#2926, initial work by @MEO265, finalized by @Bisaloo).
+* `length_test_linter()` is extended to check incorrect usage of `nrow()`, `ncol()`, `NROW()`, `NCOL()` (#2933, @mcol).
+* `implicit_assignment_linter()` gains argument `allow_paren_print` to disable lints for the use of `(` for auto-printing (#2962, @TimTaylor).
 
 ### New linters
 
+* `all_equal_linter()` warns about incorrect use of `all.equal()` in `if` clauses or preceded by `!` (#2885, @Bisaloo).
 * `download_file_linter()` encourages the use of `mode = "wb"` (or `mode = "ab"`) when using `download.file()`, rather than `mode = "w"` or `mode = "a"`, as the latter can produce broken
 files in Windows (#2882, @Bisaloo).
 * `lint2df_linter()` encourages the use of the `list2DF()` function, or the `data.frame()` function when recycling is required, over the slower and less readable `do.call(cbind.data.frame, )` alternative (#2834, @Bisaloo).
-* `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.
+* `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0. Thanks also to @emmanuel-ferdman for fixing a false positive before release.
 
 ### Lint accuracy fixes: removing false positives
 
@@ -72,6 +77,8 @@ files in Windows (#2882, @Bisaloo).
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
 * `expect_true_false_linter()` is pipe-aware, so that `42 |> expect_identical(x, ignore_attr = TRUE)` no longer lints (#1520, @MichaelChirico).
 * `T_and_F_symbol_linter()` ignores `T` and `F` used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
+* `T_and_F_symbol_linter()` ignores `T` and `F` if followed by `[` or `[[` (#2944, @mcol).
+* `implicit_assignment_linter()` with `allow_scoped=TRUE` doesn't lint for `if (a <- 1) print(a)` (#2913, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
