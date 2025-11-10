@@ -54,8 +54,7 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -66,7 +65,8 @@
 
         </dt>
         <dd>Lint a file, directory, or package</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="linters_with_defaults.html">linters_with_defaults()</a></code>
 
@@ -77,8 +77,7 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -89,19 +88,22 @@
 
         </dt>
         <dd>Read lintr settings</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="exclude.html">exclude()</a></code>
 
         </dt>
         <dd>Exclude lines or files from linting</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="linters_with_tags.html">linters_with_tags()</a></code>
 
         </dt>
         <dd>Create a tag-based linter configuration</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="modify_defaults.html">modify_defaults()</a></code>
 
@@ -112,8 +114,7 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -124,697 +125,813 @@
 
         </dt>
         <dd><code>T</code> and <code>F</code> symbol linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="absolute_path_linter.html">absolute_path_linter()</a></code>
 
         </dt>
         <dd>Absolute path linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="all_equal_linter.html">all_equal_linter()</a></code>
 
         </dt>
         <dd>Warn about invalid usage of <code><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal()</a></code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="any_duplicated_linter.html">any_duplicated_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>anyDuplicated(x) &gt; 0</code> over <code>any(duplicated(x))</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="any_is_na_linter.html">any_is_na_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>anyNA(x)</code> over <code>any(is.na(x))</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="assignment_linter.html">assignment_linter()</a></code>
 
         </dt>
         <dd>Assignment linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="backport_linter.html">backport_linter()</a></code>
 
         </dt>
         <dd>Backport linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="boolean_arithmetic_linter.html">boolean_arithmetic_linter()</a></code>
 
         </dt>
         <dd>Require usage of boolean operators over equivalent arithmetic</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="brace_linter.html">brace_linter()</a></code>
 
         </dt>
         <dd>Brace linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="class_equals_linter.html">class_equals_linter()</a></code>
 
         </dt>
         <dd>Block comparison of class with <code>==</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="coalesce_linter.html">coalesce_linter()</a></code>
 
         </dt>
         <dd>Encourage usage of the null coalescing operator <code>%||%</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="commas_linter.html">commas_linter()</a></code>
 
         </dt>
         <dd>Commas linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="commented_code_linter.html">commented_code_linter()</a></code>
 
         </dt>
         <dd>Commented code linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="comparison_negation_linter.html">comparison_negation_linter()</a></code>
 
         </dt>
         <dd>Block usages like !(x == y) where a direct relational operator is appropriate</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="condition_call_linter.html">condition_call_linter()</a></code>
 
         </dt>
         <dd>Recommend usage of <code>call. = FALSE</code> in conditions</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="condition_message_linter.html">condition_message_linter()</a></code>
 
         </dt>
         <dd>Block usage of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> and <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> with messaging functions using <code>...</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="conjunct_test_linter.html">conjunct_test_linter()</a></code>
 
         </dt>
         <dd>Force <code>&amp;&amp;</code> conditions to be written separately where appropriate</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="consecutive_assertion_linter.html">consecutive_assertion_linter()</a></code>
 
         </dt>
         <dd>Force consecutive calls to assertions into just one when possible</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="consecutive_mutate_linter.html">consecutive_mutate_linter()</a></code>
 
         </dt>
         <dd>Require consecutive calls to mutate() to be combined when possible</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="cyclocomp_linter.html">cyclocomp_linter()</a></code>
 
         </dt>
         <dd>Cyclomatic complexity linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="download_file_linter.html">download_file_linter()</a></code>
 
         </dt>
         <dd>Recommend usage of a portable <code>mode</code> value for downloading files</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="duplicate_argument_linter.html">duplicate_argument_linter()</a></code>
 
         </dt>
         <dd>Duplicate argument linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="empty_assignment_linter.html">empty_assignment_linter()</a></code>
 
         </dt>
         <dd>Block assignment of <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="equals_na_linter.html">equals_na_linter()</a></code>
 
         </dt>
         <dd>Equality check with NA linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_comparison_linter.html">expect_comparison_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_gt(x, y)</code> over <code>expect_true(x &gt; y)</code> (and similar)</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_identical_linter.html">expect_identical_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_identical(x, y)</code> where appropriate</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_length_linter.html">expect_length_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_length(x, n)</code> over <code>expect_equal(length(x), n)</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_named_linter.html">expect_named_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_named(x, n)</code> over <code>expect_equal(names(x), n)</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_not_linter.html">expect_not_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_false(x)</code> over <code>expect_true(!x)</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_null_linter.html">expect_null_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_null</code> for checking <code>NULL</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_s3_class_linter.html">expect_s3_class_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_s3_class()</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_s4_class_linter.html">expect_s4_class_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_s4_class(x, k)</code> over <code>expect_true(is(x, k))</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_true_false_linter.html">expect_true_false_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_true(x)</code> over <code>expect_equal(x, TRUE)</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_type_linter.html">expect_type_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>expect_type(x, type)</code> over <code>expect_equal(typeof(x), type)</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="fixed_regex_linter.html">fixed_regex_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>fixed=TRUE</code> in regular expressions where appropriate</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="for_loop_index_linter.html">for_loop_index_linter()</a></code>
 
         </dt>
         <dd>Block usage of for loops directly overwriting the indexing variable</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="function_argument_linter.html">function_argument_linter()</a></code>
 
         </dt>
         <dd>Function argument linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="function_left_parentheses_linter.html">function_left_parentheses_linter()</a></code>
 
         </dt>
         <dd>Function left parentheses linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="function_return_linter.html">function_return_linter()</a></code>
 
         </dt>
         <dd>Lint common mistakes/style issues cropping up from return statements</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="if_not_else_linter.html">if_not_else_linter()</a></code>
 
         </dt>
         <dd>Block statements like if (!A) x else y</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="if_switch_linter.html">if_switch_linter()</a></code>
 
         </dt>
         <dd>Require usage of switch() over repeated if/else blocks</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="ifelse_censor_linter.html">ifelse_censor_linter()</a></code>
 
         </dt>
         <dd>Block usage of <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> where <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin()</a></code> or <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax()</a></code> is more appropriate</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="implicit_assignment_linter.html">implicit_assignment_linter()</a></code>
 
         </dt>
         <dd>Avoid implicit assignment in function calls</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="implicit_integer_linter.html">implicit_integer_linter()</a></code>
 
         </dt>
         <dd>Implicit integer linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="indentation_linter.html">indentation_linter()</a></code>
 
         </dt>
         <dd>Check that indentation is consistent</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="infix_spaces_linter.html">infix_spaces_linter()</a></code>
 
         </dt>
         <dd>Infix spaces linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="inner_combine_linter.html">inner_combine_linter()</a></code>
 
         </dt>
         <dd>Require <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> to be applied before relatively expensive vectorized functions</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="is_numeric_linter.html">is_numeric_linter()</a></code>
 
         </dt>
         <dd>Redirect <code>is.numeric(x) || is.integer(x)</code> to just use <code>is.numeric(x)</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="keyword_quote_linter.html">keyword_quote_linter()</a></code>
 
         </dt>
         <dd>Block unnecessary quoting in calls</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="length_levels_linter.html">length_levels_linter()</a></code>
 
         </dt>
         <dd>Require usage of nlevels over length(levels(.))</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="length_test_linter.html">length_test_linter()</a></code>
 
         </dt>
         <dd>Check for a common mistake where a size check like 'length' is applied in the wrong place</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="lengths_linter.html">lengths_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths()</a></code> where possible</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="library_call_linter.html">library_call_linter()</a></code>
 
         </dt>
         <dd>Library call linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="line_length_linter.html">line_length_linter()</a></code>
 
         </dt>
         <dd>Line length linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="list2df_linter.html">list2df_linter()</a></code>
 
         </dt>
         <dd>Recommend direct usage of <code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame()</a></code> to create a data.frame from a list</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="list_comparison_linter.html">list_comparison_linter()</a></code>
 
         </dt>
         <dd>Block usage of comparison operators with known-list() functions like lapply</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="literal_coercion_linter.html">literal_coercion_linter()</a></code>
 
         </dt>
         <dd>Require usage of correctly-typed literals over literal coercions</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="matrix_apply_linter.html">matrix_apply_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>colSums(x)</code> or <code>rowSums(x)</code> over <code>apply(x, ., sum)</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="missing_argument_linter.html">missing_argument_linter()</a></code>
 
         </dt>
         <dd>Missing argument linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="missing_package_linter.html">missing_package_linter()</a></code>
 
         </dt>
         <dd>Missing package linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="namespace_linter.html">namespace_linter()</a></code>
 
         </dt>
         <dd>Namespace linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="nested_ifelse_linter.html">nested_ifelse_linter()</a></code>
 
         </dt>
         <dd>Block usage of nested <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> calls</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="nested_pipe_linter.html">nested_pipe_linter()</a></code>
 
         </dt>
         <dd>Block usage of pipes nested inside other calls</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="nonportable_path_linter.html">nonportable_path_linter()</a></code>
 
         </dt>
         <dd>Non-portable path linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="nrow_subset_linter.html">nrow_subset_linter()</a></code>
 
         </dt>
         <dd>Block usage of <code>nrow(subset(x, .))</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="numeric_leading_zero_linter.html">numeric_leading_zero_linter()</a></code>
 
         </dt>
         <dd>Require usage of a leading zero in all fractional numerics</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="nzchar_linter.html">nzchar_linter()</a></code>
 
         </dt>
         <dd>Require usage of nzchar where appropriate</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="object_length_linter.html">object_length_linter()</a></code>
 
         </dt>
         <dd>Object length linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="object_name_linter.html">object_name_linter()</a></code>
 
         </dt>
         <dd>Object name linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="object_overwrite_linter.html">object_overwrite_linter()</a></code>
 
         </dt>
         <dd>Block assigning any variables whose name clashes with a <code>base</code> R function</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="object_usage_linter.html">object_usage_linter()</a></code>
 
         </dt>
         <dd>Object usage linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="one_call_pipe_linter.html">one_call_pipe_linter()</a></code>
 
         </dt>
         <dd>Block single-call magrittr pipes</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="outer_negation_linter.html">outer_negation_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code>!any(x)</code> over <code>all(!x)</code>, <code>!all(x)</code> over <code>any(!x)</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="package_hooks_linter.html">package_hooks_linter()</a></code>
 
         </dt>
         <dd>Package hooks linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="paren_body_linter.html">paren_body_linter()</a></code>
 
         </dt>
         <dd>Parenthesis before body linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="paste_linter.html">paste_linter()</a></code>
 
         </dt>
         <dd>Raise lints for several common poor usages of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="pipe_call_linter.html">pipe_call_linter()</a></code>
 
         </dt>
         <dd>Pipe call linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="pipe_consistency_linter.html">pipe_consistency_linter()</a></code>
 
         </dt>
         <dd>Pipe consistency linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="pipe_continuation_linter.html">pipe_continuation_linter()</a></code>
 
         </dt>
         <dd>Pipe continuation linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="pipe_return_linter.html">pipe_return_linter()</a></code>
 
         </dt>
         <dd>Block usage of return() in magrittr pipelines</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="print_linter.html">print_linter()</a></code>
 
         </dt>
         <dd>Block usage of print() for logging</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="quotes_linter.html">quotes_linter()</a></code>
 
         </dt>
         <dd>Character string quote linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="redundant_equals_linter.html">redundant_equals_linter()</a></code>
 
         </dt>
         <dd>Block usage of <code>==</code>, <code>!=</code> on logical vectors</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="redundant_ifelse_linter.html">redundant_ifelse_linter()</a></code>
 
         </dt>
         <dd>Prevent <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> from being used to produce <code>TRUE</code>/<code>FALSE</code> or <code>1</code>/<code>0</code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="regex_subset_linter.html">regex_subset_linter()</a></code>
 
         </dt>
         <dd>Require usage of direct methods for subsetting strings via regex</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="rep_len_linter.html">rep_len_linter()</a></code>
 
         </dt>
         <dd>Require usage of rep_len(x, n) over rep(x, length.out = n)</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="repeat_linter.html">repeat_linter()</a></code>
 
         </dt>
         <dd>Repeat linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="return_linter.html">return_linter()</a></code>
 
         </dt>
         <dd>Return linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="routine_registration_linter.html">routine_registration_linter()</a></code>
 
         </dt>
         <dd>Identify unregistered native routines</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="sample_int_linter.html">sample_int_linter()</a></code>
 
         </dt>
         <dd>Require usage of sample.int(n, m, ...) over sample(1:n, m, ...)</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="scalar_in_linter.html">scalar_in_linter()</a></code>
 
         </dt>
         <dd>Block usage like x %in% "a"</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="semicolon_linter.html">semicolon_linter()</a></code>
 
         </dt>
         <dd>Semicolon linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="seq_linter.html">seq_linter()</a></code>
 
         </dt>
         <dd>Sequence linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="sort_linter.html">sort_linter()</a></code>
 
         </dt>
         <dd>Check for common mistakes around sorting vectors</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="spaces_inside_linter.html">spaces_inside_linter()</a></code>
 
         </dt>
         <dd>Spaces inside linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="spaces_left_parentheses_linter.html">spaces_left_parentheses_linter()</a></code>
 
         </dt>
         <dd>Spaces before parentheses linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="sprintf_linter.html">sprintf_linter()</a></code>
 
         </dt>
         <dd>Require correct <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf()</a></code> calls</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="stopifnot_all_linter.html">stopifnot_all_linter()</a></code>
 
         </dt>
         <dd>Block usage of all() within stopifnot()</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="string_boundary_linter.html">string_boundary_linter()</a></code>
 
         </dt>
         <dd>Require usage of <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith()</a></code> and <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">endsWith()</a></code> over <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code>/<code><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr()</a></code> versions</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="strings_as_factors_linter.html">strings_as_factors_linter()</a></code>
 
         </dt>
         <dd>Identify cases where <code>stringsAsFactors</code> should be supplied explicitly</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="system_file_linter.html">system_file_linter()</a></code>
 
         </dt>
         <dd>Block usage of <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code> with <code><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file()</a></code></dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="terminal_close_linter.html">terminal_close_linter()</a></code>
 
         </dt>
         <dd>Prohibit close() from terminating a function definition</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="todo_comment_linter.html">todo_comment_linter()</a></code>
 
         </dt>
         <dd>TODO comment linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="trailing_blank_lines_linter.html">trailing_blank_lines_linter()</a></code>
 
         </dt>
         <dd>Trailing blank lines linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="trailing_whitespace_linter.html">trailing_whitespace_linter()</a></code>
 
         </dt>
         <dd>Trailing whitespace linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="undesirable_function_linter.html">undesirable_function_linter()</a></code>
 
         </dt>
         <dd>Undesirable function linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="undesirable_operator_linter.html">undesirable_operator_linter()</a></code>
 
         </dt>
         <dd>Undesirable operator linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code>
 
         </dt>
         <dd>Unneeded concatenation linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code>
 
         </dt>
         <dd>Block usage of anonymous functions in iteration functions when unnecessary</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code>
 
         </dt>
         <dd>Block instances of unnecessary nesting</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="unnecessary_placeholder_linter.html">unnecessary_placeholder_linter()</a></code>
 
         </dt>
         <dd>Block usage of pipeline placeholders if unnecessary</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="unreachable_code_linter.html">unreachable_code_linter()</a></code>
 
         </dt>
         <dd>Block unreachable code and comments following return statements</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="unused_import_linter.html">unused_import_linter()</a></code>
 
         </dt>
         <dd>Check that imported packages are actually used</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="vector_logic_linter.html">vector_logic_linter()</a></code>
 
         </dt>
         <dd>Enforce usage of scalar logical operators in conditional statements</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="which_grepl_linter.html">which_grepl_linter()</a></code>
 
         </dt>
         <dd>Require usage of grep over which(grepl(.))</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="whitespace_linter.html">whitespace_linter()</a></code>
 
         </dt>
         <dd>Whitespace linter</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="yoda_test_linter.html">yoda_test_linter()</a></code>
 
@@ -825,8 +942,7 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -837,109 +953,127 @@
 
         </dt>
         <dd>Create a linter configuration based on all available linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="available_linters.html">available_linters()</a></code> <code><a href="available_linters.html">available_tags()</a></code>
 
         </dt>
         <dd>Get Linter metadata from a package</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="best_practices_linters.html">best_practices_linters</a></code>
 
         </dt>
         <dd>Best practices linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="common_mistakes_linters.html">common_mistakes_linters</a></code>
 
         </dt>
         <dd>Common mistake linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="configurable_linters.html">configurable_linters</a></code>
 
         </dt>
         <dd>Configurable linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="consistency_linters.html">consistency_linters</a></code>
 
         </dt>
         <dd>Consistency linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="correctness_linters.html">correctness_linters</a></code>
 
         </dt>
         <dd>Correctness linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="default_linters.html">default_linters</a></code>
 
         </dt>
         <dd>Default linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="deprecated_linters.html">deprecated_linters</a></code>
 
         </dt>
         <dd>Deprecated linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="efficiency_linters.html">efficiency_linters</a></code>
 
         </dt>
         <dd>Efficiency linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="executing_linters.html">executing_linters</a></code>
 
         </dt>
         <dd>Code executing linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="linters.html">linters</a></code>
 
         </dt>
         <dd>Available linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="package_development_linters.html">package_development_linters</a></code>
 
         </dt>
         <dd>Package development linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="pkg_testthat_linters.html">pkg_testthat_linters</a></code>
 
         </dt>
         <dd>Testthat linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="readability_linters.html">readability_linters</a></code>
 
         </dt>
         <dd>Readability linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="regex_linters.html">regex_linters</a></code>
 
         </dt>
         <dd>Regular expression linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="robustness_linters.html">robustness_linters</a></code>
 
         </dt>
         <dd>Robustness linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="style_linters.html">style_linters</a></code>
 
         </dt>
         <dd>Style linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="tidy_design_linters.html">tidy_design_linters</a></code>
 
@@ -950,8 +1084,7 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -962,13 +1095,15 @@
 
         </dt>
         <dd>Default undesirable functions and operators</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="default_linters.html">default_linters</a></code>
 
         </dt>
         <dd>Default linters</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="default_settings.html">default_settings</a></code>
 
@@ -979,8 +1114,7 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -991,55 +1125,64 @@
 
         </dt>
         <dd>Create a <code>linter</code> closure</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_lint.html">expect_lint()</a></code> <code><a href="expect_lint.html">expect_no_lint()</a></code>
 
         </dt>
         <dd>Lint expectation</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="expect_lint_free.html">expect_lint_free()</a></code>
 
         </dt>
         <dd>Test that the package is lint free</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="ids_with_token.html">ids_with_token()</a></code> <code><a href="ids_with_token.html">with_id()</a></code>
 
         </dt>
         <dd>Get parsed IDs by token</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="is_lint_level.html">is_lint_level()</a></code>
 
         </dt>
         <dd>Is this an expression- or a file-level source object?</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="get_r_string.html">get_r_string()</a></code>
 
         </dt>
         <dd>Extract text from <code>STR_CONST</code> nodes</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="use_lintr.html">use_lintr()</a></code>
 
         </dt>
         <dd>Use lintr in your project</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="make_linter_from_xpath.html">make_linter_from_xpath()</a></code> <code><a href="make_linter_from_xpath.html">make_linter_from_function_xpath()</a></code>
 
         </dt>
         <dd>Create a linter from an XPath</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="xml_nodes_to_lints.html">xml_nodes_to_lints()</a></code>
 
         </dt>
         <dd>Convert an XML node or nodeset into a Lint</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="xp_call_name.html">xp_call_name()</a></code>
 
@@ -1050,8 +1193,7 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -1062,37 +1204,43 @@
 
         </dt>
         <dd>Create a <code>lint</code> object</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="checkstyle_output.html">checkstyle_output()</a></code>
 
         </dt>
         <dd>Checkstyle Report for lint results</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="sarif_output.html">sarif_output()</a></code>
 
         </dt>
         <dd>SARIF Report for lint results</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="gitlab_output.html">gitlab_output()</a></code>
 
         </dt>
         <dd>GitLab Report for lint results</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="clear_cache.html">clear_cache()</a></code>
 
         </dt>
         <dd>Clear the lintr cache</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="get_source_expressions.html">get_source_expressions()</a></code>
 
         </dt>
         <dd>Parsed sourced file from a filename</dd>
-      </dl><dl><dt>
+
+        <dt>
 
           <code><a href="parse_exclusions.html">parse_exclusions()</a></code>
 
@@ -1108,7 +1256,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

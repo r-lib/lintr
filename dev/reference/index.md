@@ -1,0 +1,594 @@
+# Package index
+
+## Linting
+
+- [`lint()`](https://lintr.r-lib.org/dev/reference/lint.md)
+  [`lint_dir()`](https://lintr.r-lib.org/dev/reference/lint.md)
+  [`lint_package()`](https://lintr.r-lib.org/dev/reference/lint.md) :
+  Lint a file, directory, or package
+- [`linters_with_defaults()`](https://lintr.r-lib.org/dev/reference/linters_with_defaults.md)
+  : Create a linter configuration based on defaults
+
+## Configuration
+
+- [`read_settings()`](https://lintr.r-lib.org/dev/reference/read_settings.md)
+  : Read lintr settings
+- [`exclude()`](https://lintr.r-lib.org/dev/reference/exclude.md) :
+  Exclude lines or files from linting
+- [`linters_with_tags()`](https://lintr.r-lib.org/dev/reference/linters_with_tags.md)
+  : Create a tag-based linter configuration
+- [`modify_defaults()`](https://lintr.r-lib.org/dev/reference/modify_defaults.md)
+  : Modify lintr defaults
+
+## Individual linters
+
+- [`T_and_F_symbol_linter()`](https://lintr.r-lib.org/dev/reference/T_and_F_symbol_linter.md)
+  :
+
+  `T` and `F` symbol linter
+
+- [`absolute_path_linter()`](https://lintr.r-lib.org/dev/reference/absolute_path_linter.md)
+  : Absolute path linter
+
+- [`all_equal_linter()`](https://lintr.r-lib.org/dev/reference/all_equal_linter.md)
+  :
+
+  Warn about invalid usage of
+  [`all.equal()`](https://rdrr.io/r/base/all.equal.html)
+
+- [`any_duplicated_linter()`](https://lintr.r-lib.org/dev/reference/any_duplicated_linter.md)
+  :
+
+  Require usage of `anyDuplicated(x) > 0` over `any(duplicated(x))`
+
+- [`any_is_na_linter()`](https://lintr.r-lib.org/dev/reference/any_is_na_linter.md)
+  :
+
+  Require usage of `anyNA(x)` over `any(is.na(x))`
+
+- [`assignment_linter()`](https://lintr.r-lib.org/dev/reference/assignment_linter.md)
+  : Assignment linter
+
+- [`backport_linter()`](https://lintr.r-lib.org/dev/reference/backport_linter.md)
+  : Backport linter
+
+- [`boolean_arithmetic_linter()`](https://lintr.r-lib.org/dev/reference/boolean_arithmetic_linter.md)
+  : Require usage of boolean operators over equivalent arithmetic
+
+- [`brace_linter()`](https://lintr.r-lib.org/dev/reference/brace_linter.md)
+  : Brace linter
+
+- [`class_equals_linter()`](https://lintr.r-lib.org/dev/reference/class_equals_linter.md)
+  :
+
+  Block comparison of class with `==`
+
+- [`coalesce_linter()`](https://lintr.r-lib.org/dev/reference/coalesce_linter.md)
+  :
+
+  Encourage usage of the null coalescing operator `%||%`
+
+- [`commas_linter()`](https://lintr.r-lib.org/dev/reference/commas_linter.md)
+  : Commas linter
+
+- [`commented_code_linter()`](https://lintr.r-lib.org/dev/reference/commented_code_linter.md)
+  : Commented code linter
+
+- [`comparison_negation_linter()`](https://lintr.r-lib.org/dev/reference/comparison_negation_linter.md)
+  : Block usages like !(x == y) where a direct relational operator is
+  appropriate
+
+- [`condition_call_linter()`](https://lintr.r-lib.org/dev/reference/condition_call_linter.md)
+  :
+
+  Recommend usage of `call. = FALSE` in conditions
+
+- [`condition_message_linter()`](https://lintr.r-lib.org/dev/reference/condition_message_linter.md)
+  :
+
+  Block usage of [`paste()`](https://rdrr.io/r/base/paste.html) and
+  [`paste0()`](https://rdrr.io/r/base/paste.html) with messaging
+  functions using `...`
+
+- [`conjunct_test_linter()`](https://lintr.r-lib.org/dev/reference/conjunct_test_linter.md)
+  :
+
+  Force `&&` conditions to be written separately where appropriate
+
+- [`consecutive_assertion_linter()`](https://lintr.r-lib.org/dev/reference/consecutive_assertion_linter.md)
+  : Force consecutive calls to assertions into just one when possible
+
+- [`consecutive_mutate_linter()`](https://lintr.r-lib.org/dev/reference/consecutive_mutate_linter.md)
+  : Require consecutive calls to mutate() to be combined when possible
+
+- [`cyclocomp_linter()`](https://lintr.r-lib.org/dev/reference/cyclocomp_linter.md)
+  : Cyclomatic complexity linter
+
+- [`download_file_linter()`](https://lintr.r-lib.org/dev/reference/download_file_linter.md)
+  :
+
+  Recommend usage of a portable `mode` value for downloading files
+
+- [`duplicate_argument_linter()`](https://lintr.r-lib.org/dev/reference/duplicate_argument_linter.md)
+  : Duplicate argument linter
+
+- [`empty_assignment_linter()`](https://lintr.r-lib.org/dev/reference/empty_assignment_linter.md)
+  :
+
+  Block assignment of [`{}`](https://rdrr.io/r/base/Paren.html)
+
+- [`equals_na_linter()`](https://lintr.r-lib.org/dev/reference/equals_na_linter.md)
+  : Equality check with NA linter
+
+- [`expect_comparison_linter()`](https://lintr.r-lib.org/dev/reference/expect_comparison_linter.md)
+  :
+
+  Require usage of `expect_gt(x, y)` over `expect_true(x > y)` (and
+  similar)
+
+- [`expect_identical_linter()`](https://lintr.r-lib.org/dev/reference/expect_identical_linter.md)
+  :
+
+  Require usage of `expect_identical(x, y)` where appropriate
+
+- [`expect_length_linter()`](https://lintr.r-lib.org/dev/reference/expect_length_linter.md)
+  :
+
+  Require usage of `expect_length(x, n)` over
+  `expect_equal(length(x), n)`
+
+- [`expect_named_linter()`](https://lintr.r-lib.org/dev/reference/expect_named_linter.md)
+  :
+
+  Require usage of `expect_named(x, n)` over `expect_equal(names(x), n)`
+
+- [`expect_not_linter()`](https://lintr.r-lib.org/dev/reference/expect_not_linter.md)
+  :
+
+  Require usage of `expect_false(x)` over `expect_true(!x)`
+
+- [`expect_null_linter()`](https://lintr.r-lib.org/dev/reference/expect_null_linter.md)
+  :
+
+  Require usage of `expect_null` for checking `NULL`
+
+- [`expect_s3_class_linter()`](https://lintr.r-lib.org/dev/reference/expect_s3_class_linter.md)
+  :
+
+  Require usage of `expect_s3_class()`
+
+- [`expect_s4_class_linter()`](https://lintr.r-lib.org/dev/reference/expect_s4_class_linter.md)
+  :
+
+  Require usage of `expect_s4_class(x, k)` over `expect_true(is(x, k))`
+
+- [`expect_true_false_linter()`](https://lintr.r-lib.org/dev/reference/expect_true_false_linter.md)
+  :
+
+  Require usage of `expect_true(x)` over `expect_equal(x, TRUE)`
+
+- [`expect_type_linter()`](https://lintr.r-lib.org/dev/reference/expect_type_linter.md)
+  :
+
+  Require usage of `expect_type(x, type)` over
+  `expect_equal(typeof(x), type)`
+
+- [`fixed_regex_linter()`](https://lintr.r-lib.org/dev/reference/fixed_regex_linter.md)
+  :
+
+  Require usage of `fixed=TRUE` in regular expressions where appropriate
+
+- [`for_loop_index_linter()`](https://lintr.r-lib.org/dev/reference/for_loop_index_linter.md)
+  : Block usage of for loops directly overwriting the indexing variable
+
+- [`function_argument_linter()`](https://lintr.r-lib.org/dev/reference/function_argument_linter.md)
+  : Function argument linter
+
+- [`function_left_parentheses_linter()`](https://lintr.r-lib.org/dev/reference/function_left_parentheses_linter.md)
+  : Function left parentheses linter
+
+- [`function_return_linter()`](https://lintr.r-lib.org/dev/reference/function_return_linter.md)
+  : Lint common mistakes/style issues cropping up from return statements
+
+- [`if_not_else_linter()`](https://lintr.r-lib.org/dev/reference/if_not_else_linter.md)
+  : Block statements like if (!A) x else y
+
+- [`if_switch_linter()`](https://lintr.r-lib.org/dev/reference/if_switch_linter.md)
+  : Require usage of switch() over repeated if/else blocks
+
+- [`ifelse_censor_linter()`](https://lintr.r-lib.org/dev/reference/ifelse_censor_linter.md)
+  :
+
+  Block usage of [`ifelse()`](https://rdrr.io/r/base/ifelse.html) where
+  [`pmin()`](https://rdrr.io/r/base/Extremes.html) or
+  [`pmax()`](https://rdrr.io/r/base/Extremes.html) is more appropriate
+
+- [`implicit_assignment_linter()`](https://lintr.r-lib.org/dev/reference/implicit_assignment_linter.md)
+  : Avoid implicit assignment in function calls
+
+- [`implicit_integer_linter()`](https://lintr.r-lib.org/dev/reference/implicit_integer_linter.md)
+  : Implicit integer linter
+
+- [`indentation_linter()`](https://lintr.r-lib.org/dev/reference/indentation_linter.md)
+  : Check that indentation is consistent
+
+- [`infix_spaces_linter()`](https://lintr.r-lib.org/dev/reference/infix_spaces_linter.md)
+  : Infix spaces linter
+
+- [`inner_combine_linter()`](https://lintr.r-lib.org/dev/reference/inner_combine_linter.md)
+  :
+
+  Require [`c()`](https://rdrr.io/r/base/c.html) to be applied before
+  relatively expensive vectorized functions
+
+- [`is_numeric_linter()`](https://lintr.r-lib.org/dev/reference/is_numeric_linter.md)
+  :
+
+  Redirect `is.numeric(x) || is.integer(x)` to just use `is.numeric(x)`
+
+- [`keyword_quote_linter()`](https://lintr.r-lib.org/dev/reference/keyword_quote_linter.md)
+  : Block unnecessary quoting in calls
+
+- [`length_levels_linter()`](https://lintr.r-lib.org/dev/reference/length_levels_linter.md)
+  : Require usage of nlevels over length(levels(.))
+
+- [`length_test_linter()`](https://lintr.r-lib.org/dev/reference/length_test_linter.md)
+  : Check for a common mistake where a size check like 'length' is
+  applied in the wrong place
+
+- [`lengths_linter()`](https://lintr.r-lib.org/dev/reference/lengths_linter.md)
+  :
+
+  Require usage of [`lengths()`](https://rdrr.io/r/base/lengths.html)
+  where possible
+
+- [`library_call_linter()`](https://lintr.r-lib.org/dev/reference/library_call_linter.md)
+  : Library call linter
+
+- [`line_length_linter()`](https://lintr.r-lib.org/dev/reference/line_length_linter.md)
+  : Line length linter
+
+- [`list2df_linter()`](https://lintr.r-lib.org/dev/reference/list2df_linter.md)
+  :
+
+  Recommend direct usage of
+  [`data.frame()`](https://rdrr.io/r/base/data.frame.html) to create a
+  data.frame from a list
+
+- [`list_comparison_linter()`](https://lintr.r-lib.org/dev/reference/list_comparison_linter.md)
+  : Block usage of comparison operators with known-list() functions like
+  lapply
+
+- [`literal_coercion_linter()`](https://lintr.r-lib.org/dev/reference/literal_coercion_linter.md)
+  : Require usage of correctly-typed literals over literal coercions
+
+- [`matrix_apply_linter()`](https://lintr.r-lib.org/dev/reference/matrix_apply_linter.md)
+  :
+
+  Require usage of `colSums(x)` or `rowSums(x)` over `apply(x, ., sum)`
+
+- [`missing_argument_linter()`](https://lintr.r-lib.org/dev/reference/missing_argument_linter.md)
+  : Missing argument linter
+
+- [`missing_package_linter()`](https://lintr.r-lib.org/dev/reference/missing_package_linter.md)
+  : Missing package linter
+
+- [`namespace_linter()`](https://lintr.r-lib.org/dev/reference/namespace_linter.md)
+  : Namespace linter
+
+- [`nested_ifelse_linter()`](https://lintr.r-lib.org/dev/reference/nested_ifelse_linter.md)
+  :
+
+  Block usage of nested [`ifelse()`](https://rdrr.io/r/base/ifelse.html)
+  calls
+
+- [`nested_pipe_linter()`](https://lintr.r-lib.org/dev/reference/nested_pipe_linter.md)
+  : Block usage of pipes nested inside other calls
+
+- [`nonportable_path_linter()`](https://lintr.r-lib.org/dev/reference/nonportable_path_linter.md)
+  : Non-portable path linter
+
+- [`nrow_subset_linter()`](https://lintr.r-lib.org/dev/reference/nrow_subset_linter.md)
+  :
+
+  Block usage of `nrow(subset(x, .))`
+
+- [`numeric_leading_zero_linter()`](https://lintr.r-lib.org/dev/reference/numeric_leading_zero_linter.md)
+  : Require usage of a leading zero in all fractional numerics
+
+- [`nzchar_linter()`](https://lintr.r-lib.org/dev/reference/nzchar_linter.md)
+  : Require usage of nzchar where appropriate
+
+- [`object_length_linter()`](https://lintr.r-lib.org/dev/reference/object_length_linter.md)
+  : Object length linter
+
+- [`object_name_linter()`](https://lintr.r-lib.org/dev/reference/object_name_linter.md)
+  : Object name linter
+
+- [`object_overwrite_linter()`](https://lintr.r-lib.org/dev/reference/object_overwrite_linter.md)
+  :
+
+  Block assigning any variables whose name clashes with a `base` R
+  function
+
+- [`object_usage_linter()`](https://lintr.r-lib.org/dev/reference/object_usage_linter.md)
+  : Object usage linter
+
+- [`one_call_pipe_linter()`](https://lintr.r-lib.org/dev/reference/one_call_pipe_linter.md)
+  : Block single-call magrittr pipes
+
+- [`outer_negation_linter()`](https://lintr.r-lib.org/dev/reference/outer_negation_linter.md)
+  :
+
+  Require usage of `!any(x)` over `all(!x)`, `!all(x)` over `any(!x)`
+
+- [`package_hooks_linter()`](https://lintr.r-lib.org/dev/reference/package_hooks_linter.md)
+  : Package hooks linter
+
+- [`paren_body_linter()`](https://lintr.r-lib.org/dev/reference/paren_body_linter.md)
+  : Parenthesis before body linter
+
+- [`paste_linter()`](https://lintr.r-lib.org/dev/reference/paste_linter.md)
+  :
+
+  Raise lints for several common poor usages of
+  [`paste()`](https://rdrr.io/r/base/paste.html)
+
+- [`pipe_call_linter()`](https://lintr.r-lib.org/dev/reference/pipe_call_linter.md)
+  : Pipe call linter
+
+- [`pipe_consistency_linter()`](https://lintr.r-lib.org/dev/reference/pipe_consistency_linter.md)
+  : Pipe consistency linter
+
+- [`pipe_continuation_linter()`](https://lintr.r-lib.org/dev/reference/pipe_continuation_linter.md)
+  : Pipe continuation linter
+
+- [`pipe_return_linter()`](https://lintr.r-lib.org/dev/reference/pipe_return_linter.md)
+  : Block usage of return() in magrittr pipelines
+
+- [`print_linter()`](https://lintr.r-lib.org/dev/reference/print_linter.md)
+  : Block usage of print() for logging
+
+- [`quotes_linter()`](https://lintr.r-lib.org/dev/reference/quotes_linter.md)
+  : Character string quote linter
+
+- [`redundant_equals_linter()`](https://lintr.r-lib.org/dev/reference/redundant_equals_linter.md)
+  :
+
+  Block usage of `==`, `!=` on logical vectors
+
+- [`redundant_ifelse_linter()`](https://lintr.r-lib.org/dev/reference/redundant_ifelse_linter.md)
+  :
+
+  Prevent [`ifelse()`](https://rdrr.io/r/base/ifelse.html) from being
+  used to produce `TRUE`/`FALSE` or `1`/`0`
+
+- [`regex_subset_linter()`](https://lintr.r-lib.org/dev/reference/regex_subset_linter.md)
+  : Require usage of direct methods for subsetting strings via regex
+
+- [`rep_len_linter()`](https://lintr.r-lib.org/dev/reference/rep_len_linter.md)
+  : Require usage of rep_len(x, n) over rep(x, length.out = n)
+
+- [`repeat_linter()`](https://lintr.r-lib.org/dev/reference/repeat_linter.md)
+  : Repeat linter
+
+- [`return_linter()`](https://lintr.r-lib.org/dev/reference/return_linter.md)
+  : Return linter
+
+- [`routine_registration_linter()`](https://lintr.r-lib.org/dev/reference/routine_registration_linter.md)
+  : Identify unregistered native routines
+
+- [`sample_int_linter()`](https://lintr.r-lib.org/dev/reference/sample_int_linter.md)
+  : Require usage of sample.int(n, m, ...) over sample(1:n, m, ...)
+
+- [`scalar_in_linter()`](https://lintr.r-lib.org/dev/reference/scalar_in_linter.md)
+  : Block usage like x %in% "a"
+
+- [`semicolon_linter()`](https://lintr.r-lib.org/dev/reference/semicolon_linter.md)
+  : Semicolon linter
+
+- [`seq_linter()`](https://lintr.r-lib.org/dev/reference/seq_linter.md)
+  : Sequence linter
+
+- [`sort_linter()`](https://lintr.r-lib.org/dev/reference/sort_linter.md)
+  : Check for common mistakes around sorting vectors
+
+- [`spaces_inside_linter()`](https://lintr.r-lib.org/dev/reference/spaces_inside_linter.md)
+  : Spaces inside linter
+
+- [`spaces_left_parentheses_linter()`](https://lintr.r-lib.org/dev/reference/spaces_left_parentheses_linter.md)
+  : Spaces before parentheses linter
+
+- [`sprintf_linter()`](https://lintr.r-lib.org/dev/reference/sprintf_linter.md)
+  :
+
+  Require correct [`sprintf()`](https://rdrr.io/r/base/sprintf.html)
+  calls
+
+- [`stopifnot_all_linter()`](https://lintr.r-lib.org/dev/reference/stopifnot_all_linter.md)
+  : Block usage of all() within stopifnot()
+
+- [`string_boundary_linter()`](https://lintr.r-lib.org/dev/reference/string_boundary_linter.md)
+  :
+
+  Require usage of
+  [`startsWith()`](https://rdrr.io/r/base/startsWith.html) and
+  [`endsWith()`](https://rdrr.io/r/base/startsWith.html) over
+  [`grepl()`](https://rdrr.io/r/base/grep.html)/[`substr()`](https://rdrr.io/r/base/substr.html)
+  versions
+
+- [`strings_as_factors_linter()`](https://lintr.r-lib.org/dev/reference/strings_as_factors_linter.md)
+  :
+
+  Identify cases where `stringsAsFactors` should be supplied explicitly
+
+- [`system_file_linter()`](https://lintr.r-lib.org/dev/reference/system_file_linter.md)
+  :
+
+  Block usage of [`file.path()`](https://rdrr.io/r/base/file.path.html)
+  with [`system.file()`](https://rdrr.io/r/base/system.file.html)
+
+- [`terminal_close_linter()`](https://lintr.r-lib.org/dev/reference/terminal_close_linter.md)
+  : Prohibit close() from terminating a function definition
+
+- [`todo_comment_linter()`](https://lintr.r-lib.org/dev/reference/todo_comment_linter.md)
+  : TODO comment linter
+
+- [`trailing_blank_lines_linter()`](https://lintr.r-lib.org/dev/reference/trailing_blank_lines_linter.md)
+  : Trailing blank lines linter
+
+- [`trailing_whitespace_linter()`](https://lintr.r-lib.org/dev/reference/trailing_whitespace_linter.md)
+  : Trailing whitespace linter
+
+- [`undesirable_function_linter()`](https://lintr.r-lib.org/dev/reference/undesirable_function_linter.md)
+  : Undesirable function linter
+
+- [`undesirable_operator_linter()`](https://lintr.r-lib.org/dev/reference/undesirable_operator_linter.md)
+  : Undesirable operator linter
+
+- [`unnecessary_concatenation_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_concatenation_linter.md)
+  : Unneeded concatenation linter
+
+- [`unnecessary_lambda_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_lambda_linter.md)
+  : Block usage of anonymous functions in iteration functions when
+  unnecessary
+
+- [`unnecessary_nesting_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_nesting_linter.md)
+  : Block instances of unnecessary nesting
+
+- [`unnecessary_placeholder_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_placeholder_linter.md)
+  : Block usage of pipeline placeholders if unnecessary
+
+- [`unreachable_code_linter()`](https://lintr.r-lib.org/dev/reference/unreachable_code_linter.md)
+  : Block unreachable code and comments following return statements
+
+- [`unused_import_linter()`](https://lintr.r-lib.org/dev/reference/unused_import_linter.md)
+  : Check that imported packages are actually used
+
+- [`vector_logic_linter()`](https://lintr.r-lib.org/dev/reference/vector_logic_linter.md)
+  : Enforce usage of scalar logical operators in conditional statements
+
+- [`which_grepl_linter()`](https://lintr.r-lib.org/dev/reference/which_grepl_linter.md)
+  : Require usage of grep over which(grepl(.))
+
+- [`whitespace_linter()`](https://lintr.r-lib.org/dev/reference/whitespace_linter.md)
+  : Whitespace linter
+
+- [`yoda_test_linter()`](https://lintr.r-lib.org/dev/reference/yoda_test_linter.md)
+  : Block obvious "yoda tests"
+
+## Groups of linters
+
+- [`all_linters()`](https://lintr.r-lib.org/dev/reference/all_linters.md)
+  : Create a linter configuration based on all available linters
+- [`available_linters()`](https://lintr.r-lib.org/dev/reference/available_linters.md)
+  [`available_tags()`](https://lintr.r-lib.org/dev/reference/available_linters.md)
+  : Get Linter metadata from a package
+- [`best_practices_linters`](https://lintr.r-lib.org/dev/reference/best_practices_linters.md)
+  : Best practices linters
+- [`common_mistakes_linters`](https://lintr.r-lib.org/dev/reference/common_mistakes_linters.md)
+  : Common mistake linters
+- [`configurable_linters`](https://lintr.r-lib.org/dev/reference/configurable_linters.md)
+  : Configurable linters
+- [`consistency_linters`](https://lintr.r-lib.org/dev/reference/consistency_linters.md)
+  : Consistency linters
+- [`correctness_linters`](https://lintr.r-lib.org/dev/reference/correctness_linters.md)
+  : Correctness linters
+- [`default_linters`](https://lintr.r-lib.org/dev/reference/default_linters.md)
+  : Default linters
+- [`deprecated_linters`](https://lintr.r-lib.org/dev/reference/deprecated_linters.md)
+  : Deprecated linters
+- [`efficiency_linters`](https://lintr.r-lib.org/dev/reference/efficiency_linters.md)
+  : Efficiency linters
+- [`executing_linters`](https://lintr.r-lib.org/dev/reference/executing_linters.md)
+  : Code executing linters
+- [`linters`](https://lintr.r-lib.org/dev/reference/linters.md) :
+  Available linters
+- [`package_development_linters`](https://lintr.r-lib.org/dev/reference/package_development_linters.md)
+  : Package development linters
+- [`pkg_testthat_linters`](https://lintr.r-lib.org/dev/reference/pkg_testthat_linters.md)
+  : Testthat linters
+- [`readability_linters`](https://lintr.r-lib.org/dev/reference/readability_linters.md)
+  : Readability linters
+- [`regex_linters`](https://lintr.r-lib.org/dev/reference/regex_linters.md)
+  : Regular expression linters
+- [`robustness_linters`](https://lintr.r-lib.org/dev/reference/robustness_linters.md)
+  : Robustness linters
+- [`style_linters`](https://lintr.r-lib.org/dev/reference/style_linters.md)
+  : Style linters
+- [`tidy_design_linters`](https://lintr.r-lib.org/dev/reference/tidy_design_linters.md)
+  : Tidyverse design linters
+
+## Common default configurations
+
+- [`all_undesirable_functions`](https://lintr.r-lib.org/dev/reference/default_undesirable_functions.md)
+  [`default_undesirable_functions`](https://lintr.r-lib.org/dev/reference/default_undesirable_functions.md)
+  [`all_undesirable_operators`](https://lintr.r-lib.org/dev/reference/default_undesirable_functions.md)
+  [`default_undesirable_operators`](https://lintr.r-lib.org/dev/reference/default_undesirable_functions.md)
+  : Default undesirable functions and operators
+- [`default_linters`](https://lintr.r-lib.org/dev/reference/default_linters.md)
+  : Default linters
+- [`default_settings`](https://lintr.r-lib.org/dev/reference/default_settings.md)
+  : Default lintr settings
+
+## Utilities
+
+- [`Linter()`](https://lintr.r-lib.org/dev/reference/Linter.md) :
+
+  Create a `linter` closure
+
+- [`expect_lint()`](https://lintr.r-lib.org/dev/reference/expect_lint.md)
+  [`expect_no_lint()`](https://lintr.r-lib.org/dev/reference/expect_lint.md)
+  : Lint expectation
+
+- [`expect_lint_free()`](https://lintr.r-lib.org/dev/reference/expect_lint_free.md)
+  : Test that the package is lint free
+
+- [`ids_with_token()`](https://lintr.r-lib.org/dev/reference/ids_with_token.md)
+  [`with_id()`](https://lintr.r-lib.org/dev/reference/ids_with_token.md)
+  : Get parsed IDs by token
+
+- [`is_lint_level()`](https://lintr.r-lib.org/dev/reference/is_lint_level.md)
+  : Is this an expression- or a file-level source object?
+
+- [`get_r_string()`](https://lintr.r-lib.org/dev/reference/get_r_string.md)
+  :
+
+  Extract text from `STR_CONST` nodes
+
+- [`use_lintr()`](https://lintr.r-lib.org/dev/reference/use_lintr.md) :
+  Use lintr in your project
+
+- [`make_linter_from_xpath()`](https://lintr.r-lib.org/dev/reference/make_linter_from_xpath.md)
+  [`make_linter_from_function_xpath()`](https://lintr.r-lib.org/dev/reference/make_linter_from_xpath.md)
+  : Create a linter from an XPath
+
+- [`xml_nodes_to_lints()`](https://lintr.r-lib.org/dev/reference/xml_nodes_to_lints.md)
+  : Convert an XML node or nodeset into a Lint
+
+- [`xp_call_name()`](https://lintr.r-lib.org/dev/reference/xp_call_name.md)
+  : Get the name of the function matched by an XPath
+
+## Meta-tooling
+
+- [`Lint()`](https://lintr.r-lib.org/dev/reference/lint-s3.md) :
+
+  Create a `lint` object
+
+- [`checkstyle_output()`](https://lintr.r-lib.org/dev/reference/checkstyle_output.md)
+  : Checkstyle Report for lint results
+
+- [`sarif_output()`](https://lintr.r-lib.org/dev/reference/sarif_output.md)
+  : SARIF Report for lint results
+
+- [`gitlab_output()`](https://lintr.r-lib.org/dev/reference/gitlab_output.md)
+  : GitLab Report for lint results
+
+- [`clear_cache()`](https://lintr.r-lib.org/dev/reference/clear_cache.md)
+  : Clear the lintr cache
+
+- [`get_source_expressions()`](https://lintr.r-lib.org/dev/reference/get_source_expressions.md)
+  : Parsed sourced file from a filename
+
+- [`parse_exclusions()`](https://lintr.r-lib.org/dev/reference/parse_exclusions.md)
+  : read a source file and parse all the excluded lines from it
