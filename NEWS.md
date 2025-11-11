@@ -52,6 +52,7 @@
 * `use_lintr()` adds the created `.lintr` file to the `.Rbuildignore` if run in a package (#2926, initial work by @MEO265, finalized by @Bisaloo).
 * `length_test_linter()` is extended to check incorrect usage of `nrow()`, `ncol()`, `NROW()`, `NCOL()` (#2933, @mcol).
 * `implicit_assignment_linter()` gains argument `allow_paren_print` to disable lints for the use of `(` for auto-printing (#2962, @TimTaylor).
+* `line_length_linter()` has a new argument `ignore_string_bodies` (defaulting to `FALSE`) which governs whether the contents of multi-line string bodies should be linted (#856, @MichaelChirico). We think the biggest use case for this is writing SQL in R strings, especially in cases where the recommended string width for SQL & R differ.
 
 ### New linters
 
