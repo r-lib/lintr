@@ -212,7 +212,7 @@ default settings are also shown.
 | function_left_parentheses_linter |                                                                                                                                         |
 | indentation_linter               | indent = 2L, hanging_indent_style = “tidy”, assignment_as_infix = TRUE                                                                  |
 | infix_spaces_linter              | exclude_operators = NULL, allow_multiple_spaces = TRUE                                                                                  |
-| line_length_linter               | length = 80L                                                                                                                            |
+| line_length_linter               | length = 80L, ignore_string_bodies = FALSE                                                                                              |
 | object_length_linter             | length = 30L                                                                                                                            |
 | object_name_linter               | styles = c(“snake_case”, “symbols”), regexes = character(0)                                                                             |
 | object_usage_linter              | interpret_glue = NULL, interpret_extensions = c(“glue”, “rlang”), skip_with = TRUE                                                      |

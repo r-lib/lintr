@@ -220,6 +220,13 @@
   for auto-printing
   ([\#2962](https://github.com/r-lib/lintr/issues/2962),
   [@TimTaylor](https://github.com/TimTaylor)).
+- [`line_length_linter()`](https://lintr.r-lib.org/dev/reference/line_length_linter.md)
+  has a new argument `ignore_string_bodies` (defaulting to `FALSE`)
+  which governs whether the contents of multi-line string bodies should
+  be linted ([\#856](https://github.com/r-lib/lintr/issues/856),
+  [@MichaelChirico](https://github.com/MichaelChirico)). We think the
+  biggest use case for this is writing SQL in R strings, especially in
+  cases where the recommended string width for SQL & R differ.
 
 #### New linters
 
