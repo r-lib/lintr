@@ -21,7 +21,7 @@ This linter covers several rules related to \code{\link[=library]{library()}} ca
 \item Block usage of argument \code{character.only}, in particular
 for loading packages in a loop.
 \item Block consecutive calls to \code{suppressMessages(library(.))}
-in favor of using \code{\link[=suppressMessages]{suppressMessages()}} only once to suppress
+in favor of using \code{\link[backports:suppressWarnings]{backports::suppressMessages()}} only once to suppress
 messages from all \code{library()} calls. Ditto \code{\link[=suppressPackageStartupMessages]{suppressPackageStartupMessages()}}.
 }
 }
