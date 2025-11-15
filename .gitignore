@@ -15,6 +15,7 @@ script.R
 *.Rcheck
 lintr_*.tar.gz
 testthat-problems.rds
+tests/testthat/_problems/
 
 docs
 inst/doc
