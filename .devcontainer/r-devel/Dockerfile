@@ -1,7 +1,7 @@
 FROM docker.io/rhub/r-minimal:devel
 
 RUN apk update && \
-  apk add --no-cache git gcc g++ libxml2 linux-headers musl-dev
+  apk add --no-cache git gcc g++ libxml2-dev linux-headers musl-dev
 
 COPY DESCRIPTION .
 

@@ -230,7 +230,7 @@ rd_undesirable_operators <- function() {
   op_link_map <- c(
     `:::` = "\\link[base:ns-dblcolon]{:::}",
     `<<-` = "\\link[base:assignOps]{<<-}",
-    `->>` = "\\link[base:assignOps]{<<-}"
+    `->>` = "\\link[base:assignOps]{->>}"
   )
   op <- names(default_undesirable_operators)
 

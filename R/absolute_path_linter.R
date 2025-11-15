@@ -11,7 +11,7 @@
 #' @examples
 #' # will produce lints
 #' lint(
-#'   text = 'R"--[/blah/file.txt]--"',
+#'   text = 'R"(/blah/file.txt)"',
 #'   linters = absolute_path_linter()
 #' )
 #'
