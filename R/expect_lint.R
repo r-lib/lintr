@@ -87,8 +87,6 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   }
 
   expect_lint_impl_(lints, checks)
-
-  testthat::succeed()
 }
 
 #' NB: must _not_ succeed(), should only fail() or abort()
@@ -122,11 +120,13 @@ expect_lint_impl_ <- function(lints, checks) {
         return(testthat::fail(sprintf(
           "check #%d: %s %s did not match %s",
           # deparse ensures that NULL, list(), etc are handled gracefully
-          itr, field, deparse(value), deparse(check)
+          itr, field, deparse(value), deparse(check_field)
         )))
       }
     }
   }
+
+  testthat::succeed()
 }
 
 #' @rdname expect_lint
