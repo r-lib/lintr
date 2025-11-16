@@ -20,6 +20,7 @@
 * `assignment_linter()` no longer errors if `"%<>%"` is an allowed operator (#2850, @AshesITR).
 * `condition_call_linter()` no longer covers cases where the object type in the ellipsis cannot be determined with certainty (#2888, #2890, @Bisaloo). In particular, this fixes the known false positive of custom conditions created via `errorCondition()` or `warningCondition()` not being compatible with the `call.` argument in `stop()` or `warning()`.
 * `package_hooks_linter()` now validates `.onUnload()` hook signatures, requiring exactly one argument starting with 'lib' (#2940, @emmanuel-ferdman).
+* `expect_lint()` conforms to {testthat} v3.3.0+ rules for custom expectations, namely that they produce either exactly one success or exactly one failure (#2937, @hadley).
 
 ## Changes to default linters
 
