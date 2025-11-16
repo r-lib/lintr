@@ -78,6 +78,11 @@
   argument starting with ‘lib’
   ([\#2940](https://github.com/r-lib/lintr/issues/2940),
   [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
+- [`expect_lint()`](https://lintr.r-lib.org/dev/reference/expect_lint.md)
+  conforms to {testthat} v3.3.0+ rules for custom expectations, namely
+  that they produce either exactly one success or exactly one failure
+  ([\#2937](https://github.com/r-lib/lintr/issues/2937),
+  [@hadley](https://github.com/hadley)).
 
 ### Changes to default linters
 
