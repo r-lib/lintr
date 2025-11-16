@@ -20,3 +20,4 @@ tests/testthat/_problems/
 docs
 inst/doc
 .DS_Store
+.claude/settings.local.json
