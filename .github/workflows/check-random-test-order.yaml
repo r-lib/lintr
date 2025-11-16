@@ -1,8 +1,7 @@
 on:
   push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+    branches:
+      - 'rc-*'
 
 name: check-random-test-order
 
@@ -27,7 +26,6 @@ jobs:
       - name: Run Tests in Random Order
         run: |
           options(crayon.enabled = TRUE)
-          withr::local_envvar(TESTTHAT_PARALLEL = "FALSE")
           seed <- sample.int(1e6, 1L)
           cli::cli_inform("Chosen seed for the current test run: {seed}")
           set.seed(seed)
