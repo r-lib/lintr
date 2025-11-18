@@ -93,7 +93,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
 
 #' NB: must _not_ succeed(), should only fail() or abort()
 #' @noRd
-expect_lint_impl_ <- function(lints, checks, trace_env = caller_env()) {
+expect_lint_impl_ <- function(lints, checks, trace_env = rlang::caller_env()) {
   itr <- 0L
   # valid fields are those from Lint(), plus 'linter'
   lint_fields <- c(names(formals(Lint)), "linter")
