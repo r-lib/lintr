@@ -54,6 +54,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
 
   lints <- lint(file, ...)
+
   n_lints <- length(lints)
   lint_str <- if (n_lints) paste(c("", lints), collapse = "\n") else ""
 
@@ -87,11 +88,13 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   }
 
   expect_lint_impl_(lints, checks)
+
+  invisible(lints)
 }
 
 #' NB: must _not_ succeed(), should only fail() or abort()
 #' @noRd
-expect_lint_impl_ <- function(lints, checks) {
+expect_lint_impl_ <- function(lints, checks, trace_env = caller_env()) {
   itr <- 0L
   # valid fields are those from Lint(), plus 'linter'
   lint_fields <- c(names(formals(Lint)), "linter")
@@ -117,11 +120,12 @@ expect_lint_impl_ <- function(lints, checks) {
         isTRUE(all.equal(value, check_field))
       }
       if (!ok) {
-        return(testthat::fail(sprintf(
+        fail_msg <- sprintf(
           "check #%d: %s %s did not match %s",
           # deparse ensures that NULL, list(), etc are handled gracefully
           itr, field, deparse(value), deparse(check_field)
-        )))
+        )
+        return(testthat::fail(fail_msg, trace_env = trace_env))
       }
     }
   }
