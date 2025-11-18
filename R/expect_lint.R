@@ -54,7 +54,6 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
 
   lints <- lint(file, ...)
-
   n_lints <- length(lints)
   lint_str <- if (n_lints) paste(c("", lints), collapse = "\n") else ""
 
