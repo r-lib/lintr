@@ -59,8 +59,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
 
   wrong_number_fmt <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
-    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
-    return(testthat::expect(n_lints %==% 0L, msg))
+    if (n_lints != 0L) {
+      return(testthat::fail(sprintf(wrong_number_fmt, n_lints, 0L, lint_str)))
+    }
+    return(testthat::succeed())
   }
 
   if (!is.list(checks) || !is.null(names(checks))) { # vector or named list
@@ -69,8 +71,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   checks[] <- lapply(checks, fix_names, "message")
 
   if (n_lints != length(checks)) {
-    msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
-    return(testthat::expect(FALSE, msg))
+    return(testthat::fail(sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)))
   }
 
   if (ignore_order) {
@@ -85,42 +86,50 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
     checks <- checks[check_order]
   }
 
-  local({
-    itr_env <- new.env(parent = emptyenv())
-    itr_env$itr <- 0L
-    # valid fields are those from Lint(), plus 'linter'
-    lint_fields <- c(names(formals(Lint)), "linter")
-    Map(
-      function(lint, check) {
-        itr_env$itr <- itr_env$itr + 1L
-        lapply(names(check), function(field) {
-          if (!field %in% lint_fields) {
-            cli_abort(c(
-              x = "Check {.val {itr_env$itr}} has an invalid field: {.field {field}}.",
-              i = "Valid fields are: {.field {lint_fields}}."
-            ))
-          }
-          check <- check[[field]]
-          value <- lint[[field]]
-          msg <- sprintf(
-            "check #%d: %s %s did not match %s",
-            itr_env$itr, field, deparse(value), deparse(check)
-          )
-          # deparse ensures that NULL, list(), etc are handled gracefully
-          ok <- if (field == "message") {
-            re_matches_logical(value, check)
-          } else {
-            isTRUE(all.equal(value, check))
-          }
-          testthat::expect(ok, msg)
-        })
-      },
-      lints,
-      checks
-    )
-  })
+  expect_lint_impl_(lints, checks)
 
-  invisible(NULL)
+  invisible(lints)
+}
+
+#' NB: must _not_ succeed(), should only fail() or abort()
+#' @noRd
+expect_lint_impl_ <- function(lints, checks, trace_env = rlang::caller_env()) {
+  itr <- 0L
+  # valid fields are those from Lint(), plus 'linter'
+  lint_fields <- c(names(formals(Lint)), "linter")
+
+  for (i in seq_along(lints)) {
+    lint <- lints[[i]]
+    check <- checks[[i]]
+
+    itr <- itr + 1L
+
+    for (field in names(check)) {
+      if (!field %in% lint_fields) {
+        cli_abort(c(
+          x = "Check {.val {itr}} has an invalid field: {.field {field}}.",
+          i = "Valid fields are: {.field {lint_fields}}."
+        ))
+      }
+      check_field <- check[[field]]
+      value <- lint[[field]]
+      ok <- if (field == "message") {
+        re_matches_logical(value, check_field)
+      } else {
+        isTRUE(all.equal(value, check_field))
+      }
+      if (!ok) {
+        fail_msg <- sprintf(
+          "check #%d: %s %s did not match %s",
+          # deparse ensures that NULL, list(), etc are handled gracefully
+          itr, field, deparse(value), deparse(check_field)
+        )
+        return(testthat::fail(fail_msg, trace_env = trace_env))
+      }
+    }
+  }
+
+  testthat::succeed()
 }
 
 #' @rdname expect_lint
@@ -162,12 +171,11 @@ expect_lint_free <- function(...) {
   if (has_lints) {
     lint_output <- format(lints)
   }
-  result <- testthat::expect(
-    !has_lints,
-    paste0("Not lint free\n", lint_output)
-  )
 
-  invisible(result)
+  if (has_lints) {
+    return(testthat::fail(paste0("Not lint free\n", lint_output)))
+  }
+  testthat::succeed()
 }
 
 # Helper function to check if testthat is installed.
