@@ -85,6 +85,13 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
+#' @param needs_braces Logical, default FALSE. If it's possible or known that
+#'   `lines` cannot be parsed as a standalone expression, only a "child"
+#'   expression, we insert braces `{}` around it to ensure that it parses.
+#'   There is only one known case for this, namely, when finding code with
+#'   shorthand lambda `\(` where `\` and `(` are separated by a comment;
+#'   see `object_usage_linter()` for more details.
+#' @noRd
 get_content <- function(lines, info, needs_braces = FALSE) {
   lines[is.na(lines)] <- ""
 
