@@ -14,7 +14,7 @@ than this are linted.}
 Check for overly complicated expressions. See \code{cyclocomp()} function from \code{{cyclocomp}}.
 }
 \examples{
-\dontshow{if (requireNamespace("cyclocomp", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("cyclocomp", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 # will produce lints
 lint(
   text = "if (TRUE) 1 else 2",

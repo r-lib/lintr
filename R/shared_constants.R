@@ -92,7 +92,7 @@ get_fixed_string <- function(static_regex) {
 #'
 #' This handles two cases: converting a "trivial" character group like `[$]` to `$`,
 #'   and converting an escaped character like `"\\$"` to `$`. Splitting a full expression
-#'   into tokens is handled by [get_fixed_string()].
+#'   into tokens is handled by `get_fixed_string()`.
 #'
 #' @noRd
 get_token_replacement <- function(token_content, token_type) {
@@ -220,7 +220,7 @@ object_name_xpath <- local({
   ]"
 
   # either an argument supplied positionally, i.e., not like 'arg = val', or the call <expr>
-  not_kwarg_cond <- "not(preceding-sibling::*[1][self::EQ_SUB])"
+  not_kwarg_cond <- "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])"
 
   glue(xp_strip_comments("
   //SYMBOL[ {sprintf(xp_assignment_target_fmt, 'ancestor', '')} ]
@@ -253,7 +253,7 @@ strip_names <- function(x) {
 
 #' Pull out symbols used in glue strings under the current sub-tree
 #'
-#' Required by any linter (e.g. [object_usage_linter()] / [unused_imports_linter()])
+#' Required by any linter (e.g. [object_usage_linter()] / [unused_import_linter()])
 #'   that lints based on whether certain symbols are present, to ensure any
 #'   symbols only used inside glue strings are also visible to the linter.
 #'
