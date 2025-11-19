@@ -102,6 +102,16 @@ test_that("string_boundary_linter blocks disallowed substr()/substring() usage",
   expect_lint("substring(x, start, nchar(x)) == 'abcde'", ends_message, linter)
   # more complicated expressions
   expect_lint("substring(colnames(x), start, nchar(colnames(x))) == 'abc'", ends_message, linter)
+
+  # adversarial comments
+  expect_lint(
+    trim_some("
+      substring(colnames(x), start, nchar(colnames( # comment
+      x))) == 'abc'
+    "),
+    ends_message,
+    linter
+  )
 })
 
 test_that("plain ^ or $ are skipped", {

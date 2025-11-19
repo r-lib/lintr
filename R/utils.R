@@ -85,20 +85,27 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
-get_content <- function(lines, info) {
+#' @param needs_braces Logical, default FALSE. If it's possible or known that
+#'   `lines` cannot be parsed as a standalone expression, only a "child"
+#'   expression, we insert braces `{}` around it to ensure that it parses.
+#'   There is only one known case for this, namely, when finding code with
+#'   shorthand lambda `\(` where `\` and `(` are separated by a comment;
+#'   see `object_usage_linter()` for more details.
+#' @noRd
+get_content <- function(lines, info, needs_braces = FALSE) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
+    # put in data.frame-like format
     if (is_node(info)) {
-      info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
-        as.integer(xml_attr(info, attr))
-      })
+      info <- lapply(xml2::xml_attrs(info), as.integer)
     }
 
     lines <- lines[seq(info$line1, info$line2)]
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
+  if (needs_braces) lines <- c("{", lines, "}")
   paste(lines, collapse = "\n")
 }
 
