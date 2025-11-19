@@ -47,17 +47,17 @@ lint(
   text = "x[grep(pattern, x)]",
   linters = regex_subset_linter()
 )
-#> <text>:1:3: warning: [regex_subset_linter] Prefer grepv(pattern, x, ...) over x[grep(pattern, x, ...)] and x[grepl(pattern, x, ...)]. Code required to run on R versions before 4.5.0 can use grep(pattern, x, ..., value = TRUE).
+#> <text>:1:1: warning: [regex_subset_linter] Prefer grepv(pattern, x, ...) over x[grep(pattern, x, ...)] and x[grepl(pattern, x, ...)]. Code required to run on R versions before 4.5.0 can use grep(pattern, x, ..., value = TRUE).
 #> x[grep(pattern, x)]
-#>   ^~~~~~~~~~~~~~~~
+#> ^~~~~~~~~~~~~~~~~~~
 
 lint(
   text = "x[stringr::str_which(x, pattern)]",
   linters = regex_subset_linter()
 )
-#> <text>:1:3: warning: [regex_subset_linter] Prefer stringr::str_subset(x, pattern) over x[str_detect(x, pattern)] and x[str_which(x, pattern)].
+#> <text>:1:1: warning: [regex_subset_linter] Prefer stringr::str_subset(x, pattern) over x[str_detect(x, pattern)] and x[str_which(x, pattern)].
 #> x[stringr::str_which(x, pattern)]
-#>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # okay
 lint(
