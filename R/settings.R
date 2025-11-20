@@ -65,7 +65,7 @@
 read_settings <- function(filename, call = parent.frame()) {
   reset_settings()
 
-  # doing lint(text=) should read settings from the current directory, required e.g. for Emacs, #2847
+  # doing lint(text=) should read settings from the current directory, #2847
   location <- if (missing(filename)) "." else filename
   config_file <- find_config(location)
   default_encoding <- find_default_encoding(location)
