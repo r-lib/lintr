@@ -19,8 +19,8 @@
 #'   - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
 #' @param cache When logical, toggle caching of lint results. If passed a character string, store the cache in this
 #'   directory.
-#' @param parse_settings Logical, default `TRUE`. Whether to try and parse the [settings][read_settings]. Otherwise,
-#'   the [default_settings()] are used.
+#' @param parse_settings Logical. Whether to try and parse the [settings][read_settings]. Otherwise, the
+#'   [default_settings()] are used. `TRUE` by default when linting files, as opposed to `text=`.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #'   linting is being done ad hoc.
 #'
@@ -38,14 +38,13 @@
 #' unlink(f)
 #'
 #' @export
-lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
+lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = !inline_data, text = NULL) {
   # TODO(#2502): Remove this workaround.
   dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
   check_dots(dot_names, c("exclude", "parse_exclusions"))
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
-  parse_settings <- (!inline_data || !missing(parse_settings)) && isTRUE(parse_settings)
 
   if (parse_settings) {
     read_settings(filename)
