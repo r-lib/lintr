@@ -214,6 +214,22 @@ test_that("implicit_assignment_linter blocks disallowed usages in simple conditi
   expect_lint("while (0L -> x) FALSE", lint_message, linter)
   expect_lint("for (x in y <- 1:10) print(x)", lint_message, linter)
   expect_lint("for (x in 1:10 -> y) print(x)", lint_message, linter)
+
+  # adversarial commenting
+  expect_lint(
+    trim_some("
+      while # comment
+      (x <- 0L) FALSE
+
+      while ( # comment
+      x <- 0L) FALSE
+    "),
+    list(
+      list(lint_message, line_number = 2L),
+      list(lint_message, line_number = 5L)
+    ),
+    linter
+  )
 })
 
 test_that("implicit_assignment_linter blocks disallowed usages in nested conditional statements", {
@@ -422,6 +438,17 @@ test_that("allow_scoped skips scoped assignments", {
   # outside of branching, doesn't matter
   expect_lint("foo(idx <- bar()); baz()", lint_message, linter)
   expect_lint("foo(x, idx <- bar()); baz()", lint_message, linter)
+
+  # adversarial comments
+  expect_no_lint(
+    trim_some("
+      if # comment
+      (any(idx <- x < 0)) {
+        stop('negative elements: ', toString(which(idx)))
+      }
+    "),
+    linter
+  )
 })
 
 test_that("interaction of allow_lazy and allow_scoped", {

@@ -58,7 +58,7 @@ redundant_equals_linter <- function() {
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, xpath)
-    op <- xml_text(xml_find_first(bad_expr, "*[2]"))
+    op <- xml_text(xml_find_first(bad_expr, "*[not(self::COMMENT)][2]"))
 
     xml_nodes_to_lints(
       bad_expr,
