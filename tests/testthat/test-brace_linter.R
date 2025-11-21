@@ -634,3 +634,4 @@ test_that("function shorthand is treated like 'full' function", {
     linter
   )
 })
+# nofuzz end
