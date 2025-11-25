@@ -44,6 +44,10 @@
   change in the Tidyverse Style Guide
   ([\#2707](https://github.com/r-lib/lintr/issues/2707),
   [@MichaelChirico](https://github.com/MichaelChirico)).
+- [`lint()`](https://lintr.r-lib.org/dev/reference/lint.md) no longer
+  picks up settings automatically in *ad hoc* invocations like
+  `lint("text\n")` or `lint(text = "str")`. You should set
+  `parse_settings=TRUE` to force settings to be read.
 
 ### Bug fixes
 
@@ -56,7 +60,10 @@
 - Files with encoding inferred from settings read more robustly under
   `lint(parse_settings = TRUE)`
   ([\#2803](https://github.com/r-lib/lintr/issues/2803),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
+  [@MichaelChirico](https://github.com/MichaelChirico)). Thanks also to
+  [@bastistician](https://github.com/bastistician) for detecting a
+  regression caused by the initial change for users of Emacs
+  ([\#2847](https://github.com/r-lib/lintr/issues/2847)).
 - [`assignment_linter()`](https://lintr.r-lib.org/dev/reference/assignment_linter.md)
   no longer errors if `"%<>%"` is an allowed operator
   ([\#2850](https://github.com/r-lib/lintr/issues/2850),

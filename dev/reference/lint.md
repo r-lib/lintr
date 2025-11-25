@@ -16,7 +16,7 @@ lint(
   linters = NULL,
   ...,
   cache = FALSE,
-  parse_settings = TRUE,
+  parse_settings = !inline_data,
   text = NULL
 )
 
@@ -71,11 +71,11 @@ lint_package(
 
 - parse_settings:
 
-  Logical, default `TRUE`. Whether to try and parse the
+  Logical. Whether to try and parse the
   [settings](https://lintr.r-lib.org/dev/reference/read_settings.md).
   Otherwise, the
   [`default_settings()`](https://lintr.r-lib.org/dev/reference/default_settings.md)
-  are used.
+  are used. `TRUE` by default when linting files, as opposed to `text=`.
 
 - text:
 
@@ -143,10 +143,10 @@ lint(text = "a = 123")
 f <- tempfile()
 writeLines("a=1", f)
 lint(f)
-#> /tmp/RtmpitNIfn/file18954cbdf269:1:2: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+#> /tmp/Rtmpe76qyw/file187c3c3bef0:1:2: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
 #> a=1
 #>  ^
-#> /tmp/RtmpitNIfn/file18954cbdf269:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
+#> /tmp/Rtmpe76qyw/file187c3c3bef0:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
 #> a=1
 #>  ^
 unlink(f)

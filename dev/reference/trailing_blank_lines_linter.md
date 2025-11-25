@@ -32,7 +32,7 @@ lint(
   filename = f,
   linters = trailing_blank_lines_linter()
 )
-#> /tmp/RtmpitNIfn/file189514003610:2:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
+#> /tmp/Rtmpe76qyw/file187c4101d1c9:2:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
 #> 
 #> ^
 unlink(f)

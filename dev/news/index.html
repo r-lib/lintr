@@ -68,12 +68,14 @@
 </ul></li>
 <li>Argument <code>interpret_glue</code> to <code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code> is deprecated in favor of the more general <code>interpret_extensions</code>, in which <code>"glue"</code> is present by default (<a href="https://github.com/r-lib/lintr/issues/1472" class="external-link">#1472</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). See the description below.</li>
 <li>The default for <code><a href="../reference/pipe_consistency_linter.html">pipe_consistency_linter()</a></code> is changed from <code>"auto"</code> (require one pipe style, either magrittr or native) to <code>"|&gt;"</code> (R native pipe required) to coincide with the same change in the Tidyverse Style Guide (<a href="https://github.com/r-lib/lintr/issues/2707" class="external-link">#2707</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/lint.html">lint()</a></code> no longer picks up settings automatically in <em>ad hoc</em> invocations like <code>lint("text\n")</code> or <code>lint(text = "str")</code>. You should set <code>parse_settings=TRUE</code> to force settings to be read.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/lint-s3.html">Lint()</a></code>, and thus all linters, ensures that the returned object’s <code>message</code> attribute is consistently a simple character string (and not, for example, an object of class <code>"glue"</code>; <a href="https://github.com/r-lib/lintr/issues/2740" class="external-link">#2740</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>Files with encoding inferred from settings read more robustly under <code>lint(parse_settings = TRUE)</code> (<a href="https://github.com/r-lib/lintr/issues/2803" class="external-link">#2803</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>Files with encoding inferred from settings read more robustly under <code>lint(parse_settings = TRUE)</code> (<a href="https://github.com/r-lib/lintr/issues/2803" class="external-link">#2803</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Thanks also to <a href="https://github.com/bastistician" class="external-link">@bastistician</a> for detecting a regression caused by the initial change for users of Emacs (<a href="https://github.com/r-lib/lintr/issues/2847" class="external-link">#2847</a>).</li>
 <li>
 <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> no longer errors if <code>"%&lt;&gt;%"</code> is an allowed operator (<a href="https://github.com/r-lib/lintr/issues/2850" class="external-link">#2850</a>, <a href="https://github.com/AshesITR" class="external-link">@AshesITR</a>).</li>
 <li>
