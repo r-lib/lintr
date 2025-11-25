@@ -2,6 +2,8 @@
 
 ## Deprecations & breaking changes
 
+* The default for `pipe_consistency_linter()` is changed from `"auto"` (require one pipe style, either magrittr or native) to `"|>"` (R native pipe required) to coincide with the same change in the Tidyverse Style Guide (#2707, @MichaelChirico).
+* `lint()` no longer picks up settings automatically in _ad hoc_ invocations like `lint("text\n")` or `lint(text = "str")`. You should set `parse_settings=TRUE` to force settings to be read. Emacs ESS users may need to update to a recent version, e.g. `ESS>20251003`.
 * Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now defunct.
 * Six linters marked as deprecated with warning in the previous release are now fully deprecated: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`. They will be removed in the next release.
 * As previously announced, the following fully-deprecated items are now removed from the package:
@@ -11,8 +13,6 @@
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
 * Argument `interpret_glue` to `object_usage_linter()` is deprecated in favor of the more general `interpret_extensions`, in which `"glue"` is present by default (#1472, @MichaelChirico). See the description below.
-* The default for `pipe_consistency_linter()` is changed from `"auto"` (require one pipe style, either magrittr or native) to `"|>"` (R native pipe required) to coincide with the same change in the Tidyverse Style Guide (#2707, @MichaelChirico).
-* `lint()` no longer picks up settings automatically in _ad hoc_ invocations like `lint("text\n")` or `lint(text = "str")`. You should set `parse_settings=TRUE` to force settings to be read.
 
 ## Bug fixes
 
