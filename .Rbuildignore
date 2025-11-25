@@ -3,7 +3,6 @@
 ^[^/]+\.R$
 ^travis-tool\.sh$
 ^.*\.gz$
-^cran-comments\.md$
 ^lintr\.Rproj$
 ^\.Rproj\.user$
 ^\.idea$
