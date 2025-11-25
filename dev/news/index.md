@@ -179,10 +179,6 @@
   function to output lints to GitLab format
   ([\#2858](https://github.com/r-lib/lintr/issues/2858),
   [@lschneiderbauer](https://github.com/lschneiderbauer))
-- [`brace_linter()`](https://lintr.r-lib.org/dev/reference/brace_linter.md)
-  requires `test_that()`’s `code=` argument to have curly braces
-  ([\#2292](https://github.com/r-lib/lintr/issues/2292),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
 - [`fixed_regex_linter()`](https://lintr.r-lib.org/dev/reference/fixed_regex_linter.md)
   recognizes usage of the new (R 4.5.0)
   [`grepv()`](https://rdrr.io/r/base/grep.html) wrapper of

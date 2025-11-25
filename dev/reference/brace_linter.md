@@ -51,9 +51,6 @@ brace_linter(
 
 - Function bodies are wrapped in curly braces.
 
-- [`testthat::test_that()`](https://testthat.r-lib.org/reference/test_that.html)'s
-  `code=` argument must be wrapped in braces.
-
 ## See also
 
 - [linters](https://lintr.r-lib.org/dev/reference/linters.md) for a
@@ -96,14 +93,6 @@ lint(
 #>  return(1) }
 #>            ^
 
-lint(
-  text = "test_that('my test', expect_identical(foo(), 1))",
-  linters = brace_linter()
-)
-#> <text>:1:22: style: [brace_linter] test_that()'s code= argument requires braces to get accurate source hints
-#> test_that('my test', expect_identical(foo(), 1))
-#>                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
 # okay
 writeLines("f <- function() {\n  1\n}")
 #> f <- function() {
@@ -133,12 +122,4 @@ lint(
   linters = brace_linter(allow_single_line = TRUE)
 )
 #> ℹ No lints found.
-
-lint(
-  text = "test_that('my test', { expect_identical(foo(), 1) })",
-  linters = brace_linter()
-)
-#> <text>:1:22: style: [brace_linter] Opening curly braces should never go on their own line and should always be followed by a new line.
-#> test_that('my test', { expect_identical(foo(), 1) })
-#>                      ^
 ```
