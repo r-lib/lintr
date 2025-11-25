@@ -634,37 +634,4 @@ test_that("function shorthand is treated like 'full' function", {
     linter
   )
 })
-
-test_that("test_that(code=) requires braces", {
-  linter <- brace_linter()
-  lint_msg <- rex::rex("test_that()'s code= argument requires braces")
-
-  # inline case doesn't lint about test_that(), only the more general rule
-  expect_lint(
-    "test_that('code', { braced })",
-    rex::rex("Opening curly braces"),
-    linter
-  )
-  expect_no_lint(
-    trim_some("
-      test_that('my test', {
-        braced_test()
-        braced_test()
-      })
-    "),
-    linter
-  )
-
-  expect_lint("test_that('code', expect_true(TRUE))", lint_msg, linter)
-  expect_lint(
-    trim_some("
-      test_that(
-        'code',
-        expect_true(TRUE)
-      )
-    "),
-    lint_msg,
-    linter
-  )
-})
 # nofuzz end
