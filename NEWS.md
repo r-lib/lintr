@@ -12,7 +12,7 @@
    + `linter=` argument of `Lint()`.
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
-* Argument `interpret_glue` to `object_usage_linter()` is deprecated in favor of the more general `interpret_extensions`, in which `"glue"` is present by default (#1472, @MichaelChirico). See the description below.
+* Argument `interpret_glue` to `object_usage_linter()` is deprecated in favor of the more general `interpret_extensions`, in which `"glue"` is present by default (#1472, @MichaelChirico). See the description below under 'New and improved features'.
 
 ## Bug fixes
 
@@ -27,10 +27,10 @@
 
 ## New and improved features
 
-* `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
+* `brace_linter()` has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
 * `seq_linter()`:
    + recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
-   + recommends using `sequence()` instead of `unlist(lapply(ints, seq))` (#2618, @Bisaloo)
+   + recommends using `sequence()` instead of `unlist(lapply(ints, seq))` (#2618, @Bisaloo).
 * `undesirable_operator_linter()`:
    + Lints operators in prefix form, e.g. `` `%%`(x, 2)`` (#1910, @MichaelChirico). Disable this by setting `call_is_undesirable=FALSE`.
    + Accepts unnamed entries, treating them as undesirable operators, e.g. `undesirable_operator_linter("%%")` (#2536, @MichaelChirico).
@@ -43,7 +43,7 @@
 * `boolean_arithmetic_linter()` finds many more cases like `sum(x | y) == 0` where the total of a known-logical vector is compared to 0 (#1580, @MichaelChirico).
 * `any_duplicated_linter()` is extended to recognize some usages from {dplyr} and {data.table} that could be replaced by `anyDuplicated()`, e.g. `n_distinct(col) == n()` or `uniqueN(col) == .N` (#2482, @MichaelChirico).
 * `expect_lint()` has a new argument `ignore_order` (default `FALSE`), which, if `TRUE`, allows the `checks=` to be provided in arbitary order vs. how `lint()` produces them (@MichaelChirico).
-* New `gitlab_output()` function to output lints to GitLab format (#2858, @lschneiderbauer)
+* New `gitlab_output()` function to output lints to GitLab format (#2858, @lschneiderbauer).
 * `fixed_regex_linter()` recognizes usage of the new (R 4.5.0) `grepv()` wrapper of `grep()`; `regex_subset_linter()` also recommends `grepv()` alternatives (#2855, @MichaelChirico).
 * `object_usage_linter()` lints missing packages that may cause false positives (#2872, @AshesITR)
 * New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
@@ -57,8 +57,7 @@
 ### New linters
 
 * `all_equal_linter()` warns about incorrect use of `all.equal()` in `if` clauses or preceded by `!` (#2885, @Bisaloo). Such usages should wrap `all.equal()` with `isTRUE()`, for example.
-* `download_file_linter()` encourages the use of `mode = "wb"` (or `mode = "ab"`) when using `download.file()`, rather than `mode = "w"` or `mode = "a"`, as the latter can produce broken
-files in Windows (#2882, @Bisaloo).
+* `download_file_linter()` encourages the use of `mode = "wb"` (or `mode = "ab"`) when using `download.file()`, rather than `mode = "w"` or `mode = "a"`, as the latter can produce broken files in Windows (#2882, @Bisaloo).
 * `list2df_linter()` encourages the use of the `list2DF()` function, or the `data.frame()` function when recycling is required, over the slower and less readable `do.call(cbind.data.frame, )` alternative (#2834, @Bisaloo).
 * `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0. Thanks also to @emmanuel-ferdman for fixing a false positive before release.
 
@@ -67,7 +66,6 @@ files in Windows (#2882, @Bisaloo).
 * `unnecessary_nesting_linter()`:
    + Treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
    + Treats `=` assignment the same as `<-` when deciding to combine consecutive `if()` clauses (#2245, @MichaelChirico).
-* `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
 * `string_boundary_linter()` omits lints of patterns like `\\^` which have an anchor but are not regular expressions (#2636, @MichaelChirico).
 * `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
 * `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
