@@ -410,7 +410,11 @@ validate_lint_object <- function(message, line, line_number, column_number, rang
     cli_abort("{.arg message} must be a character string")
   }
   if (is.object(message)) {
-    cli_abort("{.arg message} must be a simple string, but has class {.cls {class(message)}}")
+    cli_warn(c(
+      "{.arg message} must be a simple string, but has class {.cls {class(message)}}",
+      i = "This will be an error in the next lintr release"
+    ))
+    message <- unclass(message)
   }
   if (length(line) != 1L || !is.character(line)) {
     cli_abort("{.arg line} must be a character string.")

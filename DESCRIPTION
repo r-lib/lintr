@@ -1,6 +1,6 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 3.3.0
+Version: 3.3.0-1
 Authors@R: c(
     person("Jim", "Hester", , role = "aut"),
     person("Florent", "Angly", role = "aut",

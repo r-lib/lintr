@@ -1,4 +1,4 @@
-# lintr (3.3.0)
+# lintr (3.3.0-1)
 
 ## Deprecations & breaking changes
 
@@ -13,10 +13,10 @@
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
 * Argument `interpret_glue` to `object_usage_linter()` is deprecated in favor of the more general `interpret_extensions`, in which `"glue"` is present by default (#1472, @MichaelChirico). See the description below under 'New and improved features'.
+* `Lint()`, and thus all linters, require that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico). In general it is good to avoid slower string builders like `glue()` inside a loop (a linter might be run on every expression in your pakcage). Classed character strings return a warning in this release, which will be upgraded to an error subsequently.
 
 ## Bug fixes
 
-* `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
 * Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico). Thanks also to @bastistician for detecting a regression caused by the initial change for users of Emacs (#2847).
 * `assignment_linter()` no longer errors if `"%<>%"` is an allowed operator (#2850, @AshesITR).
 * `expect_lint()` conforms to {testthat} v3.3.0+ rules for custom expectations, namely that they produce either exactly one success or exactly one failure (#2937, @hadley).
