@@ -1,9 +1,5 @@
 # Changelog
 
-## lintr (development version)
-
-Nothing yet :)
-
 ## lintr 3.2.0
 
 CRAN release: 2025-02-12

@@ -24,7 +24,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/r-lib/lintr/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/r-lib/lintr/blob/v3.3.0-1/inst/CITATION)
 
 Hester, J., Angly, F., Chirico, M., Hyde, R., Kun, R., Patil, I., &
 Rosenstock, A. (2025). Static Code Analysis for R. Journal of Open
