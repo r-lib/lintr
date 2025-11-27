@@ -1,6 +1,10 @@
 # lintr (development version)
 
-Nothing yet :)
+## New and improved features
+
+### Linter improvements
+
+* `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
 
 # lintr (3.3.0-1)
 
