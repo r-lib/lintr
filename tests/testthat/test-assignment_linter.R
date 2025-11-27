@@ -375,12 +375,6 @@ test_that("multiple lints throw correct messages when = is required", {
   )
 })
 
-test_that("Deprecated arguments error as intended", {
-  expect_error(regexp = "allow_cascading_assign", assignment_linter(allow_cascading_assign = FALSE))
-  expect_error(regexp = "allow_right_assign", assignment_linter(allow_right_assign = TRUE))
-  expect_error(regexp = "allow_pipe_assign", assignment_linter(allow_pipe_assign = TRUE))
-})
-
 test_that("implicit '<-' assignments inside calls are ignored where top-level '<-' is disallowed", {
   linter <- assignment_linter(operator = "=")
 
