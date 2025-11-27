@@ -270,9 +270,7 @@ test_that("fixed replacement is correct with UTF-8", {
 #'   are valid replacements.
 #' @noRd
 robust_non_printable_unicode <- function() {
-  if (getRversion() < "4.1.0") {
-    "abc\\U000a0defghi"
-  } else if (.Platform$OS.type == "windows") {
+  if (.Platform$OS.type == "windows") {
     "abc\U{0a0def}ghi"
   } else {
     "abc\\U{0a0def}ghi"
@@ -315,12 +313,8 @@ local({
     R"([\xa])",              R"([\xa])",              R"(\n)"
   )
   if (.Platform$OS.type == "windows" && !hasName(R.Version(), "crt")) {
-    skip_cases <- c(
-      # These require UTF-8 support
-      "abc\\U{A0DEF}ghi", "[\\U1d4d7]", "[\\U{1D4D7}]", "\\u{A0}\\U{0001d4d7}",
-      # R version-specific difference in output message on Windows (probably r80051)
-      if (getRversion() == "4.0.4") "[\\U{F7D5}]"
-    )
+    # These require UTF-8 support
+    skip_cases <- c("abc\\U{A0DEF}ghi", "[\\U1d4d7]", "[\\U{1D4D7}]", "\\u{A0}\\U{0001d4d7}")
   } else {
     skip_cases <- character()
   }
