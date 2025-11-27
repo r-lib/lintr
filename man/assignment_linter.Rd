@@ -4,7 +4,7 @@
 \alias{assignment_linter}
 \title{Assignment linter}
 \usage{
-assignment_linter(operator = c("<-", "<<-"), allow_trailing = TRUE)\
+assignment_linter(operator = c("<-", "<<-"), allow_trailing = TRUE)
 }
 \arguments{
 \item{operator}{Character vector of valid assignment operators. Defaults to allowing \verb{<-} and \verb{<<-}; other valid
