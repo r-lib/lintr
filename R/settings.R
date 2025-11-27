@@ -244,7 +244,7 @@ validate_exclusions <- function(exclusions) {
   exclusion_names <- names2(exclusions)
   has_names <- nzchar(exclusion_names)
   unnamed_is_string <-
-    vapply(exclusions[!has_names], function(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
+    vapply(exclusions[!has_names], \(x) is.character(x) && length(x) == 1L && !is.na(x), logical(1L))
   if (!all(unnamed_is_string)) {
     problematic_entries <- which(!has_names)[!unnamed_is_string] # nolint: object_usage_linter. TODO(#2252).
     cli_abort(c(
@@ -258,7 +258,7 @@ validate_exclusions <- function(exclusions) {
 validate_named_exclusion <- function(exclusions, idx) {
   entry <- exclusions[[idx]]
   if (is.list(entry)) {
-    valid_entry <- vapply(entry, function(x) is.numeric(x) && !anyNA(x), logical(1L))
+    valid_entry <- vapply(entry, \(x) is.numeric(x) && !anyNA(x), logical(1L))
   } else {
     valid_entry <- is.numeric(entry) && !anyNA(entry)
   }
@@ -298,8 +298,8 @@ get_encoding_from_dcf <- function(file) {
 
   encodings <- tryCatch(
     unname(drop(read.dcf(file, "Encoding"))),
-    error = function(e) NULL,
-    warning = function(e) NULL
+    error = \(e) NULL,
+    warning = \(e) NULL
   )
 
   encodings <- encodings[!is.na(encodings)]

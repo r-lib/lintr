@@ -139,8 +139,6 @@ test_that("non-<- assignments are detected", {
 })
 
 test_that("shorthand lambda is detected", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint("\\() data <- 1", "'data' is an exported object", object_overwrite_linter())
 })
 

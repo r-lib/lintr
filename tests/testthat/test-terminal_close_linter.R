@@ -27,7 +27,6 @@ test_that("terminal_close_linter skips allowed cases", {
   ")
   expect_no_lint(lines, linter)
 
-  skip_if_not_r_version("4.1.0")
   lines <- trim_some("
     foo <- \\(bar) {
       close <- bar + 1
@@ -83,8 +82,6 @@ test_that("terminal_close_linter blocks simple cases", {
 })
 
 test_that("lints vectorize", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint(
     trim_some("{
       foo <- function() {

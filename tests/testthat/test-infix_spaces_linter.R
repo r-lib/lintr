@@ -172,7 +172,6 @@ test_that("Rules around missing arguments are respected", {
 })
 
 test_that("native pipe is supported", {
-  skip_if_not_r_version("4.1.0")
   linter <- infix_spaces_linter()
 
   expect_no_lint("a |> foo()", linter)

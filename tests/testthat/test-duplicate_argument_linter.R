@@ -90,7 +90,6 @@ test_that("doesn't lint duplicated arguments in allowed functions", {
     linter
   )
 
-  skip_if_not_r_version("4.1.0")
   expect_lint(
     "x |>
     dplyr::mutate(

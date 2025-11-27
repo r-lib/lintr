@@ -54,7 +54,6 @@ test_that("function_argument_linter blocks disallowed usages", {
 })
 
 test_that("function_argument_linter also lints lambda expressions", {
-  skip_if_not_r_version("4.1.0")
   linter <- function_argument_linter()
   lint_msg <- rex::rex("Arguments without defaults should come before arguments with defaults.")
 

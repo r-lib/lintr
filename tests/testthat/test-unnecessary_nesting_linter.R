@@ -187,7 +187,6 @@ test_that("unnecessary_nesting_linter skips one-line functions", {
   )
 
   # ditto short-hand lambda
-  skip_if_not_r_version("4.1.0")
   expect_no_lint(
     trim_some("
       foo <- \\(x) {

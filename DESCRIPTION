@@ -24,9 +24,8 @@ License: MIT + file LICENSE
 URL: https://lintr.r-lib.org, https://github.com/r-lib/lintr
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
-    R (>= 4.0)
+    R (>= 4.1.0)
 Imports:
-    backports (>= 1.5.0),
     cli (>= 3.4.0),
     codetools,
     digest,

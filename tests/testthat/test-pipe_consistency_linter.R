@@ -1,6 +1,5 @@
 # nofuzz start
 test_that("pipe_consistency skips allowed usage", {
-  skip_if_not_r_version("4.1.0")
   linter <- pipe_consistency_linter()
 
   expect_no_lint("1:3 |> mean() |> as.character()", linter)
@@ -18,7 +17,6 @@ test_that("pipe_consistency skips allowed usage", {
 })
 
 test_that("pipe_consistency lints blocked usage", {
-  skip_if_not_r_version("4.1.0")
   linter <- pipe_consistency_linter()
   lint_message <- rex::rex("Use the |> pipe operator instead of the %>% pipe operator.")
 
@@ -56,8 +54,6 @@ test_that("pipe_consistency lints blocked usage", {
 
 
 test_that("pipe_consistency_linter works with |> argument", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- pipe_consistency_linter(pipe = "|>")
   lint_message <- rex::rex("Use the |> pipe operator instead of the %>% pipe operator.")
   lint_message_tee <- rex::rex("Use the |> pipe operator instead of the %T>% pipe operator.")
@@ -114,8 +110,6 @@ test_that("pipe_consistency_linter works with |> argument", {
 })
 
 test_that("pipe_consistency_linter works with %>% argument", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- pipe_consistency_linter(pipe = "%>%")
   expected_message <- rex::rex("Use the %>% pipe operator instead of the |> pipe operator.")
 
@@ -151,8 +145,6 @@ test_that("pipe_consistency_linter works with %>% argument", {
 })
 
 test_that("simply enforcing a consistent style is supported", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- pipe_consistency_linter("auto")
   lint_message <- rex::rex("Stick to one pipe operator; found 1 instances of %>% and 1 instances of |>.")
 

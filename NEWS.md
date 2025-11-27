@@ -1,6 +1,8 @@
 # lintr (development version)
 
-Nothing yet :)
+## Notes
+
+* {lintr} now requires R 4.1.0
 
 # lintr (3.3.0-1)
 

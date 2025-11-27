@@ -256,7 +256,6 @@ test_that("package_hooks_linter detects bad argument names in 'teardown' hooks",
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.1.0")
   linter <- package_hooks_linter()
 
   expect_lint(

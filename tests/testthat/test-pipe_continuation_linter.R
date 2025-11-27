@@ -76,8 +76,6 @@ test_that("pipe-continuation linter correctly handles nesting", {
 })
 
 test_that("pipe-continuation linter handles native pipe", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- pipe_continuation_linter()
   lint_msg_native <- rex::rex("Put a space before `|>` and a new line after it,")
   lint_msg_magrittr <- rex::rex("Put a space before `%>%` and a new line after it,")

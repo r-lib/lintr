@@ -76,7 +76,7 @@ test_that("expect_lint doesn't change language", {
 })
 
 test_that("execution without testthat gives the right errors", {
-  local_mocked_bindings(requireNamespace = function(...) FALSE)
+  local_mocked_bindings(requireNamespace = \(...) FALSE)
   lint_msg <- function(nm) rex::rex("`", nm, "()` is designed to work", anything, "testthat")
 
   expect_error(expect_lint(), lint_msg("expect_lint"))
@@ -87,7 +87,7 @@ test_that("execution without testthat gives the right errors", {
 
 test_that("lint order can be ignored", {
   linters <- list(assignment_linter(), infix_spaces_linter())
-  expected <- lapply(linters, function(l) list(linter = attr(l, "name")))
+  expected <- lapply(linters, \(l) list(linter = attr(l, "name")))
   expect_success(expect_lint("a=1", expected, linters, ignore_order = TRUE))
   expect_success(expect_lint("a=1", rev(expected), linters, ignore_order = TRUE))
 

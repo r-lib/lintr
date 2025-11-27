@@ -143,8 +143,6 @@ test_that("'parallel' calls are not linted", {
 })
 
 test_that("native pipe is linted", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- consecutive_mutate_linter()
   lint_msg <- rex::rex("Unify consecutive calls to mutate().")
 

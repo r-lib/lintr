@@ -75,7 +75,7 @@ is_excluded <- function(line_number, linter, file_exclusion) {
 is_excluded_file <- function(file_exclusion) {
   any(vapply(
     file_exclusion[!nzchar(names2(file_exclusion))],
-    function(full_exclusion) Inf %in% full_exclusion,
+    \(full_exclusion) Inf %in% full_exclusion,
     logical(1L)
   ))
 }
@@ -170,7 +170,7 @@ parse_exclusions <- function(file,
     exclusions <- add_exclusions(exclusions, nextt + 1L, linters_string, exclude_linter_sep, linter_names)
   }
 
-  exclusions[] <- lapply(exclusions, function(lines) sort(unique(lines)))
+  exclusions[] <- lapply(exclusions, \(lines) sort(unique(lines)))
 
   exclusions
 }
@@ -413,6 +413,6 @@ remove_linter_duplicates <- function(x) {
 
 # Removes linter exclusions without lines and files without any linter exclusions.
 remove_empty <- function(x) {
-  x[] <- lapply(x, function(ex) ex[lengths(ex) > 0L])
+  x[] <- lapply(x, \(ex) ex[lengths(ex) > 0L])
   x[lengths(x) > 0L]
 }

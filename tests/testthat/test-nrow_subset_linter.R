@@ -45,8 +45,6 @@ test_that("linter is pipeline-aware", {
   lint_msg <- "Use arithmetic to count the number of rows satisfying a condition"
 
   expect_lint("x %>% subset(y == z) %>% nrow()", lint_msg, linter)
-  expect_lint("filter(x, y == z) %>% nrow()", lint_msg, linter)
-
-  skip_if_not_r_version("4.1.0")
   expect_lint("x |> subset(y == z) |> nrow()", lint_msg, linter)
+  expect_lint("filter(x, y == z) %>% nrow()", lint_msg, linter)
 })

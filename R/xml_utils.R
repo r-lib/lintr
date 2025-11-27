@@ -42,7 +42,7 @@ safe_parse_to_xml <- function(parsed_content) {
   tryCatch(
     xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)),
     # use xml_missing so that code doesn't always need to condition on XML existing
-    error = function(e) xml2::xml_missing()
+    error = \(e) xml2::xml_missing()
   )
 }
 

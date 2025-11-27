@@ -309,8 +309,8 @@ glue_parse_failure_warning <- function(cond) {
 glue_symbol_extractor <- function(text, envir, data) {
   symbols <- tryCatch(
     all.vars(parse(text = text), functions = TRUE),
-    error = function(...) NULL,
-    warning = function(...) NULL
+    error = \(...) NULL,
+    warning = \(...) NULL
   )
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)

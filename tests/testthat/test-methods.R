@@ -100,7 +100,7 @@ test_that("print.lint works for inline data, even in RStudio", {
 
   skip_if_not_installed("rstudioapi")
   local_mocked_bindings(
-    hasFun = function(...) FALSE,
+    hasFun = \(...) FALSE,
     .package = "rstudioapi"
   )
   withr::with_options(

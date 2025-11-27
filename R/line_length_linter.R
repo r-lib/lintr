@@ -117,7 +117,7 @@ is_in_string_body <- function(parse_data, max_length, long_idx) {
   # right delimiter just ends at 'col2', but 'col1' takes some sleuthing
   str_data$line1_width <- nchar(vapply(
     strsplit(str_data$text, "\n", fixed = TRUE),
-    function(x) x[1L],
+    \(x) x[1L],
     FUN.VALUE = character(1L),
     USE.NAMES = FALSE
   ))

@@ -19,7 +19,7 @@ test_that("undesirable functions and operators", {
     expect_type(x, "list")
     expect_gt(length(x), 0L)
     expect_true(all(nzchar(names(x))))
-    expect_true(all(vapply(x, function(x) is.na(x) || is.character(x), logical(1L))))
+    expect_true(all(vapply(x, \(x) is.na(x) || is.character(x), logical(1L))))
     expect_true(all(lengths(x) == 1L))
   }
 })

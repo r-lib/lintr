@@ -91,7 +91,6 @@ test_that("implicit_assignment_linter skips allowed usages", {
     linter
   )
 
-  skip_if_not_r_version("4.1.0")
   expect_no_lint(
     trim_some("
       map(1:4, \\(x) {
@@ -334,12 +333,9 @@ test_that("implicit_assignment_linter works as expected with pipes and walrus op
   expect_no_lint("data %>% mutate(a := b)", linter)
   expect_no_lint("dt %>% .[, z := x + y]", linter)
   expect_no_lint("data %<>% mutate(a := b)", linter)
+  expect_no_lint("data |> mutate(a := b)", linter)
 
   expect_no_lint("DT[i, x := i]", linter)
-
-  skip_if_not_r_version("4.1.0")
-
-  expect_no_lint("data |> mutate(a := b)", linter)
 })
 
 test_that("parenthetical assignments are caught", {

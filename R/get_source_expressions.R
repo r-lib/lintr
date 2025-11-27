@@ -77,11 +77,11 @@ get_source_expressions <- function(filename, lines = NULL) {
   source_expression$lines <- extract_r_source(
     filename = source_expression$filename,
     lines = source_expression$lines,
-    error = function(e) lint_rmd_error(e, source_expression)
+    error = \(e) lint_rmd_error(e, source_expression)
   )
   names(source_expression$lines) <- seq_along(source_expression$lines)
   source_expression$content <- get_content(source_expression$lines)
-  parsed_content <- get_source_expression(source_expression, error = function(e) lint_parse_error(e, source_expression))
+  parsed_content <- get_source_expression(source_expression, error = \(e) lint_parse_error(e, source_expression))
 
   # Currently no way to distinguish the source of the warning
   #   from the message itself, so we just grep the source for the
@@ -218,7 +218,7 @@ parser_warning_regexes <- list(
 #'
 #' @noRd
 fixup_line <- function(line) {
-  nchars <- tryCatch(nchar(line, type = "chars"), error = function(e) NA_integer_)
+  nchars <- tryCatch(nchar(line, type = "chars"), error = \(e) NA_integer_)
   if (is.na(nchars)) {
     ""
   } else {
@@ -584,7 +584,7 @@ maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
   }
   expression_xmls <- lapply(
     xml_find_all(xml_parsed_content, "/exprlist/*"),
-    function(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
+    \(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
   )
   for (i in seq_along(expressions)) {
     expressions[[i]]$xml_parsed_content <- expression_xmls[[i]]
@@ -625,7 +625,7 @@ fix_tab_indentations <- function(source_expression) {
 
   tab_cols <- gregexpr("\t", source_expression[["lines"]], fixed = TRUE)
   names(tab_cols) <- seq_along(tab_cols)
-  matched_lines <- vapply(tab_cols, function(line_match) !is.na(line_match[1L]) && line_match[1L] > 0L, logical(1L))
+  matched_lines <- vapply(tab_cols, \(line_match) !is.na(line_match[1L]) && line_match[1L] > 0L, logical(1L))
   if (!any(matched_lines)) {
     return(parse_data)
   }

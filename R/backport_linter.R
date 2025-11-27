@@ -50,7 +50,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   r_version <- normalize_r_version(r_version)
 
   if (all(r_version >= R_system_version(names(backports)))) {
-    return(Linter(function(source_expression) list(), linter_level = "file"))
+    return(Linter(\(source_expression) list(), linter_level = "file"))
   }
 
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
