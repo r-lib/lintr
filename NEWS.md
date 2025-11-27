@@ -1,3 +1,7 @@
+# lintr (development version)
+
+Nothing yet :)
+
 # lintr (3.3.0-1)
 
 ## Deprecations & breaking changes
