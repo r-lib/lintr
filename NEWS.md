@@ -1,6 +1,9 @@
 # lintr (development version)
 
-Nothing yet :)
+## Deprecations & breaking changes
+
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now removed.
+* Argument `interpret_glue` to `object_usage_linter()`, marked deprecated in the previous release, is now defunct.
 
 # lintr (3.3.0-1)
 
