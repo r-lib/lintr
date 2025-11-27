@@ -53,3 +53,13 @@ test_that("lints vectorize", { # nofuzz
     unnecessary_placeholder_linter()
   )
 })
+
+test_that("logic survives adversarial commenting", {
+  expect_no_lint(
+    trim_some("
+      x %T>% foo(arg = # comment
+      .)
+    "),
+    unnecessary_placeholder_linter()
+  )
+})
