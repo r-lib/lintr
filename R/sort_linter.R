@@ -69,26 +69,24 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 sort_linter <- function() {
-  non_keyword_arg <- "expr[not(preceding-sibling::*[1][self::EQ_SUB])]"
+  # NB: assumes COMMENTs stripped
+  non_keyword_arg <- "expr[position() > 1 and not(preceding-sibling::*[1][self::EQ_SUB])]"
   order_xpath <- glue("
-  //OP-LEFT-BRACKET
+  self::expr[
+    expr[1] = expr/{non_keyword_arg}
+  ]
+    /OP-LEFT-BRACKET
     /following-sibling::expr[1][
-      expr[1][
-        SYMBOL_FUNCTION_CALL[text() = 'order']
-        and count(following-sibling::{non_keyword_arg}) = 1
-        and following-sibling::{non_keyword_arg} =
-          parent::expr[1]/parent::expr[1]/expr[1]
-      ]
+      count({non_keyword_arg}) = 1
     ]
   ")
 
   sorted_xpath <- "
-  parent::expr[not(SYMBOL_SUB)]
-    /parent::expr[
-      (EQ or NE)
-      and expr/expr = expr
-    ]
-  "
+  self::*[
+    (EQ or NE)
+    and expr/expr = expr
+    and not(expr/EQ_SUB)
+  ]"
 
 
   arguments_xpath <-
@@ -97,9 +95,11 @@ sort_linter <- function() {
   arg_values_xpath <- glue("{arguments_xpath}/following-sibling::expr[1]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
+    order_calls <- strip_comments_from_subtree(xml_parent(xml_parent(
+      source_expression$xml_find_function_calls("order")
+    )))
 
-    order_expr <- xml_find_all(xml, order_xpath)
+    order_expr <- xml_find_all(order_calls, order_xpath)
 
     variable <- xml_text(xml_find_first(
       order_expr,
@@ -132,8 +132,9 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    xml_calls <- source_expression$xml_find_function_calls("sort")
-    sorted_expr <- xml_find_all(xml_calls, sorted_xpath)
+    sort_calls <- xml_parent(xml_parent(source_expression$xml_find_function_calls("sort")))
+    sort_calls <- strip_comments_from_subtree(sort_calls)
+    sorted_expr <- xml_find_all(sort_calls, sorted_xpath)
 
     sorted_op <- xml_text(xml_find_first(sorted_expr, "*[2]"))
     lint_message <- ifelse(

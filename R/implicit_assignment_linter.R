@@ -9,6 +9,8 @@
 #' @param allow_scoped Logical, default `FALSE`. If `TRUE`, "scoped assignments",
 #'   where the object is assigned in the statement beginning a branch and used only
 #'   within that branch, are skipped.
+#' @param allow_paren_print Logical, default `FALSE`. If `TRUE`, assignments using
+#'   `(` for auto-printing at the top-level are not linted.
 #'
 #' @examples
 #' # will produce lints
@@ -21,6 +23,12 @@
 #'   text = "mean(x <- 1:4)",
 #'   linters = implicit_assignment_linter()
 #' )
+#'
+#' lint(
+#'   text = "(x <- 1)",
+#'   linters = implicit_assignment_linter()
+#' )
+#'
 #'
 #' # okay
 #' lines <- "x <- 1L\nif (x) TRUE"
@@ -53,6 +61,11 @@
 #'   linters = implicit_assignment_linter(allow_scoped = TRUE)
 #' )
 #'
+#' lint(
+#'   text = "(x <- 1)",
+#'   linters = implicit_assignment_linter(allow_paren_print = TRUE)
+#' )
+#'
 #' @evalRd rd_tags("implicit_assignment_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
@@ -61,7 +74,8 @@
 #' @export
 implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
                                        allow_lazy = FALSE,
-                                       allow_scoped = FALSE) {
+                                       allow_scoped = FALSE,
+                                       allow_paren_print = FALSE) {
   stopifnot(is.null(except) || is.character(except))
 
   if (length(except) > 0L) {
@@ -82,7 +96,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
   xpath <- glue("
     ({assignments})
       /parent::expr[
-        preceding-sibling::*[2][self::IF or self::WHILE]
+        preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]
         or parent::forcond
         or preceding-sibling::expr/{xpath_exceptions}
         or parent::expr/*[1][self::OP-LEFT-PAREN]
@@ -94,7 +108,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
   }
   if (allow_scoped) {
     # force 2nd preceding to ensure we're in the loop condition, not the loop expression
-    in_branch_cond <- "ancestor-or-self::expr[preceding-sibling::*[2][self::IF or self::WHILE]]"
+    in_branch_cond <- "ancestor-or-self::expr[preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]]"
     xpath <- paste0(
       xpath,
       # _if_ we're in an IF/WHILE branch, lint if the assigned SYMBOL appears anywhere later on.
@@ -116,6 +130,9 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     bad_expr <- xml_find_all(xml, xpath)
 
     print_only <- !is.na(xml_find_first(bad_expr, "parent::expr[parent::exprlist and *[1][self::OP-LEFT-PAREN]]"))
+    if (allow_paren_print) {
+      bad_expr <- bad_expr[!print_only]
+    }
 
     xml_nodes_to_lints(
       bad_expr,

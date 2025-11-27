@@ -37,6 +37,17 @@ patrick::with_parameters_test_that(
   fun = c("length", "nrow", "ncol", "NROW", "NCOL")
 )
 
+test_that("adversarial comment is handled in lint message", {
+  expect_lint(
+    trim_some("
+      length(x + #
+      y == 2)
+    "),
+    rex::rex("Checking the length of a logical vector is likely a mistake. Did you mean `length(x+y) == 2`?"),
+    length_test_linter()
+  )
+})
+
 patrick::with_parameters_test_that(
   "all logical operators detected",
   expect_lint(
@@ -51,6 +62,8 @@ patrick::with_parameters_test_that(
 )
 
 test_that("lints vectorize", {
+  linter <- length_test_linter()
+
   expect_lint(
     trim_some("{
       length(x == y)
@@ -60,6 +73,26 @@ test_that("lints vectorize", {
       list(rex::rex("length(x) == y"), line_number = 2L),
       list(rex::rex("length(y) == z"), line_number = 3L)
     ),
-    length_test_linter()
+    linter
+  )
+
+  expect_lint(
+    trim_some("{
+      length( # comment
+      x       # comment
+      ==      # comment
+      y       # comment
+      )       # comment
+      length( # comment
+      y       # comment
+      ==      # comment
+      z       # comment
+      )
+    }"),
+    list(
+      list(rex::rex("length(x) == y"), line_number = 2L),
+      list(rex::rex("length(y) == z"), line_number = 7L)
+    ),
+    linter
   )
 })
