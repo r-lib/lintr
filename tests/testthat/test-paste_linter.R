@@ -8,6 +8,8 @@ test_that("paste_linter skips allowed usages for sep=''", {
   expect_no_lint("sep <- ''; paste('a', sep)", linter)
   expect_no_lint("paste(sep = ',', '', 'a')", linter)
   expect_no_lint("paste0('a', 'b', 'c')", linter)
+  expect_no_lint("expression(2); paste('a', 'b', 'c', sep = ',')", linter)
+  expect_no_lint("paste('a', 'b', expression(2), sep = ',')", linter)
 })
 
 test_that("paste_linter blocks simple disallowed usages for sep=''", {
@@ -20,6 +22,23 @@ test_that("paste_linter blocks simple disallowed usages for sep=''", {
   expect_lint(
     "paste('a', 'b', sep = '')",
     rex::rex('paste0(...) is better than paste(..., sep = "").'),
+    paste_linter()
+  )
+
+  expect_lint(
+    "paste('a', 'b', expression(2), sep = '')",
+    rex::rex('paste0(...) is better than paste(..., sep = "").'),
+    paste_linter()
+  )
+
+  expect_lint(
+    "c(expression(paste('a', 'b', sep = ',')))",
+    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
+    paste_linter()
+  )
+  expect_lint(
+    "c(expression(paste('a', 'b', sep = '')))",
+    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
     paste_linter()
   )
 })
