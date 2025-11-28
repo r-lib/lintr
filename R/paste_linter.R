@@ -65,6 +65,11 @@
 #'   linters = paste_linter()
 #' )
 #'
+#' lint(
+#'   text = 'expression(paste("a", "b", sep = ""))',
+#'   linters = paste_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = 'paste0("a", "b")',
@@ -74,11 +79,6 @@
 #' lint(
 #'   text = 'paste("a", "b", sep = "")',
 #'   linters = paste_linter(allow_empty_sep = TRUE)
-#' )
-#'
-#' lint(
-#'   text = 'expression(paste("a", "b", sep = ""))',
-#'   linters = paste_linter()
 #' )
 #'
 #' lint(
