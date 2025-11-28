@@ -129,8 +129,11 @@ paste_linter <- function(allow_empty_sep = FALSE,
     /parent::expr
   "
   expression_paste_sep_xpath <- "
-  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]
-    and parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']]
+  following-sibling::SYMBOL_SUB[
+    text() = 'sep'
+    and following-sibling::expr[1][STR_CONST]
+    and parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']
+  ]
     /parent::expr
   "
   to_string_xpath <- "
