@@ -5,7 +5,9 @@
 #' The following issues are linted by default by this linter
 #'   (see arguments for which can be de-activated optionally):
 #'
-#'  1. Block usage of [base::paste()] with `sep = ""`. [base::paste0()] is a faster, more concise alternative.
+#'  1. Block usage of [base::paste()] with `sep = ""`. [base::paste0()] is a faster, more concise alternative;
+#'     this is valid unless `paste` occurs inside [base::expression], which according to [grDevices::plotmath]
+#'     does not support the `sep` argument.
 #'  2. Block usage of `paste()` or `paste0()` with `collapse = ", "`. [toString()] is a direct
 #'     wrapper for this, and alternatives like [glue::glue_collapse()] might give better messages for humans.
 #'  3. Block usage of `paste0()` that supplies `sep=` -- this is not a formal argument to `paste0`, and
@@ -123,11 +125,14 @@ paste_linter <- function(allow_empty_sep = FALSE,
   check_file_paths <- allow_file_path %in% c("double_slash", "never")
 
   paste_sep_xpath <- "
-  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]
-    and not(parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression'])]
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
     /parent::expr
   "
-
+  expression_paste_sep_xpath <- "
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]
+    and parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']]
+    /parent::expr
+  "
   to_string_xpath <- "
   parent::expr[
     count(expr) = 3
@@ -190,7 +195,18 @@ paste_linter <- function(allow_empty_sep = FALSE,
       paste_sep_value <- get_r_string(paste_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
     }
 
-    if (!allow_empty_sep) {
+    ## check if we are inside an expression()
+    expression_paste_sep_expr <- xml_find_all(paste_calls, expression_paste_sep_xpath)
+    if (length(expression_paste_sep_expr) > 0) {
+      optional_lints <- c(optional_lints, xml_nodes_to_lints(
+        expression_paste_sep_expr[1],
+        source_expression = source_expression,
+        lint_message = "inside expression(...), paste does not accept a 'sep' argument.",
+        type = "warning"
+      ))
+    }
+
+    else if (!allow_empty_sep) {
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         paste_sep_expr[!nzchar(paste_sep_value)],
         source_expression = source_expression,

@@ -4,7 +4,7 @@
 
 ### Lint accuracy fixes: removing false positives
 
-* `paste_linter()` doesn't lint `expression(paste(., sep = ""))` (#2945, @mcol).
+* `paste_linter()` lints `expression(paste(., sep = ""))` because the `paste` inside an expression doesn't support the `sep` argument (#2945, @mcol).
 
 # lintr (3.3.0-1)
 
