@@ -197,16 +197,14 @@ paste_linter <- function(allow_empty_sep = FALSE,
 
     ## check if we are inside an expression()
     expression_paste_sep_expr <- xml_find_all(paste_calls, expression_paste_sep_xpath)
-    if (length(expression_paste_sep_expr) > 0) {
+    if (length(expression_paste_sep_expr) > 0L) {
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
-        expression_paste_sep_expr[1],
+        expression_paste_sep_expr[1L],
         source_expression = source_expression,
         lint_message = "inside expression(...), paste does not accept a 'sep' argument.",
         type = "warning"
       ))
-    }
-
-    else if (!allow_empty_sep) {
+    } else if (!allow_empty_sep) {
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         paste_sep_expr[!nzchar(paste_sep_value)],
         source_expression = source_expression,
