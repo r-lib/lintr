@@ -11,7 +11,7 @@ or to be put in your configuration file."><meta property="og:image" content="htt
 
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.3.0-1</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ or to be put in your configuration file."><meta property="og:image" content="htt
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Create a tag-based linter configuration</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/v3.3.0-1/R/with.R" class="external-link"><code>R/with.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/main/R/with.R" class="external-link"><code>R/with.R</code></a></small>
       <div class="d-none name"><code>linters_with_tags.Rd</code></div>
     </div>
 
@@ -90,7 +90,7 @@ If it does not exist, it is added. If the value is <code>NULL</code>, the linter
 <dd><p>Tags to exclude from the results. Linters with at least one matching tag will not be returned.
 If <code>exclude_tags</code> is <code>NULL</code>, no linters will be excluded. Note that <code>tags</code> takes priority, meaning that any
 tag found in both <code>tags</code> and <code>exclude_tags</code> will be included, not excluded. Note that linters with tag <code>"defunct"</code>
-(which do not work and can no longer be run) cannot be queried directly. See <a href="lintr-deprecated.html">lintr-deprecated</a> instead.</p></dd>
+(which do not work and can no longer be run) cannot be queried directly.</p></dd>
 
 </dl></div>
     <div class="section level2">

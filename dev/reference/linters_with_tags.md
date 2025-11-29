@@ -39,9 +39,7 @@ linters_with_tags(tags, ..., packages = "lintr", exclude_tags = "deprecated")
   be excluded. Note that `tags` takes priority, meaning that any tag
   found in both `tags` and `exclude_tags` will be included, not
   excluded. Note that linters with tag `"defunct"` (which do not work
-  and can no longer be run) cannot be queried directly. See
-  [lintr-deprecated](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  instead.
+  and can no longer be run) cannot be queried directly.
 
 ## Value
 

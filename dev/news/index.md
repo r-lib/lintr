@@ -1,5 +1,15 @@
 # Changelog
 
+## lintr (development version)
+
+### Deprecations & breaking changes
+
+- Six linters fully deprecated in the previous release are now removed:
+  `consecutive_stopifnot_linter()`, `extraction_operator_linter()`,
+  `no_tab_linter()`, `single_quotes_linter()`,
+  `unnecessary_nested_if_linter()`, and
+  `unneeded_concatenation_linter()`.
+
 ## lintr 3.2.0
 
 CRAN release: 2025-02-12
@@ -34,17 +44,17 @@ CRAN release: 2025-02-12
   favor lint messages to be phrased like “Action, reason” to put the
   “what” piece of the message front-and-center. This may be a breaking
   change for code that tests the specific phrasing of lints.
-- [`extraction_operator_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  is deprecated. Although switching from `$` to `[[` has some robustness
-  benefits for package code, it can lead to non-idiomatic code in many
-  contexts (e.g. R6 classes, Shiny applications, etc.)
+- `extraction_operator_linter()` is deprecated. Although switching from
+  `$` to `[[` has some robustness benefits for package code, it can lead
+  to non-idiomatic code in many contexts (e.g. R6 classes, Shiny
+  applications, etc.)
   ([\#2409](https://github.com/r-lib/lintr/issues/2409),
   [@IndrajeetPatil](https://github.com/IndrajeetPatil)). One reason to
   avoid `$` is that it allows partial matching where `[[` does not. Use
   `options(warnPartialMatchDollar = TRUE)` to disable this feature and
   restore some parity to using `$` vs. `[[`.
-- [`unnecessary_nested_if_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  is deprecated and subsumed into the new/more general
+- `unnecessary_nested_if_linter()` is deprecated and subsumed into the
+  new/more general
   [`unnecessary_nesting_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_nesting_linter.md).
 - Dropped support for posting GitHub comments from inside GitHub comment
   bot, Travis, Wercker, and Jenkins CI tools (spurred by
@@ -947,8 +957,8 @@ CRAN release: 2023-07-19
   ([\#1746](https://github.com/r-lib/lintr/issues/1746),
   [@tonyk7440](https://github.com/tonyk7440) and
   [@klmr](https://github.com/klmr)).
-- [`single_quotes_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  is deprecated in favor of the more generalizable
+- `single_quotes_linter()` is deprecated in favor of the more
+  generalizable
   [`quotes_linter()`](https://lintr.r-lib.org/dev/reference/quotes_linter.md)
   ([\#1729](https://github.com/r-lib/lintr/issues/1729),
   [@MichaelChirico](https://github.com/MichaelChirico)).
@@ -957,13 +967,12 @@ CRAN release: 2023-07-19
   for naming consistency
   ([\#1707](https://github.com/r-lib/lintr/issues/1707),
   [@IndrajeetPatil](https://github.com/IndrajeetPatil)).
-- [`consecutive_stopifnot_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  is deprecated in favor of the more general (see below)
+- `consecutive_stopifnot_linter()` is deprecated in favor of the more
+  general (see below)
   [`consecutive_assertion_linter()`](https://lintr.r-lib.org/dev/reference/consecutive_assertion_linter.md)
   ([\#1604](https://github.com/r-lib/lintr/issues/1604),
   [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`no_tab_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  is deprecated in favor of
+- `no_tab_linter()` is deprecated in favor of
   [`whitespace_linter()`](https://lintr.r-lib.org/dev/reference/whitespace_linter.md)
   for naming consistency and future generalization
   ([\#1954](https://github.com/r-lib/lintr/issues/1954),
@@ -1230,10 +1239,9 @@ CRAN release: 2023-07-19
   [@AshesITR](https://github.com/AshesITR))
 
 - [`unnecessary_concatenation_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_concatenation_linter.md)
-  (f.k.a.
-  [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md))
-  no longer lints on `c(...)` (i.e., passing `...` in a function call)
-  when `allow_single_expression = FALSE`
+  (f.k.a. `unneeded_concatenation_linter()`) no longer lints on `c(...)`
+  (i.e., passing `...` in a function call) when
+  `allow_single_expression = FALSE`
   ([\#1696](https://github.com/r-lib/lintr/issues/1696),
   [@MichaelChirico](https://github.com/MichaelChirico))
 
@@ -1373,9 +1381,9 @@ CRAN release: 2023-07-19
   [\#1792](https://github.com/r-lib/lintr/issues/1792),
   [\#1898](https://github.com/r-lib/lintr/issues/1898)).
 
-- [`unnecessary_nested_if_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  for checking unnecessary nested `if` statements where a single `if`
-  statement with appropriate conditional expression would suffice
+- `unnecessary_nested_if_linter()` for checking unnecessary nested `if`
+  statements where a single `if` statement with appropriate conditional
+  expression would suffice
   ([@IndrajeetPatil](https://github.com/IndrajeetPatil) and
   [@AshesITR](https://github.com/AshesITR),
   [\#1778](https://github.com/r-lib/lintr/issues/1778)).
@@ -1387,32 +1395,24 @@ CRAN release: 2023-07-19
   [\#1777](https://github.com/r-lib/lintr/issues/1777)).
 
 - [`quotes_linter()`](https://lintr.r-lib.org/dev/reference/quotes_linter.md)
-  is a generalized version of (now deprecated)
-  [`single_quotes_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md).
+  is a generalized version of (now deprecated) `single_quotes_linter()`.
   It accepts an argument `delimiter` to specify whether `"` or `'`
   should be the accepted method for delimiting character literals. The
   default, `"`, reflects the Tidyverse style guide recommendation and
-  matches the behavior of
-  [`single_quotes_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md).
+  matches the behavior of `single_quotes_linter()`.
 
 - [`unnecessary_concatenation_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_concatenation_linter.md)
-  is simply
-  [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md),
-  renamed.
+  is simply `unneeded_concatenation_linter()`, renamed.
 
 - [`consecutive_assertion_linter()`](https://lintr.r-lib.org/dev/reference/consecutive_assertion_linter.md)
-  (f.k.a.
-  [`consecutive_stopifnot_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md))
-  now lints for consecutive calls to `assertthat::assert_that()` (as
-  long as the `msg=` argument is not used;
-  [\#1604](https://github.com/r-lib/lintr/issues/1604),
+  (f.k.a. `consecutive_stopifnot_linter()`) now lints for consecutive
+  calls to `assertthat::assert_that()` (as long as the `msg=` argument
+  is not used; [\#1604](https://github.com/r-lib/lintr/issues/1604),
   [@MichaelChirico](https://github.com/MichaelChirico)).
 
 - [`whitespace_linter()`](https://lintr.r-lib.org/dev/reference/whitespace_linter.md)
-  is simply
-  [`no_tab_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md),
-  renamed. In the future, we plan to extend it to work for different
-  whitespace preferences.
+  is simply `no_tab_linter()`, renamed. In the future, we plan to extend
+  it to work for different whitespace preferences.
 
 ### Notes
 
@@ -1879,9 +1879,8 @@ CRAN release: 2022-06-13
   user experience during de-linting – just press Return
   ([\#735](https://github.com/r-lib/lintr/issues/735),
   [@AshesITR](https://github.com/AshesITR)).\*
-- [`no_tab_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md):
-  use more reliable matching (e.g., excluding matches found in comments;
-  [\#441](https://github.com/r-lib/lintr/issues/441),
+- `no_tab_linter()`: use more reliable matching (e.g., excluding matches
+  found in comments; [\#441](https://github.com/r-lib/lintr/issues/441),
   [@russHyde](https://github.com/russHyde)).
 - [`object_length_linter()`](https://lintr.r-lib.org/dev/reference/object_length_linter.md):
   correctly detect generics and only count the implementation class
@@ -2117,8 +2116,7 @@ future releases. See, e.g.
 - [`conjunct_test_linter()`](https://lintr.r-lib.org/dev/reference/conjunct_test_linter.md)
   Require usage of `expect_true(x); expect_true(y)` over
   `expect_true(x && y)` and similar.
-- [`consecutive_stopifnot_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  Require consecutive calls to
+- `consecutive_stopifnot_linter()` Require consecutive calls to
   [`stopifnot()`](https://rdrr.io/r/base/stopifnot.html) to be unified
   into one.
 - [`expect_comparison_linter()`](https://lintr.r-lib.org/dev/reference/expect_comparison_linter.md)
@@ -2298,15 +2296,13 @@ future releases. See, e.g.
   several preceding expressions
   ([\#846](https://github.com/r-lib/lintr/issues/846),
   [@jonkeane](https://github.com/jonkeane)).
-- [`extraction_operator_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md):
-  no longer lint `x[NULL]`
+- `extraction_operator_linter()`: no longer lint `x[NULL]`
   ([\#1273](https://github.com/r-lib/lintr/issues/1273),
   [@AshesITR](https://github.com/AshesITR)).
 - [`is_lint_level()`](https://lintr.r-lib.org/dev/reference/is_lint_level.md):
   new exported helper for readably explaining which type of expression
   is required for a custom linter. Some linters are written to require
-  the full file’s parse tree (for example,
-  [`single_quotes_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)).
+  the full file’s parse tree (for example, `single_quotes_linter()`).
   Others only need single expressions, which is more cache-friendly
   (most linters are written this way to leverage caching)
   ([\#921](https://github.com/r-lib/lintr/issues/921),
@@ -2324,7 +2320,7 @@ future releases. See, e.g.
   improve lint message to be clearer about the reason for linting
   ([\#522](https://github.com/r-lib/lintr/issues/522),
   [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md):
+- `unneeded_concatenation_linter()`:
   - Correctly considers arguments in pipelines (`%>%` or `|>`;
     [\#573](https://github.com/r-lib/lintr/issues/573),
     [\#1270](https://github.com/r-lib/lintr/issues/1270),
@@ -2549,10 +2545,9 @@ since the last major release (1.0.0) in 2016-04-16.
   ([\#143](https://github.com/r-lib/lintr/issues/143),
   [\#326](https://github.com/r-lib/lintr/issues/326),
   [@jabranham](https://github.com/jabranham))
-- New
-  [`extraction_operator_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  checks that the `[[` operator is used when extracting a single element
-  from an object, not `[` (subsetting) nor `$` (interactive use)
+- New `extraction_operator_linter()` checks that the `[[` operator is
+  used when extracting a single element from an object, not `[`
+  (subsetting) nor `$` (interactive use)
   ([@fangly](https://github.com/fangly)).
 - New
   [`function_left_parentheses_linter()`](https://lintr.r-lib.org/dev/reference/function_left_parentheses_linter.md)
@@ -2599,10 +2594,8 @@ since the last major release (1.0.0) in 2016-04-16.
   ([\#48](https://github.com/r-lib/lintr/issues/48),
   [\#149](https://github.com/r-lib/lintr/issues/149),
   [@fangly](https://github.com/fangly)).
-- New
-  [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  lints uses of c() with a constant or no arguments
-  ([@fangly](https://github.com/fangly)).
+- New `unneeded_concatenation_linter()` lints uses of c() with a
+  constant or no arguments ([@fangly](https://github.com/fangly)).
 
 ### New functions for writing linters
 
@@ -2651,8 +2644,7 @@ since the last major release (1.0.0) in 2016-04-16.
 - [`function_left_parentheses_linter()`](https://lintr.r-lib.org/dev/reference/function_left_parentheses_linter.md)
   now allows spaces if a function starts with a left parenthesis
   ([\#311](https://github.com/r-lib/lintr/issues/311))
-- [`no_tab_linter()`](https://lintr.r-lib.org/dev/reference/lintr-deprecated.md)
-  now reports proper line in all cases
+- `no_tab_linter()` now reports proper line in all cases
   ([\#134](https://github.com/r-lib/lintr/issues/134),
   [@fangly](https://github.com/fangly))
 - [`object_length_linter()`](https://lintr.r-lib.org/dev/reference/object_length_linter.md)

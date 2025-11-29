@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.3.0-1</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">3.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +84,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Creating new linters</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/v3.3.0-1/vignettes/creating_linters.Rmd" class="external-link"><code>vignettes/creating_linters.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/lintr/blob/main/vignettes/creating_linters.Rmd" class="external-link"><code>vignettes/creating_linters.Rmd</code></a></small>
       <div class="d-none name"><code>creating_linters.Rmd</code></div>
     </div>
 
@@ -249,7 +249,7 @@ whenever possible. Two types of exceptions observed in
 <code><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot()</a></code>, which will typically appear on consecutive
 expressions) or (2) when the linter logic is very simple &amp; fast to
 compute, so that the overhead of re-running the linter is low (e.g.,
-<code>single_quotes_linter</code>). In those cases, use
+<code>quotes_linter</code>). In those cases, use
 <code>is_lint_level(source_expression, "file")</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xml</span> <span class="op">&lt;-</span> <span class="va">source_expression</span><span class="op">$</span><span class="va">xml_parsed_content</span></span>

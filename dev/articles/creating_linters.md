@@ -186,8 +186,8 @@ applies (e.g., `conjunct_test_linter` looks for consecutive calls to
 [`stopifnot()`](https://rdrr.io/r/base/stopifnot.html), which will
 typically appear on consecutive expressions) or (2) when the linter
 logic is very simple & fast to compute, so that the overhead of
-re-running the linter is low (e.g., `single_quotes_linter`). In those
-cases, use `is_lint_level(source_expression, "file")`.
+re-running the linter is low (e.g., `quotes_linter`). In those cases,
+use `is_lint_level(source_expression, "file")`.
 
 ``` r
 xml <- source_expression$xml_parsed_content
