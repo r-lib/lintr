@@ -133,7 +133,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   find_indent_type <- switch(hanging_indent_style,
     tidy = build_indentation_style_tidy(),
     always = build_indentation_style_always(),
-    never = function(change) "block"
+    never = \(change) "block"
   )
 
   if (isTRUE(assignment_as_infix)) {

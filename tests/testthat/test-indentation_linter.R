@@ -802,7 +802,6 @@ test_that("consecutive same-level lints are suppressed", {
 })
 
 test_that("native pipe is supported", {
-  skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
   expect_no_lint(
@@ -828,7 +827,6 @@ test_that("it doesn't error on invalid code", {
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
   expect_no_lint(

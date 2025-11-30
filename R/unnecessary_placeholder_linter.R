@@ -45,7 +45,7 @@ unnecessary_placeholder_linter <- function() {
     ]
     /expr[2][
       SYMBOL[text() = '.']
-      and not(preceding-sibling::*[1][self::EQ_SUB])
+      and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
     ]
   ")
 

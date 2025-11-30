@@ -230,7 +230,7 @@ rd_undesirable_operators <- function() {
   op_link_map <- c(
     `:::` = "\\link[base:ns-dblcolon]{:::}",
     `<<-` = "\\link[base:assignOps]{<<-}",
-    `->>` = "\\link[base:assignOps]{<<-}"
+    `->>` = "\\link[base:assignOps]{->>}"
   )
   op <- names(default_undesirable_operators)
 
@@ -306,9 +306,6 @@ logical_env <- function(x, unset = "") {
   )
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
-
-  # R>=4.1.0: ...names
-  backports::import(pkgname, "...names")
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,

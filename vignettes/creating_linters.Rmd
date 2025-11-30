@@ -156,7 +156,7 @@ Note that this check is unnecessary because we provided `linter_level = "express
 Therefore, it is preferable to write expression-level linters whenever possible. Two types of exceptions observed in `lintr` are
 (1) when several or all expressions are _required_ to ensure the linter logic applies (e.g., `conjunct_test_linter` looks for
 consecutive calls to `stopifnot()`, which will typically appear on consecutive expressions) or (2) when the linter logic
-is very simple & fast to compute, so that the overhead of re-running the linter is low (e.g., `single_quotes_linter`). In those cases,
+is very simple & fast to compute, so that the overhead of re-running the linter is low (e.g., `quotes_linter`). In those cases,
 use `is_lint_level(source_expression, "file")`.
 
 ```r

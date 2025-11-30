@@ -54,8 +54,9 @@ linter_auto_name <- function(which = -3L) {
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
     match_data <- re_matches(nm, regex, locations = TRUE)
-    nm <- substr(nm, start = 1L, stop = match_data[1L, "end"])
-    nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
+    nm <- nm |>
+      substr(start = 1L, stop = match_data[1L, "end"]) |>
+      re_substitutes(rex(start, alnums, "::"), "")
   }
   nm
 }
@@ -85,20 +86,27 @@ names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
-get_content <- function(lines, info) {
+#' @param needs_braces Logical, default FALSE. If it's possible or known that
+#'   `lines` cannot be parsed as a standalone expression, only a "child"
+#'   expression, we insert braces `{}` around it to ensure that it parses.
+#'   There is only one known case for this, namely, when finding code with
+#'   shorthand lambda `\(` where `\` and `(` are separated by a comment;
+#'   see `object_usage_linter()` for more details.
+#' @noRd
+get_content <- function(lines, info, needs_braces = FALSE) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
+    # put in data.frame-like format
     if (is_node(info)) {
-      info <- lapply(stats::setNames(nm = c("col1", "col2", "line1", "line2")), function(attr) {
-        as.integer(xml_attr(info, attr))
-      })
+      info <- lapply(xml2::xml_attrs(info), as.integer)
     }
 
     lines <- lines[seq(info$line1, info$line2)]
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
+  if (needs_braces) lines <- c("{", lines, "}")
   paste(lines, collapse = "\n")
 }
 
@@ -228,8 +236,12 @@ get_r_string <- function(s, xpath = NULL) {
       s <- xml_find_chr(s, sprintf("string(%s)", xpath))
     }
   }
-  # parse() skips "" elements --> offsets the length of the output,
-  #   but NA in --> NA out
+  r_string_from_parse_text(s)
+}
+
+# parse() skips "" elements --> offsets the length of the output,
+#   but NA in --> NA out
+r_string_from_parse_text <- function(s) {
   is.na(s) <- !nzchar(s)
   out <- as.character(parse(text = s, keep.source = FALSE))
   is.na(out) <- is.na(s)
@@ -252,7 +264,7 @@ is_tainted <- function(lines) {
 #' @param ref_help Help page to refer users hitting an error to.
 #' @noRd
 check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
-  valid_args <- unlist(lapply(ref_calls, function(f) names(formals(f))))
+  valid_args <- unlist(lapply(ref_calls, \(f) names(formals(f))))
   is_valid <- dot_names %in% valid_args
   if (all(is_valid)) {
     return(invisible())

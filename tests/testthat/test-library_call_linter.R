@@ -233,7 +233,6 @@ test_that("skips allowed usages of library()/character.only=TRUE", {
   expect_no_lint("function(pkg) library(pkg, character.only = TRUE)", linter)
   expect_no_lint("function(pkgs) sapply(pkgs, require, character.only = TRUE)", linter)
 
-  skip_if_not_r_version("4.1.0")
   expect_no_lint("\\(pkg) library(pkg, character.only = TRUE)", linter)
   expect_no_lint("\\(pkgs) sapply(pkgs, require, character.only = TRUE)", linter)
 })

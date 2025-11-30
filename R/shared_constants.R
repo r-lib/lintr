@@ -92,7 +92,7 @@ get_fixed_string <- function(static_regex) {
 #'
 #' This handles two cases: converting a "trivial" character group like `[$]` to `$`,
 #'   and converting an escaped character like `"\\$"` to `$`. Splitting a full expression
-#'   into tokens is handled by [get_fixed_string()].
+#'   into tokens is handled by `get_fixed_string()`.
 #'
 #' @noRd
 get_token_replacement <- function(token_content, token_type) {
@@ -253,7 +253,7 @@ strip_names <- function(x) {
 
 #' Pull out symbols used in glue strings under the current sub-tree
 #'
-#' Required by any linter (e.g. [object_usage_linter()] / [unused_imports_linter()])
+#' Required by any linter (e.g. [object_usage_linter()] / [unused_import_linter()])
 #'   that lints based on whether certain symbols are present, to ensure any
 #'   symbols only used inside glue strings are also visible to the linter.
 #'
@@ -309,8 +309,8 @@ glue_parse_failure_warning <- function(cond) {
 glue_symbol_extractor <- function(text, envir, data) {
   symbols <- tryCatch(
     all.vars(parse(text = text), functions = TRUE),
-    error = function(...) NULL,
-    warning = function(...) NULL
+    error = \(...) NULL,
+    warning = \(...) NULL
   )
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)
