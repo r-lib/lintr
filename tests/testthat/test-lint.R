@@ -205,7 +205,7 @@ test_that("old compatibility usage errors", {
   )
 
   expect_error(
-    lint("a <- 1\n", linters = function(two, arguments) NULL),
+    lint("a <- 1\n", linters = \(two, arguments) NULL),
     error_msg
   )
 
@@ -218,7 +218,7 @@ test_that("old compatibility usage errors", {
 test_that("Linters throwing an error give a helpful error", {
   tmp_file <- withr::local_tempfile(lines = "a <- 1")
   lintr_error_msg <- "a broken linter"
-  linter <- function() Linter(function(source_expression) cli_abort(lintr_error_msg))
+  linter <- function() Linter(\(source_expression) cli_abort(lintr_error_msg))
   # NB: Some systems/setups may use e.g. symlinked files when creating under tempfile();
   #   we don't care much about that, so just check basename()
   expect_error(lint(tmp_file, linter()), lintr_error_msg, fixed = TRUE)
@@ -227,7 +227,7 @@ test_that("Linters throwing an error give a helpful error", {
 
 test_that("Linter() input is validated", {
   expect_error(Linter(1L), "`fun` must be a function taking exactly one argument", fixed = TRUE)
-  expect_error(Linter(function(a, b) TRUE), "`fun` must be a function taking exactly one argument", fixed = TRUE)
+  expect_error(Linter(\(a, b) TRUE), "`fun` must be a function taking exactly one argument", fixed = TRUE)
 })
 
 test_that("typo in argument name gives helpful error", {

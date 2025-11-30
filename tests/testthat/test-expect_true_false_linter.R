@@ -7,8 +7,6 @@ test_that("expect_true_false_linter skips allowed usages", {
 
   expect_no_lint("42 %>% expect_identical(42, ignore_attr = TRUE)", linter)
   expect_no_lint("42 %>% expect_identical(42, TRUE)", linter)
-
-  skip_if_not_r_version("4.1.0")
   expect_no_lint("42 |> expect_identical(42, ignore_attr = TRUE)", linter)
 })
 
@@ -29,8 +27,6 @@ test_that("expect_true_false_linter blocks simple disallowed usages", {
   expect_lint("expect_equal(TRUE, foo(x))", lint_msg, linter)
 
   expect_lint("42 %T>% expect_equal(TRUE)", lint_msg, linter)
-
-  skip_if_not_r_version("4.1.0")
   expect_lint("42 |> expect_equal(TRUE)", lint_msg, linter)
 })
 

@@ -32,8 +32,6 @@ test_that("lengths_linter blocks simple disallowed purrr usages", {
 })
 
 test_that("lengths_linter blocks simple disallowed usages with pipes", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- lengths_linter()
   lint_msg <- rex::rex("Use lengths() to find the length of each element in a list.")
 

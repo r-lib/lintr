@@ -24,9 +24,8 @@ License: MIT + file LICENSE
 URL: https://lintr.r-lib.org, https://github.com/r-lib/lintr
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
-    R (>= 4.0)
+    R (>= 4.1.0)
 Imports:
-    backports (>= 1.5.0),
     cli (>= 3.4.0),
     codetools,
     digest,
@@ -133,7 +132,6 @@ Collate:
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
-    'lintr-deprecated.R'
     'lintr-package.R'
     'list2df_linter.R'
     'list_comparison_linter.R'

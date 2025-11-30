@@ -44,7 +44,7 @@ snake_case_linter <-
 trailing_semicolons_linter <- function(...) {
   # .call=TRUE means the linter name will be displayed in the warning
   warning("Using deleted linter")
-  Linter(function(...) list())
+  Linter(\(...) list())
 }
 
 
@@ -146,7 +146,7 @@ summarize_failures <- function(version, failures) {
   files <- result_path(version, failures)
   packages <- gsub("\\.failures$", "", failures)
 
-  package_failures <- sapply(files, function(x) paste(unique(readLines(x)), collapse = " ||| "))
+  package_failures <- sapply(files, \(x) paste(unique(readLines(x)), collapse = " ||| "))
 
   paste(sprintf("  %s: %s", packages, package_failures), collapse = "\n")
 }
