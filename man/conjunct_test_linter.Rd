@@ -10,8 +10,7 @@ conjunct_test_linter(
 )
 }
 \arguments{
-\item{allow_named_stopifnot}{Logical, \code{TRUE} by default. If \code{FALSE}, "named" calls to \code{stopifnot()},
-available since R 4.0.0 to provide helpful messages for test failures, are also linted.}
+\item{allow_named_stopifnot}{Logical, \code{TRUE} by default. If \code{FALSE}, "named" calls to \code{stopifnot()} are also linted.}
 
 \item{allow_filter}{Character naming the method for linting calls to \code{filter()}. The default, \code{"never"}, means
 \code{filter()} and \code{dplyr::filter()} calls are linted; \code{"not_dplyr"} means only \code{dplyr::filter()} calls are linted;

@@ -115,8 +115,6 @@ test_that("incorrect subset/filter usage is caught", {
 })
 
 test_that("native pipe usage is caught in subset/filter logic", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint("x |> filter(y && z)", rex::rex("Use `&` in subsetting"), vector_logic_linter())
 })
 

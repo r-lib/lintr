@@ -70,7 +70,7 @@ package_hooks_linter <- function() {
   "
   bad_call_xpaths <- vapply(
     seq_along(bad_calls),
-    function(ii) sprintf(bad_msg_call_xpath_fmt, names(bad_calls)[ii], xp_text_in_table(bad_calls[[ii]])),
+    \(ii) sprintf(bad_msg_call_xpath_fmt, names(bad_calls)[ii], xp_text_in_table(bad_calls[[ii]])),
     character(1L)
   )
   names(bad_call_xpaths) <- names(bad_calls)

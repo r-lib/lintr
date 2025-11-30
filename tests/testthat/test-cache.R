@@ -35,8 +35,8 @@ fhash <- function(filename) {
 
 test_that("clear_cache deletes the directory if no file is given", {
   local_mocked_bindings(
-    read_settings = function(...) invisible(...),
-    unlink = function(...) list(...)
+    read_settings = \(...) invisible(...),
+    unlink = \(...) list(...)
   )
 
   expect_identical(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
@@ -59,7 +59,7 @@ test_that("lint with cache uses the provided relative cache directory", {
 test_that("it works outside of a package", {
   linter <- assignment_linter()
 
-  local_mocked_bindings(find_package = function(...) NULL)
+  local_mocked_bindings(find_package = \(...) NULL)
   path <- withr::local_tempfile(pattern = "my_cache_dir_")
   expect_false(dir.exists(path))
   expect_lint("a <- 1", NULL, linter, cache = path)

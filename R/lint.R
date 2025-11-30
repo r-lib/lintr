@@ -232,7 +232,7 @@ lint_dir <- function(path = ".", ...,
 drop_excluded <- function(files, exclusions) {
   to_exclude <- vapply(
     files,
-    function(file) file %in% names(exclusions) && is_excluded_file(exclusions[[file]]),
+    \(file) file %in% names(exclusions) && is_excluded_file(exclusions[[file]]),
     logical(1L)
   )
   files[!to_exclude]
@@ -612,7 +612,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       rule_index_exists <-
         which(vapply(
           sarif$runs[[1L]]$tool$driver$rules,
-          function(x) x$id == lint$linter,
+          \(x) x$id == lint$linter,
           logical(1L)
         ))
       if (length(rule_index_exists) == 0L || is.na(rule_index_exists[1L])) {

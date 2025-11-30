@@ -79,7 +79,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     ## Case 2/3/4: problems with foo in pkg::foo / pkg:::foo
 
     # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
-    namespaces <- lapply(packages, function(package) tryCatch(getNamespace(package), error = identity))
+    namespaces <- lapply(packages, \(package) tryCatch(getNamespace(package), error = identity))
     failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
 
     # nocov start
@@ -126,7 +126,7 @@ namespace_symbols <- function(ns, exported = TRUE) {
 is_in_pkg <- function(symbols, namespaces, exported = TRUE) {
   vapply(
     seq_along(symbols),
-    function(ii) symbols[[ii]] %in% namespace_symbols(namespaces[[ii]], exported = exported),
+    \(ii) symbols[[ii]] %in% namespace_symbols(namespaces[[ii]], exported = exported),
     logical(1L)
   )
 }

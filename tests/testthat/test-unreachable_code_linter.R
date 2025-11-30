@@ -574,8 +574,6 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint(
     trim_some("
       foo <- \\(bar) {
@@ -604,8 +602,6 @@ test_that("Do not lint inline else after stop in inline function", {
 })
 
 test_that("Do not lint inline else after stop in inline lambda function", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- unreachable_code_linter()
 
   expect_lint("\\(x) if (x > 3L) stop() else x + 3", NULL, linter)
