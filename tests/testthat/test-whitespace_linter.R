@@ -56,7 +56,3 @@ test_that("whitespace_linter blocks disallowed usages with a pipe", {
     linter
   )
 })
-
-test_that("no_tab_linter is defunct", {
-  expect_error(no_tab_linter(), "Use whitespace_linter instead", fixed = TRUE)
-})

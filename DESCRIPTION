@@ -133,7 +133,6 @@ Collate:
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
-    'lintr-deprecated.R'
     'lintr-package.R'
     'list2df_linter.R'
     'list_comparison_linter.R'
