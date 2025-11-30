@@ -10,6 +10,10 @@
   `unnecessary_nested_if_linter()`, and
   `unneeded_concatenation_linter()`.
 
+### Notes
+
+- {lintr} now requires R 4.1.0
+
 ## lintr 3.2.0
 
 CRAN release: 2025-02-12

@@ -27,9 +27,8 @@ library_call_linter(allow_preamble = TRUE)
   packages in a loop.
 
 - Block consecutive calls to `suppressMessages(library(.))` in favor of
-  using
-  [`backports::suppressMessages()`](https://rdrr.io/pkg/backports/man/suppressWarnings.html)
-  only once to suppress messages from all
+  using [`suppressMessages()`](https://rdrr.io/r/base/message.html) only
+  once to suppress messages from all
   [`library()`](https://rdrr.io/r/base/library.html) calls. Ditto
   [`suppressPackageStartupMessages()`](https://rdrr.io/r/base/message.html).
 
