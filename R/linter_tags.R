@@ -132,8 +132,10 @@ validate_linter_db <- function(available, package) {
 #' @examples
 #' available_tags()
 available_tags <- function(packages = "lintr") {
-  platform_independent_sort(unique(unlist(available_linters(packages = packages, exclude_tags = NULL)[["tags"]])))
-}
+  available_linters(packages = packages, exclude_tags = NULL)[["tags"]] |>
+    unlist() |>
+    unique() |>
+    platform_independent_sort()}
 
 # nocov start
 
