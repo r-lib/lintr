@@ -211,7 +211,8 @@ lint_dir <- function(path = ".", ...,
     )
   }
 
-  lints <- reorder_lints(flatten_lints(lints))
+  lints <- flatten_lints(lints)
+  lints <- reorder_lints(lints)
 
   if (relative_path) {
     path <- normalize_path(path, mustWork = FALSE)
