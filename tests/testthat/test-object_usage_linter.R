@@ -802,8 +802,6 @@ test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
 })
 
 test_that("functional lambda definitions are also caught", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint(
     trim_some("
       fun <- \\() {

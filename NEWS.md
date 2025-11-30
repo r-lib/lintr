@@ -4,6 +4,10 @@
 
 * Six linters fully deprecated in the previous release are now removed: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`.
 
+## Notes
+
+* {lintr} now requires R 4.1.0
+
 # lintr (3.3.0-1)
 
 ## Deprecations & breaking changes
