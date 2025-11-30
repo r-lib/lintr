@@ -283,7 +283,8 @@ find_default_encoding <- function(filename) {
     return(NULL)
   }
 
-  find_package(filename, allow_rproj = TRUE) |>
+  filename |>
+    find_package(allow_rproj = TRUE) |>
     find_rproj_at() |>
     get_encoding_from_dcf()
 }

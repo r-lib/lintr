@@ -78,8 +78,8 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   lints <- lint_impl_(linters, lint_cache, filename, source_expressions)
 
-  lints <-
-    maybe_append_condition_lints(lints, source_expressions, lint_cache, filename) |>
+  lints <- lints |>
+    maybe_append_condition_lints(source_expressions, lint_cache, filename) |>
     flatten_lints() |>
     reorder_lints()
   class(lints) <- c("lints", "list")
@@ -211,7 +211,7 @@ lint_dir <- function(path = ".", ...,
     )
   }
 
-  lints <- flatten_lints(lints) |> reorder_lints()
+  lints <- reorder_lints(flatten_lints(lints))
 
   if (relative_path) {
     path <- normalize_path(path, mustWork = FALSE)

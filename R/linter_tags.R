@@ -135,7 +135,8 @@ available_tags <- function(packages = "lintr") {
   available_linters(packages = packages, exclude_tags = NULL)[["tags"]] |>
     unlist() |>
     unique() |>
-    platform_independent_sort()}
+    platform_independent_sort()
+}
 
 # nocov start
 
