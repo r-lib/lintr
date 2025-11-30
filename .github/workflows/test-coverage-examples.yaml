@@ -41,7 +41,6 @@ jobs:
             "R/exclude.R",
             "R/extract.R",
             "R/ids_with_token.R",
-            "R/lintr-deprecated.R",
             "R/make_linter_from_regex.R",
             "R/make_linter_from_xpath.R",
             "R/namespace.R",
