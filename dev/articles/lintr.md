@@ -202,34 +202,34 @@ linters: linters_with_defaults(
 By default, the following linters are enabled. Where applicable, the
 default settings are also shown.
 
-|                                  | settings                                                                                                                                |
-|:---------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------|
-| assignment_linter                | operator = c(“\<-”, “\<\<-”), allow_cascading_assign = NULL, allow_right_assign = NULL, allow_trailing = TRUE, allow_pipe_assign = NULL |
-| brace_linter                     | allow_single_line = FALSE, function_bodies = “multi_line”                                                                               |
-| commas_linter                    | allow_trailing = FALSE                                                                                                                  |
-| commented_code_linter            |                                                                                                                                         |
-| equals_na_linter                 |                                                                                                                                         |
-| function_left_parentheses_linter |                                                                                                                                         |
-| indentation_linter               | indent = 2L, hanging_indent_style = “tidy”, assignment_as_infix = TRUE                                                                  |
-| infix_spaces_linter              | exclude_operators = NULL, allow_multiple_spaces = TRUE                                                                                  |
-| line_length_linter               | length = 80L, ignore_string_bodies = FALSE                                                                                              |
-| object_length_linter             | length = 30L                                                                                                                            |
-| object_name_linter               | styles = c(“snake_case”, “symbols”), regexes = character(0)                                                                             |
-| object_usage_linter              | interpret_glue = NULL, interpret_extensions = c(“glue”, “rlang”), skip_with = TRUE                                                      |
-| paren_body_linter                |                                                                                                                                         |
-| pipe_consistency_linter          | pipe = “\|\>”                                                                                                                           |
-| pipe_continuation_linter         |                                                                                                                                         |
-| quotes_linter                    | delimiter = “"”                                                                                                                         |
-| return_linter                    | return_style = “implicit”, allow_implicit_else = TRUE, return_functions = NULL, except = NULL, except_regex = NULL                      |
-| semicolon_linter                 | allow_compound = FALSE, allow_trailing = FALSE                                                                                          |
-| seq_linter                       |                                                                                                                                         |
-| spaces_inside_linter             |                                                                                                                                         |
-| spaces_left_parentheses_linter   |                                                                                                                                         |
-| T_and_F_symbol_linter            |                                                                                                                                         |
-| trailing_blank_lines_linter      |                                                                                                                                         |
-| trailing_whitespace_linter       | allow_empty_lines = FALSE, allow_in_strings = TRUE                                                                                      |
-| vector_logic_linter              |                                                                                                                                         |
-| whitespace_linter                |                                                                                                                                         |
+|                                  | settings                                                                                                           |
+|:---------------------------------|:-------------------------------------------------------------------------------------------------------------------|
+| assignment_linter                | operator = c(“\<-”, “\<\<-”), allow_trailing = TRUE                                                                |
+| brace_linter                     | allow_single_line = FALSE, function_bodies = “multi_line”                                                          |
+| commas_linter                    | allow_trailing = FALSE                                                                                             |
+| commented_code_linter            |                                                                                                                    |
+| equals_na_linter                 |                                                                                                                    |
+| function_left_parentheses_linter |                                                                                                                    |
+| indentation_linter               | indent = 2L, hanging_indent_style = “tidy”, assignment_as_infix = TRUE                                             |
+| infix_spaces_linter              | exclude_operators = NULL, allow_multiple_spaces = TRUE                                                             |
+| line_length_linter               | length = 80L, ignore_string_bodies = FALSE                                                                         |
+| object_length_linter             | length = 30L                                                                                                       |
+| object_name_linter               | styles = c(“snake_case”, “symbols”), regexes = character(0)                                                        |
+| object_usage_linter              | interpret_glue = NULL, interpret_extensions = c(“glue”, “rlang”), skip_with = TRUE                                 |
+| paren_body_linter                |                                                                                                                    |
+| pipe_consistency_linter          | pipe = “\|\>”                                                                                                      |
+| pipe_continuation_linter         |                                                                                                                    |
+| quotes_linter                    | delimiter = “"”                                                                                                    |
+| return_linter                    | return_style = “implicit”, allow_implicit_else = TRUE, return_functions = NULL, except = NULL, except_regex = NULL |
+| semicolon_linter                 | allow_compound = FALSE, allow_trailing = FALSE                                                                     |
+| seq_linter                       |                                                                                                                    |
+| spaces_inside_linter             |                                                                                                                    |
+| spaces_left_parentheses_linter   |                                                                                                                    |
+| T_and_F_symbol_linter            |                                                                                                                    |
+| trailing_blank_lines_linter      |                                                                                                                    |
+| trailing_whitespace_linter       | allow_empty_lines = FALSE, allow_in_strings = TRUE                                                                 |
+| vector_logic_linter              |                                                                                                                    |
+| whitespace_linter                |                                                                                                                    |
 
 Another way to customize linters is by specifying tags in
 [`linters_with_tags()`](https://lintr.r-lib.org/dev/reference/linters_with_tags.md).

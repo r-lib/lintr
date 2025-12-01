@@ -5,13 +5,7 @@ Check that the specified operator is used for assignment.
 ## Usage
 
 ``` r
-assignment_linter(
-  operator = c("<-", "<<-"),
-  allow_cascading_assign = NULL,
-  allow_right_assign = NULL,
-  allow_trailing = TRUE,
-  allow_pipe_assign = NULL
-)
+assignment_linter(operator = c("<-", "<<-"), allow_trailing = TRUE)
 ```
 
 ## Arguments
@@ -22,10 +16,6 @@ assignment_linter(
   `<-` and `<<-`; other valid options are `=`, `->`, `->>`, `%<>%`; use
   `"any"` to denote "allow all operators", in which case this linter
   only considers `allow_trailing` for generating lints.
-
-- allow_cascading_assign, allow_right_assign, allow_pipe_assign:
-
-  (Defunct)
 
 - allow_trailing:
 

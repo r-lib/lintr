@@ -9,6 +9,16 @@
   `no_tab_linter()`, `single_quotes_linter()`,
   `unnecessary_nested_if_linter()`, and
   `unneeded_concatenation_linter()`.
+- Arguments `allow_cascading_assign=`, `allow_right_assign=`, and
+  `allow_pipe_assign=` to
+  [`assignment_linter()`](https://lintr.r-lib.org/dev/reference/assignment_linter.md)
+  are now removed. Use `operator=` instead.
+- Argument `interpret_glue` to
+  [`object_usage_linter()`](https://lintr.r-lib.org/dev/reference/object_usage_linter.md),
+  marked deprecated in the previous release, is now defunct. Use
+  `interpret_extensions=` instead; see the 3.3.0-1 release notes and
+  [`?object_usage_linter`](https://lintr.r-lib.org/dev/reference/object_usage_linter.md)
+  for more.
 
 ### Notes
 

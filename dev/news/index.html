@@ -55,6 +55,8 @@
 <div class="section level3">
 <h3 id="deprecations--breaking-changes-development-version">Deprecations &amp; breaking changes<a class="anchor" aria-label="anchor" href="#deprecations--breaking-changes-development-version"></a></h3>
 <ul><li>Six linters fully deprecated in the previous release are now removed: <code>consecutive_stopifnot_linter()</code>, <code>extraction_operator_linter()</code>, <code>no_tab_linter()</code>, <code>single_quotes_linter()</code>, <code>unnecessary_nested_if_linter()</code>, and <code>unneeded_concatenation_linter()</code>.</li>
+<li>Arguments <code>allow_cascading_assign=</code>, <code>allow_right_assign=</code>, and <code>allow_pipe_assign=</code> to <code><a href="../reference/assignment_linter.html">assignment_linter()</a></code> are now removed. Use <code>operator=</code> instead.</li>
+<li>Argument <code>interpret_glue</code> to <code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code>, marked deprecated in the previous release, is now defunct. Use <code>interpret_extensions=</code> instead; see the 3.3.0-1 release notes and <code><a href="../reference/object_usage_linter.html">?object_usage_linter</a></code> for more.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="notes-development-version">Notes<a class="anchor" aria-label="anchor" href="#notes-development-version"></a></h3>
