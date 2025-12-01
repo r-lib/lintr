@@ -4,6 +4,10 @@
 
 * Six linters fully deprecated in the previous release are now removed: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`.
 
+## Bug fixes
+
+* Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
+
 ## Notes
 
 * {lintr} now requires R 4.1.0
