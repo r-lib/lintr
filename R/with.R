@@ -114,8 +114,13 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
         ))
       }
       for (linter in available$linter) {
-        linter_factory <- get(linter, envir = pkg_ns, inherits = FALSE)
-        delayedAssign(linter, call_linter_factory(linter_factory, linter, package), assign.env = tagged_linter_env)
+        # need an environment in each iteration, otherwise the lazy evaluation will use
+        #   the value of 'linter' left over after the loop, i.e., tail(available$linter, 1)
+        local({
+          linter_factory <- get(linter, envir = pkg_ns, inherits = FALSE)
+          linter <- linter # force a local copy to be found by delayedAssign
+          delayedAssign(linter, call_linter_factory(linter_factory, linter, package), assign.env = tagged_linter_env)
+        })
       }
     }
   }
