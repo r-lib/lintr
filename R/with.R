@@ -112,7 +112,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
           i = "These are advertised by {.fn available_linters}, but are not exported by package {.pkg {package}}."
         ))
       }
-      for (linter in available$linter) lazily_assign_linter(linter, package, tagged_linter_env)
+      for (linter in available$linter) lazily_assign_linter_(linter, package, tagged_linter_env)
     }
   }
 
@@ -129,7 +129,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
 #'   local() environment retains a copy of that variable; the formals of a helper
 #'   have the same effect.
 #' @noRd
-lazily_assign_linter <- function(linter, package, env) {
+lazily_assign_linter_ <- function(linter, package, env) {
   linter_factory <- get(linter, envir = getNamespace(package), inherits = FALSE)
   delayedAssign(linter, call_linter_factory(linter_factory, linter, package), assign.env = env)
 }
