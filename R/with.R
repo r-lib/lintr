@@ -134,7 +134,6 @@ lazily_assign_linter_ <- function(linter, package, env) {
   delayedAssign(linter, call_linter_factory(linter_factory, linter, package), assign.env = env)
 }
 
-
 #' Create a linter configuration based on all available linters
 #'
 #' @inheritParams linters_with_tags
