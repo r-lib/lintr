@@ -39,8 +39,6 @@ test_that("whitespace_linter blocks disallowed usages", {
 })
 
 test_that("whitespace_linter blocks disallowed usages with a pipe", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- whitespace_linter()
   lint_msg <- rex::rex("Use spaces to indent, not tabs.")
 

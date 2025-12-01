@@ -85,11 +85,11 @@ build_available_linters <- function(available, package, tags, exclude_tags) {
   available_df <- data.frame(linter = available[["linter"]], package)
   available_df$tags <- strsplit(available[["tags"]], split = " ", fixed = TRUE)
   if (!is.null(tags)) {
-    matches_tags <- vapply(available_df$tags, function(linter_tags) any(linter_tags %in% tags), logical(1L))
+    matches_tags <- vapply(available_df$tags, \(linter_tags) any(linter_tags %in% tags), logical(1L))
     available_df <- available_df[matches_tags, ]
   }
   if (!is.null(exclude_tags)) {
-    matches_exclude <- vapply(available_df$tags, function(linter_tags) any(linter_tags %in% exclude_tags), logical(1L))
+    matches_exclude <- vapply(available_df$tags, \(linter_tags) any(linter_tags %in% exclude_tags), logical(1L))
     available_df <- available_df[!matches_exclude, ]
   }
 
@@ -132,7 +132,10 @@ validate_linter_db <- function(available, package) {
 #' @examples
 #' available_tags()
 available_tags <- function(packages = "lintr") {
-  platform_independent_sort(unique(unlist(available_linters(packages = packages, exclude_tags = NULL)[["tags"]])))
+  available_linters(packages = packages, exclude_tags = NULL)[["tags"]] |>
+    unlist() |>
+    unique() |>
+    platform_independent_sort()
 }
 
 # nocov start
@@ -184,7 +187,7 @@ rd_linters <- function(tag_name) {
 rd_taglist <- function() {
   linters <- available_linters(exclude_tags = NULL)
   # don't count tags on deprecated linters to the counts of other tags
-  linters$tags <- lapply(linters$tags, function(x) if ("deprecated" %in% x) "deprecated" else x)
+  linters$tags <- lapply(linters$tags, \(x) if ("deprecated" %in% x) "deprecated" else x)
 
   tag_table <- table(unlist(linters[["tags"]]))
   tags <- platform_independent_sort(names(tag_table))

@@ -54,8 +54,9 @@ linter_auto_name <- function(which = -3L) {
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
     match_data <- re_matches(nm, regex, locations = TRUE)
-    nm <- substr(nm, start = 1L, stop = match_data[1L, "end"])
-    nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
+    nm <- nm |>
+      substr(start = 1L, stop = match_data[1L, "end"]) |>
+      re_substitutes(rex(start, alnums, "::"), "")
   }
   nm
 }
@@ -263,7 +264,7 @@ is_tainted <- function(lines) {
 #' @param ref_help Help page to refer users hitting an error to.
 #' @noRd
 check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
-  valid_args <- unlist(lapply(ref_calls, function(f) names(formals(f))))
+  valid_args <- unlist(lapply(ref_calls, \(f) names(formals(f))))
   is_valid <- dot_names %in% valid_args
   if (all(is_valid)) {
     return(invisible())

@@ -597,8 +597,6 @@ test_that("code with pipes is handled correctly", {
     linter
   )
 
-  skip_if_not_r_version("4.1.0")
-
   expect_no_lint(
     trim_some("
       out <- lapply(stuff, function(i) {
@@ -618,7 +616,6 @@ test_that("code with pipes is handled correctly", {
 })
 
 test_that("function shorthand is treated like 'full' function", {
-  skip_if_not_r_version("4.1.0")
   linter <- brace_linter()
 
   expect_no_lint("a <- \\() {  \n}", linter)

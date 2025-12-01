@@ -182,7 +182,7 @@ make_check_env <- function(pkg_name, xml, library_lint_hook) {
 
   # Just assign them an empty function
   for (symbol in symbols) {
-    assign(symbol, function(...) invisible(), envir = env)
+    assign(symbol, \(...) invisible(), envir = env)
   }
   env
 }

@@ -6,6 +6,10 @@
 * Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now removed. Use `operator=` instead.
 * Argument `interpret_glue` to `object_usage_linter()`, marked deprecated in the previous release, is now defunct. Use `interpret_extensions=` instead; see the 3.3.0-1 release notes and `?object_usage_linter` for more.
 
+## Notes
+
+* {lintr} now requires R 4.1.0
+
 # lintr (3.3.0-1)
 
 ## Deprecations & breaking changes

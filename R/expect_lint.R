@@ -79,9 +79,9 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
     lints <- lints[lint_order]
 
     check_order <- order(
-      vapply(checks, function(x) x$line_number %||% 0L, FUN.VALUE = integer(1L)),
-      vapply(checks, function(x) x$column_number %||% 0L, FUN.VALUE = integer(1L)),
-      vapply(checks, function(x) x$linter %||% "", FUN.VALUE = character(1L))
+      vapply(checks, \(x) x$line_number %||% 0L, FUN.VALUE = integer(1L)),
+      vapply(checks, \(x) x$column_number %||% 0L, FUN.VALUE = integer(1L)),
+      vapply(checks, \(x) x$linter %||% "", FUN.VALUE = character(1L))
     )
     checks <- checks[check_order]
   }
