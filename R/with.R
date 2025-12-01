@@ -102,8 +102,7 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
   tagged_linter_env <- new.env()
 
   for (package in packages) {
-    pkg_ns <- loadNamespace(package)
-    ns_exports <- getNamespaceExports(pkg_ns)
+    ns_exports <- getNamespaceExports(package)
     available <- available_linters(packages = package, tags = tags, exclude_tags = exclude_tags)
     if (nrow(available) > 0L) {
       if (!all(available$linter %in% ns_exports)) {
@@ -113,20 +112,28 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
           i = "These are advertised by {.fn available_linters}, but are not exported by package {.pkg {package}}."
         ))
       }
-      for (linter in available$linter) {
-        # need an environment in each iteration, otherwise the lazy evaluation will use
-        #   the value of 'linter' left over after the loop, i.e., tail(available$linter, 1)
-        local({
-          linter_factory <- get(linter, envir = pkg_ns, inherits = FALSE)
-          linter <- linter # force a local copy to be found by delayedAssign
-          delayedAssign(linter, call_linter_factory(linter_factory, linter, package), assign.env = tagged_linter_env)
-        })
-      }
+      for (linter in available$linter) lazily_assign_linter(linter, package, tagged_linter_env)
     }
   }
 
   modify_defaults(..., defaults = tagged_linter_env)
 }
+
+#' Avoid call_linter_factory up-front to delay displaying warnings until needed.
+#'   This e.g. allows modify_defaults() to skip warnings from linters that aren't needed.
+#' NB: this helper has the very subtle effect of ensuring 'linter' is associated correctly;
+#'   an earlier attempt had this logic directly in a loop in linters_with_tags, but
+#'   that results in the value of 'linter' matching that of the loop index after the loop
+#'   completes, rather than what its value was when 'delayedAssign()' is called. local({})
+#'   _can_ work, but requires the befuddling line 'linter <- linter' to ensure that the
+#'   local() environment retains a copy of that variable; the formals of a helper
+#'   have the same effect.
+#' @noRd
+lazily_assign_linter <- function(linter, package, env) {
+  linter_factory <- get(linter, envir = getNamespace(package), inherits = FALSE)
+  delayedAssign(linter, call_linter_factory(linter_factory, linter, package), assign.env = env)
+}
+
 
 #' Create a linter configuration based on all available linters
 #'
