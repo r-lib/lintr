@@ -56,6 +56,7 @@ VignetteBuilder:
 Config/Needs/website: tidyverse/tidytemplate
 Config/Needs/development: pkgload, testthat, patrick
 Config/testthat/edition: 3
+Config/testthat/parallel: true
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
