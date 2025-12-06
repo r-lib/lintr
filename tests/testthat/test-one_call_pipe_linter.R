@@ -96,7 +96,7 @@ test_that("Native pipes are handled as well", {
 })
 
 test_that("one_call_pipe_linter skips data.table chains with native pipe", {
-  skip_if_not_r_version("4.3.0")
+  skip_unless_r(">= 4.3.0")
 
   linter <- one_call_pipe_linter()
   lint_msg <- rex::rex("Avoid pipe |> for expressions with only a single call.")
