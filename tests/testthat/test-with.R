@@ -117,3 +117,20 @@ test_that("all_linters respects ellipsis argument", {
     all_linters(packages = "lintr", implicit_integer_linter = NULL)
   )
 })
+
+test_that("Excluding cyclocomp linter avoids a warning", {
+  local_mocked_bindings(
+    requireNamespace = function(pkg, ...) pkg != "cyclocomp" || base::requireNamespace(pkg, ...)
+  )
+
+  expect_silent(all_linters(cyclocomp_linter = NULL))
+  expect_silent(linters_with_tags("configurable", cyclocomp_linter = NULL))
+})
+
+test_that("cyclocomp_linter does warn as intended", {
+  local_mocked_bindings(
+    requireNamespace = function(pkg, ...) pkg != "cyclocomp" && base::requireNamespace(pkg, ...)
+  )
+
+  expect_warning(linters_with_tags("configurable"), "cyclocomp::cyclocomp")
+})
