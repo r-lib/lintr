@@ -16,6 +16,7 @@
 <url><loc>https://lintr.r-lib.org/reference/Linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/T_and_F_symbol_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/absolute_path_linter.html</loc></url>
+<url><loc>https://lintr.r-lib.org/reference/all_equal_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/all_linters.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/any_duplicated_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/any_is_na_linter.html</loc></url>
@@ -28,6 +29,7 @@
 <url><loc>https://lintr.r-lib.org/reference/checkstyle_output.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/class_equals_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/clear_cache.html</loc></url>
+<url><loc>https://lintr.r-lib.org/reference/coalesce_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/commas_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/commented_code_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/common_mistakes_linters.html</loc></url>
@@ -45,6 +47,7 @@
 <url><loc>https://lintr.r-lib.org/reference/default_settings.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/default_undesirable_functions.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/deprecated_linters.html</loc></url>
+<url><loc>https://lintr.r-lib.org/reference/download_file_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/duplicate_argument_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/efficiency_linters.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/empty_assignment_linter.html</loc></url>
@@ -70,6 +73,7 @@
 <url><loc>https://lintr.r-lib.org/reference/function_return_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/get_r_string.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/get_source_expressions.html</loc></url>
+<url><loc>https://lintr.r-lib.org/reference/gitlab_output.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/ids_with_token.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/if_not_else_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/if_switch_linter.html</loc></url>
@@ -95,6 +99,7 @@
 <url><loc>https://lintr.r-lib.org/reference/linters_with_tags.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/lintr-deprecated.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/lintr-package.html</loc></url>
+<url><loc>https://lintr.r-lib.org/reference/list2df_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/list_comparison_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/literal_coercion_linter.html</loc></url>
 <url><loc>https://lintr.r-lib.org/reference/make_linter_from_xpath.html</loc></url>
