@@ -1,0 +1,87 @@
+# Continuous integration
+
+You can configure `lintr` to run as part of continuous integration
+(either for a package or a general project containing R files) in order
+to automatically check that commits and pull requests do not deteriorate
+code style.
+
+## For packages
+
+First, take special note of the proviso in
+[`?executing_linters`](https://lintr.r-lib.org/reference/executing_linters.md)
+about the need to have your package and its dependencies installed or
+loaded (e.g. with
+[`pkgload::load_all()`](https://pkgload.r-lib.org/reference/load_all.html))
+in order for certain linters
+(e.g. [`object_usage_linter()`](https://lintr.r-lib.org/reference/object_usage_linter.md))
+to function as intended.
+
+### GitHub Actions
+
+If your package is on GitHub, the easiest way to do this is with GitHub
+Actions. The workflow configuration files use YAML syntax. The `usethis`
+package has some great functionality that can help you with workflow
+files. The most straightforward way to add a `lintr` workflow to your
+package is to use the
+[r-lib/actions](https://github.com/r-lib/actions/)’s [`lint`
+example](https://github.com/r-lib/actions/tree/v2-branch/examples#lint-workflow).
+To do this with `usethis`, you need to call
+
+``` r
+usethis::use_github_action("lint")
+```
+
+This will create a workflow file called `lint.yaml` and place it in the
+correct location, namely in the `.github/workflows` directory of your
+repository. This file configures all the steps required to run
+[`lintr::lint_package()`](https://lintr.r-lib.org/reference/lint.md) on
+your package.
+
+Alternatively you can use the eponymous
+[`lint-changed-files.yaml`](https://github.com/r-lib/actions/blob/v2-branch/examples/lint-changed-files.yaml)
+to only lint any changed files:
+
+``` r
+usethis::use_github_action("lint-changed-files")
+```
+
+Comments to the commit or pull request will be printed as
+[annotations](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-status-checks#types-of-status-checks-on-github)
+along side the status check on GitHub. If you want the builds to produce
+an error instead of just a warning, you can set the environment variable
+`LINTR_ERROR_ON_LINT=true`. This is set by default for both
+[r-lib/actions](https://github.com/r-lib/actions/)’s `lint.yaml` and
+`lint-changed-files.yaml`. Note that this will kill the R process in
+case of a lint.
+
+If your project is in a subdirectory and you would like to use GitHub
+Actions annotations, you can set
+`options(lintr.github_annotation_project_dir = "path/to/project")` which
+will make sure that the annotations point to the correct paths.
+
+## For projects
+
+You are not limited to using `lintr` for packages – you can use it in
+combination with continuous integration for any other project.
+
+### GitHub Actions
+
+If your project is on GitHub, you could take advantage of GitHub Actions
+and the `usethis` functionality.
+[r-lib/actions](https://github.com/r-lib/actions/) includes a
+[`lint-project`
+example](https://github.com/r-lib/actions/tree/v2-branch/examples#lint-project-workflow),
+which you can use by calling:
+
+``` r
+usethis::use_github_action("lint-project")
+```
+
+### Super-Linter
+
+`lintr` powers R lints for
+[Super-Linter](https://github.com/github/super-linter) and
+[MegaLinter](https://megalinter.io/latest/), which provide a unified
+linting experience across many languages. Specifically, they execute
+[`lintr::lint()`](https://lintr.r-lib.org/reference/lint.md) on the R
+and R Markdown files included in a given project.
