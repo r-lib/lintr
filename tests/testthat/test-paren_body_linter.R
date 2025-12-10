@@ -1,4 +1,4 @@
-testthat::test_that("paren_body_linter returns correct lints", {
+test_that("paren_body_linter returns correct lints", {
   linter <- paren_body_linter()
   lint_msg <- rex::rex("Put a space between a right parenthesis and a body expression.")
 
@@ -26,11 +26,17 @@ testthat::test_that("paren_body_linter returns correct lints", {
     "function()test",
     list(
       line_number = 1L,
-      column_number = 11L,
+      column_number = 10L,
       type = "style",
       line = "function()test",
-      ranges = list(c(11L, 14L))
+      ranges = list(c(10L, 10L))
     ),
+    linter
+  )
+
+  expect_lint(
+    "for (ii in 1:10)ii",
+    list(column_number = 16L, ranges = list(c(16L, 16L))),
     linter
   )
 
