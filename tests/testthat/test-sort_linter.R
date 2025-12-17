@@ -12,6 +12,10 @@ test_that("sort_linter skips allowed usages", {
   expect_no_lint("x[order(x, y)]", linter)
   # pretty sure this never makes sense, but test anyway
   expect_no_lint("x[order(y, na.last = x)]", linter)
+
+  # is.unsorted false positives
+  expect_no_lint("identical(sort(x), y)", linter)
+  expect_no_lint("identical(sort(foo(x)), x)", linter)
 })
 
 
@@ -134,15 +138,21 @@ test_that("sort_linter blocks simple disallowed usages for is.sorted cases", {
   sorted_msg <- rex::rex("Use !is.unsorted(x) to test the sortedness of a vector.")
 
   expect_lint("sort(x) == x", sorted_msg, linter)
+  expect_lint("identical(x, sort(x))", sorted_msg, linter)
 
   # argument order doesn't matter
   expect_lint("x == sort(x)", sorted_msg, linter)
+  expect_lint("identical(sort(x), x)", sorted_msg, linter)
 
   # inverted version
   expect_lint("sort(x) != x", unsorted_msg, linter)
+  expect_lint("!identical(x, sort(x))", unsorted_msg, linter)
 
   # expression matching
   expect_lint("sort(foo(x)) == foo(x)", sorted_msg, linter)
+  expect_lint("identical(foo(x), sort(foo(x)))", sorted_msg, linter)
+  expect_lint("identical(sort(foo(x)), foo(x))", sorted_msg, linter)
+
   expect_lint(
     trim_some("
       sort(foo(x # comment
