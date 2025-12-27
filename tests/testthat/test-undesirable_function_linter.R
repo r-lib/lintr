@@ -72,7 +72,7 @@ test_that("invalid inputs fail correctly", {
 
   expect_error(
     undesirable_function_linter(symbol_is_undesirable = 1.0),
-    "is.logical(symbol_is_undesirable) is not TRUE",
+    "symbol_is_undesirable` must be a logical",
     fixed = TRUE
   )
 })

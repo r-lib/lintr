@@ -116,13 +116,17 @@ as_tibble.lints <- function(x, ..., # nolint: object_name_linter.
                             .rows = NULL,
                             .name_repair = c("check_unique", "unique", "universal", "minimal"),
                             rownames = NULL) {
-  stopifnot(requireNamespace("tibble", quietly = TRUE))
+  if (!requireNamespace("tibble", quietly = TRUE)) {
+    cli_abort("Package {.pkg tibble} is required to convert lints to a tibble.")
+  }
   tibble::as_tibble(as.data.frame(x), ..., .rows = .rows, .name_repair = .name_repair, rownames = rownames)
 }
 
 #' @exportS3Method data.table::as.data.table
 as.data.table.lints <- function(x, keep.rownames = FALSE, ...) { # nolint: object_name_linter.
-  stopifnot(requireNamespace("data.table", quietly = TRUE))
+  if (!requireNamespace("data.table", quietly = TRUE)) {
+    cli_abort("Package {.pkg data.table} is required to convert lints to a data.table.")
+  }
   data.table::setDT(as.data.frame(x), keep.rownames = keep.rownames, ...)
 }
 
