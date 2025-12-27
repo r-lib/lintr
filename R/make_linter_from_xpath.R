@@ -18,10 +18,12 @@ make_linter_from_xpath <- function(xpath,
   type <- match.arg(type)
   level <- match.arg(level)
 
-  stopifnot(
-    "xpath should be a character string" = is.character(xpath) && length(xpath) == 1L && !is.na(xpath),
-    "lint_message is required" = !missing(lint_message)
-  )
+  if (!is.character(xpath) || length(xpath) != 1L || is.na(xpath)) {
+    cli_abort("{.arg xpath} should be a character string.")
+  }
+  if (missing(lint_message)) {
+    cli_abort("{.arg lint_message} is required.")
+  }
 
   xml_key <- if (level == "expression") "xml_parsed_content" else "full_xml_parsed_content"
 
@@ -54,11 +56,15 @@ make_linter_from_function_xpath <- function(function_names,
   type <- match.arg(type)
   level <- match.arg(level)
 
-  stopifnot(
-    "function_names should be a character vector" = is.character(function_names) && length(function_names) > 0L,
-    "xpath should be a character string" = is.character(xpath) && length(xpath) == 1L && !is.na(xpath),
-    "lint_message is required" = !missing(lint_message)
-  )
+  if (!is.character(function_names) || length(function_names) == 0L) {
+    cli_abort("{.arg function_names} should be a character vector.")
+  }
+  if (!is.character(xpath) || length(xpath) != 1L || is.na(xpath)) {
+    cli_abort("{.arg xpath} should be a character string.")
+  }
+  if (missing(lint_message)) {
+    cli_abort("{.arg lint_message} is required.")
+  }
 
   function() {
     Linter(linter_level = level, function(source_expression) {

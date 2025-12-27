@@ -76,7 +76,9 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
                                        allow_lazy = FALSE,
                                        allow_scoped = FALSE,
                                        allow_paren_print = FALSE) {
-  stopifnot(is.null(except) || is.character(except))
+  if (!is.null(except) && !is.character(except)) {
+    cli_abort("{.arg except} must be a character vector or NULL, not {.obj_simple_type_name {except}}.")
+  }
 
   if (length(except) > 0L) {
     exceptions <- xp_text_in_table(except)
