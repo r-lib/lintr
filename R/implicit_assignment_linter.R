@@ -77,7 +77,7 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
                                        allow_scoped = FALSE,
                                        allow_paren_print = FALSE) {
   if (!is.null(except) && !is.character(except)) {
-    cli_abort("{.arg except} must be a character vector or NULL, not {.obj_simple_type_name {except}}.")
+    cli_abort("{.arg except} must be a character vector or NULL, not {.obj_type_friendly {except}}.")
   }
 
   if (length(except) > 0L) {

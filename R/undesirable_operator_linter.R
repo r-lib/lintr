@@ -75,7 +75,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
                                         call_is_undesirable = TRUE) {
   if (is.list(op)) op <- unlist(op)
   if (!is.logical(call_is_undesirable)) {
-    cli_abort("{.arg call_is_undesirable} must be a logical, not {.obj_simple_type_name {call_is_undesirable}}.")
+    cli_abort("{.arg call_is_undesirable} must be a logical, not {.obj_type_friendly {call_is_undesirable}}.")
   }
   # allow (uncoerced->implicitly logical) 'NA'
   if (length(op) == 0L || !(is.character(op) || all(is.na(op)))) {

@@ -76,7 +76,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   if (is.list(fun)) fun <- unlist(fun)
   if (!is.logical(symbol_is_undesirable)) {
-    cli_abort("{.arg symbol_is_undesirable} must be a logical, not {.obj_simple_type_name {symbol_is_undesirable}}.")
+    cli_abort("{.arg symbol_is_undesirable} must be a logical, not {.obj_type_friendly {symbol_is_undesirable}}.")
   }
   # allow (uncoerced->implicitly logical) 'NA'
   if (length(fun) == 0L || !(is.character(fun) || all(is.na(fun)))) {
