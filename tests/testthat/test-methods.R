@@ -137,6 +137,12 @@ test_that("as_tibble.list is _not_ dispatched directly", {
 
   lints <- lint(text = "a = 1", linters = assignment_linter())
   expect_identical(nrow(tibble::as_tibble(lints)), 1L)
+
+  as_tibble <- tibble::as_tibble
+  with_mocked_bindings(
+    requireNamespace = \(pkg, ...) pkg != "tibble" && base::requireNamespace(pkg, ...),
+    expect_error(as_tibble(lints), "tibble is required to convert lints", fixed = TRUE)
+  )
 })
 
 test_that("as.data.table.list is _not_ dispatched directly", {
@@ -144,6 +150,12 @@ test_that("as.data.table.list is _not_ dispatched directly", {
 
   lints <- lint(text = "a = 1", linters = assignment_linter())
   expect_identical(nrow(data.table::as.data.table(lints)), 1L)
+
+  as.data.table <- data.table::as.data.table
+  with_mocked_bindings(
+    requireNamespace = \(pkg, ...) pkg != "data.table" && base::requireNamespace(pkg, ...),
+    expect_error(as.data.table(lints), "data.table is required to convert lints", fixed = TRUE)
+  )
 })
 
 local({
