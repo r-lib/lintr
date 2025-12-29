@@ -130,7 +130,7 @@ test_that("implicit_assignment_linter respects except argument", {
   )
 
   expect_error(
-    implicit_assigment_linter(except = 1L),
+    implicit_assignment_linter(except = 1L),
     "`except` must be a character",
     fixed = TRUE
   )

@@ -151,6 +151,7 @@ test_that("as.data.table.list is _not_ dispatched directly", {
   lints <- lint(text = "a = 1", linters = assignment_linter())
   expect_identical(nrow(data.table::as.data.table(lints)), 1L)
 
+  # nolint next: object_name_linter. Retain data.table naming style for clarity.
   as.data.table <- data.table::as.data.table
   with_mocked_bindings(
     requireNamespace = \(pkg, ...) pkg != "data.table" && base::requireNamespace(pkg, ...),
