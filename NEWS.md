@@ -6,6 +6,43 @@
 * Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now removed. Use `operator=` instead.
 * Argument `interpret_glue` to `object_usage_linter()`, marked deprecated in the previous release, is now defunct. Use `interpret_extensions=` instead; see the 3.3.0-1 release notes and `?object_usage_linter` for more.
 
+## New and improved features
+
+### Linter improvements
+
+* General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
+   + `brace_linter()`
+   + `coalesce_linter()`
+   + `comparison_negation_linter()` #2826
+   + `conjunct_test_linter()` #2827
+   + `empty_assignment_linter()`
+   + `expect_comparison_linter()`
+   + `fixed_regex_linter()` #2827
+   + `if_switch_linter()`
+   + `ifelse_censor_linter()` #2826
+   + `implicit_assignment_linter()`
+   + `length_test_linter()`
+   + `literal_coercion_linter()` #2824
+   + `matrix_apply_linter()` #2825
+   + `nzchar_linter()` #2826
+   + `object_length_linter()` #2827
+   + `object_name_linter()` #2827
+   + `object_usage_linter()`
+   + `outer_negation_linter()` #2827
+   + `redundant_equals_linter()`
+   + `regex_subset_linter()`
+   + `seq_linter()`
+   + `sort_linter()`
+   + `sprintf_linter()` #2827
+   + `string_boundary_linter()`
+   + `strings_as_factors_linter()`
+   + `unnecessary_concatenation_linter()` #2827
+   + `unnecessary_lambda_linter()` #2827
+   + `unnecessary_nesting_linter()` #2827
+   + `unnecessary_placeholder_linter()`
+   + `unreachable_code_linter()` #2827
+   + `vector_logic_linter()` #2826
+
 ## Notes
 
 * {lintr} now requires R 4.1.0
@@ -64,48 +101,6 @@
 * `any_duplicated_linter()` is extended to recognize some usages from {dplyr} and {data.table} that could be replaced by `anyDuplicated()`, e.g. `n_distinct(col) == n()` or `uniqueN(col) == .N` (#2482, @MichaelChirico).
 * `fixed_regex_linter()` recognizes usage of the new (R 4.5.0) `grepv()` wrapper of `grep()`; `regex_subset_linter()` also recommends `grepv()` alternatives (#2855, @MichaelChirico).
 * `object_usage_linter()` lints missing packages that may cause false positives (#2872, @AshesITR)
-* New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
-* `sprintf_linter()` lints `sprintf()` and `gettextf()` calls when a constant string is passed to `fmt` (#2894, @Bisaloo).
-* General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
-   + `brace_linter()`
-   + `coalesce_linter()`
-   + `comparison_negation_linter()` #2826
-   + `conjunct_test_linter()` #2827
-   + `empty_assignment_linter()`
-   + `expect_comparison_linter()`
-   + `fixed_regex_linter()` #2827
-   + `if_switch_linter()`
-   + `ifelse_censor_linter()` #2826
-   + `implicit_assignment_linter()`
-   + `length_test_linter()`
-   + `literal_coercion_linter()` #2824
-   + `matrix_apply_linter()` #2825
-   + `nzchar_linter()` #2826
-   + `object_length_linter()` #2827
-   + `object_name_linter()` #2827
-   + `object_usage_linter()`
-   + `outer_negation_linter()` #2827
-   + `redundant_equals_linter()`
-   + `regex_subset_linter()`
-   + `seq_linter()`
-   + `sort_linter()`
-   + `sprintf_linter()` #2827
-   + `string_boundary_linter()`
-   + `strings_as_factors_linter()`
-   + `unnecessary_concatenation_linter()` #2827
-   + `unnecessary_lambda_linter()` #2827
-   + `unnecessary_nesting_linter()` #2827
-   + `unnecessary_placeholder_linter()`
-   + `unreachable_code_linter()` #2827
-   + `vector_logic_linter()` #2826
-
-
-### New linters
-
-* `download_file_linter()` encourages the use of `mode = "wb"` (or `mode = "ab"`) when using `download.file()`, rather than `mode = "w"` or `mode = "a"`, as the latter can produce broken
-files in Windows (#2882, @Bisaloo).
-* `lint2df_linter()` encourages the use of the `list2DF()` function, or the `data.frame()` function when recycling is required, over the slower and less readable `do.call(cbind.data.frame, )` alternative (#2834, @Bisaloo).
-* `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls when a constant string is passed to `fmt` (#2894, @Bisaloo).
 * `length_test_linter()` is extended to check incorrect usage of `nrow()`, `ncol()`, `NROW()`, `NCOL()` (#2933, @mcol).
 * `implicit_assignment_linter()` gains argument `allow_paren_print` to disable lints for the use of `(` for auto-printing (#2962, @TimTaylor).

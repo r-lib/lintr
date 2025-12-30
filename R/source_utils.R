@@ -34,13 +34,6 @@ build_xml_find_function_calls <- function(xml) {
         res <- function_call_cache[include_function_idx]
       }
     }
-    if (include_s4_slots) {
-      if (is.null(function_names)) {
-        res <- combine_nodesets(function_call_cache, s4_slot_cache)
-      } else {
-        res <- combine_nodesets(function_call_cache, s4_slot_cache[names(s4_slot_cache) %in% function_names])
-      }
-    }
     if (keep_names) res else unname(res)
   }
 }
