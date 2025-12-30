@@ -3,6 +3,9 @@ test_that("coalesce_linter skips allowed usage", {
 
   expect_no_lint("if (is.null(x)) y", linter)
   expect_no_lint("if (!is.null(x)) y", linter)
+  expect_no_lint("if (!is.null(x)) x", linter)
+  expect_no_lint("if (is.null(x)) x", linter)
+  expect_no_lint("c(if (!is.null(E)) E)", linter)
   expect_no_lint("if (is.null(x)) y else z", linter)
   expect_no_lint("if (!is.null(x)) x[1] else y", linter)
   expect_no_lint("if (is.null(x[1])) y else x[2]", linter)

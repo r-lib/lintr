@@ -18,7 +18,7 @@ see also \code{\link[=available_tags]{available_tags()}}.
 The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (65 linters)}
-\item{\link[=common_mistakes_linters]{common_mistakes} (12 linters)}
+\item{\link[=common_mistakes_linters]{common_mistakes} (13 linters)}
 \item{\link[=configurable_linters]{configurable} (44 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
@@ -29,7 +29,7 @@ The following tags exist:
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
 \item{\link[=readability_linters]{readability} (66 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
-\item{\link[=robustness_linters]{robustness} (18 linters)}
+\item{\link[=robustness_linters]{robustness} (19 linters)}
 \item{\link[=style_linters]{style} (40 linters)}
 \item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }
@@ -38,6 +38,7 @@ The following tags exist:
 The following linters exist:
 \itemize{
 \item{\code{\link{absolute_path_linter}} (tags: best_practices, configurable, robustness)}
+\item{\code{\link{all_equal_linter}} (tags: common_mistakes, robustness)}
 \item{\code{\link{any_duplicated_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{any_is_na_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{assignment_linter}} (tags: configurable, consistency, default, style)}

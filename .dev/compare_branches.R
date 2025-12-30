@@ -226,7 +226,7 @@ test_encoding <- function(dir) {
     for (r_file in list.files(dir, pattern = "(?i)\\.r(?:md)?$", recursive = TRUE, full.names = TRUE)) {
       # lintr has better encoding support since 8cd6ad~linter>2.0.1~Jul 2021; use
       #   the accompanying helper if possible. clunkier default otherwise.
-      encoding <- tryCatch(lintr:::find_default_encoding(r_file), error = function(...) NULL)
+      encoding <- tryCatch(lintr:::find_default_encoding(r_file), error = \(...) NULL)
       local({
         con <- file(r_file, encoding = encoding %||% "UTF-8")
         on.exit(close(con))
@@ -360,7 +360,7 @@ get_linter_from_name <- function(linter_name) {
     } else {
       eval(call(linter_name))
     },
-    error = function(cond) eval(as.name(linter_name))
+    error = \(cond) eval(as.name(linter_name))
   )
 }
 
@@ -580,7 +580,7 @@ if (params$benchmark) {
             idcol = "package",
             lapply(
               linter,
-              function(package) data.table::data.table(filename = names(package), duration = unlist(package))
+              \(package) data.table::data.table(filename = names(package), duration = unlist(package))
             )
           )
         )

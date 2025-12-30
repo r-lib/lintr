@@ -5,7 +5,6 @@
 #' @param operator Character vector of valid assignment operators. Defaults to allowing `<-` and `<<-`; other valid
 #'   options are `=`, `->`, `->>`, `%<>%`; use `"any"` to denote "allow all operators", in which case this linter only
 #'   considers `allow_trailing` for generating lints.
-#' @param allow_cascading_assign,allow_right_assign,allow_pipe_assign (Defunct)
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
 #'
 #' @examples
@@ -81,37 +80,7 @@
 #' - <https://style.tidyverse.org/pipes.html#assignment-2>
 #' @export
 assignment_linter <- function(operator = c("<-", "<<-"),
-                              allow_cascading_assign = NULL,
-                              allow_right_assign = NULL,
-                              allow_trailing = TRUE,
-                              allow_pipe_assign = NULL) {
-  if (!missing(allow_cascading_assign)) {
-    lintr_deprecated(
-      "allow_cascading_assign",
-      '"<<-" and/or "->>" in operator',
-      version = "3.2.0",
-      type = "Argument",
-      signal = "stop"
-    )
-  }
-  if (!missing(allow_right_assign)) {
-    lintr_deprecated(
-      "allow_right_assign",
-      '"->" in operator',
-      version = "3.2.0",
-      type = "Argument",
-      signal = "stop"
-    )
-  }
-  if (!missing(allow_pipe_assign)) {
-    lintr_deprecated(
-      "allow_pipe_assign",
-      '"%<>%" in operator',
-      version = "3.2.0",
-      type = "Argument",
-      signal = "stop"
-    )
-  }
+                              allow_trailing = TRUE) {
   all_operators <- c("<-", "=", "->", "<<-", "->>", "%<>%")
   if ("any" %in% operator) {
     operator <- all_operators

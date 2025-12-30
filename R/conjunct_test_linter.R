@@ -5,15 +5,14 @@
 #'   `expect_true(A); expect_true(B)` is better than `expect_true(A && B)`, and
 #'   `expect_false(A); expect_false(B)` is better than `expect_false(A || B)`.
 #'
-#' Similar reasoning applies to `&&` usage inside [stopifnot()] and `assertthat::assert_that()` calls.
+#' Similar reasoning applies to `&&` usage inside [base::stopifnot()] and `assertthat::assert_that()` calls.
 #'
 #' Relatedly, `dplyr::filter(DF, A & B)` is the same as `dplyr::filter(DF, A, B)`, but the latter will be more readable
 #'   / easier to format for long conditions. Note that this linter assumes usages of `filter()` are `dplyr::filter()`;
 #'   if you're using another function named `filter()`, e.g. [stats::filter()], please namespace-qualify it to avoid
 #'   false positives. You can omit linting `filter()` expressions altogether via `allow_filter = TRUE`.
 #'
-#' @param allow_named_stopifnot Logical, `TRUE` by default. If `FALSE`, "named" calls to `stopifnot()`,
-#'   available since R 4.0.0 to provide helpful messages for test failures, are also linted.
+#' @param allow_named_stopifnot Logical, `TRUE` by default. If `FALSE`, "named" calls to `stopifnot()` are also linted.
 #' @param allow_filter Character naming the method for linting calls to `filter()`. The default, `"never"`, means
 #'   `filter()` and `dplyr::filter()` calls are linted; `"not_dplyr"` means only `dplyr::filter()` calls are linted;
 #'   and `"always"` means no calls to `filter()` are linted. Calls like `stats::filter()` are never linted.

@@ -19,8 +19,8 @@
 #'   - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
 #' @param cache When logical, toggle caching of lint results. If passed a character string, store the cache in this
 #'   directory.
-#' @param parse_settings Logical, default `TRUE`. Whether to try and parse the [settings][read_settings]. Otherwise,
-#'   the [default_settings()] are used.
+#' @param parse_settings Logical. Whether to try and parse the [settings][read_settings]. Otherwise, the
+#'   [default_settings()] are used. `TRUE` by default when linting files, as opposed to `text=`.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #'   linting is being done ad hoc.
 #'
@@ -38,14 +38,13 @@
 #' unlink(f)
 #'
 #' @export
-lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
+lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = !inline_data, text = NULL) {
   # TODO(#2502): Remove this workaround.
   dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
   check_dots(dot_names, c("exclude", "parse_exclusions"))
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
-  parse_settings <- !inline_data && isTRUE(parse_settings)
 
   if (parse_settings) {
     read_settings(filename)
@@ -77,29 +76,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     return(exclude(lints, lines = lines, linter_names = names(linters), ...))
   }
 
-  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
-  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+  lints <- lint_impl_(linters, lint_cache, filename, source_expressions)
 
-  lints <- list()
-  if (!is_tainted(source_expressions$lines)) {
-    for (expr in source_expressions$expressions) {
-      for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
-        # use withCallingHandlers for friendlier failures on unexpected linter errors
-        lints[[length(lints) + 1L]] <- withCallingHandlers(
-          get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
-          error = function(cond) {
-            cli_abort(
-              "Linter {.fn linter} failed in {.file {filename}}:",
-              parent = cond
-            )
-          }
-        )
-      }
-    }
-  }
-
-  lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
-  lints <- reorder_lints(flatten_lints(lints))
+  lints <- lints |>
+    maybe_append_condition_lints(source_expressions, lint_cache, filename) |>
+    flatten_lints() |>
+    reorder_lints()
   class(lints) <- c("lints", "list")
 
   cache_file(lint_cache, filename, linters, lints)
@@ -109,6 +91,33 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   # simplify filename if inline
   zap_temp_filename(res, needs_tempfile)
+}
+
+lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
+  if (is_tainted(source_expressions$lines)) {
+    return(list())
+  }
+
+  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
+  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+
+  lints <- list()
+  for (expr in source_expressions$expressions) {
+    for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
+      # use withCallingHandlers for friendlier failures on unexpected linter errors
+      lints[[length(lints) + 1L]] <- withCallingHandlers(
+        get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
+        error = function(cond) {
+          cli_abort(
+            "Linter {.fn linter} failed in {.file {filename}}:",
+            parent = cond
+          )
+        }
+      )
+    }
+  }
+
+  lints
 }
 
 #' @param path For the base directory of the project (for `lint_dir()`) or
@@ -225,7 +234,7 @@ lint_dir <- function(path = ".", ...,
 drop_excluded <- function(files, exclusions) {
   to_exclude <- vapply(
     files,
-    function(file) file %in% names(exclusions) && is_excluded_file(exclusions[[file]]),
+    \(file) file %in% names(exclusions) && is_excluded_file(exclusions[[file]]),
     logical(1L)
   )
   files[!to_exclude]
@@ -403,7 +412,11 @@ validate_lint_object <- function(message, line, line_number, column_number, rang
     cli_abort("{.arg message} must be a character string")
   }
   if (is.object(message)) {
-    cli_abort("{.arg message} must be a simple string, but has class {.cls {class(message)}}")
+    cli_warn(c(
+      "{.arg message} must be a simple string, but has class {.cls {class(message)}}",
+      i = "This will be an error in the next lintr release"
+    ))
+    message <- unclass(message)
   }
   if (length(line) != 1L || !is.character(line)) {
     cli_abort("{.arg line} must be a character string.")
@@ -601,7 +614,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       rule_index_exists <-
         which(vapply(
           sarif$runs[[1L]]$tool$driver$rules,
-          function(x) x$id == lint$linter,
+          \(x) x$id == lint$linter,
           logical(1L)
         ))
       if (length(rule_index_exists) == 0L || is.na(rule_index_exists[1L])) {

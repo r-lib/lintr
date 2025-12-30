@@ -3,9 +3,7 @@
 #' Check that closures have the proper usage using [codetools::checkUsage()].
 #' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue (Deprecated) If `TRUE`, interpret [glue::glue()] calls to avoid
-#'   false positives caused by local variables which are only used in a glue expression.
-#'   Provide `interpret_extensions` instead, see below.
+#' @param interpret_glue (Defunct)
 #' @param interpret_extensions Character vector of extensions to interpret. These are meant to cover known cases where
 #'   variables may be used in ways understood by the reader but not by `checkUsage()` to avoid false positives.
 #'   Currently `"glue"` and `"rlang"` are supported, both of which are in the default.
@@ -42,14 +40,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       '"glue" in interpret_extensions',
       version = "3.3.0",
       type = "Argument",
-      signal = "warning"
+      signal = "stop"
     )
-
-    if (interpret_glue) {
-      interpret_extensions <- union(interpret_extensions, "glue")
-    } else {
-      interpret_extensions <- setdiff(interpret_extensions, "glue")
-    }
   }
 
   if (length(interpret_extensions) > 0L) {
@@ -70,11 +62,14 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     | //SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][{fun_node}]
   ")
 
-  # code like:content
+  # code like:
   #   foo <- \ #comment
   #     (x) x
   # is technically valid, but won't parse unless the lambda is in a bigger expression (here '<-').
-  #   the same doesn't apply to 'function'.
+  #   the same doesn't apply to 'function', which is acknowledged as "not worth a breaking change to fix":
+  #   https://bugs.r-project.org/show_bug.cgi?id=18924. If we find such code (which has only ever
+  #   arisen in content fuzzing where we inject comments at random to the AST), we have to avoid parsing
+  #   it as a standalone expression.
   xpath_unsafe_lambda <- "OP-LAMBDA[@line1 = following-sibling::*[1][self::COMMENT]/@line1]"
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
@@ -109,8 +104,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
 
     lapply(fun_assignments, function(fun_assignment) {
       # this will mess with the source line numbers. but I don't think anybody cares.
-      known_safe <- is.na(xml_find_first(fun_assignment, xpath_unsafe_lambda))
-      code <- get_content(lines = source_expression$content, fun_assignment, known_safe = known_safe)
+      needs_braces <- !is.na(xml_find_first(fun_assignment, xpath_unsafe_lambda))
+      code <- get_content(lines = source_expression$content, fun_assignment, needs_braces = needs_braces)
       fun <- try_silently(eval(
         envir = env,
         parse(
@@ -187,7 +182,7 @@ make_check_env <- function(pkg_name, xml, library_lint_hook) {
 
   # Just assign them an empty function
   for (symbol in symbols) {
-    assign(symbol, function(...) invisible(), envir = env)
+    assign(symbol, \(...) invisible(), envir = env)
   }
   env
 }
@@ -255,19 +250,6 @@ parse_check_usage <- function(expression,
       or(line_info, end)
     )
   )
-
-  # nocov start
-  is_missing <- is.na(res$message)
-  if (any(is_missing)) {
-    # TODO(#2474): Remove this.
-    missing_msg <- vals[is_missing][[1L]] # nolint: object_usage_linter. TODO(#2252).
-    cli_warn(c(
-      x = "Couldn't parse usage message {.str {missing_msg}}. Ignoring {.val {sum(is_missing)}} usage warnings.",
-      i = "Please report a possible bug at {.url https://github.com/r-lib/lintr/issues}."
-    ))
-  }
-  # nocov end
-  res <- res[!is_missing, ]
 
   res$line1 <- ifelse(
     nzchar(res$line1),

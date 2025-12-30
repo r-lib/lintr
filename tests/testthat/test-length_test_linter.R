@@ -3,43 +3,63 @@ test_that("skips allowed usages", {
 
   expect_no_lint("length(x) > 0", linter)
   expect_no_lint("length(DF[key == val, cols])", linter)
+  expect_no_lint("nrow(x) > 0", linter)
+  expect_no_lint("nrow(DF[key == val, cols])", linter)
+  expect_no_lint("ncol(x) > 0", linter)
+  expect_no_lint("ncol(DF[key == val, cols])", linter)
+  expect_no_lint("NROW(x) > 0", linter)
+  expect_no_lint("NROW(DF[key == val, cols])", linter)
+  expect_no_lint("NCOL(x) > 0", linter)
+  expect_no_lint("NCOL(DF[key == val, cols])", linter)
 })
 
-test_that("blocks simple disallowed usages", {
-  linter <- length_test_linter()
-  lint_msg_stub <- rex::rex("Checking the length of a logical vector is likely a mistake. Did you mean ")
+patrick::with_parameters_test_that(
+  "blocks simple disallowed usages",
+  {
+    linter <- length_test_linter()
+    lint_msg_stub <- sprintf("Checking the %s of a logical vector is likely a mistake. Did you mean ", fun)
+    expect_lint(
+      paste0(fun, "(x == 0)"),
+      rex::rex(lint_msg_stub, "`", fun, "(x) == 0`?"),
+      linter
+    )
+    expect_lint(
+      paste0(fun, "(x == y)"),
+      rex::rex(lint_msg_stub, "`", fun, "(x) == y`?"),
+      linter
+    )
+    expect_lint(
+      paste0(fun, "(x + y == 2)"),
+      rex::rex(lint_msg_stub, "`", fun, "(x+y) == 2`?"),
+      linter
+    )
+  },
+  fun = c("length", "nrow", "ncol", "NROW", "NCOL")
+)
 
-  expect_lint("length(x == 0)", rex::rex(lint_msg_stub, "`length(x) == 0`?"), linter)
-  expect_lint("length(x == y)", rex::rex(lint_msg_stub, "`length(x) == y`?"), linter)
-  expect_lint("length(x + y == 2)", rex::rex(lint_msg_stub, "`length(x+y) == 2`?"), linter)
-
-  # adversarial comments
+test_that("adversarial comment is handled in lint message", {
   expect_lint(
     trim_some("
       length(x + #
       y == 2)
     "),
-    rex::rex(lint_msg_stub, "`length(x+y) == 2`?"),
-    linter
+    rex::rex("Checking the length of a logical vector is likely a mistake. Did you mean `length(x+y) == 2`?"),
+    length_test_linter()
   )
 })
 
-local({
-  ops <- c(lt = "<", lte = "<=", gt = ">", gte = ">=", eq = "==", neq = "!=")
-  linter <- length_test_linter()
-  lint_msg_stub <- rex::rex("Checking the length of a logical vector is likely a mistake. Did you mean ")
-
-  patrick::with_parameters_test_that(
-    "all logical operators detected",
-    expect_lint(
-      paste("length(x", op, "y)"),
-      rex::rex("`length(x) ", op, " y`?"),
-      linter
-    ),
-    op = ops,
-    .test_name = names(ops)
+patrick::with_parameters_test_that(
+  "all logical operators detected",
+  expect_lint(
+    sprintf("%s(x %s y)", fun, op),
+    rex::rex("`", fun, "(x) ", op, " y`?"),
+    length_test_linter()
+  ),
+  .cases = expand.grid(
+    op = c("<", "<=", ">", ">=", "==", "!="),
+    fun = c("length", "nrow", "ncol", "NROW", "NCOL")
   )
-})
+)
 
 test_that("lints vectorize", {
   linter <- length_test_linter()

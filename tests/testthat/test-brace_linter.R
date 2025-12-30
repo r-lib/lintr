@@ -597,8 +597,6 @@ test_that("code with pipes is handled correctly", {
     linter
   )
 
-  skip_if_not_r_version("4.1.0")
-
   expect_no_lint(
     trim_some("
       out <- lapply(stuff, function(i) {
@@ -618,7 +616,6 @@ test_that("code with pipes is handled correctly", {
 })
 
 test_that("function shorthand is treated like 'full' function", {
-  skip_if_not_r_version("4.1.0")
   linter <- brace_linter()
 
   expect_no_lint("a <- \\() {  \n}", linter)
@@ -631,39 +628,6 @@ test_that("function shorthand is treated like 'full' function", {
       rex::rex("Opening curly braces should never go on their own line"),
       rex::rex("Closing curly-braces should always be on their own line")
     ),
-    linter
-  )
-})
-
-test_that("test_that(code=) requires braces", {
-  linter <- brace_linter()
-  lint_msg <- rex::rex("test_that()'s code= argument requires braces")
-
-  # inline case doesn't lint about test_that(), only the more general rule
-  expect_lint(
-    "test_that('code', { braced })",
-    rex::rex("Opening curly braces"),
-    linter
-  )
-  expect_no_lint(
-    trim_some("
-      test_that('my test', {
-        braced_test()
-        braced_test()
-      })
-    "),
-    linter
-  )
-
-  expect_lint("test_that('code', expect_true(TRUE))", lint_msg, linter)
-  expect_lint(
-    trim_some("
-      test_that(
-        'code',
-        expect_true(TRUE)
-      )
-    "),
-    lint_msg,
     linter
   )
 })
