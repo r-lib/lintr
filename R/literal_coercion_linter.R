@@ -101,7 +101,7 @@ literal_coercion_linter <- function() {
       # TODO(#2473): Avoid a recommendation like '1' that clashes with implicit_integer_linter().
       literal_equivalent_str <- vapply(
         str2expression(coercion_str),
-        function(expr) deparse1(suppressWarnings(eval(expr))),
+        \(expr) deparse1(suppressWarnings(eval(expr))),
         character(1L)
       )
       lint_message <- sprintf(

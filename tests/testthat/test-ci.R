@@ -32,7 +32,7 @@ patrick::with_parameters_test_that(
 
     l <- lint(tmp)
 
-    local_mocked_bindings(quit = function(...) cat("Tried to quit.\n"))
+    local_mocked_bindings(quit = \(...) cat("Tried to quit.\n"))
     expect_output(print(l), "::warning file", fixed = TRUE)
   },
   env_var_value = list("T", "true")

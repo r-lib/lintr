@@ -20,7 +20,7 @@ patrick::with_parameters_test_that(
   "sprintf_linter blocks disallowed usages",
   {
     linter <- sprintf_linter()
-    unused_arg_msg <- if (getRversion() >= "4.1.0") "one argument not used by format" else NULL
+    unused_arg_msg <- "one argument not used by format"
 
     expect_lint(paste0(call_name, "('hello', 1)"), "constant", linter)
 
@@ -138,7 +138,7 @@ local({
       # Nested pipes
       expect_lint(
         paste("'%%sb'", pipe, "sprintf('%s')", pipe, "sprintf('a')"),
-        if (getRversion() >= "4.1.0") list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = "constant"),
+        list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = "constant"),
         linter
       )
       expect_lint(
@@ -178,8 +178,6 @@ test_that("pipe logic survives adversarial comments", {
 })
 
 test_that("lints vectorize", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint(
     trim_some("{
       sprintf('%s', a, b)

@@ -57,28 +57,21 @@ with_config <- function(contents, code, config_dir = ".", filename = ".lintr") {
   code
 }
 
-skip_if_not_r_version <- function(min_version) {
-  if (getRversion() < min_version) {
-    testthat::skip(paste("R version at least", min_version, "is required"))
-  }
-}
-
 skip_if_not_utf8_locale <- function() {
   testthat::skip_if_not(l10n_info()[["UTF-8"]], "Not a UTF-8 locale")
 }
 
 safe_load_help_db <- function() {
-  help_db <- tryCatch(tools::Rd_db("lintr"), error = function(e) NULL)
+  help_db <- tryCatch(tools::Rd_db("lintr"), error = \(e) NULL)
   # e.g. in dev under pkgload::load_all()
   if (length(help_db) == 0L) {
-    help_db <- tryCatch(tools::Rd_db(dir = testthat::test_path("..", "..")), error = function(e) NULL)
+    help_db <- tryCatch(tools::Rd_db(dir = testthat::test_path("..", "..")), error = \(e) NULL)
     testthat::skip_if_not(length(help_db) > 0L, message = "Package help corrupted or not installed")
   }
   help_db
 }
 
 pipes <- function(exclude = NULL) {
-  if (getRversion() < "4.1.0") exclude <- unique(c(exclude, "|>"))
   all_pipes <- c(
     standard = "%>%",
     greedy = "%!>%",

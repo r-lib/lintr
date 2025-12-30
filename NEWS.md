@@ -2,6 +2,20 @@
 
 ## Deprecations & breaking changes
 
+* Six linters fully deprecated in the previous release are now removed: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`.
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now removed. Use `operator=` instead.
+* Argument `interpret_glue` to `object_usage_linter()`, marked deprecated in the previous release, is now defunct. Use `interpret_extensions=` instead; see the 3.3.0-1 release notes and `?object_usage_linter` for more.
+
+## Notes
+
+* {lintr} now requires R 4.1.0
+
+# lintr (3.3.0-1)
+
+## Deprecations & breaking changes
+
+* The default for `pipe_consistency_linter()` is changed from `"auto"` (require one pipe style, either magrittr or native) to `"|>"` (R native pipe required) to coincide with the same change in the Tidyverse Style Guide (#2707, @MichaelChirico).
+* `lint()` no longer picks up settings automatically in _ad hoc_ invocations like `lint("text\n")` or `lint(text = "str")`. You should set `parse_settings=TRUE` to force settings to be read. Emacs ESS users may need to update to a recent version, e.g. `ESS>20251003`.
 * Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now defunct.
 * Six linters marked as deprecated with warning in the previous release are now fully deprecated: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`. They will be removed in the next release.
 * As previously announced, the following fully-deprecated items are now removed from the package:
@@ -10,16 +24,13 @@
    + `linter=` argument of `Lint()`.
    + `with_defaults()`.
    + Linters `closed_curly_linter()`, `open_curly_linter()`, `paren_brace_linter()`, and `semicolon_terminator_linter()`.
-* Argument `interpret_glue` to `object_usage_linter()` is deprecated in favor of the more general `interpret_extensions`, in which `"glue"` is present by default (#1472, @MichaelChirico). See the description below.
-* The default for `pipe_consistency_linter()` is changed from `"auto"` (require one pipe style, either magrittr or native) to `"|>"` (R native pipe required) to coincide with the same change in the Tidyverse Style Guide (#2707, @MichaelChirico).
+* Argument `interpret_glue` to `object_usage_linter()` is deprecated in favor of the more general `interpret_extensions`, in which `"glue"` is present by default (#1472, @MichaelChirico). See the description below under 'New and improved features'.
+* `Lint()`, and thus all linters, require that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico). In general it is good to avoid slower string builders like `glue()` inside a loop (a linter might be run on every expression in your pakcage). Classed character strings return a warning in this release, which will be upgraded to an error subsequently.
 
 ## Bug fixes
 
-* `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
-* Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico).
+* Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico). Thanks also to @bastistician for detecting a regression caused by the initial change for users of Emacs (#2847).
 * `assignment_linter()` no longer errors if `"%<>%"` is an allowed operator (#2850, @AshesITR).
-* `condition_call_linter()` no longer covers cases where the object type in the ellipsis cannot be determined with certainty (#2888, #2890, @Bisaloo). In particular, this fixes the known false positive of custom conditions created via `errorCondition()` or `warningCondition()` not being compatible with the `call.` argument in `stop()` or `warning()`.
-* `package_hooks_linter()` now validates `.onUnload()` hook signatures, requiring exactly one argument starting with 'lib' (#2940, @emmanuel-ferdman).
 * `expect_lint()` conforms to {testthat} v3.3.0+ rules for custom expectations, namely that they produce either exactly one success or exactly one failure (#2937, @hadley).
 
 ## Changes to default linters
@@ -28,58 +39,53 @@
 
 ## New and improved features
 
-* `brace_linter()`' has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
+### New linters
+
+* `all_equal_linter()` warns about incorrect use of `all.equal()` in `if` clauses or preceded by `!` (#2885, @Bisaloo). Such usages should wrap `all.equal()` with `isTRUE()`, for example.
+* `download_file_linter()` encourages the use of `mode = "wb"` (or `mode = "ab"`) when using `download.file()`, rather than `mode = "w"` or `mode = "a"`, as the latter can produce broken files in Windows (#2882, @Bisaloo).
+* `list2df_linter()` encourages the use of the `list2DF()` function, or the `data.frame()` function when recycling is required, over the slower and less readable `do.call(cbind.data.frame, )` alternative (#2834, @Bisaloo).
+* `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0. Thanks also to @emmanuel-ferdman for fixing a false positive before release.
+
+### Linter improvements
+
+* `brace_linter()` has a new argument `function_bodies` (default `"multi_line"`) which controls when to require function bodies to be wrapped in curly braces, with the options `"always"`, `"multi_line"` (only require curly braces when a function body spans multiple lines), `"not_inline"` (only require curly braces when a function body starts on a new line) and `"never"` (#1807, #2240, @salim-b).
 * `seq_linter()`:
    + recommends using `seq_along(x)` instead of `seq_len(length(x))` (#2577, @MichaelChirico).
-   + recommends using `sequence()` instead of `unlist(lapply(ints, seq))` (#2618, @Bisaloo)
+   + recommends using `sequence()` instead of `unlist(lapply(ints, seq))` (#2618, @Bisaloo).
 * `undesirable_operator_linter()`:
    + Lints operators in prefix form, e.g. `` `%%`(x, 2)`` (#1910, @MichaelChirico). Disable this by setting `call_is_undesirable=FALSE`.
    + Accepts unnamed entries, treating them as undesirable operators, e.g. `undesirable_operator_linter("%%")` (#2536, @MichaelChirico).
-* `indentation_linter()` handles `for` un-braced for loops correctly (#2564, @MichaelChirico).
+* `undesirable_function_linter()` accepts unnamed entries, treating them as undesirable functions, e.g. `undesirable_function_linter("sum")` (#2536, @MichaelChirico).
+* `indentation_linter()` handles un-braced `for` loops correctly (#2564, @MichaelChirico).
 * Setting `exclusions` supports globs like `knitr*` to exclude files/directories with a pattern (#1554, @MichaelChirico).
-* `get_source_expression()` captures warnings emitted by the R parser (currently always for mis-specified literal integers like `1.1L`) and `lint()` returns them as lints (#2065, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` apply to objects assigned with `assign()` or generics created with `setGeneric()` (#1665, @MichaelChirico).
 * `object_usage_linter()` gains argument `interpret_extensions` to govern which false positive-prone common syntaxes should be checked for used objects (#1472, @MichaelChirico). Currently `"glue"` (renamed from earlier argument `interpret_glue`) and `"rlang"` are supported. The latter newly covers usage of the `.env` pronoun like `.env$key`, where `key` was previously missed as being a used variable.
 * `boolean_arithmetic_linter()` finds many more cases like `sum(x | y) == 0` where the total of a known-logical vector is compared to 0 (#1580, @MichaelChirico).
-* `expect_lint()` has a new argument `ignore_order` (default `FALSE`), which, if `TRUE`, allows the `checks=` to be provided in arbitary order vs. how `lint()` produces them (@MichaelChirico).
-* `undesirable_function_linter()` accepts unnamed entries, treating them as undesirable functions, e.g. `undesirable_function_linter("sum")` (#2536, @MichaelChirico).
 * `any_duplicated_linter()` is extended to recognize some usages from {dplyr} and {data.table} that could be replaced by `anyDuplicated()`, e.g. `n_distinct(col) == n()` or `uniqueN(col) == .N` (#2482, @MichaelChirico).
-* New `gitlab_output()` function to output lints to GitLab format (#2858, @lschneiderbauer)
-* `brace_linter()` requires `test_that()`'s `code=` argument to have curly braces (#2292, @MichaelChirico).
 * `fixed_regex_linter()` recognizes usage of the new (R 4.5.0) `grepv()` wrapper of `grep()`; `regex_subset_linter()` also recommends `grepv()` alternatives (#2855, @MichaelChirico).
 * `object_usage_linter()` lints missing packages that may cause false positives (#2872, @AshesITR)
-* New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls when a constant string is passed to `fmt` (#2894, @Bisaloo).
-* `use_lintr()` adds the created `.lintr` file to the `.Rbuildignore` if run in a package (#2926, initial work by @MEO265, finalized by @Bisaloo).
 * `length_test_linter()` is extended to check incorrect usage of `nrow()`, `ncol()`, `NROW()`, `NCOL()` (#2933, @mcol).
 * `implicit_assignment_linter()` gains argument `allow_paren_print` to disable lints for the use of `(` for auto-printing (#2962, @TimTaylor).
 * `line_length_linter()` has a new argument `ignore_string_bodies` (defaulting to `FALSE`) which governs whether the contents of multi-line string bodies should be linted (#856, @MichaelChirico). We think the biggest use case for this is writing SQL in R strings, especially in cases where the recommended string width for SQL & R differ.
-
-### New linters
-
-* `all_equal_linter()` warns about incorrect use of `all.equal()` in `if` clauses or preceded by `!` (#2885, @Bisaloo).
-* `download_file_linter()` encourages the use of `mode = "wb"` (or `mode = "ab"`) when using `download.file()`, rather than `mode = "w"` or `mode = "a"`, as the latter can produce broken
-files in Windows (#2882, @Bisaloo).
-* `lint2df_linter()` encourages the use of the `list2DF()` function, or the `data.frame()` function when recycling is required, over the slower and less readable `do.call(cbind.data.frame, )` alternative (#2834, @Bisaloo).
-* `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0. Thanks also to @emmanuel-ferdman for fixing a false positive before release.
+* `package_hooks_linter()` now validates `.onUnload()` hook signatures, requiring exactly one argument starting with 'lib' (#2940, @emmanuel-ferdman).
 
 ### Lint accuracy fixes: removing false positives
 
 * `unnecessary_nesting_linter()`:
    + Treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
    + Treats `=` assignment the same as `<-` when deciding to combine consecutive `if()` clauses (#2245, @MichaelChirico).
-
-* `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
 * `string_boundary_linter()` omits lints of patterns like `\\^` which have an anchor but are not regular expressions (#2636, @MichaelChirico).
 * `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
 * `missing_argument_linter()` allows empty calls like `foo()` even if there are comments between `(` and `)` (#2741, @MichaelChirico).
 * `return_linter()` works on functions that happen to use braced expressions in their formals (#2616, @MichaelChirico).
 * `object_name_linter()` and `object_length_linter()` account for S3 class correctly when the generic is assigned with `=` (#2507, @MichaelChirico).
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
-* `expect_true_false_linter()` is pipe-aware, so that `42 |> expect_identical(x, ignore_attr = TRUE)` no longer lints (#1520, @MichaelChirico).
-* `T_and_F_symbol_linter()` ignores `T` and `F` used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
-* `T_and_F_symbol_linter()` ignores `T` and `F` if followed by `[` or `[[` (#2944, @mcol).
 * `implicit_assignment_linter()` with `allow_scoped=TRUE` doesn't lint for `if (a <- 1) print(a)` (#2913, @MichaelChirico).
+* `expect_true_false_linter()` is pipe-aware, so that `42 |> expect_identical(x, ignore_attr = TRUE)` no longer lints (#1520, @MichaelChirico).
+* `T_and_F_symbol_linter()` ignores `T` and `F`:
+   + When used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
+   + If followed by `[` or `[[` (#2944, @mcol).
 
 ### Lint accuracy fixes: removing false negatives
 
@@ -88,11 +94,20 @@ files in Windows (#2882, @Bisaloo).
   + `library_call_linter()`
   + `terminal_close_linter()`
   + `unnecessary_lambda_linter()`
-* More consistency on handling `@` extractions (#2820, @MichaelChirico).
+* More consistency on handling `@` extractions to match how similar `$` extractions would be linted (#2820, @MichaelChirico).
   + `function_left_parentheses_linter()`
   + `indentation_linter()`
   + `library_call_linter()`
   + `missing_argument_linter()`
+* `condition_call_linter()` no longer covers cases where the object type in the ellipsis cannot be determined with certainty (#2888, #2890, @Bisaloo). In particular, this fixes the known false positive of custom conditions created via `errorCondition()` or `warningCondition()` not being compatible with the `call.` argument in `stop()` or `warning()`.
+
+### Other improvements
+
+* `get_source_expression()` captures warnings emitted by the R parser (currently always for mis-specified literal integers like `1.1L`) and `lint()` returns them as lints (#2065, @MichaelChirico).
+* `expect_lint()` has a new argument `ignore_order` (default `FALSE`), which, if `TRUE`, allows the `checks=` to be provided in arbitary order vs. how `lint()` produces them (@MichaelChirico).
+* New `gitlab_output()` function to output lints to GitLab format (#2858, @lschneiderbauer).
+* New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
+* `use_lintr()` adds the created `.lintr` file to the `.Rbuildignore` if run in a package (#2926, initial work by @MEO265, finalized by @Bisaloo).
 
 ## Notes
 
