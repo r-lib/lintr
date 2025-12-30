@@ -52,7 +52,7 @@ lint(
   text = code_lines,
   linters = unreachable_code_linter()
 )
-#> <text>:3:3: warning: [unreachable_code_linter] Remove code and comments coming after return() or stop().
+#> <text>:3:3: warning: [unreachable_code_linter] Remove code and comments coming after return().
 #>   2 + 2
 #>   ^~~~~
 
@@ -92,7 +92,7 @@ lint(
   text = code_lines,
   linters = unreachable_code_linter()
 )
-#> <text>:3:3: warning: [unreachable_code_linter] Remove code and comments coming after return() or stop().
+#> <text>:3:3: warning: [unreachable_code_linter] Remove code and comments coming after return().
 #>   # end skip
 #>   ^~~~~~~~~~
 
