@@ -42,8 +42,8 @@ wrong_number_use_idx <- grep("sprintf(wrong_number_fmt,", contents, fixed = TRUE
 if (
   length(wrong_number_def_idx) != 1L ||
     length(wrong_number_use_idx) == 0L ||
-    # these lines should be self-contained & have no comments
-    !all(endsWith(contents[wrong_number_use_idx], ")")) ||
+    # these lines should be self-contained, have no comments, no nested calls
+    !all(grepl("[^)][)]$", contents[wrong_number_use_idx])) ||
     inherits(tryCatch(parse(text = contents[wrong_number_use_idx]), error = identity), "error")
 ) {
   stop(sprintf(
