@@ -77,7 +77,7 @@ test_that("partial matching works for exclusions but warns if no linter found", 
   expect_warning(
     expect_warning(
       expect_warning(
-        expect_lint(
+        expect_lint( # nofuzz
           file = "partially_matched_exclusions.R",
           checks = rex::rex("semicolons"),
           parse_settings = FALSE
