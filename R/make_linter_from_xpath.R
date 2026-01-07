@@ -57,7 +57,7 @@ make_linter_from_function_xpath <- function(function_names,
   level <- match.arg(level)
 
   if (!is.character(function_names) || length(function_names) == 0L) {
-    cli_abort("{.arg function_names} should be a character vector.")
+    cli_abort("{.arg function_names} must be a character vector.")
   }
   if (!is.character(xpath) || length(xpath) != 1L || is.na(xpath)) {
     cli_abort("{.arg xpath} must be a character string.")
