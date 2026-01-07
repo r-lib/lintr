@@ -19,7 +19,7 @@ make_linter_from_xpath <- function(xpath,
   level <- match.arg(level)
 
   if (!is.character(xpath) || length(xpath) != 1L || is.na(xpath)) {
-    cli_abort("{.arg xpath} should be a character string.")
+    cli_abort("{.arg xpath} must be a character string.")
   }
   if (missing(lint_message)) {
     cli_abort("{.arg lint_message} is required.")
