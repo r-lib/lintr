@@ -79,7 +79,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
   }
   # allow (uncoerced->implicitly logical) 'NA'
   if (length(op) == 0L || !(is.character(op) || all(is.na(op)))) {
-    cli_abort("{.arg op} should be a non-empty character vector.")
+    cli_abort("{.arg op} must be a non-empty character vector.")
   }
 
   nm <- names2(op)
