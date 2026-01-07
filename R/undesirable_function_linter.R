@@ -80,7 +80,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   }
   # allow (uncoerced->implicitly logical) 'NA'
   if (length(fun) == 0L || !(is.character(fun) || all(is.na(fun)))) {
-    cli_abort("{.arg fun} should be a non-empty character vector.")
+    cli_abort("{.arg fun} must be a non-empty character vector.")
   }
 
   nm <- names2(fun)
