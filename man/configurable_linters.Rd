@@ -23,6 +23,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{cyclocomp_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
+\item{\code{\link{float_comparison_linter}}}
 \item{\code{\link{if_not_else_linter}}}
 \item{\code{\link{if_switch_linter}}}
 \item{\code{\link{implicit_assignment_linter}}}

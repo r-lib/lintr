@@ -14,6 +14,7 @@ The following linters are tagged with 'correctness':
 \itemize{
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{equals_na_linter}}}
+\item{\code{\link{float_comparison_linter}}}
 \item{\code{\link{missing_argument_linter}}}
 \item{\code{\link{namespace_linter}}}
 \item{\code{\link{object_usage_linter}}}
