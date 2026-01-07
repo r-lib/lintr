@@ -57,12 +57,12 @@ test_that("Line numbers are extracted correctly", {
 test_that("invalid inputs fail correctly", {
   expect_error(
     undesirable_function_linter(fun = NULL),
-    "`fun` should be a non-empty character vector",
+    "`fun` must be a non-empty character vector",
     fixed = TRUE
   )
   expect_error(
     undesirable_function_linter(fun = character(0L)),
-    "`fun` should be a non-empty character vector",
+    "`fun` must be a non-empty character vector",
     fixed = TRUE
   )
   expect_error(
