@@ -6,6 +6,10 @@
 * Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now removed. Use `operator=` instead.
 * Argument `interpret_glue` to `object_usage_linter()`, marked deprecated in the previous release, is now defunct. Use `interpret_extensions=` instead; see the 3.3.0-1 release notes and `?object_usage_linter` for more.
 
+## Bug fixes
+
+* Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
+
 ## New and improved features
 
 ### Linter improvements
