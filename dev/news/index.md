@@ -20,6 +20,18 @@
   [`?object_usage_linter`](https://lintr.r-lib.org/dev/reference/object_usage_linter.md)
   for more.
 
+### Bug fixes
+
+- Excluding
+  [`cyclocomp_linter()`](https://lintr.r-lib.org/dev/reference/cyclocomp_linter.md)
+  in
+  [`available_linters()`](https://lintr.r-lib.org/dev/reference/available_linters.md)
+  or
+  [`linters_with_tags()`](https://lintr.r-lib.org/dev/reference/linters_with_tags.md),
+  which requires the weak dependency {cyclocomp}, no longer emits a
+  warning ([\#2909](https://github.com/r-lib/lintr/issues/2909),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
+
 ### Notes
 
 - {lintr} now requires R 4.1.0

@@ -59,6 +59,10 @@
 <li>Argument <code>interpret_glue</code> to <code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code>, marked deprecated in the previous release, is now defunct. Use <code>interpret_extensions=</code> instead; see the 3.3.0-1 release notes and <code><a href="../reference/object_usage_linter.html">?object_usage_linter</a></code> for more.</li>
 </ul></div>
 <div class="section level3">
+<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li>Excluding <code><a href="../reference/cyclocomp_linter.html">cyclocomp_linter()</a></code> in <code><a href="../reference/available_linters.html">available_linters()</a></code> or <code><a href="../reference/linters_with_tags.html">linters_with_tags()</a></code>, which requires the weak dependency {cyclocomp}, no longer emits a warning (<a href="https://github.com/r-lib/lintr/issues/2909" class="external-link">#2909</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="notes-development-version">Notes<a class="anchor" aria-label="anchor" href="#notes-development-version"></a></h3>
 <ul><li>{lintr} now requires R 4.1.0</li>
 </ul></div>
