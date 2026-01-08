@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("pipe-continuation correctly handles stand-alone expressions", {
   linter <- pipe_continuation_linter()
   lint_msg <- rex::rex("Put a space before `%>%` and a new line after it,")
@@ -197,3 +198,4 @@ local({
     .cases = cases
   )
 })
+# nofuzz end

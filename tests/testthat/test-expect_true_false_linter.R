@@ -3,7 +3,7 @@ test_that("expect_true_false_linter skips allowed usages", {
   # expect_true is a scalar test; testing logical vectors with expect_equal is OK
   expect_no_lint("expect_equal(x, c(TRUE, FALSE))", linter)
 
-  expect_no_lint("expect_equal(x, y, ignore_attr = TRUE)")
+  expect_no_lint("expect_equal(x, y, ignore_attr = TRUE)", linter)
 
   expect_no_lint("42 %>% expect_identical(42, ignore_attr = TRUE)", linter)
   expect_no_lint("42 %>% expect_identical(42, TRUE)", linter)

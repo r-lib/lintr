@@ -292,7 +292,7 @@ test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", 
     "),
     linter
   )
-  expect_no_lint(
+  expect_no_lint( # nofuzz
     trim_some("
       DT[, {
         plot(x, y)

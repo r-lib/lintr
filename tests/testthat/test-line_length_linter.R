@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("line_length_linter skips allowed usages", {
   linter <- line_length_linter(80L)
 
@@ -157,3 +158,4 @@ test_that("string bodies can be ignored", {
   expect_lint('"short" # 15!!!', lint_msg, linter)
   expect_lint('foo("a", long_)', lint_msg, linter)
 })
+# nofuzz end
