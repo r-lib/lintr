@@ -129,7 +129,7 @@ withr::defer(for (restoration in test_restorations) writeLines(restoration$lines
 #   even 'report <- test_local(...)', which does return an object, lacks any information about
 #   which tests failed (all reports are about successful or skipped tests). probably this is not
 #   the best approach but documentation was not very helpful.
-reporter <- testthat::SummaryReporter$new()
+reporter <- testthat::SummaryReporter$new(max_reports = 500L)
 testthat::test_local(reporter = reporter, stop_on_failure = FALSE)
 
 failures <- reporter$failures$as_list()
