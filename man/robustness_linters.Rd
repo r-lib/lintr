@@ -16,6 +16,7 @@ The following linters are tagged with 'robustness':
 \item{\code{\link{all_equal_linter}}}
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{class_equals_linter}}}
+\item{\code{\link{decimal_fraction_linter}}}
 \item{\code{\link{download_file_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{for_loop_index_linter}}}
