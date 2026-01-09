@@ -10,6 +10,12 @@
 
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
 
+## New and improved features
+
+### Linter improvements
+
+* `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
+
 ## Notes
 
 * {lintr} now requires R 4.1.0
