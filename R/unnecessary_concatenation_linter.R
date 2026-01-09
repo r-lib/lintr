@@ -52,10 +52,9 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 unnecessary_concatenation_linter <- function(allow_single_expression = TRUE) { # nolint: object_length_linter.
-  stopifnot(
-    is.logical(allow_single_expression),
-    length(allow_single_expression) == 1L
-  )
+  if (!is.logical(allow_single_expression) || length(allow_single_expression) != 1L) {
+    cli_abort("{.arg allow_single_expression} must be a single logical value.")
+  }
 
   msg_empty <-
     "Replace unnecessary c() by NULL or, whenever possible, vector() seeded with the correct type and/or length."
