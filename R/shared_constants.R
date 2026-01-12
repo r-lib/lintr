@@ -92,7 +92,7 @@ get_fixed_string <- function(static_regex) {
 #'
 #' This handles two cases: converting a "trivial" character group like `[$]` to `$`,
 #'   and converting an escaped character like `"\\$"` to `$`. Splitting a full expression
-#'   into tokens is handled by [get_fixed_string()].
+#'   into tokens is handled by `get_fixed_string()`.
 #'
 #' @noRd
 get_token_replacement <- function(token_content, token_type) {
@@ -253,7 +253,7 @@ strip_names <- function(x) {
 
 #' Pull out symbols used in glue strings under the current sub-tree
 #'
-#' Required by any linter (e.g. [object_usage_linter()] / [unused_imports_linter()])
+#' Required by any linter (e.g. [object_usage_linter()] / [unused_import_linter()])
 #'   that lints based on whether certain symbols are present, to ensure any
 #'   symbols only used inside glue strings are also visible to the linter.
 #'
@@ -280,9 +280,7 @@ extract_glued_symbols <- function(expr, interpret_glue = TRUE) {
 
   glued_symbols <- new.env(parent = emptyenv())
   for (glue_call in glue_calls) {
-    # TODO(#2475): Drop tryCatch().
-    parsed_call <-
-      tryCatch(xml2lang(glue_call), error = unexpected_glue_parse_error, warning = unexpected_glue_parse_error)
+    parsed_call <- xml2lang(glue_call)
     parsed_call[[".envir"]] <- glued_symbols
     parsed_call[[".transformer"]] <- glue_symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
@@ -291,14 +289,6 @@ extract_glued_symbols <- function(expr, interpret_glue = TRUE) {
   names(glued_symbols)
 }
 
-unexpected_glue_parse_error <- function(cond) {
-  # nocov start
-  cli_abort(c(
-    x = "Unexpected failure to parse glue call.",
-    i = "Please report: {conditionMessage(cond)}"
-  ))
-  # nocov end
-}
 glue_parse_failure_warning <- function(cond) {
   cli_warn(c(
     x = "Evaluating glue expression while testing for local variable usage failed: {conditionMessage(cond)}",
@@ -309,8 +299,8 @@ glue_parse_failure_warning <- function(cond) {
 glue_symbol_extractor <- function(text, envir, data) {
   symbols <- tryCatch(
     all.vars(parse(text = text), functions = TRUE),
-    error = function(...) NULL,
-    warning = function(...) NULL
+    error = \(...) NULL,
+    warning = \(...) NULL
   )
   for (sym in symbols) {
     assign(sym, NULL, envir = envir)

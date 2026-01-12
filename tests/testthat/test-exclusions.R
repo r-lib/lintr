@@ -5,21 +5,23 @@ test_that("it excludes properly", {
     lintr.exclude_end = "#TeSt_NoLiNt_EnD"
   )
 
-  lintr:::read_settings(NULL)
+  exclusion_sample <- normalize_path(test_path("exclusions-test"))
+  withr::local_dir(withr::local_tempdir())
+  file.copy(exclusion_sample, ".")
 
-  t1 <- lint("exclusions-test", parse_settings = FALSE)
+  t1 <- lint("exclusions-test")
   expect_length(t1, 8L)
 
-  t2 <- lint("exclusions-test", exclusions = list("exclusions-test" = 4L), parse_settings = FALSE)
+  t2 <- lint("exclusions-test", exclusions = list("exclusions-test" = 4L))
   expect_length(t2, 7L)
 
-  t3 <- lint("exclusions-test", exclusions = list("exclusions-test"), parse_settings = FALSE)
+  t3 <- lint("exclusions-test", exclusions = list("exclusions-test"))
   expect_length(t3, 0L)
 
   cache_path <- file.path(tempdir(), "lintr_cache")
   clear_cache("exclusions-test", cache_path)
   for (info in sprintf("caching: pass %s", 1L:4L)) {
-    t4 <- lint("exclusions-test", cache = cache_path, parse_settings = FALSE)
+    t4 <- lint("exclusions-test", cache = cache_path)
 
     expect_identical(length(t4), 8L, info = info)
   }
@@ -29,41 +31,54 @@ test_that("it doesn't fail when encountering misspecified encodings", {
   withr::local_options(
     lintr.exclude = "#TeSt_NoLiNt",
     lintr.exclude_start = "#TeSt_NoLiNt_StArT",
-    lintr.exclude_end = "#TeSt_NoLiNt_EnD"
+    lintr.exclude_end = "#TeSt_NoLiNt_EnD",
+    lintr.linter_file = tempfile()
   )
-  lintr:::read_settings(NULL)
 
-  expect_length(lintr:::parse_exclusions("dummy_projects/project/cp1252.R"), 0L)
+  withr::local_dir(test_path("dummy_projects", "project"))
+  expect_no_error(lint("cp1252.R"))
 })
 
 test_that("it gives the expected error message when there is only one start but no end", {
-  lintr:::read_settings(NULL)
+  withr::local_options(
+    lintr.exclude = "#TeSt_NoLiNt",
+    lintr.exclude_start = "#TeSt_NoLiNt_StArT",
+    lintr.exclude_end = "#TeSt_NoLiNt_EnD",
+    lintr.linter_file = tempfile()
+  )
+  withr::local_dir(test_path("dummy_projects", "project"))
 
   expect_error(
-    lintr:::parse_exclusions("dummy_projects/project/one_start_no_end.R"),
+    lint("one_start_no_end.R"),
     "has 1 range start (line 3) and 0 range ends",
     fixed = TRUE
   )
 })
 
 test_that("it gives the expected error message when there is mismatch between multiple starts and ends", {
-  lintr:::read_settings(NULL)
+  withr::local_options(
+    lintr.exclude = "#TeSt_NoLiNt",
+    lintr.exclude_start = "#TeSt_NoLiNt_StArT",
+    lintr.exclude_end = "#TeSt_NoLiNt_EnD",
+    lintr.linter_file = tempfile()
+  )
+  withr::local_dir(test_path("dummy_projects", "project"))
 
   expect_error(
-    lintr:::parse_exclusions("dummy_projects/project/mismatched_starts_ends.R"),
+    lint("mismatched_starts_ends.R"),
     "has 3 range starts (lines 3, 7, 11) and 2 range ends (lines 1, 9)",
     fixed = TRUE
   )
 })
 
 test_that("partial matching works for exclusions but warns if no linter found", { # nofuzz
-  lintr:::read_settings(NULL)
+  withr::local_dir(test_path("dummy_projects", "project"))
 
   expect_warning(
     expect_warning(
       expect_warning(
         expect_lint(
-          file = "dummy_projects/project/partially_matched_exclusions.R",
+          file = "partially_matched_exclusions.R",
           checks = rex::rex("semicolons"),
           parse_settings = FALSE
         ),

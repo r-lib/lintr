@@ -4,19 +4,6 @@ test_that("input validation for available_linters works as expected", {
   expect_error(available_linters(exclude_tags = 1L), "`exclude_tags` must be a <character> vector.")
 })
 
-test_that("validate_linter_db works as expected", {
-  df_empty <- data.frame()
-  expect_warning(
-    lintr:::validate_linter_db(df_empty, "mypkg"),
-    'must contain the columns "linter" and "tags"',
-    fixed = TRUE
-  )
-  expect_false(suppressWarnings(lintr:::validate_linter_db(df_empty, "mypkg")))
-
-  df <- data.frame(linter = "absolute_path_linter", tags = "robustness")
-  expect_true(lintr:::validate_linter_db(df, "mypkg"))
-})
-
 test_that("available_linters returns a data frame", {
   avail <- available_linters()
   avail2 <- available_linters(c("lintr", "not-a-package"))
@@ -43,22 +30,22 @@ test_that("available_tags returns a character vector", {
   expect_true(all(available_linters()$tags[[1L]] %in% tags))
   expect_true(all(unlist(available_linters()$tags) %in% tags))
   expect_identical(anyDuplicated(tags), 0L)
-  expect_identical(lintr:::platform_independent_order(tags), seq_along(tags))
 })
 
 test_that("default_linters and default tag match up", {
   avail <- available_linters()
-  tagged_default <- avail[["linter"]][vapply(avail[["tags"]], function(tags) "default" %in% tags, logical(1L))]
+  tagged_default <- avail[["linter"]][vapply(avail[["tags"]], \(tags) "default" %in% tags, logical(1L))]
   expect_identical(tagged_default, names(default_linters))
 })
 
 test_that("warnings occur only for deprecated linters", {
   skip_if_not_installed("cyclocomp") # actually we expect a warning there
 
+  expect_error(linters_with_tags(), "`tags` was not specified. Available tags:")
   expect_silent(linters_with_tags(tags = NULL))
   num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
-  deprecation_warns_seen <- 0L
-  outer_env <- environment()
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$deprecation_warns_seen <- 0L
   expect_silent({
     withCallingHandlers(
       linters_with_tags(tags = "deprecated", exclude_tags = NULL),
@@ -72,7 +59,7 @@ test_that("warnings occur only for deprecated linters", {
       }
     )
   })
-  expect_identical(deprecation_warns_seen, num_deprecated_linters)
+  expect_identical(outer_env$deprecation_warns_seen, num_deprecated_linters)
 })
 
 test_that("available_linters matches the set of linters available from lintr", {
@@ -109,7 +96,7 @@ test_that("lintr help files are up to date", {
 
   lintr_db <- available_linters(exclude_tags = NULL)
   lintr_db$package <- NULL
-  lintr_db$tags <- lapply(lintr_db$tags, function(x) if ("deprecated" %in% x) "deprecated" else sort(x))
+  lintr_db$tags <- lapply(lintr_db$tags, \(x) if ("deprecated" %in% x) "deprecated" else sort(x))
   lintr_db <- lintr_db[order(lintr_db$linter), ]
 
   expect_true("linters.Rd" %in% names(help_db), info = "?linters exists")
@@ -202,7 +189,7 @@ test_that("lintr help files are up to date", {
     )[[1L]]
 
     # those entries in available_linters() with the current tag
-    db_linter_has_tag <- vapply(lintr_db$tags, function(linter_tag) any(tag %in% linter_tag), logical(1L))
+    db_linter_has_tag <- vapply(lintr_db$tags, \(linter_tag) any(tag %in% linter_tag), logical(1L))
     expected <- lintr_db$linter[db_linter_has_tag]
 
     expect_identical(
@@ -214,11 +201,11 @@ test_that("lintr help files are up to date", {
 
   # (3) the 'configurable' tag applies if and only if the linter has parameters
   has_args <- 0L < lengths(Map(
-    function(linter, tags) if ("deprecated" %in% tags) NULL else formals(match.fun(linter)),
+    \(linter, tags) if ("deprecated" %in% tags) NULL else formals(match.fun(linter)),
     lintr_db$linter,
     lintr_db$tags
   ))
-  has_configurable_tag <- vapply(lintr_db$tags, function(tags) "configurable" %in% tags, logical(1L))
+  has_configurable_tag <- vapply(lintr_db$tags, \(tags) "configurable" %in% tags, logical(1L))
 
   expect_identical(has_configurable_tag, unname(has_args))
 })
@@ -239,7 +226,7 @@ test_that("all linters have at least one tag", {
 test_that("other packages' linters can be included", {
   db_loc <- withr::local_tempdir()
   local_mocked_bindings(
-    system.file = function(..., package) file.path(db_loc, package, ...)
+    system.file = \(..., package) file.path(db_loc, package, ...)
   )
 
   custom_db <- data.frame(
@@ -248,15 +235,16 @@ test_that("other packages' linters can be included", {
     tags = c("tag1 tag2", "tag1 tag3")
   )
   custom_db$tags <- strsplit(custom_db$tags, " ", fixed = TRUE)
-  custom_loc <- file.path(db_loc, "myPkg", "lintr")
-  dir.create(custom_loc, recursive = TRUE)
+  custom_dir <- file.path(db_loc, "myPkg", "lintr")
+  custom_csv <- file.path(custom_dir, "linters.csv")
+  dir.create(custom_dir, recursive = TRUE)
   write_csv <- function(x, file) write.csv(x, file, row.names = FALSE, quote = FALSE)
   write_csv(
     within(custom_db, {
       tags <- vapply(tags, paste, collapse = " ", FUN.VALUE = character(1L))
       rm(package)
     }),
-    file.path(custom_loc, "linters.csv")
+    custom_csv
   )
 
   expect_identical(
@@ -265,9 +253,18 @@ test_that("other packages' linters can be included", {
   )
 
   # edge case
-  write_csv(custom_db[0L, c("linter", "tags")], file.path(custom_loc, "linters.csv"))
+  write_csv(custom_db[0L, c("linter", "tags")], custom_csv)
   expect_identical(
     available_linters(packages = "myPkg"),
     custom_db[0L, ]
+  )
+
+  write_csv(data.frame(a = 1L, b = 1L), custom_csv)
+  expect_warning(
+    expect_identical(
+      available_linters(packages = "myPkg"),
+      custom_db[0L, ]
+    ),
+    'must contain the columns "linter" and "tags"'
   )
 })

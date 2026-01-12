@@ -27,8 +27,7 @@ clone_xml_ <- function(x) {
 
 # caveat: whether this is a copy or not is inconsistent. assume the output is read-only!
 strip_comments_from_subtree <- function(expr) {
-  comments <- xml_find_all(expr, ".//COMMENT")
-  if (length(comments) == 0L) {
+  if (length(xml_find_first(expr, ".//COMMENT")) == 0L) {
     return(expr)
   }
   expr <- clone_xml_(expr)
@@ -43,7 +42,7 @@ safe_parse_to_xml <- function(parsed_content) {
   tryCatch(
     xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)),
     # use xml_missing so that code doesn't always need to condition on XML existing
-    error = function(e) xml2::xml_missing()
+    error = \(e) xml2::xml_missing()
   )
 }
 

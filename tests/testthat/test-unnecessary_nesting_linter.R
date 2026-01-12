@@ -206,7 +206,6 @@ test_that("unnecessary_nesting_linter skips one-line functions", {
   )
 
   # ditto short-hand lambda
-  skip_if_not_r_version("4.1.0")
   expect_no_lint(
     trim_some("
       foo <- \\(x) {
@@ -323,7 +322,7 @@ test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", 
     "),
     linter
   )
-  expect_no_lint(
+  expect_no_lint( # nofuzz
     trim_some("
       DT[, {
         plot(x, y)

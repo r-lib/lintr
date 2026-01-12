@@ -34,8 +34,8 @@ modify_defaults <- function(defaults, ...) {
   if (missing(defaults)) {
     cli_abort("{.arg defaults} is a required argument, but is missing.")
   }
-  if (!is.list(defaults) || !all(nzchar(names2(defaults)))) {
-    cli_abort("{.arg defaults} must be a named list, not {.obj_type_friendly {defaults}}.")
+  if (!(is.list(defaults) || is.environment(defaults)) || !all(nzchar(names2(defaults)))) {
+    cli_abort("{.arg defaults} must be a named list or environment, not {.obj_type_friendly {defaults}}.")
   }
   vals <- list(...)
   nms <- names2(vals)
@@ -53,7 +53,8 @@ modify_defaults <- function(defaults, ...) {
   }
 
   is.na(vals) <- nms == vals
-  defaults[nms] <- vals
+  for (ii in seq_along(nms)) defaults[[nms[ii]]] <- vals[[ii]]
+  if (is.environment(defaults)) defaults <- as.list(defaults)
 
   res <- defaults[!vapply(defaults, is.null, logical(1L))]
   res <- res[platform_independent_order(names(res))]
@@ -92,14 +93,16 @@ modify_defaults <- function(defaults, ...) {
 #' }
 #' @export
 linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "deprecated") {
+  if (missing(tags)) {
+    cli_abort("{.arg tags} was not specified. Available tags: {available_tags()}")
+  }
   if (!is.character(tags) && !is.null(tags)) {
     cli_abort("{.arg tags} must be a character vector, or {.code NULL}, not {.obj_type_friendly {tags}}.")
   }
-  tagged_linters <- list()
+  tagged_linter_env <- new.env()
 
   for (package in packages) {
-    pkg_ns <- loadNamespace(package)
-    ns_exports <- getNamespaceExports(pkg_ns)
+    ns_exports <- getNamespaceExports(package)
     available <- available_linters(packages = package, tags = tags, exclude_tags = exclude_tags)
     if (nrow(available) > 0L) {
       if (!all(available$linter %in% ns_exports)) {
@@ -109,18 +112,26 @@ linters_with_tags <- function(tags, ..., packages = "lintr", exclude_tags = "dep
           i = "These are advertised by {.fn available_linters}, but are not exported by package {.pkg {package}}."
         ))
       }
-      linter_factories <- mget(available$linter, envir = pkg_ns)
-      linters <- Map(
-        call_linter_factory,
-        linter_factory = linter_factories,
-        linter_name = names(linter_factories),
-        MoreArgs = list(package = package)
-      )
-      tagged_linters <- c(tagged_linters, linters)
+      for (linter in available$linter) lazily_assign_linter_(linter, package, tagged_linter_env)
     }
   }
 
-  modify_defaults(..., defaults = tagged_linters)
+  modify_defaults(..., defaults = tagged_linter_env)
+}
+
+#' Avoid call_linter_factory up-front to delay displaying warnings until needed.
+#'   This e.g. allows modify_defaults() to skip warnings from linters that aren't needed.
+#' NB: this helper has the very subtle effect of ensuring 'linter' is associated correctly;
+#'   an earlier attempt had this logic directly in a loop in linters_with_tags, but
+#'   that results in the value of 'linter' matching that of the loop index after the loop
+#'   completes, rather than what its value was when 'delayedAssign()' is called. local({})
+#'   _can_ work, but requires the befuddling line 'linter <- linter' to ensure that the
+#'   local() environment retains a copy of that variable; the formals of a helper
+#'   have the same effect.
+#' @noRd
+lazily_assign_linter_ <- function(linter, package, env) {
+  linter_factory <- get(linter, envir = getNamespace(package), inherits = FALSE)
+  delayedAssign(linter, call_linter_factory(linter_factory, linter, package), assign.env = env)
 }
 
 #' Create a linter configuration based on all available linters

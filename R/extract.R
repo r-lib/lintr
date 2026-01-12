@@ -6,21 +6,21 @@ extract_r_source <- function(filename, lines, error = identity) {
   }
 
   # mask non-source lines by NA, but keep total line count identical so the line number for EOF is correct, see #1400
-  output <- rep.int(NA_character_, length(lines))
+  output_env <- new.env(parent = emptyenv())
+  output_env$output <- rep.int(NA_character_, length(lines))
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
   if (is_error(chunks) || is_lint(chunks)) {
     assign("e", chunks, envir = parent.frame())
     # error, so return empty code
-    return(output)
+    return(output_env$output)
   }
 
   # no chunks found, so just return the lines
   if (length(chunks[["starts"]]) == 0L || length(chunks[["ends"]]) == 0L) {
-    return(output)
+    return(output_env$output)
   }
 
-  output_env <- environment() # nolint: object_usage_linter. False positive-ish -- used below.
   Map(
     function(start, end, indent) {
       line_seq <- seq(start + 1L, end - 1L)
@@ -32,8 +32,8 @@ extract_r_source <- function(filename, lines, error = identity) {
     chunks[["indents"]]
   )
   # drop <<chunk>> references, too
-  is.na(output) <- grep(pattern$ref.chunk, output)
-  replace_prefix(output, pattern$chunk.code)
+  is.na(output_env$output) <- grep(pattern$ref.chunk, output_env$output)
+  replace_prefix(output_env$output, pattern$chunk.code)
 }
 
 get_knitr_pattern <- function(filename, lines) {

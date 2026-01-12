@@ -67,7 +67,7 @@ test_that("arguments handle <<- and ->/->> correctly", {
   )
 })
 
-test_that("arguments handle trailing assignment operators correctly", {
+test_that("arguments handle trailing assignment operators correctly", { # nofuzz
   linter_default <- assignment_linter()
   linter_no_trailing <- assignment_linter(allow_trailing = FALSE)
   expect_no_lint("x <- y", linter_no_trailing)
@@ -166,7 +166,7 @@ test_that("arguments handle trailing assignment operators correctly", {
   )
 })
 
-test_that("allow_trailing interacts correctly with comments in braced expressions", {
+test_that("allow_trailing interacts correctly with comments in braced expressions", { # nofuzz
   linter <- assignment_linter(allow_trailing = FALSE)
   expect_no_lint(
     trim_some("
@@ -216,6 +216,9 @@ test_that("allow_trailing interacts correctly with comments in braced expression
 
 test_that("%<>% throws a lint", {
   expect_lint("x %<>% sum()", "Avoid the assignment pipe %<>%", assignment_linter())
+  # regression test for #2850
+  expect_lint("a <- 42", "Use %<>% for assignment", assignment_linter(operator = "%<>%"))
+
   expect_no_lint("x %<>% sum()", assignment_linter(operator = "%<>%"))
 
   # interaction with allow_trailing
@@ -371,12 +374,6 @@ test_that("multiple lints throw correct messages when = is required", {
     ),
     assignment_linter(operator = "=")
   )
-})
-
-test_that("Deprecated arguments error as intended", {
-  expect_error(regexp = "allow_cascading_assign", assignment_linter(allow_cascading_assign = FALSE))
-  expect_error(regexp = "allow_right_assign", assignment_linter(allow_right_assign = TRUE))
-  expect_error(regexp = "allow_pipe_assign", assignment_linter(allow_pipe_assign = TRUE))
 })
 
 test_that("implicit '<-' assignments inside calls are ignored where top-level '<-' is disallowed", {

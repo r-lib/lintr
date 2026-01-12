@@ -1,10 +1,7 @@
-# TODO(#2768): possibly just use %||% instead
-`%|||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0L || (is.atomic(x[[1L]]) && is.na(x[[1L]]))) {
-    y
-  } else {
-    x
-  }
+# TODO(R>=4.4.0): remove this.
+# NB: {backports} approach doesn't work since we need this before .onLoad() in names2()
+if (!exists("%||%", "package:base")) {
+  `%||%` <- function(x, y) if (is.null(x)) y else x # nolint: coalesce_linter.
 }
 
 `%==%` <- function(x, y) {
@@ -24,18 +21,19 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
-  res <- list()
-  itr <- 1L
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$res <- list()
+  outer_env$itr <- 1L
   assign_item <- function(x) {
     if (inherits(x, class)) {
-      res[[itr]] <<- x
-      itr <<- itr + 1L
+      outer_env$res[[outer_env$itr]] <- x
+      outer_env$itr <- outer_env$itr + 1L
     } else if (is.list(x)) {
       lapply(x, assign_item)
     }
   }
   assign_item(x)
-  res
+  outer_env$res
 }
 
 fix_names <- function(x, default) {
@@ -56,8 +54,9 @@ linter_auto_name <- function(which = -3L) {
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
     match_data <- re_matches(nm, regex, locations = TRUE)
-    nm <- substr(nm, start = 1L, stop = match_data[1L, "end"])
-    nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
+    nm <- nm |>
+      substr(start = 1L, stop = match_data[1L, "end"]) |>
+      re_substitutes(rex(start, alnums, "::"), "")
   }
   nm
 }
@@ -84,10 +83,17 @@ auto_names <- function(x) {
 
 # The following functions is from dplyr
 names2 <- function(x) {
-  names(x) %|||% rep("", length(x))
+  names(x) %||% rep("", length(x))
 }
 
-get_content <- function(lines, info, known_safe = TRUE) {
+#' @param needs_braces Logical, default FALSE. If it's possible or known that
+#'   `lines` cannot be parsed as a standalone expression, only a "child"
+#'   expression, we insert braces `{}` around it to ensure that it parses.
+#'   There is only one known case for this, namely, when finding code with
+#'   shorthand lambda `\(` where `\` and `(` are separated by a comment;
+#'   see `object_usage_linter()` for more details.
+#' @noRd
+get_content <- function(lines, info, needs_braces = FALSE) {
   lines[is.na(lines)] <- ""
 
   if (!missing(info)) {
@@ -100,7 +106,7 @@ get_content <- function(lines, info, known_safe = TRUE) {
     lines[length(lines)] <- substr(lines[length(lines)], 1L, info$col2)
     lines[1L] <- substr(lines[1L], info$col1, nchar(lines[1L]))
   }
-  if (!known_safe) lines <- c("{", lines, "}")
+  if (needs_braces) lines <- c("{", lines, "}")
   paste(lines, collapse = "\n")
 }
 
@@ -152,12 +158,13 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
 }
 
 read_lines <- function(file, encoding = settings$encoding, ...) {
-  terminal_newline <- TRUE
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$terminal_newline <- TRUE
   lines <- withCallingHandlers(
     readLines(file, warn = TRUE, ...),
     warning = function(w) {
-      if (grepl("incomplete final line found on", w$message, fixed = TRUE)) {
-        terminal_newline <<- FALSE
+      if (grepl("incomplete final line found on", conditionMessage(w), fixed = TRUE)) {
+        outer_env$terminal_newline <- FALSE
         invokeRestart("muffleWarning")
       }
     }
@@ -165,14 +172,9 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
   lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
   lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
   Encoding(lines) <- "UTF-8"
-  attr(lines, "terminal_newline") <- terminal_newline
+  attr(lines, "terminal_newline") <- outer_env$terminal_newline
   lines
 }
-
-# nocov start
-# support for usethis::use_release_issue(). Make sure to use devtools::load_all() beforehand!
-release_bullets <- function() {}
-# nocov end
 
 # see issue #923, PR #2455 -- some locales ignore _ when running sort(), others don't.
 #   We want to consistently treat "_" < "n" = "N"; C locale does this, which 'radix' uses.
@@ -234,8 +236,12 @@ get_r_string <- function(s, xpath = NULL) {
       s <- xml_find_chr(s, sprintf("string(%s)", xpath))
     }
   }
-  # parse() skips "" elements --> offsets the length of the output,
-  #   but NA in --> NA out
+  r_string_from_parse_text(s)
+}
+
+# parse() skips "" elements --> offsets the length of the output,
+#   but NA in --> NA out
+r_string_from_parse_text <- function(s) {
   is.na(s) <- !nzchar(s)
   out <- as.character(parse(text = s, keep.source = FALSE))
   is.na(out) <- is.na(s)
@@ -258,7 +264,7 @@ is_tainted <- function(lines) {
 #' @param ref_help Help page to refer users hitting an error to.
 #' @noRd
 check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
-  valid_args <- unlist(lapply(ref_calls, function(f) names(formals(f))))
+  valid_args <- unlist(lapply(ref_calls, \(f) names(formals(f))))
   is_valid <- dot_names %in% valid_args
   if (all(is_valid)) {
     return(invisible())

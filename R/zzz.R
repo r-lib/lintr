@@ -26,6 +26,7 @@ default_linters <- modify_defaults(
   object_name_linter(),
   object_usage_linter(),
   paren_body_linter(),
+  pipe_consistency_linter(),
   pipe_continuation_linter(),
   quotes_linter(),
   return_linter(),
@@ -229,7 +230,7 @@ rd_undesirable_operators <- function() {
   op_link_map <- c(
     `:::` = "\\link[base:ns-dblcolon]{:::}",
     `<<-` = "\\link[base:assignOps]{<<-}",
-    `->>` = "\\link[base:assignOps]{<<-}"
+    `->>` = "\\link[base:assignOps]{->>}"
   )
   op <- names(default_undesirable_operators)
 
@@ -305,12 +306,6 @@ logical_env <- function(x, unset = "") {
   )
   toset <- !(names(op_lintr) %in% names(op))
   if (any(toset)) options(op_lintr[toset])
-
-  # R>=4.1.0: ...names
-  backports::import(pkgname, "...names")
-
-  # R>=4.4.0: %||%
-  backports::import(pkgname, "%||%")
 
   utils::assignInMyNamespace("default_settings", list(
     linters = default_linters,

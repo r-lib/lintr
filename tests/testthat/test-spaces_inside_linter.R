@@ -198,8 +198,6 @@ test_that("multi-line expressions have good markers", {
 })
 
 test_that("spaces_inside_linter blocks disallowed usages with a pipe", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- spaces_inside_linter()
 
   expect_lint(

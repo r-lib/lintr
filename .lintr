@@ -3,12 +3,19 @@ linters: all_linters(
     line_length_linter(120L),
     object_overwrite_linter(allow_names = c("line", "lines", "pipe", "symbols")),
     todo_comment_linter(
-      except_regex = rex::rex(
-        "TODO(",
-        # GitHub issue number #1234, possibly from another repo org/repo#5678
-        maybe(one_or_more(character_class("a-zA-Z0-9-")), "/", one_or_more(character_class("a-zA-Z0-9._-"))),
-        "#", one_or_more(digit),
-        ")"
+      except_regex = c(
+        rex::rex(
+          "TODO(",
+          # GitHub issue number #1234, possibly from another repo org/repo#5678
+          maybe(one_or_more(character_class("a-zA-Z0-9-")), "/", one_or_more(character_class("a-zA-Z0-9._-"))),
+          "#", one_or_more(digit),
+          ")"
+        ),
+        rex::rex(
+          "TODO(",
+          "R>", maybe("="), digit, ".", digit, maybe(".", digit),
+          ")"
+        )
       )
     ),
     undesirable_function_name_linter = undesirable_function_linter(modify_defaults(
@@ -25,11 +32,6 @@ linters: all_linters(
       ),
       symbol_is_undesirable = FALSE
     ),
-    undesirable_operator_linter(modify_defaults(
-      defaults = default_undesirable_operators,
-      `:::` = NULL,
-      `<<-` = NULL
-    )),
     unnecessary_concatenation_linter(allow_single_expression = FALSE),
     absolute_path_linter = NULL,
     library_call_linter = NULL,
@@ -38,9 +40,7 @@ linters: all_linters(
     strings_as_factors_linter = NULL,
     todo_comment_linter = NULL,
     # exclude; we use customized version above
-    undesirable_function_linter = NULL,
-    # TODO(#2327): Enable this.
-    unreachable_code_linter = NULL
+    undesirable_function_linter = NULL
   )
 exclusions: list(
     "inst/doc/creating_linters.R" = 1L,

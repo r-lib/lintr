@@ -1,6 +1,7 @@
 #' Repeat linter
 #'
-#' Check that `while (TRUE)` is not used for infinite loops.
+#' Check that `while (TRUE)` is not used for infinite loops. While this is valid
+#' R code, using `repeat {}` is more explicit.
 #'
 #' @examples
 #' # will produce lints

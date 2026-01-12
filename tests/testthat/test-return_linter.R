@@ -31,8 +31,6 @@ test_that("Lint return on end of function", {
 })
 
 test_that("Lint return on end of lambda function", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint(
     trim_some("
       \\(bar) {
@@ -781,8 +779,6 @@ test_that("return_linter skips invokeRestart(), tryInvokeRestart()", {
 
 # NB: x |> return() is blocked by the parser, so no need to test that.
 test_that("Native pipes are handled correctly", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- return_linter(return_style = "explicit")
   lint_msg <- rex::rex("All functions must have an explicit return().")
 

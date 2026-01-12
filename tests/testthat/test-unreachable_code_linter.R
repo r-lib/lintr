@@ -9,7 +9,7 @@ test_that("unreachable_code_linter works in simple function", {
 
 test_that("unreachable_code_linter works in sub expressions", {
   linter <- unreachable_code_linter()
-  msg <- rex::rex("Remove code and comments coming after return() or stop()")
+  msg <- rex::rex("Remove code and comments coming after return()")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -73,7 +73,7 @@ test_that("unreachable_code_linter works in sub expressions", {
     linter
   )
 
-   expect_lint(
+  expect_lint(
     trim_some("
       foo <- function(bar) {
         if (bar) {
@@ -139,7 +139,8 @@ test_that("unreachable_code_linter works in sub expressions", {
 
 test_that("unreachable_code_linter works with next and break in sub expressions", {
   linter <- unreachable_code_linter()
-  msg <- rex::rex("Remove code and comments coming after `next` or `break`")
+  next_msg <- rex::rex("Remove code and comments coming after `next`")
+  break_msg <- rex::rex("Remove code and comments coming after `break`")
 
   lines <- trim_some("
     foo <- function(bar) {
@@ -168,11 +169,11 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
   expect_lint(
     lines,
     list(
-      list(line_number = 4L, message = msg),
-      list(line_number = 7L, message = msg),
-      list(line_number = 10L, message = msg),
-      list(line_number = 15L, message = msg),
-      list(line_number = 18L, message = msg)
+      list(line_number = 4L, message = next_msg),
+      list(line_number = 7L, message = break_msg),
+      list(line_number = 10L, message = next_msg),
+      list(line_number = 15L, message = next_msg),
+      list(line_number = 18L, message = break_msg)
     ),
     linter
   )
@@ -219,11 +220,46 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
       }
     "),
     list(
-      list(line_number = 3L, message = msg),
-      list(line_number = 5L, message = msg),
-      list(line_number = 8L, message = msg),
-      list(line_number = 11L, message = msg),
-      list(line_number = 14L, message = msg)
+      list(line_number = 3L, message = next_msg),
+      list(line_number = 5L, message = break_msg),
+      list(line_number = 8L, message = break_msg),
+      list(line_number = 11L, message = next_msg),
+      list(line_number = 14L, message = break_msg)
+    ),
+    linter
+  )
+
+  # also with comments
+  expect_lint(
+    trim_some("
+      foo <- function(bar) {
+        if (bar) {
+          next; # comment
+          x <- 2
+        } else {
+          break; # comment
+          x <- 3
+        }
+        while (bar) {
+          break; # comment
+          5 + 3
+        }
+        repeat {
+          next; # comment
+          test()
+        }
+        for(i in 1:3) {
+          break; # comment
+          5 + 4
+        }
+      }
+    "),
+    list(
+      list(line_number = 4L, message = next_msg),
+      list(line_number = 7L, message = break_msg),
+      list(line_number = 11L, message = break_msg),
+      list(line_number = 15L, message = next_msg),
+      list(line_number = 19L, message = break_msg)
     ),
     linter
   )
@@ -318,7 +354,7 @@ test_that("unreachable_code_linter identifies simple unreachable code", {
     lines,
     list(
       line_number = 3L,
-      message = rex::rex("Remove code and comments coming after return() or stop()")
+      message = rex::rex("Remove code and comments coming after return()")
     ),
     unreachable_code_linter()
   )
@@ -334,13 +370,13 @@ test_that("unreachable_code_linter finds unreachable comments", {
   ")
   expect_lint(
     lines,
-    rex::rex("Remove code and comments coming after return() or stop()"),
+    rex::rex("Remove code and comments coming after return()"),
     unreachable_code_linter()
   )
 })
 
 test_that("unreachable_code_linter finds expressions in the same line", { # nofuzz
-  msg <- rex::rex("Remove code and comments coming after return() or stop()")
+  msg <- rex::rex("Remove code and comments coming after return()")
   linter <- unreachable_code_linter()
 
   lines <- trim_some("
@@ -368,7 +404,7 @@ test_that("unreachable_code_linter finds expressions in the same line", { # nofu
 })
 
 test_that("unreachable_code_linter finds expressions and comments after comment in return line", {
-  msg <- rex::rex("Remove code and comments coming after return() or stop()")
+  msg <- rex::rex("Remove code and comments coming after return()")
   linter <- unreachable_code_linter()
 
   lines <- trim_some("
@@ -397,7 +433,7 @@ test_that("unreachable_code_linter finds a double return", {
   ")
   expect_lint(
     lines,
-    rex::rex("Remove code and comments coming after return() or stop()"),
+    rex::rex("Remove code and comments coming after return()"),
     unreachable_code_linter()
   )
 })
@@ -412,7 +448,7 @@ test_that("unreachable_code_linter finds code after stop()", {
   ")
   expect_lint(
     lines,
-    rex::rex("Remove code and comments coming after return() or stop()"),
+    rex::rex("Remove code and comments coming after stop()"),
     unreachable_code_linter()
   )
 })
@@ -621,7 +657,7 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
       list(false_msg, line_number = 2L),
       list(false_msg, line_number = 5L),
       list(true_msg, line_number = 10L),
-      list(rex::rex("Remove code and comments coming after return() or stop()."), line_number = 13L)
+      list(rex::rex("Remove code and comments coming after stop()."), line_number = 13L)
     ),
     linter
   )
@@ -641,8 +677,6 @@ test_that("unreachable_code_linter identifies unreachable code in mixed conditio
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint(
     trim_some("
       foo <- \\(bar) {
@@ -652,7 +686,7 @@ test_that("function shorthand is handled", {
     "),
     list(
       line_number = 3L,
-      message = rex::rex("Remove code and comments coming after return() or stop()")
+      message = rex::rex("Remove code and comments coming after return()")
     ),
     unreachable_code_linter()
   )
@@ -671,8 +705,6 @@ test_that("Do not lint inline else after stop in inline function", {
 })
 
 test_that("Do not lint inline else after stop in inline lambda function", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- unreachable_code_linter()
 
   expect_no_lint("\\(x) if (x > 3L) stop() else x + 3", linter)

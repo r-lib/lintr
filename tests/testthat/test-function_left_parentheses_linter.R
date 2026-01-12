@@ -198,7 +198,6 @@ test_that("newline in character string doesn't trigger false positive (#1963)", 
 })
 
 test_that("shorthand functions are handled", { # nofuzz
-  skip_if_not_r_version("4.1.0")
   linter <- function_left_parentheses_linter()
   fun_lint_msg <- rex::rex("Remove spaces before the left parenthesis in a function definition.")
 

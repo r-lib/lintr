@@ -205,7 +205,7 @@ test_that("old compatibility usage errors", {
   )
 
   expect_error(
-    lint("a <- 1\n", linters = function(two, arguments) NULL),
+    lint("a <- 1\n", linters = \(two, arguments) NULL),
     error_msg
   )
 
@@ -218,7 +218,7 @@ test_that("old compatibility usage errors", {
 test_that("Linters throwing an error give a helpful error", {
   tmp_file <- withr::local_tempfile(lines = "a <- 1")
   lintr_error_msg <- "a broken linter"
-  linter <- function() Linter(function(source_expression) cli_abort(lintr_error_msg))
+  linter <- function() Linter(\(source_expression) cli_abort(lintr_error_msg))
   # NB: Some systems/setups may use e.g. symlinked files when creating under tempfile();
   #   we don't care much about that, so just check basename()
   expect_error(lint(tmp_file, linter()), lintr_error_msg, fixed = TRUE)
@@ -227,9 +227,73 @@ test_that("Linters throwing an error give a helpful error", {
 
 test_that("Linter() input is validated", {
   expect_error(Linter(1L), "`fun` must be a function taking exactly one argument", fixed = TRUE)
-  expect_error(Linter(function(a, b) TRUE), "`fun` must be a function taking exactly one argument", fixed = TRUE)
+  expect_error(Linter(\(a, b) TRUE), "`fun` must be a function taking exactly one argument", fixed = TRUE)
 })
 
 test_that("typo in argument name gives helpful error", {
   expect_error(lint("xxx", litners = identity), "Found unknown arguments in `...`: `litners`")
+})
+
+
+test_that("gitlab_output() writes expected report", {
+  skip_if_not_installed("jsonlite")
+
+  tmpfile <- withr::local_tempfile()
+
+  # zero lints: we expect an empty json array
+  gitlab_output(lint(text = "", linters = infix_spaces_linter()), filename = tmpfile)
+  expect_match(
+    readLines(tmpfile),
+    R"(\s*\[\s*\]\s*)"
+  )
+
+  # single lint
+  gitlab_output(lint(text = "x<-1", linters = infix_spaces_linter()), filename = tmpfile)
+  expect_identical(
+    jsonlite::read_json(tmpfile),
+    list(list(
+      description = "Put spaces around all infix operators.",
+      check_name = "infix_spaces_linter",
+      fingerprint = "eb7cc117e8616bd8170fe6aa29e8b0ae849ac6c7",
+      location = list(path = "<text>", lines = list(begin = 1L)),
+      severity = "info"
+    ))
+  )
+
+  # two lints
+  gitlab_output(lint(text = c("x<-1", "y<-1"), linters = infix_spaces_linter()), filename = tmpfile)
+  expect_identical(
+    jsonlite::read_json(tmpfile),
+    list(list(
+      description = "Put spaces around all infix operators.",
+      check_name = "infix_spaces_linter",
+      fingerprint = "eb7cc117e8616bd8170fe6aa29e8b0ae849ac6c7",
+      location = list(path = "<text>", lines = list(begin = 1L)),
+      severity = "info"
+    ), list(
+      description = "Put spaces around all infix operators.",
+      check_name = "infix_spaces_linter",
+      fingerprint = "c20bd2090d08e3a5c12d670f5763ad43d233fe05",
+      location = list(path = "<text>", lines = list(begin = 2L)),
+      severity = "info"
+    ))
+  )
+
+  expect_error(gitlab_output(NULL), "must be a <lints> object", fixed = TRUE)
+})
+
+test_that("explicit parse_settings=TRUE works for inline data", {
+  withr::local_dir(tempdir())
+  .lintr <- withr::local_tempfile(lines = "linters: list(assignment_linter())")
+  withr::local_options(list(lintr.linter_file = .lintr))
+
+  lint_str <- "a=1\n" # assignment lints, but not infix_spaces
+  foo <- withr::local_tempfile(lines = lint_str)
+
+  expect_length(lint(foo, parse_settings = TRUE), 1L)
+  expect_length(lint(text = lint_str, parse_settings = TRUE), 1L)
+  expect_length(lint(lint_str, parse_settings = TRUE), 1L)
+
+  # parse_settings=TRUE default not picked up
+  expect_length(lint(text = lint_str), 2L)
 })

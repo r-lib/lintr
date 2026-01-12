@@ -63,7 +63,7 @@ object_overwrite_linter <- function(
   pkg_exports <- lapply(
     packages,
     # .__C__ etc.: drop 150+ "virtual" names since they are very unlikely to appear anyway
-    function(pkg) setdiff(grep("^[.]__[A-Z]__", getNamespaceExports(pkg), value = TRUE, invert = TRUE), allow_names)
+    \(pkg) setdiff(grep("^[.]__[A-Z]__", getNamespaceExports(pkg), value = TRUE, invert = TRUE), allow_names)
   )
   pkg_exports <- data.frame(
     package = rep(packages, lengths(pkg_exports)),
