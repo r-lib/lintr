@@ -4,12 +4,14 @@ The default print method for character vectors is appropriate for
 interactively inspecting objects, not for logging messages. Thus
 checked-in usage like `print(paste('Data has', nrow(DF), 'rows.'))` is
 better served by using [`cat()`](https://rdrr.io/r/base/cat.html), e.g.
-`cat(sprintf('Data has %d rows.\n', nrow(DF)))` (noting that using
+`cat(sprintf('Data has %d rows.\n', nrow(DF)))`. Note that using
 [`cat()`](https://rdrr.io/r/base/cat.html) entails supplying your own
-line returns, and that
+line returns;
 [`glue::glue()`](https://glue.tidyverse.org/reference/glue.html) might
 be preferable to [`sprintf()`](https://rdrr.io/r/base/sprintf.html) for
-constructing templated strings). Lastly, note that
+constructing templated strings. Alternatively,
+[`writeLines()`](https://rdrr.io/r/base/writeLines.html) can be used to
+print character vectors with their own line returns. Lastly, note that
 [`message()`](https://rdrr.io/r/base/message.html) differs slightly from
 [`cat()`](https://rdrr.io/r/base/cat.html) in that it prints to `stderr`
 by default, not `stdout`, but is still a good option to consider for
