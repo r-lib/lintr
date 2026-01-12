@@ -63,6 +63,61 @@
 <ul><li>Excluding <code><a href="../reference/cyclocomp_linter.html">cyclocomp_linter()</a></code> in <code><a href="../reference/available_linters.html">available_linters()</a></code> or <code><a href="../reference/linters_with_tags.html">linters_with_tags()</a></code>, which requires the weak dependency {cyclocomp}, no longer emits a warning (<a href="https://github.com/r-lib/lintr/issues/2909" class="external-link">#2909</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
+<h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
+<div class="section level4">
+<h4 id="linter-improvements-development-version">Linter improvements<a class="anchor" aria-label="anchor" href="#linter-improvements-development-version"></a></h4>
+<ul><li>General handling of logic around where comments can appear in code has been improved (<a href="https://github.com/r-lib/lintr/issues/2822" class="external-link">#2822</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
+<ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
+<li><code><a href="../reference/coalesce_linter.html">coalesce_linter()</a></code></li>
+<li>
+<code><a href="../reference/comparison_negation_linter.html">comparison_negation_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2826" class="external-link">#2826</a></li>
+<li>
+<code><a href="../reference/conjunct_test_linter.html">conjunct_test_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li><code><a href="../reference/empty_assignment_linter.html">empty_assignment_linter()</a></code></li>
+<li><code><a href="../reference/expect_comparison_linter.html">expect_comparison_linter()</a></code></li>
+<li>
+<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li><code><a href="../reference/if_switch_linter.html">if_switch_linter()</a></code></li>
+<li>
+<code><a href="../reference/ifelse_censor_linter.html">ifelse_censor_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2826" class="external-link">#2826</a></li>
+<li><code><a href="../reference/implicit_assignment_linter.html">implicit_assignment_linter()</a></code></li>
+<li><code><a href="../reference/length_test_linter.html">length_test_linter()</a></code></li>
+<li>
+<code><a href="../reference/literal_coercion_linter.html">literal_coercion_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2824" class="external-link">#2824</a></li>
+<li>
+<code><a href="../reference/matrix_apply_linter.html">matrix_apply_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2825" class="external-link">#2825</a></li>
+<li>
+<code><a href="../reference/nzchar_linter.html">nzchar_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2826" class="external-link">#2826</a></li>
+<li>
+<code><a href="../reference/object_length_linter.html">object_length_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li>
+<code><a href="../reference/object_name_linter.html">object_name_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li><code><a href="../reference/object_usage_linter.html">object_usage_linter()</a></code></li>
+<li>
+<code><a href="../reference/outer_negation_linter.html">outer_negation_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li><code><a href="../reference/redundant_equals_linter.html">redundant_equals_linter()</a></code></li>
+<li><code><a href="../reference/regex_subset_linter.html">regex_subset_linter()</a></code></li>
+<li><code><a href="../reference/seq_linter.html">seq_linter()</a></code></li>
+<li><code><a href="../reference/sort_linter.html">sort_linter()</a></code></li>
+<li>
+<code><a href="../reference/sprintf_linter.html">sprintf_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li><code><a href="../reference/string_boundary_linter.html">string_boundary_linter()</a></code></li>
+<li><code><a href="../reference/strings_as_factors_linter.html">strings_as_factors_linter()</a></code></li>
+<li>
+<code><a href="../reference/unnecessary_concatenation_linter.html">unnecessary_concatenation_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li>
+<code><a href="../reference/unnecessary_lambda_linter.html">unnecessary_lambda_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li>
+<code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li><code><a href="../reference/unnecessary_placeholder_linter.html">unnecessary_placeholder_linter()</a></code></li>
+<li>
+<code><a href="../reference/unreachable_code_linter.html">unreachable_code_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2827" class="external-link">#2827</a></li>
+<li>
+<code><a href="../reference/vector_logic_linter.html">vector_logic_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2826" class="external-link">#2826</a></li>
+</ul></li>
+</ul></div>
+</div>
+<div class="section level3">
 <h3 id="notes-development-version">Notes<a class="anchor" aria-label="anchor" href="#notes-development-version"></a></h3>
 <ul><li>{lintr} now requires R 4.1.0</li>
 </ul></div>

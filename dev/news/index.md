@@ -32,6 +32,66 @@
   warning ([\#2909](https://github.com/r-lib/lintr/issues/2909),
   [@MichaelChirico](https://github.com/MichaelChirico)).
 
+### New and improved features
+
+#### Linter improvements
+
+- General handling of logic around where comments can appear in code has
+  been improved ([\#2822](https://github.com/r-lib/lintr/issues/2822),
+  [@MichaelChirico](https://github.com/MichaelChirico)). In many cases,
+  this is a tiny robustness fix for weird edge cases unlikely to be
+  found in practice, but in others, this improves practical linter
+  precision (reduced false positives and/or false negatives). The
+  affected linters (with annotations for changes noteworthy enough to
+  have gotten a dedicated bug) are:
+  - [`brace_linter()`](https://lintr.r-lib.org/dev/reference/brace_linter.md)
+  - [`coalesce_linter()`](https://lintr.r-lib.org/dev/reference/coalesce_linter.md)
+  - [`comparison_negation_linter()`](https://lintr.r-lib.org/dev/reference/comparison_negation_linter.md)
+    [\#2826](https://github.com/r-lib/lintr/issues/2826)
+  - [`conjunct_test_linter()`](https://lintr.r-lib.org/dev/reference/conjunct_test_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`empty_assignment_linter()`](https://lintr.r-lib.org/dev/reference/empty_assignment_linter.md)
+  - [`expect_comparison_linter()`](https://lintr.r-lib.org/dev/reference/expect_comparison_linter.md)
+  - [`fixed_regex_linter()`](https://lintr.r-lib.org/dev/reference/fixed_regex_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`if_switch_linter()`](https://lintr.r-lib.org/dev/reference/if_switch_linter.md)
+  - [`ifelse_censor_linter()`](https://lintr.r-lib.org/dev/reference/ifelse_censor_linter.md)
+    [\#2826](https://github.com/r-lib/lintr/issues/2826)
+  - [`implicit_assignment_linter()`](https://lintr.r-lib.org/dev/reference/implicit_assignment_linter.md)
+  - [`length_test_linter()`](https://lintr.r-lib.org/dev/reference/length_test_linter.md)
+  - [`literal_coercion_linter()`](https://lintr.r-lib.org/dev/reference/literal_coercion_linter.md)
+    [\#2824](https://github.com/r-lib/lintr/issues/2824)
+  - [`matrix_apply_linter()`](https://lintr.r-lib.org/dev/reference/matrix_apply_linter.md)
+    [\#2825](https://github.com/r-lib/lintr/issues/2825)
+  - [`nzchar_linter()`](https://lintr.r-lib.org/dev/reference/nzchar_linter.md)
+    [\#2826](https://github.com/r-lib/lintr/issues/2826)
+  - [`object_length_linter()`](https://lintr.r-lib.org/dev/reference/object_length_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`object_name_linter()`](https://lintr.r-lib.org/dev/reference/object_name_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`object_usage_linter()`](https://lintr.r-lib.org/dev/reference/object_usage_linter.md)
+  - [`outer_negation_linter()`](https://lintr.r-lib.org/dev/reference/outer_negation_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`redundant_equals_linter()`](https://lintr.r-lib.org/dev/reference/redundant_equals_linter.md)
+  - [`regex_subset_linter()`](https://lintr.r-lib.org/dev/reference/regex_subset_linter.md)
+  - [`seq_linter()`](https://lintr.r-lib.org/dev/reference/seq_linter.md)
+  - [`sort_linter()`](https://lintr.r-lib.org/dev/reference/sort_linter.md)
+  - [`sprintf_linter()`](https://lintr.r-lib.org/dev/reference/sprintf_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`string_boundary_linter()`](https://lintr.r-lib.org/dev/reference/string_boundary_linter.md)
+  - [`strings_as_factors_linter()`](https://lintr.r-lib.org/dev/reference/strings_as_factors_linter.md)
+  - [`unnecessary_concatenation_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_concatenation_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`unnecessary_lambda_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_lambda_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`unnecessary_nesting_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_nesting_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`unnecessary_placeholder_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_placeholder_linter.md)
+  - [`unreachable_code_linter()`](https://lintr.r-lib.org/dev/reference/unreachable_code_linter.md)
+    [\#2827](https://github.com/r-lib/lintr/issues/2827)
+  - [`vector_logic_linter()`](https://lintr.r-lib.org/dev/reference/vector_logic_linter.md)
+    [\#2826](https://github.com/r-lib/lintr/issues/2826)
+
 ### Notes
 
 - {lintr} now requires R 4.1.0
