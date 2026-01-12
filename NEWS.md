@@ -9,6 +9,7 @@
 ## Bug fixes
 
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
+* `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
 
 ## New and improved features
 
@@ -47,6 +48,10 @@
    + `unreachable_code_linter()` #2827
    + `vector_logic_linter()` #2826
 
+### Lint accuracy fixes: removing false positives
+
+* `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
+
 ## Notes
 
 * {lintr} now requires R 4.1.0
@@ -70,9 +75,6 @@
 
 ## Bug fixes
 
-* `Lint()`, and thus all linters, ensures that the returned object's `message` attribute is consistently a simple character string (and not, for example, an object of class `"glue"`; #2740, @MichaelChirico).
-* Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico).
-* `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
 * Files with encoding inferred from settings read more robustly under `lint(parse_settings = TRUE)` (#2803, @MichaelChirico). Thanks also to @bastistician for detecting a regression caused by the initial change for users of Emacs (#2847).
 * `assignment_linter()` no longer errors if `"%<>%"` is an allowed operator (#2850, @AshesITR).
 * `expect_lint()` conforms to {testthat} v3.3.0+ rules for custom expectations, namely that they produce either exactly one success or exactly one failure (#2937, @hadley).
@@ -105,45 +107,6 @@
 * `object_name_linter()` and `object_length_linter()` apply to objects assigned with `assign()` or generics created with `setGeneric()` (#1665, @MichaelChirico).
 * `object_usage_linter()` gains argument `interpret_extensions` to govern which false positive-prone common syntaxes should be checked for used objects (#1472, @MichaelChirico). Currently `"glue"` (renamed from earlier argument `interpret_glue`) and `"rlang"` are supported. The latter newly covers usage of the `.env` pronoun like `.env$key`, where `key` was previously missed as being a used variable.
 * `boolean_arithmetic_linter()` finds many more cases like `sum(x | y) == 0` where the total of a known-logical vector is compared to 0 (#1580, @MichaelChirico).
-* New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
-* General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
-   + `brace_linter()`
-   + `coalesce_linter()`
-   + `comparison_negation_linter()` #2826
-   + `conjunct_test_linter()` #2827
-   + `empty_assignment_linter()`
-   + `fixed_regex_linter()` #2827
-   + `if_switch_linter()`
-   + `ifelse_censor_linter()` #2826
-   + `implicit_assignment_linter()`
-   + `length_test_linter()`
-   + `literal_coercion_linter()` #2824
-   + `matrix_apply_linter()` #2825
-   + `nzchar_linter()` #2826
-   + `object_length_linter()` #2827
-   + `object_name_linter()` #2827
-   + `object_usage_linter()`
-   + `outer_negation_linter()` #2827
-   + `redundant_equals_linter()`
-   + `regex_subset_linter()`
-   + `seq_linter()`
-   + `sort_linter()`
-   + `sprintf_linter()` #2827
-   + `string_boundary_linter()`
-   + `strings_as_factors_linter()`
-   + `unnecessary_concatenation_linter()` #2827
-   + `unnecessary_lambda_linter()` #2827
-   + `unnecessary_nesting_linter()` #2827
-   + `unnecessary_placeholder_linter()`
-   + `unreachable_code_linter()` #2827
-   + `vector_logic_linter()` #2826
-* Assignment with `=` and `<-` are treated as equivalent in more places (#2829, @MichaelChirico). Affected linters are:
-   + `object_overwrite_linter()`
-   + `package_hooks_linter()`
-
-### New linters
-
-* `coalesce_linter()` encourages the use of the infix operator `x %||% y`, which is equivalent to `if (is.null(x)) y else x` (#2246, @MichaelChirico). While this has long been used in many tidyverse packages (it was added to {ggplot2} in 2008), it became part of every R installation from R 4.4.0.
 * `any_duplicated_linter()` is extended to recognize some usages from {dplyr} and {data.table} that could be replaced by `anyDuplicated()`, e.g. `n_distinct(col) == n()` or `uniqueN(col) == .N` (#2482, @MichaelChirico).
 * `fixed_regex_linter()` recognizes usage of the new (R 4.5.0) `grepv()` wrapper of `grep()`; `regex_subset_linter()` also recommends `grepv()` alternatives (#2855, @MichaelChirico).
 * `object_usage_linter()` lints missing packages that may cause false positives (#2872, @AshesITR)
@@ -157,9 +120,6 @@
 
 * `unnecessary_nesting_linter()`:
    + Treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
-   + Treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
-
-* `unnecessary_nesting_linter()` treats function bodies under the shorthand lambda (`\()`) the same as normal function bodies (#2748, @MichaelChirico).
    + Treats `=` assignment the same as `<-` when deciding to combine consecutive `if()` clauses (#2245, @MichaelChirico).
 * `string_boundary_linter()` omits lints of patterns like `\\^` which have an anchor but are not regular expressions (#2636, @MichaelChirico).
 * `implicit_integer_linter(allow_colon = TRUE)` is OK with negative literals, e.g. `-1:1` or `1:-1` (#2673, @MichaelChirico).
@@ -180,7 +140,6 @@
   + `library_call_linter()`
   + `terminal_close_linter()`
   + `unnecessary_lambda_linter()`
-* More consistency on handling `@` extractions (#2820, @MichaelChirico).
 * More consistency on handling `@` extractions to match how similar `$` extractions would be linted (#2820, @MichaelChirico).
   + `function_left_parentheses_linter()`
   + `indentation_linter()`

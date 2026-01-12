@@ -92,12 +92,13 @@ test_that("commented_code_linter can detect operators in comments and lint corre
     expect_no_lint(paste("# something like i", op, "1", collapse = ""), linter)
     expect_lint(paste("# i", op, "1", collapse = ""), lint_msg, linter)
   }
+})
 
 test_that("commented_code_linter can detect operators in comments and lint correctly", {
   expect_lint(
     "# 1:3 |> sum()",
     rex::rex("Remove commented code."),
-    linter
+    commented_code_linter()
   )
 })
 

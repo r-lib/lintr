@@ -114,7 +114,7 @@ apply_fuzzers <- function(f, fuzzers) {
     # check if our attempted edit introduced some error; skip applying this fuzzer only if so
     pd <- error_or_parse_data(f)
     if (inherits(pd, "error")) {
-      writeLines(unedited, f)
+      writeLines(lines, f)
       next
     }
     lines <- readLines(f)
