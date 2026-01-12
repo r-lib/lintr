@@ -200,6 +200,7 @@ unnecessary_nesting_linter <- function(
   #          * suppressWarnings({ expr })
   #          * DataTable[, { expr }]
   #          * DataTable[, col := { expr }] <- requires carve-out for `:=`
+  # 'count(*) - ...' used to be just 'count(expr)', but that misses '=' assigments (exprlist).
   unnecessary_brace_xpath <- glue("
   //OP-LEFT-BRACE
     /parent::expr[
