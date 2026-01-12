@@ -60,7 +60,8 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   wrong_number_fmt <- "got %d lints instead of %d%s"
   if (is.null(checks)) {
     if (n_lints != 0L) {
-      return(testthat::fail(sprintf(wrong_number_fmt, n_lints, 0L, lint_str)))
+      fail_msg <- sprintf(wrong_number_fmt, n_lints, 0L, lint_str)
+      return(testthat::fail(fail_msg))
     }
     return(testthat::succeed())
   }
@@ -71,7 +72,8 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   checks[] <- lapply(checks, fix_names, "message")
 
   if (n_lints != length(checks)) {
-    return(testthat::fail(sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)))
+    fail_msg <- sprintf(wrong_number_fmt, n_lints, length(checks), lint_str)
+    return(testthat::fail(fail_msg))
   }
 
   if (ignore_order) {
