@@ -278,6 +278,8 @@ test_that("gitlab_output() writes expected report", {
       severity = "info"
     ))
   )
+
+  expect_error(gitlab_output(NULL), "must be a <lints> object", fixed = TRUE)
 })
 
 test_that("explicit parse_settings=TRUE works for inline data", {
