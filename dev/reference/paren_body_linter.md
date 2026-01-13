@@ -30,9 +30,9 @@ lint(
   text = "function(x)x + 1",
   linters = paren_body_linter()
 )
-#> <text>:1:12: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+#> <text>:1:11: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
 #> function(x)x + 1
-#>            ^~~~~
+#>           ^
 
 # okay
 lint(
