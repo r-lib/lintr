@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("indentation linter flags unindented expressions", {
   linter <- indentation_linter(indent = 2L)
 
@@ -910,3 +911,4 @@ test_that("for loop gets correct linting", {
     linter
   )
 })
+# nofuzz end
