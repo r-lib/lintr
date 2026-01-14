@@ -92,6 +92,15 @@
   - [`vector_logic_linter()`](https://lintr.r-lib.org/dev/reference/vector_logic_linter.md)
     [\#2826](https://github.com/r-lib/lintr/issues/2826)
 
+### New and improved features
+
+#### Linter improvements
+
+- [`sort_linter()`](https://lintr.r-lib.org/dev/reference/sort_linter.md)
+  recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))`
+  ([\#2921](https://github.com/r-lib/lintr/issues/2921),
+  [@Bisaloo](https://github.com/Bisaloo)).
+
 ### Notes
 
 - {lintr} now requires R 4.1.0
