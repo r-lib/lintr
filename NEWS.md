@@ -3,6 +3,49 @@
 ## Deprecations & breaking changes
 
 * Six linters fully deprecated in the previous release are now removed: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`.
+* Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now removed. Use `operator=` instead.
+* Argument `interpret_glue` to `object_usage_linter()`, marked deprecated in the previous release, is now defunct. Use `interpret_extensions=` instead; see the 3.3.0-1 release notes and `?object_usage_linter` for more.
+
+## Bug fixes
+
+* Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
+
+## New and improved features
+
+### Linter improvements
+
+* General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
+   + `brace_linter()`
+   + `coalesce_linter()`
+   + `comparison_negation_linter()` #2826
+   + `conjunct_test_linter()` #2827
+   + `empty_assignment_linter()`
+   + `expect_comparison_linter()`
+   + `fixed_regex_linter()` #2827
+   + `if_switch_linter()`
+   + `ifelse_censor_linter()` #2826
+   + `implicit_assignment_linter()`
+   + `length_test_linter()`
+   + `literal_coercion_linter()` #2824
+   + `matrix_apply_linter()` #2825
+   + `nzchar_linter()` #2826
+   + `object_length_linter()` #2827
+   + `object_name_linter()` #2827
+   + `object_usage_linter()`
+   + `outer_negation_linter()` #2827
+   + `redundant_equals_linter()`
+   + `regex_subset_linter()`
+   + `seq_linter()`
+   + `sort_linter()`
+   + `sprintf_linter()` #2827
+   + `string_boundary_linter()`
+   + `strings_as_factors_linter()`
+   + `unnecessary_concatenation_linter()` #2827
+   + `unnecessary_lambda_linter()` #2827
+   + `unnecessary_nesting_linter()` #2827
+   + `unnecessary_placeholder_linter()`
+   + `unreachable_code_linter()` #2827
+   + `vector_logic_linter()` #2826
 
 ## New and improved features
 

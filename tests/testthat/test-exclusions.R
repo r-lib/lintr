@@ -71,7 +71,7 @@ test_that("it gives the expected error message when there is mismatch between mu
   )
 })
 
-test_that("partial matching works for exclusions but warns if no linter found", {
+test_that("partial matching works for exclusions but warns if no linter found", { # nofuzz
   withr::local_dir(test_path("dummy_projects", "project"))
 
   expect_warning(

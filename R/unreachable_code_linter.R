@@ -80,32 +80,50 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     (//REPEAT | //ELSE | //FOR)/following-sibling::expr[1]
     | (//IF | //WHILE)/following-sibling::expr[2]
   "
+
+  # normal case: expression after terminal call is on the next line
+  unreachable_expr_cond_ws <- "
+  following-sibling::*[
+    not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON or self::ELSE or preceding-sibling::ELSE)
+    and (not(self::COMMENT) or @line2 > preceding-sibling::*[not(self::COMMENT)][1]/@line2)
+  ][1]"
+  # robustness case: expression after terminal call is on the same line (after a semicolon),
+  #   wherefore the condition is a bit different due to <exprlist> nodes
+  unreachable_expr_cond_sc <- "
+  parent::exprlist[OP-SEMICOLON]
+    /following-sibling::*[
+      not(self::OP-RIGHT-BRACE)
+      and (not(self::COMMENT) or @line1 > preceding-sibling::exprlist/expr/@line2)
+    ][1]
+  "
+
+  terminal_fun_expr <-
+    "(//FUNCTION | //OP-LAMBDA)/following-sibling::expr[OP-LEFT-BRACE][last()]"
+
   # NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051
-  xpath_return_stop <- glue("
-  (
-    {expr_after_control}
-    | (//FUNCTION | //OP-LAMBDA)[following-sibling::expr[1]/*[1][self::OP-LEFT-BRACE]]/following-sibling::expr[1]
-  )
-    /expr[expr[1][
-      not(OP-DOLLAR or OP-AT)
-      and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
-    ]]
-    /following-sibling::*[
-      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
-      and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
-    ][1]
-  ")
-  xpath_next_break <- glue("
-  ({expr_after_control})
-    /expr[NEXT or BREAK]
-    /following-sibling::*[
-      not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON)
-      and (not(self::COMMENT) or @line2 > preceding-sibling::*[1]/@line2)
-    ][1]
+  terminal_call_cond <- "expr[1][
+    not(OP-DOLLAR or OP-AT)
+    and SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
+  ]"
+
+  xpath_after_terminal_node <- glue("
+    ({expr_after_control} | {terminal_fun_expr})//expr[{terminal_call_cond}]/{unreachable_expr_cond_ws}
+    | ({expr_after_control} | {terminal_fun_expr})//expr[{terminal_call_cond}]/{unreachable_expr_cond_sc}
+    | ({expr_after_control})//expr[NEXT or BREAK]/{unreachable_expr_cond_ws}
+    | ({expr_after_control})//expr[NEXT or BREAK]/{unreachable_expr_cond_sc}
   ")
 
+  xpath_terminal_node <- "
+    (preceding-sibling::exprlist//expr | preceding-sibling::expr)
+      /*[
+        self::expr/SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
+        or self::NEXT
+        or self::BREAK
+      ]
+  "
+
   xpath_if_while <- "
-    (//WHILE | //IF)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]
+    (//IF | //WHILE)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]
       /parent::expr
   "
 
@@ -128,12 +146,6 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     expr[vapply(expr, xml2::xml_length, integer(1L)) != 0L]
   }
 
-  drop_valid_comments <- function(expr, valid_comment_re) {
-    is_valid_comment <- xml2::xml_name(expr) == "COMMENT" &
-      re_matches_logical(xml_text(expr), valid_comment_re)
-    expr[!is_valid_comment]
-  }
-
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
@@ -141,21 +153,20 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     # also build with '|', not rex::rex(or(.)), the latter which will double-escape the regex.
     allow_comment_regex <- paste(union(allow_comment_regex, settings$exclude_end), collapse = "|")
 
-    expr_return_stop <- xml_find_all(xml, xpath_return_stop)
+    expr_after_terminal_node <- xml_find_all(xml, xpath_after_terminal_node)
 
-    lints_return_stop <- xml_nodes_to_lints(
-      drop_valid_comments(expr_return_stop, allow_comment_regex),
+    is_valid_comment <- xml2::xml_name(expr_after_terminal_node) == "COMMENT" &
+      re_matches_logical(xml_text(expr_after_terminal_node), allow_comment_regex)
+
+    expr_after_terminal_node <- expr_after_terminal_node[!is_valid_comment]
+    terminal_node <- xml_text(xml_find_first(expr_after_terminal_node, xpath_terminal_node))
+    terminal_node <-
+      ifelse(terminal_node %in% c("return", "stop"), paste0(terminal_node, "()"), paste0("`", terminal_node, "`"))
+
+    lints_after_terminal_node <- xml_nodes_to_lints(
+      expr_after_terminal_node,
       source_expression = source_expression,
-      lint_message = "Remove code and comments coming after return() or stop().",
-      type = "warning"
-    )
-
-    expr_next_break <- xml_find_all(xml, xpath_next_break)
-
-    lints_next_break <- xml_nodes_to_lints(
-      drop_valid_comments(expr_next_break, allow_comment_regex),
-      source_expression = source_expression,
-      lint_message = "Remove code and comments coming after `next` or `break`.",
+      lint_message = sprintf("Remove code and comments coming after %s.", terminal_node),
       type = "warning"
     )
 
@@ -177,6 +188,6 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
       type = "warning"
     )
 
-    c(lints_return_stop, lints_next_break, lints_if_while, lints_else)
+    c(lints_after_terminal_node, lints_if_while, lints_else)
   })
 }

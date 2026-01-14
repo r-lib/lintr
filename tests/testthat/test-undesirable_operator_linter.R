@@ -67,12 +67,12 @@ test_that("invalid inputs fail correctly", {
   )
   expect_error(
     undesirable_operator_linter(op = NULL),
-    "`op` should be a non-empty character vector",
+    "`op` must be a non-empty character vector",
     fixed = TRUE
   )
   expect_error(
     undesirable_operator_linter(op = character(0L)),
-    "`op` should be a non-empty character vector",
+    "`op` must be a non-empty character vector",
     fixed = TRUE
   )
 

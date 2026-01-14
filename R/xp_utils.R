@@ -77,10 +77,12 @@ xp_or <- function(...) paren_wrap(..., sep = "or")
 #'
 #' @export
 xp_call_name <- function(expr, depth = 1L, condition = NULL) {
-  stopifnot(
-    is.numeric(depth), depth >= 0L,
-    is.null(condition) || is.character(condition)
-  )
+  if (!is.numeric(depth) || depth < 0L) {
+    cli_abort("{.arg depth} must be a non-negative number, not {.obj_type_friendly {depth}}.")
+  }
+  if (!is.null(condition) && !is.character(condition)) {
+    cli_abort("{.arg condition} must be a character vector or NULL, not {.obj_type_friendly {condition}}.")
+  }
   is_valid_expr <- is_node(expr) || is_nodeset(expr)
   if (!is_valid_expr) {
     cli_abort(c(

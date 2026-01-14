@@ -146,7 +146,7 @@ test_that("lint() results from file or text should be consistent", {
   expect_identical(lint_from_file, lint_from_text)
 })
 
-test_that("exclusions work with custom linter names", {
+test_that("exclusions work with custom linter names", { # nofuzz
   expect_no_lint(
     "a = 2 # nolint: bla.",
     linters = list(bla = assignment_linter()),
@@ -278,6 +278,8 @@ test_that("gitlab_output() writes expected report", {
       severity = "info"
     ))
   )
+
+  expect_error(gitlab_output(NULL), "must be a <lints> object", fixed = TRUE)
 })
 
 test_that("explicit parse_settings=TRUE works for inline data", {
