@@ -47,6 +47,12 @@
    + `unreachable_code_linter()` #2827
    + `vector_logic_linter()` #2826
 
+## New and improved features
+
+### Linter improvements
+
+* `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
+
 ## Notes
 
 * {lintr} now requires R 4.1.0
