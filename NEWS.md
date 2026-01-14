@@ -9,6 +9,7 @@
 ## Bug fixes
 
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
+* Scalar logic (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` is no longer incorrectly flagged (#2935, @emmanuel-ferdman).
 
 ## New and improved features
 

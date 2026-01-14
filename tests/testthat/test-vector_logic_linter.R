@@ -151,6 +151,16 @@ test_that("subsetting logic handles nesting", {
   expect_no_lint("subset(x, y < x[y > 0, drop = AA && BB, y])", linter)
 })
 
+test_that("scalar logic in anonymous functions within filter/subset is allowed", {
+  linter <- vector_logic_linter()
+
+  expect_no_lint("filter(x, vapply(y, function(i) is.numeric(i) && mean(i) > 1, NA))", linter)
+  expect_no_lint("subset(x, sapply(y, function(i) is.null(i) || length(i) == 0))", linter)
+  expect_no_lint("filter(x, vapply(y, \\(i) i && z, NA))", linter)
+  expect_no_lint("filter(x, Map(function(a, b) a && b, x, y))", linter)
+  expect_no_lint("filter(x, vapply(y, function(i) any(sapply(i, function(j) j && z)), NA))", linter)
+})
+
 test_that("filter() handling is conservative about stats::filter()", {
   linter <- vector_logic_linter()
   and_msg <- rex::rex("Use `&` in subsetting expressions")
