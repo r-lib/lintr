@@ -48,6 +48,12 @@
    + `unreachable_code_linter()` #2827
    + `vector_logic_linter()` #2826
 
+## New and improved features
+
+### Linter improvements
+
+* `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
+
 ### Lint accuracy fixes: removing false positives
 
 * `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
