@@ -161,6 +161,34 @@ test_that("scalar logic in anonymous functions within filter/subset is allowed",
   expect_no_lint("filter(x, vapply(y, function(i) any(sapply(i, function(j) j && z)), NA))", linter)
 })
 
+test_that("vector logic in if conditions inside anonymous functions is still linted", {
+  linter <- vector_logic_linter()
+  or_msg <- rex::rex("Use `||` in conditional expressions.")
+  and_msg <- rex::rex("Use `&&` in conditional expressions.")
+
+  expect_lint(
+    "subset(x, sapply(col, function(x) { if (A | B) do_ab(x) else do_other(x) }))",
+    or_msg,
+    linter
+  )
+  expect_lint(
+    "filter(x, vapply(y, function(i) { if (a & b) 1 else 0 }, 1))",
+    and_msg,
+    linter
+  )
+  expect_lint(
+    "subset(x, sapply(col, \\(x) { if (A | B) x }))",
+    or_msg,
+    linter
+  )
+  expect_lint(
+    "subset(x, sapply(col, function(x) { while (A | B) x }))",
+    or_msg,
+    linter
+  )
+  expect_no_lint("subset(x, sapply(col, function(x) { if (any(a | b)) x }))", linter)
+})
+
 test_that("filter() handling is conservative about stats::filter()", {
   linter <- vector_logic_linter()
   and_msg <- rex::rex("Use `&` in subsetting expressions")
