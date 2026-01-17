@@ -21,7 +21,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 repeat_linter <- function() {
-  xpath <- "//WHILE[following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']]"
+  xpath <- "//WHILE[following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']]/parent::expr"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
@@ -31,9 +31,7 @@ repeat_linter <- function() {
     xml_nodes_to_lints(
       lints,
       source_expression = source_expression,
-      lint_message = "Use 'repeat' instead of 'while (TRUE)' for infinite loops.",
-      range_start_xpath = "number(./@col1)",
-      range_end_xpath = "number(./following-sibling::*[3]/@col2)"
+      lint_message = "Use 'repeat' instead of 'while (TRUE)' for infinite loops."
     )
   })
 }

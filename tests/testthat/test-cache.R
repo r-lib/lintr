@@ -42,30 +42,30 @@ test_that("clear_cache deletes the directory if no file is given", {
   expect_identical(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
 })
 
-test_that("lint with cache uses the provided relative cache directory", {
+test_that("lint with cache uses the provided relative cache directory", { # nofuzz
   path <- withr::local_tempdir("my_cache_dir")
   linter <- assignment_linter()
 
   # create the cache
-  expect_lint("a <- 1", NULL, linter, cache = path)
+  expect_no_lint("a <- 1", linter, cache = path)
   expect_true(dir.exists(path))
   expect_length(list.files(file.path(path)), 1L)
 
   # read the cache
-  expect_lint("a <- 1", NULL, linter, cache = path)
+  expect_no_lint("a <- 1", linter, cache = path)
   expect_true(dir.exists(path))
 })
 
-test_that("it works outside of a package", {
+test_that("it works outside of a package", { # nofuzz
   linter <- assignment_linter()
 
   local_mocked_bindings(find_package = \(...) NULL)
   path <- withr::local_tempfile(pattern = "my_cache_dir_")
   expect_false(dir.exists(path))
-  expect_lint("a <- 1", NULL, linter, cache = path)
+  expect_no_lint("a <- 1", linter, cache = path)
   expect_true(dir.exists(path))
   expect_length(list.files(path), 1L)
-  expect_lint("a <- 1", NULL, linter, cache = path)
+  expect_no_lint("a <- 1", linter, cache = path)
   expect_true(dir.exists(path))
 })
 

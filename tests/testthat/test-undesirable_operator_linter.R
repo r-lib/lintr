@@ -19,7 +19,7 @@ test_that("linter returns correct linting", {
   expect_no_lint("`%%`(10, 2)", linter)
 })
 
-test_that("undesirable_operator_linter handles '=' consistently", {
+test_that("undesirable_operator_linter handles '=' consistently", { # nofuzz
   linter <- undesirable_operator_linter(op = c("=" = "As an alternative, use '<-'"))
 
   expect_lint("a = 2L", rex::rex("Avoid undesirable operator `=`."), linter)

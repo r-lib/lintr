@@ -2,6 +2,7 @@
 # thus less than ideal to test expect_lint(), which can process multiple lints. If you want to test
 # for failure, always put the lint check or lint field that must fail first.
 
+# nofuzz start
 linter <- assignment_linter()
 lint_msg <- "Use one of <-, <<- for assignment, not ="
 
@@ -85,7 +86,7 @@ test_that("execution without testthat gives the right errors", {
   expect_error(expect_lint_free(), lint_msg("expect_lint_free"))
 })
 
-test_that("lint order can be ignored", { # nofuzz
+test_that("lint order can be ignored", {
   linters <- list(assignment_linter(), infix_spaces_linter())
   expected <- lapply(linters, \(l) list(linter = attr(l, "name")))
   expect_success(expect_lint("a=1", expected, linters, ignore_order = TRUE))
@@ -108,3 +109,4 @@ test_that("lint order can be ignored", { # nofuzz
   )
   expect_success(expect_lint(lines, expected[sample.int(4L)], linters, ignore_order = TRUE))
 })
+# nofuzz end
