@@ -68,7 +68,7 @@ test_that("returns the correct linting", {
     linter
   )
 
-  expect_lint(
+  expect_lint( # nofuzz: comment_injection
     trim_some("
       fun <- function() {
         a2 <- 1
