@@ -88,7 +88,7 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
   if (length(one_expr_idx) == 0L && length(range_start_idx) == 0L) next
 
   test_original <- test_lines
-  pd <- getParseData(parse(test_file))
+  pd <- getParseData(parse(test_file, keep.source = TRUE))
 
   for (start_line in rev(one_expr_idx)) {
     end_line <- start_line
@@ -117,7 +117,7 @@ for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = 
 
   if (length(one_expr_idx)) {
     writeLines(test_lines, test_file)
-    pd <- getParseData(parse(test_file))
+    pd <- getParseData(parse(test_file, keep.source = TRUE))
     range_start_idx <- grep("^\\s*# fuzzer disable:", test_lines)
   }
 
