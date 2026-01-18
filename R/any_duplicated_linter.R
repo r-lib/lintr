@@ -132,10 +132,10 @@ any_duplicated_linter <- function() {
   uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
 
   Linter(linter_level = "expression", function(source_expression) {
-    any_calls <- source_expression$xml_find_function_calls("any")
-    unique_calls <- source_expression$xml_find_function_calls("unique")
+    xml <- source_expression$xml_parsed_content
+    xml_calls <- source_expression$xml_find_function_calls("any")
 
-    any_duplicated_expr <- xml_find_all(any_calls, any_duplicated_xpath)
+    any_duplicated_expr <- xml_find_all(xml_calls, any_duplicated_xpath)
     any_duplicated_lints <- xml_nodes_to_lints(
       any_duplicated_expr,
       source_expression = source_expression,
