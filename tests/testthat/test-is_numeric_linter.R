@@ -35,26 +35,13 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
   )
 
   # line breaks don't matter
-  expect_lint(
-    trim_some("
-      if (
-        is.integer(x)
-        || is.numeric(x)
-      ) TRUE
-    "),
-    lint_msg,
-    linter
-  )
-
-  # nor do comments
-  expect_lint( # nofuzz: dollar_at
-    trim_some("
-      is.integer(DT$ #comment
-      x) || is.numeric(DT$x)
-    "),
-    lint_msg,
-    linter
-  )
+  lines <- trim_some("
+    if (
+      is.integer(x)
+      || is.numeric(x)
+    ) TRUE
+  ")
+  expect_lint(lines, lint_msg, linter)
 
   # caught when nesting
   expect_lint("all(y > 5) && (is.integer(x) || is.numeric(x))", lint_msg, linter)

@@ -35,7 +35,6 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   expect_no_lint("length(unique(l1$DF$x)) == nrow(l2$DF)", linter)
 
   # lintable usage
-  #debug(linter)
   expect_lint("length(unique(x)) == length(x)", lint_msg_x, linter)
   # argument order doesn't matter
   expect_lint("length(x) == length(unique(x))", lint_msg_x, linter)

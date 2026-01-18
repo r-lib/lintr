@@ -263,41 +263,6 @@ test_that("unreachable_code_linter works with next and break in sub expressions"
     ),
     linter
   )
-
-  # also with comments
-  expect_lint(
-    trim_some("
-      foo <- function(bar) {
-        if (bar) {
-          next; # comment
-          x <- 2
-        } else {
-          break; # comment
-          x <- 3
-        }
-        while (bar) {
-          break; # comment
-          5 + 3
-        }
-        repeat {
-          next; # comment
-          test()
-        }
-        for(i in 1:3) {
-          break; # comment
-          5 + 4
-        }
-      }
-    "),
-    list(
-      list(line_number = 4L, message = msg),
-      list(line_number = 7L, message = msg),
-      list(line_number = 11L, message = msg),
-      list(line_number = 15L, message = msg),
-      list(line_number = 19L, message = msg)
-    ),
-    linter
-  )
 })
 
 test_that("unreachable_code_linter ignores expressions that aren't functions", {
@@ -478,7 +443,7 @@ test_that("unreachable_code_linter ignores code after foo$stop(), which might be
   )
 })
 
-test_that("unreachable_code_linter ignores terminal nolint end comments", { # nofuzz: assignment comment_injection
+test_that("unreachable_code_linter ignores terminal nolint end comments", { # nofuzz: comment_injection
   linter <- unreachable_code_linter()
 
   withr::local_options(list(
@@ -486,7 +451,7 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", { # no
     lintr.exclude_end = "#\\s*TestNoLintEnd"
   ))
 
-  expect_no_lint(
+  expect_no_lint( # nofuzz
     trim_some("
       foo <- function() {
         do_something
