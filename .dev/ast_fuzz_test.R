@@ -69,14 +69,21 @@ suppressMessages(pkgload::load_all())
 can_parse <- \(lines) !inherits(tryCatch(parse(text = lines), error = identity), "error")
 get_str <- \(x) tail(unlist(strsplit(x, ": ", fixed = TRUE)), 1L)
 
-
 # beware lazy eval: originally tried adding a withr::defer() in each iteration, but
 #   this effectively only runs the last 'defer' expression as the names are only
 #   evaluated at run-time. So instead keep track of all edits in this object.
+# these have to be enabled/disabled at runtime as it's not possible to disentagle which
+#   fuzzer caused the error ex-post (and it might be the interaction of >1 at issue).
+#   an earlier approach was like the current 'nofuzz' -- just comment out the troublesome
+#   tests from being run at all. But that led to a very quickly growing set of tests being
+#   skipped totally, which also hid some issues that are surfaced by the current approach.
+#   Another idea would be to just leave the enable/disable calls as code in the test suite,
+#   but I prefer the current approach of leaving them as comments: (1) it's more consistent
+#   with the 'nolint' exclusion system and (2) it doesn't distract the casual reader as much.
 test_restorations <- list()
 for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = TRUE)) {
   test_lines <- readLines(test_file)
-  one_expr_idx <- grep("# nofuzz", test_lines)
+  one_expr_idx <- grep("# nofuzz", test_lines, fixed = TRUE)
   range_start_idx <- grep("^\\s*# fuzzer disable:", test_lines)
   if (length(one_expr_idx) == 0L && length(range_start_idx) == 0L) next
 
@@ -147,8 +154,7 @@ all_classes <- unlist(lapply(
   reporter$get_results(),
   \(test) lapply(test$results, \(x) class(x)[1L])
 ))
-cat("Summary of test statuses:\n")
-print(table(all_classes))
+print(table(`Summary of test statuses:` = all_classes))
 
 # ignore any test that failed for expected reasons, e.g. some known lint metadata changes
 #   about line numbers or the contents of the line. this saves us having to pepper tons of

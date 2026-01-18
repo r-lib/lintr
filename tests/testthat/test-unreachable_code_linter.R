@@ -478,7 +478,7 @@ test_that("unreachable_code_linter ignores code after foo$stop(), which might be
   )
 })
 
-test_that("unreachable_code_linter ignores terminal nolint end comments", {
+test_that("unreachable_code_linter ignores terminal nolint end comments", { # nofuzz: assignment comment_injection
   linter <- unreachable_code_linter()
 
   withr::local_options(list(
@@ -486,7 +486,7 @@ test_that("unreachable_code_linter ignores terminal nolint end comments", {
     lintr.exclude_end = "#\\s*TestNoLintEnd"
   ))
 
-  expect_no_lint( # nofuzz: comment_injection
+  expect_no_lint(
     trim_some("
       foo <- function() {
         do_something

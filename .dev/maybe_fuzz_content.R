@@ -1,11 +1,4 @@
 maybe_fuzz_content <- function(file, lines) {
-  # some tests (esp. involving encoding) have to be skipped entirely
-  #   since the logic here is not able to copy over relevant configs/settings
-  active_fuzzers <- .fuzzers$active
-  if (length(active_fuzzers) == 0L) {
-    return(file)
-  }
-
   if (is.null(file)) {
     new_file <- tempfile()
     con <- file(new_file, encoding = "UTF-8")
@@ -16,7 +9,7 @@ maybe_fuzz_content <- function(file, lines) {
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
-  apply_fuzzers(new_file, fuzzers = active_fuzzers)
+  apply_fuzzers(new_file, fuzzers = .fuzzers$active)
 
   new_file
 }
@@ -107,7 +100,7 @@ apply_fuzzers <- function(f, fuzzers) {
     return(invisible())
   }
 
-  unedited <- lines <- readLines(f)
+  unedited <- lines <- readLines(f, warn = FALSE)
   for (fuzzer in fuzzers) {
     updated_lines <- fuzzer(pd, lines)
     if (is.null(updated_lines)) next # skip some I/O if we can
@@ -126,11 +119,11 @@ apply_fuzzers <- function(f, fuzzers) {
 
 .fuzzers <- new.env()
 .fuzzers$active <- list(
-  function_lambda = function_lambda_fuzzer,
-  pipe = pipe_fuzzer,
-  dollar_at = dollar_at_fuzzer,
+  assignment = assignment_fuzzer,
   comment_injection = comment_injection_fuzzer,
-  assignment = assignment_fuzzer
+  dollar_at = dollar_at_fuzzer,
+  function_lambda = function_lambda_fuzzer,
+  pipe = pipe_fuzzer
 )
 .fuzzers$inactive <- list()
 

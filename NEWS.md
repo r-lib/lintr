@@ -118,6 +118,7 @@
 * `boolean_arithmetic_linter()` finds many more cases like `sum(x | y) == 0` where the total of a known-logical vector is compared to 0 (#1580, @MichaelChirico).
 * New argument `include_s4_slots` for the `xml_find_function_calls()` entry in the `get_source_expressions()` to govern whether calls of the form `s4Obj@fun()` are included in the result (#2820, @MichaelChirico).
 * General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
+   + `any_duplicated_linter()`
    + `brace_linter()`
    + `coalesce_linter()`
    + `comparison_negation_linter()` #2826
@@ -127,6 +128,8 @@
    + `if_switch_linter()`
    + `ifelse_censor_linter()` #2826
    + `implicit_assignment_linter()`
+   + `is_numeric_linter()`
+   + `keyword_quote_linter()`
    + `length_test_linter()`
    + `literal_coercion_linter()` #2824
    + `matrix_apply_linter()` #2825
