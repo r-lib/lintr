@@ -34,7 +34,7 @@ test_that("single check", {
   expect_success(expect_lint("1:nrow(x)", "(nrow)", seq_linter()))
 })
 
-test_that("multiple checks", {
+test_that("multiple checks", { # nofuzz: comment_injection
   expect_success(
     expect_lint(file = "exclusions-test", checks = as.list(rep(lint_msg, 9L)), linters = linter, parse_settings = FALSE)
   )
@@ -85,9 +85,8 @@ test_that("execution without testthat gives the right errors", {
   expect_error(expect_no_lint(), lint_msg("expect_no_lint"))
   expect_error(expect_lint_free(), lint_msg("expect_lint_free"))
 })
-# fuzzer enable: assignment
 
-test_that("lint order can be ignored", { # nofuzz: assignment
+test_that("lint order can be ignored", {
   linters <- list(assignment_linter(), infix_spaces_linter())
   expected <- lapply(linters, \(l) list(linter = attr(l, "name")))
   expect_success(expect_lint("a=1", expected, linters, ignore_order = TRUE))
@@ -110,3 +109,4 @@ test_that("lint order can be ignored", { # nofuzz: assignment
   )
   expect_success(expect_lint(lines, expected[sample.int(4L)], linters, ignore_order = TRUE))
 })
+# fuzzer enable: assignment
