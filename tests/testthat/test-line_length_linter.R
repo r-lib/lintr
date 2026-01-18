@@ -101,7 +101,7 @@ test_that("string bodies can be ignored", {
   expect_no_lint(
     trim_some("
       1234567890
-      my_fun78('90
+      my_fun('90
       123456789012345
       123456789'
       )
