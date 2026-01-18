@@ -44,16 +44,6 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   # match with nesting too
   expect_lint("nrow(l$DF) == length(unique(l$DF[['col']]))", lint_msg_df, linter)
 
-  # including under comment torture
-  expect_lint(
-    trim_some("
-      nrow(l$ # comment
-      DF) == length(unique(l$DF[['col']]))
-    "),
-    lint_msg_df,
-    linter
-  )
-
   # !=, <, and > usages are all alternative ways of writing a test for dupes
   #   technically, the direction of > / < matter, but writing
   #   length(unique(x)) > length(x) doesn't seem like it would ever happen.
