@@ -19,8 +19,8 @@
 #'   - [lint()] (in case of `lint_dir()` and `lint_package()`; e.g. `linters` or `cache`)
 #' @param cache When logical, toggle caching of lint results. If passed a character string, store the cache in this
 #'   directory.
-#' @param parse_settings Logical, default `TRUE`. Whether to try and parse the [settings][read_settings]. Otherwise,
-#'   the [default_settings()] are used.
+#' @param parse_settings Logical. Whether to try and parse the [settings][read_settings]. Otherwise, the
+#'   [default_settings()] are used. `TRUE` by default when linting files, as opposed to `text=`.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #'   linting is being done ad hoc.
 #'
@@ -38,14 +38,13 @@
 #' unlink(f)
 #'
 #' @export
-lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = TRUE, text = NULL) {
+lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = !inline_data, text = NULL) {
   # TODO(#2502): Remove this workaround.
   dot_names <- if (getRversion() %in% c("4.1.1", "4.1.2")) names(list(...)) else ...names()
   check_dots(dot_names, c("exclude", "parse_exclusions"))
 
   needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
-  parse_settings <- !inline_data && isTRUE(parse_settings)
 
   if (parse_settings) {
     read_settings(filename)
@@ -77,29 +76,12 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     return(exclude(lints, lines = lines, linter_names = names(linters), ...))
   }
 
-  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
-  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+  lints <- lint_impl_(linters, lint_cache, filename, source_expressions)
 
-  lints <- list()
-  if (!is_tainted(source_expressions$lines)) {
-    for (expr in source_expressions$expressions) {
-      for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
-        # use withCallingHandlers for friendlier failures on unexpected linter errors
-        lints[[length(lints) + 1L]] <- withCallingHandlers(
-          get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
-          error = function(cond) {
-            cli_abort(
-              "Linter {.fn linter} failed in {.file {filename}}:",
-              parent = cond
-            )
-          }
-        )
-      }
-    }
-  }
-
-  lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
-  lints <- reorder_lints(flatten_lints(lints))
+  lints <- lints |>
+    maybe_append_condition_lints(source_expressions, lint_cache, filename) |>
+    flatten_lints() |>
+    reorder_lints()
   class(lints) <- c("lints", "list")
 
   cache_file(lint_cache, filename, linters, lints)
@@ -109,6 +91,33 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   # simplify filename if inline
   zap_temp_filename(res, needs_tempfile)
+}
+
+lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
+  if (is_tainted(source_expressions$lines)) {
+    return(list())
+  }
+
+  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
+  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+
+  lints <- list()
+  for (expr in source_expressions$expressions) {
+    for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
+      # use withCallingHandlers for friendlier failures on unexpected linter errors
+      lints[[length(lints) + 1L]] <- withCallingHandlers(
+        get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
+        error = function(cond) {
+          cli_abort(
+            "Linter {.fn linter} failed in {.file {filename}}:",
+            parent = cond
+          )
+        }
+      )
+    }
+  }
+
+  lints
 }
 
 #' @param path For the base directory of the project (for `lint_dir()`) or
@@ -225,7 +234,7 @@ lint_dir <- function(path = ".", ...,
 drop_excluded <- function(files, exclusions) {
   to_exclude <- vapply(
     files,
-    function(file) file %in% names(exclusions) && is_excluded_file(exclusions[[file]]),
+    \(file) file %in% names(exclusions) && is_excluded_file(exclusions[[file]]),
     logical(1L)
   )
   files[!to_exclude]
@@ -403,7 +412,11 @@ validate_lint_object <- function(message, line, line_number, column_number, rang
     cli_abort("{.arg message} must be a character string")
   }
   if (is.object(message)) {
-    cli_abort("{.arg message} must be a simple string, but has class {.cls {class(message)}}")
+    cli_warn(c(
+      "{.arg message} must be a simple string, but has class {.cls {class(message)}}",
+      i = "This will be an error in the next lintr release"
+    ))
+    message <- unclass(message)
   }
   if (length(line) != 1L || !is.character(line)) {
     cli_abort("{.arg line} must be a character string.")
@@ -601,7 +614,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       rule_index_exists <-
         which(vapply(
           sarif$runs[[1L]]$tool$driver$rules,
-          function(x) x$id == lint$linter,
+          \(x) x$id == lint$linter,
           logical(1L)
         ))
       if (length(rule_index_exists) == 0L || is.na(rule_index_exists[1L])) {
@@ -647,6 +660,75 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   }
 
   write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
+}
+
+#' GitLab Report for lint results
+#'
+#' Generate a report of the linting results using the
+#' [GitLab](https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format) format.
+#'
+#' @details
+#' lintr only supports three severity types ("style", "warning", and "error")
+#' while the GitLab format supports five ("info", "minor", "major", "critical",
+#' and "blocker"). The types "style", "warning", and "error" are mapped to
+#' the GitLab types "info", "major", and "blocker", respectively. The GitLab
+#' types "minor" and "critical" are ignored.
+#'
+#' @param lints The linting results
+#' @param filename The file name of the output report
+#' @export
+gitlab_output <- function(lints, filename = "lintr_results.json") {
+  if (!inherits(lints, "lints")) {
+    cli_abort("{.arg lints} must be a {.cls lints} object, not {.obj_type_friendly {lints}}.")
+  }
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    cli_abort("{.pkg jsonlite} is required to produce Gitlab reports. Please install to continue.") # nocov
+  }
+
+  # Format
+  # (copied from https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format)
+  # ==============================
+  # description          String   A human-readable description of the code quality violation.
+  # check_name           String   A unique name representing the check, or rule, associated with this violation.
+  # fingerprint          String   A unique fingerprint to identify this specific code quality violation, such as a hash
+  #                               of its contents.
+  # location.path        String   The file containing the code quality violation, expressed as a relative path in the
+  #                               repository. Do not prefix with ./.
+  # location.lines.begin
+  # -or-                 Integer  The line on which the code quality violation occurred.
+  # location.positions.begin.line
+  #
+  # severity             String   The severity of the violation, can be one of info, minor, major, critical, or blocker.
+
+  # Gitlab format as R data structure
+  res <-
+    lapply(
+      lints,
+      function(lint) {
+        with(
+          lint,
+          list(
+            description = message,
+            check_name = linter,
+            fingerprint =  digest::digest(line, algo = "sha1"),
+            location = list(
+              path = filename,
+              lines = list(
+                begin = line_number
+              )
+            ),
+            severity = switch(type,
+              style = "info",
+              error = "blocker",
+              warning = "major",
+              "info"
+            )
+          )
+        )
+      }
+    )
+
+  write(jsonlite::toJSON(res, pretty = TRUE, auto_unbox = TRUE), filename)
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {

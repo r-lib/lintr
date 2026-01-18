@@ -247,7 +247,6 @@ test_that("used symbols are detected correctly", {
   )
 
 
-
   # regression #1322
   expect_silent(expect_no_lint("assign('x', 42)", object_usage_linter()))
 })
@@ -652,6 +651,10 @@ test_that("missing libraries don't cause issue", {
         a
       }
     "),
+    list(
+      "Could not find exported symbols for package \"a.a.a.z.z.z\"",
+      line_number = 1L
+    ),
     object_usage_linter()
   )
 })
@@ -799,8 +802,6 @@ test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
 })
 
 test_that("functional lambda definitions are also caught", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint(
     trim_some("
       fun <- \\() {
@@ -902,26 +903,13 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
   )
 })
 
-test_that("interpret_glue is deprecated", {
-  expect_warning(
-    {
-      linter_no <- object_usage_linter(interpret_glue = FALSE)
-    },
+test_that("interpret_glue is defunct", {
+  expect_error(
+    object_usage_linter(interpret_glue = FALSE),
     rex::rex("interpret_glue", anything, "deprecated")
   )
-  expect_warning(
-    {
-      linter_yes <- object_usage_linter(interpret_glue = TRUE)
-    },
+  expect_error(
+    object_usage_linter(interpret_glue = TRUE),
     rex::rex("interpret_glue", anything, "deprecated")
   )
-
-  code <- trim_some("
-    fun <- function() {
-      local_var <- 42
-      glue::glue('The answer is {local_var}.')
-    }
-  ")
-  expect_lint(code, "local_var", linter_no)
-  expect_no_lint(code, linter_yes)
 })

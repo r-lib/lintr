@@ -61,26 +61,18 @@ test_that("undesirable_operator_linter vectorizes messages", {
 })
 
 test_that("invalid inputs fail correctly", {
-  error_msg <- "`op` should be a non-empty named character vector"
-
-  expect_error(
-    undesirable_operator_linter("***"),
-    error_msg,
-    fixed = TRUE
-  )
   expect_error(
     undesirable_operator_linter(c("***" = NA, NA)),
-    error_msg,
-    fixed = TRUE
+    rex::rex("Unnamed elements of `op` must not be missing", anything, "2")
   )
   expect_error(
     undesirable_operator_linter(op = NULL),
-    error_msg,
+    "`op` must be a non-empty character vector",
     fixed = TRUE
   )
   expect_error(
     undesirable_operator_linter(op = character(0L)),
-    error_msg,
+    "`op` must be a non-empty character vector",
     fixed = TRUE
   )
 
@@ -94,4 +86,21 @@ test_that("invalid inputs fail correctly", {
     'Did not recognize any valid operators in request for: "***" and "///"',
     fixed = TRUE
   )
+})
+
+test_that("Default recommendations can be specified multiple ways", {
+  linter_na <- undesirable_operator_linter(c(`%f%` = NA))
+  linter_unnamed1 <- undesirable_operator_linter("%f%")
+  linter_unnamed2 <- undesirable_operator_linter(c("%f%", "%b%"))
+  linter_mixed1 <- undesirable_operator_linter(c("%f%", `%b%` = "no %b%"))
+  linter_mixed2 <- undesirable_operator_linter(c("%f%", `%b%` = NA))
+
+  lint_message <- rex::rex("Avoid undesirable operator `%f%`")
+
+  lint_str <- "a %f% b"
+  expect_lint(lint_str, lint_message, linter_na)
+  expect_lint(lint_str, lint_message, linter_unnamed1)
+  expect_lint(lint_str, lint_message, linter_unnamed2)
+  expect_lint(lint_str, lint_message, linter_mixed1)
+  expect_lint(lint_str, lint_message, linter_mixed2)
 })

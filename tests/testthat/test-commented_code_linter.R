@@ -93,8 +93,7 @@ test_that("commented_code_linter can detect operators in comments and lint corre
     expect_lint(paste("# i", op, "1", collapse = ""), lint_msg, linter)
   }
 
-  skip_if_not_r_version("4.1.0")
-
+test_that("commented_code_linter can detect operators in comments and lint correctly", {
   expect_lint(
     "# 1:3 |> sum()",
     rex::rex("Remove commented code."),
@@ -107,7 +106,5 @@ test_that("commented_code_linter can detect commented code ending with pipes", {
   lint_msg <- rex::rex("Remove commented code.")
 
   expect_lint("# f() %>%", lint_msg, linter)
-
-  skip_if_not_r_version("4.1.0")
   expect_lint("# f() |>", lint_msg, linter)
 })

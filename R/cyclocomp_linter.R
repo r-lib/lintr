@@ -28,12 +28,12 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
       "Cyclocomp complexity is computed using {.fn cyclocomp::cyclocomp}.",
       i = "Please install the needed {.pkg cyclocomp} package."
     ))
-    return(Linter(function(.) cli_abort("cyclocomp_linter is disabled due to lack of the {.pkg cyclocomp} package")))
+    return(Linter(\(.) cli_abort("cyclocomp_linter is disabled due to lack of the {.pkg cyclocomp} package")))
   }
   # nocov end
   Linter(linter_level = "expression", function(source_expression) {
     complexity <- try_silently(
-      cyclocomp::cyclocomp(parse(text = source_expression$content))
+      cyclocomp::cyclocomp(parse(text = source_expression$content, keep.source = FALSE))
     )
     if (inherits(complexity, "try-error") || complexity <= complexity_limit) {
       return(list())
@@ -45,8 +45,9 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
       column_number = source_expression[["column"]][1L],
       type = "style",
       message = sprintf(
-        "Reduce the cyclomatic complexity of this expression from %d to at most %d.",
-        complexity, complexity_limit
+        "Reduce the cyclomatic complexity of this expression from %d to at most %d. %s",
+        complexity, complexity_limit,
+        "Consider replacing high-complexity sections like loops and branches with helper functions."
       ),
       ranges = list(rep(col1, 2L)),
       line = source_expression$lines[1L]

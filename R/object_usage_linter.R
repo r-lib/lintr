@@ -3,9 +3,7 @@
 #' Check that closures have the proper usage using [codetools::checkUsage()].
 #' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue (Deprecated) If `TRUE`, interpret [glue::glue()] calls to avoid
-#'   false positives caused by local variables which are only used in a glue expression.
-#'   Provide `interpret_extensions` instead, see below.
+#' @param interpret_glue (Defunct)
 #' @param interpret_extensions Character vector of extensions to interpret. These are meant to cover known cases where
 #'   variables may be used in ways understood by the reader but not by `checkUsage()` to avoid false positives.
 #'   Currently `"glue"` and `"rlang"` are supported, both of which are in the default.
@@ -42,14 +40,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       '"glue" in interpret_extensions',
       version = "3.3.0",
       type = "Argument",
-      signal = "warning"
+      signal = "stop"
     )
-
-    if (interpret_glue) {
-      interpret_extensions <- union(interpret_extensions, "glue")
-    } else {
-      interpret_extensions <- setdiff(interpret_extensions, "glue")
-    }
   }
 
   if (length(interpret_extensions) > 0L) {
@@ -70,11 +62,14 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     | //SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][{fun_node}]
   ")
 
-  # code like:content
+  # code like:
   #   foo <- \ #comment
   #     (x) x
   # is technically valid, but won't parse unless the lambda is in a bigger expression (here '<-').
-  #   the same doesn't apply to 'function'.
+  #   the same doesn't apply to 'function', which is acknowledged as "not worth a breaking change to fix":
+  #   https://bugs.r-project.org/show_bug.cgi?id=18924. If we find such code (which has only ever
+  #   arisen in content fuzzing where we inject comments at random to the AST), we have to avoid parsing
+  #   it as a standalone expression.
   xpath_unsafe_lambda <- "OP-LAMBDA[@line1 = following-sibling::*[1][self::COMMENT]/@line1]"
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
@@ -89,19 +84,28 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   Linter(linter_level = "file", function(source_expression) {
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
 
-    declared_globals <- try_silently(globalVariables(package = pkg_name %|||% globalenv()))
+    declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
 
     xml <- source_expression$full_xml_parsed_content
 
+    # Catch missing packages and report them as lints
+    outer_env <- new.env(parent = emptyenv())
+    outer_env$library_lints <- list()
+    library_lint_hook <- function(lint_node, lint_msg) {
+      outer_env$library_lints[[length(outer_env$library_lints) + 1L]] <- xml_nodes_to_lints(
+        lint_node, source_expression = source_expression, lint_message = lint_msg, type = "warning"
+      )
+    }
+
     # run the following at run-time, not "compile" time to allow package structure to change
-    env <- make_check_env(pkg_name, xml)
+    env <- make_check_env(pkg_name, xml, library_lint_hook)
 
     fun_assignments <- xml_find_all(xml, xpath_function_assignment)
 
     lapply(fun_assignments, function(fun_assignment) {
       # this will mess with the source line numbers. but I don't think anybody cares.
-      known_safe <- is.na(xml_find_first(fun_assignment, xpath_unsafe_lambda))
-      code <- get_content(lines = source_expression$content, fun_assignment, known_safe = known_safe)
+      needs_braces <- !is.na(xml_find_first(fun_assignment, xpath_unsafe_lambda))
+      code <- get_content(lines = source_expression$content, fun_assignment, needs_braces = needs_braces)
       fun <- try_silently(eval(
         envir = env,
         parse(
@@ -154,12 +158,15 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         if (is.na(line_based_match)) fun_assignment else line_based_match
       })
 
-      xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
+      c(
+        outer_env$library_lints,
+        xml_nodes_to_lints(nodes, source_expression = source_expression, lint_message = res$message, type = "warning")
+      )
     })
   })
 }
 
-make_check_env <- function(pkg_name, xml) {
+make_check_env <- function(pkg_name, xml, library_lint_hook) {
   if (!is.null(pkg_name)) {
     parent_env <- try_silently(getNamespace(pkg_name))
   }
@@ -170,12 +177,12 @@ make_check_env <- function(pkg_name, xml) {
 
   symbols <- c(
     get_assignment_symbols(xml),
-    get_imported_symbols(xml)
+    get_imported_symbols(xml, library_lint_hook)
   )
 
   # Just assign them an empty function
   for (symbol in symbols) {
-    assign(symbol, function(...) invisible(), envir = env)
+    assign(symbol, \(...) invisible(), envir = env)
   }
   env
 }
@@ -244,19 +251,6 @@ parse_check_usage <- function(expression,
     )
   )
 
-  # nocov start
-  is_missing <- is.na(res$message)
-  if (any(is_missing)) {
-    # TODO(#2474): Remove this.
-    missing_msg <- vals[is_missing][[1L]] # nolint: object_usage_linter. TODO(#2252).
-    cli_warn(c(
-      x = "Couldn't parse usage message {.str {missing_msg}}. Ignoring {.val {sum(is_missing)}} usage warnings.",
-      i = "Please report a possible bug at {.url https://github.com/r-lib/lintr/issues}."
-    ))
-  }
-  # nocov end
-  res <- res[!is_missing, ]
-
   res$line1 <- ifelse(
     nzchar(res$line1),
     as.integer(res$line1) + start_line - 1L,
@@ -274,7 +268,7 @@ parse_check_usage <- function(expression,
   res
 }
 
-get_imported_symbols <- function(xml) {
+get_imported_symbols <- function(xml, library_lint_hook) {
   import_exprs_xpath <- "
   //SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
     /parent::expr
@@ -290,10 +284,20 @@ get_imported_symbols <- function(xml) {
   import_exprs <- xml_find_all(xml, import_exprs_xpath)
   imported_pkgs <- get_r_string(import_exprs)
 
-  unlist(lapply(imported_pkgs, function(pkg) {
+  unlist(Map(pkg = imported_pkgs, expr = import_exprs, function(pkg, expr) {
     tryCatch(
       getNamespaceExports(pkg),
-      error = function(e) character()
+      error = function(e) {
+        lint_node <- xml2::xml_parent(expr)
+        lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is necessary here.
+        lib_noun <- if (length(lib_paths) == 1L) "library" else "libraries"
+        lint_msg <- paste0(
+          "Could not find exported symbols for package \"", pkg, "\" in ", lib_noun, " ",
+          toString(shQuote(lib_paths)), " (", conditionMessage(e), "). This may lead to false positives."
+        )
+        library_lint_hook(lint_node, lint_msg)
+        character()
+      }
     )
   }))
 }

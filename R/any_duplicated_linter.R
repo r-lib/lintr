@@ -19,6 +19,11 @@
 #'   linters = any_duplicated_linter()
 #' )
 #'
+#' lint(
+#'   text = "DT[, uniqueN(col) == .N]",
+#'   linters = any_duplicated_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "anyDuplicated(x)",
@@ -30,12 +35,17 @@
 #'   linters = any_duplicated_linter()
 #' )
 #'
+#' lint(
+#'   text = "anyDuplicated(DT, by = 'col') == 0L",
+#'   linters = any_duplicated_linter()
+#' )
+#'
 #' @evalRd rd_tags("any_duplicated_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 any_duplicated_linter <- function() {
   any_duplicated_xpath <- "
-  following-sibling::expr[1][expr[1][SYMBOL_FUNCTION_CALL[text() = 'duplicated']]]
+  following-sibling::expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'duplicated']]
     /parent::expr[
       count(expr) = 2
       or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm'])
@@ -52,34 +62,74 @@ any_duplicated_linter <- function() {
   #  the final parent::expr/expr gets us to the expr on the other side of EQ;
   #  this lets us match on either side of EQ, where following-sibling
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
-  length_comparison_xpath <- "
-  parent::expr
-    /parent::expr[expr/SYMBOL_FUNCTION_CALL[text() = 'length']]
-    /parent::expr[EQ or NE or GT or LT]
-  "
-  length_unique_xpath <- "
-  expr/expr/expr[1][
-    SYMBOL_FUNCTION_CALL[text() = 'unique']
-    and (
-      following-sibling::expr =
-        parent::expr
-        /parent::expr
-        /parent::expr
-        /expr
-        /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
-        /following-sibling::expr
-      or
-      following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
-        parent::expr
-        /parent::expr
-        /parent::expr
-        /expr
-        /expr[1][SYMBOL_FUNCTION_CALL[text() = 'nrow']]
-        /following-sibling::expr
-    )
-  ]"
+  length_unique_xpath_parts <- glue("
+  //{ c('EQ', 'NE', 'GT', 'LT') }
+    /parent::expr
+    /expr[
+      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
+      and expr/expr[1][
+        SYMBOL_FUNCTION_CALL[text() = 'unique']
+        and (
+          following-sibling::expr =
+            parent::expr
+              /parent::expr
+              /parent::expr
+              /expr
+              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
+              /following-sibling::expr
+          or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
+            parent::expr
+              /parent::expr
+              /parent::expr
+              /expr
+              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'nrow']]
+              /following-sibling::expr
+          or parent::expr
+            /parent::expr
+            /parent::expr
+            /expr[
+              SYMBOL[text() = '.N']
+              or (expr/SYMBOL_FUNCTION_CALL[text() = 'n'] and count(expr) = 1)
+            ]
+        )
+      ]
+    ]
+  ")
+  length_unique_xpath <- paste(length_unique_xpath_parts, collapse = " | ")
 
-  uses_nrow_xpath <- "./expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
+  distinct_xpath <- glue("
+  //{ c('EQ', 'NE', 'GT', 'LT') }
+    /parent::expr
+    /expr[
+      expr[1][
+        SYMBOL_FUNCTION_CALL[text() = 'uniqueN' or text() = 'n_distinct']
+        and (
+          following-sibling::expr =
+            parent::expr
+              /parent::expr
+              /expr
+              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length' or text() = 'nrow']]
+              /following-sibling::expr
+          or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
+            parent::expr
+              /parent::expr
+              /expr
+              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'nrow']]
+              /following-sibling::expr
+          or parent::expr
+            /parent::expr
+            /expr[
+              SYMBOL[text() = '.N']
+              or (expr/SYMBOL_FUNCTION_CALL[text() = 'n'] and count(expr) = 1)
+            ]
+        )
+      ]
+    ]
+  ")
+
+  uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
+  uses_dtn_xpath <- "./parent::expr/expr/SYMBOL[text() = '.N']"
+  uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
 
   Linter(linter_level = "expression", function(source_expression) {
     any_calls <- source_expression$xml_find_function_calls("any")
@@ -93,24 +143,40 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    in_length_comparison <- !is.na(xml_find_first(unique_calls, length_comparison_xpath))
-    unique_calls <- strip_comments_from_subtree(
-      xml_parent(xml_parent(xml_parent(unique_calls[in_length_comparison])))
-    )
-    is_length_unique <- !is.na(xml_find_first(unique_calls, length_unique_xpath))
-    length_unique_expr <- unique_calls[is_length_unique]
-    lint_message <- ifelse(
-      is.na(xml_find_first(length_unique_expr, uses_nrow_xpath)),
-      "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x).",
+    length_unique_expr <- xml_find_all(xml, length_unique_xpath)
+    length_unique_lint_message <- character(length(length_unique_expr))
+    length_unique_lint_message[] <- "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)."
+    length_unique_lint_message[!is.na(xml_find_first(length_unique_expr, uses_nrow_xpath))] <-
       "anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"
-    )
+    length_unique_lint_message[!is.na(xml_find_first(length_unique_expr, uses_dtn_xpath))] <-
+      "anyDuplicated(x) == 0L is better than length(unique(x)) == .N"
+    length_unique_lint_message[!is.na(xml_find_first(length_unique_expr, uses_dplyr_xpath))] <-
+      "anyDuplicated(x) == 0L is better than length(unique(x)) == n()."
     length_unique_lints <- xml_nodes_to_lints(
       length_unique_expr,
       source_expression = source_expression,
-      lint_message = lint_message,
+      lint_message = length_unique_lint_message,
       type = "warning"
     )
 
-    c(any_duplicated_lints, length_unique_lints)
+    distinct_expr <- xml_find_all(xml, distinct_xpath)
+    distinct_lint_message_fmt <- character(length(distinct_expr))
+    distinct_lint_message_fmt[] <- "anyDuplicated(x) == 0L is better than %s(x) == length(x)."
+    distinct_lint_message_fmt[!is.na(xml_find_first(distinct_expr, uses_nrow_xpath))] <-
+      "anyDuplicated(DF$col) == 0L is better than %s(DF$col) == nrow(DF)"
+    distinct_lint_message_fmt[!is.na(xml_find_first(distinct_expr, uses_dtn_xpath))] <-
+      "anyDuplicated(x) == 0L is better than %s(x) == .N"
+    distinct_lint_message_fmt[!is.na(xml_find_first(distinct_expr, uses_dplyr_xpath))] <-
+      "anyDuplicated(x) == 0L is better than %s(x) == n()."
+
+    distinct_lint_message <- sprintf(distinct_lint_message_fmt, xp_call_name(distinct_expr))
+    distinct_lints <- xml_nodes_to_lints(
+      distinct_expr,
+      source_expression = source_expression,
+      lint_message = distinct_lint_message,
+      type = "warning"
+    )
+
+    c(any_duplicated_lints, length_unique_lints, distinct_lints)
   })
 }

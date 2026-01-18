@@ -58,6 +58,7 @@ coalesce_linter <- function() {
   |
   self::*[expr[
     preceding-sibling::IF
+    and following-sibling::ELSE
     and OP-EXCLAMATION
     and (
       expr/expr[2] = following-sibling::expr[1]

@@ -122,8 +122,6 @@ test_that("allow_outer_calls= argument works", {
 })
 
 test_that("Native pipes are handled as well", {
-  skip_if_not_r_version("4.1.0")
-
   linter <- nested_pipe_linter()
   linter_inline <- nested_pipe_linter(allow_inline = FALSE)
   lint_msg <- rex::rex("Don't nest pipes inside other calls.")

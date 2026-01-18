@@ -206,7 +206,6 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
   ")
 
   # not(. != .): don't match if there are _any_ expr which _don't_ match the top expr
-  #   do this as a second step to 
   equality_test_cond <- glue("self::*[
     .//expr/IF/following-sibling::{equal_str_cond}/expr[not(STR_CONST)]
       != expr[1][EQ]/expr[not(STR_CONST)]

@@ -1,5 +1,5 @@
 # fuzzer disable: comment_injection
-testthat::test_that("paren_body_linter returns correct lints", {
+test_that("paren_body_linter returns correct lints", {
   linter <- paren_body_linter()
   lint_msg <- rex::rex("Put a space between a right parenthesis and a body expression.")
 
@@ -27,11 +27,17 @@ testthat::test_that("paren_body_linter returns correct lints", {
     "function()test",
     list(
       line_number = 1L,
-      column_number = 11L,
+      column_number = 10L,
       type = "style",
       line = "function()test",
-      ranges = list(c(11L, 14L))
+      ranges = list(c(10L, 10L))
     ),
+    linter
+  )
+
+  expect_lint(
+    "for (ii in 1:10)ii",
+    list(column_number = 16L, ranges = list(c(16L, 16L))),
     linter
   )
 
@@ -45,7 +51,6 @@ testthat::test_that("paren_body_linter returns correct lints", {
   expect_lint("function()if(TRUE)while(TRUE)test", list(lint_msg, lint_msg, lint_msg), linter)
 
   # No space after the closing parenthesis of an anonymous function prompts a lint
-  skip_if_not_r_version("4.1.0")
   expect_lint("\\()test", lint_msg, linter)
 })
 
@@ -78,7 +83,6 @@ test_that("multi-line versions are caught", {
     linter
   )
 
-  skip_if_not_r_version("4.1.0")
   expect_lint(
     trim_some("
       \\(var
@@ -90,7 +94,6 @@ test_that("multi-line versions are caught", {
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.1.0")
   linter <- paren_body_linter()
   lint_msg <- rex::rex("Put a space between a right parenthesis and a body expression.")
 

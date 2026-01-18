@@ -226,7 +226,7 @@ test_that("max_branch_lines= and max_branch_expressions= arguments work", {
   expect_no_lint(five_expr_three_lines_lines, max_expr4_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expressions= block over-complex switch() too", {
+test_that("max_branch_lines= and max_branch_expressions= block over-complex switch() too", { # nofuzz
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_lines4_linter <- if_switch_linter(max_branch_lines = 4L)
   max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
@@ -389,7 +389,7 @@ test_that("max_branch_lines= and max_branch_expressions= block over-complex swit
   expect_lint(five_expr_three_lines_lines, lint_msg, max_expr4_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expressions= interact correctly", {
+test_that("max_branch_lines= and max_branch_expressions= interact correctly", { # nofuzz
   linter <- if_switch_linter(max_branch_lines = 5L, max_branch_expressions = 3L)
   lint_msg <- rex::rex("Prefer switch() statements over repeated if/else equality tests")
 
@@ -439,7 +439,7 @@ test_that("max_branch_lines= and max_branch_expressions= interact correctly", {
   )
 })
 
-test_that("max_branch_lines= and max_branch_expressions= work for a terminal 'else' branch", {
+test_that("max_branch_lines= and max_branch_expressions= work for a terminal 'else' branch", { # nofuzz
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
   lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
@@ -482,7 +482,7 @@ test_that("max_branch_lines= and max_branch_expressions= work for a terminal 'el
   expect_lint(default_long_lines, lint_msg, max_expr2_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expressions= are guided by the most complex branch", {
+test_that("max_branch_lines= and max_branch_expressions= are guided by the most complex branch", { # nofuzz
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
   lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")

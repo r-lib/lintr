@@ -36,16 +36,14 @@ paren_body_linter <- make_linter_from_xpath(
       or preceding-sibling::OP-LAMBDA
       or preceding-sibling::IF
       or preceding-sibling::WHILE
-      or preceding-sibling::OP-LAMBDA
     )
   ]
-    /following-sibling::expr[1]
   |
   //forcond[
     @line1 = following-sibling::expr/@line2
     and OP-RIGHT-PAREN/@col1 = following-sibling::expr/@col1 - 1
   ]
-    /following-sibling::expr
+    /OP-RIGHT-PAREN
   ",
   lint_message = "Put a space between a right parenthesis and a body expression.",
   type = "style"

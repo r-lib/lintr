@@ -3,10 +3,17 @@
 #' Report the use of undesirable operators, e.g. \code{\link[base:ns-dblcolon]{:::}} or
 #' [`<<-`][base::assignOps] and suggest an alternative.
 #'
-#' @param op Named character vector. `names(op)` correspond to undesirable operators,
-#'   while the values give a description of why the operator is undesirable.
-#'   If `NA`, no additional information is given in the lint message. Defaults to
-#'   [default_undesirable_operators]. To make small customizations to this list,
+#' @param op Character vector of undesirable operators. Input can be any of three types:
+#'   - Unnamed entries must be a character string specifying an undesirable operator.
+#'   - For named entries, the name specifies the undesirable operator.
+#'     + If the entry is a character string, it is used as a description of
+#'       why a given operator is undesirable
+#'     + Otherwise, entries should be missing (`NA`)
+#'   A generic message that the named operator is undesirable is used if no
+#'     specific description is provided.
+#'   Input can also be a list of character strings for convenience.
+#'
+#'   Defaults to [default_undesirable_operators]. To make small customizations to this list,
 #'   use [modify_defaults()].
 #' @param call_is_undesirable Logical, default `TRUE`. Should lints also be produced
 #'   for prefix-style usage of the operators provided in `op`?
@@ -31,6 +38,11 @@
 #'   linters = undesirable_operator_linter()
 #' )
 #'
+#' lint(
+#'   text = "mtcars$wt",
+#'   linters = undesirable_operator_linter("$")
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "a <- log(10)",
@@ -51,17 +63,39 @@
 #'   linters = undesirable_operator_linter(call_is_undesirable = FALSE)
 #' )
 #'
+#' lint(
+#'   text = 'mtcars[["wt"]]',
+#'   linters = undesirable_operator_linter("$")
+#' )
+#'
 #' @evalRd rd_tags("undesirable_operator_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 undesirable_operator_linter <- function(op = default_undesirable_operators,
                                         call_is_undesirable = TRUE) {
-  if (is.null(names(op)) || !all(nzchar(names(op))) || length(op) == 0L) {
-    cli_abort(c(
-      x = "{.arg op} should be a non-empty named character vector.",
-      i = "Use missing elements to indicate default messages."
+  if (is.list(op)) op <- unlist(op)
+  if (!is.logical(call_is_undesirable)) {
+    cli_abort("{.arg call_is_undesirable} must be a logical, not {.obj_type_friendly {call_is_undesirable}}.")
+  }
+  # allow (uncoerced->implicitly logical) 'NA'
+  if (length(op) == 0L || !(is.character(op) || all(is.na(op)))) {
+    cli_abort("{.arg op} must be a non-empty character vector.")
+  }
+
+  nm <- names2(op)
+  implicit_idx <- !nzchar(nm)
+  if (any(implicit_idx)) {
+    names(op)[implicit_idx] <- op[implicit_idx]
+    is.na(op) <- implicit_idx
+  }
+  if (anyNA(names(op))) {
+    missing_idx <- which(is.na(names(op))) # nolint: object_usage_linter. False positive.
+    cli_abort(paste(
+      "Unnamed elements of {.arg op} must not be missing,",
+      "but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}."
     ))
   }
+
   # infix must be handled individually below; non-assignment `=` are always OK
   operator_nodes <- infix_metadata$xml_tag_exact[
     infix_metadata$string_value %in% setdiff(names(op), "%%") &

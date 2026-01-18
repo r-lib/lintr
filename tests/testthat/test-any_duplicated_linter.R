@@ -63,6 +63,27 @@ test_that("any_duplicated_linter catches length(unique()) equivalencies too", {
   expect_lint("length(x) > length(unique(x))", lint_msg_x, linter)
 })
 
+test_that("dplyr & data.table equivalents are also linted", {
+  linter <- any_duplicated_linter()
+
+  expect_no_lint("uniqueN(x) == nrow(y)", linter)
+  expect_no_lint("n_distinct(x) == nrow(y)", linter)
+  expect_no_lint("x[, length(unique(col)) == .N()]", linter)
+  # some other n function, not dplyr::n
+  expect_no_lint("x %>% summarize(length(unique(col)) == n(2))", linter)
+  expect_no_lint("x %>% summarize(length(unique(col)) == n)", linter)
+
+  expect_lint("uniqueN(x) == nrow(x)", rex::rex("uniqueN(DF$col) == nrow(DF)"), linter)
+  expect_lint("data.table::uniqueN(x) == nrow(x)", rex::rex("uniqueN(DF$col) == nrow(DF)"), linter)
+  expect_lint("x[, length(unique(col)) == .N]", rex::rex("length(unique(x)) == .N"), linter)
+  expect_lint("x[, uniqueN(col) == .N]", rex::rex("uniqueN(x) == .N"), linter)
+
+  expect_lint("n_distinct(x) == nrow(x)", rex::rex("n_distinct(DF$col) == nrow(DF)"), linter)
+  expect_lint("dplyr::n_distinct(x) == nrow(x)", rex::rex("n_distinct(DF$col) == nrow(DF)"), linter)
+  expect_lint("x %>% summarize(length(unique(col)) == n())", rex::rex("length(unique(x)) == n()"), linter)
+  expect_lint("x %>% summarize(n_distinct(col) == n())", rex::rex("n_distinct(x) == n()"), linter)
+})
+
 test_that("any_duplicated_linter catches expression with two types of lint", {
   linter <- any_duplicated_linter()
   lint_msg <- rex::rex("anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)")

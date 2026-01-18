@@ -44,7 +44,7 @@ snake_case_linter <-
 trailing_semicolons_linter <- function(...) {
   # .call=TRUE means the linter name will be displayed in the warning
   warning("Using deleted linter")
-  Linter(function(...) list())
+  Linter(\(...) list())
 }
 
 
@@ -101,7 +101,8 @@ clone_and_lint <- function(repo_url) {
 
   start_time <- proc.time()
   on.exit(repo_data[.(repo_url), elapsed := (proc.time() - start_time)["elapsed"]])
-  warnings <- character()
+  outer_env <- new.env(parent = emptyenv())
+  outer_env$warnings <- character()
   withCallingHandlers(
     tryCatch(
       {
@@ -117,12 +118,12 @@ clone_and_lint <- function(repo_url) {
       }
     ),
     warning = function(cond) {
-      warnings <<- c(warnings, conditionMessage(cond))
+      outer_env$warnings <- c(outer_env$warnings, conditionMessage(cond))
       invokeRestart("muffleWarning")
     }
   )
-  if (length(warnings) > 0L) {
-    writeLines(warnings, file.path(out_dir, paste0(package, ".warnings")))
+  if (length(outer_env$warnings) > 0L) {
+    writeLines(outer_env$warnings, file.path(out_dir, paste0(package, ".warnings")))
   }
 }
 
@@ -145,7 +146,7 @@ summarize_failures <- function(version, failures) {
   files <- result_path(version, failures)
   packages <- gsub("\\.failures$", "", failures)
 
-  package_failures <- sapply(files, function(x) paste(unique(readLines(x)), collapse = " ||| "))
+  package_failures <- sapply(files, \(x) paste(unique(readLines(x)), collapse = " ||| "))
 
   paste(sprintf("  %s: %s", packages, package_failures), collapse = "\n")
 }

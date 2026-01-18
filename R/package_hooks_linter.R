@@ -1,6 +1,6 @@
 #' Package hooks linter
 #'
-#' Check various common "gotchas" in [.onLoad()], [.onAttach()], [.Last.lib()], and [.onDetach()]
+#' Check various common "gotchas" in [.onLoad()], [.onAttach()], [.Last.lib()], [.onDetach()], and [.onUnload()]
 #'   namespace hooks that will cause `R CMD check` issues. See Writing R Extensions for details.
 #'
 #' 1. `.onLoad()` shouldn't call [cat()], [message()], [print()], [writeLines()], [packageStartupMessage()],
@@ -9,7 +9,7 @@
 #'    `require()`, `library()`, or `installed.packages()`.
 #' 3. `.Last.lib()` and `.onDetach()` shouldn't call [library.dynam.unload()].
 #' 4. `.onLoad()` and `.onAttach()` should take two arguments, with names matching `^lib` and `^pkg`;
-#'    `.Last.lib()` and `.onDetach()` should take one argument with name matching `^lib`.
+#'    `.Last.lib()`, `.onDetach()`, and `.onUnload()` should take one argument with name matching `^lib`.
 #'
 #' @examples
 #' # will produce lints
@@ -25,6 +25,11 @@
 #'
 #' lint(
 #'   text = ".onDetach <- function(pkg) { }",
+#'   linters = package_hooks_linter()
+#' )
+#'
+#' lint(
+#'   text = ".onUnload <- function() { }",
 #'   linters = package_hooks_linter()
 #' )
 #'
@@ -44,6 +49,11 @@
 #'   linters = package_hooks_linter()
 #' )
 #'
+#' lint(
+#'   text = ".onUnload <- function(libpath) { }",
+#'   linters = package_hooks_linter()
+#' )
+#'
 #' @evalRd rd_tags("package_hooks_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -60,7 +70,7 @@ package_hooks_linter <- function() {
   "
   bad_call_xpaths <- vapply(
     seq_along(bad_calls),
-    function(ii) sprintf(bad_msg_call_xpath_fmt, names(bad_calls)[ii], xp_text_in_table(bad_calls[[ii]])),
+    \(ii) sprintf(bad_msg_call_xpath_fmt, names(bad_calls)[ii], xp_text_in_table(bad_calls[[ii]])),
     character(1L)
   )
   names(bad_call_xpaths) <- names(bad_calls)
@@ -77,7 +87,7 @@ package_hooks_linter <- function() {
 
   # lints here will hit the function <expr>,
   #   this path returns to the corresponding namespace hook's name
-  ns_calls <- xp_text_in_table(c(".onLoad", ".onAttach", ".onDetach", ".Last.lib"))
+  ns_calls <- xp_text_in_table(c(".onLoad", ".onAttach", ".onDetach", ".onUnload", ".Last.lib"))
 
   # usually any given package will have one or maybe two files defining namespace hooks.
   #   given the number of checks, then, it's prudent to check first if any such hook is defined,
@@ -119,7 +129,7 @@ package_hooks_linter <- function() {
   unload_arg_name_xpath <- "
   (//FUNCTION | //OP-LAMBDA)
     /parent::expr[
-      preceding-sibling::expr/SYMBOL[text() = '.onDetach' or text() = '.Last.lib']
+      preceding-sibling::expr/SYMBOL[text() = '.onDetach' or text() = '.onUnload' or text() = '.Last.lib']
       and (
         count(SYMBOL_FORMALS) != 1
         or SYMBOL_FORMALS[not(starts-with(text(), 'lib'))]
@@ -181,7 +191,7 @@ package_hooks_linter <- function() {
     bad_unload_call_lints <-
       xml_nodes_to_lints(bad_unload_call_expr, source_expression, bad_unload_call_message, type = "warning")
 
-    # (5) .Last.lib() and .onDetach() should take one arguments with name matching ^lib
+    # (5) .Last.lib(), .onDetach(), and .onUnload() should take one argument with name matching ^lib
     unload_arg_name_expr <- xml_find_all(xml, unload_arg_name_xpath)
 
     unload_arg_name_message <- sprintf(

@@ -2,7 +2,9 @@
 #'
 #' Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 #'
-#' @param r_version Minimum R version to test for compatibility
+#' @param r_version Minimum R version to test for compatibility. Defaults to
+#'  the R version currently in use. The version can be specified as a version
+#'  number, or as a version alias (such as `"devel"`, `"oldrel"`, `"oldrel-1"`).
 #' @param except Character vector of functions to be excluded from linting.
 #'  Use this to list explicitly defined backports, e.g. those imported from the `{backports}` package or manually
 #'  defined in your package.
@@ -19,6 +21,11 @@
 #'   linters = backport_linter("3.2.0")
 #' )
 #'
+#' lint(
+#'   text = "deparse1(expr)",
+#'   linters = backport_linter("3.6.0")
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "trimws(x)",
@@ -27,12 +34,13 @@
 #'
 #' lint(
 #'   text = "str2lang(x)",
-#'   linters = backport_linter("4.0.0")
+#'   linters = backport_linter("3.2.0", except = "str2lang")
 #' )
 #'
+#' # Version aliases instead of numbers can also be passed to `r_version`
 #' lint(
-#'   text = "str2lang(x)",
-#'   linters = backport_linter("3.2.0", except = "str2lang")
+#'   text = "deparse1(expr)",
+#'   linters = backport_linter("release")
 #' )
 #'
 #' @evalRd rd_tags("backport_linter")
@@ -42,7 +50,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   r_version <- normalize_r_version(r_version)
 
   if (all(r_version >= R_system_version(names(backports)))) {
-    return(Linter(function(source_expression) list(), linter_level = "file"))
+    return(Linter(\(source_expression) list(), linter_level = "file"))
   }
 
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
@@ -66,7 +74,7 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
     bad_versions <- unname(backport_index[all_names])
 
     lint_message <- sprintf(
-      "%s (R %s) is not available for dependency R >= %s.",
+      "%s (R %s) is not always available for requested dependency (R >= %s).",
       all_names,
       bad_versions,
       r_version
@@ -131,7 +139,21 @@ normalize_r_version <- function(r_version) {
 # devel NEWS https://cran.rstudio.com/doc/manuals/r-devel/NEWS.html
 # release NEWS https://cran.r-project.org/doc/manuals/r-release/NEWS.html
 backports <- list(
-  `4.4.0` = character(), # need character() entries for oldrel specifications
+  `4.6.0` = character(),
+  `4.5.0` = c(
+    # base
+    "grepv", "use",
+    # stats
+    "qr.influence",
+    # tools
+    "check_packages_urls", "check_package_dois",
+    "CRAN_current_db", "CRAN_aliases_db", "CRAN_rdxrefs_db", "CRAN_archive_db", "CRAN_authors_db",
+    "R", "parse_URI_reference",
+    "base_aliases_db", "base_rdxrefs_db",
+    "sha256sum"
+  ),
+  `4.4.3` = character(), # need character() entries for oldrel specifications
+  `4.4.0` = character(),
   `4.3.3` = character(),
   `4.3.0` = c("R_compiled_by", "array2DF"),
   `4.2.3` = character(),

@@ -178,7 +178,7 @@ test_that("package_hooks_linter blocks attaching namespaces", {
   )
 })
 
-test_that("package_hooks_linter skips valid .onDetach() and .Last.lib()", {
+test_that("package_hooks_linter skips valid 'teardown' hooks", {
   linter <- package_hooks_linter()
 
   expect_no_lint(".onDetach <- function(lib) { }", linter)
@@ -186,6 +186,9 @@ test_that("package_hooks_linter skips valid .onDetach() and .Last.lib()", {
 
   expect_no_lint(".Last.lib <- function(lib) { }", linter)
   expect_no_lint(".Last.lib <- function(libname) { }", linter)
+
+  expect_no_lint(".onUnload <- function(lib) { }", linter)
+  expect_no_lint(".onUnload <- function(libpath) { }", linter)
 })
 
 test_that("package_hooks_linter catches usage of library.dynam.unload()", {
@@ -202,13 +205,10 @@ test_that("package_hooks_linter catches usage of library.dynam.unload()", {
     linter
   )
   # expected usage is in .onUnload
-  expect_no_lint(
-    ".onUnload <- function(lib) { library.dynam.unload() }",
-    linter
-  )
+  expect_no_lint(".onUnload <- function(lib) { library.dynam.unload() }", linter)
 })
 
-test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.lib()", {
+test_that("package_hooks_linter detects bad argument names in 'teardown' hooks", {
   linter <- package_hooks_linter()
   lint_msg_part <- " should take one argument starting with 'lib'"
 
@@ -229,6 +229,11 @@ test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.
     rex::rex(".Last.lib()", lint_msg_part),
     linter
   )
+  expect_lint(
+    ".onUnload <- function(pkg) { }",
+    rex::rex(".onUnload()", lint_msg_part),
+    linter
+  )
 
   # exactly one argument required.
   # NB: QC.R allows ... arguments to be passed, but disallow this flexibility in the linter.
@@ -247,10 +252,24 @@ test_that("package_hooks_linter detects bad argument names in .onDetach()/.Last.
     rex::rex(".onDetach()", lint_msg_part),
     linter
   )
+  expect_lint(
+    ".onUnload <- function() { }",
+    rex::rex(".onUnload()", lint_msg_part),
+    linter
+  )
+  expect_lint(
+    ".onUnload <- function(lib, pkg) { }",
+    rex::rex(".onUnload()", lint_msg_part),
+    linter
+  )
+  expect_lint(
+    ".onUnload <- function(...) { }",
+    rex::rex(".onUnload()", lint_msg_part),
+    linter
+  )
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.1.0")
   linter <- package_hooks_linter()
 
   expect_lint(
