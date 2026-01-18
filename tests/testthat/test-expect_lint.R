@@ -87,7 +87,7 @@ test_that("execution without testthat gives the right errors", {
 })
 # fuzzer enable: assignment
 
-test_that("lint order can be ignored", {
+test_that("lint order can be ignored", { # nofuzz: assignment
   linters <- list(assignment_linter(), infix_spaces_linter())
   expected <- lapply(linters, \(l) list(linter = attr(l, "name")))
   expect_success(expect_lint("a=1", expected, linters, ignore_order = TRUE))
