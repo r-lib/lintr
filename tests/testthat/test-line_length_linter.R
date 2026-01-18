@@ -141,7 +141,7 @@ test_that("string bodies can be ignored", {
       1234567890
       my_fun('90
       1234567890
-      12345678'); 2345
+      12345678'); 234
     "),
     lint_msg,
     linter
