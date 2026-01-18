@@ -136,7 +136,7 @@ keyword_quote_linter <- function() {
     )
 
     extraction_expr <- extraction_expr[invalid_extraction_quoting]
-    extractor <- xml_find_chr(extraction_expr, "string(preceding-sibling::*[not(self::COMMENT)][1])")
+    extractor <- xml_find_chr(extraction_expr, "string(preceding-sibling::*[1])")
     gen_extractor <- ifelse(extractor == "$", "[[", "slot()")
 
     extraction_lints <- xml_nodes_to_lints(
