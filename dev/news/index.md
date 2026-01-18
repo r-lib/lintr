@@ -31,6 +31,10 @@
   which requires the weak dependency {cyclocomp}, no longer emits a
   warning ([\#2909](https://github.com/r-lib/lintr/issues/2909),
   [@MichaelChirico](https://github.com/MichaelChirico)).
+- [`repeat_linter()`](https://lintr.r-lib.org/dev/reference/repeat_linter.md)
+  no longer errors when `while` is in a column to the right of `}`
+  ([\#2828](https://github.com/r-lib/lintr/issues/2828),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
 
 ### New and improved features
 
@@ -100,6 +104,14 @@
   recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))`
   ([\#2921](https://github.com/r-lib/lintr/issues/2921),
   [@Bisaloo](https://github.com/Bisaloo)).
+
+#### Lint accuracy fixes: removing false positives
+
+- [`unnecessary_nesting_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_nesting_linter.md)
+  treats `=` assignment the same as `<-` for several pieces of logic
+  ([\#2245](https://github.com/r-lib/lintr/issues/2245) and
+  [\#2829](https://github.com/r-lib/lintr/issues/2829),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
 
 ### Notes
 
@@ -2245,9 +2257,10 @@ future releases. See, e.g.
   Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)`
   and similar.
 - [`fixed_regex_linter()`](https://lintr.r-lib.org/dev/reference/fixed_regex_linter.md)
-  Require `fixed = TRUE` or `stringr::fixed()` for regular expressions
-  that can be expressed statically, e.g. `strsplit(x, "[.]")` can be
-  `strsplit(x, ".", fixed = TRUE)`.
+  Require `fixed = TRUE` or
+  [`stringr::fixed()`](https://stringr.tidyverse.org/reference/modifiers.html)
+  for regular expressions that can be expressed statically,
+  e.g. `strsplit(x, "[.]")` can be `strsplit(x, ".", fixed = TRUE)`.
   - Added parameter `allow_grepl` (default `FALSE`) to toggle whether
     [`grepl()`](https://rdrr.io/r/base/grep.html) usages should be
     linted. These might be treated separately because `grepl("^x", NA)`

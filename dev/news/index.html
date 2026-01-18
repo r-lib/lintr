@@ -61,6 +61,8 @@
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
 <ul><li>Excluding <code><a href="../reference/cyclocomp_linter.html">cyclocomp_linter()</a></code> in <code><a href="../reference/available_linters.html">available_linters()</a></code> or <code><a href="../reference/linters_with_tags.html">linters_with_tags()</a></code>, which requires the weak dependency {cyclocomp}, no longer emits a warning (<a href="https://github.com/r-lib/lintr/issues/2909" class="external-link">#2909</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/repeat_linter.html">repeat_linter()</a></code> no longer errors when <code>while</code> is in a column to the right of <code>}</code> (<a href="https://github.com/r-lib/lintr/issues/2828" class="external-link">#2828</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
@@ -123,6 +125,11 @@
 <h4 id="linter-improvements-development-version-1">Linter improvements<a class="anchor" aria-label="anchor" href="#linter-improvements-development-version-1"></a></h4>
 <ul><li>
 <code><a href="../reference/sort_linter.html">sort_linter()</a></code> recommends usage of <code>!is.unsorted(x)</code> over <code>identical(x, sort(x))</code> (<a href="https://github.com/r-lib/lintr/issues/2921" class="external-link">#2921</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
+</ul></div>
+<div class="section level4">
+<h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code> treats <code>=</code> assignment the same as <code>&lt;-</code> for several pieces of logic (<a href="https://github.com/r-lib/lintr/issues/2245" class="external-link">#2245</a> and <a href="https://github.com/r-lib/lintr/issues/2829" class="external-link">#2829</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 </div>
 <div class="section level3">
@@ -874,7 +881,7 @@
 <li>
 <code><a href="../reference/expect_type_linter.html">expect_type_linter()</a></code> Require usage of <code>expect_type(x, t)</code> over <code>expect_equal(typeof(x), t)</code> and similar.</li>
 <li>
-<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> Require <code>fixed = TRUE</code> or <code>stringr::fixed()</code> for regular expressions that can be expressed statically, e.g. <code>strsplit(x, "[.]")</code> can be <code>strsplit(x, ".", fixed = TRUE)</code>.
+<code><a href="../reference/fixed_regex_linter.html">fixed_regex_linter()</a></code> Require <code>fixed = TRUE</code> or <code><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">stringr::fixed()</a></code> for regular expressions that can be expressed statically, e.g. <code>strsplit(x, "[.]")</code> can be <code>strsplit(x, ".", fixed = TRUE)</code>.
 <ul><li>Added parameter <code>allow_grepl</code> (default <code>FALSE</code>) to toggle whether <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl()</a></code> usages should be linted. These might be treated separately because <code>grepl("^x", NA)</code> is <code>FALSE</code>; the <code><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith()</a></code> equivalent to get <code>FALSE</code> for missing input is clunkier, but more explicit: <code>!is.na(x) &amp; startsWith(x, string)</code> (<a href="https://github.com/r-lib/lintr/issues/1376" class="external-link">#1376</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></li>
 <li>

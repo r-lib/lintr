@@ -29,7 +29,7 @@ lint(
 )
 #> <text>:1:1: style: [repeat_linter] Use 'repeat' instead of 'while (TRUE)' for infinite loops.
 #> while (TRUE) { }
-#> ^~~~~~~~~~~~
+#> ^~~~~~~~~~~~~~~~
 
 
 # okay

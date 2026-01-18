@@ -19,7 +19,7 @@ fixed_regex_linter(allow_unescaped = FALSE)
 ## Details
 
 NB: for `stringr` functions, that means wrapping the pattern in
-`stringr::fixed()`.
+[`stringr::fixed()`](https://stringr.tidyverse.org/reference/modifiers.html).
 
 NB: this linter is likely not able to distinguish every possible case
 when a fixed regular expression is preferable, rather it seeks to
