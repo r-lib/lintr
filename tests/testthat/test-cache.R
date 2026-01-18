@@ -42,7 +42,7 @@ test_that("clear_cache deletes the directory if no file is given", {
   expect_identical(clear_cache(file = NULL, path = "."), list(".", recursive = TRUE))
 })
 
-test_that("lint with cache uses the provided relative cache directory", { # nofuzz
+test_that("lint with cache uses the provided relative cache directory", {
   path <- withr::local_tempdir("my_cache_dir")
   linter <- assignment_linter()
 

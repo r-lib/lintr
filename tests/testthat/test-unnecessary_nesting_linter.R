@@ -310,7 +310,7 @@ test_that("unnecessary_nesting_linter passes for multi-line braced expressions",
   )
 })
 
-test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", { # nofuzz
+test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", {
   linter <- unnecessary_nesting_linter()
 
   expect_no_lint(
@@ -321,7 +321,7 @@ test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", 
     "),
     linter
   )
-  expect_no_lint( # nofuzz
+  expect_no_lint(
     trim_some("
       DT[, {
         plot(x, y)

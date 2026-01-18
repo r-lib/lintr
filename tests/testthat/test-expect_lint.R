@@ -34,7 +34,7 @@ test_that("single check", {
   expect_success(expect_lint("1:nrow(x)", "(nrow)", seq_linter()))
 })
 
-test_that("multiple checks", { # nofuzz
+test_that("multiple checks", {
   expect_success(
     expect_lint(file = "exclusions-test", checks = as.list(rep(lint_msg, 9L)), linters = linter, parse_settings = FALSE)
   )
@@ -110,4 +110,3 @@ test_that("lint order can be ignored", {
   )
   expect_success(expect_lint(lines, expected[sample.int(4L)], linters, ignore_order = TRUE))
 })
-# nofuzz end

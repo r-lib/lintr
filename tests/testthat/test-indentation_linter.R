@@ -356,7 +356,6 @@ test_that("function argument indentation works in always-hanging-style", { # nof
     linter
   )
 })
-# nofuzz end
 
 test_that("indentation with operators works", {
   linter <- indentation_linter()
