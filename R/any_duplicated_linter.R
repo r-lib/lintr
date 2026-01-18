@@ -63,68 +63,64 @@ any_duplicated_linter <- function() {
   #  this lets us match on either side of EQ, where following-sibling
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
   length_unique_xpath_parts <- glue("
-  //{ c('EQ', 'NE', 'GT', 'LT') }
-    /parent::expr
-    /expr[
-      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
-      and expr/expr[1][
-        SYMBOL_FUNCTION_CALL[text() = 'unique']
-        and (
-          following-sibling::expr =
-            parent::expr
-              /parent::expr
-              /parent::expr
-              /expr
-              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
-              /following-sibling::expr
-          or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
-            parent::expr
-              /parent::expr
-              /parent::expr
-              /expr
-              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'nrow']]
-              /following-sibling::expr
-          or parent::expr
+  expr[
+    expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
+    and expr/expr[1][
+      SYMBOL_FUNCTION_CALL[text() = 'unique']
+      and (
+        following-sibling::expr =
+          parent::expr
             /parent::expr
             /parent::expr
-            /expr[
-              SYMBOL[text() = '.N']
-              or (expr/SYMBOL_FUNCTION_CALL[text() = 'n'] and count(expr) = 1)
-            ]
-        )
-      ]
+            /expr
+            /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length']]
+            /following-sibling::expr
+        or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
+          parent::expr
+            /parent::expr
+            /parent::expr
+            /expr
+            /expr[1][SYMBOL_FUNCTION_CALL[text() = 'nrow']]
+            /following-sibling::expr
+        or parent::expr
+          /parent::expr
+          /parent::expr
+          /expr[
+            SYMBOL[text() = '.N']
+            or (expr/SYMBOL_FUNCTION_CALL[text() = 'n'] and count(expr) = 1)
+          ]
+      )
     ]
+  ]
   ")
   length_unique_xpath <- paste(length_unique_xpath_parts, collapse = " | ")
 
   distinct_xpath <- glue("
-  //{ c('EQ', 'NE', 'GT', 'LT') }
-    /parent::expr
-    /expr[
-      expr[1][
-        SYMBOL_FUNCTION_CALL[text() = 'uniqueN' or text() = 'n_distinct']
-        and (
-          following-sibling::expr =
-            parent::expr
-              /parent::expr
-              /expr
-              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length' or text() = 'nrow']]
-              /following-sibling::expr
-          or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
-            parent::expr
-              /parent::expr
-              /expr
-              /expr[1][SYMBOL_FUNCTION_CALL[text() = 'nrow']]
-              /following-sibling::expr
-          or parent::expr
+  expr[
+    expr[1][
+      SYMBOL_FUNCTION_CALL[text() = 'uniqueN' or text() = 'n_distinct']
+      and (
+        following-sibling::expr =
+          parent::expr
             /parent::expr
-            /expr[
-              SYMBOL[text() = '.N']
-              or (expr/SYMBOL_FUNCTION_CALL[text() = 'n'] and count(expr) = 1)
-            ]
-        )
-      ]
+            /expr
+            /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length' or text() = 'nrow']]
+            /following-sibling::expr
+        or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
+          parent::expr
+            /parent::expr
+            /expr
+            /expr[1][SYMBOL_FUNCTION_CALL[text() = 'nrow']]
+            /following-sibling::expr
+        or parent::expr
+          /parent::expr
+          /expr[
+            SYMBOL[text() = '.N']
+            or (expr/SYMBOL_FUNCTION_CALL[text() = 'n'] and count(expr) = 1)
+          ]
+      )
     ]
+  ]
   ")
 
   uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
@@ -132,7 +128,11 @@ any_duplicated_linter <- function() {
   uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
 
   Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
+    xml <- source_expression$xml_parsed_content |>
+      xml_find_all("//EQ | //NE | //GT | //LT") |>
+      xml_parent() |>
+      strip_comments_from_subtree()
+
     xml_calls <- source_expression$xml_find_function_calls("any")
 
     any_duplicated_expr <- xml_find_all(xml_calls, any_duplicated_xpath)
