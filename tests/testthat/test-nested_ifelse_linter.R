@@ -1,14 +1,14 @@
 test_that("nested_ifelse_linter skips allowed usages", {
   linter <- nested_ifelse_linter()
 
-  expect_lint("if (TRUE) 1 else 2", NULL, linter)
-  expect_lint("if (TRUE) 1 else if (TRUE) 2 else 3", NULL, linter)
+  expect_no_lint("if (TRUE) 1 else 2", linter)
+  expect_no_lint("if (TRUE) 1 else if (TRUE) 2 else 3", linter)
 
-  expect_lint("ifelse(runif(10) > .2, 4, 6)", NULL, linter)
+  expect_no_lint("ifelse(runif(10) > .2, 4, 6)", linter)
 
   # don't block suggested alternatives
-  expect_lint("fcase(l1, v1, l2, v2)", NULL, linter)
-  expect_lint("case_when(l1 ~ v1, l2 ~ v2)", NULL, linter)
+  expect_no_lint("fcase(l1, v1, l2, v2)", linter)
+  expect_no_lint("case_when(l1 ~ v1, l2 ~ v2)", linter)
 })
 
 test_that("nested_ifelse_linter blocks simple disallowed usages", {

@@ -1,13 +1,13 @@
 test_that("sample_int_linter skips allowed usages", {
   linter <- sample_int_linter()
 
-  expect_lint("sample(n, m)", NULL, linter)
-  expect_lint("sample(n, m, TRUE)", NULL, linter)
-  expect_lint("sample(n, m, prob = 1:n/n)", NULL, linter)
-  expect_lint("sample(foo(x), m, TRUE)", NULL, linter)
-  expect_lint("sample(n, replace = TRUE)", NULL, linter)
+  expect_no_lint("sample(n, m)", linter)
+  expect_no_lint("sample(n, m, TRUE)", linter)
+  expect_no_lint("sample(n, m, prob = 1:n/n)", linter)
+  expect_no_lint("sample(foo(x), m, TRUE)", linter)
+  expect_no_lint("sample(n, replace = TRUE)", linter)
 
-  expect_lint("sample(10:1, m)", NULL, linter)
+  expect_no_lint("sample(10:1, m)", linter)
 })
 
 test_that("sample_int_linter blocks simple disallowed usages", {
@@ -40,8 +40,8 @@ test_that("sample_int_linter blocks sample(seq(n)) and sample(seq(1, ...))", {
   expect_lint("sample(seq(1L, 10, by = 1L), 5)", lint_msg, linter)
 
   # lint doesn't apply when by= is used (except when set to literal 1)
-  expect_lint("sample(seq(1, 10, by = 2), 5)", NULL, linter)
-  expect_lint("sample(seq(1, 10, by = n), 5)", NULL, linter)
+  expect_no_lint("sample(seq(1, 10, by = 2), 5)", linter)
+  expect_no_lint("sample(seq(1, 10, by = n), 5)", linter)
 })
 
 test_that("sample_int_linter catches literal integer/numeric in the first arg", {
@@ -55,19 +55,19 @@ test_that("sample_int_linter catches literal integer/numeric in the first arg", 
 test_that("sample_int_linter skips TRUE or FALSE in the first argument", {
   linter <- sample_int_linter()
 
-  expect_lint("sample(replace = TRUE, letters)", NULL, linter)
-  expect_lint("sample(replace = FALSE, letters)", NULL, linter)
+  expect_no_lint("sample(replace = TRUE, letters)", linter)
+  expect_no_lint("sample(replace = FALSE, letters)", linter)
 })
 
 test_that("sample_int_linter skips x$sample() usage", {
   linter <- sample_int_linter()
   lint_msg <- rex::rex("sample.int(n, m, ...) is preferable to sample(n, m, ...).")
 
-  expect_lint("foo$sample(1L)", NULL, linter)
-  expect_lint("foo$sample(1:10)", NULL, linter)
-  expect_lint("foo$sample(seq_len(10L))", NULL, linter)
+  expect_no_lint("foo$sample(1L)", linter)
+  expect_no_lint("foo$sample(1:10)", linter)
+  expect_no_lint("foo$sample(seq_len(10L))", linter)
   # ditto for '@' slot extraction
-  expect_lint("foo@sample(1L)", NULL, linter)
+  expect_no_lint("foo@sample(1L)", linter)
 
   # however, base::sample qualification is still caught
   expect_lint("base::sample(10L)", lint_msg, linter)

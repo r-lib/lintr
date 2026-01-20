@@ -35,8 +35,7 @@ test_that("semicolon_linter handles trailing semicolons", {
   expect_lint(
     trim_some("
       function() { a <- 1;
-      }"
-    ),
+      }"),
     list(lint_msg, line_number = 1L, column_number = 20L),
     linter
   )

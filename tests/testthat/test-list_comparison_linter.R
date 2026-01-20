@@ -1,5 +1,5 @@
 test_that("list_comparison_linter skips allowed usages", {
-  expect_lint("sapply(x, sum) > 10", NULL, list_comparison_linter())
+  expect_no_lint("sapply(x, sum) > 10", list_comparison_linter())
 })
 
 local({

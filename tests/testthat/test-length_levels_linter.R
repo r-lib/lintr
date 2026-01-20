@@ -1,5 +1,5 @@
 test_that("length_levels_linter skips allowed usages", {
-  expect_lint("length(c(levels(x), 'a'))", NULL, length_levels_linter())
+  expect_no_lint("length(c(levels(x), 'a'))", length_levels_linter())
 })
 
 test_that("length_levels_linter blocks simple disallowed usages", {

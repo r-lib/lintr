@@ -1,25 +1,25 @@
 test_that("equals_na_linter skips allowed usages", {
   linter <- equals_na_linter()
 
-  expect_lint("blah", NULL, linter)
-  expect_lint("  blah", NULL, linter)
-  expect_lint("  blah", NULL, linter)
-  expect_lint("x=NA", NULL, linter)
-  expect_lint("x = NaN", NULL, linter)
-  expect_lint("x = NA_real_", NULL, linter)
-  expect_lint("is.na(x)", NULL, linter)
-  expect_lint("is.nan(x)", NULL, linter)
-  expect_lint("x[!is.na(x)]", NULL, linter)
+  expect_no_lint("blah", linter)
+  expect_no_lint("  blah", linter)
+  expect_no_lint("  blah", linter)
+  expect_no_lint("x=NA", linter)
+  expect_no_lint("x = NaN", linter)
+  expect_no_lint("x = NA_real_", linter)
+  expect_no_lint("is.na(x)", linter)
+  expect_no_lint("is.nan(x)", linter)
+  expect_no_lint("x[!is.na(x)]", linter)
 
   # equals_na_linter should ignore strings and comments
-  expect_lint("is.na(x) # do not flag x == NA if inside a comment", NULL, linter)
-  expect_lint("lint_msg <- 'do not flag x == NA if inside a string'", NULL, linter)
+  expect_no_lint("is.na(x) # do not flag x == NA if inside a comment", linter)
+  expect_no_lint("lint_msg <- 'do not flag x == NA if inside a string'", linter)
 
   # nested NAs are okay
-  expect_lint("x==f(1, ignore = NA)", NULL, linter)
+  expect_no_lint("x==f(1, ignore = NA)", linter)
 
   # this should be covered by any_is_na_linter()
-  expect_lint("NA %in% x", NULL, linter)
+  expect_no_lint("NA %in% x", linter)
 })
 
 skip_if_not_installed("tibble")
