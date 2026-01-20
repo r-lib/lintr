@@ -112,7 +112,6 @@ test_that("sort_linter works with multiple lints in a single expression", {
     ),
     linter
   )
-
 })
 
 test_that("sort_linter skips usages calling sort arguments", {
