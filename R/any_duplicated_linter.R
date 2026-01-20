@@ -128,7 +128,7 @@ any_duplicated_linter <- function() {
   uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
 
   Linter(linter_level = "expression", function(source_expression) {
-    # NB: need two parents 
+    # NB: need two parents given three parent::expr in XPath and stripped comments.
     xml <- source_expression$xml_parsed_content |>
       xml_find_all("//EQ | //NE | //GT | //LT") |>
       xml_parent() |>
