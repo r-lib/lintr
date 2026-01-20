@@ -13,7 +13,7 @@ test_that("consecutive_assertion_linter skips allowed usages", {
       y
 
       stopifnot(z)
-    "), 
+    "),
     linter
   )
 })
@@ -93,7 +93,7 @@ test_that("Mixing test functions is fine", {
     trim_some("
       assert_that(x)
       stopifnot(y)
-    "), 
+    "),
     consecutive_assertion_linter()
   )
 })
@@ -124,7 +124,7 @@ test_that("interceding = assignments aren't linted", {
       assert_that(C)
       z = 3
       assert_that(D)
-    }"), 
+    }"),
     consecutive_assertion_linter()
   )
 })

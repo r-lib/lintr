@@ -25,7 +25,7 @@ patrick::with_parameters_test_that(
       trim_some(glue::glue("
         library({backend})
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")), 
+      ")),
       linter
     )
 
@@ -33,7 +33,7 @@ patrick::with_parameters_test_that(
       trim_some(glue::glue("
         require('{backend}')
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")), 
+      ")),
       linter
     )
 
@@ -43,7 +43,7 @@ patrick::with_parameters_test_that(
           tbl({backend}::sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")), 
+      ")),
       linter
     )
 
@@ -53,7 +53,7 @@ patrick::with_parameters_test_that(
           tbl({backend}:::sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")), 
+      ")),
       linter
     )
 
@@ -63,7 +63,7 @@ patrick::with_parameters_test_that(
         NULL
 
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")), 
+      ")),
       linter
     )
 
@@ -76,7 +76,7 @@ patrick::with_parameters_test_that(
           tbl(sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")), 
+      ")),
       linter
     )
   },

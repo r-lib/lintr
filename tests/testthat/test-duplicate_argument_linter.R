@@ -36,13 +36,23 @@ test_that("duplicate_argument_linter respects except argument", {
   linter_list <- duplicate_argument_linter(except = "list")
   linter_all <- duplicate_argument_linter(except = character())
 
-  expect_no_lint("list(
-      var = 1,
-      var = 2
-    )", linter_list)
+  expect_no_lint(
+    trim_some("
+      list(
+        var = 1,
+        var = 2
+      )
+    "),
+    linter_list
+  )
 
-  expect_no_lint("(function(x, y) x + y)(x = 1)
-    list(var = 1, var = 2)", linter_list)
+  expect_no_lint(
+    trim_some("
+      (function(x, y) x + y)(x = 1)
+      list(var = 1, var = 2)
+    "),
+    linter_list
+  )
 
   expect_lint(
     "fun(`

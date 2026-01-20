@@ -47,7 +47,7 @@ test_that("function_argument_linter blocks disallowed usages", {
                y = 1,
                z = 2) {
       }
-    "), 
+    "),
     linter
   )
 })

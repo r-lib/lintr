@@ -65,7 +65,7 @@ test_that("backport_linter detects backwards-incompatibility", {
     trim_some("
       numToBits(2)
       R_user_dir('mypkg')
-    "), 
+    "),
     backport_linter("3.0.0", except = c("numToBits", "R_user_dir"))
   )
 })

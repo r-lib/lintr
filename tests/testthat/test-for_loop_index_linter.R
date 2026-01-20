@@ -17,7 +17,7 @@ test_that("for_loop_index_linter skips allowed usages", {
         }
         i <- 7L
       }
-    "), 
+    "),
     linter
   )
 })
