@@ -159,6 +159,7 @@ test_that("scalar logic in anonymous functions within filter/subset is allowed",
   expect_no_lint("filter(x, vapply(y, \\(i) i && z, NA))", linter)
   expect_no_lint("filter(x, Map(function(a, b) a && b, x, y))", linter)
   expect_no_lint("filter(x, vapply(y, function(i) any(sapply(i, function(j) j && z)), NA))", linter)
+  expect_no_lint("filter(x, vapply(y, function(i) { is.numeric(i) && mean(i) > 1 }, NA))", linter)
 })
 
 test_that("vector logic in if conditions inside anonymous functions is still linted", {
@@ -183,6 +184,11 @@ test_that("vector logic in if conditions inside anonymous functions is still lin
   )
   expect_lint(
     "subset(x, sapply(col, function(x) { while (A | B) x }))",
+    or_msg,
+    linter
+  )
+  expect_lint(
+    "filter(x, vapply(y, function(i) if (A | B) 1 else 0, 1))",
     or_msg,
     linter
   )

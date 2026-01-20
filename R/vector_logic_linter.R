@@ -69,7 +69,8 @@ vector_logic_linter <- function() {
   #     <ELSE>             # (here & below is optional)
   #     <expr> ... </expr>
   #  </expr>
-  #  we _don't_ want to match anything on the second expr, hence this
+  #  we _don't_ want to match anything on the second expr.
+  #  not(call[not(lambda)]): skip unless _every_ call ancestor has a lambda
   condition_xpath <- "
   (//AND | //OR)[
     ancestor::expr[
