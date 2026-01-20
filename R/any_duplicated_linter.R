@@ -63,7 +63,7 @@ any_duplicated_linter <- function() {
   #  this lets us match on either side of EQ, where following-sibling
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
   length_unique_xpath_parts <- glue("
-  expr[
+  expr/expr[
     expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
     and expr/expr[1][
       SYMBOL_FUNCTION_CALL[text() = 'unique']
@@ -96,7 +96,7 @@ any_duplicated_linter <- function() {
   length_unique_xpath <- paste(length_unique_xpath_parts, collapse = " | ")
 
   distinct_xpath <- glue("
-  expr[
+  expr/expr[
     expr[1][
       SYMBOL_FUNCTION_CALL[text() = 'uniqueN' or text() = 'n_distinct']
       and (
@@ -128,8 +128,10 @@ any_duplicated_linter <- function() {
   uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
 
   Linter(linter_level = "expression", function(source_expression) {
+    # NB: need two parents 
     xml <- source_expression$xml_parsed_content |>
       xml_find_all("//EQ | //NE | //GT | //LT") |>
+      xml_parent() |>
       xml_parent() |>
       strip_comments_from_subtree()
 
