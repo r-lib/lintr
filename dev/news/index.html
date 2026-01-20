@@ -117,19 +117,15 @@
 <li>
 <code><a href="../reference/vector_logic_linter.html">vector_logic_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2826" class="external-link">#2826</a></li>
 </ul></li>
-</ul></div>
-</div>
-<div class="section level3">
-<h3 id="new-and-improved-features-development-version-1">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version-1"></a></h3>
-<div class="section level4">
-<h4 id="linter-improvements-development-version-1">Linter improvements<a class="anchor" aria-label="anchor" href="#linter-improvements-development-version-1"></a></h4>
-<ul><li>
+<li>
 <code><a href="../reference/sort_linter.html">sort_linter()</a></code> recommends usage of <code>!is.unsorted(x)</code> over <code>identical(x, sort(x))</code> (<a href="https://github.com/r-lib/lintr/issues/2921" class="external-link">#2921</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
 </ul></div>
 <div class="section level4">
 <h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
 <ul><li>
 <code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code> treats <code>=</code> assignment the same as <code>&lt;-</code> for several pieces of logic (<a href="https://github.com/r-lib/lintr/issues/2245" class="external-link">#2245</a> and <a href="https://github.com/r-lib/lintr/issues/2829" class="external-link">#2829</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/vector_logic_linter.html">vector_logic_linter()</a></code> ignores scalar operators (<code>&amp;&amp;</code>/<code>||</code>) inside anonymous functions within <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code>/<code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2935" class="external-link">#2935</a>, <a href="https://github.com/emmanuel-ferdman" class="external-link">@emmanuel-ferdman</a>).</li>
 </ul></div>
 </div>
 <div class="section level3">

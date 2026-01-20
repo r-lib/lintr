@@ -95,11 +95,6 @@
     [\#2827](https://github.com/r-lib/lintr/issues/2827)
   - [`vector_logic_linter()`](https://lintr.r-lib.org/dev/reference/vector_logic_linter.md)
     [\#2826](https://github.com/r-lib/lintr/issues/2826)
-
-### New and improved features
-
-#### Linter improvements
-
 - [`sort_linter()`](https://lintr.r-lib.org/dev/reference/sort_linter.md)
   recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))`
   ([\#2921](https://github.com/r-lib/lintr/issues/2921),
@@ -112,6 +107,11 @@
   ([\#2245](https://github.com/r-lib/lintr/issues/2245) and
   [\#2829](https://github.com/r-lib/lintr/issues/2829),
   [@MichaelChirico](https://github.com/MichaelChirico)).
+- [`vector_logic_linter()`](https://lintr.r-lib.org/dev/reference/vector_logic_linter.md)
+  ignores scalar operators (`&&`/`||`) inside anonymous functions within
+  [`filter()`](https://rdrr.io/r/stats/filter.html)/[`subset()`](https://rdrr.io/r/base/subset.html)
+  ([\#2935](https://github.com/r-lib/lintr/issues/2935),
+  [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
 
 ### Notes
 
