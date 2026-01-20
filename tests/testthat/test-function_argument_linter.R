@@ -41,12 +41,15 @@ test_that("function_argument_linter blocks disallowed usages", {
     list(message = lint_msg, line_number = 4L),
     linter
   )
-  expect_no_lint(trim_some("
+  expect_no_lint(
+    trim_some("
       function(x,
                y = 1,
                z = 2) {
       }
-    "), linter)
+    "), 
+    linter
+  )
 })
 
 test_that("function_argument_linter also lints lambda expressions", {

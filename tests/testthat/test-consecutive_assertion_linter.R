@@ -7,12 +7,15 @@ test_that("consecutive_assertion_linter skips allowed usages", {
   expect_no_lint("stopifnot(x); y; stopifnot(z)", linter)
 
   # inline or potentially with gaps don't matter
-  expect_no_lint(trim_some("
+  expect_no_lint(
+    trim_some("
       stopifnot(x)
       y
 
       stopifnot(z)
-    "), linter)
+    "), 
+    linter
+  )
 })
 
 test_that("consecutive_assertion_linter blocks simple disallowed usages", {
@@ -86,10 +89,13 @@ test_that("assert_that usages are handled correctly too", {
 })
 
 test_that("Mixing test functions is fine", {
-  expect_no_lint(trim_some("
+  expect_no_lint(
+    trim_some("
       assert_that(x)
       stopifnot(y)
-    "), consecutive_assertion_linter())
+    "), 
+    consecutive_assertion_linter()
+  )
 })
 
 test_that("lints vectorize", {
@@ -109,7 +115,8 @@ test_that("lints vectorize", {
 })
 
 test_that("interceding = assignments aren't linted", {
-  expect_no_lint(trim_some("{
+  expect_no_lint(
+    trim_some("{
       stopifnot(A)
       x = 1
       stopifnot(B)
@@ -117,5 +124,7 @@ test_that("interceding = assignments aren't linted", {
       assert_that(C)
       z = 3
       assert_that(D)
-    }"), consecutive_assertion_linter())
+    }"), 
+    consecutive_assertion_linter()
+  )
 })

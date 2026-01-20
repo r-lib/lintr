@@ -21,38 +21,54 @@ patrick::with_parameters_test_that(
   {
     linter <- consecutive_mutate_linter(invalid_backends = backend)
 
-    expect_no_lint(trim_some(glue::glue("
+    expect_no_lint(
+      trim_some(glue::glue("
         library({backend})
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")), linter)
+      ")), 
+      linter
+    )
 
-    expect_no_lint(trim_some(glue::glue("
+    expect_no_lint(
+      trim_some(glue::glue("
         require('{backend}')
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")), linter)
+      ")), 
+      linter
+    )
 
-    expect_no_lint(trim_some(glue("
+    expect_no_lint(
+      trim_some(glue("
         conn %>%
           tbl({backend}::sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")), linter)
+      ")), 
+      linter
+    )
 
-    expect_no_lint(trim_some(glue("
+    expect_no_lint(
+      trim_some(glue("
         conn %>%
           tbl({backend}:::sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")), linter)
+      ")), 
+      linter
+    )
 
-    expect_no_lint(trim_some(glue("
+    expect_no_lint(
+      trim_some(glue("
         #' @import {backend}
         NULL
 
         DF %>% mutate(a = a + 1) %>% mutate(b = a - 2)
-      ")), linter)
+      ")), 
+      linter
+    )
 
-    expect_no_lint(trim_some(glue("
+    expect_no_lint(
+      trim_some(glue("
         #' @importFrom {backend} sql
         NULL
 
@@ -60,7 +76,9 @@ patrick::with_parameters_test_that(
           tbl(sql('SELECT 1 AS x')) %>%
           mutate(a = x + 1) %>%
           mutate(b = a + 1)
-      ")), linter)
+      ")), 
+      linter
+    )
   },
   .test_name = c("dbplyr", "custom.backend"),
   backend = c("dbplyr", "custom.backend")
