@@ -9,7 +9,7 @@
 ## Bug fixes
 
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
-* Scalar logic (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` is no longer incorrectly flagged (#2935, @emmanuel-ferdman).
+* `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
 
 ## New and improved features
 
@@ -47,12 +47,12 @@
    + `unnecessary_placeholder_linter()`
    + `unreachable_code_linter()` #2827
    + `vector_logic_linter()` #2826
-
-## New and improved features
-
-### Linter improvements
-
 * `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
+
+### Lint accuracy fixes: removing false positives
+
+* `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
+* Scalar logic (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` is no longer incorrectly flagged (#2935, @emmanuel-ferdman).
 
 ## Notes
 

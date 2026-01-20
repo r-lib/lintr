@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("assignment_linter skips allowed usages", {
   linter <- assignment_linter()
 
@@ -387,3 +388,4 @@ test_that("implicit '<-' assignments inside calls are ignored where top-level '<
   expect_no_lint("for (i in foo(idx <- is.na(y))) which(idx)", linter)
   expect_no_lint("for (i in foo(bar(idx <- is.na(y)))) which(idx)", linter)
 })
+# nofuzz end

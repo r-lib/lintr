@@ -68,6 +68,8 @@ test_that("non-terminal expressions are not considered for the logic", {
 })
 
 test_that("parallels in further nesting are skipped", {
+  linter <- unnecessary_nesting_linter()
+
   expect_no_lint(
     trim_some("
       if (length(bucket) > 1) {
@@ -81,7 +83,24 @@ test_that("parallels in further nesting are skipped", {
         }
       }
     "),
-    unnecessary_nesting_linter()
+    linter
+  )
+
+  # same but with '='
+  expect_no_lint(
+    trim_some("
+      if (length(bucket) > 1) {
+        return(age)
+      } else {
+        age = age / 2
+        if (grepl('[0-9]', age)) {
+          return(age)
+        } else {
+          return('unknown')
+        }
+      }
+    "),
+    linter
   )
 })
 
@@ -256,13 +275,23 @@ test_that("unnecessary_nesting_linter skips one-expression repeat loops", {
 })
 
 test_that("unnecessary_nesting_linter skips one-expression assignments by default", {
+  linter <- unnecessary_nesting_linter()
+
   expect_no_lint(
     trim_some("
       {
         x <- foo()
       }
     "),
-    unnecessary_nesting_linter()
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      {
+        x = foo()
+      }
+    "),
+    linter
   )
 })
 
@@ -281,7 +310,7 @@ test_that("unnecessary_nesting_linter passes for multi-line braced expressions",
   )
 })
 
-test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", {
+test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", { # nofuzz
   linter <- unnecessary_nesting_linter()
 
   expect_no_lint(
@@ -325,6 +354,20 @@ test_that("unnecessary_nesting_linter skips if unbracing won't reduce nesting", 
         n <- .N - 1
         x[n] < y[n]
       }, j = TRUE, by = x]
+    "),
+    linter
+  )
+
+  # interaction of '=' assignment and 'loose' braces (?)
+  expect_no_lint(
+    trim_some("
+      DT[
+        {
+          n = .N - 1
+          x[n] < y[n]
+        }
+        , j = TRUE, by = x
+      ]
     "),
     linter
   )

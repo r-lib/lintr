@@ -1,3 +1,4 @@
+# nofuzz start
 test_that("semicolon_linter skips allowed usages", {
   linter <- semicolon_linter()
 
@@ -41,7 +42,7 @@ test_that("semicolon_linter handles trailing semicolons", {
   )
 })
 
-test_that("semicolon_linter handles compound semicolons", { # nofuzz
+test_that("semicolon_linter handles compound semicolons", {
   linter <- semicolon_linter()
   lint_msg <- rex::rex("Replace compound semicolons by a newline.")
 
@@ -75,7 +76,7 @@ test_that("semicolon_linter handles compound semicolons", { # nofuzz
   )
 })
 
-test_that("semicolon_linter handles multiple/mixed semicolons", { # nofuzz
+test_that("semicolon_linter handles multiple/mixed semicolons", {
   linter <- semicolon_linter()
   trail_msg <- rex::rex("Remove trailing semicolons.")
   comp_msg <- rex::rex("Replace compound semicolons by a newline.")
@@ -107,7 +108,7 @@ test_that("semicolon_linter handles multiple/mixed semicolons", { # nofuzz
 })
 
 
-test_that("Compound semicolons only", { # nofuzz
+test_that("Compound semicolons only", {
   linter <- semicolon_linter(allow_trailing = TRUE)
   expect_no_lint("a <- 1;", linter)
   expect_no_lint("function(){a <- 1;}", linter)
@@ -121,7 +122,7 @@ test_that("Compound semicolons only", { # nofuzz
 })
 
 
-test_that("Trailing semicolons only", { # nofuzz
+test_that("Trailing semicolons only", {
   linter <- semicolon_linter(allow_compound = TRUE)
   expect_no_lint("a <- 1;b <- 2", linter)
   expect_no_lint("function() {a <- 1;b <- 2}", linter)
@@ -144,10 +145,11 @@ test_that("Trailing semicolons only", { # nofuzz
 })
 
 
-test_that("Compound semicolons only", { # nofuzz
+test_that("Compound semicolons only", {
   expect_error(
     semicolon_linter(allow_trailing = TRUE, allow_compound = TRUE),
     "At least one of `allow_compound` or `allow_trailing` must be `FALSE`",
     fixed = TRUE
   )
 })
+# nofuzz end
