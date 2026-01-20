@@ -1,12 +1,12 @@
 test_that("class_equals_linter skips allowed usages", {
   linter <- class_equals_linter()
 
-  expect_lint("class(x) <- 'character'", NULL, linter)
-  expect_lint("class(x) = 'character'", NULL, linter)
+  expect_no_lint("class(x) <- 'character'", linter)
+  expect_no_lint("class(x) = 'character'", linter)
 
   # proper way to test exact class
-  expect_lint("identical(class(x), c('glue', 'character'))", NULL, linter)
-  expect_lint("is_lm <- inherits(x, 'lm')", NULL, linter)
+  expect_no_lint("identical(class(x), c('glue', 'character'))", linter)
+  expect_no_lint("is_lm <- inherits(x, 'lm')", linter)
 })
 
 test_that("class_equals_linter blocks simple disallowed usages", {
@@ -38,7 +38,7 @@ test_that("class_equals_linter blocks class(x) != 'klass'", {
 test_that("class_equals_linter skips usage for subsetting", {
   linter <- class_equals_linter()
 
-  expect_lint("class(x)[class(x) == 'foo']", NULL, linter)
+  expect_no_lint("class(x)[class(x) == 'foo']", linter)
 
   # but not further nesting
   expect_lint(
