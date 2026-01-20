@@ -72,22 +72,37 @@ test_that("duplicate_argument_linter respects except argument", {
 test_that("doesn't lint duplicated arguments in allowed functions", {
   linter <- duplicate_argument_linter()
 
-  expect_no_lint("x %>%
-     dplyr::mutate(
-       col = a + b,
-       col = col + d
-     )", linter)
+  expect_no_lint(
+    trim_some("
+      x %>%
+       dplyr::mutate(
+         col = a + b,
+         col = col + d
+       )
+    "),
+    linter
+  )
 
-  expect_no_lint("x %>%
-     dplyr::transmute(
-       col = a + b,
-       col = col / 2.5
-     )", linter)
+  expect_no_lint(
+    trim_some("
+      x %>%
+       dplyr::transmute(
+         col = a + b,
+         col = col / 2.5
+       )
+    "),
+    linter
+  )
 
-  expect_no_lint("x |>
-    dplyr::mutate(
-      col = col |> str_replace('t', '') |> str_replace('\\\\s+$', 'xxx')
-    )", linter)
+  expect_no_lint(
+    trim_some("
+      x |>
+      dplyr::mutate(
+        col = col |> str_replace('t', '') |> str_replace('\\\\s+$', 'xxx')
+      )
+    "),
+    linter
+  )
 })
 
 test_that("interceding comments don't trip up logic", {
