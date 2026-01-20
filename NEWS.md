@@ -52,7 +52,7 @@
 ### Lint accuracy fixes: removing false positives
 
 * `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
-* Scalar logic (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` is no longer incorrectly flagged (#2935, @emmanuel-ferdman).
+* `vector_logic_linter()` ignores scalar operators (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` (#2935, @emmanuel-ferdman).
 
 ## Notes
 
