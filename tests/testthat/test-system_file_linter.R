@@ -1,8 +1,8 @@
 test_that("system_file_linter skips allowed usages", {
   linter <- system_file_linter()
 
-  expect_lint("system.file('a', 'b', 'c')", NULL, linter)
-  expect_lint("file.path('a', 'b', 'c')", NULL, linter)
+  expect_no_lint("system.file('a', 'b', 'c')", linter)
+  expect_no_lint("file.path('a', 'b', 'c')", linter)
 })
 
 test_that("system_file_linter blocks simple disallowed usages", {

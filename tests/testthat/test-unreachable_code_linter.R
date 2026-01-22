@@ -658,7 +658,6 @@ test_that("function shorthand is handled", {
 })
 
 test_that("Do not lint inline else after stop", {
-
   expect_no_lint("if (x > 3L) stop() else x + 3", unreachable_code_linter())
 })
 

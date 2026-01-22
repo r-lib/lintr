@@ -136,7 +136,7 @@ test_that("pipe_consistency_linter works with %>% argument", {
   expect_lint(
     trim_some("
       1:3 %>%
-        mean() |> 
+        mean() |>
         as.character()
     "),
     list(message = expected_message, line_number = 2L, column_number = 10L),
