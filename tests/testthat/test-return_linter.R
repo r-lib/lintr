@@ -702,7 +702,7 @@ test_that("except= and except_regex= combination works", {
   )
 })
 
-test_that("return_linter skips brace-wrapped inline functions", { # nofuzz
+test_that("return_linter skips brace-wrapped inline functions", { # nofuzz: comment_injection
   expect_no_lint("function(x) { sum(x) }", return_linter(return_style = "explicit"))
 })
 

@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("returns the correct linting", {
   ops <- c(
     "+",
@@ -190,7 +190,7 @@ test_that("mixed unary & binary operators aren't mis-lint", {
   )
 })
 
-test_that("parse tags are accepted by exclude_operators", {
+test_that("parse tags are accepted by exclude_operators", { # nofuzz: assignment
   expect_no_lint("sum(x, na.rm=TRUE)", infix_spaces_linter(exclude_operators = "EQ_SUB"))
   expect_no_lint("function(x, na.rm=TRUE) { }", infix_spaces_linter(exclude_operators = "EQ_FORMALS"))
   expect_no_lint("x=1", infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
@@ -212,7 +212,7 @@ test_that("parse tags are accepted by exclude_operators", {
   expect_lint(text, list(col_formals, col_sub), infix_spaces_linter(exclude_operators = "EQ_ASSIGN"))
 })
 
-test_that("lints vectorize", {
+test_that("lints vectorize", { # nofuzz: assignment
   lint_msg <- rex::rex("Put spaces around all infix operators.")
 
   expect_lint(
@@ -235,4 +235,4 @@ test_that("lints vectorize", {
     infix_spaces_linter()
   )
 })
-# nofuzz end
+# fuzzer enable: comment_injection

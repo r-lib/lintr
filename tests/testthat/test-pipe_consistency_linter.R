@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: pipe
 test_that("pipe_consistency skips allowed usage", {
   linter <- pipe_consistency_linter()
 
@@ -202,4 +202,4 @@ test_that("simply enforcing a consistent style is supported", {
     linter
   )
 })
-# nofuzz end
+# fuzzer enable: pipe

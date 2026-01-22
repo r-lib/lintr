@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("returns the correct linting (with default parameters)", {
   linter <- commas_linter()
   msg_after <- rex::rex("Put a space after a comma.")
@@ -114,4 +114,4 @@ test_that("returns the correct linting (with 'allow_trailing' set)", {
     linter
   )
 })
-# nofuzz end
+# fuzzer enable: comment_injection

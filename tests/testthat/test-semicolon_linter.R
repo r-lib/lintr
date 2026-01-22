@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("semicolon_linter skips allowed usages", {
   linter <- semicolon_linter()
 
@@ -151,4 +151,4 @@ test_that("Compound semicolons only", {
     fixed = TRUE
   )
 })
-# nofuzz end
+# fuzzer enable: comment_injection

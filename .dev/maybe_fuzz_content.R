@@ -9,13 +9,7 @@ maybe_fuzz_content <- function(file, lines) {
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
-  apply_fuzzers(new_file, fuzzers = list(
-    function_lambda_fuzzer,
-    pipe_fuzzer,
-    dollar_at_fuzzer,
-    comment_injection_fuzzer,
-    assignment_fuzzer
-  ))
+  apply_fuzzers(new_file, fuzzers = .fuzzers$active)
 
   new_file
 }
@@ -106,19 +100,55 @@ apply_fuzzers <- function(f, fuzzers) {
     return(invisible())
   }
 
-  unedited <- lines <- readLines(f)
+  unedited <- lines <- readLines(f, warn = FALSE)
   for (fuzzer in fuzzers) {
     updated_lines <- fuzzer(pd, lines)
-    if (is.null(updated_lines) || identical(unedited, updated_lines)) next # skip some I/O if we can
+    if (is.null(updated_lines)) next # skip some I/O if we can
     writeLines(updated_lines, f)
-    # check if our attempted edit introduced some error; skip applying this fuzzer only if so
+    # check if our attempted edit introduced some error
     pd <- error_or_parse_data(f)
     if (inherits(pd, "error")) {
-      writeLines(lines, f)
-      next
+      writeLines(unedited, f)
+      return(invisible())
     }
     lines <- readLines(f)
   }
 
+  invisible()
+}
+
+.fuzzers <- new.env()
+.fuzzers$active <- list(
+  assignment = assignment_fuzzer,
+  comment_injection = comment_injection_fuzzer,
+  dollar_at = dollar_at_fuzzer,
+  function_lambda = function_lambda_fuzzer,
+  pipe = pipe_fuzzer
+)
+.fuzzers$inactive <- list()
+
+deactivate_fuzzers <- function(names_str) {
+  req <- unlist(strsplit(names_str, " ", fixed = TRUE))
+  if (!all(req %in% names(.fuzzers$active))) {
+    stop(sprintf(
+      "Invalid attempt to deactivate fuzzers: '%s'\n  Currently active fuzzers: %s\n  Currently inactive fuzzers: %s",
+      names_str, toString(names(.fuzzers$active)), toString(names(.fuzzers$inactive))
+    ))
+  }
+  .fuzzers$inactive[req] <- .fuzzers$active[req]
+  .fuzzers$active[req] <- NULL
+  invisible()
+}
+
+activate_fuzzers <- function(names_str) {
+  req <- unlist(strsplit(names_str, " ", fixed = TRUE))
+  if (!all(req %in% names(.fuzzers$inactive))) {
+    stop(sprintf(
+      "Invalid attempt to activate fuzzers: '%s'\n  Currently active fuzzers: %s\n  Currently inactive fuzzers: %s",
+      names_str, toString(names(.fuzzers$active)), toString(names(.fuzzers$inactive))
+    ))
+  }
+  .fuzzers$active[req] <- .fuzzers$inactive[req]
+  .fuzzers$inactive[req] <- NULL
   invisible()
 }

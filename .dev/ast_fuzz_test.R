@@ -53,7 +53,7 @@ if (
 }
 
 contents[wrong_number_def_idx] <-
-  'wrong_number_fmt <- "got %d lints instead of %d%s\\nFile contents:\\n%s"'
+  '  wrong_number_fmt <- "got %d lints instead of %d%s\\nFile contents:\\n%s"'
 contents[wrong_number_use_idx] <-
   gsub("\\)$", ", readChar(file, file.size(file)))", contents[wrong_number_use_idx])
 writeLines(contents, expect_lint_file)
@@ -66,61 +66,81 @@ withr::defer({
 
 suppressMessages(pkgload::load_all())
 
+can_parse <- \(lines) !inherits(tryCatch(parse(text = lines), error = identity), "error")
+get_str <- \(x) tail(unlist(strsplit(x, ": ", fixed = TRUE)), 1L)
+
 # beware lazy eval: originally tried adding a withr::defer() in each iteration, but
 #   this effectively only runs the last 'defer' expression as the names are only
 #   evaluated at run-time. So instead keep track of all edits in this object.
-# this approach to implementing 'nofuzz' feels painfully manual, but I couldn't
-#   figure out how else to get 'testthat' to give us what we need -- the failures
-#   object in the reporter is frustratingly inconsistent in whether the trace
-#   exists, and even if it does, we'd have to text-mangle to get the corresponding
-#   file names out. Also, the trace 'srcref' happens under keep.source=FALSE,
-#   so we lose any associated comments anyway. even that would not solve the issue
-#   of getting top-level exclusions done for 'nofuzz start|end' ranges, except
-#   maybe if it enabled us to reuse lintr's own exclude() system.
-# therefore we take this approach: pass over the test suite first and comment out
-#   any tests/units that have been marked 'nofuzz'. restore later. one consequence
-#   is there's no support for fuzzer-specific exclusion, e.g. we fully disable
-#   the unnecessary_placeholder_linter() tests because |> and _ placeholders differ.
+# these have to be enabled/disabled at runtime as it's not possible to disentagle which
+#   fuzzer caused the error ex-post (and it might be the interaction of >1 at issue).
+#   an earlier approach was like the current 'nofuzz' -- just comment out the troublesome
+#   tests from being run at all. But that led to a very quickly growing set of tests being
+#   skipped totally, which also hid some issues that are surfaced by the current approach.
+#   Another idea would be to just leave the enable/disable calls as code in the test suite,
+#   but I prefer the current approach of leaving them as comments: (1) it's more consistent
+#   with the 'nolint' exclusion system and (2) it doesn't distract the casual reader as much.
 test_restorations <- list()
 for (test_file in list.files("tests/testthat", pattern = "^test-", full.names = TRUE)) {
-  xml <- read_xml(xmlparsedata::xml_parse_data(parse(test_file, keep.source = TRUE)))
-  # parent::* to catch top-level comments (exprlist). matches one-line nofuzz and start/end ranges.
-  nofuzz_lines <- xml_find_all(xml, "//COMMENT[contains(text(), 'nofuzz')]/parent::*")
-  if (length(nofuzz_lines) == 0L) next
+  test_lines <- readLines(test_file)
+  one_expr_idx <- grep("# nofuzz", test_lines, fixed = TRUE)
+  range_start_idx <- grep("^\\s*# fuzzer disable:", test_lines)
+  if (length(one_expr_idx) == 0L && length(range_start_idx) == 0L) next
 
-  test_original <- test_lines <- readLines(test_file)
+  test_original <- test_lines
+  pd <- getParseData(parse(test_file, keep.source = TRUE))
 
-  for (nofuzz_line in nofuzz_lines) {
-    comments <- xml_find_all(nofuzz_line, "COMMENT[contains(text(), 'nofuzz')]")
-    comment_text <- xml_text(comments)
-    # handle start/end ranges first.
-    start_idx <- grep("nofuzz start", comment_text, fixed = TRUE)
-    end_idx <- grep("nofuzz end", comment_text, fixed = TRUE)
-    if (length(start_idx) != length(end_idx) || any(end_idx < start_idx)) {
-      stop(sprintf(
-        "Mismatched '# nofuzz start' (%s), '# nofuzz end' (%s) in %s",
-        toString(start_idx), toString(end_idx), test_file
-      ))
+  for (start_line in rev(one_expr_idx)) {
+    end_line <- start_line
+    while (end_line <= length(test_lines) && !can_parse(test_lines[start_line:end_line])) {
+      end_line <- end_line + 1L
     }
-
-    comment_ranges <- Map(`:`,
-      as.integer(xml_attr(comments[start_idx], "line1")),
-      as.integer(xml_attr(comments[end_idx], "line1"))
-    )
-    for (comment_range in comment_ranges) {
-      test_lines[comment_range] <- paste("#", test_lines[comment_range])
+    if (end_line > length(test_lines)) {
+      stop("Unable to parse any expression starting from line ", start_line)
     }
-
-    if (length(start_idx) > 0L && !any(!start_idx & !end_idx)) next
-
-    # NB: one-line tests line expect_lint(...) # nofuzz are not supported,
-    #   since the comment will attach to the parent test_that() & thus comment
-    #   out the whole unit. Easiest solution is just to spread out those few tests for now.
-    comment_range <- as.integer(xml_attr(nofuzz_line, "line1")):as.integer(xml_attr(nofuzz_line, "line2"))
-    test_lines[comment_range] <- paste("#", test_lines[comment_range])
+    comment_txt <- subset(pd, line1 == start_line & token == "COMMENT", select = "text", drop = TRUE)
+    # blanket disable means the test cannot be run. this happens e.g. for tests of encoding
+    #   that are too complicated to deal with in this GHA.
+    if (comment_txt == "# nofuzz") {
+      test_lines[start_line:end_line] <- ""
+    } else {
+      deactivated <- get_str(comment_txt)
+      test_lines <- c(
+        head(test_lines, start_line - 1L),
+        sprintf("deactivate_fuzzers('%s')", deactivated),
+        test_lines[start_line:end_line],
+        sprintf("activate_fuzzers('%s')", deactivated),
+        tail(test_lines, -end_line)
+      )
+    }
   }
 
-  writeLines(test_lines, test_file)
+  if (length(one_expr_idx)) {
+    writeLines(test_lines, test_file)
+    pd <- getParseData(parse(test_file, keep.source = TRUE))
+    range_start_idx <- grep("^\\s*# fuzzer disable:", test_lines)
+  }
+
+  range_end_idx <- grep("^\\s*# fuzzer enable:", test_lines)
+
+  if (length(range_start_idx) != length(range_end_idx) || any(range_end_idx < range_start_idx)) {
+    stop(sprintf(
+      "Mismatched '# fuzzer disable' (%s), '# fuzzer enable' (%s) in %s",
+      toString(range_start_idx), toString(range_end_idx), test_file
+    ))
+  }
+
+  for (ii in seq_along(range_start_idx)) {
+    start_line <- test_lines[range_start_idx[ii]]
+    test_lines[range_start_idx[ii]] <-
+      gsub("#.*", sprintf("deactivate_fuzzers('%s')", get_str(start_line)), start_line)
+    end_line <- test_lines[range_end_idx[ii]]
+    test_lines[range_end_idx[ii]] <-
+      gsub("#.*", sprintf("activate_fuzzers('%s')", get_str(end_line)), end_line)
+  }
+
+  if (length(range_start_idx)) writeLines(test_lines, test_file)
+
   test_restorations <- c(test_restorations, list(list(file = test_file, lines = test_original)))
 }
 withr::defer(for (restoration in test_restorations) writeLines(restoration$lines, restoration$file))
@@ -134,8 +154,7 @@ all_classes <- unlist(lapply(
   reporter$get_results(),
   \(test) lapply(test$results, \(x) class(x)[1L])
 ))
-cat("Summary of test statuses:\n")
-print(table(all_classes))
+print(table(`Summary of test statuses:` = all_classes))
 
 # ignore any test that failed for expected reasons, e.g. some known lint metadata changes
 #   about line numbers or the contents of the line. this saves us having to pepper tons of
@@ -160,7 +179,7 @@ if (length(invalid_failures) > 0L) {
     \(x) sprintf("%s:%s", x$file, x$test),
     character(1L)
   )
-  cat("Some fuzzed tests failed unexpectedly!\n")
+  cat(sprintf("%d fuzzed tests failed unexpectedly!\n", length(invalid_failures)))
   print(invalid_failures)
-  stop("Use # nofuzz [start|end] to mark false positives or fix any bugs.")
+  stop("Fix any bugs, or use '# nofuzz'/'# fuzzer [dis|en]able' to mark false positives.")
 }

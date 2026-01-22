@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("returns the correct linting", {
   linter <- trailing_whitespace_linter()
   lint_msg <- rex::rex("Remove trailing whitespace.")
@@ -68,4 +68,4 @@ test_that("also handles trailing whitespace in string constants", {
     trailing_whitespace_linter(allow_in_strings = FALSE)
   )
 })
-# nofuzz end
+# fuzzer enable: comment_injection
