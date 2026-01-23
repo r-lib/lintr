@@ -112,3 +112,23 @@ pkg_name <- function(path = find_package()) {
   nm <- read.dcf(file.path(path, "DESCRIPTION"), fields = "Package")[1L]
   if (!is.na(nm)) nm
 }
+
+min_r_version <- function(path = find_package(".")) {
+  if (is.null(path)) {
+    return(NA_character_)
+  }
+  depends_field <- read.dcf(file.path(path, "DESCRIPTION"), fields = "Depends")
+
+  depends <- trimws(strsplit(depends_field, ",", fixed = TRUE)[[1L]])
+
+  min_r_ver <- gsub("^R \\(>=?\\s(.+)\\)", "\\1", grep("R ", depends, value = TRUE, fixed = TRUE))
+
+  if (length(min_r_ver) == 0) {
+    return(NA_character_)
+  }
+  # According to 'Writing R Extensions', the trailing 0 for patch version can
+  # be dropped.
+  # But we want to identically match an existing version number so we add it if
+  # it's missing.
+  gsub("^(\\d+\\.\\d+)$", "\\1.0", min_r_ver)
+}
