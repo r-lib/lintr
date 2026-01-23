@@ -54,6 +54,12 @@
 * `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
 * `vector_logic_linter()` ignores scalar operators (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` (#2935, @emmanuel-ferdman).
 
+## New and improved features
+
+### Lint accuracy fixes: removing false positives
+
+* `paste_linter()` lints `expression(paste(., sep = ""))` because the `paste` inside an expression doesn't support the `sep` argument (#2945, @mcol).
+
 ## Notes
 
 * {lintr} now requires R 4.1.0
@@ -130,10 +136,6 @@
 * `object_name_linter()` and `object_length_linter()` account for S3 class correctly when the generic is assigned with `=` (#2507, @MichaelChirico).
 * `assignment_linter()` with `operator = "="` does a better job of skipping implicit assignments, which are intended to be governed by `implicit_assignment_linter()` (#2765, @MichaelChirico).
 * `implicit_assignment_linter()` with `allow_scoped=TRUE` doesn't lint for `if (a <- 1) print(a)` (#2913, @MichaelChirico).
-* `expect_true_false_linter()` is pipe-aware, so that `42 |> expect_identical(x, ignore_attr = TRUE)` no longer lints (#1520, @MichaelChirico).
-* `T_and_F_symbol_linter()` ignores `T` and `F`:
-   + When used as symbols in formulas (`y ~ T + F`), which can represent variables in data not controlled by the author (#2637, @MichaelChirico).
-   + If followed by `[` or `[[` (#2944, @mcol).
 
 ### Lint accuracy fixes: removing false negatives
 
