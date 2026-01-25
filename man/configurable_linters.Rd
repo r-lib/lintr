@@ -21,6 +21,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_mutate_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
+\item{\code{\link{decimal_fraction_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
 \item{\code{\link{if_not_else_linter}}}

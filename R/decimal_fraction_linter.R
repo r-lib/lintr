@@ -33,8 +33,9 @@
 #'
 #' @evalRd rd_tags("decimal_fraction_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
+#' @param lint_exact_binary Logical, whether to lint values exactly representable in binary.
 #' @export
-decimal_fraction_linter <- function() {
+decimal_fraction_linter <- function(lint_exact_binary = FALSE) {
   Linter(linter_level = "expression", function(source_expression) {
     tracked_funs <- c("as.integer", "ceiling", "floor", "trunc")
     xml_calls <- source_expression$xml_find_function_calls(tracked_funs)
@@ -99,59 +100,49 @@ decimal_fraction_linter <- function() {
       !is.na(xml_find_first(expr, "ancestor::expr[OP-MINUS and count(expr) = 1]"))
     }, logical(1L))
 
-    # Skip nodes where we failed to identify the non-numeric operand; otherwise
-    # we could build a malformed suggestion.
-    ok <- nzchar(other_factor)
-    bad_expr <- bad_expr[ok]
-    num_text <- num_text[ok]
-    other_factor <- other_factor[ok]
-    operator <- operator[ok]
-    is_negative <- is_negative[ok]
-    if (length(bad_expr) == 0L) {
+    filtered <- filter_decimal_fraction_inputs(
+      bad_expr = bad_expr,
+      num_text = num_text,
+      other_factor = other_factor,
+      operator = operator,
+      is_negative = is_negative
+    )
+    if (length(filtered[["bad_expr"]]) == 0L) {
       return(list())
     }
 
-    fractions <- lapply(num_text, decimal_literal_to_fraction)
-    has_fraction <- vapply(fractions, Negate(is.null), logical(1L))
-    bad_expr <- bad_expr[has_fraction]
-    other_factor <- other_factor[has_fraction]
-    fractions <- fractions[has_fraction]
-    operator <- operator[has_fraction]
-    is_negative <- is_negative[has_fraction]
-    if (length(bad_expr) == 0L) {
-      return(list())
-    }
-
-    call_names <- xp_call_name(bad_expr, depth = 1L)
-    lint_message <- vapply(seq_along(bad_expr), function(idx) {
-      fraction <- fractions[[idx]]
-      sign_factor <- ifelse(is_negative[[idx]], -1L, 1L)
-      numerator <- sign_factor * fraction[["numerator"]]
-      denominator <- fraction[["denominator"]]
-      if (operator[[idx]] == "OP-SLASH") {
-        numerator <- sign_factor * fraction[["denominator"]]
-        denominator <- fraction[["numerator"]]
+    fractions <- lapply(filtered[["num_text"]], function(number) {
+      parts <- extract_decimal_parts(number)
+      if (!lint_exact_binary && is_exact_binary_literal(parts[["fractional_part"]])) {
+        return(NULL)
       }
-      has_mult_part <- numerator != 1L
-      has_div_part <- denominator != 1L
-      mult_part <- if (has_mult_part) sprintf(" * %dL", numerator) else ""
-      div_part <- if (has_div_part) sprintf(" / %dL", denominator) else ""
-      replacement_template <- if (has_mult_part && has_div_part) "%s((%s%s)%s)" else "%s(%s%s%s)"
-      replacement <- sprintf(
-        replacement_template,
-        call_names[[idx]],
-        other_factor[[idx]],
-        mult_part,
-        div_part
+      convert_parts_to_fraction(
+        integer_part = parts[["integer_part"]],
+        fractional_part = parts[["fractional_part"]]
       )
-      sprintf(
-        "Use %s to avoid floating-point rounding.",
-        replacement
-      )
-    }, character(1L))
+    })
+    filtered <- filter_decimal_fractions(
+      bad_expr = filtered[["bad_expr"]],
+      other_factor = filtered[["other_factor"]],
+      operator = filtered[["operator"]],
+      is_negative = filtered[["is_negative"]],
+      fractions = fractions
+    )
+    if (length(filtered[["bad_expr"]]) == 0L) {
+      return(list())
+    }
+
+    call_names <- xp_call_name(filtered[["bad_expr"]], depth = 1L)
+    lint_message <- build_decimal_fraction_message(
+      fractions = filtered[["fractions"]],
+      call_names = call_names,
+      other_factor = filtered[["other_factor"]],
+      operator = filtered[["operator"]],
+      is_negative = filtered[["is_negative"]]
+    )
 
     xml_nodes_to_lints(
-      bad_expr,
+      filtered[["bad_expr"]],
       source_expression = source_expression,
       lint_message = lint_message,
       type = "warning",
@@ -162,56 +153,129 @@ decimal_fraction_linter <- function() {
   })
 }
 
-#' Convert a decimal literal to a reduced fraction
+filter_decimal_fraction_inputs <- function(bad_expr, num_text, other_factor, operator, is_negative) {
+  ok <- nzchar(other_factor)
+  list(
+    bad_expr = bad_expr[ok],
+    num_text = num_text[ok],
+    other_factor = other_factor[ok],
+    operator = operator[ok],
+    is_negative = is_negative[ok]
+  )
+}
+
+filter_decimal_fractions <- function(bad_expr, other_factor, operator, is_negative, fractions) {
+  has_fraction <- vapply(fractions, Negate(is.null), logical(1L))
+  list(
+    bad_expr = bad_expr[has_fraction],
+    other_factor = other_factor[has_fraction],
+    operator = operator[has_fraction],
+    is_negative = is_negative[has_fraction],
+    fractions = fractions[has_fraction]
+  )
+}
+
+build_decimal_fraction_message <- function(fractions, call_names, other_factor, operator, is_negative) {
+  vapply(seq_along(fractions), function(idx) {
+    fraction <- fractions[[idx]]
+    sign_factor <- ifelse(is_negative[[idx]], -1L, 1L)
+    numerator <- sign_factor * fraction[["numerator"]]
+    denominator <- fraction[["denominator"]]
+    if (operator[[idx]] == "OP-SLASH") {
+      numerator <- sign_factor * fraction[["denominator"]]
+      denominator <- fraction[["numerator"]]
+    }
+    has_mult_part <- numerator != 1L
+    has_div_part <- denominator != 1L
+    mult_part <- if (has_mult_part) sprintf(" * %dL", numerator) else ""
+    div_part <- if (has_div_part) sprintf(" / %dL", denominator) else ""
+    replacement_template <- if (has_mult_part && has_div_part) "%s((%s%s)%s)" else "%s(%s%s%s)"
+    replacement <- sprintf(
+      replacement_template,
+      call_names[[idx]],
+      other_factor[[idx]],
+      mult_part,
+      div_part
+    )
+    sprintf(
+      "Use %s to avoid floating-point rounding.",
+      replacement
+    )
+  }, character(1L))
+}
+
+#' Determine if a decimal literal is exactly representable in binary
 #'
-#' @param number Character scalar decimal literal.
-#' @return A list with `numerator` and `denominator`, or `NULL` if the literal is unsuitable.
+#' @param fractional_part Character scalar containing fractional digits.
+#' @return `TRUE` when the literal is exactly representable in binary.
 #' @keywords internal
 #' @rdname decimal_fraction_helpers
-decimal_literal_to_fraction <- function(number) {
+is_exact_binary_literal <- function(fractional_part) {
+  if (fractional_part == "") {
+    return(TRUE)
+  }
+  fractional_digits <- as.integer(fractional_part)
+
+  digits <- nchar(fractional_part)
+  v5 <- 0L
+  while (fractional_digits %% 5L == 0L) {
+    fractional_digits <- fractional_digits / 5L
+    v5 <- v5 + 1L
+  }
+
+  v5 >= digits
+}
+
+#' Extract decimal literal parts with exponent applied
+#'
+#' @param number Character scalar decimal literal.
+#' @return A list with `integer_part` and `fractional_part`, or `NULL` if invalid.
+#' @keywords internal
+#' @rdname decimal_fraction_helpers
+extract_decimal_parts <- function(number) {
   split_exp <- strsplit(number, "[eE]", perl = TRUE)[[1L]]
   mantissa <- split_exp[[1L]]
   exponent <- if (length(split_exp) > 1L) as.integer(split_exp[[2L]]) else 0L
-  if (should_skip_decimal_fraction(mantissa, exponent)) {
-    return(NULL)
-  }
+  sign_char <- if (grepl("^[-+]", mantissa)) substr(mantissa, 1L, 1L) else ""
+  mantissa <- sub("^[-+]", "", mantissa)
 
   parts <- strsplit(mantissa, ".", fixed = TRUE)[[1L]]
   integer_part <- parts[[1L]]
   fractional_part <- if (length(parts) > 1L) parts[[2L]] else ""
   integer_part <- ifelse(nzchar(integer_part), integer_part, "0")
 
-  # Use decimal digits for numerator/denominator to avoid floating-point drift.
-  numerator <- as.integer(paste0(integer_part, fractional_part))
-  if (is.na(numerator)) {
-    return(NULL)
+  digits_text <- paste0(integer_part, fractional_part)
+  decimal_pos <- nchar(integer_part)
+  new_decimal_pos <- decimal_pos + exponent
+  if (new_decimal_pos >= nchar(digits_text)) {
+    integer_part <- paste0(digits_text, strrep("0", new_decimal_pos - nchar(digits_text)))
+    fractional_part <- ""
+  } else if (new_decimal_pos <= 0L) {
+    integer_part <- "0"
+    fractional_part <- paste0(strrep("0", abs(new_decimal_pos)), digits_text)
+  } else {
+    integer_part <- substr(digits_text, 1L, new_decimal_pos)
+    fractional_part <- substr(digits_text, new_decimal_pos + 1L, nchar(digits_text))
   }
-  denominator <- 10.0^nchar(fractional_part)
-  if (exponent < 0L) {
-    denominator <- denominator * 10.0^abs(exponent)
+  if (sign_char != "") {
+    integer_part <- paste0(sign_char, integer_part)
   }
-  reduce_fraction(numerator, denominator)
+
+  fractional_part <- sub("0+$", "", fractional_part)
+  list(integer_part = integer_part, fractional_part = fractional_part)
 }
 
-#' Decide whether to skip fraction conversion
+#' Convert decimal literal parts to a reduced fraction
 #'
-#' @param mantissa Character scalar mantissa.
-#' @param exponent Integer exponent from scientific notation.
-#' @return `TRUE` when the literal should be ignored.
+#' @param integer_part Character scalar integer part.
+#' @param fractional_part Character scalar fractional part.
+#' @return A list with `numerator` and `denominator`, or `NULL` if invalid.
 #' @keywords internal
 #' @rdname decimal_fraction_helpers
-should_skip_decimal_fraction <- function(mantissa, exponent) {
-  if (!grepl(".", mantissa, fixed = TRUE)) {
-    return(exponent >= 0L)
-  }
-  # Positive exponents create integer-like values (e.g., 3.2e2) that we skip.
-  if (exponent > 0L) {
-    return(TRUE)
-  }
-  if (exponent >= 0L && !grepl("[1-9]", mantissa)) {
-    return(TRUE)
-  }
-  FALSE
+convert_parts_to_fraction <- function(integer_part, fractional_part) {
+  numerator <- as.integer(paste0(integer_part, fractional_part))
+  denominator <- 10.0^nchar(fractional_part)
+  reduce_fraction(numerator, denominator)
 }
 
 #' Normalize a fraction into reduced integer form

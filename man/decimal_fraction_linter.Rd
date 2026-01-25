@@ -4,7 +4,10 @@
 \alias{decimal_fraction_linter}
 \title{Decimal fraction integer linter}
 \usage{
-decimal_fraction_linter()
+decimal_fraction_linter(lint_exact_binary = FALSE)
+}
+\arguments{
+\item{lint_exact_binary}{Logical, whether to lint values exactly representable in binary.}
 }
 \description{
 Check for use of \verb{as.integer(x * <float>)} and suggest an integer arithmetic
@@ -43,5 +46,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=efficiency_linters]{efficiency}, \link[=robustness_linters]{robustness}
 }
