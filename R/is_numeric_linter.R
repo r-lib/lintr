@@ -67,9 +67,8 @@ is_numeric_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    or_expr <- xml |>
-      xml_find_all("//OR2") |>
-      xml_parent() |>
+    or_expr <- xml_find_all(xml, "//OR2/parent::*")
+    or_expr <- or_expr |>
       strip_comments_from_subtree() |>
       xml_find_all(or_xpath)
     or_lints <- xml_nodes_to_lints(

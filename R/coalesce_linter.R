@@ -70,9 +70,10 @@ coalesce_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    null_calls <- xml_parent(xml_parent(xml_parent(
-      source_expression$xml_find_function_calls("is.null")
-    )))
+    null_calls <- xml_find_all(
+      source_expression$xml_find_function_calls("is.null"),
+      "parent::*/parent::*/parent::*"
+    )
     null_calls <- strip_comments_from_subtree(null_calls)
     bad_expr <- xml_find_all(null_calls, xpath)
     is_negation <- !is.na(xml_find_first(bad_expr, "expr/OP-EXCLAMATION"))

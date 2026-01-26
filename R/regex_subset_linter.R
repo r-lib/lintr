@@ -60,9 +60,10 @@ regex_subset_linter <- function() {
   stringr_xpath <- glue(xpath_fmt, arg_pos = 2L)
 
   Linter(linter_level = "expression", function(source_expression) {
-    grep_calls <- xml_parent(xml_parent(xml_parent(
-      source_expression$xml_find_function_calls(c("grepl", "grep"))
-    )))
+    grep_calls <- xml_find_all(
+      source_expression$xml_find_function_calls(c("grepl", "grep")),
+      "parent::*/parent::*/parent::*"
+    )
     grep_calls <- strip_comments_from_subtree(grep_calls)
     grep_expr <- xml_find_all(grep_calls, grep_xpath)
 
@@ -76,9 +77,10 @@ regex_subset_linter <- function() {
       type = "warning"
     )
 
-    stringr_calls <- xml_parent(xml_parent(xml_parent(
-      source_expression$xml_find_function_calls(c("str_detect", "str_which"))
-    )))
+    stringr_calls <- xml_find_all(
+      source_expression$xml_find_function_calls(c("str_detect", "str_which")),
+      "parent::*/parent::*/parent::*"
+    )
     stringr_calls <- strip_comments_from_subtree(stringr_calls)
     stringr_expr <- xml_find_all(stringr_calls, stringr_xpath)
 
