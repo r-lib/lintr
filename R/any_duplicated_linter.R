@@ -129,8 +129,9 @@ any_duplicated_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     # NB: need two parents given three parent::expr in XPath and stripped comments.
-    xml <- xml_find_all(source_expression$xml_parsed_content, "(//EQ | //NE | //GT | //LT)/parent::*/parent::*")
-    xml <- strip_comments_from_subtree(xml)
+    xml <- source_expression$xml_parsed_content |>
+      xml_find_all("(//EQ | //NE | //GT | //LT)/parent::*/parent::*") |>
+      strip_comments_from_subtree()
 
     xml_calls <- source_expression$xml_find_function_calls("any")
 

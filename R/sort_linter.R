@@ -100,11 +100,9 @@ sort_linter <- function() {
   arg_values_xpath <- glue("{arguments_xpath}/following-sibling::expr[1]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    order_calls <- xml_find_all(
-      source_expression$xml_find_function_calls("order"),
-      "parent::*/parent::*"
-    )
-    order_calls <- strip_comments_from_subtree(order_calls)
+    order_calls <- source_expression$xml_find_function_calls("order") |>
+      xml_find_all("parent::*/parent::*") |>
+      strip_comments_from_subtree()
 
     order_expr <- xml_find_all(order_calls, order_xpath)
 
@@ -139,8 +137,9 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    sort_calls <- xml_find_all(source_expression$xml_find_function_calls("sort"), "parent::*/parent::*/parent::*")
-    sort_calls <- strip_comments_from_subtree(sort_calls)
+    sort_calls <- source_expression$xml_find_function_calls("sort") |>
+      xml_find_all("parent::*/parent::*/parent::*") |>
+      strip_comments_from_subtree()
     sorted_expr <- xml_find_all(sort_calls, sorted_xpath)
 
     sorted_op <- xml_text(xml_find_first(sorted_expr, "*[2]"))
