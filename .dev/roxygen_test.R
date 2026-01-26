@@ -9,11 +9,12 @@ old_files <- list.files(old_dir, pattern = "\\.Rd$")
 new_dir <- "man"
 
 .Last <- function() {
-  if (dir.exists(old_dir)) {
-    unlink(new_dir, recursive = TRUE)
-    file.copy(old_dir, ".", recursive = TRUE)
-    unlink(old_dir, recursive = TRUE)
+  if (!dir.exists(old_dir)) {
+    return(invisible())
   }
+  unlink(new_dir, recursive = TRUE)
+  file.copy(old_dir, ".", recursive = TRUE)
+  unlink(old_dir, recursive = TRUE)
 }
 
 # Rd2txt() prints to its out= argument, so we'd have to compare file contents;
