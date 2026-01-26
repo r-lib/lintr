@@ -10,7 +10,7 @@
 #'
 #' @noRd
 build_xml_find_function_calls <- function(xml) {
-  function_call_cache <- xml_find_all(xml, "//SYMBOL_FUNCTION_CALL/parent::expr")
+  function_call_cache <- xml_parent(xml_find_all(xml, "//SYMBOL_FUNCTION_CALL"))
   names(function_call_cache) <- get_r_string(function_call_cache, "SYMBOL_FUNCTION_CALL")
 
   s4_slot_cache <- xml_find_all(xml, "//SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]")
