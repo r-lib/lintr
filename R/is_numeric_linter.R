@@ -3,6 +3,8 @@
 #' [is.numeric()] returns `TRUE` when `typeof(x)` is `double` or `integer` --
 #'   testing `is.numeric(x) || is.integer(x)` is thus redundant.
 #'
+#' NOT ROXYGENIZED
+#'
 #' NB: This linter plays well with [class_equals_linter()], which can help
 #'   avoid further `is.numeric()` equivalents like
 #'   `any(class(x) == c("numeric", "integer"))`.
