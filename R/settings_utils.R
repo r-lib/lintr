@@ -123,7 +123,7 @@ min_r_version <- function(path = find_package(".")) {
 
   min_r_ver <- gsub("^R \\(>=?\\s(.+)\\)", "\\1", grep("R ", depends, value = TRUE, fixed = TRUE))
 
-  if (length(min_r_ver) == 0) {
+  if (length(min_r_ver) == 0L) {
     return(NA_character_)
   }
   # According to 'Writing R Extensions', the trailing 0 for patch version can
