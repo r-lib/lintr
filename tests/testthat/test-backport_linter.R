@@ -10,7 +10,8 @@ test_that("backport_linter detects backwards-incompatibility", {
   expect_no_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", backport_linter())
   expect_no_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", backport_linter("release"))
   expect_no_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", backport_linter("devel"))
-
+  expect_no_lint(".getNamespaceInfo(dir.exists(lapply(x, toTitleCase)))", backport_linter("auto"))
+  
   expect_lint(
     "numToBits(2)",
     rex::rex("numToBits (R 4.1.0) is not always available for requested dependency (R >= 4.0.0)."),
@@ -81,4 +82,47 @@ test_that("backport_linter generates expected warnings", {
     fixed = TRUE
   )
   expect_identical(l, lint(tmp, backport_linter("3.0.0")))
+})
+
+test_that("backport_linter works with package R version", {
+  pkg_lints_from_outside <- lint_package(
+    "dummy_packages/auto_backport_fail",
+    linters = backport_linter(),
+    parse_settings = FALSE
+  )
+  pkg_lints_from_root <- withr::with_dir(
+    "dummy_packages/auto_backport_fail",
+    lint_package(linters = backport_linter(), parse_settings = FALSE)
+  )
+
+  expect_length(pkg_lints_from_outside, 1L)
+  expect_identical(
+    pkg_lints_from_outside[[1]]$message,
+    "numToBits (R 4.1.0) is not always available for requested dependency (R >= 4.0.0)."
+  )
+  expect_length(pkg_lints_from_root, 1L)
+  expect_identical(
+    pkg_lints_from_root[[1]]$message,
+    "numToBits (R 4.1.0) is not always available for requested dependency (R >= 4.0.0)."
+  )
+
+  # Can be overwritten
+  pkg_lints_from_outside_noauto <- lint_package(
+    "dummy_packages/auto_backport_fail",    
+    backport_linter("3.0.0"),
+    parse_settings = FALSE
+  )
+
+  expect_length(pkg_lints_from_outside_noauto, 1L)
+  expect_identical(
+    pkg_lints_from_outside_noauto[[1]]$message,
+    "numToBits (R 4.1.0) is not always available for requested dependency (R >= 3.0.0)."
+  )
+
+  pkg_lints_auto_pass <- lint_package(
+    "dummy_packages/auto_backport_pass",
+    linters = backport_linter(),
+    parse_settings = FALSE
+  )
+  expect_length(pkg_lints_auto_pass, 0L)
 })
