@@ -34,13 +34,14 @@ test_that("available_tags returns a character vector", {
 
 test_that("default_linters and default tag match up", {
   avail <- available_linters()
-  tagged_default <- avail[["linter"]][vapply(avail[["tags"]], function(tags) "default" %in% tags, logical(1L))]
+  tagged_default <- avail[["linter"]][vapply(avail[["tags"]], \(tags) "default" %in% tags, logical(1L))]
   expect_identical(tagged_default, names(default_linters))
 })
 
 test_that("warnings occur only for deprecated linters", {
   skip_if_not_installed("cyclocomp") # actually we expect a warning there
 
+  expect_error(linters_with_tags(), "`tags` was not specified. Available tags:")
   expect_silent(linters_with_tags(tags = NULL))
   num_deprecated_linters <- nrow(available_linters(tags = "deprecated", exclude_tags = NULL))
   outer_env <- new.env(parent = emptyenv())
@@ -95,7 +96,7 @@ test_that("lintr help files are up to date", {
 
   lintr_db <- available_linters(exclude_tags = NULL)
   lintr_db$package <- NULL
-  lintr_db$tags <- lapply(lintr_db$tags, function(x) if ("deprecated" %in% x) "deprecated" else sort(x))
+  lintr_db$tags <- lapply(lintr_db$tags, \(x) if ("deprecated" %in% x) "deprecated" else sort(x))
   lintr_db <- lintr_db[order(lintr_db$linter), ]
 
   expect_true("linters.Rd" %in% names(help_db), info = "?linters exists")
@@ -188,7 +189,7 @@ test_that("lintr help files are up to date", {
     )[[1L]]
 
     # those entries in available_linters() with the current tag
-    db_linter_has_tag <- vapply(lintr_db$tags, function(linter_tag) any(tag %in% linter_tag), logical(1L))
+    db_linter_has_tag <- vapply(lintr_db$tags, \(linter_tag) any(tag %in% linter_tag), logical(1L))
     expected <- lintr_db$linter[db_linter_has_tag]
 
     expect_identical(
@@ -200,11 +201,11 @@ test_that("lintr help files are up to date", {
 
   # (3) the 'configurable' tag applies if and only if the linter has parameters
   has_args <- 0L < lengths(Map(
-    function(linter, tags) if ("deprecated" %in% tags) NULL else formals(match.fun(linter)),
+    \(linter, tags) if ("deprecated" %in% tags) NULL else formals(match.fun(linter)),
     lintr_db$linter,
     lintr_db$tags
   ))
-  has_configurable_tag <- vapply(lintr_db$tags, function(tags) "configurable" %in% tags, logical(1L))
+  has_configurable_tag <- vapply(lintr_db$tags, \(tags) "configurable" %in% tags, logical(1L))
 
   expect_identical(has_configurable_tag, unname(has_args))
 })
@@ -225,7 +226,7 @@ test_that("all linters have at least one tag", {
 test_that("other packages' linters can be included", {
   db_loc <- withr::local_tempdir()
   local_mocked_bindings(
-    system.file = function(..., package) file.path(db_loc, package, ...)
+    system.file = \(..., package) file.path(db_loc, package, ...)
   )
 
   custom_db <- data.frame(

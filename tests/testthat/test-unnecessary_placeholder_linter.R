@@ -19,7 +19,7 @@ patrick::with_parameters_test_that(
   pipe = pipes
 )
 
-patrick::with_parameters_test_that( # nofuzz
+patrick::with_parameters_test_that( # nofuzz: pipe
   "unnecessary_placeholder_linter blocks simple disallowed usages",
   {
     expect_lint(
@@ -38,7 +38,7 @@ patrick::with_parameters_test_that( # nofuzz
   pipe = pipes
 )
 
-test_that("lints vectorize", { # nofuzz
+test_that("lints vectorize", { # nofuzz: pipe
   lint_msg <- rex::rex("Don't use the placeholder (`.`) when it's not needed")
 
   expect_lint(
@@ -50,6 +50,16 @@ test_that("lints vectorize", { # nofuzz
       list(lint_msg, line_number = 2L),
       list(lint_msg, line_number = 3L)
     ),
+    unnecessary_placeholder_linter()
+  )
+})
+
+test_that("logic survives adversarial commenting", {
+  expect_no_lint(
+    trim_some("
+      x %T>% foo(arg = # comment
+      .)
+    "),
     unnecessary_placeholder_linter()
   )
 })

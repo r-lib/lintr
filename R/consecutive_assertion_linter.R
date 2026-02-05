@@ -1,6 +1,6 @@
 #' Force consecutive calls to assertions into just one when possible
 #'
-#' [stopifnot()] accepts any number of tests, so sequences like
+#' [base::stopifnot()] accepts any number of tests, so sequences like
 #'   `stopifnot(x); stopifnot(y)` are redundant. Ditto for tests using
 #'   `assertthat::assert_that()` without specifying `msg=`.
 #'

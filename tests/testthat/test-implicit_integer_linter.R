@@ -57,8 +57,8 @@ test_that("linter returns the correct linting", {
   linter <- implicit_integer_linter()
   lint_msg <- rex::rex("Use 1L or 1.0 to avoid implicit integers.")
 
-  expect_lint("x <<- 1L", NULL, linter)
-  expect_lint("1.0/-Inf -> y", NULL, linter)
+  expect_no_lint("x <<- 1L", linter)
+  expect_no_lint("1.0/-Inf -> y", linter)
   expect_lint(
     "y <- 1+i",
     list(message = lint_msg, line_number = 1L, column_number = 7L),

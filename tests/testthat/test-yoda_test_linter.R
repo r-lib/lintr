@@ -1,12 +1,12 @@
 test_that("yoda_test_linter skips allowed usages", {
   linter <- yoda_test_linter()
 
-  expect_lint("expect_equal(x, 2)", NULL, linter)
+  expect_no_lint("expect_equal(x, 2)", linter)
   # namespace qualification doesn't matter
-  expect_lint("testthat::expect_identical(x, 'a')", NULL, linter)
+  expect_no_lint("testthat::expect_identical(x, 'a')", linter)
   # two variables can't be distinguished which is expected/actual (without
   #   playing quixotic games trying to parse that out from variable names)
-  expect_lint("expect_equal(x, y)", NULL, linter)
+  expect_no_lint("expect_equal(x, y)", linter)
 })
 
 test_that("yoda_test_linter blocks simple disallowed usages", {
@@ -24,8 +24,8 @@ test_that("yoda_test_linter ignores strings in $ expressions", {
   linter <- yoda_test_linter()
 
   # the "key" here shows up at the same level of the parse tree as plain "key" normally would
-  expect_lint('expect_equal(x$"key", 2)', NULL, linter)
-  expect_lint('expect_equal(x@"key", 2)', NULL, linter)
+  expect_no_lint('expect_equal(x$"key", 2)', linter)
+  expect_no_lint('expect_equal(x@"key", 2)', linter)
 })
 
 # if we only inspect the first argument & ignore context, get false positives
@@ -34,7 +34,7 @@ local({
   linter <- yoda_test_linter()
   patrick::with_parameters_test_that(
     "yoda_test_linter ignores usage in pipelines",
-    expect_lint(sprintf("foo() %s expect_identical(2)", pipe), NULL, linter),
+    expect_no_lint(sprintf("foo() %s expect_identical(2)", pipe), linter),
     pipe = pipes,
     .test_name = names(pipes)
   )

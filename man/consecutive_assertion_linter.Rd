@@ -7,7 +7,7 @@
 consecutive_assertion_linter()
 }
 \description{
-\code{\link[=stopifnot]{stopifnot()}} accepts any number of tests, so sequences like
+\code{\link[base:stopifnot]{base::stopifnot()}} accepts any number of tests, so sequences like
 \verb{stopifnot(x); stopifnot(y)} are redundant. Ditto for tests using
 \code{assertthat::assert_that()} without specifying \verb{msg=}.
 }

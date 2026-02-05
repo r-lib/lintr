@@ -92,5 +92,4 @@ test_that("matrix_apply_linter works with multiple lints in a single expression"
     ),
     linter
   )
-
 })

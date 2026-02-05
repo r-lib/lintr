@@ -9,7 +9,7 @@ maybe_fuzz_content <- function(file, lines) {
     file.copy(file, new_file, copy.mode = FALSE)
   }
 
-  apply_fuzzers(new_file, list(function_lambda_fuzzer, pipe_fuzzer, dollar_at_fuzzer))
+  apply_fuzzers(new_file, fuzzers = .fuzzers$active)
 
   new_file
 }
@@ -59,6 +59,39 @@ dollar_at_fuzzer <- simple_swap_fuzzer(
   replacements = c("$", "@")
 )
 
+assignment_fuzzer <- simple_swap_fuzzer(
+  \(pd) (pd$token == "LEFT_ASSIGN" & pd$text == "<-") | pd$token == "EQ_ASSIGN",
+  replacements = c("<-", "=")
+)
+
+comment_injection_fuzzer <- function(pd, lines) {
+  # injecting comment before a call often structurally breaks parsing
+  #   (SYMBOL_FUNCTION_CALL-->SYMBOL), so avoid
+  terminal_token_idx <- which(pd$terminal & !pd$token %in% c("COMMENT", "SYMBOL_FUNCTION_CALL", "SLOT"))
+  # formula is messy because it's very easy to break parsing, but not easy to exclude the right
+  #   elements from the pd data.frame (easier with XPath ancestor axis). Just skip for now.
+  if (any(pd$token == "'~'")) {
+    return(invisible())
+  }
+  injection_count <- sample(0:length(terminal_token_idx), 1L)
+
+  if (injection_count == 0L) {
+    return(invisible())
+  }
+
+  terminal_token_idx <- sort(sample(terminal_token_idx, injection_count))
+
+  for (ii in rev(terminal_token_idx)) {
+    line <- lines[pd$line2[ii]]
+    lines[pd$line2[ii]] <- paste0(
+      substr(line, 1L, pd$col2[ii]),
+      " # INJECTED COMMENT\n",
+      substr(line, pd$col2[ii] + 1L, nchar(line))
+    )
+  }
+  lines
+}
+
 # we could also consider just passing any test where no fuzzing takes place,
 #   i.e. letting the other GHA handle whether unfuzzed tests pass as expected.
 apply_fuzzers <- function(f, fuzzers) {
@@ -67,19 +100,55 @@ apply_fuzzers <- function(f, fuzzers) {
     return(invisible())
   }
 
-  unedited <- lines <- readLines(f)
+  unedited <- lines <- readLines(f, warn = FALSE)
   for (fuzzer in fuzzers) {
     updated_lines <- fuzzer(pd, lines)
-    if (is.null(updated_lines) || identical(unedited, updated_lines)) next # skip some I/O if we can
+    if (is.null(updated_lines)) next # skip some I/O if we can
     writeLines(updated_lines, f)
-    # check if our attempted edit introduced some error; skip applying this fuzzer only if so
+    # check if our attempted edit introduced some error
     pd <- error_or_parse_data(f)
     if (inherits(pd, "error")) {
-      writeLines(lines, f)
-      next
+      writeLines(unedited, f)
+      return(invisible())
     }
     lines <- readLines(f)
   }
 
+  invisible()
+}
+
+.fuzzers <- new.env()
+.fuzzers$active <- list(
+  assignment = assignment_fuzzer,
+  comment_injection = comment_injection_fuzzer,
+  dollar_at = dollar_at_fuzzer,
+  function_lambda = function_lambda_fuzzer,
+  pipe = pipe_fuzzer
+)
+.fuzzers$inactive <- list()
+
+deactivate_fuzzers <- function(names_str) {
+  req <- unlist(strsplit(names_str, " ", fixed = TRUE))
+  if (!all(req %in% names(.fuzzers$active))) {
+    stop(sprintf(
+      "Invalid attempt to deactivate fuzzers: '%s'\n  Currently active fuzzers: %s\n  Currently inactive fuzzers: %s",
+      names_str, toString(names(.fuzzers$active)), toString(names(.fuzzers$inactive))
+    ))
+  }
+  .fuzzers$inactive[req] <- .fuzzers$active[req]
+  .fuzzers$active[req] <- NULL
+  invisible()
+}
+
+activate_fuzzers <- function(names_str) {
+  req <- unlist(strsplit(names_str, " ", fixed = TRUE))
+  if (!all(req %in% names(.fuzzers$inactive))) {
+    stop(sprintf(
+      "Invalid attempt to activate fuzzers: '%s'\n  Currently active fuzzers: %s\n  Currently inactive fuzzers: %s",
+      names_str, toString(names(.fuzzers$active)), toString(names(.fuzzers$inactive))
+    ))
+  }
+  .fuzzers$active[req] <- .fuzzers$inactive[req]
+  .fuzzers$inactive[req] <- NULL
   invisible()
 }

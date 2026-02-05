@@ -183,7 +183,7 @@ unnecessary_nesting_linter <- function(
 
   used_exit_call_xpath <- glue("expr/expr[position() = last()]/{exit_call_expr}")
 
-  assignment_cond <- if (allow_assignment) "expr[LEFT_ASSIGN or RIGHT_ASSIGN]" else "false"
+  assignment_cond <- if (allow_assignment) "*[LEFT_ASSIGN or RIGHT_ASSIGN or EQ_ASSIGN]" else "false"
 
   # several carve-outs of common cases where single-expression braces are OK
   #   - control flow statements: if, for, while, repeat
@@ -200,10 +200,11 @@ unnecessary_nesting_linter <- function(
   #          * suppressWarnings({ expr })
   #          * DataTable[, { expr }]
   #          * DataTable[, col := { expr }] <- requires carve-out for `:=`
+  # 'count(*) - ...' used to be just 'count(expr)', but that misses '=' assigments (exprlist).
   unnecessary_brace_xpath <- glue("
   //OP-LEFT-BRACE
     /parent::expr[
-      count(expr) = 1
+      count(*) - count(COMMENT) - count(OP-LEFT-BRACE) - count(OP-RIGHT-BRACE) = 1
       and not(preceding-sibling::*[
         self::FUNCTION
         or self::OP-LAMBDA
@@ -241,7 +242,10 @@ unnecessary_nesting_linter <- function(
   # "un-walk" from the unnecessary IF to the IF with which it should be combined
   corresponding_if_xpath <- "preceding-sibling::IF | parent::expr/preceding-sibling::IF"
 
-  unnecessary_else_brace_xpath <- "//IF/parent::expr[parent::expr[preceding-sibling::ELSE and count(expr) = 1]]"
+  unnecessary_else_brace_xpath <- "
+  //IF/parent::expr[parent::expr[
+    preceding-sibling::ELSE and count(*) - count(COMMENT) - count(OP-LEFT-BRACE) - count(OP-RIGHT-BRACE) = 1
+  ]]"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

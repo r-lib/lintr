@@ -11,7 +11,7 @@ lint(
   linters = NULL,
   ...,
   cache = FALSE,
-  parse_settings = TRUE,
+  parse_settings = !inline_data,
   text = NULL
 )
 
@@ -50,8 +50,8 @@ linters.}
 \item{cache}{When logical, toggle caching of lint results. If passed a character string, store the cache in this
 directory.}
 
-\item{parse_settings}{Logical, default \code{TRUE}. Whether to try and parse the \link[=read_settings]{settings}. Otherwise,
-the \code{\link[=default_settings]{default_settings()}} are used.}
+\item{parse_settings}{Logical. Whether to try and parse the \link[=read_settings]{settings}. Otherwise, the
+\code{\link[=default_settings]{default_settings()}} are used. \code{TRUE} by default when linting files, as opposed to \verb{text=}.}
 
 \item{text}{Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 linting is being done ad hoc.}

@@ -277,7 +277,6 @@ test_that("cases with braces are caught", {
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.1.0")
   linter <- unnecessary_lambda_linter()
   linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
 

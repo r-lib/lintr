@@ -3,6 +3,9 @@ test_that("coalesce_linter skips allowed usage", {
 
   expect_no_lint("if (is.null(x)) y", linter)
   expect_no_lint("if (!is.null(x)) y", linter)
+  expect_no_lint("if (!is.null(x)) x", linter)
+  expect_no_lint("if (is.null(x)) x", linter)
+  expect_no_lint("c(if (!is.null(E)) E)", linter)
   expect_no_lint("if (is.null(x)) y else z", linter)
   expect_no_lint("if (!is.null(x)) x[1] else y", linter)
   expect_no_lint("if (is.null(x[1])) y else x[2]", linter)
@@ -35,9 +38,19 @@ test_that("coalesce_linter blocks simple disallowed usage", {
 
   expect_lint("if (!is.null(x[1])) x[1] else y", lint_msg_not, linter)
   expect_lint("if (!is.null(foo(x))) foo(x) else y", lint_msg_not, linter)
+
+  # adversarial comments
+  expect_lint(
+    trim_some("
+      if (!is.null(x[1])) x[ # comment
+      1] else y
+    "),
+    lint_msg_not,
+    linter
+  )
 })
 
-test_that("coalesce_linter blocks usage with implicit assignment", {
+test_that("coalesce_linter blocks usage with implicit assignment", { # nofuzz: assignment
   linter <- coalesce_linter()
   lint_msg <- rex::rex("Use x %||% y instead of if (is.null(x))")
   lint_msg_not <- rex::rex("Use x %||% y instead of if (!is.null(x))")
@@ -53,7 +66,7 @@ test_that("coalesce_linter blocks usage with implicit assignment", {
   expect_lint("if (!is.null(s <- foo(x))) { s } else { y }", lint_msg_not, linter)
 })
 
-test_that("lints vectorize", {
+test_that("lints vectorize", { # nofuzz: assignment
   expect_lint(
     trim_some("{
       if (is.null(x)) y else x

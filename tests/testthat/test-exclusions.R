@@ -71,7 +71,7 @@ test_that("it gives the expected error message when there is mismatch between mu
   )
 })
 
-test_that("partial matching works for exclusions but warns if no linter found", {
+test_that("partial matching works for exclusions but warns if no linter found", { # nofuzz: assignment comment_injection
   withr::local_dir(test_path("dummy_projects", "project"))
 
   expect_warning(
@@ -168,7 +168,7 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
   expect_length(lint_dir(tmp), 3L)
 })
 
-test_that("next-line exclusion works", {
+test_that("next-line exclusion works", { # nofuzz
   withr::local_options(
     lintr.exclude = "# NL",
     lintr.exclude_next = "# NLN",
@@ -178,30 +178,27 @@ test_that("next-line exclusion works", {
   linter <- assignment_linter()
 
   # blanket exclusion works
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN
       x = 1
     "),
-    NULL,
     linter
   )
 
   # specific exclusion works
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN: assignment_linter.
       x = 1
     "),
-    NULL,
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN: assignment.
       x = 1
     "),
-    NULL,
     linter
   )
   expect_lint(

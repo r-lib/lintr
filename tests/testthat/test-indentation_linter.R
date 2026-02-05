@@ -1,3 +1,4 @@
+# fuzzer disable: comment_injection
 test_that("indentation linter flags unindented expressions", {
   linter <- indentation_linter(indent = 2L)
 
@@ -152,8 +153,7 @@ test_that("indentation linter flags improper closing curly braces", {
   )
 })
 
-# nofuzz start
-test_that("function argument indentation works in tidyverse-style", {
+test_that("function argument indentation works in tidyverse-style", { # nofuzz: function_lambda
   linter <- indentation_linter()
   expect_no_lint(
     trim_some("
@@ -228,7 +228,7 @@ test_that("function argument indentation works in tidyverse-style", {
   )
 
   # anchor is correctly found with assignments as well
-  expect_no_lint(
+  expect_no_lint( # nofuzz: assignment
     trim_some("
       test <- function(a = 1L,
                        b = 2L) {
@@ -262,7 +262,7 @@ test_that("function argument indentation works in tidyverse-style", {
   )
 })
 
-test_that("function argument indentation works in always-hanging-style", {
+test_that("function argument indentation works in always-hanging-style", { # nofuzz: function_lambda
   linter <- indentation_linter(hanging_indent_style = "always")
   expect_no_lint(
     trim_some("
@@ -323,7 +323,7 @@ test_that("function argument indentation works in always-hanging-style", {
   )
 
   # anchor is correctly found with assignments as well
-  expect_no_lint(
+  expect_no_lint( # nofuzz: assignment
     trim_some("
       test <- function(a = 1L,
                        b = 2L) {
@@ -356,7 +356,6 @@ test_that("function argument indentation works in always-hanging-style", {
     linter
   )
 })
-# nofuzz end
 
 test_that("indentation with operators works", {
   linter <- indentation_linter()
@@ -802,7 +801,6 @@ test_that("consecutive same-level lints are suppressed", {
 })
 
 test_that("native pipe is supported", {
-  skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
   expect_no_lint(
@@ -828,7 +826,6 @@ test_that("it doesn't error on invalid code", {
 })
 
 test_that("function shorthand is handled", {
-  skip_if_not_r_version("4.1.0")
   linter <- indentation_linter()
 
   expect_no_lint(
@@ -912,3 +909,4 @@ test_that("for loop gets correct linting", {
     linter
   )
 })
+# fuzzer enable: comment_injection

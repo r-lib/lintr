@@ -1,16 +1,16 @@
 test_that("missing_package_linter skips allowed usages", {
   linter <- missing_package_linter()
 
-  expect_lint("library(stats)", NULL, linter)
-  expect_lint('library("stats")', NULL, linter)
-  expect_lint("library('stats')", NULL, linter)
-  expect_lint("library(`stats`)", NULL, linter)
-  expect_lint("library(stats, quietly)", NULL, linter)
-  expect_lint("library(stats, quietly = TRUE)", NULL, linter)
-  expect_lint("require(stats)", NULL, linter)
-  expect_lint("require(stats, quietly = TRUE)", NULL, linter)
-  expect_lint('loadNamespace("stats")', NULL, linter)
-  expect_lint('requireNamespace("stats")', NULL, linter)
+  expect_no_lint("library(stats)", linter)
+  expect_no_lint('library("stats")', linter)
+  expect_no_lint("library('stats')", linter)
+  expect_no_lint("library(`stats`)", linter)
+  expect_no_lint("library(stats, quietly)", linter)
+  expect_no_lint("library(stats, quietly = TRUE)", linter)
+  expect_no_lint("require(stats)", linter)
+  expect_no_lint("require(stats, quietly = TRUE)", linter)
+  expect_no_lint('loadNamespace("stats")', linter)
+  expect_no_lint('requireNamespace("stats")', linter)
 })
 
 test_that("missing_package_linter blocks disallowed usages", {
@@ -36,16 +36,16 @@ test_that("missing_package_linter blocks disallowed usages", {
 test_that("loadNamespace and requireNamespace allow plain symbols", {
   linter <- missing_package_linter()
 
-  expect_lint("loadNamespace(mypkg)", NULL, linter)
-  expect_lint("requireNamespace(mypkg)", NULL, linter)
+  expect_no_lint("loadNamespace(mypkg)", linter)
+  expect_no_lint("requireNamespace(mypkg)", linter)
 })
 
 test_that("character.only=TRUE case is handled", {
   linter <- missing_package_linter()
 
-  expect_lint("library(statts, character.only = TRUE)", NULL, linter)
-  expect_lint("require(statts, character.only = TRUE)", NULL, linter)
-  expect_lint('library("stats", character.only = TRUE)', NULL, linter)
+  expect_no_lint("library(statts, character.only = TRUE)", linter)
+  expect_no_lint("require(statts, character.only = TRUE)", linter)
+  expect_no_lint('library("stats", character.only = TRUE)', linter)
 
   expect_lint(
     'library("statts", character.only = TRUE)',

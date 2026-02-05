@@ -13,6 +13,7 @@ Linters highlighting code robustness issues, such as possibly wrong edge case be
 The following linters are tagged with 'robustness':
 \itemize{
 \item{\code{\link{absolute_path_linter}}}
+\item{\code{\link{all_equal_linter}}}
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{class_equals_linter}}}
 \item{\code{\link{download_file_linter}}}

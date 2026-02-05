@@ -74,12 +74,13 @@
 undesirable_operator_linter <- function(op = default_undesirable_operators,
                                         call_is_undesirable = TRUE) {
   if (is.list(op)) op <- unlist(op)
-  stopifnot(
-    is.logical(call_is_undesirable),
-    # allow (uncoerced->implicitly logical) 'NA'
-    `\`op\` should be a non-empty character vector` =
-      length(op) > 0L && (is.character(op) || all(is.na(op)))
-  )
+  if (!is.logical(call_is_undesirable)) {
+    cli_abort("{.arg call_is_undesirable} must be a logical, not {.obj_type_friendly {call_is_undesirable}}.")
+  }
+  # allow (uncoerced->implicitly logical) 'NA'
+  if (length(op) == 0L || !(is.character(op) || all(is.na(op)))) {
+    cli_abort("{.arg op} must be a non-empty character vector.")
+  }
 
   nm <- names2(op)
   implicit_idx <- !nzchar(nm)

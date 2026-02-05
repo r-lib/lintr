@@ -7,7 +7,7 @@
 list2df_linter()
 }
 \description{
-\code{\link[=list2DF]{list2DF()}} is the preferred way to turn a list of columns into a data.frame.
+\code{\link[base:list2DF]{base::list2DF()}} is the preferred way to turn a list of columns into a data.frame.
 Note that it doesn't support recycling; if that's required, use \code{\link[=data.frame]{data.frame()}}.
 }
 \examples{

@@ -4,20 +4,12 @@
 \alias{assignment_linter}
 \title{Assignment linter}
 \usage{
-assignment_linter(
-  operator = c("<-", "<<-"),
-  allow_cascading_assign = NULL,
-  allow_right_assign = NULL,
-  allow_trailing = TRUE,
-  allow_pipe_assign = NULL
-)
+assignment_linter(operator = c("<-", "<<-"), allow_trailing = TRUE)
 }
 \arguments{
 \item{operator}{Character vector of valid assignment operators. Defaults to allowing \verb{<-} and \verb{<<-}; other valid
 options are \code{=}, \verb{->}, \verb{->>}, \verb{\%<>\%}; use \code{"any"} to denote "allow all operators", in which case this linter only
 considers \code{allow_trailing} for generating lints.}
-
-\item{allow_cascading_assign, allow_right_assign, allow_pipe_assign}{(Defunct)}
 
 \item{allow_trailing}{Logical, default \code{TRUE}. If \code{FALSE} then assignments aren't allowed at end of lines.}
 }

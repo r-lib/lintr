@@ -1,8 +1,8 @@
 test_that("nrow_subset_linter skips allowed usage", {
   linter <- nrow_subset_linter()
 
-  expect_lint("nrow(foo(subset(x, y == z)))", NULL, linter)
-  expect_lint("with(x, sum(y == z))", NULL, linter)
+  expect_no_lint("nrow(foo(subset(x, y == z)))", linter)
+  expect_no_lint("with(x, sum(y == z))", linter)
 })
 
 test_that("nrow_subset_linter blocks subset() cases", {
@@ -45,8 +45,6 @@ test_that("linter is pipeline-aware", {
   lint_msg <- "Use arithmetic to count the number of rows satisfying a condition"
 
   expect_lint("x %>% subset(y == z) %>% nrow()", lint_msg, linter)
-  expect_lint("filter(x, y == z) %>% nrow()", lint_msg, linter)
-
-  skip_if_not_r_version("4.1.0")
   expect_lint("x |> subset(y == z) |> nrow()", lint_msg, linter)
+  expect_lint("filter(x, y == z) %>% nrow()", lint_msg, linter)
 })

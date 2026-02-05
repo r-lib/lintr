@@ -64,10 +64,6 @@ test_that("raw strings are handled correctly", {
   expect_no_lint("r'(\")'", linter)
 })
 
-test_that("single_quotes_linter is defunct", {
-  expect_error(single_quotes_linter(), "Use quotes_linter instead", fixed = TRUE)
-})
-
 test_that("lints vectorize", {
   lint_msg <- rex::rex("Only use double-quotes.")
 

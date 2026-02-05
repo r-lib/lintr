@@ -45,7 +45,7 @@ test_that("Lint() errors on invalid input", {
     "`message` must be a character string",
     fixed = TRUE
   )
-  expect_error(
+  expect_warning(
     Lint("dummy.R", message = glue("a")),
     "`message` must be a simple string",
     fixed = TRUE

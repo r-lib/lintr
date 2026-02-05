@@ -2,7 +2,7 @@
 #'
 #' @description
 #' This linter discourages combining condition functions like [stop()] with string concatenation
-#'   functions [paste()] and [paste0()]. This is because
+#'   functions [base::paste()] and [base::paste0()]. This is because
 #'
 #'  - `stop(paste0(...))` is redundant as it is exactly equivalent to `stop(...)`
 #'  - `stop(paste(...))` is similarly equivalent to `stop(...)` with separators (see examples)

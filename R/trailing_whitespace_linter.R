@@ -59,7 +59,7 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strin
       start_lines <- as.integer(xml_attr(all_str_consts, "line1"))
       end_lines <- as.integer(xml_attr(all_str_consts, "line2"))
 
-      is_in_str <- vapply(bad_lines, function(ln) any(start_lines <= ln & ln < end_lines), logical(1L))
+      is_in_str <- vapply(bad_lines, \(ln) any(start_lines <= ln & ln < end_lines), logical(1L))
       bad_lines <- bad_lines[!is_in_str]
     }
 

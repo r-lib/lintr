@@ -133,7 +133,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   find_indent_type <- switch(hanging_indent_style,
     tidy = build_indentation_style_tidy(),
     always = build_indentation_style_always(),
-    never = function(change) "block"
+    never = \(change) "block"
   )
 
   if (isTRUE(assignment_as_infix)) {
@@ -314,13 +314,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       type = "style",
       message = lint_messages,
       line = unname(source_expression$file_lines[bad_lines]),
-      # TODO(#2467): Use ranges = apply(lint_ranges, 1L, list, simplify = FALSE).
-      ranges = lapply(
-        seq_along(bad_lines),
-        function(i) {
-          list(lint_ranges[i, ])
-        }
-      )
+      ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
     )
   })
 }

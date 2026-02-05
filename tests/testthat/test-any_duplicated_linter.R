@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: dollar_at
 test_that("any_duplicated_linter skips allowed usages", {
   linter <- any_duplicated_linter()
 
@@ -102,4 +102,4 @@ test_that("any_duplicated_linter catches expression with two types of lint", {
     linter
   )
 })
-# nofuzz end
+# fuzzer enable: dollar_at

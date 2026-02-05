@@ -3,7 +3,6 @@
 ^[^/]+\.R$
 ^travis-tool\.sh$
 ^.*\.gz$
-^cran-comments\.md$
 ^lintr\.Rproj$
 ^\.Rproj\.user$
 ^\.idea$
@@ -21,6 +20,7 @@
 ^\.covrignore$
 ^script[.]R$
 ^bench$
+^tests/testthat/_problems$
 ^tests/testthat/dummy_packages/package/[.]Rbuildignore$
 ^tests/testthat/dummy_packages/cp1252/[.]Rbuildignore$
 testthat-problems[.]rds$

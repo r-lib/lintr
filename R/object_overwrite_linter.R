@@ -63,7 +63,7 @@ object_overwrite_linter <- function(
   pkg_exports <- lapply(
     packages,
     # .__C__ etc.: drop 150+ "virtual" names since they are very unlikely to appear anyway
-    function(pkg) setdiff(grep("^[.]__[A-Z]__", getNamespaceExports(pkg), value = TRUE, invert = TRUE), allow_names)
+    \(pkg) setdiff(grep("^[.]__[A-Z]__", getNamespaceExports(pkg), value = TRUE, invert = TRUE), allow_names)
   )
   pkg_exports <- data.frame(
     package = rep(packages, lengths(pkg_exports)),
@@ -75,9 +75,10 @@ object_overwrite_linter <- function(
 
   # test that the symbol doesn't match an argument name in the function
   # NB: data.table := has parse token LEFT_ASSIGN as well
+  # ancestor::* for '=' assignment
   xpath_assignments <- glue("
     (//SYMBOL | //STR_CONST)[
-      not(text() = ancestor::expr/preceding-sibling::SYMBOL_FORMALS/text())
+      not(text() = ancestor::*/preceding-sibling::SYMBOL_FORMALS/text())
     ]/
       parent::expr[
         count(*) = 1

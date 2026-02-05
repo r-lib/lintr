@@ -2,7 +2,7 @@
 namespace_imports <- function(path = find_package(".")) {
   namespace_data <- tryCatch(
     parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
-    error = function(e) NULL
+    error = \(e) NULL
   )
 
   if (length(namespace_data$imports) == 0L) {
@@ -57,7 +57,7 @@ imported_s3_generics <- function(ns_imports) {
 exported_s3_generics <- function(path = find_package(".")) {
   namespace_data <- tryCatch(
     parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
-    error = function(e) NULL
+    error = \(e) NULL
   )
 
   if (length(namespace_data$S3methods) == 0L || nrow(namespace_data$S3methods) == 0L) {

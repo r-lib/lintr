@@ -1,12 +1,12 @@
 test_that("function_argument_linter skips allowed usages", {
   linter <- function_argument_linter()
 
-  expect_lint("function(x, y = 1, z = 2) {}", NULL, linter)
-  expect_lint("function(x, y, z = 1) {}", NULL, linter)
+  expect_no_lint("function(x, y = 1, z = 2) {}", linter)
+  expect_no_lint("function(x, y, z = 1) {}", linter)
 
   # ... handled correctly
-  expect_lint("function(x, y, z = 1, ...) {}", NULL, linter)
-  expect_lint("function(x, y, ..., z = 1) {}", NULL, linter)
+  expect_no_lint("function(x, y, z = 1, ...) {}", linter)
+  expect_no_lint("function(x, y, ..., z = 1) {}", linter)
 })
 
 test_that("function_argument_linter blocks disallowed usages", {
@@ -41,27 +41,25 @@ test_that("function_argument_linter blocks disallowed usages", {
     list(message = lint_msg, line_number = 4L),
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(x,
                y = 1,
                z = 2) {
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("function_argument_linter also lints lambda expressions", {
-  skip_if_not_r_version("4.1.0")
   linter <- function_argument_linter()
   lint_msg <- rex::rex("Arguments without defaults should come before arguments with defaults.")
 
   expect_lint("\\(x, y = 1, z) {}", list(message = lint_msg, column_number = 13L), linter)
   expect_lint("\\(x, y = 1, z, w = 2) {}", list(message = lint_msg, column_number = 13L), linter)
-  expect_lint("\\(x, y = 1, z = 2) {}", NULL, linter)
-  expect_lint("\\(x, y, z = 1) {}", NULL, linter)
+  expect_no_lint("\\(x, y = 1, z = 2) {}", linter)
+  expect_no_lint("\\(x, y, z = 1) {}", linter)
 })
 
 test_that("Use of missing() is reported in the lint message", {

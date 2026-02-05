@@ -2,6 +2,7 @@
 # thus less than ideal to test expect_lint(), which can process multiple lints. If you want to test
 # for failure, always put the lint check or lint field that must fail first.
 
+# fuzzer disable: assignment
 linter <- assignment_linter()
 lint_msg <- "Use one of <-, <<- for assignment, not ="
 
@@ -20,7 +21,7 @@ test_that("single check", {
   expect_failure(expect_lint("a=1", "asdf", linter))
   expect_success(expect_lint("a=1", c(message = lint_msg), linter))
   expect_failure(expect_lint("a=1", c(message = NULL), linter))
-  expect_success(expect_lint("a=1", c(message = lint_msg, line_number = 1L), linter))
+  expect_success(expect_lint("a=1", list(message = lint_msg, line_number = 1L), linter))
   expect_failure(expect_lint("a=1", c(line_number = 2L, message = lint_msg), linter))
 
   expect_error(expect_lint("a=1", c(message = lint_msg, lineXXX = 1L), linter), "Check 1 has an invalid field: lineXXX")
@@ -33,7 +34,7 @@ test_that("single check", {
   expect_success(expect_lint("1:nrow(x)", "(nrow)", seq_linter()))
 })
 
-test_that("multiple checks", {
+test_that("multiple checks", { # nofuzz: comment_injection
   expect_success(
     expect_lint(file = "exclusions-test", checks = as.list(rep(lint_msg, 9L)), linters = linter, parse_settings = FALSE)
   )
@@ -41,11 +42,11 @@ test_that("multiple checks", {
   expect_success(expect_lint("a=1; b=2", list(lint_msg, lint_msg), linter))
   expect_success(expect_lint("a=1; b=2", list(c(message = lint_msg), c(message = lint_msg)), linter))
   expect_success(expect_lint("a=1; b=2", list(c(line_number = 1L), c(linter = "assignment_linter")), linter))
-  expect_success(expect_lint("a=1; b=2", list(lint_msg, c(line = "a=1; b=2", type = "warning")), linter))
+  expect_success(expect_lint("a=1; b=2", list(lint_msg, list(line = "a=1; b=2", type = "style")), linter))
   expect_success(expect_lint("a=1\nb=2", list(c(line_number = 1L), c(line_number = 2L)), linter))
   expect_failure(expect_lint("a=1\nb=2", list(c(line_number = 2L), c(line_number = 2L)), linter))
 
-  expect_success(expect_lint("a=1; b=2", list(list(line_number = 1L), list(line_number = 2L)), linter))
+  expect_success(expect_lint("a=1\nb=2", list(list(line_number = 1L), list(line_number = 2L)), linter))
   expect_failure(expect_lint("a=1; b=2", list(list(line_number = 2L), list(line_number = 2L)), linter))
   expect_success(
     expect_lint("\t1\n\t2", list("tabs", list(column_number = 1L, ranges = list(c(1L, 1L)))), whitespace_linter())
@@ -76,7 +77,7 @@ test_that("expect_lint doesn't change language", {
 })
 
 test_that("execution without testthat gives the right errors", {
-  local_mocked_bindings(requireNamespace = function(...) FALSE)
+  local_mocked_bindings(requireNamespace = \(...) FALSE)
   lint_msg <- function(nm) rex::rex("`", nm, "()` is designed to work", anything, "testthat")
 
   expect_error(expect_lint(), lint_msg("expect_lint"))
@@ -85,9 +86,9 @@ test_that("execution without testthat gives the right errors", {
   expect_error(expect_lint_free(), lint_msg("expect_lint_free"))
 })
 
-test_that("lint order can be ignored", {
+test_that("lint order can be ignored", { # nofuzz: comment_injection
   linters <- list(assignment_linter(), infix_spaces_linter())
-  expected <- lapply(linters, function(l) list(linter = attr(l, "name")))
+  expected <- lapply(linters, \(l) list(linter = attr(l, "name")))
   expect_success(expect_lint("a=1", expected, linters, ignore_order = TRUE))
   expect_success(expect_lint("a=1", rev(expected), linters, ignore_order = TRUE))
 
@@ -108,3 +109,4 @@ test_that("lint order can be ignored", {
   )
   expect_success(expect_lint(lines, expected[sample.int(4L)], linters, ignore_order = TRUE))
 })
+# fuzzer enable: assignment

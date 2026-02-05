@@ -68,7 +68,7 @@ test_that("returns the correct linting", {
     linter
   )
 
-  expect_lint(
+  expect_lint( # nofuzz: comment_injection
     trim_some("
       fun <- function() {
         a2 <- 1
@@ -753,6 +753,21 @@ test_that("symbols in formulas aren't treated as 'undefined global'", {
     ),
     linter
   )
+
+  # native lambda requires being in an expression to support a comment immediately after
+  expect_lint(
+    trim_some("
+      foo <- \\ # comment
+      (x) {
+        lm(
+          y(w) ~ z,
+          data = x[!is.na(y)]
+        )
+      }
+    "),
+    "no visible",
+    linter
+  )
 })
 
 test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
@@ -787,8 +802,6 @@ test_that("NSE-ish symbols after $/@ are ignored as sources for lints", {
 })
 
 test_that("functional lambda definitions are also caught", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint(
     trim_some("
       fun <- \\() {
@@ -871,7 +884,7 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
   skip_if_not_installed("rlang")
   linter <- object_usage_linter()
 
-  expect_lint( # nofuzz
+  expect_lint( # nofuzz: dollar_at
     trim_some("
       foo <- function(df) {
         source <- 1
@@ -890,26 +903,13 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
   )
 })
 
-test_that("interpret_glue is deprecated", {
-  expect_warning(
-    {
-      linter_no <- object_usage_linter(interpret_glue = FALSE)
-    },
+test_that("interpret_glue is defunct", {
+  expect_error(
+    object_usage_linter(interpret_glue = FALSE),
     rex::rex("interpret_glue", anything, "deprecated")
   )
-  expect_warning(
-    {
-      linter_yes <- object_usage_linter(interpret_glue = TRUE)
-    },
+  expect_error(
+    object_usage_linter(interpret_glue = TRUE),
     rex::rex("interpret_glue", anything, "deprecated")
   )
-
-  code <- trim_some("
-    fun <- function() {
-      local_var <- 42
-      glue::glue('The answer is {local_var}.')
-    }
-  ")
-  expect_lint(code, "local_var", linter_no)
-  expect_no_lint(code, linter_yes)
 })

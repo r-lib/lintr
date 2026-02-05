@@ -1,6 +1,6 @@
 #' Require usage of `lengths()` where possible
 #'
-#' [lengths()] is a function that was added to base R in version 3.2.0 to
+#' [base::lengths()] is a function that was added to base R in version 3.2.0 to
 #'   get the length of each element of a list. It is equivalent to
 #'   `sapply(x, length)`, but faster and more readable.
 #'

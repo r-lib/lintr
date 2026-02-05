@@ -69,7 +69,8 @@ vector_logic_linter <- function() {
   #     <ELSE>             # (here & below is optional)
   #     <expr> ... </expr>
   #  </expr>
-  #  we _don't_ want to match anything on the second expr, hence this
+  #  we _don't_ want to match anything on the second expr.
+  #  not(call[not(lambda)]): skip unless _every_ call ancestor has a lambda
   condition_xpath <- "
   (//AND | //OR)[
     ancestor::expr[
@@ -81,8 +82,11 @@ vector_logic_linter <- function() {
       ]
     ]
     and not(ancestor::expr[
-      preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
-      or preceding-sibling::OP-LEFT-BRACKET
+      (
+        preceding-sibling::expr[last()][SYMBOL_FUNCTION_CALL[not(text() = 'expect_true' or text() = 'expect_false')]]
+        or preceding-sibling::OP-LEFT-BRACKET
+      )
+      and not(descendant-or-self::expr[FUNCTION or OP-LAMBDA])
     ])
     and not(parent::expr/expr[
       STR_CONST
@@ -99,6 +103,7 @@ vector_logic_linter <- function() {
       and not(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[not(text() = 'subset' or text() = 'filter')])
       and not(preceding-sibling::OP-LEFT-BRACKET)
       and not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'circular'])
+      and not(ancestor::expr[FUNCTION or OP-LAMBDA])
     ]
     /*[not(self::COMMENT)][2]
   "

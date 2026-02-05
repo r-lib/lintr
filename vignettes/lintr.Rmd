@@ -35,8 +35,6 @@ Checking an R project for lints can be done with three different functions:
     This will apply `lint()` to all R source files matching the `pattern` argument.
     By default, this means all `.R` files as well as `knitr` formats (e.g. `.Rmd`, `.Rnw`).
 
-    `lint_dir` is vectorized over `path`, so multiple directories can be linted at the same time.
-
 -   Lint all relevant directories of an R package using `lint_package()`:
 
     ``` r

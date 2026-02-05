@@ -1,3 +1,4 @@
+# fuzzer disable: assignment
 test_that("assignment_linter skips allowed usages", {
   linter <- assignment_linter()
 
@@ -66,6 +67,7 @@ test_that("arguments handle <<- and ->/->> correctly", {
   )
 })
 
+# fuzzer disable: comment_injection
 test_that("arguments handle trailing assignment operators correctly", {
   linter_default <- assignment_linter()
   linter_no_trailing <- assignment_linter(allow_trailing = FALSE)
@@ -212,6 +214,7 @@ test_that("allow_trailing interacts correctly with comments in braced expression
     linter
   )
 })
+# fuzzer enable: comment_injection
 
 test_that("%<>% throws a lint", {
   expect_lint("x %<>% sum()", "Avoid the assignment pipe %<>%", assignment_linter())
@@ -375,12 +378,6 @@ test_that("multiple lints throw correct messages when = is required", {
   )
 })
 
-test_that("Deprecated arguments error as intended", {
-  expect_error(regexp = "allow_cascading_assign", assignment_linter(allow_cascading_assign = FALSE))
-  expect_error(regexp = "allow_right_assign", assignment_linter(allow_right_assign = TRUE))
-  expect_error(regexp = "allow_pipe_assign", assignment_linter(allow_pipe_assign = TRUE))
-})
-
 test_that("implicit '<-' assignments inside calls are ignored where top-level '<-' is disallowed", {
   linter <- assignment_linter(operator = "=")
 
@@ -393,3 +390,4 @@ test_that("implicit '<-' assignments inside calls are ignored where top-level '<
   expect_no_lint("for (i in foo(idx <- is.na(y))) which(idx)", linter)
   expect_no_lint("for (i in foo(bar(idx <- is.na(y)))) which(idx)", linter)
 })
+# fuzzer enable: assignment

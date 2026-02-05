@@ -21,7 +21,7 @@ test_that("returns the correct linting", {
   expect_lint("x = ;", rex::rex("unexpected ';'"), linter)
 
   # no parsing error is expected for the equals-assignment in this code
-  expect_lint("purrr::partial(list, 1, ... = , 2)", NULL, linter)
+  expect_no_lint("purrr::partial(list, 1, ... = , 2)", linter)
 
   # trigger error with base only, and extract it to match against
   #   what comes out from expect_lint.

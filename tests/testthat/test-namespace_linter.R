@@ -1,34 +1,34 @@
 test_that("namespace_linter skips allowed usages", {
   linter <- namespace_linter()
 
-  expect_lint("stats::sd", NULL, linter)
-  expect_lint("stats::sd(c(1,2,3))", NULL, linter)
-  expect_lint('"stats"::sd(c(1,2,3))', NULL, linter)
-  expect_lint('stats::"sd"(c(1,2,3))', NULL, linter)
-  expect_lint("stats::`sd`(c(1,2,3))", NULL, linter)
+  expect_no_lint("stats::sd", linter)
+  expect_no_lint("stats::sd(c(1,2,3))", linter)
+  expect_no_lint('"stats"::sd(c(1,2,3))', linter)
+  expect_no_lint('stats::"sd"(c(1,2,3))', linter)
+  expect_no_lint("stats::`sd`(c(1,2,3))", linter)
 
-  expect_lint("datasets::mtcars", NULL, linter)
-  expect_lint("stats:::print.formula", NULL, linter)
-  expect_lint('"stats":::print.formula', NULL, linter)
+  expect_no_lint("datasets::mtcars", linter)
+  expect_no_lint("stats:::print.formula", linter)
+  expect_no_lint('"stats":::print.formula', linter)
 })
 
 test_that("namespace_linter respects check_exports and check_nonexports arguments", {
-  expect_lint("stats::ssd(c(1,2,3))", NULL, namespace_linter(check_exports = FALSE))
-  expect_lint("stats:::ssd(c(1,2,3))", NULL, namespace_linter(check_nonexports = FALSE))
-  expect_lint("stats:::ssd(c(1,2,3))", NULL, namespace_linter(check_exports = FALSE, check_nonexports = FALSE))
+  expect_no_lint("stats::ssd(c(1,2,3))", namespace_linter(check_exports = FALSE))
+  expect_no_lint("stats:::ssd(c(1,2,3))", namespace_linter(check_nonexports = FALSE))
+  expect_no_lint("stats:::ssd(c(1,2,3))", namespace_linter(check_exports = FALSE, check_nonexports = FALSE))
 })
 
 test_that("namespace_linter can work with backticked symbols", {
   skip_if_not_installed("rlang")
   linter <- namespace_linter()
 
-  expect_lint("rlang::`%||%`", NULL, linter)
-  expect_lint("rlang::`%||%`()", NULL, linter)
+  expect_no_lint("rlang::`%||%`", linter)
+  expect_no_lint("rlang::`%||%`()", linter)
 
-  expect_lint("rlang::'%||%'", NULL, linter)
-  expect_lint("rlang::'%||%'()", NULL, linter)
-  expect_lint('rlang::"%||%"', NULL, linter)
-  expect_lint('rlang::"%||%"()', NULL, linter)
+  expect_no_lint("rlang::'%||%'", linter)
+  expect_no_lint("rlang::'%||%'()", linter)
+  expect_no_lint('rlang::"%||%"', linter)
+  expect_no_lint('rlang::"%||%"()', linter)
 
   expect_lint("rlang::`%>%`", "'%>%' is not exported from {rlang}.", linter)
   expect_lint("rlang::'%>%'()", "'%>%' is not exported from {rlang}.", linter)

@@ -28,7 +28,7 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
   expect_lint("is.integer(x) || is.numeric(x)", lint_msg, linter)
 
   # identical expressions match too
-  expect_lint( # nofuzz
+  expect_lint( # nofuzz: dollar_at
     "is.integer(DT$x) || is.numeric(DT$x)",
     lint_msg,
     linter

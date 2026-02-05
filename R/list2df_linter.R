@@ -1,6 +1,6 @@
 #' Recommend direct usage of `data.frame()` to create a data.frame from a list
 #'
-#' [list2DF()] is the preferred way to turn a list of columns into a data.frame.
+#' [base::list2DF()] is the preferred way to turn a list of columns into a data.frame.
 #'   Note that it doesn't support recycling; if that's required, use [data.frame()].
 #'
 #' @examples

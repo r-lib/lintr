@@ -7,19 +7,19 @@ test_that("linter returns correct linting", {
   expect_no_lint("cat(\"10$\")", linter)
   expect_lint(
     "a <<- log(10)",
-    list(message = msg_assign, line_number = 1L, column_number = 3L),
+    list(msg_assign, line_number = 1L, column_number = 3L),
     linter
   )
-  expect_lint( # nofuzz
+  expect_lint( # nofuzz: dollar_at
     "data$parsed == c(1, 2)",
-    list(message = msg_dollar, line_number = 1L, column_number = 5L),
+    list(msg_dollar, line_number = 1L, column_number = 5L),
     linter
   )
 
   expect_no_lint("`%%`(10, 2)", linter)
 })
 
-test_that("undesirable_operator_linter handles '=' consistently", {
+test_that("undesirable_operator_linter handles '=' consistently", { # nofuzz: assignment
   linter <- undesirable_operator_linter(op = c("=" = "As an alternative, use '<-'"))
 
   expect_lint("a = 2L", rex::rex("Avoid undesirable operator `=`."), linter)
@@ -67,12 +67,12 @@ test_that("invalid inputs fail correctly", {
   )
   expect_error(
     undesirable_operator_linter(op = NULL),
-    "`op` should be a non-empty character vector",
+    "`op` must be a non-empty character vector",
     fixed = TRUE
   )
   expect_error(
     undesirable_operator_linter(op = character(0L)),
-    "`op` should be a non-empty character vector",
+    "`op` must be a non-empty character vector",
     fixed = TRUE
   )
 

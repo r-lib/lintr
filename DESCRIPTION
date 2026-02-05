@@ -1,6 +1,6 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 3.2.0.9000
+Version: 3.3.0.9000
 Authors@R: c(
     person("Jim", "Hester", , role = "aut"),
     person("Florent", "Angly", role = "aut",
@@ -24,9 +24,8 @@ License: MIT + file LICENSE
 URL: https://lintr.r-lib.org, https://github.com/r-lib/lintr
 BugReports: https://github.com/r-lib/lintr/issues
 Depends:
-    R (>= 4.0)
+    R (>= 4.1.0)
 Imports:
-    backports (>= 1.5.0),
     cli (>= 3.4.0),
     codetools,
     digest,
@@ -35,6 +34,7 @@ Imports:
     rex,
     stats,
     utils,
+    xfun,
     xml2 (>= 1.0.0),
     xmlparsedata (>= 1.0.5)
 Suggests:
@@ -45,20 +45,20 @@ Suggests:
     rlang,
     rmarkdown,
     rstudioapi (>= 0.2),
-    testthat (>= 3.2.1),
+    testthat (>= 3.3.0),
     tibble,
     tufte,
     withr (>= 2.5.0)
 Enhances:
     data.table
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 Config/Needs/website: tidyverse/tidytemplate
 Config/Needs/development: pkgload, testthat, patrick
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Collate:
     'make_linter_from_xpath.R'
     'xp_utils.R'
@@ -68,6 +68,7 @@ Collate:
     'absolute_path_linter.R'
     'actions.R'
     'addins.R'
+    'all_equal_linter.R'
     'any_duplicated_linter.R'
     'any_is_na_linter.R'
     'assignment_linter.R'
@@ -131,7 +132,6 @@ Collate:
     'lint.R'
     'linter_tag_docs.R'
     'linter_tags.R'
-    'lintr-deprecated.R'
     'lintr-package.R'
     'list2df_linter.R'
     'list_comparison_linter.R'

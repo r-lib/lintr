@@ -3,9 +3,7 @@
 #' Check that closures have the proper usage using [codetools::checkUsage()].
 #' Note that this runs [base::eval()] on the code, so **do not use with untrusted code**.
 #'
-#' @param interpret_glue (Deprecated) If `TRUE`, interpret [glue::glue()] calls to avoid
-#'   false positives caused by local variables which are only used in a glue expression.
-#'   Provide `interpret_extensions` instead, see below.
+#' @param interpret_glue (Defunct)
 #' @param interpret_extensions Character vector of extensions to interpret. These are meant to cover known cases where
 #'   variables may be used in ways understood by the reader but not by `checkUsage()` to avoid false positives.
 #'   Currently `"glue"` and `"rlang"` are supported, both of which are in the default.
@@ -42,14 +40,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       '"glue" in interpret_extensions',
       version = "3.3.0",
       type = "Argument",
-      signal = "warning"
+      signal = "stop"
     )
-
-    if (interpret_glue) {
-      interpret_extensions <- union(interpret_extensions, "glue")
-    } else {
-      interpret_extensions <- setdiff(interpret_extensions, "glue")
-    }
   }
 
   if (length(interpret_extensions) > 0L) {
@@ -61,13 +53,24 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   # NB: the repeated expr[2][FUNCTION] XPath has no performance impact, so the different direct assignment XPaths are
   #   split for better readability, see PR#1197
   # TODO(#1106): use //[...] to capture assignments in more scopes
-  xpath_function_assignment <- "
-    expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]
-    | expr_or_assign_or_help[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]
-    | equal_assign[EQ_ASSIGN]/expr[2][FUNCTION or OP-LAMBDA]
-    | //SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][FUNCTION or OP-LAMBDA]
-    | //SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][FUNCTION or OP-LAMBDA]
-  "
+  fun_node <- "FUNCTION or OP-LAMBDA"
+  xpath_function_assignment <- glue("
+    expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[2][{fun_node}]
+    | expr_or_assign_or_help[EQ_ASSIGN]/expr[2][{fun_node}]
+    | equal_assign[EQ_ASSIGN]/expr[2][{fun_node}]
+    | //SYMBOL_FUNCTION_CALL[text() = 'assign']/parent::expr/following-sibling::expr[2][{fun_node}]
+    | //SYMBOL_FUNCTION_CALL[text() = 'setMethod']/parent::expr/following-sibling::expr[3][{fun_node}]
+  ")
+
+  # code like:
+  #   foo <- \ #comment
+  #     (x) x
+  # is technically valid, but won't parse unless the lambda is in a bigger expression (here '<-').
+  #   the same doesn't apply to 'function', which is acknowledged as "not worth a breaking change to fix":
+  #   https://bugs.r-project.org/show_bug.cgi?id=18924. If we find such code (which has only ever
+  #   arisen in content fuzzing where we inject comments at random to the AST), we have to avoid parsing
+  #   it as a standalone expression.
+  xpath_unsafe_lambda <- "OP-LAMBDA[@line1 = following-sibling::*[1][self::COMMENT]/@line1]"
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
   symbol_exclude_cond <- "preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT or ancestor::expr[OP-TILDE]"
@@ -100,7 +103,9 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     fun_assignments <- xml_find_all(xml, xpath_function_assignment)
 
     lapply(fun_assignments, function(fun_assignment) {
-      code <- get_content(lines = source_expression$content, fun_assignment)
+      # this will mess with the source line numbers. but I don't think anybody cares.
+      needs_braces <- !is.na(xml_find_first(fun_assignment, xpath_unsafe_lambda))
+      code <- get_content(lines = source_expression$content, fun_assignment, needs_braces = needs_braces)
       fun <- try_silently(eval(
         envir = env,
         parse(
@@ -177,7 +182,7 @@ make_check_env <- function(pkg_name, xml, library_lint_hook) {
 
   # Just assign them an empty function
   for (symbol in symbols) {
-    assign(symbol, function(...) invisible(), envir = env)
+    assign(symbol, \(...) invisible(), envir = env)
   }
   env
 }
@@ -190,8 +195,8 @@ get_assignment_symbols <- function(xml) {
       expr[RIGHT_ASSIGN]/expr[2]/SYMBOL[1] |
       equal_assign/expr[1]/SYMBOL[1] |
       expr_or_assign_or_help/expr[1]/SYMBOL[1] |
-      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='assign']]/expr[2]/* |
-      expr[expr[1][SYMBOL_FUNCTION_CALL/text()='setMethod']]/expr[2]/*
+      expr[expr[1][SYMBOL_FUNCTION_CALL/text() = 'assign']]/expr[2]/* |
+      expr[expr[1][SYMBOL_FUNCTION_CALL/text() = 'setMethod']]/expr[2]/*
     "
   ))
 }

@@ -115,8 +115,6 @@ test_that("incorrect subset/filter usage is caught", {
 })
 
 test_that("native pipe usage is caught in subset/filter logic", {
-  skip_if_not_r_version("4.1.0")
-
   expect_lint("x |> filter(y && z)", rex::rex("Use `&` in subsetting"), vector_logic_linter())
 })
 
@@ -151,6 +149,50 @@ test_that("subsetting logic handles nesting", {
   expect_no_lint("filter(x, y < mean(y, na.rm = AA && BB))", linter)
   expect_no_lint("subset(x, y < mean(y, na.rm = AA && BB) & y > 0)", linter)
   expect_no_lint("subset(x, y < x[y > 0, drop = AA && BB, y])", linter)
+})
+
+test_that("scalar logic in anonymous functions within filter/subset is allowed", {
+  linter <- vector_logic_linter()
+
+  expect_no_lint("filter(x, vapply(y, function(i) is.numeric(i) && mean(i) > 1, NA))", linter)
+  expect_no_lint("subset(x, sapply(y, function(i) is.null(i) || length(i) == 0))", linter)
+  expect_no_lint("filter(x, vapply(y, \\(i) i && z, NA))", linter)
+  expect_no_lint("filter(x, Map(function(a, b) a && b, x, y))", linter)
+  expect_no_lint("filter(x, vapply(y, function(i) any(sapply(i, function(j) j && z)), NA))", linter)
+  expect_no_lint("filter(x, vapply(y, function(i) { is.numeric(i) && mean(i) > 1 }, NA))", linter)
+})
+
+test_that("vector logic in if conditions inside anonymous functions is still linted", {
+  linter <- vector_logic_linter()
+  or_msg <- rex::rex("Use `||` in conditional expressions.")
+  and_msg <- rex::rex("Use `&&` in conditional expressions.")
+
+  expect_lint(
+    "subset(x, sapply(col, function(x) { if (A | B) do_ab(x) else do_other(x) }))",
+    or_msg,
+    linter
+  )
+  expect_lint(
+    "filter(x, vapply(y, function(i) { if (a & b) 1 else 0 }, 1))",
+    and_msg,
+    linter
+  )
+  expect_lint(
+    "subset(x, sapply(col, \\(x) { if (A | B) x }))",
+    or_msg,
+    linter
+  )
+  expect_lint(
+    "subset(x, sapply(col, function(x) { while (A | B) x }))",
+    or_msg,
+    linter
+  )
+  expect_lint(
+    "filter(x, vapply(y, function(i) if (A | B) 1 else 0, 1))",
+    or_msg,
+    linter
+  )
+  expect_no_lint("subset(x, sapply(col, function(x) { if (any(a | b)) x }))", linter)
 })
 
 test_that("filter() handling is conservative about stats::filter()", {

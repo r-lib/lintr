@@ -66,7 +66,7 @@ strings_as_factors_linter <- local({
   parent::expr[
     expr[
       (
-        STR_CONST[not(following-sibling::*[1][self::EQ_SUB])]
+        STR_CONST[not(following-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])]
         or ( {c_combine_strings} )
         or expr[1][
           SYMBOL_FUNCTION_CALL[text() = 'rep']
@@ -74,7 +74,7 @@ strings_as_factors_linter <- local({
         ]
         or expr[1][SYMBOL_FUNCTION_CALL[ {xp_text_in_table(known_character_funs)} ]]
       )
-      and not(preceding-sibling::*[2][self::SYMBOL_SUB and text() = 'row.names'])
+      and not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'row.names'])
     ]
     and not(SYMBOL_SUB[text() = 'stringsAsFactors'])
   ]")

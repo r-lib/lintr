@@ -5,13 +5,13 @@
 #' The following issues are linted by default by this linter
 #'   (see arguments for which can be de-activated optionally):
 #'
-#'  1. Block usage of [paste()] with `sep = ""`. [paste0()] is a faster, more concise alternative.
+#'  1. Block usage of [base::paste()] with `sep = ""`. [base::paste0()] is a faster, more concise alternative.
 #'  2. Block usage of `paste()` or `paste0()` with `collapse = ", "`. [toString()] is a direct
 #'     wrapper for this, and alternatives like [glue::glue_collapse()] might give better messages for humans.
 #'  3. Block usage of `paste0()` that supplies `sep=` -- this is not a formal argument to `paste0`, and
 #'     is likely to be a mistake.
 #'  4. Block usage of `paste()` / `paste0()` combined with [rep()] that could be replaced by
-#'     [strrep()]. `strrep()` can handle the task of building a block of repeated strings
+#'     [base::strrep()]. `strrep()` can handle the task of building a block of repeated strings
 #'     (e.g. often used to build "horizontal lines" for messages). This is both more readable and
 #'     skips the (likely small) overhead of putting two strings into the global string cache when only one is needed.
 #'
