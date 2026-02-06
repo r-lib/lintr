@@ -41,15 +41,13 @@ check_roxygenize_idempotent <- function(LOCALE) {
   
   new_files <- list.files(new_dir, pattern = "\\.Rd$")
   
-  any_failed <- FALSE
-
   old_not_new <- setdiff(old_files, new_files)
   if (length(old_not_new) > 0L) {
     cat(sprintf(
       "Found saved .Rd files gone from a fresh run of roxygenize() in LOCALE=%s: %s\n",
       LOCALE, toString(old_not_new)
     ))
-    any_failed <- TRUE
+    return(FALSE)
   }
   
   new_not_old <- setdiff(new_files, old_files)
@@ -58,9 +56,10 @@ check_roxygenize_idempotent <- function(LOCALE) {
       "Found new .Rd files from a fresh run of roxygenize() in LOCALE=%s: %s\n",
       LOCALE, toString(new_not_old)
     ))
-    any_failed <- TRUE
+    return(FALSE)
   }
     
+  ok <- TRUE
   for (file in new_files) {
     old_file <- file.path(old_dir, file)
     new_file <- file.path(new_dir, file)
@@ -72,21 +71,19 @@ check_roxygenize_idempotent <- function(LOCALE) {
     cat("  [---]: saved output in man/ directory\n")
     cat("  [+++]: roxygenize() output of R/ sources\n")
     system2("diff", c("--unified", old_file, new_file))
-    any_failed <- TRUE
+    ok <- FALSE
   }
 
-  !any_failed
+  ok
 }
 
 # Run the check in a few locales to ensure there's no idempotency issues w.r.t. sorting, too
-all_locales_passed <- TRUE
+any_failed_locale <- FALSE
 for (LOCALE in c("C", "en_US.utf8", "hu_HU.utf8", "ja_JP.utf8")) {
-  if (!check_roxygenize_idempotent(LOCALE)) {
-    all_locales_passed <- FALSE
-  }
+  any_failed_locale <- any_failed_locale || !check_roxygenize_idempotent(LOCALE)
 }
 
-if (!all_locales_passed) {
+if (any_failed_locale) {
   message("roxygenize() check failed.")
   q(status = 1)
 }
