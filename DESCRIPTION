@@ -14,7 +14,8 @@ Authors@R: c(
     person("Indrajeet", "Patil", email = "patilindrajeet.science@gmail.com", role = "aut",
            comment = c(ORCID = "0000-0003-1995-6531")),
     person("Hugo", "Gruson", role = "aut",
-           comment = c(ORCID = "0000-0002-4094-1476"))
+           comment = c(ORCID = "0000-0002-4094-1476")),
+    person("Emmanuel", "Ferdman", role = "aut")
   )
 Description: Checks adherence to a given style, syntax errors and possible
     semantic issues.  Supports on the fly checking of R code edited with
