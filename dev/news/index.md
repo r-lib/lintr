@@ -35,6 +35,10 @@
   no longer errors when `while` is in a column to the right of `}`
   ([\#2828](https://github.com/r-lib/lintr/issues/2828),
   [@MichaelChirico](https://github.com/MichaelChirico)).
+- `undesirable_operator_linter(call_is_undesirable = FALSE)` now
+  correctly skips prefix notation like `` `:::`(pkg, fun) ``
+  ([\#2999](https://github.com/r-lib/lintr/issues/2999),
+  [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
 
 ### New and improved features
 
