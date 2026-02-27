@@ -19,6 +19,13 @@ test_that("if_switch_linter skips allowed usages", {
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2", linter)
   # still no third if() clause
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else 3", linter)
+
+  # empty string comparisons can't use switch()
+  expect_no_lint("if (x == '') 1 else if (x == 'a') 2 else if (x == 'b') 3", linter)
+  expect_no_lint('if (x == "") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == '') 2 else if (x == 'b') 3", linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == '') 3", linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == 'c') 3 else if (x == '') 4", linter)
 })
 
 test_that("if_switch_linter blocks simple disallowed usages", {

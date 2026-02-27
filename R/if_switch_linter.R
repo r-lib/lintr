@@ -159,7 +159,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L) {
-  equal_str_cond <- "expr[1][EQ and expr/STR_CONST]"
+  equal_str_cond <- "expr[1][EQ and expr/STR_CONST[string-length(text()) > 2]]"
 
   if (max_branch_lines > 0L || max_branch_expressions > 0L) {
     complexity_cond <- xp_or(c(
@@ -191,6 +191,10 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
   # NB: IF AND {...} AND ELSE/... implies >= 3 equality conditions are present
   # .//expr/IF/...: the expr in `==` that's _not_ the STR_CONST
   # not(preceding::IF): prevent nested matches which might be incorrect globally
+  empty_string_cond <- paste0(
+    ".//ELSE/following-sibling::expr/IF/following-sibling::expr[1][EQ]",
+    "/expr/STR_CONST[string-length(text()) = 2]"
+  )
   if_xpath <- glue("
   //IF
     /parent::expr[
@@ -202,6 +206,7 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
         and ELSE/following-sibling::expr[IF and {equal_str_cond}]
       ]
       and not({ max_lines_cond })
+      and not({ empty_string_cond })
     ]
   ")
 
