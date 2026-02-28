@@ -11,7 +11,7 @@
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
 * `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
 * `undesirable_operator_linter(call_is_undesirable = FALSE)` now correctly skips prefix notation like `` `:::`(pkg, fun) `` (#2999, @emmanuel-ferdman).
-* `if_switch_linter()` no longer produces a false positive when comparing to empty strings (`""` or `''`), which cannot be used as `switch()` case names (#2835, @emmanuel-ferdman).
+* `if_switch_linter()` no longer produces a false positive when comparing to empty strings (`""`, `''`, or raw strings like `R"()"`), which cannot be used as `switch()` case names (#2835, @emmanuel-ferdman).
 
 ## New and improved features
 

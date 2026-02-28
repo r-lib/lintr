@@ -28,6 +28,19 @@ test_that("if_switch_linter skips allowed usages", {
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == 'c') 3 else if (x == '') 4", linter)
 })
 
+test_that("if_switch_linter handles raw empty strings", {
+  skip_unless_r(">= 4.0.0")
+
+  linter <- if_switch_linter()
+
+  # raw empty strings can't use switch() either
+  expect_no_lint('if (x == R"()") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint('if (x == r"[]") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint('if (x == R"{}") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint('if (x == R"--()--") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint('if (x == R"()") 1 else if (x == R"{}") 2 else if (x == R"[]") 3', linter)
+})
+
 test_that("if_switch_linter blocks simple disallowed usages", {
   linter <- if_switch_linter()
   lint_msg <- rex::rex("Prefer switch() statements over repeated if/else equality tests")

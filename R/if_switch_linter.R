@@ -188,13 +188,6 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
     switch_xpath <- NULL
   }
 
-  # NB: IF AND {...} AND ELSE/... implies >= 3 equality conditions are present
-  # .//expr/IF/...: the expr in `==` that's _not_ the STR_CONST
-  # not(preceding::IF): prevent nested matches which might be incorrect globally
-  empty_string_cond <- paste0(
-    ".//ELSE/following-sibling::expr/IF/following-sibling::expr[1][EQ]",
-    "/expr/STR_CONST[string-length(text()) = 2]"
-  )
   if_xpath <- glue("
   //IF
     /parent::expr[
@@ -206,27 +199,27 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
         and ELSE/following-sibling::expr[IF and {equal_str_cond}]
       ]
       and not({ max_lines_cond })
-      and not({ empty_string_cond })
     ]
   ")
-
-  # not(. != .): don't match if there are _any_ expr which _don't_ match the top expr
-  equality_test_cond <- glue("self::*[
-    .//expr/IF/following-sibling::{equal_str_cond}/expr[not(STR_CONST)]
-      != expr[1][EQ]/expr[not(STR_CONST)]
-  ]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
     bad_expr <- xml_find_all(xml, if_xpath)
-    expr_all_equal <- is.na(xml_find_first(
-      strip_comments_from_subtree(bad_expr),
-      equality_test_cond
-    ))
+
+    bad_expr_clean <- strip_comments_from_subtree(bad_expr)
+    expr_all_equal <- vapply(bad_expr_clean, chain_vars_equal, logical(1L))
+    bad_expr <- bad_expr[expr_all_equal]
+
+    # Exclude empty strings, which can't be used as switch() case names
+    has_empty <- vapply(bad_expr, function(expr) {
+      str_nodes <- get_chain_strings(expr)
+      any(vapply(str_nodes, function(n) !nzchar(get_r_string(n)), logical(1L)))
+    }, logical(1L))
+    bad_expr <- bad_expr[!has_empty]
 
     lints <- xml_nodes_to_lints(
-      bad_expr[expr_all_equal],
+      bad_expr,
       source_expression = source_expression,
       lint_message = paste(
         "Prefer switch() statements over repeated if/else equality tests,",
@@ -250,4 +243,34 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
 
     lints
   })
+}
+
+get_chain_strings <- function(expr) {
+  str_nodes <- list()
+  first <- xml_find_first(expr, "IF/following-sibling::expr[1][EQ]/expr/STR_CONST")
+  if (!is.na(first)) str_nodes <- c(str_nodes, list(first))
+  current <- expr
+  repeat {
+    else_if <- xml_find_first(current, "ELSE/following-sibling::expr[IF]")
+    if (is.na(else_if)) break
+    current <- else_if
+    str_node <- xml_find_first(current, "IF/following-sibling::expr[1][EQ]/expr/STR_CONST")
+    if (!is.na(str_node)) str_nodes <- c(str_nodes, list(str_node))
+  }
+  str_nodes
+}
+
+chain_vars_equal <- function(expr) {
+  var_nodes <- list()
+  first <- xml_find_first(expr, "IF/following-sibling::expr[1][EQ]/expr[not(STR_CONST)]")
+  if (!is.na(first)) var_nodes <- c(var_nodes, list(xml_text(first)))
+  current <- expr
+  repeat {
+    else_if <- xml_find_first(current, "ELSE/following-sibling::expr[IF]")
+    if (is.na(else_if)) break
+    current <- else_if
+    var_node <- xml_find_first(current, "IF/following-sibling::expr[1][EQ]/expr[not(STR_CONST)]")
+    if (!is.na(var_node)) var_nodes <- c(var_nodes, list(xml_text(var_node)))
+  }
+  length(unique(unlist(var_nodes))) == 1L
 }
