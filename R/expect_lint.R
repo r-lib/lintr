@@ -50,10 +50,21 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
-  if (is.null(file)) on.exit(unlink(file), add = TRUE)
-  file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
+  if (!is.null(file) && !missing(content) && is.character(content)) {
+    # Both file and content → Mode 3 (identity-aware linting)
+    lints <- lint(file, ..., text = content)
+  } else {
+    if (is.null(file)) on.exit(unlink(file), add = TRUE)
+    file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
+    lints <- lint(file, ...)
+  }
 
-  lints <- lint(file, ...)
+  check_lints(lints, checks, ignore_order)
+
+  invisible(lints)
+}
+
+check_lints <- function(lints, checks, ignore_order) {
   n_lints <- length(lints)
   lint_str <- if (n_lints) paste(c("", lints), collapse = "\n") else ""
 
@@ -89,8 +100,6 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   }
 
   expect_lint_impl_(lints, checks)
-
-  invisible(lints)
 }
 
 #' NB: must _not_ succeed(), should only fail() or abort()
