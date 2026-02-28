@@ -29,8 +29,6 @@ test_that("if_switch_linter skips allowed usages", {
 })
 
 test_that("if_switch_linter handles raw empty strings", {
-  skip_unless_r(">= 4.0.0")
-
   linter <- if_switch_linter()
 
   # raw empty strings can't use switch() either
