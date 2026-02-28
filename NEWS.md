@@ -49,6 +49,11 @@
    + `vector_logic_linter()` #2826
 * `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
 
+### Core improvements
+
+* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (@atusy).
+* `expect_lint()` gains a `file` argument so that both content and file identity can be supplied in tests, matching the new `lint()` capability (@atusy).
+
 ### Lint accuracy fixes: removing false positives
 
 * `if_switch_linter()` no longer produces a false positive when comparing to empty strings (`""`, `''`, or raw strings like `R"()"`), which cannot be used as `switch()` case names (#2835, @emmanuel-ferdman).
