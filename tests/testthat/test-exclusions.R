@@ -220,3 +220,23 @@ test_that("next-line exclusion works", { # nofuzz
     linter
   )
 })
+
+test_that("exclude() handles non-existent file paths in source exclusions", {
+  # Simulate lints from a non-existent identity path (Mode 3)
+  fake_path <- normalize_path("/no/such/file.R", mustWork = FALSE)
+  line_content <- "x = 1 # nolint: assignment_linter."
+  fake_lint <- Lint(
+    filename = fake_path,
+    line_number = 1L,
+    type = "style",
+    message = "test",
+    line = line_content
+  )
+  fake_lint$linter <- "assignment_linter"
+  lints <- list(fake_lint)
+  class(lints) <- c("lints", "list")
+
+  # Pass lines= so parse_exclusions doesn't try to read from disk
+  result <- exclude(lints, linter_names = "assignment_linter", lines = line_content)
+  expect_length(result, 0L)
+})
