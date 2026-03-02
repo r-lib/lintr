@@ -98,6 +98,20 @@ test_that("multiple lints have right metadata", {
       } else if (y == 'C') {
         do_C()
       }
+      if (z1 == 'a') {
+        do_a()
+      } else if (z2 == 'b') {
+        do_b()
+      } else if (z3 == 'c') {
+        do_c()
+      }
+      if (a == '1') {
+        do_1()
+      } else if (a == '2') {
+        do_2()
+      } else if (a == '') {
+        do_blank()
+      }
     }"),
     list(
       list(lint_msg, line_number = 2L),
