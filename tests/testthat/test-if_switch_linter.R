@@ -17,8 +17,12 @@ test_that("if_switch_linter skips allowed usages", {
   # simple cases with two conditions might be more natural
   #   without switch(); require at least three branches to trigger a lint
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2", linter)
+  # not thrown by raw strings
+  expect_no_lint("if (x == 'a') 1 else if (x == R'(b)') 2", linter)
   # still no third if() clause
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else 3", linter)
+  # not thrown by raw strings
+  expect_no_lint("if (x == 'a') 1 else if (x == R'(b)') 2 else 3", linter)
 
   # empty string comparisons can't use switch()
   expect_no_lint("if (x == '') 1 else if (x == 'a') 2 else if (x == 'b') 3", linter)
@@ -42,6 +46,8 @@ test_that("if_switch_linter blocks simple disallowed usages", {
 
   # anything with >= 2 equality statements is deemed switch()-worthy
   expect_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == 'c') 3", lint_msg, linter)
+  # regardless of raw strings
+  expect_lint("if (x == 'a') 1 else if (x == r'(b)') 2 else if (x == R'--[c]--') 3", lint_msg, linter)
   # expressions are also OK
   expect_lint("if (foo(x) == 'a') 1 else if (foo(x) == 'b') 2 else if (foo(x) == 'c') 3", lint_msg, linter)
   # including when comments are present
