@@ -63,8 +63,6 @@
 <ul><li>Excluding <code><a href="../reference/cyclocomp_linter.html">cyclocomp_linter()</a></code> in <code><a href="../reference/available_linters.html">available_linters()</a></code> or <code><a href="../reference/linters_with_tags.html">linters_with_tags()</a></code>, which requires the weak dependency {cyclocomp}, no longer emits a warning (<a href="https://github.com/r-lib/lintr/issues/2909" class="external-link">#2909</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/repeat_linter.html">repeat_linter()</a></code> no longer errors when <code>while</code> is in a column to the right of <code>}</code> (<a href="https://github.com/r-lib/lintr/issues/2828" class="external-link">#2828</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
-<li>
-<code>undesirable_operator_linter(call_is_undesirable = FALSE)</code> now correctly skips prefix notation like <code>`:::`(pkg, fun)</code> (<a href="https://github.com/r-lib/lintr/issues/2999" class="external-link">#2999</a>, <a href="https://github.com/emmanuel-ferdman" class="external-link">@emmanuel-ferdman</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
@@ -125,6 +123,10 @@
 <div class="section level4">
 <h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
 <ul><li>
+<code><a href="../reference/if_switch_linter.html">if_switch_linter()</a></code> no longer produces a false positive when comparing to empty strings (<code>""</code>, <code>''</code>, or raw strings like <code>R"()"</code>), which cannot be used as <code><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch()</a></code> case names (<a href="https://github.com/r-lib/lintr/issues/2835" class="external-link">#2835</a>, <a href="https://github.com/emmanuel-ferdman" class="external-link">@emmanuel-ferdman</a>).</li>
+<li>
+<code>undesirable_operator_linter(call_is_undesirable = FALSE)</code> now correctly skips prefix notation like <code>`:::`(pkg, fun)</code> (<a href="https://github.com/r-lib/lintr/issues/2999" class="external-link">#2999</a>, <a href="https://github.com/emmanuel-ferdman" class="external-link">@emmanuel-ferdman</a>).</li>
+<li>
 <code><a href="../reference/unnecessary_nesting_linter.html">unnecessary_nesting_linter()</a></code> treats <code>=</code> assignment the same as <code>&lt;-</code> for several pieces of logic (<a href="https://github.com/r-lib/lintr/issues/2245" class="external-link">#2245</a> and <a href="https://github.com/r-lib/lintr/issues/2829" class="external-link">#2829</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code><a href="../reference/vector_logic_linter.html">vector_logic_linter()</a></code> ignores scalar operators (<code>&amp;&amp;</code>/<code>||</code>) inside anonymous functions within <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code>/<code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code> (<a href="https://github.com/r-lib/lintr/issues/2935" class="external-link">#2935</a>, <a href="https://github.com/emmanuel-ferdman" class="external-link">@emmanuel-ferdman</a>).</li>

@@ -35,10 +35,6 @@
   no longer errors when `while` is in a column to the right of `}`
   ([\#2828](https://github.com/r-lib/lintr/issues/2828),
   [@MichaelChirico](https://github.com/MichaelChirico)).
-- `undesirable_operator_linter(call_is_undesirable = FALSE)` now
-  correctly skips prefix notation like `` `:::`(pkg, fun) ``
-  ([\#2999](https://github.com/r-lib/lintr/issues/2999),
-  [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
 
 ### New and improved features
 
@@ -106,6 +102,16 @@
 
 #### Lint accuracy fixes: removing false positives
 
+- [`if_switch_linter()`](https://lintr.r-lib.org/dev/reference/if_switch_linter.md)
+  no longer produces a false positive when comparing to empty strings
+  (`""`, `''`, or raw strings like `R"()"`), which cannot be used as
+  [`switch()`](https://rdrr.io/r/base/switch.html) case names
+  ([\#2835](https://github.com/r-lib/lintr/issues/2835),
+  [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
+- `undesirable_operator_linter(call_is_undesirable = FALSE)` now
+  correctly skips prefix notation like `` `:::`(pkg, fun) ``
+  ([\#2999](https://github.com/r-lib/lintr/issues/2999),
+  [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
 - [`unnecessary_nesting_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_nesting_linter.md)
   treats `=` assignment the same as `<-` for several pieces of logic
   ([\#2245](https://github.com/r-lib/lintr/issues/2245) and
