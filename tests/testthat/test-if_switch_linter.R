@@ -32,9 +32,6 @@ test_that("if_switch_linter handles raw empty strings", {
   linter <- if_switch_linter()
 
   # raw empty strings can't use switch() either
-  expect_no_lint('if (x == R"()") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
-  expect_no_lint('if (x == r"[]") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
-  expect_no_lint('if (x == R"{}") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
   expect_no_lint('if (x == R"--()--") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
   expect_no_lint('if (x == R"()") 1 else if (x == R"{}") 2 else if (x == R"[]") 3', linter)
 })

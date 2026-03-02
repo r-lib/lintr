@@ -212,11 +212,11 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
     bad_expr <- bad_expr[expr_all_equal]
 
     # Exclude empty strings, which can't be used as switch() case names
-    has_empty <- vapply(bad_expr, function(expr) {
+    nonempty <- vapply(bad_expr, function(expr) {
       str_nodes <- get_chain_strings(expr)
-      any(vapply(str_nodes, function(n) !nzchar(get_r_string(n)), logical(1L)))
+      all(vapply(str_nodes, function(n) nzchar(get_r_string(n)), logical(1L)))
     }, logical(1L))
-    bad_expr <- bad_expr[!has_empty]
+    bad_expr <- bad_expr[nonempty]
 
     lints <- xml_nodes_to_lints(
       bad_expr,
@@ -245,6 +245,7 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
   })
 }
 
+# Extract STR_CONST nodes from equality conditions in an if/else if chain.
 get_chain_strings <- function(expr) {
   str_nodes <- list()
   first <- xml_find_first(expr, "IF/following-sibling::expr[1][EQ]/expr/STR_CONST")
@@ -260,17 +261,18 @@ get_chain_strings <- function(expr) {
   str_nodes
 }
 
+# Check that equality conditions in an if/else if chain use the same variable.
 chain_vars_equal <- function(expr) {
-  var_nodes <- list()
+  var_nodes <- character()
   first <- xml_find_first(expr, "IF/following-sibling::expr[1][EQ]/expr[not(STR_CONST)]")
-  if (!is.na(first)) var_nodes <- c(var_nodes, list(xml_text(first)))
+  if (!is.na(first)) var_nodes <- c(var_nodes, xml_text(first))
   current <- expr
   repeat {
     else_if <- xml_find_first(current, "ELSE/following-sibling::expr[IF]")
     if (is.na(else_if)) break
     current <- else_if
     var_node <- xml_find_first(current, "IF/following-sibling::expr[1][EQ]/expr[not(STR_CONST)]")
-    if (!is.na(var_node)) var_nodes <- c(var_nodes, list(xml_text(var_node)))
+    if (!is.na(var_node)) var_nodes <- c(var_nodes, xml_text(var_node))
   }
-  length(unique(unlist(var_nodes))) == 1L
+  length(unique(var_nodes)) == 1L
 }
