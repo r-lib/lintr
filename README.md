@@ -14,7 +14,7 @@ adherence to a given style, identifying syntax errors and possible
 semantic issues, then reports them to you so you can take action. Watch
 lintr in action in the following animation:
 
-![](man/figures/demo-still.gif "lintr demo")
+![](man/figures/demo.gif "lintr demo")
 
 `{lintr}` is complementary to [the `{styler}`
 package](https://github.com/r-lib/styler) which automatically restyles

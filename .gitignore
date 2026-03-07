@@ -17,6 +17,7 @@ lintr_*.tar.gz
 tests/testthat/_problems
 testthat-problems.rds
 
+*.html
 docs
 inst/doc
 .DS_Store
