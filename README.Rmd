@@ -8,7 +8,13 @@
 
 `{lintr}` provides [static code analysis for R](https://en.wikipedia.org/wiki/Static_program_analysis). It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action. Watch lintr in action in the following animation:
 
-![](man/figures/demo.gif "lintr demo")
+```{r, echo = FALSE, results = 'asis'}
+if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+  cat('![](man/figures/demo.gif "lintr demo")')
+} else {
+  cat('![](man/figures/demo-still.gif "lintr demo")')
+}
+```
 
 `{lintr}` is complementary to [the `{styler}` package](https://github.com/r-lib/styler) which automatically restyles code, eliminating some of the problems that `{lintr}` can detect.
 
