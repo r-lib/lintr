@@ -10,7 +10,7 @@ test_that("assignment_linter skips allowed usages", {
 
 test_that("assignment_linter blocks disallowed usages", {
   linter <- assignment_linter()
-  lint_msg <- rex::rex("Use one of <-, <<- for assignment, not =.")
+  lint_msg <- rex::rex("Use <- for assignment, not =.")
 
   expect_lint("blah=1", lint_msg, linter)
   expect_lint("blah = 1", lint_msg, linter)
@@ -32,16 +32,16 @@ test_that("arguments handle <<- and ->/->> correctly", {
   linter_yes_right <- assignment_linter(operator = c("->", "->>"))
   lint_msg_right <- rex::rex("Replace ->> by assigning to a specific environment")
 
-  expect_lint("1 -> blah", rex::rex("Use one of <-, <<- for assignment, not ->."), linter)
+  expect_lint("1 -> blah", rex::rex("Use <- for assignment, not ->."), linter)
   expect_lint("1 ->> blah", lint_msg_right, assignment_linter(operator = "<-"))
 
-  # <<- is only blocked optionally
-  expect_no_lint("1 <<- blah", linter)
+  # <<- can be unblocked optionally
   expect_lint(
     "1 <<- blah",
     rex::rex("Replace <<- by assigning to a specific environment"),
-    assignment_linter(operator = "<-")
+    linter
   )
+  expect_no_lint("1 <<- blah", assignment_linter(operator = "<<-"))
 
   # blocking -> can be disabled
   expect_no_lint("1 -> blah", linter_yes_right)
@@ -85,10 +85,10 @@ test_that("arguments handle trailing assignment operators correctly", {
 
   expect_lint(
     trim_some("
-      x <<-
+      x <-
         y
     "),
-    rex::rex("<<- should not be trailing"),
+    rex::rex("<- should not be trailing"),
     linter_no_trailing
   )
   expect_lint(
@@ -127,11 +127,11 @@ test_that("arguments handle trailing assignment operators correctly", {
       arrange(-value) ->
       is_long
   ")
-  expect_lint(pipe_right_string, rex::rex("Use one of <-, <<- for assignment, not ->"), linter_default)
+  expect_lint(pipe_right_string, rex::rex("Use <- for assignment, not ->"), linter_default)
   expect_lint(
     pipe_right_string,
     list(
-      rex::rex("Use one of <-, <<- for assignment, not ->"),
+      rex::rex("Use <- for assignment, not ->"),
       rex::rex("Assignment -> should not be trailing")
     ),
     linter_no_trailing
@@ -150,7 +150,7 @@ test_that("arguments handle trailing assignment operators correctly", {
         54
     "),
     list(
-      list(message = "Use one of <-, <<- for assignment, not =.", line_number = 1L, column_number = 6L),
+      list(message = "Use <- for assignment, not =.", line_number = 1L, column_number = 6L),
       list(message = "Assignment = should not be trailing at the end of a line", line_number = 1L, column_number = 6L),
       list(message = "Assignment <- should not be trailing at the end of a line", line_number = 3L, column_number = 6L)
     ),
