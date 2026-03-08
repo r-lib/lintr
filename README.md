@@ -11,10 +11,74 @@ status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https:/
 `{lintr}` provides [static code analysis for
 R](https://en.wikipedia.org/wiki/Static_program_analysis). It checks for
 adherence to a given style, identifying syntax errors and possible
-semantic issues, then reports them to you so you can take action. Watch
-lintr in action in the following animation:
+semantic issues.
 
-![](man/figures/demo.gif "lintr demo")
+For example, given a file `bad.R` with the following contents:
+
+``` r
+# Bad R code for demonstration
+my_func = function(x){ # Assignment with =
+    if(x > 0){ # Missing space before {
+        print("Positive")
+    }
+    else { # else on new line, missing space
+        print("Not positive")
+    }
+    return(T) # Using T instead of TRUE
+}
+```
+
+Running `lintr::lint()` on this file would produce the following output:
+
+``` r
+lintr::lint("bad.R")
+```
+
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:2:9: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+    ## my_func = function(x){
+    ##         ^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:2:22: style: [brace_linter] There should be a space before an opening curly brace.
+    ## my_func = function(x){
+    ##                      ^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:2:22: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+    ## my_func = function(x){
+    ##                      ^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:3:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    ##     if(x > 0){
+    ##   ~^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:3:7: style: [spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.
+    ##     if(x > 0){
+    ##       ^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:3:14: style: [brace_linter] There should be a space before an opening curly brace.
+    ##     if(x > 0){
+    ##              ^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:3:14: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+    ##     if(x > 0){
+    ##              ^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:4:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+    ##         print("Positive")
+    ##     ~~~^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:5:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    ##     }
+    ##   ~^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:6:5: style: [brace_linter] `else` should come on the same line as the previous `}`.
+    ##     else {
+    ##     ^~~~
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:7:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+    ##         print("Not positive")
+    ##     ~~~^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:8:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    ##     }
+    ##   ~^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:9:5: style: [return_linter] Use implicit return behavior; explicit return() is not needed.
+    ##     return(T)
+    ##     ^~~~~~
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:9:13: style: [T_and_F_symbol_linter] Use TRUE instead of the symbol T.
+    ##     return(T)
+    ##            ~^
+    ## /tmp/Rtmp80OasP/file2f3544a682c3.R:11:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
+    ## 
+    ## ^
 
 `{lintr}` is complementary to [the `{styler}`
 package](https://github.com/r-lib/styler) which automatically restyles

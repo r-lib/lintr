@@ -1,7 +1,3 @@
----
-params:
-  is_cran: false
----
 # lintr <img src="man/figures/logo.png" align="right" width="240" />
 
 [![R build status](https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/lintr/actions)
@@ -10,14 +6,46 @@ params:
 [![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.07240/status.svg)](https://doi.org/10.21105/joss.07240)
 
-`{lintr}` provides [static code analysis for R](https://en.wikipedia.org/wiki/Static_program_analysis). It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action. Watch lintr in action in the following animation:
+`{lintr}` provides [static code analysis for R](https://en.wikipedia.org/wiki/Static_program_analysis). It checks for adherence to a given style, identifying syntax errors and possible semantic issues.
 
-```{r, echo = FALSE, results = 'asis'}
-if (params$is_cran) {
-  cat('![](man/figures/demo-still.gif "lintr demo")')
-} else {
-  cat('![](man/figures/demo.gif "lintr demo")')
+For example, given a file `bad.R` with the following contents:
+
+```r
+# Bad R code for demonstration
+my_func = function(x){ # Assignment with =
+    if(x > 0){ # Missing space before {
+        print("Positive")
+    }
+    else { # else on new line, missing space
+        print("Not positive")
+    }
+    return(T) # Using T instead of TRUE
 }
+```
+
+```{r, include = FALSE}
+# create a temporary file for the demonstration
+bad_code_for_linting <- '
+my_func = function(x){
+    if(x > 0){
+        print("Positive")
+    }
+    else {
+        print("Not positive")
+    }
+    return(T)
+}
+'
+tmp_lintr_file <- tempfile(fileext = ".R")
+writeLines(bad_code_for_linting, tmp_lintr_file)
+```
+
+Running `lintr::lint()` on this file would produce the following output:
+```{r, eval = FALSE}
+lintr::lint("bad.R")
+```
+```{r, echo = FALSE}
+lintr::lint(tmp_lintr_file)
 ```
 
 `{lintr}` is complementary to [the `{styler}` package](https://github.com/r-lib/styler) which automatically restyles code, eliminating some of the problems that `{lintr}` can detect.
