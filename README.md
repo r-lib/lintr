@@ -25,77 +25,48 @@ Running `lintr::lint()` on this file would produce the following output:
 lintr::lint("bad.R")
 ```
 
-    ## [[1]]
     ## bad.R:2:9: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
     ## my_func = function(x){
     ##         ^
-    ## 
-    ## [[2]]
     ## bad.R:2:22: style: [brace_linter] There should be a space before an opening curly brace.
     ## my_func = function(x){
     ##                      ^
-    ## 
-    ## [[3]]
     ## bad.R:2:22: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
     ## my_func = function(x){
     ##                      ^
-    ## 
-    ## [[4]]
     ## bad.R:3:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
     ##     if(x > 0){
     ##   ~^
-    ## 
-    ## [[5]]
     ## bad.R:3:7: style: [spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.
     ##     if(x > 0){
     ##       ^
-    ## 
-    ## [[6]]
     ## bad.R:3:14: style: [brace_linter] There should be a space before an opening curly brace.
     ##     if(x > 0){
     ##              ^
-    ## 
-    ## [[7]]
     ## bad.R:3:14: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
     ##     if(x > 0){
     ##              ^
-    ## 
-    ## [[8]]
     ## bad.R:4:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
     ##         print("Positive")
     ##     ~~~^
-    ## 
-    ## [[9]]
     ## bad.R:5:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
     ##     }
     ##   ~^
-    ## 
-    ## [[10]]
     ## bad.R:6:5: style: [brace_linter] `else` should come on the same line as the previous `}`.
     ##     else {
     ##     ^~~~
-    ## 
-    ## [[11]]
     ## bad.R:7:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
     ##         print("Not positive")
     ##     ~~~^
-    ## 
-    ## [[12]]
     ## bad.R:8:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
     ##     }
     ##   ~^
-    ## 
-    ## [[13]]
     ## bad.R:9:5: style: [return_linter] Use implicit return behavior; explicit return() is not needed.
     ##     return(T)
     ##     ^~~~~~
-    ## 
-    ## [[14]]
     ## bad.R:9:13: style: [T_and_F_symbol_linter] Use TRUE instead of the symbol T.
     ##     return(T)
     ##            ~^
-    ## 
-    ## [[15]]
     ## bad.R:11:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
     ## 
     ## ^

@@ -50,11 +50,13 @@ local({
   on.exit(unlink(code_file))
 
   writeLines(bad_code, code_file)
-  code_file |>
+  lints <- code_file |>
     lintr::lint() |>
     # ensure output shows 'bad.R', lest the rendering have
     #   randomized filenames (ugly and unnecessary diff)
     lapply(replace, "filename", "bad.R")
+  class(lints) <- "lints"
+  lints
 })
 ```
 
