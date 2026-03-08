@@ -17,8 +17,27 @@ test_that("if_switch_linter skips allowed usages", {
   # simple cases with two conditions might be more natural
   #   without switch(); require at least three branches to trigger a lint
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2", linter)
+  # not thrown by raw strings
+  expect_no_lint("if (x == 'a') 1 else if (x == R'(b)') 2", linter)
   # still no third if() clause
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else 3", linter)
+  # not thrown by raw strings
+  expect_no_lint("if (x == 'a') 1 else if (x == R'(b)') 2 else 3", linter)
+
+  # empty string comparisons can't use switch()
+  expect_no_lint("if (x == '') 1 else if (x == 'a') 2 else if (x == 'b') 3", linter)
+  expect_no_lint('if (x == "") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == '') 2 else if (x == 'b') 3", linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == '') 3", linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == 'c') 3 else if (x == '') 4", linter)
+})
+
+test_that("if_switch_linter handles raw empty strings", {
+  linter <- if_switch_linter()
+
+  # raw empty strings can't use switch() either
+  expect_no_lint('if (x == R"--()--") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint('if (x == R"()") 1 else if (x == R"{}") 2 else if (x == R"[]") 3', linter)
 })
 
 test_that("if_switch_linter blocks simple disallowed usages", {
@@ -27,6 +46,8 @@ test_that("if_switch_linter blocks simple disallowed usages", {
 
   # anything with >= 2 equality statements is deemed switch()-worthy
   expect_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == 'c') 3", lint_msg, linter)
+  # regardless of raw strings
+  expect_lint("if (x == 'a') 1 else if (x == r'(b)') 2 else if (x == R'--[c]--') 3", lint_msg, linter)
   # expressions are also OK
   expect_lint("if (foo(x) == 'a') 1 else if (foo(x) == 'b') 2 else if (foo(x) == 'c') 3", lint_msg, linter)
   # including when comments are present
@@ -76,6 +97,20 @@ test_that("multiple lints have right metadata", {
         do_B()
       } else if (y == 'C') {
         do_C()
+      }
+      if (z1 == 'a') {
+        do_a()
+      } else if (z2 == 'b') {
+        do_b()
+      } else if (z3 == 'c') {
+        do_c()
+      }
+      if (a == '1') {
+        do_1()
+      } else if (a == '2') {
+        do_2()
+      } else if (a == '') {
+        do_blank()
       }
     }"),
     list(

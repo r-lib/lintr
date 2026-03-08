@@ -24,6 +24,7 @@ Authors:
   \item Alexander Rosenstock (AshesITR)
   \item Indrajeet Patil \email{patilindrajeet.science@gmail.com} (\href{https://orcid.org/0000-0003-1995-6531}{ORCID})
   \item Hugo Gruson (\href{https://orcid.org/0000-0002-4094-1476}{ORCID})
+  \item Emmanuel Ferdman
 }
 
 }
