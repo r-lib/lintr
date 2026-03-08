@@ -16,7 +16,7 @@ output:
 
 For example, given a file `bad.R` with the following contents:
 
-```r
+```R
 my_func = function(x){
     if(x > 0){
         print("Positive")
@@ -28,7 +28,16 @@ my_func = function(x){
 }
 ```
 
-```{r, include = FALSE}
+Running `lintr::lint()` on this file would produce the following output:
+```R
+lintr::lint("bad.R")
+```
+
+```{r, echo = FALSE}
+# ensure output shows 'bad.R'
+# NB: knitr doesn't play well with changing directory,
+#   so be sure to change back within the same chunk
+old_dir <- setwd(tempdir())
 bad_code_for_linting <- '
 my_func = function(x){
     if(x > 0){
@@ -40,17 +49,10 @@ my_func = function(x){
     return(T)
 }
 '
-tmp_lintr_file <- tempfile(fileext = ".R")
-writeLines(bad_code_for_linting, tmp_lintr_file)
-```
-
-Running `lintr::lint()` on this file would produce the following output:
-```{r, eval = FALSE}
+writeLines(bad_code_for_linting, "bad.R")
 lintr::lint("bad.R")
-```
-```{r, echo = FALSE}
-lintr::lint(tmp_lintr_file)
-unlink(tmp_lintr_file)
+unlink("bad.R")
+setwd(old_dir)
 ```
 
 `{lintr}` is complementary to [the `{styler}` package](https://github.com/r-lib/styler) which automatically restyles code, eliminating some of the problems that `{lintr}` can detect.

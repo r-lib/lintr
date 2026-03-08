@@ -25,49 +25,49 @@ Running `lintr::lint()` on this file would produce the following output:
 lintr::lint("bad.R")
 ```
 
-    ## /tmp/RtmpmxeaHi/file305431441558.R:2:9: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+    ## /tmp/Rtmpa6VVM6/bad.R:2:9: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
     ## my_func = function(x){
     ##         ^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:2:22: style: [brace_linter] There should be a space before an opening curly brace.
+    ## /tmp/Rtmpa6VVM6/bad.R:2:22: style: [brace_linter] There should be a space before an opening curly brace.
     ## my_func = function(x){
     ##                      ^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:2:22: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+    ## /tmp/Rtmpa6VVM6/bad.R:2:22: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
     ## my_func = function(x){
     ##                      ^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:3:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    ## /tmp/Rtmpa6VVM6/bad.R:3:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
     ##     if(x > 0){
     ##   ~^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:3:7: style: [spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.
+    ## /tmp/Rtmpa6VVM6/bad.R:3:7: style: [spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.
     ##     if(x > 0){
     ##       ^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:3:14: style: [brace_linter] There should be a space before an opening curly brace.
+    ## /tmp/Rtmpa6VVM6/bad.R:3:14: style: [brace_linter] There should be a space before an opening curly brace.
     ##     if(x > 0){
     ##              ^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:3:14: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+    ## /tmp/Rtmpa6VVM6/bad.R:3:14: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
     ##     if(x > 0){
     ##              ^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:4:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+    ## /tmp/Rtmpa6VVM6/bad.R:4:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
     ##         print("Positive")
     ##     ~~~^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:5:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    ## /tmp/Rtmpa6VVM6/bad.R:5:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
     ##     }
     ##   ~^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:6:5: style: [brace_linter] `else` should come on the same line as the previous `}`.
+    ## /tmp/Rtmpa6VVM6/bad.R:6:5: style: [brace_linter] `else` should come on the same line as the previous `}`.
     ##     else {
     ##     ^~~~
-    ## /tmp/RtmpmxeaHi/file305431441558.R:7:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+    ## /tmp/Rtmpa6VVM6/bad.R:7:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
     ##         print("Not positive")
     ##     ~~~^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:8:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    ## /tmp/Rtmpa6VVM6/bad.R:8:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
     ##     }
     ##   ~^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:9:5: style: [return_linter] Use implicit return behavior; explicit return() is not needed.
+    ## /tmp/Rtmpa6VVM6/bad.R:9:5: style: [return_linter] Use implicit return behavior; explicit return() is not needed.
     ##     return(T)
     ##     ^~~~~~
-    ## /tmp/RtmpmxeaHi/file305431441558.R:9:13: style: [T_and_F_symbol_linter] Use TRUE instead of the symbol T.
+    ## /tmp/Rtmpa6VVM6/bad.R:9:13: style: [T_and_F_symbol_linter] Use TRUE instead of the symbol T.
     ##     return(T)
     ##            ~^
-    ## /tmp/RtmpmxeaHi/file305431441558.R:11:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
+    ## /tmp/Rtmpa6VVM6/bad.R:11:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
     ## 
     ## ^
 
