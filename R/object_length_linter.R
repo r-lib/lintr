@@ -34,11 +34,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 object_length_linter <- function(length = 30L) {
-  lint_message <- paste(
-    "Variable and function names should not be longer than",
-    length,
-    "characters."
-  )
+  lint_message <- paste("Variable and function names should not be longer than", length, "characters.")
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
