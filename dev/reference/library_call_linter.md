@@ -3,6 +3,17 @@
 This linter covers several rules related to
 [`library()`](https://rdrr.io/r/base/library.html) calls:
 
+- Enforce such calls to all be at the top of the script.
+
+- Block usage of argument `character.only`, in particular for loading
+  packages in a loop.
+
+- Block consecutive calls to `suppressMessages(library(.))` in favor of
+  using [`suppressMessages()`](https://rdrr.io/r/base/message.html) only
+  once to suppress messages from all
+  [`library()`](https://rdrr.io/r/base/library.html) calls. Ditto
+  [`suppressPackageStartupMessages()`](https://rdrr.io/r/base/message.html).
+
 ## Usage
 
 ``` r
@@ -18,19 +29,6 @@ library_call_linter(allow_preamble = TRUE)
   otherwise some setup code is allowed, but all
   [`library()`](https://rdrr.io/r/base/library.html) calls must follow
   consecutively after the first one.
-
-## Details
-
-- Enforce such calls to all be at the top of the script.
-
-- Block usage of argument `character.only`, in particular for loading
-  packages in a loop.
-
-- Block consecutive calls to `suppressMessages(library(.))` in favor of
-  using [`suppressMessages()`](https://rdrr.io/r/base/message.html) only
-  once to suppress messages from all
-  [`library()`](https://rdrr.io/r/base/library.html) calls. Ditto
-  [`suppressPackageStartupMessages()`](https://rdrr.io/r/base/message.html).
 
 ## See also
 
