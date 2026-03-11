@@ -274,4 +274,3 @@ test_that("it doesn't fail when exclude contains capturing groups (#2831)", {
     exclude = "((a)|(b))"
   )
 })
-

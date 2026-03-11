@@ -196,12 +196,12 @@ re_matches_logical <- function(x, regex, ...) {
 #' @noRd
 re_matches_locations <- function(x, regex, ...) {
   m <- regexpr(regex, x, perl = TRUE, ...)
-  start <- as.vector(m)
-  end <- start + attr(m, "match.length") - 1L
-  matched <- start != -1L
-  start[!matched] <- NA_integer_
-  end[!matched] <- NA_integer_
-  data.frame(start = start, end = end)
+  match_start <- as.vector(m)
+  match_end <- match_start + attr(m, "match.length") - 1L
+  matched <- match_start != -1L
+  match_start[!matched] <- NA_integer_
+  match_end[!matched] <- NA_integer_
+  data.frame(start = match_start, end = match_end)
 }
 
 #' Extract text from `STR_CONST` nodes
