@@ -220,3 +220,18 @@ test_that("next-line exclusion works", { # nofuzz
     linter
   )
 })
+
+test_that("it doesn't fail when exclude contains capturing groups (#2831)", {
+  expect_lint(
+    "x = 1",
+    list(rex::rex("Use one of <-, <<- for assignment, not =.")),
+    linters = assignment_linter(),
+    exclude = "(a)|(b)"
+  )
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(a)|(b)"
+  )
+})

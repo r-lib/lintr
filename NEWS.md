@@ -10,6 +10,7 @@
 
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
 * `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
+* `lint(exclude=)` doesn't fail cryptically when provided a regex with capture groups (#2831, @MichaelChirico).
 
 ## New and improved features
 

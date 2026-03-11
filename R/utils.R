@@ -192,6 +192,18 @@ re_matches_logical <- function(x, regex, ...) {
   res
 }
 
+#' re_matches with type-stable locations output for the overall match
+#' @noRd
+re_matches_locations <- function(x, regex, ...) {
+  m <- regexpr(regex, x, perl = TRUE, ...)
+  start <- as.vector(m)
+  end <- start + attr(m, "match.length") - 1L
+  matched <- start != -1L
+  start[!matched] <- NA_integer_
+  end[!matched] <- NA_integer_
+  data.frame(start = start, end = end)
+}
+
 #' Extract text from `STR_CONST` nodes
 #'
 #' Convert `STR_CONST` `text()` values into R strings. This is useful to account for arbitrary
