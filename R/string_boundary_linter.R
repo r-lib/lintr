@@ -159,9 +159,10 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       ))
     }
 
-    substr_calls <- xml_parent(xml_parent(
-      source_expression$xml_find_function_calls(c("substr", "substring"))
-    ))
+    substr_calls <- xml_find_all(
+      source_expression$xml_find_function_calls(c("substr", "substring")),
+      "parent::*/parent::*"
+    )
     is_str_comparison <- !is.na(xml_find_first(substr_calls, string_comparison_xpath))
     substr_calls <- strip_comments_from_subtree(substr_calls[is_str_comparison])
     substr_expr <- xml_find_all(substr_calls, substr_xpath)
