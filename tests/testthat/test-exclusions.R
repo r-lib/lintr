@@ -221,7 +221,7 @@ test_that("next-line exclusion works", { # nofuzz
   )
 })
 
-test_that("it doesn't fail when exclude contains capturing groups (#2831)", {
+test_that("lint() doesn't fail when exclude contains capturing groups (#2831)", {
   expect_lint(
     "x = 1",
     list(rex::rex("Use one of <-, <<- for assignment, not =.")),
