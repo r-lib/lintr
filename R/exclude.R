@@ -48,8 +48,14 @@ exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL
   source_exclusions <- lapply(filenames, parse_exclusions, linter_names = linter_names, ...)
   names(source_exclusions) <- filenames
 
-
-  exclusions <- normalize_exclusions(c(source_exclusions, exclusions))
+  # Source exclusions use already-normalized paths from source_expression$filename.
+  # normalize_path=FALSE avoids Sys.glob/file.exists which fail for non-existent files (Mode 3).
+  source_exclusions <- normalize_exclusions(source_exclusions, normalize_path = FALSE)
+  config_exclusions <- normalize_exclusions(exclusions)
+  exclusions <- c(source_exclusions, config_exclusions) |>
+    remove_file_duplicates() |>
+    remove_linter_duplicates() |>
+    remove_line_duplicates()
   to_exclude <- vapply(
     seq_len(nrow(lint_df)),
     function(i) {

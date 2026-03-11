@@ -297,3 +297,62 @@ test_that("explicit parse_settings=TRUE works for inline data", {
   # parse_settings=TRUE default not picked up
   expect_length(lint(text = lint_str), 2L)
 })
+
+# Mode 3: lint(filename, text=) — content from text, identity from filename
+
+test_that("lint(filename, text=) uses identity path in output", {
+  lints <- lint("R/foo.R", text = "x = 1\n", linters = assignment_linter())
+  expect_length(lints, 1L)
+  expect_true(grepl("foo.R$", lints[[1L]]$filename))
+  # Should NOT show <text>
+
+  expect_false(identical(lints[[1L]]$filename, "<text>"))
+})
+
+test_that("lint(filename, text=) works with non-existent files", {
+  lints <- lint("R/new_file.R", text = "x = 1\n", linters = assignment_linter())
+  expect_length(lints, 1L)
+  expect_true(grepl("new_file.R$", lints[[1L]]$filename))
+})
+
+test_that("lint(filename, text=) respects nolint comments", {
+  lints <- lint("new.R", text = "x = 1 # nolint: assignment_linter.\n", linters = assignment_linter())
+  expect_length(lints, 0L)
+})
+
+test_that("lint(filename, text=) discovers config via identity path with parse_settings", {
+  pkg_path <- test_path("dummy_packages", "assignmentLinter")
+  local_config("linters: list(assignment_linter())", pkg_path)
+
+  lints <- lint(
+    file.path(pkg_path, "R", "abc.R"),
+    text = "x = 1\n",
+    parse_settings = TRUE
+  )
+  expect_length(lints, 1L)
+})
+
+test_that("lint(filename, text=) works with cache", {
+  cache_path <- withr::local_tempdir()
+  lints <- lint("R/cached_file.R", text = "x = 1\n", linters = assignment_linter(), cache = cache_path)
+  expect_length(lints, 1L)
+
+  # Second call should use cache
+  lints2 <- lint("R/cached_file.R", text = "x = 1\n", linters = assignment_linter(), cache = cache_path)
+  expect_length(lints2, 1L)
+})
+
+test_that("lint(filename, text=) detects knitr from extension", {
+  rmd_content <- paste(
+    "---",
+    "title: test",
+    "---",
+    "",
+    "```{r}",
+    "x = 1",
+    "```",
+    sep = "\n"
+  )
+  lints <- lint("test.Rmd", text = rmd_content, linters = assignment_linter())
+  expect_length(lints, 1L)
+})

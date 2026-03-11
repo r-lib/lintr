@@ -110,3 +110,19 @@ test_that("lint order can be ignored", { # nofuzz: comment_injection
   expect_success(expect_lint(lines, expected[sample.int(4L)], linters, ignore_order = TRUE))
 })
 # fuzzer enable: assignment
+
+test_that("expect_lint with file and content uses Mode 3", {
+  expect_success(expect_lint("x = 1", lint_msg, linter, file = "test.R"))
+  expect_success(expect_no_lint("x <- 1", linter, file = "test.R"))
+})
+
+test_that("expect_lint with file only (no content) reads from file", {
+  expect_success(
+    expect_lint(
+      file = "exclusions-test",
+      checks = as.list(rep(lint_msg, 9L)),
+      linters = linter,
+      parse_settings = FALSE
+    )
+  )
+})
