@@ -2,9 +2,11 @@
 #'
 #' Check for usage of unavailable functions. Not reliable for testing r-devel dependencies.
 #'
-#' @param r_version Minimum R version to test for compatibility. Defaults to
-#'  the R version currently in use. The version can be specified as a version
-#'  number, or as a version alias (such as `"devel"`, `"oldrel"`, `"oldrel-1"`).
+#' @param r_version Minimum R version to test for compatibility. The version
+#'  can be specified as a version number, or as a version alias (such as `"devel"`,
+#'  `"oldrel"`, `"oldrel-1"`). It can also be `"auto"` (the default) to use the minimum R version 
+#'   declared in the `DESCRIPTION` file of R packages, and the R version in the current
+#'   R session outside of packages.
 #' @param except Character vector of functions to be excluded from linting.
 #'  Use this to list explicitly defined backports, e.g. those imported from the `{backports}` package or manually
 #'  defined in your package.
@@ -46,7 +48,7 @@
 #' @evalRd rd_tags("backport_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-backport_linter <- function(r_version = getRversion(), except = character()) {
+backport_linter <- function(r_version = "auto", except = character()) {
   r_version <- normalize_r_version(r_version)
 
   if (all(r_version >= R_system_version(names(backports)))) {
@@ -120,6 +122,15 @@ normalize_r_version <- function(r_version) {
     ))
 
     r_version <- R_system_version(available_patches[selected_patch])
+  } else if (identical(r_version, "auto")) {
+    r_version <- min_r_version()
+    if (is.na(r_version)) {
+      cli_warn(c(
+        x = "No DESCRIPTION file or no specified minimum R version could be found.",
+        i = "Setting {.arg r_version} to the currently running R version (R {getRversion()})."
+      ))
+      r_version <- getRversion()
+    }
   } else if (is.character(r_version)) {
     r_version <- R_system_version(r_version, strict = TRUE)
   } else if (!inherits(r_version, "R_system_version")) {
