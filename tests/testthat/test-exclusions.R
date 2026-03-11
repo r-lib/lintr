@@ -221,7 +221,7 @@ test_that("next-line exclusion works", { # nofuzz
   )
 })
 
-test_that("it doesn't fail when exclude contains capturing groups (#2831)", {
+test_that("it doesn't fail when exclude contains capturing groups (#2831)", { # nofuzz: assignment
   # capturing groups
   expect_lint(
     "x = 1",
