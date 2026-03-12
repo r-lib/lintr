@@ -91,6 +91,11 @@ test_that("unnecessary_lambda_linter skips allowed inner comparisons", {
   expect_no_lint("sapply(x, function(xi) !all.equal(xi, y))", linter)
   expect_no_lint("sapply(x, \\(xi) !all.equal(xi, y))", linter)
   expect_no_lint("purrr::map(x, ~!foo(.x))", linter)
+
+  # unary operators, #2742
+  expect_no_lint("sapply(x, function(xi) -foo(xi))", linter)
+  expect_no_lint("sapply(x, function(xi) +foo(xi))", linter)
+  expect_no_lint("sapply(x, function(xi) ~foo(xi))", linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {

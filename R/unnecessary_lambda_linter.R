@@ -121,7 +121,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     /expr[last()][
       count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
       and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
-      and not(OP-EXCLAMATION)
+      and not(OP-EXCLAMATION or OP-PLUS or OP-MINUS or OP-TILDE)
       and preceding-sibling::SYMBOL_FORMALS =
         .//expr[
           position() = 2
