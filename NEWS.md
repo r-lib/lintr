@@ -55,6 +55,7 @@
 * `undesirable_operator_linter(call_is_undesirable = FALSE)` now correctly skips prefix notation like `` `:::`(pkg, fun) `` (#2999, @emmanuel-ferdman).
 * `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
 * `vector_logic_linter()` ignores scalar operators (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` (#2935, @emmanuel-ferdman).
+* `unnecessary_lambda_linter()` skips lambdas with an outer unary operators like `sapply(x, \(xi) !all(xi))` (#2742, @MichaelChirico).
 
 ## Notes
 
