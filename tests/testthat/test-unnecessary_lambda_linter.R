@@ -86,6 +86,11 @@ test_that("unnecessary_lambda_linter skips allowed inner comparisons", {
 
   # only lint "plain" calls that can be replaced by eliminating the lambda
   expect_no_lint("sapply(x, function(xi) sum(abs(xi)) == 0)", linter)
+
+  # negated calls, #2742
+  expect_no_lint("sapply(x, function(xi) !all.equal(xi, y))", linter)
+  expect_no_lint("sapply(x, \\(xi) !all.equal(xi, y))", linter)
+  expect_no_lint("purrr::map(x, ~!foo(.x))", linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
