@@ -128,8 +128,8 @@ parse_exclusions <- function(file,
     return(list())
   }
 
-  start_locations <- re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
-  end_locations <- re_matches(lines, exclude_end, locations = TRUE)[, "start"]
+  start_locations <- re_matches_locations(lines, exclude_start)[, "end"] + 1L
+  end_locations <- re_matches_locations(lines, exclude_end)[, "start"]
   starts <- which(!is.na(start_locations))
   ends <- which(!is.na(end_locations))
 
@@ -152,10 +152,10 @@ parse_exclusions <- function(file,
     }
   }
 
-  next_locations <- re_matches(lines, exclude_next, locations = TRUE)[, "end"] + 1L
+  next_locations <- re_matches_locations(lines, exclude_next)[, "end"] + 1L
   nexts <- which(!is.na(next_locations))
 
-  nolint_locations <- re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
+  nolint_locations <- re_matches_locations(lines, exclude)[, "end"] + 1L
   nolints <- which(!is.na(nolint_locations))
 
   # Disregard nolint tags if they also match nolint next / start / end
