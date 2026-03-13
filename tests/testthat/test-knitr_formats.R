@@ -1,5 +1,5 @@
 regexes <- list(
-  assign = rex::rex("Use one of <-, <<- for assignment, not =."),
+  assign = rex::rex("Use <- for assignment, not =."),
   local_var = rex::rex("local variable"),
   quotes = rex::rex("Only use double-quotes."),
   trailing = rex::rex("Remove trailing blank lines."),

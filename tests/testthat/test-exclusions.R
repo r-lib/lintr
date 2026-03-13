@@ -206,7 +206,7 @@ test_that("next-line exclusion works", { # nofuzz
       # NLN: line_length_linter.
       x = 1
     "),
-    rex::rex("Use one of <-, <<- for assignment, not =."),
+    rex::rex("Use <- for assignment, not =."),
     list(linter, line_length_linter())
   )
 
@@ -216,7 +216,7 @@ test_that("next-line exclusion works", { # nofuzz
       x = 1 # NLN: assignment_linter.
       x = 2
     "),
-    list(rex::rex("Use one of <-, <<- for assignment, not =."), line_number = 1L),
+    list(rex::rex("Use <- for assignment, not =."), line_number = 1L),
     linter
   )
 })
