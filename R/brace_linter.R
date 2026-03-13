@@ -1,7 +1,6 @@
 #' Brace linter
 #'
 #' Perform various style checks related to placement and spacing of curly braces:
-#'
 #'  - Opening curly braces are never on their own line and are always followed by a newline.
 #'  - Opening curly braces have a space before them.
 #'  - Closing curly braces are on their own line unless they are followed by an `else`.
