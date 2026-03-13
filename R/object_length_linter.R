@@ -2,7 +2,6 @@
 #'
 #' Check that object names are not too long.
 #' The length of an object name is defined as the length in characters, after removing extraneous parts:
-#'
 #'  * generic prefixes for implementations of S3 generics, e.g. `as.data.frame.my_class` has length 8.
 #'  * leading `.`, e.g. `.my_hidden_function` has length 18.
 #'  * "%%" for infix operators, e.g. `%my_op%` has length 5.

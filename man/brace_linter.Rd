@@ -22,8 +22,6 @@ brace_linter(
 }
 \description{
 Perform various style checks related to placement and spacing of curly braces:
-}
-\details{
 \itemize{
 \item Opening curly braces are never on their own line and are always followed by a newline.
 \item Opening curly braces have a space before them.
