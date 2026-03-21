@@ -113,3 +113,10 @@ test_that("literals in assign() and setGeneric() are checked", {
     linter
   )
 })
+
+# Regression test for #3032
+test_that("object_length_linter does not crash with empty filename", {
+  expect_no_error(
+    lint("", text = "x <- 1", linters = object_length_linter(), parse_settings = FALSE)
+  )
+})
