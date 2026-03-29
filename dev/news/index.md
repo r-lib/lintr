@@ -2267,10 +2267,9 @@ future releases. See, e.g.
   Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)`
   and similar.
 - [`fixed_regex_linter()`](https://lintr.r-lib.org/dev/reference/fixed_regex_linter.md)
-  Require `fixed = TRUE` or
-  [`stringr::fixed()`](https://stringr.tidyverse.org/reference/modifiers.html)
-  for regular expressions that can be expressed statically,
-  e.g. `strsplit(x, "[.]")` can be `strsplit(x, ".", fixed = TRUE)`.
+  Require `fixed = TRUE` or `stringr::fixed()` for regular expressions
+  that can be expressed statically, e.g. `strsplit(x, "[.]")` can be
+  `strsplit(x, ".", fixed = TRUE)`.
   - Added parameter `allow_grepl` (default `FALSE`) to toggle whether
     [`grepl()`](https://rdrr.io/r/base/grep.html) usages should be
     linted. These might be treated separately because `grepl("^x", NA)`

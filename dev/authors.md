@@ -17,7 +17,8 @@
 - **Alexander Rosenstock**. Author.  
   AshesITR
 
-- **Indrajeet Patil**. Author. [](https://orcid.org/0000-0003-1995-6531)
+- **[Indrajeet Patil](https://indrajeetpatil.github.io/)**. Author.
+  [](https://orcid.org/0000-0003-1995-6531)
 
 - **Hugo Gruson**. Author. [](https://orcid.org/0000-0002-4094-1476)
 
