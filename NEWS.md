@@ -57,6 +57,7 @@
    + recommends usage of `sort(x, decreasing = TRUE)` over `rev(sort(x))` (#3066, @Bisaloo).
 * `paste_linter()` lints `expression(paste(., sep = ""))` because the `paste` inside an expression doesn't support the `sep` argument (#2945, @mcol).
 * `namespace_linter()` detects functions accessed with `::` or `:::` when they are already imported into the package's `NAMESPACE` (#2081, @MichaelChirico).
+* `paste_linter()` recommends `deparse1(x)` in favor of `paste(deparse(x), collapse = ...)` (#2615, @emmanuel-ferdman).
 
 
 ### Lint accuracy fixes: removing false positives

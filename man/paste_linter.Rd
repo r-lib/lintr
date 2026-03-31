@@ -43,6 +43,9 @@ skips the (likely small) overhead of putting two strings into the global string 
 
 Only target scalar usages -- \code{strrep} can handle more complicated cases (e.g. \code{strrep(letters, 26:1)},
 but those aren't as easily translated from a \code{paste(collapse=)} call.
+\item Block usage of \code{paste()} or \code{paste0()} to collapse the output of \code{\link[base:deparse]{base::deparse()}}, e.g.
+\code{paste(deparse(x), collapse = " ")}. \code{\link[base:deparse1]{base::deparse1()}} is a more readable equivalent,
+i.e. \code{deparse1(x)}.
 }
 }
 \examples{
@@ -79,6 +82,11 @@ lint(
 
 lint(
   text = 'expression(paste("a", "b", sep = ""))',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste(deparse(x), collapse = " ")',
   linters = paste_linter()
 )
 
@@ -130,6 +138,11 @@ lint(
 
 lint(
   text = 'expression(paste("a", "b"))',
+  linters = paste_linter()
+)
+
+lint(
+  text = "deparse1(x)",
   linters = paste_linter()
 )
 
