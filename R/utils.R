@@ -50,7 +50,7 @@ fix_names <- function(x, default) {
 
 linter_auto_name <- function(which = -3L) {
   sys_call <- sys.call(which = which)
-  nm <- paste(deparse(sys_call, 500L), collapse = " ")
+  nm <- deparse1(sys_call)
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
     match_data <- re_matches(nm, regex, locations = TRUE)
