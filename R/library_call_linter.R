@@ -1,7 +1,6 @@
 #' Library call linter
 #'
 #' This linter covers several rules related to [library()] calls:
-#'
 #'  - Enforce such calls to all be at the top of the script.
 #'  - Block usage of argument `character.only`, in particular
 #'    for loading packages in a loop.
