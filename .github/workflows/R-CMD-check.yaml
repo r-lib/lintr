@@ -44,6 +44,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      _R_CHECK_RD_CONTENTS_VALUE_: 1
 
     steps:
       - name: Set locale
