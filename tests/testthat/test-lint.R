@@ -305,7 +305,7 @@ test_that("lint(text=) handles unmarked UTF-8 text correctly", {
 
   expect_no_error(
     expect_length(lint(text = text_native, linters = absolute_path_linter()), 0L)
-  ) expect_length(res, 0L)
+  )
 
   writeLines(c('x <- "\u00e4"', 'y <- "/absolute/path"'), tf, useBytes = TRUE)
   text_native_lint <- readLines(tf)
