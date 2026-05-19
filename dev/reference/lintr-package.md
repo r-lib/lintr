@@ -18,15 +18,18 @@ and Sublime Text.
 
 Authors:
 
+- Michael Chirico <michaelchirico4@gmail.com>
+  ([ORCID](https://orcid.org/0000-0003-0787-087X))
+
 - Jim Hester
 
-- Florent Angly (fangly)
+- Florent Angly (GitHub: fangly)
 
 - Russ Hyde
 
 - Kun Ren
 
-- Alexander Rosenstock (AshesITR)
+- Alexander Rosenstock (GitHub: AshesITR)
 
 - Indrajeet Patil <patilindrajeet.science@gmail.com>
   ([ORCID](https://orcid.org/0000-0003-1995-6531))

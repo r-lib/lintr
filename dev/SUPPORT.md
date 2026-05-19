@@ -18,6 +18,7 @@ include code that doesn’t lint as expected with the linter in question.
 For example,
 
 ``` r
+
 library(lintr)
 
 lint(

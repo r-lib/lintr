@@ -59,7 +59,7 @@ return_linter(
   `.onAttach()`, `.onDetach()`, `.Last.lib()`, `.First()` and `.Last()`.
   `except` matches function names exactly, while `except_regex` does
   exclusion by pattern matching with
-  [`rex::re_matches()`](https://rdrr.io/pkg/rex/man/re_matches.html).
+  [`rex::re_matches()`](https://rex.r-lib.org/reference/re_matches.html).
 
 ## See also
 

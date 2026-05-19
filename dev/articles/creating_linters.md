@@ -8,6 +8,7 @@ for [lintr](https://lintr.r-lib.org).
 A good example of a simple linter is the `pipe_call_linter`.
 
 ``` r
+
 #' Pipe call linter
 #'
 #' Force explicit calls in magrittr pipes, e.g.,
@@ -44,6 +45,7 @@ Let’s walk through the parts of the linter individually.
 ## Writing the linter
 
 ``` r
+
 #' Pipe call linter
 #'
 #' Force explicit calls in magrittr pipes, e.g.,
@@ -54,15 +56,16 @@ Describe the linter, giving it a title and briefly covering the usages
 that are discouraged when the linter is active.
 
 ``` r
+
 #' @evalRd rd_tags("pipe_call_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ```
 
 These lines (1) generate a Tags section in the documentation for the
-linter[¹](#fn1); (2) link to the full table of available linters; and
-(3) mark the function for export. The most unfamiliar here is probably
-(1), which can be skipped outside of `lintr` itself.
+linter[^1]; (2) link to the full table of available linters; and (3)
+mark the function for export. The most unfamiliar here is probably (1),
+which can be skipped outside of `lintr` itself.
 
 ``` r
 pipe_call_linter <- function() {
@@ -76,6 +79,7 @@ linter in this function declaration (see, e.g. `assignment_linter`), but
 `pipe_call_linter` requires no additional arguments.
 
 ``` r
+
 xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
 ```
 
@@ -112,9 +116,9 @@ pretty closely to the description of what the `pipe_call_linter` is
 looking for, but there is subtlety in mapping between the R code you’re
 used to and how they show up in the XML representation. `expr` nodes in
 particular take some practice to get accustomed to – use the plentiful
-XPath-based linters in `lintr` as a guide to get extra
-practice[²](#fn2). Note: `xml2` implements XPath 1.0, which lacks some
-helpful features available in XPath 2.0.
+XPath-based linters in `lintr` as a guide to get extra practice[^2].
+Note: `xml2` implements XPath 1.0, which lacks some helpful features
+available in XPath 2.0.
 
 ``` r
 Linter(function(source_expression) {
@@ -161,6 +165,7 @@ linters in `lintr` are built using XPath because it is a powerful
 language for computation on the abstract syntax tree / parse tree.
 
 ``` r
+
 if (!is_lint_level(source_expression, "expression")) {
   return(list())
 }
@@ -190,6 +195,7 @@ re-running the linter is low (e.g., `quotes_linter`). In those cases,
 use `is_lint_level(source_expression, "file")`.
 
 ``` r
+
 xml <- source_expression$xml_parsed_content
 
 bad_expr <- xml2::xml_find_all(xml, xpath)
@@ -202,9 +208,10 @@ is used to execute the XPath on this particular expression. Keep in mind
 that it is typically possible for a single expression to generate more
 than one lint – for example, `x %>% na.omit %>% sum` will trigger the
 [`pipe_call_linter()`](https://lintr.r-lib.org/dev/reference/pipe_call_linter.md)
-twice[³](#fn3).
+twice[^3].
 
 ``` r
+
 xml_nodes_to_lints(
   bad_expr,
   source_expression = source_expression,
@@ -227,6 +234,7 @@ to more closely match the observed usage. In such cases,
 customized message. See, for example, `seq_linter`.
 
 ``` r
+
 linter_level = "expression"
 ```
 
@@ -263,12 +271,14 @@ The main three aspects to test are:
 1.  Linter returns no lints when there is nothing to lint, e.g.
 
 ``` r
+
 expect_no_lint("blah", assignment_linter())
 ```
 
 2.  Linter returns a lint when there is something to lint, e.g.
 
 ``` r
+
 expect_lint("blah=1",
   rex("Use <-, not =, for assignment."),
   assignment_linter()
@@ -278,6 +288,7 @@ expect_lint("blah=1",
 3.  As many edge cases as you can think of that might break it, e.g.
 
 ``` r
+
 expect_lint("fun((blah = fun(1)))",
   rex("Use <-, not =, for assignment."),
   assignment_linter()
@@ -288,6 +299,7 @@ You may want to test that additional `lint` attributes are correct, such
 as the type, line number, column number, e.g.
 
 ``` r
+
 expect_lint("blah=1",
   list(message = "assignment", line_number = 1, column_number = 5, type = "style"),
   assignment_linter()
@@ -298,6 +310,7 @@ Finally, it is a good idea to test that your linter reports multiple
 lints if needed, e.g.
 
 ``` r
+
 expect_lint("blah=1; blah=2",
   list(
     list(line_number = 1, column_number = 5),
@@ -333,6 +346,7 @@ demonstrated their utility already.
   efficiently. Instead of
 
   ``` r
+
   xml <- source_expression$xml_parsed_content
   xpath <- "//SYMBOL_FUNCTION_CALL[text() = 'myfun']/parent::expr/some/cond"
   xml_find_all(xml, xpath)
@@ -341,6 +355,7 @@ demonstrated their utility already.
   use
 
   ``` r
+
   xml_calls <- source_expression$xml_find_function_calls("myfun")
   call_xpath <- "some/cond"
   xml_find_all(xml_calls, call_xpath)
@@ -394,15 +409,13 @@ Push your changes to a branch of your fork of the
 [lintr](https://github.com/r-lib/lintr) repository, and submit a pull
 request to get your linter merged into lintr!
 
-------------------------------------------------------------------------
+[^1]: NB: this is a helper function for generating custom Rd styling.
+    See R/linter_tags.R.
 
-1.  NB: this is a helper function for generating custom Rd styling. See
-    R/linter_tags.R.
-
-2.  The W3schools tutorials are also quite helpful; see
+[^2]: The W3schools tutorials are also quite helpful; see
     <https://www.w3schools.com/xml/xpath_intro.asp>
 
-3.  This is particularly important if you want the `message` field in
+[^3]: This is particularly important if you want the `message` field in
     the resulting
     [`Lint()`](https://lintr.r-lib.org/dev/reference/lint-s3.md) to vary
     depending on the exact violation that’s found. For

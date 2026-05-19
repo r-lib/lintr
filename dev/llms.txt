@@ -25,12 +25,14 @@ code, eliminating some of the problems that
 Install the stable version from CRAN:
 
 ``` r
+
 install.packages("lintr")
 ```
 
 Or the development version from GitHub:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("r-lib/lintr")
 ```
@@ -40,6 +42,7 @@ remotes::install_github("r-lib/lintr")
 And then you can create a configuration file and run selected linters:
 
 ``` r
+
 lintr::use_lintr(type = "tidyverse")
 
 # in a project:
@@ -52,6 +55,7 @@ lintr::lint_package()
 To see a list of linters included for each configuration:
 
 ``` r
+
 # tidyverse (default)
 names(lintr::linters_with_defaults())
 
@@ -65,6 +69,7 @@ names(lintr::all_linters())
 generate lint workflows for GitHub Actions:
 
 ``` r
+
 # in a project:
 usethis::use_github_action("lint-project")
 

@@ -12,6 +12,7 @@ functions:
   [`lint()`](https://lintr.r-lib.org/dev/reference/lint.md):
 
   ``` r
+
   lint(filename = "R/bad.R")
   ```
 
@@ -19,6 +20,7 @@ functions:
   [`lint_dir()`](https://lintr.r-lib.org/dev/reference/lint.md):
 
   ``` r
+
   lint_dir(path = "R")
   ```
 
@@ -31,6 +33,7 @@ functions:
   [`lint_package()`](https://lintr.r-lib.org/dev/reference/lint.md):
 
   ``` r
+
   lint_package(path = ".")
   ```
 
@@ -161,19 +164,19 @@ behavior can be customized using different methods.
 Apart from `lintr.linter_file`, which defaults to `".lintr"`, there are
 the following settings:
 
-|                    | default                                                                                             |
-|:-------------------|:----------------------------------------------------------------------------------------------------|
-| linters            | [`lintr::default_linters`](https://lintr.r-lib.org/dev/reference/default_linters.md)                |
-| encoding           | UTF-8                                                                                               |
-| exclude            | regex: `#[[:space:]]*nolint`                                                                        |
-| exclude_next       | regex: `#[[:space:]]*nolint next`                                                                   |
-| exclude_start      | regex: `#[[:space:]]*nolint start`                                                                  |
-| exclude_end        | regex: `#[[:space:]]*nolint end`                                                                    |
-| exclude_linter     | regex: `^[[:space:]]*:[[:space:]]*(?<linters>(?:(?:[^,.])+[[:space:]]*,[[:space:]]*)*(?:[^,.])+)\.` |
-| exclude_linter_sep | regex: `[[:space:]]*,[[:space:]]*`                                                                  |
-| exclusions         | (empty)                                                                                             |
-| cache_directory    | /home/runner/.cache/R/lintr                                                                         |
-| error_on_lint      | FALSE                                                                                               |
+|  | default |
+|:---|:---|
+| linters | [`lintr::default_linters`](https://lintr.r-lib.org/dev/reference/default_linters.md) |
+| encoding | UTF-8 |
+| exclude | regex: `#[[:space:]]*nolint` |
+| exclude_next | regex: `#[[:space:]]*nolint next` |
+| exclude_start | regex: `#[[:space:]]*nolint start` |
+| exclude_end | regex: `#[[:space:]]*nolint end` |
+| exclude_linter | regex: `^[[:space:]]*:[[:space:]]*(?<linters>(?:(?:[^,.])+[[:space:]]*,[[:space:]]*)*(?:[^,.])+)\.` |
+| exclude_linter_sep | regex: `[[:space:]]*,[[:space:]]*` |
+| exclusions | (empty) |
+| cache_directory | /home/runner/.cache/R/lintr |
+| error_on_lint | FALSE |
 
 Note that the default `encoding` setting depends on the file to be
 linted. If an Encoding is found in a `.Rproj` file or a `DESCRIPTION`
@@ -193,6 +196,7 @@ disable the
 you can put this into your `.lintr`:
 
 ``` r
+
 linters: linters_with_defaults(
     line_length_linter = line_length_linter(120L),
     whitespace_linter = NULL
@@ -202,40 +206,41 @@ linters: linters_with_defaults(
 By default, the following linters are enabled. Where applicable, the
 default settings are also shown.
 
-|                                  | settings                                                                                                           |
-|:---------------------------------|:-------------------------------------------------------------------------------------------------------------------|
-| assignment_linter                | operator = c(“\<-”, “\<\<-”), allow_trailing = TRUE                                                                |
-| brace_linter                     | allow_single_line = FALSE, function_bodies = “multi_line”                                                          |
-| commas_linter                    | allow_trailing = FALSE                                                                                             |
-| commented_code_linter            |                                                                                                                    |
-| equals_na_linter                 |                                                                                                                    |
-| function_left_parentheses_linter |                                                                                                                    |
-| indentation_linter               | indent = 2L, hanging_indent_style = “tidy”, assignment_as_infix = TRUE                                             |
-| infix_spaces_linter              | exclude_operators = NULL, allow_multiple_spaces = TRUE                                                             |
-| line_length_linter               | length = 80L, ignore_string_bodies = FALSE                                                                         |
-| object_length_linter             | length = 30L                                                                                                       |
-| object_name_linter               | styles = c(“snake_case”, “symbols”), regexes = character(0)                                                        |
-| object_usage_linter              | interpret_glue = NULL, interpret_extensions = c(“glue”, “rlang”), skip_with = TRUE                                 |
-| paren_body_linter                |                                                                                                                    |
-| pipe_consistency_linter          | pipe = “\|\>”                                                                                                      |
-| pipe_continuation_linter         |                                                                                                                    |
-| quotes_linter                    | delimiter = “"”                                                                                                    |
-| return_linter                    | return_style = “implicit”, allow_implicit_else = TRUE, return_functions = NULL, except = NULL, except_regex = NULL |
-| semicolon_linter                 | allow_compound = FALSE, allow_trailing = FALSE                                                                     |
-| seq_linter                       |                                                                                                                    |
-| spaces_inside_linter             |                                                                                                                    |
-| spaces_left_parentheses_linter   |                                                                                                                    |
-| T_and_F_symbol_linter            |                                                                                                                    |
-| trailing_blank_lines_linter      |                                                                                                                    |
-| trailing_whitespace_linter       | allow_empty_lines = FALSE, allow_in_strings = TRUE                                                                 |
-| vector_logic_linter              |                                                                                                                    |
-| whitespace_linter                |                                                                                                                    |
+|  | settings |
+|:---|:---|
+| assignment_linter | operator = c(“\<-”, “\<\<-”), allow_trailing = TRUE |
+| brace_linter | allow_single_line = FALSE, function_bodies = “multi_line” |
+| commas_linter | allow_trailing = FALSE |
+| commented_code_linter |  |
+| equals_na_linter |  |
+| function_left_parentheses_linter |  |
+| indentation_linter | indent = 2L, hanging_indent_style = “tidy”, assignment_as_infix = TRUE |
+| infix_spaces_linter | exclude_operators = NULL, allow_multiple_spaces = TRUE |
+| line_length_linter | length = 80L, ignore_string_bodies = FALSE |
+| object_length_linter | length = 30L |
+| object_name_linter | styles = c(“snake_case”, “symbols”), regexes = character(0) |
+| object_usage_linter | interpret_glue = NULL, interpret_extensions = c(“glue”, “rlang”), skip_with = TRUE |
+| paren_body_linter |  |
+| pipe_consistency_linter | pipe = “\|\>” |
+| pipe_continuation_linter |  |
+| quotes_linter | delimiter = “"” |
+| return_linter | return_style = “implicit”, allow_implicit_else = TRUE, return_functions = NULL, except = NULL, except_regex = NULL |
+| semicolon_linter | allow_compound = FALSE, allow_trailing = FALSE |
+| seq_linter |  |
+| spaces_inside_linter |  |
+| spaces_left_parentheses_linter |  |
+| T_and_F_symbol_linter |  |
+| trailing_blank_lines_linter |  |
+| trailing_whitespace_linter | allow_empty_lines = FALSE, allow_in_strings = TRUE |
+| vector_logic_linter |  |
+| whitespace_linter |  |
 
 Another way to customize linters is by specifying tags in
 [`linters_with_tags()`](https://lintr.r-lib.org/dev/reference/linters_with_tags.md).
 The available tags are listed below:
 
 ``` r
+
 lintr::available_tags(packages = "lintr")
 #>  [1] "best_practices"      "common_mistakes"     "configurable"       
 #>  [4] "consistency"         "correctness"         "default"            
@@ -247,6 +252,7 @@ lintr::available_tags(packages = "lintr")
 You can select tags of interest to see which linters are included:
 
 ``` r
+
 linters <- lintr::linters_with_tags(tags = c("package_development", "readability"))
 names(linters)
 #>  [1] "backport_linter"                  "boolean_arithmetic_linter"       
@@ -306,6 +312,7 @@ tidyverse style guide, but there are many other linters available in
 linters using
 
 ``` r
+
 names(lintr::all_linters())
 #>   [1] "absolute_path_linter"             "all_equal_linter"                
 #>   [3] "any_duplicated_linter"            "any_is_na_linter"                
@@ -395,6 +402,7 @@ Beware that in such cases, a simple
 [`get()`](https://rdrr.io/r/base/get.html) is not enough:
 
 ``` r
+
 library(lintr)
 linter_name <- "assignment_linter"
 
@@ -453,6 +461,7 @@ By default, this special comment is `# nolint`:
 **file.R**
 
 ``` r
+
 X = 42L # -------------- this comment overflows the default 80 chars line length.
 ```
 
@@ -471,6 +480,7 @@ X = 42L # -------------- this comment overflows the default 80 chars line length
 **file2.R**
 
 ``` r
+
 X = 42L # nolint ------ this comment overflows the default 80 chars line length.
 ```
 
@@ -488,6 +498,7 @@ a dot.
 **file3.R**
 
 ``` r
+
 X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.
 ```
 
@@ -510,6 +521,7 @@ separator:
 **file4.R**
 
 ``` r
+
 X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.
 ```
 
@@ -525,6 +537,7 @@ their full name:
 **file5.R**
 
 ``` r
+
 X = 42L # nolint: object_name, line_len. this comment still overflows the default 80 chars line length.
 ```
 
@@ -545,6 +558,7 @@ specific linters in the following lines until a `# nolint end` is
 encountered.
 
 ``` r
+
 # x <- 42L
 # print(x)
 ```
@@ -557,6 +571,7 @@ encountered.
     #>   ^~~~~~~~
 
 ``` r
+
 # nolint start: commented_code_linter.
 # x <- 42L
 # print(x)
@@ -573,6 +588,7 @@ files. To exclude all lints for line 1 of file `R/bad.R` and
 `line_length_linter` for lines 4 to 6 of the same file, one can set
 
 ``` r
+
 exclusions: list(
     "R/bad.R" = list(
       1, # global exclusions are unnamed
@@ -593,6 +609,7 @@ all lines as excluded within a file. If a file is only given as a
 character vector, full exclusion is implied.
 
 ``` r
+
 exclusions: list(
     # excluded from all lints:
     "R/excluded1.R",
@@ -612,6 +629,7 @@ Entire directories are also recognized when supplied as strings in the
 in a R project using `renv`, set
 
 ``` r
+
 exclusions: list(
     "renv"
   )

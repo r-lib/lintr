@@ -33,10 +33,6 @@ valid setting.
 default_settings
 ```
 
-## Format
-
-An object of class `list` of length 11.
-
 ## See also
 
 [`read_settings()`](https://lintr.r-lib.org/dev/reference/read_settings.md),

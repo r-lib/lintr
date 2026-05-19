@@ -28,6 +28,7 @@ example](https://github.com/r-lib/actions/tree/v2-branch/examples#lint-workflow)
 To do this with `usethis`, you need to call
 
 ``` r
+
 usethis::use_github_action("lint")
 ```
 
@@ -42,6 +43,7 @@ Alternatively you can use the eponymous
 to only lint any changed files:
 
 ``` r
+
 usethis::use_github_action("lint-changed-files")
 ```
 
@@ -74,6 +76,7 @@ example](https://github.com/r-lib/actions/tree/v2-branch/examples#lint-project-w
 which you can use by calling:
 
 ``` r
+
 usethis::use_github_action("lint-project")
 ```
 

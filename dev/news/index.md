@@ -236,7 +236,7 @@ CRAN release: 2025-02-12
   ([\#2375](https://github.com/r-lib/lintr/issues/2375),
   [@MichaelChirico](https://github.com/MichaelChirico)). These have
   always been valid (since
-  [`rex::re_matches()`](https://rdrr.io/pkg/rex/man/re_matches.html),
+  [`rex::re_matches()`](https://rex.r-lib.org/reference/re_matches.html),
   which powers the lint exclusion logic, also uses this setting), but
   the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
 - `.lintr` configs set by option `lintr.linter_file` or environment
@@ -1771,6 +1771,7 @@ CRAN release: 2022-06-13
   for custom linters:
 
   ``` r
+
   my_custom_linter <- function(source_expression) { ... }
 
   # becomes

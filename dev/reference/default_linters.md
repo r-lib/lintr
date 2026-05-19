@@ -16,10 +16,6 @@ e.g., `line_length_linter` use their default argument(s), see
 default_linters
 ```
 
-## Format
-
-An object of class `list` of length 26.
-
 ## See also
 
 [linters](https://lintr.r-lib.org/dev/reference/linters.md) for a
