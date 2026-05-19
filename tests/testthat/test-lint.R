@@ -311,7 +311,7 @@ test_that("lint(text=) handles unmarked UTF-8 text correctly", {
   text_native_lint <- readLines(tf)
 
   expect_no_error({
-    res_lint <- lint(text = text_native_lint, linters = absolute_path_linter(lax = FALSE)),
+    res_lint <- lint(text = text_native_lint, linters = absolute_path_linter(lax = FALSE))
   })
   expect_identical(res_lint[[1L]]$line_number, 2L)
   expect_identical(res_lint[[1L]]$message, "Do not use absolute paths.")
