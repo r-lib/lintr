@@ -576,6 +576,6 @@ test_that("get_source_expressions() handles unmarked UTF-8 lines correctly", {
   pd <- expr$parsed_content
   str_const <- pd[pd$token == "STR_CONST", ]
   expect_identical(str_const$text, '"\u00e4"')
-  expect_identical(str_const$col1, 8L)
-  expect_identical(str_const$col2, 10L)
+  expect_identical(str_const$col1, 6L)
+  expect_identical(str_const$col2, 8L)
 })

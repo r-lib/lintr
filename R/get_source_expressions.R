@@ -68,11 +68,8 @@ get_source_expressions <- function(filename, lines = NULL) {
   old_lang <- set_lang("en")
   on.exit(reset_lang(old_lang))
 
-  source_expression$lines <- if (!is.null(lines)) {
-    ensure_utf8(lines, encoding = "")
-  } else {
-    read_lines(filename)
-  }
+  encoding <- if (is.null(lines)) settings$encoding
+  source_expression$lines <- ensure_utf8(lines %||% read_lines(filename), encoding)
 
   # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   terminal_newline <- !isFALSE(attr(source_expression$lines, "terminal_newline", exact = TRUE))

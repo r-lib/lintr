@@ -157,7 +157,7 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
   fun
 }
 
-ensure_utf8 <- function(lines, encoding = "") {
+ensure_utf8 <- function(lines, encoding = NULL) {
   if (is.null(encoding) || is.na(encoding)) {
     encoding <- ""
   }
@@ -182,7 +182,7 @@ ensure_utf8 <- function(lines, encoding = "") {
   lines
 }
 
-read_lines <- function(file, encoding = settings$encoding, ...) {
+read_lines <- function(file, ...) {
   outer_env <- new.env(parent = emptyenv())
   outer_env$terminal_newline <- TRUE
   lines <- withCallingHandlers(
@@ -194,7 +194,6 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
       }
     }
   )
-  lines <- ensure_utf8(lines, encoding)
   attr(lines, "terminal_newline") <- outer_env$terminal_newline
   lines
 }

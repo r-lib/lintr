@@ -771,14 +771,17 @@ maybe_append_condition_lints <- function(lints, source_expression, lint_cache, f
 }
 
 get_lines <- function(filename, text) {
+  encoding <- NULL
   if (!is.null(text)) {
     lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
   } else if (re_matches(filename, rex(newline))) {
     lines <- strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
-    return(read_lines(filename))
+    lines <- read_lines(filename)
+    encoding <- settings$encoding
   }
-  ensure_utf8(lines, encoding = "")
+
+  ensure_utf8(lines, encoding)
 }
 
 zap_temp_filename <- function(res, needs_tempfile) {
