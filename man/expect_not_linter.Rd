@@ -7,8 +7,8 @@
 expect_not_linter()
 }
 \description{
-\code{\link[testthat:logical-expectations]{testthat::expect_false()}} exists specifically for testing that an output is
-\code{FALSE}. \code{\link[testthat:logical-expectations]{testthat::expect_true()}} can also be used for such tests by
+\code{\link[testthat:expect_false]{testthat::expect_false()}} exists specifically for testing that an output is
+\code{FALSE}. \code{\link[testthat:expect_true]{testthat::expect_true()}} can also be used for such tests by
 negating the output, but it is better to use the tailored function instead.
 The reverse is also true -- use \code{expect_false(A)} instead of
 \code{expect_true(!A)}.
