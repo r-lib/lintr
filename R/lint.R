@@ -772,12 +772,13 @@ maybe_append_condition_lints <- function(lints, source_expression, lint_cache, f
 
 get_lines <- function(filename, text) {
   if (!is.null(text)) {
-    strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+    lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
   } else if (re_matches(filename, rex(newline))) {
-    strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
+    lines <- strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
-    read_lines(filename)
+    return(read_lines(filename))
   }
+  ensure_utf8(lines, encoding = "")
 }
 
 zap_temp_filename <- function(res, needs_tempfile) {

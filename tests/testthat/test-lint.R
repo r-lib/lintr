@@ -297,3 +297,22 @@ test_that("explicit parse_settings=TRUE works for inline data", {
   # parse_settings=TRUE default not picked up
   expect_length(lint(text = lint_str), 2L)
 })
+
+test_that("lint(text=) handles unmarked UTF-8 text correctly", {
+  tf <- withr::local_tempfile()
+  writeLines('x <- "\u00e4"', tf, useBytes = TRUE)
+  text_native <- readLines(tf)
+
+  expect_no_error(
+    expect_length(lint(text = text_native, linters = absolute_path_linter()), 0L)
+  ) expect_length(res, 0L)
+
+  writeLines(c('x <- "\u00e4"', 'y <- "/absolute/path"'), tf, useBytes = TRUE)
+  text_native_lint <- readLines(tf)
+
+  expect_no_error({
+    res_lint <- lint(text = text_native_lint, linters = absolute_path_linter(lax = FALSE)),
+  })
+  expect_identical(res_lint[[1L]]$line_number, 2L)
+  expect_identical(res_lint[[1L]]$message, "Do not use absolute paths.")
+})

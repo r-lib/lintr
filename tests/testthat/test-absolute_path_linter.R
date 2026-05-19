@@ -72,3 +72,13 @@ test_that("lints vectorize", {
     absolute_path_linter(lax = FALSE)
   )
 })
+
+test_that("absolute_path_linter() handles unmarked UTF-8 text input", {
+  tf <- withr::local_tempfile()
+  writeLines('x <- "\u00e4"', tf, useBytes = TRUE)
+  text_native <- readLines(tf)
+
+  expect_no_error(
+    expect_length(lint(text = text_native, linters = absolute_path_linter()), 0L)
+  )
+})

@@ -562,3 +562,20 @@ test_that("parser warnings generate lints", {
     linters = list()
   )
 })
+
+test_that("get_source_expressions() handles unmarked UTF-8 lines correctly", {
+  tf <- withr::local_tempfile()
+  writeLines('x <- "\u00e4"', tf, useBytes = TRUE)
+  text_native <- readLines(tf)
+
+  src_exprs <- get_source_expressions(tf, lines = text_native)
+
+  expect_length(src_exprs$expressions, 2L)
+  expr <- src_exprs$expressions[[1L]]
+
+  pd <- expr$parsed_content
+  str_const <- pd[pd$token == "STR_CONST", ]
+  expect_identical(str_const$text, '"\u00e4"')
+  expect_identical(str_const$col1, 8L)
+  expect_identical(str_const$col2, 10L)
+})

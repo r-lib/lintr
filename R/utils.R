@@ -157,6 +157,31 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
   fun
 }
 
+ensure_utf8 <- function(lines, encoding = "") {
+  if (is.null(encoding) || is.na(encoding)) {
+    encoding <- ""
+  }
+
+  if (encoding == "" && l10n_info()[["UTF-8"]]) {
+    encoding <- "UTF-8"
+  }
+
+  if (encoding == "UTF-8") {
+    Encoding(lines) <- "UTF-8"
+    return(lines)
+  }
+
+  is_utf8 <- Encoding(lines) == "UTF-8"
+  if (any(is_utf8)) {
+    return(lines)
+  }
+
+  lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
+  lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
+  Encoding(lines) <- "UTF-8"
+  lines
+}
+
 read_lines <- function(file, encoding = settings$encoding, ...) {
   outer_env <- new.env(parent = emptyenv())
   outer_env$terminal_newline <- TRUE
@@ -169,9 +194,7 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
       }
     }
   )
-  lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
-  lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
-  Encoding(lines) <- "UTF-8"
+  lines <- ensure_utf8(lines, encoding)
   attr(lines, "terminal_newline") <- outer_env$terminal_newline
   lines
 }
