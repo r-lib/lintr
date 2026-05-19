@@ -7,8 +7,8 @@
 expect_s4_class_linter()
 }
 \description{
-\code{\link[testthat:inheritance-expectations]{testthat::expect_s4_class()}} exists specifically for testing the class
-of S4 objects. \code{\link[testthat:logical-expectations]{testthat::expect_true()}} can also be used for such tests,
+\code{\link[testthat:expect_s4_class]{testthat::expect_s4_class()}} exists specifically for testing the class
+of S4 objects. \code{\link[testthat:expect_true]{testthat::expect_true()}} can also be used for such tests,
 but it is better to use the tailored function instead.
 }
 \examples{
