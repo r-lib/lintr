@@ -299,6 +299,8 @@ test_that("explicit parse_settings=TRUE works for inline data", {
 })
 
 test_that("lint(text=) handles unmarked UTF-8 text correctly", {
+  skip_if_not_utf8_locale()
+
   tf <- withr::local_tempfile()
   writeLines('x <- "\u00e4"', tf, useBytes = TRUE)
   text_native <- readLines(tf)

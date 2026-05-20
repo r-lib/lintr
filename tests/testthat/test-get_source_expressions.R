@@ -564,6 +564,8 @@ test_that("parser warnings generate lints", {
 })
 
 test_that("get_source_expressions() handles unmarked UTF-8 lines correctly", {
+  skip_if_not_utf8_locale()
+
   tf <- withr::local_tempfile()
   writeLines('x <- "\u00e4"', tf, useBytes = TRUE)
   text_native <- readLines(tf)
