@@ -316,3 +316,16 @@ test_that("lint(text=) handles unmarked UTF-8 text correctly", {
   expect_identical(res_lint[[1L]]$line_number, 2L)
   expect_identical(res_lint[[1L]]$message, "Do not use absolute paths.")
 })
+
+test_that("lint(text=) handles UTF-8 marked text in non-UTF-8 locale", {
+  # Set LC_CTYPE to C to simulate non-UTF-8 locale
+  withr::local_locale(c(LC_CTYPE = "C"))
+
+  # Create UTF-8 marked text
+  text <- 'x <- "\u00e4"'
+  expect_identical(Encoding(text), "UTF-8")
+
+  expect_no_error(
+    expect_length(lint(text = text, linters = absolute_path_linter()), 0L)
+  )
+})
