@@ -8,6 +8,7 @@ script.R
 *~
 \#*\#
 *.swp
+R/*.save
 
 *.o
 *.so

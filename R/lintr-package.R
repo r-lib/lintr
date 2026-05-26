@@ -17,9 +17,9 @@
 #' @importFrom tools R_user_dir
 #' @importFrom utils capture.output getParseData  globalVariables head
 #' @importFrom utils relist tail
-#' @importFrom xml2 as_list xml_attr xml_children xml_find_all xml_find_chr
-#' @importFrom xml2 xml_find_lgl xml_find_num xml_find_first xml_name
-#' @importFrom xml2 xml_parent xml_text
+#' @importFrom xml2 as_list xml_attr xml_attrs xml_child xml_children
+#' @importFrom xml2 xml_find_all xml_find_chr xml_find_lgl xml_find_num
+#' @importFrom xml2 xml_find_first xml_name xml_parent xml_text
 ## lintr namespace: end
 NULL
 

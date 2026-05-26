@@ -244,9 +244,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     indent_changes <- xml_find_all_(xml, xp_indent_changes)
     change_types <- vapply(indent_changes, find_indent_type, character(1L))
-    change_begins <- as.integer(xml_attr(indent_changes, "line1")) + 1L
+    change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
     change_ends <- xml_find_num_(indent_changes, xp_block_ends)
-    col2s <- as.integer(xml_attr(indent_changes, "col2"))
+    col2s <- as.integer(xml_attr_(indent_changes, "col2"))
     for (ii in which(change_begins <= change_ends)) {
       to_indent <- seq(from = change_begins[ii], to = change_ends[ii])
       expected_indent_levels[to_indent] <- find_new_indent(
@@ -262,8 +262,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     multiline_strings <- xml_find_all_(xml, xp_multiline_string)
     for (string in multiline_strings) {
       is_in_str <- seq(
-        from = as.integer(xml_attr(string, "line1")) + 1L,
-        to = as.integer(xml_attr(string, "line2"))
+        from = as.integer(xml_attr_(string, "line1")) + 1L,
+        to = as.integer(xml_attr_(string, "line2"))
       )
       in_str_const[is_in_str] <- TRUE
     }

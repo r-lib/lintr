@@ -99,7 +99,7 @@ get_content <- function(lines, info, needs_braces = FALSE) {
   if (!missing(info)) {
     # put in data.frame-like format
     if (is_node(info)) {
-      info <- lapply(xml2::xml_attrs(info), as.integer)
+      info <- lapply(xml_attrs_(info), as.integer)
     }
 
     lines <- lines[seq(info$line1, info$line2)]

@@ -55,7 +55,7 @@ missing_argument_linter <- function(except = c("alist", "quote", "switch"), allo
 
     missing_args <- xml_find_all_(xml_targets, xpath)
 
-    named_idx <- xml_name(missing_args) == "EQ_SUB"
+    named_idx <- xml_name_(missing_args) == "EQ_SUB"
     arg_id <- character(length(missing_args))
     arg_id[named_idx] <- sQuote(xml_find_chr_(missing_args[named_idx], "string(preceding-sibling::SYMBOL_SUB[1])"), "'")
     # TODO(#2452): use xml_find_int_() instead

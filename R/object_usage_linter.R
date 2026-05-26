@@ -122,8 +122,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         fun,
         known_used_symbols = known_used_symbols,
         declared_globals = declared_globals,
-        start_line = as.integer(xml_attr(fun_assignment, "line1")),
-        end_line = as.integer(xml_attr(fun_assignment, "line2")),
+        start_line = as.integer(xml_attr_(fun_assignment, "line1")),
+        end_line = as.integer(xml_attr_(fun_assignment, "line2")),
         skip_with = skip_with
       )
 
@@ -132,7 +132,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       lintable_symbols <- xml_find_all_(fun_assignment, xpath_culprit_symbol)
 
       lintable_symbol_names <- gsub("^`|`$", "", xml_text(lintable_symbols))
-      lintable_symbol_lines <- as.integer(xml_attr(lintable_symbols, "line1"))
+      lintable_symbol_lines <- as.integer(xml_attr_(lintable_symbols, "line1"))
 
       matched_symbol <- vapply(
         seq_len(nrow(res)),

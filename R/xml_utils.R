@@ -79,4 +79,24 @@ xml_find_num_ <- function(x, xpath, ns = empty_ns) {
 xml_find_lgl_ <- function(x, xpath, ns = empty_ns) {
   xml_find_lgl(x, xpath, ns = ns)
 }
+
+xml_attr_ <- function(x, attr, ns = empty_ns, default = NA_character_) {
+  xml_attr(x, attr, ns = ns, default = default)
+}
+
+xml_attrs_ <- function(x, ns = empty_ns) {
+  xml_attrs(x, ns = ns)
+}
+
+xml_child_ <- function(x, search = 1L, ns = empty_ns) {
+  xml_child(x, search = search, ns = ns)
+}
+
+xml_name_ <- function(x, ns = empty_ns) {
+  xml_name(x, ns = ns)
+}
+
+as_list_ <- function(x, ns = empty_ns, ...) {
+  as_list(x, ns = ns, ...)
+}
 # nolint end: undesirable_function_name_linter.

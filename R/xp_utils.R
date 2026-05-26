@@ -104,9 +104,9 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
 
 xp_find_location <- function(xml, xpath) {
   if (identical(xpath, "number(./@col1)")) {
-    as.integer(xml_attr(xml, "col1"))
+    as.integer(xml_attr_(xml, "col1"))
   } else if (identical(xpath, "number(./@col2)")) {
-    as.integer(xml_attr(xml, "col2"))
+    as.integer(xml_attr_(xml, "col2"))
   } else {
     as.integer(xml_find_num_(xml, xpath))
   }
