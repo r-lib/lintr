@@ -21,6 +21,18 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
+  if (length(x) == 0L) {
+    return(list())
+  }
+  if (inherits(x, class)) {
+    return(list(x))
+  }
+  if (is.list(x)) {
+    if (all(vapply(x, inherits, logical(1L), class))) {
+      return(unname(x))
+    }
+  }
+
   outer_env <- new.env(parent = emptyenv())
   outer_env$res <- list()
   outer_env$itr <- 1L
