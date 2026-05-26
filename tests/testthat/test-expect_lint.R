@@ -4,7 +4,7 @@
 
 # fuzzer disable: assignment
 linter <- assignment_linter()
-lint_msg <- "Use one of <-, <<- for assignment, not ="
+lint_msg <- "Use <- for assignment, not ="
 
 test_that("no checks", {
   expect_success(expect_no_lint("a", linter))
