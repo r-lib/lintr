@@ -95,8 +95,4 @@ xml_child_ <- function(x, search = 1L, ns = empty_ns) {
 xml_name_ <- function(x, ns = empty_ns) {
   xml_name(x, ns = ns)
 }
-
-as_list_ <- function(x, ns = empty_ns, ...) {
-  as_list(x, ns = ns, ...)
-}
 # nolint end: undesirable_function_name_linter.

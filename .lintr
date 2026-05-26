@@ -31,8 +31,7 @@ linters: all_linters(
       xml_attr = "use xml_attr_",
       xml_attrs = "use xml_attrs_",
       xml_child = "use xml_child_",
-      xml_name = "use xml_name_",
-      as_list = "use as_list_"
+      xml_name = "use xml_name_"
     )),
     undesirable_function_call_linter = undesirable_function_linter(
       c(
