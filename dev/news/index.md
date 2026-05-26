@@ -126,6 +126,10 @@
 ### Notes
 
 - {lintr} now requires R 4.1.0
+- Internal code is refactored to avoid
+  [`xml2::xml_ns()`](http://xml2.r-lib.org/reference/xml_ns.md) for
+  e.g. 5-30% end-to-end speed improvement in
+  [`lint_package()`](https://lintr.r-lib.org/dev/reference/lint.md)
 
 ## lintr 3.2.0
 
