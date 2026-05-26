@@ -99,7 +99,10 @@ sort_linter <- function() {
 
   arg_values_xpath <- glue("{arguments_xpath}/following-sibling::expr[1]")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(
+    linter_level = "expression",
+    selectors = c("order", "sort", "identical"),
+    function(source_expression) {
     order_calls <- strip_comments_from_subtree(xml_parent(xml_parent(
       source_expression$xml_find_function_calls("order")
     )))

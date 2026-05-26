@@ -127,7 +127,10 @@ any_duplicated_linter <- function() {
   uses_dtn_xpath <- "./parent::expr/expr/SYMBOL[text() = '.N']"
   uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
 
-  Linter(linter_level = "expression", function(source_expression) {
+  Linter(
+    linter_level = "expression",
+    selectors = c("any", "EQ", "NE", "GT", "LT", "uniqueN", "n_distinct"),
+    function(source_expression) {
     # NB: need two parents given three parent::expr in XPath and stripped comments.
     xml <- source_expression$xml_parsed_content |>
       xml_find_all_("//EQ | //NE | //GT | //LT") |>

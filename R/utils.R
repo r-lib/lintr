@@ -145,7 +145,7 @@ reset_lang <- function(old_lang) {
 #'
 #' @return The same function with its class set to 'linter'.
 #' @export
-Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression")) { # nolint: object_name, line_length.
+Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression"), selectors = character()) { # nolint: object_name, line_length.
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
     cli_abort("{.arg fun} must be a function taking exactly one argument.")
   }
@@ -154,6 +154,7 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
   class(fun) <- c("linter", "function")
   attr(fun, "name") <- name
   attr(fun, "linter_level") <- linter_level
+  attr(fun, "selectors") <- selectors
   fun
 }
 
