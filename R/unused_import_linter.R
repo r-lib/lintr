@@ -113,7 +113,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
       imported_pkgs,
       function(pkg) {
         ns_usage <- xml_find_first_(xml, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
-        !identical(ns_usage, xml2::xml_missing())
+        !identical(ns_usage, xml_missing())
       },
       logical(1L)
     )
