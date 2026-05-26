@@ -8,7 +8,7 @@
 #'
 #' @noRd
 xml2lang <- function(x) {
-  x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
+  x_strip_comments <- xml_find_all_(x, ".//*[not(self::COMMENT or self::expr)]")
   str2lang(paste(xml_text(x_strip_comments), collapse = " "))
 }
 
@@ -22,23 +22,18 @@ clone_xml_ <- function(x) {
     xml2::write_xml(x[[ii]], tmp_doc)
     xml2::xml_add_child(doc, xml2::read_xml(tmp_doc))
   }
-  xml_find_all(doc, "*")
+  xml_find_all_(doc, "*")
 }
 
 # caveat: whether this is a copy or not is inconsistent. assume the output is read-only!
 strip_comments_from_subtree <- function(expr) {
-  if (all(is.na(xml_find_first(expr, ".//COMMENT")))) {
+  if (all(is.na(xml_find_first_(expr, ".//COMMENT")))) {
     return(expr)
   }
   expr <- clone_xml_(expr)
-  for (comment in xml_find_all(expr, ".//COMMENT")) xml2::xml_remove(comment)
+  for (comment in xml_find_all_(expr, ".//COMMENT")) xml2::xml_remove(comment)
   expr
 }
-
-# placeholder xml_ns() object to skip this call on xml2 invocations
-empty_ns <- character()
-names(empty_ns) <- character()
-class(empty_ns) <- "xml_namespace"
 
 safe_parse_to_xml <- function(parsed_content) {
   if (is.null(parsed_content)) {
@@ -58,8 +53,12 @@ is_nodeset_like <- function(xml) {
     (is.list(xml) && all(vapply(xml, is_node, logical(1L))))
 }
 
-# Shadow xml_find_* functions using an underscore suffix to bypass the expensive default ns.
-# Calling the imported xml_find_all directly avoids the '::' operator namespace lookup.
+# TODO(r-lib/xml2#327): Remove this workaround if upstream bottleneck is resolved.
+# nolint start: undesirable_function_name_linter.
+# placeholder xml_ns() object to skip this call on xml2 invocations
+empty_ns <- character()
+names(empty_ns) <- character()
+class(empty_ns) <- "xml_namespace"
 
 xml_find_all_ <- function(x, xpath, ns = empty_ns, ...) {
   xml_find_all(x, xpath, ns = ns, ...)
@@ -84,5 +83,4 @@ xml_find_lgl_ <- function(x, xpath, ns = empty_ns) {
 xml_find_int_ <- function(x, xpath, ns = empty_ns) {
   xml2::xml_find_int(x, xpath, ns = ns)
 }
-
-
+# nolint end: undesirable_function_name_linter.
