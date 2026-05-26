@@ -55,7 +55,7 @@ trailing_whitespace_linter <- function(allow_empty_lines = FALSE, allow_in_strin
     }
 
     if (isTRUE(allow_in_strings) && !is.null(source_expression$full_xml_parsed_content)) {
-      all_str_consts <- xml_find_all(source_expression$full_xml_parsed_content, "//STR_CONST")
+      all_str_consts <- xml_find_all_(source_expression$full_xml_parsed_content, "//STR_CONST")
       start_lines <- as.integer(xml_attr(all_str_consts, "line1"))
       end_lines <- as.integer(xml_attr(all_str_consts, "line2"))
 

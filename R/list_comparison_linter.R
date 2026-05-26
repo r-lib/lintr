@@ -37,13 +37,13 @@ list_comparison_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(names(list_mapper_alternatives))
-    bad_expr <- xml_find_all(xml_calls, xpath)
+    bad_expr <- xml_find_all_(xml_calls, xpath)
 
     list_mapper <- xp_call_name(bad_expr, depth = 2L)
 
     vector_mapper <- list_mapper_alternatives[list_mapper]
     # we are at `x ? y` in which the comparator ? comes 2nd
-    comparator <- xml_find_chr(bad_expr, "string(*[2])")
+    comparator <- xml_find_chr_(bad_expr, "string(*[2])")
 
     lint_message <- as.character(glue(
       "The output of {list_mapper}(), a list(), is being ",

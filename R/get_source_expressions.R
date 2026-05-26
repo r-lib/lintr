@@ -583,7 +583,7 @@ maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
     return(expressions)
   }
   expression_xmls <- lapply(
-    xml_find_all(xml_parsed_content, "/exprlist/*"),
+    xml_find_all_(xml_parsed_content, "/exprlist/*"),
     \(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
   )
   for (i in seq_along(expressions)) {

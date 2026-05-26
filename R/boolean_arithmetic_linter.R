@@ -60,8 +60,8 @@ boolean_arithmetic_linter <- function() {
     length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))
     sum_calls <- source_expression$xml_find_function_calls("sum")
     any_expr <- c(
-      xml_find_all(length_calls, length_xpath),
-      xml_find_all(sum_calls, sum_xpath)
+      xml_find_all_(length_calls, length_xpath),
+      xml_find_all_(sum_calls, sum_xpath)
     )
 
     xml_nodes_to_lints(

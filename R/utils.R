@@ -233,7 +233,7 @@ get_r_string <- function(s, xpath = NULL) {
     if (is.null(xpath)) {
       s <- xml_text(s)
     } else {
-      s <- xml_find_chr(s, sprintf("string(%s)", xpath))
+      s <- xml_find_chr_(s, sprintf("string(%s)", xpath))
     }
   }
   r_string_from_parse_text(s)

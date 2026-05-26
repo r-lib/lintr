@@ -276,7 +276,7 @@ extract_glued_symbols <- function(expr, interpret_glue = TRUE) {
         and not(expr[position() > 1 and not(STR_CONST)])
       ]
   "
-  glue_calls <- xml_find_all(expr, glue_call_xpath)
+  glue_calls <- xml_find_all_(expr, glue_call_xpath)
 
   glued_symbols <- new.env(parent = emptyenv())
   for (glue_call in glue_calls) {

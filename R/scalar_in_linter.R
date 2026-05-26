@@ -45,8 +45,8 @@ scalar_in_linter <- function(in_operators = NULL) {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
-    in_op <- xml_find_chr(bad_expr, "string(SPECIAL)")
+    bad_expr <- xml_find_all_(xml, xpath)
+    in_op <- xml_find_chr_(bad_expr, "string(SPECIAL)")
     lint_msg <- paste0(
       "Use comparison operators (e.g. ==, !=, etc.) to match length-1 scalars instead of ", in_op, ". ",
       "Note that if x can be NA, x == 'arg' is NA whereas x ", in_op, " 'arg' is FALSE, ",

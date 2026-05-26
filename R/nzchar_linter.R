@@ -112,9 +112,9 @@ nzchar_linter <- function() {
   #   its "opposite" (not inverse) if the bad usage is on the RHS,
   #   e.g. 0 < nchar(x) has to be treated as nchar(x) > 0.
   op_for_msg <- function(expr, const) {
-    op <- xml_name(xml_find_first(expr, "*[not(self::COMMENT)][2]"))
+    op <- xml_name(xml_find_first_(expr, "*[not(self::COMMENT)][2]"))
     maybe_needs_flip <-
-      !is.na(xml_find_first(expr, sprintf("*[not(self::COMMENT)][1][%s]", const)))
+      !is.na(xml_find_first_(expr, sprintf("*[not(self::COMMENT)][1][%s]", const)))
 
     ordered_ops <- c("GT", "GE", "LE", "LT")
     ordered_idx <- match(op, ordered_ops)
@@ -129,7 +129,7 @@ nzchar_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    comparison_expr <- xml_find_all(xml, comparison_xpath)
+    comparison_expr <- xml_find_all_(xml, comparison_xpath)
     comparison_op <- op_for_msg(comparison_expr, const = "STR_CONST")
     comparison_lints <- xml_nodes_to_lints(
       comparison_expr,
@@ -144,7 +144,7 @@ nzchar_linter <- function() {
     )
 
     xml_calls <- source_expression$xml_find_function_calls("nchar")
-    nchar_expr <- xml_find_all(xml_calls, nchar_xpath)
+    nchar_expr <- xml_find_all_(xml_calls, nchar_xpath)
     nchar_op <- op_for_msg(nchar_expr, const = "NUM_CONST")
     nchar_lints <- xml_nodes_to_lints(
       nchar_expr,

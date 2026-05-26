@@ -99,7 +99,7 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
 
   xpath <- paste0("string(", strrep("expr/", depth), node, ")")
 
-  xml_find_chr(expr, xpath)
+  xml_find_chr_(expr, xpath)
 }
 
 xp_find_location <- function(xml, xpath) {
@@ -108,7 +108,7 @@ xp_find_location <- function(xml, xpath) {
   } else if (identical(xpath, "number(./@col2)")) {
     as.integer(xml_attr(xml, "col2"))
   } else {
-    as.integer(xml_find_num(xml, xpath))
+    as.integer(xml_find_num_(xml, xpath))
   }
 }
 

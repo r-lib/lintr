@@ -35,6 +35,11 @@ strip_comments_from_subtree <- function(expr) {
   expr
 }
 
+# placeholder xml_ns() object to skip this call on xml2 invocations
+empty_ns <- character()
+names(empty_ns) <- character()
+class(empty_ns) <- "xml_namespace"
+
 safe_parse_to_xml <- function(parsed_content) {
   if (is.null(parsed_content)) {
     return(xml2::xml_missing())
@@ -52,3 +57,32 @@ is_nodeset_like <- function(xml) {
   is_nodeset(xml) ||
     (is.list(xml) && all(vapply(xml, is_node, logical(1L))))
 }
+
+# Shadow xml_find_* functions using an underscore suffix to bypass the expensive default ns.
+# Calling the imported xml_find_all directly avoids the '::' operator namespace lookup.
+
+xml_find_all_ <- function(x, xpath, ns = empty_ns, ...) {
+  xml_find_all(x, xpath, ns = ns, ...)
+}
+
+xml_find_first_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_first(x, xpath, ns = ns)
+}
+
+xml_find_chr_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_chr(x, xpath, ns = ns)
+}
+
+xml_find_num_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_num(x, xpath, ns = ns)
+}
+
+xml_find_lgl_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_lgl(x, xpath, ns = ns)
+}
+
+xml_find_int_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_int(x, xpath, ns = ns)
+}
+
+
