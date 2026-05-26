@@ -80,9 +80,3 @@ xml_find_num_ <- function(x, xpath, ns = empty_ns) {
 xml_find_lgl_ <- function(x, xpath, ns = empty_ns) {
   xml_find_lgl(x, xpath, ns = ns)
 }
-
-xml_find_int_ <- function(x, xpath, ns = empty_ns) {
-  xml2::xml_find_int(x, xpath, ns = ns)
-}
-
-
