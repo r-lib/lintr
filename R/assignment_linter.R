@@ -131,7 +131,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
 
     lints <- NULL
     if (!is.null(op_xpath)) {
-      op_expr <- xml_find_all(xml, op_xpath)
+      op_expr <- xml_find_all_(xml, op_xpath)
 
       op_text <- xml_text(op_expr)
       allowed_op_list <- if (length(operator) > 1L) paste("one of", toString(operator)) else operator
@@ -153,7 +153,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     }
 
     if (!allow_trailing) {
-      trailing_assign_expr <- xml_find_all(xml, trailing_assign_xpath)
+      trailing_assign_expr <- xml_find_all_(xml, trailing_assign_xpath)
       trailing_assign_text <- xml_text(trailing_assign_expr)
       trailing_assign_msg_fmt <- "Assignment %s should not be trailing at the end of a line."
       trailing_assign_msg <- sprintf(trailing_assign_msg_fmt, trailing_assign_text)

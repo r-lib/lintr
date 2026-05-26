@@ -129,9 +129,9 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all_(xml, xpath)
 
-    print_only <- !is.na(xml_find_first(bad_expr, "parent::expr[parent::exprlist and *[1][self::OP-LEFT-PAREN]]"))
+    print_only <- !is.na(xml_find_first_(bad_expr, "parent::expr[parent::exprlist and *[1][self::OP-LEFT-PAREN]]"))
     if (allow_paren_print) {
       bad_expr <- bad_expr[!print_only]
     }

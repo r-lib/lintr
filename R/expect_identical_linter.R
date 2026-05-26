@@ -100,8 +100,8 @@ expect_identical_linter <- function() {
     expect_equal_calls <- source_expression$xml_find_function_calls("expect_equal")
     expect_true_calls <- source_expression$xml_find_function_calls("expect_true")
     bad_expr <- c(
-      xml_find_all(expect_equal_calls, expect_equal_xpath),
-      xml_find_all(expect_true_calls, expect_true_xpath)
+      xml_find_all_(expect_equal_calls, expect_equal_xpath),
+      xml_find_all_(expect_true_calls, expect_true_xpath)
     )
 
     xml_nodes_to_lints(

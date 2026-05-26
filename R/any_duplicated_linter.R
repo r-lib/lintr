@@ -130,14 +130,14 @@ any_duplicated_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     # NB: need two parents given three parent::expr in XPath and stripped comments.
     xml <- source_expression$xml_parsed_content |>
-      xml_find_all("//EQ | //NE | //GT | //LT") |>
+      xml_find_all_("//EQ | //NE | //GT | //LT") |>
       xml_parent() |>
       xml_parent() |>
       strip_comments_from_subtree()
 
     xml_calls <- source_expression$xml_find_function_calls("any")
 
-    any_duplicated_expr <- xml_find_all(xml_calls, any_duplicated_xpath)
+    any_duplicated_expr <- xml_find_all_(xml_calls, any_duplicated_xpath)
     any_duplicated_lints <- xml_nodes_to_lints(
       any_duplicated_expr,
       source_expression = source_expression,
@@ -145,14 +145,14 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    length_unique_expr <- xml_find_all(xml, length_unique_xpath)
+    length_unique_expr <- xml_find_all_(xml, length_unique_xpath)
     length_unique_lint_message <- character(length(length_unique_expr))
     length_unique_lint_message[] <- "anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)."
-    length_unique_lint_message[!is.na(xml_find_first(length_unique_expr, uses_nrow_xpath))] <-
+    length_unique_lint_message[!is.na(xml_find_first_(length_unique_expr, uses_nrow_xpath))] <-
       "anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"
-    length_unique_lint_message[!is.na(xml_find_first(length_unique_expr, uses_dtn_xpath))] <-
+    length_unique_lint_message[!is.na(xml_find_first_(length_unique_expr, uses_dtn_xpath))] <-
       "anyDuplicated(x) == 0L is better than length(unique(x)) == .N"
-    length_unique_lint_message[!is.na(xml_find_first(length_unique_expr, uses_dplyr_xpath))] <-
+    length_unique_lint_message[!is.na(xml_find_first_(length_unique_expr, uses_dplyr_xpath))] <-
       "anyDuplicated(x) == 0L is better than length(unique(x)) == n()."
     length_unique_lints <- xml_nodes_to_lints(
       length_unique_expr,
@@ -161,14 +161,14 @@ any_duplicated_linter <- function() {
       type = "warning"
     )
 
-    distinct_expr <- xml_find_all(xml, distinct_xpath)
+    distinct_expr <- xml_find_all_(xml, distinct_xpath)
     distinct_lint_message_fmt <- character(length(distinct_expr))
     distinct_lint_message_fmt[] <- "anyDuplicated(x) == 0L is better than %s(x) == length(x)."
-    distinct_lint_message_fmt[!is.na(xml_find_first(distinct_expr, uses_nrow_xpath))] <-
+    distinct_lint_message_fmt[!is.na(xml_find_first_(distinct_expr, uses_nrow_xpath))] <-
       "anyDuplicated(DF$col) == 0L is better than %s(DF$col) == nrow(DF)"
-    distinct_lint_message_fmt[!is.na(xml_find_first(distinct_expr, uses_dtn_xpath))] <-
+    distinct_lint_message_fmt[!is.na(xml_find_first_(distinct_expr, uses_dtn_xpath))] <-
       "anyDuplicated(x) == 0L is better than %s(x) == .N"
-    distinct_lint_message_fmt[!is.na(xml_find_first(distinct_expr, uses_dplyr_xpath))] <-
+    distinct_lint_message_fmt[!is.na(xml_find_first_(distinct_expr, uses_dplyr_xpath))] <-
       "anyDuplicated(x) == 0L is better than %s(x) == n()."
 
     distinct_lint_message <- sprintf(distinct_lint_message_fmt, xp_call_name(distinct_expr))

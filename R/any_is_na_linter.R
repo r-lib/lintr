@@ -50,7 +50,7 @@ any_is_na_linter <- function() {
     xml <- source_expression$xml_parsed_content
     xml_calls <- source_expression$xml_find_function_calls("any")
 
-    any_expr <- xml_find_all(xml_calls, any_xpath)
+    any_expr <- xml_find_all_(xml_calls, any_xpath)
     any_lints <- xml_nodes_to_lints(
       any_expr,
       source_expression = source_expression,
@@ -58,7 +58,7 @@ any_is_na_linter <- function() {
       type = "warning"
     )
 
-    in_expr <- xml_find_all(xml, in_xpath)
+    in_expr <- xml_find_all_(xml, in_xpath)
     in_lints <- xml_nodes_to_lints(
       in_expr,
       source_expression = source_expression,

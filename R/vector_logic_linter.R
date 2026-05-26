@@ -112,7 +112,7 @@ vector_logic_linter <- function() {
     xml <- source_expression$xml_parsed_content
     xml_call <- source_expression$xml_find_function_calls(c("subset", "filter"))
 
-    condition_expr <- xml_find_all(xml, condition_xpath)
+    condition_expr <- xml_find_all_(xml, condition_xpath)
     condition_op <- xml_text(condition_expr)
     condition_lints <- xml_nodes_to_lints(
       condition_expr,
@@ -121,7 +121,7 @@ vector_logic_linter <- function() {
       type = "warning"
     )
 
-    subset_expr <- xml_find_all(xml_call, subset_xpath)
+    subset_expr <- xml_find_all_(xml_call, subset_xpath)
     subset_op <- xml_text(subset_expr)
     subset_lints <- xml_nodes_to_lints(
       subset_expr,
