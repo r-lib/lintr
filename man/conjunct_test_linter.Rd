@@ -18,7 +18,7 @@ and \code{"always"} means no calls to \code{filter()} are linted. Calls like \co
 }
 \description{
 For readability of test outputs, testing only one thing per call to
-\code{\link[testthat:logical-expectations]{testthat::expect_true()}} is preferable, i.e.,
+\code{\link[testthat:expect_true]{testthat::expect_true()}} is preferable, i.e.,
 \verb{expect_true(A); expect_true(B)} is better than \code{expect_true(A && B)}, and
 \verb{expect_false(A); expect_false(B)} is better than \code{expect_false(A || B)}.
 }

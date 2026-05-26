@@ -150,7 +150,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    upfront_call_expr <- xml_find_all(xml, upfront_call_xpath)
+    upfront_call_expr <- xml_find_all_(xml, upfront_call_xpath)
 
     upfront_call_name <- xp_call_name(upfront_call_expr)
 
@@ -161,10 +161,10 @@ library_call_linter <- function(allow_preamble = TRUE) {
       type = "warning"
     )
 
-    char_only_direct_expr <- xml_find_all(xml, char_only_direct_xpath)
+    char_only_direct_expr <- xml_find_all_(xml, char_only_direct_xpath)
     char_only_direct_calls <- xp_call_name(char_only_direct_expr)
     character_only <-
-      xml_find_first(char_only_direct_expr, "./SYMBOL_SUB[text() = 'character.only']")
+      xml_find_first_(char_only_direct_expr, "./SYMBOL_SUB[text() = 'character.only']")
     char_only_direct_msg_fmt <- ifelse(
       is.na(character_only),
       "Use symbols, not strings, in %s calls.",
@@ -179,11 +179,11 @@ library_call_linter <- function(allow_preamble = TRUE) {
       type = "warning"
     )
 
-    char_only_indirect_expr <- xml_find_all(xml, char_only_indirect_xpath)
+    char_only_indirect_expr <- xml_find_all_(xml, char_only_indirect_xpath)
     char_only_indirect_lib_calls <- vapply(
       char_only_indirect_expr,
       function(expr) {
-        calls <- get_r_string(xml_find_all(expr, call_symbol_path))
+        calls <- get_r_string(xml_find_all_(expr, call_symbol_path))
         calls <- calls[calls %in% attach_calls]
         if (length(calls) == 1L) calls else NA_character_
       },
@@ -208,7 +208,7 @@ library_call_linter <- function(allow_preamble = TRUE) {
       type = "warning"
     )
 
-    consecutive_suppress_expr <- xml_find_all(xml, consecutive_suppress_xpath)
+    consecutive_suppress_expr <- xml_find_all_(xml, consecutive_suppress_xpath)
     consecutive_suppress_call_text <- xp_call_name(consecutive_suppress_expr)
     consecutive_suppress_message <- paste0(
       "Unify consecutive calls to ", consecutive_suppress_call_text, "(). ",

@@ -40,10 +40,10 @@ missing_package_linter <- function() {
     library_require_calls <- source_expression$xml_find_function_calls(c("library", "require"))
     load_require_namespace_calls <- source_expression$xml_find_function_calls(c("loadNamespace", "requireNamespace"))
     pkg_calls <- combine_nodesets(
-      xml_find_all(library_require_calls, library_require_xpath),
-      xml_find_all(load_require_namespace_calls, load_require_namespace_xpath)
+      xml_find_all_(library_require_calls, library_require_xpath),
+      xml_find_all_(load_require_namespace_calls, load_require_namespace_xpath)
     )
-    pkg_names <- get_r_string(xml_find_all(
+    pkg_names <- get_r_string(xml_find_all_(
       pkg_calls,
       "OP-LEFT-PAREN[1]/following-sibling::expr[1][SYMBOL | STR_CONST]"
     ))

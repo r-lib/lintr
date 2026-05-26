@@ -29,8 +29,8 @@ pipe_call_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
-    pipe <- xml_text(xml_find_first(bad_expr, "preceding-sibling::SPECIAL[1]"))
+    bad_expr <- xml_find_all_(xml, xpath)
+    pipe <- xml_text(xml_find_first_(bad_expr, "preceding-sibling::SPECIAL[1]"))
 
     xml_nodes_to_lints(
       bad_expr,
