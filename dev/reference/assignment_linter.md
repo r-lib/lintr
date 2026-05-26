@@ -5,7 +5,7 @@ Check that the specified operator is used for assignment.
 ## Usage
 
 ``` r
-assignment_linter(operator = c("<-", "<<-"), allow_trailing = TRUE)
+assignment_linter(operator = "<-", allow_trailing = TRUE)
 ```
 
 ## Arguments
@@ -13,9 +13,8 @@ assignment_linter(operator = c("<-", "<<-"), allow_trailing = TRUE)
 - operator:
 
   Character vector of valid assignment operators. Defaults to allowing
-  `<-` and `<<-`; other valid options are `=`, `->`, `->>`, `%<>%`; use
-  `"any"` to denote "allow all operators", in which case this linter
-  only considers `allow_trailing` for generating lints.
+  only `<-`; other valid options are `=`, `<<-`, `->`, `->>`, `%<>%`;
+  use `"any"` to denote "allow all operators", in which case
 
 - allow_trailing:
 
@@ -46,23 +45,27 @@ lint(
   text = "x = mean(x)",
   linters = assignment_linter()
 )
-#> <text>:1:3: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+#> <text>:1:3: style: [assignment_linter] Use <- for assignment, not =.
 #> x = mean(x)
 #>   ^
 
-code_lines <- "1 -> x\n2 ->> y"
+code_lines <- "1 -> x\n2 ->> y\nz <<- 3"
 writeLines(code_lines)
 #> 1 -> x
 #> 2 ->> y
+#> z <<- 3
 lint(
   text = code_lines,
   linters = assignment_linter()
 )
-#> <text>:1:3: style: [assignment_linter] Use one of <-, <<- for assignment, not ->.
+#> <text>:1:3: style: [assignment_linter] Use <- for assignment, not ->.
 #> 1 -> x
 #>   ^~
-#> <text>:2:3: style: [assignment_linter] Use one of <-, <<- for assignment, not ->>.
+#> <text>:2:3: style: [assignment_linter] Replace ->> by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior.
 #> 2 ->> y
+#>   ^~~
+#> <text>:3:3: style: [assignment_linter] Replace <<- by assigning to a specific environment (with assign() or <-) to avoid hard-to-predict behavior.
+#> z <<- 3
 #>   ^~~
 
 lint(
@@ -88,10 +91,11 @@ lint(
 )
 #> ℹ No lints found.
 
-code_lines <- "x <- 1\ny <<- 2"
+code_lines <- "x <- 1\ny <- 2\nz <- 3"
 writeLines(code_lines)
 #> x <- 1
-#> y <<- 2
+#> y <- 2
+#> z <- 3
 lint(
   text = code_lines,
   linters = assignment_linter()

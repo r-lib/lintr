@@ -208,7 +208,7 @@ default settings are also shown.
 
 |  | settings |
 |:---|:---|
-| assignment_linter | operator = c(“\<-”, “\<\<-”), allow_trailing = TRUE |
+| assignment_linter | operator = “\<-”, allow_trailing = TRUE |
 | brace_linter | allow_single_line = FALSE, function_bodies = “multi_line” |
 | commas_linter | allow_trailing = FALSE |
 | commented_code_linter |  |
@@ -428,14 +428,14 @@ withr::with_tempfile("tmp", {
   # more concise alternative for this case: use eval(call(.))
   show_lint(lint(tmp, linters = eval(call(linter_name))))
 })
-#>   line_number                                   message linter
-#> 1           1 Use one of <-, <<- for assignment, not =.    get
+#>   line_number                       message linter
+#> 1           1 Use <- for assignment, not =.    get
 #> ---------------------------------------------------------------------------
-#>   line_number                                   message            linter
-#> 1           1 Use one of <-, <<- for assignment, not =. assignment_linter
+#>   line_number                       message            linter
+#> 1           1 Use <- for assignment, not =. assignment_linter
 #> ---------------------------------------------------------------------------
-#>   line_number                                   message            linter
-#> 1           1 Use one of <-, <<- for assignment, not =. assignment_linter
+#>   line_number                       message            linter
+#> 1           1 Use <- for assignment, not =. assignment_linter
 ```
 
 ## Exclusions
@@ -470,7 +470,7 @@ X = 42L # -------------- this comment overflows the default 80 chars line length
     #> <text>:1:1: style: [object_name_linter] Variable and function name style should match snake_case or symbols.
     #> X = 42L # -------------- this comment overflows the default 80 chars line length.
     #> ^
-    #> <text>:1:3: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+    #> <text>:1:3: style: [assignment_linter] Use <- for assignment, not =.
     #> X = 42L # -------------- this comment overflows the default 80 chars line length.
     #>   ^
     #> <text>:1:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 81 characters.
@@ -504,7 +504,7 @@ X = 42L # nolint: object_name_linter. this comment overflows the default 80 char
 
 `> lint("file3.R")`
 
-    #> <text>:1:3: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+    #> <text>:1:3: style: [assignment_linter] Use <- for assignment, not =.
     #> X = 42L # nolint: object_name_linter. this comment overflows the default 80 chars line length.
     #>   ^
     #> <text>:1:81: style: [line_length_linter] Lines should not be more than 80 characters. This line is 94 characters.
@@ -527,7 +527,7 @@ X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows
 
 `> lint("file4.R")`
 
-    #> <text>:1:3: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+    #> <text>:1:3: style: [assignment_linter] Use <- for assignment, not =.
     #> X = 42L # nolint: object_name_linter, line_length_linter. this comment overflows the default 80 chars line length.
     #>   ^
 
@@ -543,7 +543,7 @@ X = 42L # nolint: object_name, line_len. this comment still overflows the defaul
 
 `> lint("file5.R")`
 
-    #> <text>:1:3: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+    #> <text>:1:3: style: [assignment_linter] Use <- for assignment, not =.
     #> X = 42L # nolint: object_name, line_len. this comment still overflows the default 80 chars line length.
     #>   ^
 

@@ -9,6 +9,12 @@
   `no_tab_linter()`, `single_quotes_linter()`,
   `unnecessary_nested_if_linter()`, and
   `unneeded_concatenation_linter()`.
+- [`assignment_linter()`](https://lintr.r-lib.org/dev/reference/assignment_linter.md)
+  only allows `<-` by default, i.e., `<<-` is now excluded (consistent
+  with the defaults for
+  [`undesirable_operator_linter()`](https://lintr.r-lib.org/dev/reference/undesirable_operator_linter.md);
+  [\#2717](https://github.com/r-lib/lintr/issues/2717),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
 - Arguments `allow_cascading_assign=`, `allow_right_assign=`, and
   `allow_pipe_assign=` to
   [`assignment_linter()`](https://lintr.r-lib.org/dev/reference/assignment_linter.md)
