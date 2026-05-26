@@ -7,9 +7,9 @@
 expect_s3_class_linter()
 }
 \description{
-\code{\link[testthat:inheritance-expectations]{testthat::expect_s3_class()}} exists specifically for testing the class
-of S3 objects. \code{\link[testthat:equality-expectations]{testthat::expect_equal()}}, \code{\link[testthat:equality-expectations]{testthat::expect_identical()}},
-and \code{\link[testthat:logical-expectations]{testthat::expect_true()}} can also be used for such tests,
+\code{\link[testthat:expect_s3_class]{testthat::expect_s3_class()}} exists specifically for testing the class
+of S3 objects. \code{\link[testthat:expect_equal]{testthat::expect_equal()}}, \code{\link[testthat:expect_identical]{testthat::expect_identical()}},
+and \code{\link[testthat:expect_true]{testthat::expect_true()}} can also be used for such tests,
 but it is better to use the tailored function instead.
 }
 \examples{

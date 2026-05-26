@@ -8,7 +8,7 @@ expect_named_linter()
 }
 \description{
 \code{\link[testthat:expect_named]{testthat::expect_named()}} exists specifically for testing the \code{\link[=names]{names()}} of
-an object. \code{\link[testthat:equality-expectations]{testthat::expect_equal()}} can also be used for such tests,
+an object. \code{\link[testthat:expect_equal]{testthat::expect_equal()}} can also be used for such tests,
 but it is better to use the tailored function instead.
 }
 \examples{

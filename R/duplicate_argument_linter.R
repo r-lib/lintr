@@ -50,12 +50,12 @@ duplicate_argument_linter <- function(except = c("mutate", "transmute")) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    call_expr <- xml_find_all(xml, xpath_call_with_args)
+    call_expr <- xml_find_all_(xml, xpath_call_with_args)
 
     bad_expr <- lapply(
       call_expr,
       function(expr) {
-        arg_expr <- xml_find_all(expr, xpath_arg_name)
+        arg_expr <- xml_find_all_(expr, xpath_arg_name)
         arg_expr[duplicated(get_r_string(arg_expr))]
       }
     )

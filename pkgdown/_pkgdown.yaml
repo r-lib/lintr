@@ -1,5 +1,9 @@
 url: https://lintr.r-lib.org
 
+authors:
+  Indrajeet Patil:
+    href: https://indrajeetpatil.github.io/
+
 template:
   bootstrap: 5
   light-switch: true

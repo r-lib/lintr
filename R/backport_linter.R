@@ -61,12 +61,12 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    used_symbols <- xml_find_all(xml, "//SYMBOL")
+    used_symbols <- xml_find_all_(xml, "//SYMBOL")
     used_symbols <- used_symbols[xml_text(used_symbols) %in% names(backport_index)]
 
     used_calls <- source_expression$xml_find_function_calls(names(backport_index))
     all_names_nodes <- combine_nodesets(
-      xml_find_first(used_calls, "SYMBOL_FUNCTION_CALL"),
+      xml_find_first_(used_calls, "SYMBOL_FUNCTION_CALL"),
       used_symbols
     )
     all_names <- xml_text(all_names_nodes)
