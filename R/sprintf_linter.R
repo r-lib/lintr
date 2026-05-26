@@ -83,12 +83,12 @@ sprintf_linter <- function() {
   capture_sprintf_warning <- function(xml) {
     parsed_expr <- xml2lang(xml)
     # convert x %>% sprintf(...) to sprintf(x, ...)
-    if (length(xml_find_first(xml, in_pipe_xpath)) > 0L) {
+    if (length(xml_find_first_(xml, in_pipe_xpath)) > 0L) {
       arg_names <- names(parsed_expr)
       arg_idx <- 2L:length(parsed_expr)
       parsed_expr[arg_idx + 1L] <- parsed_expr[arg_idx]
       names(parsed_expr)[arg_idx + 1L] <- arg_names[arg_idx]
-      parsed_expr[[2L]] <- xml2lang(xml_find_first(xml, "preceding-sibling::*[not(self::COMMENT)][2]"))
+      parsed_expr[[2L]] <- xml2lang(xml_find_first_(xml, "preceding-sibling::*[not(self::COMMENT)][2]"))
       names(parsed_expr)[2L] <- ""
     }
     parsed_expr <- zap_extra_args(parsed_expr)
@@ -102,8 +102,8 @@ sprintf_linter <- function() {
 
   Linter(linter_level = "file", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
-    sprintf_calls <- xml_find_all(xml_calls, call_xpath)
-    in_pipeline <- !is.na(xml_find_first(sprintf_calls, in_pipe_xpath))
+    sprintf_calls <- xml_find_all_(xml_calls, call_xpath)
+    in_pipeline <- !is.na(xml_find_first_(sprintf_calls, in_pipe_xpath))
 
     fmt_by_name <- get_r_string(
       sprintf_calls,

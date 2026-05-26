@@ -7,9 +7,9 @@
 expect_comparison_linter()
 }
 \description{
-\code{\link[testthat:comparison-expectations]{testthat::expect_gt()}}, \code{\link[testthat:comparison-expectations]{testthat::expect_gte()}}, \code{\link[testthat:comparison-expectations]{testthat::expect_lt()}},
-\code{\link[testthat:comparison-expectations]{testthat::expect_lte()}}, and \code{\link[testthat:equality-expectations]{testthat::expect_equal()}} exist specifically
-for testing comparisons between two objects. \code{\link[testthat:logical-expectations]{testthat::expect_true()}} can
+\code{\link[testthat:expect_gt]{testthat::expect_gt()}}, \code{\link[testthat:expect_gte]{testthat::expect_gte()}}, \code{\link[testthat:expect_lt]{testthat::expect_lt()}},
+\code{\link[testthat:expect_lte]{testthat::expect_lte()}}, and \code{\link[testthat:expect_equal]{testthat::expect_equal()}} exist specifically
+for testing comparisons between two objects. \code{\link[testthat:expect_true]{testthat::expect_true()}} can
 also be used for such tests, but it is better to use the tailored function
 instead.
 }
