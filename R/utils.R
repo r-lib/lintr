@@ -142,10 +142,22 @@ reset_lang <- function(old_lang) {
 #'   `"expression"` means an individual expression in `xml_parsed_content`, while `"file"` means all expressions
 #'   in the current file are available in `full_xml_parsed_content`.
 #'   `NA` means the linter will be run with both, expression-level and file-level source expressions.
+#' @param selectors Optional character vector of necessary (but not typically sufficient) strings to
+#'   find among a given expression's tokens (e.g. `':'`) or text (e.g. `'startsWith'`). This can be
+#'   used as an optimization to quickly filter out the large majority of expressions that do not have
+#'   any match (i.e. don't use `:`, or don't call `startsWith()`). The tokens matched are those found
+#'   in the result of [utils::getParseData()], except for `BACKTICK`, which is a special sentinel used
+#'   to find symbols starting with `` ` ``.
 #'
 #' @return The same function with its class set to 'linter'.
 #' @export
-Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character_, "file", "expression"), selectors = character()) { # nolint: object_name, line_length.
+# nolint next: object_name_linter.
+Linter <- function(
+  fun,
+  name = linter_auto_name(),
+  linter_level = c(NA_character_, "file", "expression"),
+  selectors = character()
+) {
   if (!is.function(fun) || length(formals(args(fun))) != 1L) {
     cli_abort("{.arg fun} must be a function taking exactly one argument.")
   }
