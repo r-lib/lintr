@@ -2,9 +2,9 @@
 #'
 #' Check that the specified operator is used for assignment.
 #'
-#' @param operator Character vector of valid assignment operators. Defaults to allowing `<-` and `<<-`; other valid
-#'   options are `=`, `->`, `->>`, `%<>%`; use `"any"` to denote "allow all operators", in which case this linter only
-#'   considers `allow_trailing` for generating lints.
+#' @param operator Character vector of valid assignment operators. Defaults to allowing only `<-`; other valid
+#'   options are `=`, `<<-`, `->`, `->>`, `%<>%`; use `"any"` to denote "allow all operators", in which case
+#    this linter only considers `allow_trailing` for generating lints.
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
 #'
 #' @examples
@@ -14,7 +14,7 @@
 #'   linters = assignment_linter()
 #' )
 #'
-#' code_lines <- "1 -> x\n2 ->> y"
+#' code_lines <- "1 -> x\n2 ->> y\nz <<- 3"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -37,7 +37,7 @@
 #'   linters = assignment_linter()
 #' )
 #'
-#' code_lines <- "x <- 1\ny <<- 2"
+#' code_lines <- "x <- 1\ny <- 2\nz <- 3"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -79,7 +79,7 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment-1>
 #' - <https://style.tidyverse.org/pipes.html#assignment-2>
 #' @export
-assignment_linter <- function(operator = c("<-", "<<-"),
+assignment_linter <- function(operator = "<-",
                               allow_trailing = TRUE) {
   all_operators <- c("<-", "=", "->", "<<-", "->>", "%<>%")
   if ("any" %in% operator) {
