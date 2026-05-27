@@ -13,6 +13,8 @@
 
 ## New and improved features
 
+* `Linter()` gets a new argument, `selectors=`, which can be used to greatly improve the efficiency of a given linter by quickly filtering out the large majority of expressions which cannot possibly generate a lint, e.g. using `selectors = c("paste", "paste0")` for `paste_linter()` will skip all expressions not calling `paste()` or `paste0()`. `selectors=` should be thought of as a "necessary but not sufficient' check for an expression in order to avoid false negatives.
+
 ### Linter improvements
 
 * General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
