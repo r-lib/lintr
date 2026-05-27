@@ -18,6 +18,8 @@ flatten_lints <- function(x) {
   x
 }
 
+maybe_unname <- function(x) if (is.null(names(x))) x else unname(x)
+
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
@@ -36,7 +38,7 @@ flatten_list <- function(x, class) {
       }
     }
     if (is_flat) {
-      return(if (is.null(names(x))) x else unname(x))
+      return(maybe_unname(x))
     }
   }
 
