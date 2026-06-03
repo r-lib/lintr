@@ -73,7 +73,7 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
     # need the full file to also catch usages at the top level
     xml <- source_expression$full_xml_parsed_content
 
-    attach_str <- get_r_string(xml_find_all(
+    attach_str <- get_r_string(xml_find_all_(
       source_expression$xml_find_function_calls(c("library", "require")),
       attach_pkg_xpath
     ))
@@ -81,12 +81,12 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
       return(list())
     }
 
-    namespace_expr <- xml_find_first(xml, namespace_xpath)
+    namespace_expr <- xml_find_first_(xml, namespace_xpath)
     if (!is.na(namespace_expr)) {
       return(list())
     }
 
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all_(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

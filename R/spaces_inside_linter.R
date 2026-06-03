@@ -55,7 +55,7 @@ spaces_inside_linter <- function() {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    left_expr <- xml_find_all(xml, left_xpath)
+    left_expr <- xml_find_all_(xml, left_xpath)
     left_msg <- ifelse(
       xml_text(left_expr) %in% c("[", "[["),
       "Do not place spaces after square brackets.",
@@ -70,7 +70,7 @@ spaces_inside_linter <- function() {
       range_end_xpath = "number(./following-sibling::*[1]/@col1 - 1)" # end before following expr
     )
 
-    right_expr <- xml_find_all(xml, right_xpath)
+    right_expr <- xml_find_all_(xml, right_xpath)
     right_msg <- ifelse(
       xml_text(right_expr) == "]",
       "Do not place spaces before square brackets.",

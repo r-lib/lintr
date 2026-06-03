@@ -115,9 +115,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     xml <- source_expression$xml_parsed_content
     xml_calls <- source_expression$xml_find_function_calls(names(fun))
 
-    matched_nodes <- xml_find_all(xml_calls, xpath)
+    matched_nodes <- xml_find_all_(xml_calls, xpath)
     if (symbol_is_undesirable) {
-      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all(xml, symbol_xpath))
+      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all_(xml, symbol_xpath))
     }
 
     fun_names <- get_r_string(matched_nodes)

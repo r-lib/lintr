@@ -250,7 +250,7 @@ unnecessary_nesting_linter <- function(
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    if_else_exit_expr <- xml_find_all(xml, if_else_exit_xpath)
+    if_else_exit_expr <- xml_find_all_(xml, if_else_exit_xpath)
     used_exit_call <- get_r_string(if_else_exit_expr, used_exit_call_xpath)
     if_else_exit_lints <- xml_nodes_to_lints(
       if_else_exit_expr,
@@ -262,7 +262,7 @@ unnecessary_nesting_linter <- function(
       type = "warning"
     )
 
-    unnecessary_brace_expr <- xml_find_all(xml, unnecessary_brace_xpath)
+    unnecessary_brace_expr <- xml_find_all_(xml, unnecessary_brace_xpath)
     unnecessary_brace_lints <- xml_nodes_to_lints(
       unnecessary_brace_expr,
       source_expression = source_expression,
@@ -270,10 +270,10 @@ unnecessary_nesting_linter <- function(
       type = "warning"
     )
 
-    unnecessary_nested_if_expr <- xml_find_all(xml, unnecessary_nested_if_xpath)
-    corresponding_brace <- xml_find_first(unnecessary_nested_if_expr, corresponding_if_xpath)
-    corresponding_line <- xml_attr(corresponding_brace, "line1")
-    corresponding_column <- xml_attr(corresponding_brace, "col1")
+    unnecessary_nested_if_expr <- xml_find_all_(xml, unnecessary_nested_if_xpath)
+    corresponding_brace <- xml_find_first_(unnecessary_nested_if_expr, corresponding_if_xpath)
+    corresponding_line <- xml_attr_(corresponding_brace, "line1")
+    corresponding_column <- xml_attr_(corresponding_brace, "col1")
     unnecessary_nested_if_lints <- xml_nodes_to_lints(
       unnecessary_nested_if_expr,
       source_expression = source_expression,
@@ -284,7 +284,7 @@ unnecessary_nesting_linter <- function(
       type = "warning"
     )
 
-    unnecessary_else_brace_expr <- xml_find_all(xml, unnecessary_else_brace_xpath)
+    unnecessary_else_brace_expr <- xml_find_all_(xml, unnecessary_else_brace_xpath)
     unnecessary_else_brace_lints <- xml_nodes_to_lints(
       unnecessary_else_brace_expr,
       source_expression = source_expression,

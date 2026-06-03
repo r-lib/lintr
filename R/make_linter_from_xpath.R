@@ -32,7 +32,7 @@ make_linter_from_xpath <- function(xpath,
       xml <- source_expression[[xml_key]]
 
 
-      expr <- xml_find_all(xml, xpath)
+      expr <- xml_find_all_(xml, xpath)
 
       xml_nodes_to_lints(
         expr,
@@ -70,7 +70,7 @@ make_linter_from_function_xpath <- function(function_names,
     Linter(linter_level = level, function(source_expression) {
       call_xml <- source_expression$xml_find_function_calls(function_names)
 
-      expr <- xml_find_all(call_xml, xpath)
+      expr <- xml_find_all_(call_xml, xpath)
 
       xml_nodes_to_lints(
         expr,
