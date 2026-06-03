@@ -117,9 +117,7 @@ parse_exclusions <- function(file,
                              exclude_linter_sep = settings$exclude_linter_sep,
                              lines = NULL,
                              linter_names = NULL) {
-  if (is.null(lines)) {
-    lines <- read_lines(file)
-  }
+  lines <- lines %||% ensure_utf8(read_lines(file), settings$encoding)
 
   exclusions <- list()
 
