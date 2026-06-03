@@ -77,18 +77,18 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     library_calls <- source_expression$xml_find_function_calls(c("library", "require"))
     all_calls <- source_expression$xml_find_function_calls(NULL)
 
-    import_exprs <- xml_find_all(library_calls, import_xpath)
+    import_exprs <- xml_find_all_(library_calls, import_xpath)
 
     if (length(import_exprs) == 0L) {
       return(list())
     }
-    imported_pkgs <- xml_find_chr(import_exprs, "string(expr[STR_CONST|SYMBOL])")
+    imported_pkgs <- xml_find_chr_(import_exprs, "string(expr[STR_CONST|SYMBOL])")
     # as.character(parse(...)) returns one entry per expression
     imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
 
     used_symbols <- unique(c(
-      xml_text(xml_find_all(all_calls, xp_used_functions)),
-      xml_text(xml_find_all(xml, xp_used_symbols)),
+      xml_text(xml_find_all_(all_calls, xp_used_functions)),
+      xml_text(xml_find_all_(xml, xp_used_symbols)),
       extract_glued_symbols(xml, interpret_glue = interpret_glue)
     ))
 
@@ -112,8 +112,8 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     is_ns_used <- vapply(
       imported_pkgs,
       function(pkg) {
-        ns_usage <- xml_find_first(xml, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
-        !identical(ns_usage, xml2::xml_missing())
+        ns_usage <- xml_find_first_(xml, paste0("//SYMBOL_PACKAGE[text() = '", pkg, "']"))
+        !identical(ns_usage, xml_missing())
       },
       logical(1L)
     )

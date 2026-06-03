@@ -99,7 +99,7 @@ get_content <- function(lines, info, needs_braces = FALSE) {
   if (!missing(info)) {
     # put in data.frame-like format
     if (is_node(info)) {
-      info <- lapply(xml2::xml_attrs(info), as.integer)
+      info <- lapply(xml_attrs_(info), as.integer)
     }
 
     lines <- lines[seq(info$line1, info$line2)]
@@ -255,7 +255,7 @@ get_r_string <- function(s, xpath = NULL) {
     if (is.null(xpath)) {
       s <- xml_text(s)
     } else {
-      s <- xml_find_chr(s, sprintf("string(%s)", xpath))
+      s <- xml_find_chr_(s, sprintf("string(%s)", xpath))
     }
   }
   r_string_from_parse_text(s)

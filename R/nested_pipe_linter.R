@@ -71,7 +71,7 @@ nested_pipe_linter <- function(
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all_(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

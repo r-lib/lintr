@@ -142,8 +142,8 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     pos_1_calls <- source_expression$xml_find_function_calls(pos_1_regex_funs)
     pos_2_calls <- source_expression$xml_find_function_calls(pos_2_regex_funs)
     patterns <- combine_nodesets(
-      xml_find_all(pos_1_calls, pos_1_xpath),
-      xml_find_all(pos_2_calls, pos_2_xpath)
+      xml_find_all_(pos_1_calls, pos_1_xpath),
+      xml_find_all_(pos_2_calls, pos_2_xpath)
     )
     pattern_strings <- get_r_string(patterns)
 
@@ -152,7 +152,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     pattern_strings <- pattern_strings[is_static]
 
     fixed_equivalent <- encodeString(get_fixed_string(pattern_strings), quote = '"', justify = "none")
-    call_name <- xml_find_chr(patterns, "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
+    call_name <- xml_find_chr_(patterns, "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")
     replacement_suggestion <- ifelse(

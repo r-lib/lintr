@@ -84,7 +84,7 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
     xml <- source_expression$xml_parsed_content
     ifelse_calls <- source_expression$xml_find_function_calls(ifelse_funs)
 
-    if_expr <- xml_find_all(xml, if_xpath)
+    if_expr <- xml_find_all_(xml, if_xpath)
     if_lints <- xml_nodes_to_lints(
       if_expr,
       source_expression = source_expression,
@@ -92,7 +92,7 @@ if_not_else_linter <- function(exceptions = c("is.null", "is.na", "missing")) {
       type = "warning"
     )
 
-    ifelse_expr <- xml_find_all(ifelse_calls, ifelse_xpath)
+    ifelse_expr <- xml_find_all_(ifelse_calls, ifelse_xpath)
     ifelse_call <- xp_call_name(ifelse_expr)
     ifelse_lints <- xml_nodes_to_lints(
       ifelse_expr,

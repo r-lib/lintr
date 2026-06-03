@@ -54,13 +54,13 @@ yoda_test_linter <- function() {
   second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    bad_expr <- xml_find_all(
+    bad_expr <- xml_find_all_(
       source_expression$xml_find_function_calls(c("expect_equal", "expect_identical", "expect_setequal")),
       xpath
     )
 
     matched_call <- xp_call_name(bad_expr)
-    second_const <- xml_find_first(bad_expr, second_const_xpath)
+    second_const <- xml_find_first_(bad_expr, second_const_xpath)
     lint_message <- ifelse(
       is.na(second_const),
       paste(

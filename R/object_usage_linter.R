@@ -100,11 +100,11 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     # run the following at run-time, not "compile" time to allow package structure to change
     env <- make_check_env(pkg_name, xml, library_lint_hook)
 
-    fun_assignments <- xml_find_all(xml, xpath_function_assignment)
+    fun_assignments <- xml_find_all_(xml, xpath_function_assignment)
 
     lapply(fun_assignments, function(fun_assignment) {
       # this will mess with the source line numbers. but I don't think anybody cares.
-      needs_braces <- !is.na(xml_find_first(fun_assignment, xpath_unsafe_lambda))
+      needs_braces <- !is.na(xml_find_first_(fun_assignment, xpath_unsafe_lambda))
       code <- get_content(lines = source_expression$content, fun_assignment, needs_braces = needs_braces)
       fun <- try_silently(eval(
         envir = env,
@@ -122,17 +122,17 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         fun,
         known_used_symbols = known_used_symbols,
         declared_globals = declared_globals,
-        start_line = as.integer(xml_attr(fun_assignment, "line1")),
-        end_line = as.integer(xml_attr(fun_assignment, "line2")),
+        start_line = as.integer(xml_attr_(fun_assignment, "line1")),
+        end_line = as.integer(xml_attr_(fun_assignment, "line2")),
         skip_with = skip_with
       )
 
       res$name <- re_substitutes(res$name, rex("<-"), "")
 
-      lintable_symbols <- xml_find_all(fun_assignment, xpath_culprit_symbol)
+      lintable_symbols <- xml_find_all_(fun_assignment, xpath_culprit_symbol)
 
       lintable_symbol_names <- gsub("^`|`$", "", xml_text(lintable_symbols))
-      lintable_symbol_lines <- as.integer(xml_attr(lintable_symbols, "line1"))
+      lintable_symbol_lines <- as.integer(xml_attr_(lintable_symbols, "line1"))
 
       matched_symbol <- vapply(
         seq_len(nrow(res)),
@@ -151,7 +151,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       # fallback to line based matching if no symbol is found
       missing_symbol <- is.na(matched_symbol)
       nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
-        line_based_match <- xml_find_first(
+        line_based_match <- xml_find_first_(
           fun_assignment,
           glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
         )
@@ -188,7 +188,7 @@ make_check_env <- function(pkg_name, xml, library_lint_hook) {
 }
 
 get_assignment_symbols <- function(xml) {
-  get_r_string(xml_find_all(
+  get_r_string(xml_find_all_(
     xml,
     "
       expr[LEFT_ASSIGN or EQ_ASSIGN]/expr[1]/SYMBOL[1] |
@@ -281,7 +281,7 @@ get_imported_symbols <- function(xml, library_lint_hook) {
     ]
     /expr[STR_CONST or SYMBOL][1]
   "
-  import_exprs <- xml_find_all(xml, import_exprs_xpath)
+  import_exprs <- xml_find_all_(xml, import_exprs_xpath)
   imported_pkgs <- get_r_string(import_exprs)
 
   unlist(Map(pkg = imported_pkgs, expr = import_exprs, function(pkg, expr) {
@@ -310,7 +310,7 @@ known_used_symbols <- function(fun_assignment, interpret_extensions) {
 }
 
 extract_env_symbols <- function(fun_assignment) {
-  env_names <- xml_find_all(
+  env_names <- xml_find_all_(
     fun_assignment,
     "
     .//SYMBOL[text() = '.env']
