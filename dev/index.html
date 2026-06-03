@@ -85,17 +85,75 @@
 </h1>
 </div>
 <p><a href="https://github.com/r-lib/lintr/actions" class="external-link"><img src="https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg" alt="R build status"></a> <a href="https://app.codecov.io/gh/r-lib/lintr?branch=main" class="external-link"><img src="https://codecov.io/gh/r-lib/lintr/branch/main/graphs/badge.svg" alt="codecov.io"></a> <a href="https://cran.r-project.org/package=lintr" class="external-link"><img src="https://www.r-pkg.org/badges/version/lintr" alt="CRAN_Status_Badge"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="lifecycle"></a> <a href="https://doi.org/10.21105/joss.07240" class="external-link"><img src="https://joss.theoj.org/papers/10.21105/joss.07240/status.svg" alt="DOI"></a></p>
-<p><a href="https://lintr.r-lib.org">lintr</a> provides <a href="https://en.wikipedia.org/wiki/Static_program_analysis" class="external-link">static code analysis for R</a>. It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action. Watch lintr in action in the following animation:</p>
-<p><img src="reference/figures/demo.gif" title="lintr demo"></p>
+<p><a href="https://lintr.r-lib.org">lintr</a> provides <a href="https://en.wikipedia.org/wiki/Static_program_analysis" class="external-link">static code analysis for R</a>. It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action.</p>
+<p>For example, given a file <code>bad.R</code> with the following contents:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">my_func</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Positive"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw">else</span> <span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Not positive"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Running <code><a href="reference/lint.html">lintr::lint()</a></code> on this file would produce the following output:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/lint.html">lint</a></span><span class="op">(</span><span class="st">"bad.R"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>bad.R:1:9: style: [assignment_linter] Use one of &lt;-, &lt;&lt;- for assignment, not =.
+my_func = function(x){
+        ^
+bad.R:1:22: style: [brace_linter] There should be a space before an opening curly brace.
+my_func = function(x){
+                     ^
+bad.R:1:22: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+my_func = function(x){
+                     ^
+bad.R:2:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    if(x &gt; 0){
+  ~^
+bad.R:2:7: style: [spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.
+    if(x &gt; 0){
+      ^
+bad.R:2:14: style: [brace_linter] There should be a space before an opening curly brace.
+    if(x &gt; 0){
+             ^
+bad.R:2:14: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+    if(x &gt; 0){
+             ^
+bad.R:3:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+        print("Positive")
+    ~~~^
+bad.R:4:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    }
+  ~^
+bad.R:5:5: style: [brace_linter] `else` should come on the same line as the previous `}`.
+    else {
+    ^~~~
+bad.R:6:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+        print("Not positive")
+    ~~~^
+bad.R:7:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    }
+  ~^
+bad.R:8:5: style: [return_linter] Use implicit return behavior; explicit return() is not needed.
+    return(T)
+    ^~~~~~
+bad.R:8:13: style: [T_and_F_symbol_linter] Use TRUE instead of the symbol T.
+    return(T)
+           ~^
+bad.R:10:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
+
+^</code></pre>
 <p><a href="https://lintr.r-lib.org">lintr</a> is complementary to <a href="https://github.com/r-lib/styler" class="external-link">the <code>{styler}</code> package</a> which automatically restyles code, eliminating some of the problems that <a href="https://lintr.r-lib.org">lintr</a> can detect.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install the stable version from CRAN:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"lintr"</span><span class="op">)</span></span></code></pre></div>
 <p>Or the development version from GitHub:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"r-lib/lintr"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -103,7 +161,7 @@
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
 <p>And then you can create a configuration file and run selected linters:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/use_lintr.html">use_lintr</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"tidyverse"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># in a project:</span></span>
@@ -112,7 +170,7 @@
 <span><span class="co"># in a package:</span></span>
 <span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/lint.html">lint_package</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>To see a list of linters included for each configuration:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># tidyverse (default)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/linters_with_defaults.html">linters_with_defaults</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -122,7 +180,7 @@
 <h3 id="setting-up-github-actions">Setting up GitHub Actions<a class="anchor" aria-label="anchor" href="#setting-up-github-actions"></a>
 </h3>
 <p><a href="https://usethis.r-lib.org" class="external-link">usethis</a> provides helper functions to generate lint workflows for GitHub Actions:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># in a project:</span></span>
 <span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></span>
 <span></span>
