@@ -41,6 +41,10 @@
   no longer errors when `while` is in a column to the right of `}`
   ([\#2828](https://github.com/r-lib/lintr/issues/2828),
   [@MichaelChirico](https://github.com/MichaelChirico)).
+- `get_source_expression(lines=)` and `lint(text=)` correctly handle
+  text with unmarked encoding
+  ([\#3046](https://github.com/r-lib/lintr/issues/3046),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
 
 ### New and improved features
 
