@@ -101,7 +101,7 @@ names(lintr::linters_with_defaults())
 names(lintr::all_linters())
 ```
 
-### Setting up GitHub Actions 
+### Setting up GitHub Actions
 
 `{usethis}` provides helper functions to generate lint workflows for GitHub Actions:
 
