@@ -16,7 +16,8 @@ output:
 
 For example, given a file `bad.R` with the following contents:
 
-```R
+
+``` r
 my_func = function(x){
     if(x > 0){
         print("Positive")
@@ -35,51 +36,51 @@ lintr::lint("bad.R")
 
 
 ```
-## bad.R:2:9: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
-## my_func = function(x){
-##         ^
-## bad.R:2:22: style: [brace_linter] There should be a space before an opening curly brace.
-## my_func = function(x){
-##                      ^
-## bad.R:2:22: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
-## my_func = function(x){
-##                      ^
-## bad.R:3:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
-##     if(x > 0){
-##   ~^
-## bad.R:3:7: style: [spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.
-##     if(x > 0){
-##       ^
-## bad.R:3:14: style: [brace_linter] There should be a space before an opening curly brace.
-##     if(x > 0){
-##              ^
-## bad.R:3:14: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
-##     if(x > 0){
-##              ^
-## bad.R:4:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
-##         print("Positive")
-##     ~~~^
-## bad.R:5:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
-##     }
-##   ~^
-## bad.R:6:5: style: [brace_linter] `else` should come on the same line as the previous `}`.
-##     else {
-##     ^~~~
-## bad.R:7:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
-##         print("Not positive")
-##     ~~~^
-## bad.R:8:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
-##     }
-##   ~^
-## bad.R:9:5: style: [return_linter] Use implicit return behavior; explicit return() is not needed.
-##     return(T)
-##     ^~~~~~
-## bad.R:9:13: style: [T_and_F_symbol_linter] Use TRUE instead of the symbol T.
-##     return(T)
-##            ~^
-## bad.R:11:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
-## 
-## ^
+bad.R:1:9: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+my_func = function(x){
+        ^
+bad.R:1:22: style: [brace_linter] There should be a space before an opening curly brace.
+my_func = function(x){
+                     ^
+bad.R:1:22: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+my_func = function(x){
+                     ^
+bad.R:2:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    if(x > 0){
+  ~^
+bad.R:2:7: style: [spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.
+    if(x > 0){
+      ^
+bad.R:2:14: style: [brace_linter] There should be a space before an opening curly brace.
+    if(x > 0){
+             ^
+bad.R:2:14: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+    if(x > 0){
+             ^
+bad.R:3:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+        print("Positive")
+    ~~~^
+bad.R:4:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    }
+  ~^
+bad.R:5:5: style: [brace_linter] `else` should come on the same line as the previous `}`.
+    else {
+    ^~~~
+bad.R:6:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+        print("Not positive")
+    ~~~^
+bad.R:7:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    }
+  ~^
+bad.R:8:5: style: [return_linter] Use implicit return behavior; explicit return() is not needed.
+    return(T)
+    ^~~~~~
+bad.R:8:13: style: [T_and_F_symbol_linter] Use TRUE instead of the symbol T.
+    return(T)
+           ~^
+bad.R:10:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
+
+^
 ```
 
 `{lintr}` is complementary to [the `{styler}` package](https://github.com/r-lib/styler) which automatically restyles code, eliminating some of the problems that `{lintr}` can detect.

@@ -16,7 +16,7 @@ output:
 
 For example, given a file `bad.R` with the following contents:
 
-```R
+```{r bad_code_block, eval = FALSE}
 my_func = function(x){
     if(x > 0){
         print("Positive")
@@ -26,6 +26,7 @@ my_func = function(x){
     }
     return(T)
 }
+
 ```
 
 Running `lintr::lint()` on this file would produce the following output:
@@ -33,18 +34,8 @@ Running `lintr::lint()` on this file would produce the following output:
 lintr::lint("bad.R")
 ```
 
-```{r, echo = FALSE}
-bad_code <- '
-my_func = function(x){
-    if(x > 0){
-        print("Positive")
-    }
-    else {
-        print("Not positive")
-    }
-    return(T)
-}
-'
+```{r, echo = FALSE, comment = ""}
+bad_code <- knitr::knit_code$get("bad_code_block")
 local({
   code_file <- tempfile()
   on.exit(unlink(code_file))
