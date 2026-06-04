@@ -41,6 +41,40 @@ test_that("paste_linter blocks simple disallowed usages for sep=''", {
     rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
     paste_linter()
   )
+
+  expect_lint(
+    "paste('a', 'b', expression(2), sep = '')",
+    rex::rex('paste0(...) is better than paste(..., sep = "").'),
+    paste_linter()
+  )
+
+  expect_lint(
+    "c(expression(paste('a', 'b', sep = ',')))",
+    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
+    paste_linter()
+  )
+  expect_lint(
+    "c(expression(paste('a', 'b', sep = '')))",
+    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
+    paste_linter()
+  )
+
+  # Bug 1: Multiple lints in same expression, one inside expression(), one outside
+  expect_lint(
+    "{\n  paste('a', sep = '')\n  expression(paste('b', sep = ''))\n}",
+    list(
+      rex::rex('paste0(...) is better than paste(..., sep = "").'),
+      rex::rex("inside expression(...), paste does not accept a 'sep' argument.")
+    ),
+    paste_linter()
+  )
+
+  # Bug 2: Nested expression
+  expect_lint(
+    "expression(italic(paste('a', sep = '')))",
+    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
+    paste_linter()
+  )
 })
 
 test_that("paste_linter skips allowed usages for collapse=', '", {
