@@ -116,6 +116,11 @@
 #'   linters = paste_linter()
 #' )
 #'
+#' lint(
+#'   text = 'expression(paste("a", "b"))',
+#'   linters = paste_linter()
+#' )
+#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paste_linter <- function(allow_empty_sep = FALSE,

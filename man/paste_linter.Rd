@@ -128,6 +128,11 @@ lint(
   linters = paste_linter()
 )
 
+lint(
+  text = 'expression(paste("a", "b"))',
+  linters = paste_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
