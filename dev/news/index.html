@@ -67,6 +67,8 @@
 <code><a href="../reference/repeat_linter.html">repeat_linter()</a></code> no longer errors when <code>while</code> is in a column to the right of <code>}</code> (<a href="https://github.com/r-lib/lintr/issues/2828" class="external-link">#2828</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 <li>
 <code>get_source_expression(lines=)</code> and <code>lint(text=)</code> correctly handle text with unmarked encoding (<a href="https://github.com/r-lib/lintr/issues/3046" class="external-link">#3046</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code>lint(exclude=)</code> doesn’t fail cryptically when provided a regex with capture groups (<a href="https://github.com/r-lib/lintr/issues/2831" class="external-link">#2831</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>

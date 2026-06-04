@@ -45,6 +45,9 @@
   text with unmarked encoding
   ([\#3046](https://github.com/r-lib/lintr/issues/3046),
   [@MichaelChirico](https://github.com/MichaelChirico)).
+- `lint(exclude=)` doesn’t fail cryptically when provided a regex with
+  capture groups ([\#2831](https://github.com/r-lib/lintr/issues/2831),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
 
 ### New and improved features
 
