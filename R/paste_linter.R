@@ -135,7 +135,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
   following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST] and not({ancestor_expr_cond})]
     /parent::expr
   ")
-  paste_sep_xpath <- glue("
+  expression_paste_sep_xpath <- glue("
   following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST] and {ancestor_expr_cond}]
     /parent::expr
   ")

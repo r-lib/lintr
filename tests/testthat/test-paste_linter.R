@@ -10,7 +10,7 @@ test_that("paste_linter skips allowed usages for sep=''", {
   expect_no_lint("paste0('a', 'b', 'c')", linter)
   expect_no_lint("expression(2); paste('a', 'b', 'c', sep = ',')", linter)
   expect_no_lint("paste('a', 'b', expression(2), sep = ',')", linter)
-  expect_no_lint("expression(paste('a', 'b')", linter)
+  expect_no_lint("expression(paste('a', 'b'))", linter)
 })
 
 test_that("paste_linter blocks simple disallowed usages for sep=''", {
@@ -29,13 +29,20 @@ test_that("paste_linter blocks simple disallowed usages for sep=''", {
 
   # Correct differentiation of lints in/out of expression()
   expect_lint(
-    trim_some("{
-      paste('a', sep = '')
-      expression(paste('b', sep = ''))
-    }"),
+    trim_some('{
+      expression(paste(x, y, sep=""))
+      paste(x, y, sep="")
+      expression(paste(a, b, sep=""))
+      paste(a, b, sep="")
+      expression(c(paste(d, e, sep=""), paste(f, g), paste(h, i, sep="")))
+    }'),
     list(
-      list(paste_sep_msg, line_number = 2L),
-      list(expr_sep_msg, line_number = 3L)
+      list(expr_sep_msg, line_number = 2L),
+      list(paste_sep_msg, line_number = 3L),
+      list(expr_sep_msg, line_number = 4L),
+      list(paste_sep_msg, line_number = 5L),
+      list(expr_sep_msg, line_number = 6L, column_number = 16L),
+      list(expr_sep_msg, line_number = 6L, column_number = 50L)
     ),
     linter
   )
