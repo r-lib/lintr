@@ -15,7 +15,7 @@ test_that("xp_call_name input validation works", {
   expect_error(xp_call_name(2L), "`expr` must be an <xml_nodeset>", fixed = TRUE)
 
   xml <- xml2::read_xml("<a></a>")
-  expect_error(xp_call_name(xml, depth = -1L), "depth >= 0", fixed = TRUE)
-  expect_error(xp_call_name(xml, depth = "1"), "is.numeric(depth)", fixed = TRUE)
-  expect_error(xp_call_name(xml, condition = 1L), "is.character(condition)", fixed = TRUE)
+  expect_error(xp_call_name(xml, depth = -1L), "`depth` must be a non-negative number", fixed = TRUE)
+  expect_error(xp_call_name(xml, depth = "1"), "`depth` must be a non-negative number", fixed = TRUE)
+  expect_error(xp_call_name(xml, condition = 1L), "`condition` must be a character vector or NULL", fixed = TRUE)
 })

@@ -29,7 +29,7 @@ when it comes at the beginning or end of the input, to avoid requiring empty inp
 The following issues are linted by default by this linter
 (see arguments for which can be de-activated optionally):
 \enumerate{
-\item Block usage of \code{\link[base:paste]{base::paste()}} with \code{sep = ""}. \code{\link[base:paste]{base::paste0()}} is a faster, more concise alternative;
+\item Block usage of \code{\link[base:paste]{base::paste()}} with \code{sep = ""}. \code{\link[base:paste0]{base::paste0()}} is a faster, more concise alternative;
 this is valid unless \code{paste} occurs inside \link[base:expression]{base::expression}, which according to \link[grDevices:plotmath]{grDevices::plotmath}
 does not support the \code{sep} argument.
 \item Block usage of \code{paste()} or \code{paste0()} with \code{collapse = ", "}. \code{\link[=toString]{toString()}} is a direct

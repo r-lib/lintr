@@ -242,11 +242,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     expected_indent_levels <- integer(length(indent_levels))
     is_hanging <- logical(length(indent_levels))
 
-    indent_changes <- xml_find_all(xml, xp_indent_changes)
+    indent_changes <- xml_find_all_(xml, xp_indent_changes)
     change_types <- vapply(indent_changes, find_indent_type, character(1L))
-    change_begins <- as.integer(xml_attr(indent_changes, "line1")) + 1L
-    change_ends <- xml_find_num(indent_changes, xp_block_ends)
-    col2s <- as.integer(xml_attr(indent_changes, "col2"))
+    change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
+    change_ends <- xml_find_num_(indent_changes, xp_block_ends)
+    col2s <- as.integer(xml_attr_(indent_changes, "col2"))
     for (ii in which(change_begins <= change_ends)) {
       to_indent <- seq(from = change_begins[ii], to = change_ends[ii])
       expected_indent_levels[to_indent] <- find_new_indent(
@@ -259,11 +259,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     }
 
     in_str_const <- logical(length(indent_levels))
-    multiline_strings <- xml_find_all(xml, xp_multiline_string)
+    multiline_strings <- xml_find_all_(xml, xp_multiline_string)
     for (string in multiline_strings) {
       is_in_str <- seq(
-        from = as.integer(xml_attr(string, "line1")) + 1L,
-        to = as.integer(xml_attr(string, "line2"))
+        from = as.integer(xml_attr_(string, "line1")) + 1L,
+        to = as.integer(xml_attr_(string, "line2"))
       )
       in_str_const[is_in_str] <- TRUE
     }
@@ -314,13 +314,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       type = "style",
       message = lint_messages,
       line = unname(source_expression$file_lines[bad_lines]),
-      # TODO(#2467): Use ranges = apply(lint_ranges, 1L, list, simplify = FALSE).
-      ranges = lapply(
-        seq_along(bad_lines),
-        function(i) {
-          list(lint_ranges[i, ])
-        }
-      )
+      ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
     )
   })
 }
@@ -384,11 +378,11 @@ build_indentation_style_tidy <- function() {
   )
 
   function(change) {
-    if (length(xml_find_first(change, xp_is_double_indent)) > 0L) {
+    if (length(xml_find_first_(change, xp_is_double_indent)) > 0L) {
       "double"
-    } else if (length(xml_find_first(change, xp_suppress)) > 0L) {
+    } else if (length(xml_find_first_(change, xp_suppress)) > 0L) {
       "suppress"
-    } else if (length(xml_find_first(change, xp_is_not_hanging)) == 0L) {
+    } else if (length(xml_find_first_(change, xp_is_not_hanging)) == 0L) {
       "hanging"
     } else {
       "block"
@@ -413,7 +407,7 @@ build_indentation_style_always <- function() {
   )
 
   function(change) {
-    if (length(xml_find_first(change, xp_is_not_hanging)) == 0L) {
+    if (length(xml_find_first_(change, xp_is_not_hanging)) == 0L) {
       "hanging"
     } else {
       "block"

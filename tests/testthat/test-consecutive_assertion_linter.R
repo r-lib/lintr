@@ -1,20 +1,19 @@
 test_that("consecutive_assertion_linter skips allowed usages", {
   linter <- consecutive_assertion_linter()
-  expect_lint("stopifnot(x)", NULL, linter)
-  expect_lint("stopifnot(x, y, z)", NULL, linter)
+  expect_no_lint("stopifnot(x)", linter)
+  expect_no_lint("stopifnot(x, y, z)", linter)
 
   # intervening expression
-  expect_lint("stopifnot(x); y; stopifnot(z)", NULL, linter)
+  expect_no_lint("stopifnot(x); y; stopifnot(z)", linter)
 
   # inline or potentially with gaps don't matter
-  expect_lint(
+  expect_no_lint(
     trim_some("
       stopifnot(x)
       y
-  
+
       stopifnot(z)
     "),
-    NULL,
     linter
   )
 })
@@ -33,7 +32,7 @@ test_that("consecutive_assertion_linter blocks simple disallowed usages", {
   expect_lint(
     trim_some("
       stopifnot(x)
-  
+
       stopifnot(y, z)
     "),
     lint_msg,
@@ -64,15 +63,15 @@ test_that("assert_that usages are handled correctly too", {
   linter <- consecutive_assertion_linter()
   lint_msg <- rex::rex("Unify consecutive calls to assert_that().")
 
-  expect_lint("assert_that(x)", NULL, linter)
-  expect_lint("assertthat::assert_that(x, y, z)", NULL, linter)
+  expect_no_lint("assert_that(x)", linter)
+  expect_no_lint("assertthat::assert_that(x, y, z)", linter)
 
   # if msg= is used, can't necessarily combine
   lines <- trim_some("
     assert_that(x, msg = 'bad x')
     assert_that(y, msg = 'bad y')
   ")
-  expect_lint(lines, NULL, linter)
+  expect_no_lint(lines, linter)
 
   # one test of inline usage
   expect_lint(
@@ -90,12 +89,11 @@ test_that("assert_that usages are handled correctly too", {
 })
 
 test_that("Mixing test functions is fine", {
-  expect_lint(
+  expect_no_lint(
     trim_some("
       assert_that(x)
       stopifnot(y)
     "),
-    NULL,
     consecutive_assertion_linter()
   )
 })
@@ -117,7 +115,7 @@ test_that("lints vectorize", {
 })
 
 test_that("interceding = assignments aren't linted", {
-  expect_lint(
+  expect_no_lint(
     trim_some("{
       stopifnot(A)
       x = 1
@@ -127,7 +125,6 @@ test_that("interceding = assignments aren't linted", {
       z = 3
       assert_that(D)
     }"),
-    NULL,
     consecutive_assertion_linter()
   )
 })

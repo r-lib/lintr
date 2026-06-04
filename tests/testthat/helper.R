@@ -57,12 +57,6 @@ with_config <- function(contents, code, config_dir = ".", filename = ".lintr") {
   code
 }
 
-skip_if_not_r_version <- function(min_version) {
-  if (getRversion() < min_version) {
-    testthat::skip(paste("R version at least", min_version, "is required"))
-  }
-}
-
 skip_if_not_utf8_locale <- function() {
   testthat::skip_if_not(l10n_info()[["UTF-8"]], "Not a UTF-8 locale")
 }

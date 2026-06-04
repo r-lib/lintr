@@ -94,7 +94,8 @@ package_hooks_linter <- function() {
   #   exiting early if not.
   any_hook_xpath <- glue("(//FUNCTION | //OP-LAMBDA)/parent::expr/preceding-sibling::expr/SYMBOL[{ns_calls}]")
 
-  hook_xpath <- sprintf("string(./ancestor::expr/expr/SYMBOL[%s])", ns_calls)
+  # * for '=' assignment
+  hook_xpath <- sprintf("string(./ancestor::*/expr/SYMBOL[%s])", ns_calls)
 
   load_arg_name_xpath <- "
   (//FUNCTION | //OP-LAMBDA)
@@ -139,14 +140,14 @@ package_hooks_linter <- function() {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    any_hook <- xml_find_first(xml, any_hook_xpath)
+    any_hook <- xml_find_first_(xml, any_hook_xpath)
     if (is.na(any_hook)) {
       return(list())
     }
 
     # inherits: source_expression, bad_call_xpaths
     bad_msg_call_lints <- function(xml, hook) {
-      bad_expr <- xml_find_all(xml, bad_call_xpaths[[hook]])
+      bad_expr <- xml_find_all_(xml, bad_call_xpaths[[hook]])
       lint_message <- make_bad_call_lint_message(bad_expr, hook)
       xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
     }
@@ -156,21 +157,21 @@ package_hooks_linter <- function() {
     onattach_bad_msg_call_lints <- bad_msg_call_lints(xml, ".onAttach")
 
     # (2) .onLoad() and .onAttach() should take two arguments, with names matching ^lib and ^pkg
-    load_arg_name_expr <- xml_find_all(xml, load_arg_name_xpath)
+    load_arg_name_expr <- xml_find_all_(xml, load_arg_name_xpath)
 
     load_arg_name_message <- sprintf(
       "%s() should take two arguments, with the first starting with 'lib' and the second starting with 'pkg'.",
-      xml_find_chr(load_arg_name_expr, hook_xpath)
+      xml_find_chr_(load_arg_name_expr, hook_xpath)
     )
     load_arg_name_lints <-
       xml_nodes_to_lints(load_arg_name_expr, source_expression, load_arg_name_message, type = "warning")
 
     # (3) .onLoad() and .onAttach() shouldn't call require(), library(), or installed.packages()
     # NB: base only checks the SYMBOL_FUNCTION_CALL version, not SYMBOL.
-    library_require_expr <- xml_find_all(xml, library_require_xpath)
+    library_require_expr <- xml_find_all_(xml, library_require_xpath)
 
     library_require_bad_call <- xml_text(library_require_expr)
-    library_require_hook <- xml_find_chr(library_require_expr, hook_xpath)
+    library_require_hook <- xml_find_chr_(library_require_expr, hook_xpath)
     library_require_message <- character(length(library_require_bad_call))
     is_installed_packages <- library_require_bad_call == "installed.packages"
     library_require_message[is_installed_packages] <-
@@ -181,21 +182,21 @@ package_hooks_linter <- function() {
       xml_nodes_to_lints(library_require_expr, source_expression, library_require_message, type = "warning")
 
     # (4) .Last.lib() and .onDetach() shouldn't call library.dynam.unload()
-    bad_unload_call_expr <- xml_find_all(xml, bad_unload_call_xpath)
+    bad_unload_call_expr <- xml_find_all_(xml, bad_unload_call_xpath)
 
     bad_unload_call_message <- sprintf(
       "Use library.dynam.unload() calls in .onUnload(), not %s().",
-      xml_find_chr(bad_unload_call_expr, hook_xpath)
+      xml_find_chr_(bad_unload_call_expr, hook_xpath)
     )
     bad_unload_call_lints <-
       xml_nodes_to_lints(bad_unload_call_expr, source_expression, bad_unload_call_message, type = "warning")
 
     # (5) .Last.lib(), .onDetach(), and .onUnload() should take one argument with name matching ^lib
-    unload_arg_name_expr <- xml_find_all(xml, unload_arg_name_xpath)
+    unload_arg_name_expr <- xml_find_all_(xml, unload_arg_name_xpath)
 
     unload_arg_name_message <- sprintf(
       "%s() should take one argument starting with 'lib'.",
-      xml_find_chr(unload_arg_name_expr, hook_xpath)
+      xml_find_chr_(unload_arg_name_expr, hook_xpath)
     )
     unload_arg_name_lints <-
       xml_nodes_to_lints(unload_arg_name_expr, source_expression, unload_arg_name_message, type = "warning")

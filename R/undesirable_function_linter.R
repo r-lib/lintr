@@ -75,12 +75,13 @@
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   if (is.list(fun)) fun <- unlist(fun)
-  stopifnot(
-    is.logical(symbol_is_undesirable),
-    # allow (uncoerced->implicitly logical) 'NA'
-    `\`fun\` should be a non-empty character vector` =
-      length(fun) > 0L && (is.character(fun) || all(is.na(fun)))
-  )
+  if (!is.logical(symbol_is_undesirable)) {
+    cli_abort("{.arg symbol_is_undesirable} must be a logical, not {.obj_type_friendly {symbol_is_undesirable}}.")
+  }
+  # allow (uncoerced->implicitly logical) 'NA'
+  if (length(fun) == 0L || !(is.character(fun) || all(is.na(fun)))) {
+    cli_abort("{.arg fun} must be a non-empty character vector.")
+  }
 
   nm <- names2(fun)
   implicit_idx <- !nzchar(nm)
@@ -114,9 +115,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     xml <- source_expression$xml_parsed_content
     xml_calls <- source_expression$xml_find_function_calls(names(fun))
 
-    matched_nodes <- xml_find_all(xml_calls, xpath)
+    matched_nodes <- xml_find_all_(xml_calls, xpath)
     if (symbol_is_undesirable) {
-      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all(xml, symbol_xpath))
+      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all_(xml, symbol_xpath))
     }
 
     fun_names <- get_r_string(matched_nodes)

@@ -43,8 +43,8 @@ pipe_consistency_linter <- function(pipe = c("|>", "%>%", "auto")) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    match_magrittr <- xml_find_all(xml, xpath_magrittr)
-    match_native <- xml_find_all(xml, xpath_native)
+    match_magrittr <- xml_find_all_(xml, xpath_magrittr)
+    match_native <- xml_find_all_(xml, xpath_native)
 
     n_magrittr <- length(match_magrittr)
     n_native <- length(match_native)

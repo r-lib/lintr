@@ -17,8 +17,27 @@ test_that("if_switch_linter skips allowed usages", {
   # simple cases with two conditions might be more natural
   #   without switch(); require at least three branches to trigger a lint
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2", linter)
+  # not thrown by raw strings
+  expect_no_lint("if (x == 'a') 1 else if (x == R'(b)') 2", linter)
   # still no third if() clause
   expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else 3", linter)
+  # not thrown by raw strings
+  expect_no_lint("if (x == 'a') 1 else if (x == R'(b)') 2 else 3", linter)
+
+  # empty string comparisons can't use switch()
+  expect_no_lint("if (x == '') 1 else if (x == 'a') 2 else if (x == 'b') 3", linter)
+  expect_no_lint('if (x == "") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == '') 2 else if (x == 'b') 3", linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == '') 3", linter)
+  expect_no_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == 'c') 3 else if (x == '') 4", linter)
+})
+
+test_that("if_switch_linter handles raw empty strings", {
+  linter <- if_switch_linter()
+
+  # raw empty strings can't use switch() either
+  expect_no_lint('if (x == R"--()--") 1 else if (x == "a") 2 else if (x == "b") 3', linter)
+  expect_no_lint('if (x == R"()") 1 else if (x == R"{}") 2 else if (x == R"[]") 3', linter)
 })
 
 test_that("if_switch_linter blocks simple disallowed usages", {
@@ -27,6 +46,8 @@ test_that("if_switch_linter blocks simple disallowed usages", {
 
   # anything with >= 2 equality statements is deemed switch()-worthy
   expect_lint("if (x == 'a') 1 else if (x == 'b') 2 else if (x == 'c') 3", lint_msg, linter)
+  # regardless of raw strings
+  expect_lint("if (x == 'a') 1 else if (x == r'(b)') 2 else if (x == R'--[c]--') 3", lint_msg, linter)
   # expressions are also OK
   expect_lint("if (foo(x) == 'a') 1 else if (foo(x) == 'b') 2 else if (foo(x) == 'c') 3", lint_msg, linter)
   # including when comments are present
@@ -77,6 +98,20 @@ test_that("multiple lints have right metadata", {
       } else if (y == 'C') {
         do_C()
       }
+      if (z1 == 'a') {
+        do_a()
+      } else if (z2 == 'b') {
+        do_b()
+      } else if (z3 == 'c') {
+        do_c()
+      }
+      if (a == '1') {
+        do_1()
+      } else if (a == '2') {
+        do_2()
+      } else if (a == '') {
+        do_blank()
+      }
     }"),
     list(
       list(lint_msg, line_number = 2L),
@@ -86,7 +121,8 @@ test_that("multiple lints have right metadata", {
   )
 })
 
-test_that("max_branch_lines= and max_branch_expressions= arguments work", { # nofuzz
+# fuzzer disable: comment_injection
+test_that("max_branch_lines= and max_branch_expressions= arguments work", {
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_lines4_linter <- if_switch_linter(max_branch_lines = 4L)
   max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
@@ -225,7 +261,7 @@ test_that("max_branch_lines= and max_branch_expressions= arguments work", { # no
   expect_no_lint(five_expr_three_lines_lines, max_expr4_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expressions= block over-complex switch() too", { # nofuzz
+test_that("max_branch_lines= and max_branch_expressions= block over-complex switch() too", {
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_lines4_linter <- if_switch_linter(max_branch_lines = 4L)
   max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
@@ -388,7 +424,7 @@ test_that("max_branch_lines= and max_branch_expressions= block over-complex swit
   expect_lint(five_expr_three_lines_lines, lint_msg, max_expr4_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expressions= interact correctly", { # nofuzz
+test_that("max_branch_lines= and max_branch_expressions= interact correctly", {
   linter <- if_switch_linter(max_branch_lines = 5L, max_branch_expressions = 3L)
   lint_msg <- rex::rex("Prefer switch() statements over repeated if/else equality tests")
 
@@ -438,7 +474,7 @@ test_that("max_branch_lines= and max_branch_expressions= interact correctly", { 
   )
 })
 
-test_that("max_branch_lines= and max_branch_expressions= work for a terminal 'else' branch", { # nofuzz
+test_that("max_branch_lines= and max_branch_expressions= work for a terminal 'else' branch", {
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
   lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
@@ -481,7 +517,7 @@ test_that("max_branch_lines= and max_branch_expressions= work for a terminal 'el
   expect_lint(default_long_lines, lint_msg, max_expr2_linter)
 })
 
-test_that("max_branch_lines= and max_branch_expressions= are guided by the most complex branch", { # nofuzz
+test_that("max_branch_lines= and max_branch_expressions= are guided by the most complex branch", {
   max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
   max_expr2_linter <- if_switch_linter(max_branch_expressions = 2L)
   lint_msg <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
@@ -520,3 +556,4 @@ test_that("max_branch_lines= and max_branch_expressions= are guided by the most 
   expect_lint(switch_one_branch_lines, lint_msg, max_lines2_linter)
   expect_lint(switch_one_branch_lines, lint_msg, max_expr2_linter)
 })
+# fuzzer enable: comment_injection

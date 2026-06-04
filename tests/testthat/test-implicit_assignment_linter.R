@@ -1,3 +1,4 @@
+# fuzzer disable: assignment
 test_that("implicit_assignment_linter skips allowed usages", {
   linter <- implicit_assignment_linter()
 
@@ -127,6 +128,12 @@ test_that("implicit_assignment_linter respects except argument", {
   expect_no_lint(
     "local(a <- 1L)",
     implicit_assignment_linter(except = "local")
+  )
+
+  expect_error(
+    implicit_assignment_linter(except = 1L),
+    "`except` must be a character",
+    fixed = TRUE
   )
 })
 
@@ -516,3 +523,4 @@ test_that("allow_paren_print allows `(` for auto printing", {
   print_msg <- rex::rex("Call print() explicitly instead of relying on implicit printing behavior via '('.")
   expect_lint("(a <- foo())", print_msg, implicit_assignment_linter())
 })
+# fuzzer enable: assignment

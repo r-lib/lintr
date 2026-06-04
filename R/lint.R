@@ -78,8 +78,10 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
 
   lints <- lint_impl_(linters, lint_cache, filename, source_expressions)
 
-  lints <- maybe_append_condition_lints(lints, source_expressions, lint_cache, filename)
-  lints <- reorder_lints(flatten_lints(lints))
+  lints <- lints |>
+    maybe_append_condition_lints(source_expressions, lint_cache, filename) |>
+    flatten_lints() |>
+    reorder_lints()
   class(lints) <- c("lints", "list")
 
   cache_file(lint_cache, filename, linters, lints)
@@ -676,7 +678,9 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
 #' @param filename The file name of the output report
 #' @export
 gitlab_output <- function(lints, filename = "lintr_results.json") {
-  stopifnot(inherits(lints, "lints"))
+  if (!inherits(lints, "lints")) {
+    cli_abort("{.arg lints} must be a {.cls lints} object, not {.obj_type_friendly {lints}}.")
+  }
   if (!requireNamespace("jsonlite", quietly = TRUE)) {
     cli_abort("{.pkg jsonlite} is required to produce Gitlab reports. Please install to continue.") # nocov
   }
@@ -767,13 +771,17 @@ maybe_append_condition_lints <- function(lints, source_expression, lint_cache, f
 }
 
 get_lines <- function(filename, text) {
+  encoding <- NULL
   if (!is.null(text)) {
-    strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+    lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
   } else if (re_matches(filename, rex(newline))) {
-    strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
+    lines <- strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
-    read_lines(filename)
+    lines <- read_lines(filename)
+    encoding <- settings$encoding
   }
+
+  ensure_utf8(lines, encoding)
 }
 
 zap_temp_filename <- function(res, needs_tempfile) {

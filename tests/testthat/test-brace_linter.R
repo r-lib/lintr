@@ -1,4 +1,4 @@
-# nofuzz start
+# fuzzer disable: comment_injection
 test_that("brace_linter lints braces correctly", {
   open_curly_msg <- rex::rex(
     "Opening curly braces should never go on their own line"
@@ -631,4 +631,4 @@ test_that("function shorthand is treated like 'full' function", {
     linter
   )
 })
-# nofuzz end
+# fuzzer enable: comment_injection

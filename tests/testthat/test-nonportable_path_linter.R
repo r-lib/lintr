@@ -8,17 +8,17 @@ test_that("nonportable_path_linter skips allowed usages", {
     encodeString("hello\nthere!")
   )
   for (path in non_path_strings) {
-    expect_lint(single_quote(path), NULL, linter)
-    expect_lint(double_quote(path), NULL, linter)
+    expect_no_lint(single_quote(path), linter)
+    expect_no_lint(double_quote(path), linter)
   }
 
-  expect_lint("\"'/foo'\"", NULL, linter) # nested quotes
+  expect_no_lint("\"'/foo'\"", linter) # nested quotes
 
   # system root
   root_path_strings <- c("/", "~", "c:", ".")
   for (path in root_path_strings) {
-    expect_lint(single_quote(path), NULL, linter)
-    expect_lint(double_quote(path), NULL, linter)
+    expect_no_lint(single_quote(path), linter)
+    expect_no_lint(double_quote(path), linter)
   }
 })
 
@@ -53,8 +53,8 @@ test_that("nonportable_path_linter's lax argument works", {
     "/foo", encodeString("/a\nsdf/bar"), "/as:df/bar"
   )
   for (path in unlikely_path_strings) {
-    expect_lint(single_quote(path), NULL, linter)
-    expect_lint(double_quote(path), NULL, linter)
+    expect_no_lint(single_quote(path), linter)
+    expect_no_lint(double_quote(path), linter)
   }
 })
 

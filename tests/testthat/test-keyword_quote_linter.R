@@ -109,7 +109,7 @@ test_that("keyword_quote_linter blocks quoted assignment targets", {
   expect_lint('1 -> "a b"', backtick_msg, linter)
 })
 
-test_that("keyword_quote_linter blocks quoted $, @ extractions", { # nofuzz
+test_that("keyword_quote_linter blocks quoted $, @ extractions", { # nofuzz: dollar_at
   linter <- keyword_quote_linter()
   backtick_msg <- rex::rex("Use backticks to create non-syntactic names, not quotes.")
   dollar_msg <- rex::rex("Only quote targets of extraction with $ if necessary")
@@ -131,7 +131,7 @@ test_that("keyword_quote_linter blocks quoted $, @ extractions", { # nofuzz
   expect_lint("x@`foo` = 1", at_msg, linter)
 })
 
-test_that("multiple lints are generated correctly", { # nofuzz
+test_that("multiple lints are generated correctly", { # nofuzz: dollar_at
   linter <- keyword_quote_linter()
 
   expect_lint(

@@ -57,7 +57,7 @@ todo_comment_linter <- function(todo = c("todo", "fixme"), except_regex = NULL) 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    comment_expr <- xml_find_all(xml, "//COMMENT")
+    comment_expr <- xml_find_all_(xml, "//COMMENT")
     comment_text <- xml_text(comment_expr)
     invalid_todo <- re_matches_logical(comment_text, todo_comment_regex, ignore.case = TRUE)
     if (!is.null(valid_todo_regex)) {

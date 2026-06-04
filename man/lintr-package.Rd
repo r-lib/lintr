@@ -6,8 +6,10 @@
 \alias{lintr-package}
 \title{Lintr}
 \description{
-Checks adherence to a given style, syntax errors, and possible semantic issues.
-Supports on the fly checking of R code edited with Emacs, Vim, and Sublime Text.
+Checks adherence to a given style, syntax errors, and possible semantic
+issues.
+Supports on the fly checking of R code edited with Emacs, Vim, and
+Sublime Text.
 }
 \seealso{
 \code{\link[=lint]{lint()}}, \code{\link[=lint_package]{lint_package()}}, \code{\link[=lint_dir]{lint_dir()}}, \link{linters}
@@ -17,13 +19,15 @@ Supports on the fly checking of R code edited with Emacs, Vim, and Sublime Text.
 
 Authors:
 \itemize{
+  \item Michael Chirico \email{michaelchirico4@gmail.com} (\href{https://orcid.org/0000-0003-0787-087X}{ORCID})
   \item Jim Hester
-  \item Florent Angly (fangly)
+  \item Florent Angly (GitHub: fangly)
   \item Russ Hyde
   \item Kun Ren
-  \item Alexander Rosenstock (AshesITR)
+  \item Alexander Rosenstock (GitHub: AshesITR)
   \item Indrajeet Patil \email{patilindrajeet.science@gmail.com} (\href{https://orcid.org/0000-0003-1995-6531}{ORCID})
   \item Hugo Gruson (\href{https://orcid.org/0000-0002-4094-1476}{ORCID})
+  \item Emmanuel Ferdman
 }
 
 }

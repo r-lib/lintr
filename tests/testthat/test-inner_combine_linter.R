@@ -68,13 +68,13 @@ test_that("inner_combine_linter is order-agnostic for matching arguments", {
 })
 
 test_that("c() with ...length()=1 is OK", {
-  expect_lint("c(exp())", NULL, inner_combine_linter())
+  expect_no_lint("c(exp())", inner_combine_linter())
 })
 
 skip_if_not_installed("tibble")
 patrick::with_parameters_test_that(
   "inner_combine_linter skips allowed usages:",
-  expect_lint(expr, NULL, inner_combine_linter()),
+  expect_no_lint(expr, inner_combine_linter()),
   .cases = tibble::tribble(
     ~.test_name,                      ~expr,
     "simple sin()",                   "x <- sin(1:10)",

@@ -66,12 +66,12 @@ sample_int_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("sample")
-    bad_expr <- xml_find_all(xml_calls, xpath)
+    bad_expr <- xml_find_all_(xml_calls, xpath)
 
     first_call <- xp_call_name(bad_expr, depth = 2L)
     original <- sprintf("%s(n)", first_call)
-    original[!is.na(xml_find_first(bad_expr, "expr[2]/OP-COLON"))] <- "1:n"
-    original[!is.na(xml_find_first(bad_expr, "expr[2]/NUM_CONST"))] <- "n"
+    original[!is.na(xml_find_first_(bad_expr, "expr[2]/OP-COLON"))] <- "1:n"
+    original[!is.na(xml_find_first_(bad_expr, "expr[2]/NUM_CONST"))] <- "n"
 
     xml_nodes_to_lints(
       bad_expr,

@@ -1,13 +1,13 @@
 test_that("object_overwrite_linter skips allowed usages", {
   linter <- object_overwrite_linter()
 
-  expect_lint("function() DT <- data.frame(a = 1)", NULL, linter)
+  expect_no_lint("function() DT <- data.frame(a = 1)", linter)
 
   # don't block names subassigned e.g. as columns or list elements
-  expect_lint("function() x$sd <- sd(rnorm(100))", NULL, linter)
+  expect_no_lint("function() x$sd <- sd(rnorm(100))", linter)
 
   # These virtual names are ignored to slightly reduce the search space
-  expect_lint("function() .__C__logical <- TRUE", NULL, linter)
+  expect_no_lint("function() .__C__logical <- TRUE", linter)
 })
 
 test_that("object_overwrite_linter blocks simple disallowed usages", {
@@ -94,32 +94,32 @@ test_that("Non-syntactic names are matched & linted (#2346)", {
 test_that("object_overwrite_linter skips any name assigned at the top level", {
   linter <- object_overwrite_linter()
 
-  expect_lint("data <- mtcars", NULL, linter)
-  expect_lint("sigma <- sd(rnorm(100))", NULL, linter)
+  expect_no_lint("data <- mtcars", linter)
+  expect_no_lint("sigma <- sd(rnorm(100))", linter)
 })
 
 test_that("object_overwrite_linter skips argument names", {
   linter <- object_overwrite_linter()
 
-  expect_lint("foo <- function(data) data <- data + 1", NULL, linter)
+  expect_no_lint("foo <- function(data) data <- data + 1", linter)
+  expect_no_lint("foo <- function(data) data = data + 1", linter)
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       bar <- function(a, b, c, sigma) {
         sigma <- a * b * c ^ sigma
       }
     "),
-    NULL,
     linter
   )
 })
 
 test_that("object_overwrite_linter skips data.table assignments with :=", {
-  expect_lint("foo <- function() x[, title := 4]", NULL, object_overwrite_linter())
+  expect_no_lint("foo <- function() x[, title := 4]", object_overwrite_linter())
 })
 
 test_that("object_overwrite_linter optionally accepts package names", {
-  expect_lint("function() data <- 1", NULL, object_overwrite_linter(packages = "base"))
+  expect_no_lint("function() data <- 1", object_overwrite_linter(packages = "base"))
 
   expect_lint(
     "function() lint <- TRUE",
@@ -143,7 +143,7 @@ test_that("shorthand lambda is detected", {
 })
 
 test_that("allow_names= works to ignore certain symbols", {
-  expect_lint("function() data <- 1", NULL, object_overwrite_linter(allow_names = "data"))
+  expect_no_lint("function() data <- 1", object_overwrite_linter(allow_names = "data"))
 })
 
 test_that("lints vectorize", {

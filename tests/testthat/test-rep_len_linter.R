@@ -2,17 +2,17 @@ test_that("rep_len_linter skips allowed usages", {
   linter <- rep_len_linter()
 
   # only catch length.out usages
-  expect_lint("rep(x, y)", NULL, linter)
-  expect_lint("rep(1:10, 2)", NULL, linter)
-  expect_lint("rep(1:10, 10:1)", NULL, linter)
+  expect_no_lint("rep(x, y)", linter)
+  expect_no_lint("rep(1:10, 2)", linter)
+  expect_no_lint("rep(1:10, 10:1)", linter)
 
   # usage of each is not compatible with rep_len; see ?rep.
-  expect_lint("rep(x, each = 4, length.out = 50)", NULL, linter)
+  expect_no_lint("rep(x, each = 4, length.out = 50)", linter)
   # each is implicitly the 4th positional argument. a very strange usage
   #   (because length.out is ignored), but doesn't hurt to catch it
-  expect_lint("rep(a, b, length.out = c, d)", NULL, linter)
+  expect_no_lint("rep(a, b, length.out = c, d)", linter)
   # ditto for implicit length.out=
-  expect_lint("rep(a, b, c, d)", NULL, linter)
+  expect_no_lint("rep(a, b, c, d)", linter)
 })
 
 test_that("rep_len_linter blocks simple disallowed usages", {

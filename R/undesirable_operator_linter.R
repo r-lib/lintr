@@ -74,12 +74,13 @@
 undesirable_operator_linter <- function(op = default_undesirable_operators,
                                         call_is_undesirable = TRUE) {
   if (is.list(op)) op <- unlist(op)
-  stopifnot(
-    is.logical(call_is_undesirable),
-    # allow (uncoerced->implicitly logical) 'NA'
-    `\`op\` should be a non-empty character vector` =
-      length(op) > 0L && (is.character(op) || all(is.na(op)))
-  )
+  if (!is.logical(call_is_undesirable)) {
+    cli_abort("{.arg call_is_undesirable} must be a logical, not {.obj_type_friendly {call_is_undesirable}}.")
+  }
+  # allow (uncoerced->implicitly logical) 'NA'
+  if (length(op) == 0L || !(is.character(op) || all(is.na(op)))) {
+    cli_abort("{.arg op} must be a non-empty character vector.")
+  }
 
   nm <- names2(op)
   implicit_idx <- !nzchar(nm)
@@ -116,18 +117,24 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    op_calls <- source_expression$xml_find_function_calls(quoted_op)
 
-    infix_expr <- xml_find_all(xml, infix_xpath)
+    infix_expr <- xml_find_all_(xml, infix_xpath)
 
-    operator <- c(xml_text(infix_expr), gsub("^`|`$", "", xml_text(op_calls)))
+    all_expr <- infix_expr
+    operator <- xml_text(infix_expr)
+    if (call_is_undesirable) {
+      op_calls <- source_expression$xml_find_function_calls(quoted_op)
+      all_expr <- combine_nodesets(all_expr, op_calls)
+      operator <- c(operator, gsub("^`|`$", "", xml_text(op_calls)))
+    }
+
     lint_message <- sprintf("Avoid undesirable operator `%s`.", operator)
     alternative <- op[operator]
     has_alternative <- !is.na(alternative)
     lint_message[has_alternative] <- paste(lint_message[has_alternative], alternative[has_alternative])
 
     xml_nodes_to_lints(
-      combine_nodesets(infix_expr, op_calls),
+      all_expr,
       source_expression,
       lint_message,
       type = "warning"

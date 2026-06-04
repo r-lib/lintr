@@ -91,7 +91,7 @@ keyword_quote_linter <- function() {
     xml <- source_expression$xml_parsed_content
     xml_calls <- source_expression$xml_find_function_calls(NULL)
 
-    call_arg_expr <- xml_find_all(xml_calls, call_arg_xpath)
+    call_arg_expr <- xml_find_all_(xml_calls, call_arg_xpath)
 
     invalid_call_quoting <- is_valid_r_name(get_r_string(call_arg_expr))
 
@@ -102,12 +102,12 @@ keyword_quote_linter <- function() {
       type = "warning"
     )
 
-    assignment_expr <- xml_find_all(xml, assignment_xpath)
+    assignment_expr <- xml_find_all_(xml, assignment_xpath)
 
     invalid_assignment_quoting <- is_valid_r_name(get_r_string(assignment_expr))
     # NB: XPath is such that there is exactly 1 node per match, making xml_children() ideal.
     #   xml_child() gets it wrong for 0 (an error) and >1 match.
-    assignment_to_string <- xml_name(xml_children(assignment_expr)) == "STR_CONST"
+    assignment_to_string <- xml_name_(xml_children(assignment_expr)) == "STR_CONST"
 
     string_assignment_lints <- xml_nodes_to_lints(
       assignment_expr[assignment_to_string & !invalid_assignment_quoting],
@@ -123,10 +123,10 @@ keyword_quote_linter <- function() {
       type = "warning"
     )
 
-    extraction_expr <- xml_find_all(xml, extraction_xpath)
+    extraction_expr <- xml_find_all_(xml, extraction_xpath)
 
     invalid_extraction_quoting <- is_valid_r_name(get_r_string(extraction_expr))
-    extraction_of_string <- xml_name(extraction_expr) == "STR_CONST"
+    extraction_of_string <- xml_name_(extraction_expr) == "STR_CONST"
 
     string_extraction_lints <- xml_nodes_to_lints(
       extraction_expr[extraction_of_string & !invalid_extraction_quoting],
@@ -136,7 +136,7 @@ keyword_quote_linter <- function() {
     )
 
     extraction_expr <- extraction_expr[invalid_extraction_quoting]
-    extractor <- xml_find_chr(extraction_expr, "string(preceding-sibling::*[1])")
+    extractor <- xml_find_chr_(extraction_expr, "string(preceding-sibling::*[not(self::COMMENT)][1])")
     gen_extractor <- ifelse(extractor == "$", "[[", "slot()")
 
     extraction_lints <- xml_nodes_to_lints(

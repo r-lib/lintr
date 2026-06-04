@@ -9,9 +9,10 @@ print_linter()
 \description{
 The default print method for character vectors is appropriate for interactively inspecting objects,
 not for logging messages. Thus checked-in usage like \code{print(paste('Data has', nrow(DF), 'rows.'))}
-is better served by using \code{\link[=cat]{cat()}}, e.g. \code{cat(sprintf('Data has \%d rows.\\n', nrow(DF)))} (noting that
-using \code{cat()} entails supplying your own line returns, and that \code{\link[glue:glue]{glue::glue()}} might be preferable
-to \code{\link[=sprintf]{sprintf()}} for constructing templated strings). Lastly, note that \code{\link[=message]{message()}} differs slightly
+is better served by using \code{\link[=cat]{cat()}}, e.g. \code{cat(sprintf('Data has \%d rows.\\n', nrow(DF)))}. Note that
+using \code{cat()} entails supplying your own line returns; \code{\link[glue:glue]{glue::glue()}} might be preferable
+to \code{\link[=sprintf]{sprintf()}} for constructing templated strings. Alternatively, \code{\link[=writeLines]{writeLines()}} can be used to
+print character vectors with their own line returns. Lastly, note that \code{\link[=message]{message()}} differs slightly
 from \code{cat()} in that it prints to \code{stderr} by default, not \code{stdout}, but is still a good option
 to consider for logging purposes.
 }

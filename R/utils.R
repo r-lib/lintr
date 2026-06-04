@@ -54,8 +54,9 @@ linter_auto_name <- function(which = -3L) {
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
     match_data <- re_matches(nm, regex, locations = TRUE)
-    nm <- substr(nm, start = 1L, stop = match_data[1L, "end"])
-    nm <- re_substitutes(nm, rex(start, alnums, "::"), "")
+    nm <- nm |>
+      substr(start = 1L, stop = match_data[1L, "end"]) |>
+      re_substitutes(rex(start, alnums, "::"), "")
   }
   nm
 }
@@ -98,7 +99,7 @@ get_content <- function(lines, info, needs_braces = FALSE) {
   if (!missing(info)) {
     # put in data.frame-like format
     if (is_node(info)) {
-      info <- lapply(xml2::xml_attrs(info), as.integer)
+      info <- lapply(xml_attrs_(info), as.integer)
     }
 
     lines <- lines[seq(info$line1, info$line2)]
@@ -156,7 +157,32 @@ Linter <- function(fun, name = linter_auto_name(), linter_level = c(NA_character
   fun
 }
 
-read_lines <- function(file, encoding = settings$encoding, ...) {
+ensure_utf8 <- function(lines, encoding = NULL) {
+  if (is.null(encoding) || is.na(encoding)) {
+    encoding <- ""
+  }
+
+  if (encoding == "" && l10n_info()[["UTF-8"]]) {
+    encoding <- "UTF-8"
+  }
+
+  if (encoding == "UTF-8") {
+    Encoding(lines) <- "UTF-8"
+    return(lines)
+  }
+
+  is_utf8 <- Encoding(lines) == "UTF-8"
+  if (any(is_utf8)) {
+    return(lines)
+  }
+
+  lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
+  lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
+  Encoding(lines) <- "UTF-8"
+  lines
+}
+
+read_lines <- function(file, ...) {
   outer_env <- new.env(parent = emptyenv())
   outer_env$terminal_newline <- TRUE
   lines <- withCallingHandlers(
@@ -168,9 +194,6 @@ read_lines <- function(file, encoding = settings$encoding, ...) {
       }
     }
   )
-  lines_conv <- iconv(lines, from = encoding, to = "UTF-8")
-  lines[!is.na(lines_conv)] <- lines_conv[!is.na(lines_conv)]
-  Encoding(lines) <- "UTF-8"
   attr(lines, "terminal_newline") <- outer_env$terminal_newline
   lines
 }
@@ -189,6 +212,18 @@ re_matches_logical <- function(x, regex, ...) {
     res <- complete.cases(res)
   }
   res
+}
+
+#' re_matches with type-stable locations output for the overall match
+#' @noRd
+re_matches_locations <- function(x, regex, ...) {
+  m <- regexpr(regex, x, perl = TRUE, ...)
+  match_start <- as.vector(m)
+  match_end <- match_start + attr(m, "match.length") - 1L
+  matched <- match_start != -1L
+  match_start[!matched] <- NA_integer_
+  match_end[!matched] <- NA_integer_
+  data.frame(start = match_start, end = match_end)
 }
 
 #' Extract text from `STR_CONST` nodes
@@ -232,7 +267,7 @@ get_r_string <- function(s, xpath = NULL) {
     if (is.null(xpath)) {
       s <- xml_text(s)
     } else {
-      s <- xml_find_chr(s, sprintf("string(%s)", xpath))
+      s <- xml_find_chr_(s, sprintf("string(%s)", xpath))
     }
   }
   r_string_from_parse_text(s)

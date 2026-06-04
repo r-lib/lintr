@@ -194,7 +194,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
     # Both of these look for paste(..., sep = "..."), differing in which 'sep' is linted,
     #   so run the expensive XPath search/R parse only once
     if (!allow_empty_sep || check_file_paths) {
-      paste_sep_expr <- xml_find_all(paste_calls, paste_sep_xpath)
+      paste_sep_expr <- xml_find_all_(paste_calls, paste_sep_xpath)
       paste_sep_value <- get_r_string(paste_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
     }
 
@@ -218,7 +218,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
 
     if (!allow_to_string) {
       # 3 expr: the function call, the argument, and collapse=
-      to_string_expr <- xml_find_all(both_calls, to_string_xpath)
+      to_string_expr <- xml_find_all_(both_calls, to_string_xpath)
       collapse_value <- get_r_string(
         to_string_expr,
         xpath = "./SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]"
@@ -236,7 +236,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       ))
     }
 
-    paste0_sep_expr <- xml_find_all(paste0_calls, paste0_sep_xpath)
+    paste0_sep_expr <- xml_find_all_(paste0_calls, paste0_sep_xpath)
     paste0_sep_lints <- xml_nodes_to_lints(
       paste0_sep_expr,
       source_expression = source_expression,
@@ -244,7 +244,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       type = "warning"
     )
 
-    paste_strrep_expr <- xml_find_all(both_calls, paste_strrep_xpath)
+    paste_strrep_expr <- xml_find_all_(both_calls, paste_strrep_xpath)
     collapse_arg <- get_r_string(paste_strrep_expr, "SYMBOL_SUB/following-sibling::expr[1]/STR_CONST")
     paste_strrep_expr <- paste_strrep_expr[!nzchar(collapse_arg)]
     paste_call <- xp_call_name(paste_strrep_expr)
@@ -255,7 +255,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       type = "warning"
     )
 
-    paste0_collapse_expr <- xml_find_all(paste0_calls, paste0_collapse_xpath)
+    paste0_collapse_expr <- xml_find_all_(paste0_calls, paste0_collapse_xpath)
     paste0_collapse_lints <- xml_nodes_to_lints(
       paste0_collapse_expr,
       source_expression = source_expression,
@@ -267,7 +267,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       paste_sep_slash_expr <- paste_sep_expr[paste_sep_value == "/"]
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         # in addition to paste(..., sep = "/") we ensure collapse= is not present
-        paste_sep_slash_expr[is.na(xml_find_first(paste_sep_slash_expr, "./SYMBOL_SUB[text() = 'collapse']"))],
+        paste_sep_slash_expr[is.na(xml_find_first_(paste_sep_slash_expr, "./SYMBOL_SUB[text() = 'collapse']"))],
         source_expression = source_expression,
         lint_message = paste(
           'Construct file paths with file.path(...) instead of paste(..., sep = "/").',
@@ -278,7 +278,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
         type = "warning"
       ))
 
-      paste0_file_path_expr <- xml_find_all(paste0_calls, paste0_file_path_xpath)
+      paste0_file_path_expr <- xml_find_all_(paste0_calls, paste0_file_path_xpath)
       is_file_path <-
         !vapply(paste0_file_path_expr, check_is_not_file_path, logical(1L), allow_file_path = allow_file_path)
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
@@ -297,9 +297,9 @@ paste_linter <- function(allow_empty_sep = FALSE,
 }
 
 check_is_not_file_path <- function(expr, allow_file_path) {
-  arguments <- xml_find_all(expr, "expr[position() > 1]")
+  arguments <- xml_find_all_(expr, "expr[position() > 1]")
 
-  is_string <- !is.na(xml_find_first(arguments, "STR_CONST"))
+  is_string <- !is.na(xml_find_first_(arguments, "STR_CONST"))
   string_values <- character(length(arguments))
   string_values[is_string] <- get_r_string(arguments[is_string])
   not_start_slash <- which(!startsWith(string_values, "/"))

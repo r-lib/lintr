@@ -283,12 +283,10 @@ find_default_encoding <- function(filename) {
     return(NULL)
   }
 
-  root_path <- find_package(filename, allow_rproj = TRUE)
-  rproj_enc <- get_encoding_from_dcf(find_rproj_at(root_path))
-  if (!is.null(rproj_enc)) {
-    return(rproj_enc)
-  }
-  rproj_enc
+  filename |>
+    find_package(allow_rproj = TRUE) |>
+    find_rproj_at() |>
+    get_encoding_from_dcf()
 }
 
 get_encoding_from_dcf <- function(file) {

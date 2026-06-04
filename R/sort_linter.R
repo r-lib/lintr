@@ -82,12 +82,17 @@ sort_linter <- function() {
   ")
 
   sorted_xpath <- "
-  self::*[
+  expr[
     (EQ or NE)
     and expr/expr = expr
     and not(expr/EQ_SUB)
   ]"
-
+  sorted_identical_xpath <- "
+  expr[
+    expr/SYMBOL_FUNCTION_CALL[text() = 'identical']
+    and expr/expr = expr
+  ]
+  "
 
   arguments_xpath <-
     ".//SYMBOL_SUB[text() = 'method' or text() = 'decreasing' or text() = 'na.last']"
@@ -99,9 +104,9 @@ sort_linter <- function() {
       source_expression$xml_find_function_calls("order")
     )))
 
-    order_expr <- xml_find_all(order_calls, order_xpath)
+    order_expr <- xml_find_all_(order_calls, order_xpath)
 
-    variable <- xml_text(xml_find_first(
+    variable <- xml_text(xml_find_first_(
       order_expr,
       ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
     ))
@@ -110,8 +115,8 @@ sort_linter <- function() {
 
     # Reconstruct new argument call for each expression separately
     arguments <- vapply(order_expr, function(e) {
-      arg_names <- xml_text(xml_find_all(e, arguments_xpath))
-      arg_values <- xml_text(xml_find_all(e, arg_values_xpath))
+      arg_names <- xml_text(xml_find_all_(e, arguments_xpath))
+      arg_values <- xml_text(xml_find_all_(e, arg_values_xpath))
       if (!"na.last" %in% arg_names) {
         arg_names <- c(arg_names, "na.last")
         arg_values <- c(arg_values, "TRUE")
@@ -132,19 +137,33 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    sort_calls <- xml_parent(xml_parent(source_expression$xml_find_function_calls("sort")))
+    sort_calls <- xml_parent(xml_parent(xml_parent(source_expression$xml_find_function_calls("sort"))))
     sort_calls <- strip_comments_from_subtree(sort_calls)
-    sorted_expr <- xml_find_all(sort_calls, sorted_xpath)
+    sorted_expr <- xml_find_all_(sort_calls, sorted_xpath)
 
-    sorted_op <- xml_text(xml_find_first(sorted_expr, "*[2]"))
+    sorted_op <- xml_text(xml_find_first_(sorted_expr, "*[2]"))
     lint_message <- ifelse(
       sorted_op == "==",
       "Use !is.unsorted(x) to test the sortedness of a vector.",
       "Use is.unsorted(x) to test the unsortedness of a vector."
     )
 
+    sorted_identical_expr <- xml_find_all_(sort_calls, sorted_identical_xpath)
+    is_negated <- !is.na(
+      xml_find_first_(sorted_identical_expr, "preceding-sibling::OP-EXCLAMATION")
+    )
+
+    lint_message <- c(
+      lint_message,
+      ifelse(
+        is_negated,
+        "Use is.unsorted(x) to test the unsortedness of a vector.",
+        "Use !is.unsorted(x) to test the sortedness of a vector."
+      )
+    )
+
     sorted_lints <- xml_nodes_to_lints(
-      sorted_expr,
+      combine_nodesets(sorted_expr, sorted_identical_expr),
       source_expression = source_expression,
       lint_message = lint_message,
       type = "warning"

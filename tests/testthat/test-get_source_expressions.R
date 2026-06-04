@@ -104,11 +104,11 @@ test_that("Multi-byte character truncated by parser is ignored", {
   })
 })
 
-test_that("Can read non UTF-8 file", {
+test_that("Can read non UTF-8 file", { # nofuzz. Ignore all encoding checks.
   withr::local_options(list(lintr.linter_file = tempfile()))
   proj_dir <- test_path("dummy_projects", "project")
   withr::local_dir(proj_dir)
-  expect_no_lint( # nofuzz
+  expect_no_lint(
     file = "cp1252.R",
     linters = list()
   )
@@ -271,7 +271,10 @@ test_that("xml_find_function_calls works as intended", {
   expect_length(exprs$expressions[[1L]]$xml_find_function_calls("bar"), 0L)
   expect_identical(
     exprs$expressions[[1L]]$xml_find_function_calls("foo"),
-    xml_find_all(exprs$expressions[[1L]]$xml_parsed_content, "//SYMBOL_FUNCTION_CALL[text() = 'foo']/parent::expr")
+    xml2::xml_find_all(
+      exprs$expressions[[1L]]$xml_parsed_content,
+      "//SYMBOL_FUNCTION_CALL[text() = 'foo']/parent::expr"
+    )
   )
 
   expect_length(exprs$expressions[[2L]]$xml_find_function_calls("foo"), 0L)
@@ -289,7 +292,7 @@ test_that("xml_find_function_calls works as intended", {
   # Also check order is retained:
   expect_identical(
     exprs$expressions[[6L]]$xml_find_function_calls(c("foo", "bar")),
-    xml_find_all(exprs$expressions[[6L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL/parent::expr")
+    xml2::xml_find_all(exprs$expressions[[6L]]$full_xml_parsed_content, "//SYMBOL_FUNCTION_CALL/parent::expr")
   )
 
   # Check naming and full cache
@@ -561,4 +564,23 @@ test_that("parser warnings generate lints", {
     ),
     linters = list()
   )
+})
+
+test_that("get_source_expressions() handles unmarked UTF-8 lines correctly", {
+  skip_if_not_utf8_locale()
+
+  tf <- withr::local_tempfile()
+  writeLines('x <- "\u00e4"', tf, useBytes = TRUE)
+  text_native <- readLines(tf)
+
+  src_exprs <- get_source_expressions(tf, lines = text_native)
+
+  expect_length(src_exprs$expressions, 2L)
+  expr <- src_exprs$expressions[[1L]]
+
+  pd <- expr$parsed_content
+  str_const <- pd[pd$token == "STR_CONST", ]
+  expect_identical(str_const$text, '"\u00e4"')
+  expect_identical(str_const$col1, 6L)
+  expect_identical(str_const$col2, 8L)
 })

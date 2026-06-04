@@ -68,7 +68,7 @@ test_that("returns the correct linting", {
     linter
   )
 
-  expect_lint(
+  expect_lint( # nofuzz: comment_injection
     trim_some("
       fun <- function() {
         a2 <- 1
@@ -884,7 +884,7 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
   skip_if_not_installed("rlang")
   linter <- object_usage_linter()
 
-  expect_lint( # nofuzz
+  expect_lint( # nofuzz: dollar_at
     trim_some("
       foo <- function(df) {
         source <- 1
@@ -903,26 +903,13 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
   )
 })
 
-test_that("interpret_glue is deprecated", {
-  expect_warning(
-    {
-      linter_no <- object_usage_linter(interpret_glue = FALSE)
-    },
+test_that("interpret_glue is defunct", {
+  expect_error(
+    object_usage_linter(interpret_glue = FALSE),
     rex::rex("interpret_glue", anything, "deprecated")
   )
-  expect_warning(
-    {
-      linter_yes <- object_usage_linter(interpret_glue = TRUE)
-    },
+  expect_error(
+    object_usage_linter(interpret_glue = TRUE),
     rex::rex("interpret_glue", anything, "deprecated")
   )
-
-  code <- trim_some("
-    fun <- function() {
-      local_var <- 42
-      glue::glue('The answer is {local_var}.')
-    }
-  ")
-  expect_lint(code, "local_var", linter_no)
-  expect_no_lint(code, linter_yes)
 })

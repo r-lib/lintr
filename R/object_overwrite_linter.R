@@ -75,9 +75,10 @@ object_overwrite_linter <- function(
 
   # test that the symbol doesn't match an argument name in the function
   # NB: data.table := has parse token LEFT_ASSIGN as well
+  # ancestor::* for '=' assignment
   xpath_assignments <- glue("
     (//SYMBOL | //STR_CONST)[
-      not(text() = ancestor::expr/preceding-sibling::SYMBOL_FORMALS/text())
+      not(text() = ancestor::*/preceding-sibling::SYMBOL_FORMALS/text())
     ]/
       parent::expr[
         count(*) = 1
@@ -96,7 +97,7 @@ object_overwrite_linter <- function(
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    assigned_exprs <- xml_find_all(xml, xpath_assignments)
+    assigned_exprs <- xml_find_all_(xml, xpath_assignments)
     assigned_symbols <- get_r_string(assigned_exprs, "SYMBOL|STR_CONST")
     is_quoted <- startsWith(assigned_symbols, "`")
     assigned_symbols[is_quoted] <- substr(assigned_symbols[is_quoted], 2L, nchar(assigned_symbols[is_quoted]) - 1L)

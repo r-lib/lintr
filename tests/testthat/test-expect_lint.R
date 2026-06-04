@@ -2,8 +2,9 @@
 # thus less than ideal to test expect_lint(), which can process multiple lints. If you want to test
 # for failure, always put the lint check or lint field that must fail first.
 
+# fuzzer disable: assignment
 linter <- assignment_linter()
-lint_msg <- "Use one of <-, <<- for assignment, not ="
+lint_msg <- "Use <- for assignment, not ="
 
 test_that("no checks", {
   expect_success(expect_no_lint("a", linter))
@@ -33,7 +34,7 @@ test_that("single check", {
   expect_success(expect_lint("1:nrow(x)", "(nrow)", seq_linter()))
 })
 
-test_that("multiple checks", {
+test_that("multiple checks", { # nofuzz: comment_injection
   expect_success(
     expect_lint(file = "exclusions-test", checks = as.list(rep(lint_msg, 9L)), linters = linter, parse_settings = FALSE)
   )
@@ -85,7 +86,7 @@ test_that("execution without testthat gives the right errors", {
   expect_error(expect_lint_free(), lint_msg("expect_lint_free"))
 })
 
-test_that("lint order can be ignored", {
+test_that("lint order can be ignored", { # nofuzz: comment_injection
   linters <- list(assignment_linter(), infix_spaces_linter())
   expected <- lapply(linters, \(l) list(linter = attr(l, "name")))
   expect_success(expect_lint("a=1", expected, linters, ignore_order = TRUE))
@@ -108,3 +109,4 @@ test_that("lint order can be ignored", {
   )
   expect_success(expect_lint(lines, expected[sample.int(4L)], linters, ignore_order = TRUE))
 })
+# fuzzer enable: assignment

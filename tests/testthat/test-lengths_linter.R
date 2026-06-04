@@ -1,13 +1,13 @@
 test_that("lengths_linter skips allowed usages", {
   linter <- lengths_linter()
 
-  expect_lint("length(x)", NULL, linter)
-  expect_lint("function(x) length(x) + 1L", NULL, linter)
-  expect_lint("vapply(x, fun, integer(length(y)))", NULL, linter)
-  expect_lint("sapply(x, sqrt, simplify = length(x))", NULL, linter)
+  expect_no_lint("length(x)", linter)
+  expect_no_lint("function(x) length(x) + 1L", linter)
+  expect_no_lint("vapply(x, fun, integer(length(y)))", linter)
+  expect_no_lint("sapply(x, sqrt, simplify = length(x))", linter)
 
   # TODO(#1570): also throw a lint here, and for map(x, length)
-  expect_lint("lapply(x, length)", NULL, linter)
+  expect_no_lint("lapply(x, length)", linter)
 })
 
 test_that("lengths_linter blocks simple disallowed base usages", {

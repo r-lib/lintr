@@ -8,7 +8,7 @@
 #'
 #' @noRd
 xml2lang <- function(x) {
-  x_strip_comments <- xml_find_all(x, ".//*[not(self::COMMENT or self::expr)]")
+  x_strip_comments <- xml_find_all_(x, ".//*[not(self::COMMENT or self::expr)]")
   str2lang(paste(xml_text(x_strip_comments), collapse = " "))
 }
 
@@ -22,27 +22,27 @@ clone_xml_ <- function(x) {
     xml2::write_xml(x[[ii]], tmp_doc)
     xml2::xml_add_child(doc, xml2::read_xml(tmp_doc))
   }
-  xml_find_all(doc, "*")
+  xml_find_all_(doc, "*")
 }
 
 # caveat: whether this is a copy or not is inconsistent. assume the output is read-only!
 strip_comments_from_subtree <- function(expr) {
-  if (length(xml_find_first(expr, ".//COMMENT")) == 0L) {
+  if (all(is.na(xml_find_first_(expr, ".//COMMENT")))) {
     return(expr)
   }
   expr <- clone_xml_(expr)
-  for (comment in xml_find_all(expr, ".//COMMENT")) xml2::xml_remove(comment)
+  for (comment in xml_find_all_(expr, ".//COMMENT")) xml2::xml_remove(comment)
   expr
 }
 
 safe_parse_to_xml <- function(parsed_content) {
   if (is.null(parsed_content)) {
-    return(xml2::xml_missing())
+    return(xml_missing())
   }
   tryCatch(
     xml2::read_xml(xmlparsedata::xml_parse_data(parsed_content)),
     # use xml_missing so that code doesn't always need to condition on XML existing
-    error = \(e) xml2::xml_missing()
+    error = \(e) xml_missing()
   )
 }
 
@@ -52,3 +52,47 @@ is_nodeset_like <- function(xml) {
   is_nodeset(xml) ||
     (is.list(xml) && all(vapply(xml, is_node, logical(1L))))
 }
+
+# TODO(r-lib/xml2#327): Remove this workaround if upstream bottleneck is resolved.
+# nolint start: undesirable_function_name_linter.
+# placeholder xml_ns() object to skip this call on xml2 invocations
+empty_ns <- character()
+names(empty_ns) <- character()
+class(empty_ns) <- "xml_namespace"
+
+xml_find_all_ <- function(x, xpath, ns = empty_ns, ...) {
+  xml_find_all(x, xpath, ns = ns, ...)
+}
+
+xml_find_first_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_first(x, xpath, ns = ns)
+}
+
+xml_find_chr_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_chr(x, xpath, ns = ns)
+}
+
+xml_find_num_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_num(x, xpath, ns = ns)
+}
+
+xml_find_lgl_ <- function(x, xpath, ns = empty_ns) {
+  xml_find_lgl(x, xpath, ns = ns)
+}
+
+xml_attr_ <- function(x, attr, ns = empty_ns, default = NA_character_) {
+  xml_attr(x, attr, ns = ns, default = default)
+}
+
+xml_attrs_ <- function(x, ns = empty_ns) {
+  xml_attrs(x, ns = ns)
+}
+
+xml_child_ <- function(x, search = 1L, ns = empty_ns) {
+  xml_child(x, search = search, ns = ns)
+}
+
+xml_name_ <- function(x, ns = empty_ns) {
+  xml_name(x, ns = ns)
+}
+# nolint end: undesirable_function_name_linter.

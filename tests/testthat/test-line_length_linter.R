@@ -1,3 +1,4 @@
+# fuzzer disable: comment_injection
 test_that("line_length_linter skips allowed usages", {
   linter <- line_length_linter(80L)
 
@@ -89,9 +90,10 @@ test_that("string bodies can be ignored", {
   expect_no_lint(
     trim_some("
       1234567890
-      str45 <- '
+      my_fun78('
       123456789012345
                '
+      )
     "),
     linter
   )
@@ -99,9 +101,10 @@ test_that("string bodies can be ignored", {
   expect_no_lint(
     trim_some("
       1234567890
-      str <- '90
+      my_fun('90
       123456789012345
       123456789'
+      )
     "),
     linter
   )
@@ -109,9 +112,10 @@ test_that("string bodies can be ignored", {
   expect_lint(
     trim_some("
       1234567890
-      str456 <- '
+      my_fun789('
       123456789012345
                 '
+      )
     "),
     list(
       list("11 characters", line_number = 2L),
@@ -123,9 +127,10 @@ test_that("string bodies can be ignored", {
   expect_lint(
     trim_some("
       1234567890
-      str <- '9012345
+      my_fun('9012345
       1234567890
       123456789'
+      )
     "),
     lint_msg,
     linter
@@ -134,9 +139,9 @@ test_that("string bodies can be ignored", {
   expect_lint(
     trim_some("
       1234567890
-      str <- '90
+      my_fun('90
       1234567890
-      12345678'; 2345
+      12345678'); 234
     "),
     lint_msg,
     linter
@@ -157,3 +162,4 @@ test_that("string bodies can be ignored", {
   expect_lint('"short" # 15!!!', lint_msg, linter)
   expect_lint('foo("a", long_)', lint_msg, linter)
 })
+# fuzzer enable: comment_injection

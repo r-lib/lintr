@@ -62,9 +62,9 @@ function_argument_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all_(xml, xpath)
 
-    uses_missing <- xml_find_lgl(bad_expr, used_in_missing_xpath)
+    uses_missing <- xml_find_lgl_(bad_expr, used_in_missing_xpath)
 
     missing_note <-
       ifelse(uses_missing, " Consider setting the default to NULL and using is.null() instead of using missing()", "")

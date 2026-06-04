@@ -167,7 +167,7 @@ infix_metadata$parse_tag <- ifelse(
   infix_metadata$xml_tag
 )
 # treated separately because spacing rules are different for unary operators
-infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP-TILDE")
+infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP-TILDE", "OP-EXCLAMATION")
 # high-precedence operators are ignored by this linter; see
 #   https://style.tidyverse.org/syntax.html#infix-operators
 infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
@@ -276,13 +276,11 @@ extract_glued_symbols <- function(expr, interpret_glue = TRUE) {
         and not(expr[position() > 1 and not(STR_CONST)])
       ]
   "
-  glue_calls <- xml_find_all(expr, glue_call_xpath)
+  glue_calls <- xml_find_all_(expr, glue_call_xpath)
 
   glued_symbols <- new.env(parent = emptyenv())
   for (glue_call in glue_calls) {
-    # TODO(#2475): Drop tryCatch().
-    parsed_call <-
-      tryCatch(xml2lang(glue_call), error = unexpected_glue_parse_error, warning = unexpected_glue_parse_error)
+    parsed_call <- xml2lang(glue_call)
     parsed_call[[".envir"]] <- glued_symbols
     parsed_call[[".transformer"]] <- glue_symbol_extractor
     # #1459: syntax errors in glue'd code are ignored with warning, rather than crashing lint
@@ -291,14 +289,6 @@ extract_glued_symbols <- function(expr, interpret_glue = TRUE) {
   names(glued_symbols)
 }
 
-unexpected_glue_parse_error <- function(cond) {
-  # nocov start
-  cli_abort(c(
-    x = "Unexpected failure to parse glue call.",
-    i = "Please report: {conditionMessage(cond)}"
-  ))
-  # nocov end
-}
 glue_parse_failure_warning <- function(cond) {
   cli_warn(c(
     x = "Evaluating glue expression while testing for local variable usage failed: {conditionMessage(cond)}",

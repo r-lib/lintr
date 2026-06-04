@@ -21,14 +21,17 @@ test_that("input validation works for make_linter_from_xpath", {
     fixed = TRUE
   )
 
-  err_msg <- "xpath should be a character string"
+  err_msg <- "`xpath` must be a character string"
   expect_error(make_linter_from_xpath(FALSE), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(letters), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(NA_character_), err_msg, fixed = TRUE)
   expect_error(make_linter_from_xpath(character()), err_msg, fixed = TRUE)
 
-  err_msg <- "lint_message is required"
-  expect_error(make_linter_from_xpath(""), err_msg, fixed = TRUE)
+  expect_error(
+    make_linter_from_xpath(""),
+    "`lint_message` is required",
+    fixed = TRUE
+  )
 })
 
 test_that("basic usage of make_linter_from_function_xpath works", {
@@ -45,39 +48,39 @@ test_that("basic usage of make_linter_from_function_xpath works", {
 test_that("input validation works for make_linter_from_function_xpath", {
   expect_error(
     make_linter_from_function_xpath(1L),
-    "function_names should be a character vector",
+    "`function_names` must be a character vector",
     fixed = TRUE
   )
   expect_error(
     make_linter_from_function_xpath(character()),
-    "function_names should be a character vector",
+    "`function_names` must be a character vector",
     fixed = TRUE
   )
 
   expect_error(
     make_linter_from_function_xpath("sum", 1L),
-    "xpath should be a character string",
+    "`xpath` must be a character string",
     fixed = TRUE
   )
   expect_error(
     make_linter_from_function_xpath("sum", character()),
-    "xpath should be a character string",
+    "`xpath` must be a character string",
     fixed = TRUE
   )
   expect_error(
     make_linter_from_function_xpath("sum", letters),
-    "xpath should be a character string",
+    "`xpath` must be a character string",
     fixed = TRUE
   )
   expect_error(
     make_linter_from_function_xpath("sum", NA_character_),
-    "xpath should be a character string",
+    "`xpath` must be a character string",
     fixed = TRUE
   )
 
   expect_error(
     make_linter_from_function_xpath("sum", "XP"),
-    "lint_message is required",
+    "`lint_message` is required",
     fixed = TRUE
   )
 })

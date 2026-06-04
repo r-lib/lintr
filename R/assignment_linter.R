@@ -2,10 +2,9 @@
 #'
 #' Check that the specified operator is used for assignment.
 #'
-#' @param operator Character vector of valid assignment operators. Defaults to allowing `<-` and `<<-`; other valid
-#'   options are `=`, `->`, `->>`, `%<>%`; use `"any"` to denote "allow all operators", in which case this linter only
-#'   considers `allow_trailing` for generating lints.
-#' @param allow_cascading_assign,allow_right_assign,allow_pipe_assign (Defunct)
+#' @param operator Character vector of valid assignment operators. Defaults to allowing only `<-`; other valid
+#'   options are `=`, `<<-`, `->`, `->>`, `%<>%`; use `"any"` to denote "allow all operators", in which case
+#    this linter only considers `allow_trailing` for generating lints.
 #' @param allow_trailing Logical, default `TRUE`. If `FALSE` then assignments aren't allowed at end of lines.
 #'
 #' @examples
@@ -15,7 +14,7 @@
 #'   linters = assignment_linter()
 #' )
 #'
-#' code_lines <- "1 -> x\n2 ->> y"
+#' code_lines <- "1 -> x\n2 ->> y\nz <<- 3"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -38,7 +37,7 @@
 #'   linters = assignment_linter()
 #' )
 #'
-#' code_lines <- "x <- 1\ny <<- 2"
+#' code_lines <- "x <- 1\ny <- 2\nz <- 3"
 #' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
@@ -80,38 +79,8 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment-1>
 #' - <https://style.tidyverse.org/pipes.html#assignment-2>
 #' @export
-assignment_linter <- function(operator = c("<-", "<<-"),
-                              allow_cascading_assign = NULL,
-                              allow_right_assign = NULL,
-                              allow_trailing = TRUE,
-                              allow_pipe_assign = NULL) {
-  if (!missing(allow_cascading_assign)) {
-    lintr_deprecated(
-      "allow_cascading_assign",
-      '"<<-" and/or "->>" in operator',
-      version = "3.2.0",
-      type = "Argument",
-      signal = "stop"
-    )
-  }
-  if (!missing(allow_right_assign)) {
-    lintr_deprecated(
-      "allow_right_assign",
-      '"->" in operator',
-      version = "3.2.0",
-      type = "Argument",
-      signal = "stop"
-    )
-  }
-  if (!missing(allow_pipe_assign)) {
-    lintr_deprecated(
-      "allow_pipe_assign",
-      '"%<>%" in operator',
-      version = "3.2.0",
-      type = "Argument",
-      signal = "stop"
-    )
-  }
+assignment_linter <- function(operator = "<-",
+                              allow_trailing = TRUE) {
   all_operators <- c("<-", "=", "->", "<<-", "->>", "%<>%")
   if ("any" %in% operator) {
     operator <- all_operators
@@ -162,7 +131,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
 
     lints <- NULL
     if (!is.null(op_xpath)) {
-      op_expr <- xml_find_all(xml, op_xpath)
+      op_expr <- xml_find_all_(xml, op_xpath)
 
       op_text <- xml_text(op_expr)
       allowed_op_list <- if (length(operator) > 1L) paste("one of", toString(operator)) else operator
@@ -184,7 +153,7 @@ assignment_linter <- function(operator = c("<-", "<<-"),
     }
 
     if (!allow_trailing) {
-      trailing_assign_expr <- xml_find_all(xml, trailing_assign_xpath)
+      trailing_assign_expr <- xml_find_all_(xml, trailing_assign_xpath)
       trailing_assign_text <- xml_text(trailing_assign_expr)
       trailing_assign_msg_fmt <- "Assignment %s should not be trailing at the end of a line."
       trailing_assign_msg <- sprintf(trailing_assign_msg_fmt, trailing_assign_text)

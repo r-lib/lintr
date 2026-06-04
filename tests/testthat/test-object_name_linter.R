@@ -1,5 +1,5 @@
 test_that("default styles are linted correctly", {
-  linters <-  list(
+  linters <- list(
     symbols_linter = object_name_linter("symbols"),
     CamelCase_linter = object_name_linter("CamelCase"),
     camelCase_linter = object_name_linter("camelCase"),

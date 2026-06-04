@@ -71,7 +71,7 @@ test_that("it gives the expected error message when there is mismatch between mu
   )
 })
 
-test_that("partial matching works for exclusions but warns if no linter found", {
+test_that("partial matching works for exclusions but warns if no linter found", { # nofuzz: assignment comment_injection
   withr::local_dir(test_path("dummy_projects", "project"))
 
   expect_warning(
@@ -168,7 +168,7 @@ test_that("#1442: is_excluded_files works if no global exclusions are specified"
   expect_length(lint_dir(tmp), 3L)
 })
 
-test_that("next-line exclusion works", {
+test_that("next-line exclusion works", { # nofuzz
   withr::local_options(
     lintr.exclude = "# NL",
     lintr.exclude_next = "# NLN",
@@ -178,30 +178,27 @@ test_that("next-line exclusion works", {
   linter <- assignment_linter()
 
   # blanket exclusion works
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN
       x = 1
     "),
-    NULL,
     linter
   )
 
   # specific exclusion works
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN: assignment_linter.
       x = 1
     "),
-    NULL,
     linter
   )
-  expect_lint(
+  expect_no_lint(
     trim_some("
       # NLN: assignment.
       x = 1
     "),
-    NULL,
     linter
   )
   expect_lint(
@@ -209,7 +206,7 @@ test_that("next-line exclusion works", {
       # NLN: line_length_linter.
       x = 1
     "),
-    rex::rex("Use one of <-, <<- for assignment, not =."),
+    rex::rex("Use <- for assignment, not =."),
     list(linter, line_length_linter())
   )
 
@@ -219,7 +216,75 @@ test_that("next-line exclusion works", {
       x = 1 # NLN: assignment_linter.
       x = 2
     "),
-    list(rex::rex("Use one of <-, <<- for assignment, not =."), line_number = 1L),
+    list(rex::rex("Use <- for assignment, not =."), line_number = 1L),
     linter
+  )
+})
+
+test_that("capture groups work as intended (#2831)", { # nofuzz: assignment comment_injection
+  expect_lint(
+    "x = 1",
+    list(rex::rex("Use <- for assignment, not =.")),
+    linters = assignment_linter(),
+    exclude = "(a)|(b)"
+  )
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(a)|(b)"
+  )
+
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(?:a)|(?:b)"
+  )
+
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(?:a)|(b)"
+  )
+  expect_lint(
+    "b = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(a)|(?:b)"
+  )
+
+  # named groups
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(?<group1>a)|(?<group2>b)"
+  )
+
+  # nested groups
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "((a)|(b))"
+  )
+
+  # exclude_start / exclude_end with capture groups
+  expect_lint(
+    "x = 1 # nolint start\ny = 2\nz = 3 # nolint end",
+    NULL,
+    linters = assignment_linter(),
+    exclude_start = "(# nolint start)",
+    exclude_end = "(# nolint end)"
+  )
+
+  # exclude_next with capture groups
+  expect_lint(
+    "x = 1 # nolint next\ny = 2",
+    list(message = "Use <- for assignment, not =.", line_number = 1L),
+    linters = assignment_linter(),
+    exclude_next = "(# nolint next)"
   )
 })

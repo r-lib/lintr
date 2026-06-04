@@ -1,17 +1,17 @@
 test_that("numeric_leading_zero_linter skips allowed usages", {
   linter <- numeric_leading_zero_linter()
 
-  expect_lint("a <- 0.1", NULL, linter)
-  expect_lint("b <- -0.2", NULL, linter)
-  expect_lint("c <- 3.0", NULL, linter)
-  expect_lint("d <- 4L", NULL, linter)
-  expect_lint("e <- TRUE", NULL, linter)
-  expect_lint("f <- 0.5e6", NULL, linter)
-  expect_lint("g <- 0x78", NULL, linter)
-  expect_lint("h <- 0.9 + 0.1i", NULL, linter)
-  expect_lint("h <- 0.9+0.1i", NULL, linter)
-  expect_lint("h <- 0.9 - 0.1i", NULL, linter)
-  expect_lint("i <- 2L + 3.4i", NULL, linter)
+  expect_no_lint("a <- 0.1", linter)
+  expect_no_lint("b <- -0.2", linter)
+  expect_no_lint("c <- 3.0", linter)
+  expect_no_lint("d <- 4L", linter)
+  expect_no_lint("e <- TRUE", linter)
+  expect_no_lint("f <- 0.5e6", linter)
+  expect_no_lint("g <- 0x78", linter)
+  expect_no_lint("h <- 0.9 + 0.1i", linter)
+  expect_no_lint("h <- 0.9+0.1i", linter)
+  expect_no_lint("h <- 0.9 - 0.1i", linter)
+  expect_no_lint("i <- 2L + 3.4i", linter)
 })
 
 test_that("numeric_leading_zero_linter blocks simple disallowed usages", {

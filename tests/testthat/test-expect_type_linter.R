@@ -2,21 +2,21 @@ test_that("expect_type_linter skips allowed usages", {
   linter <- expect_type_linter()
 
   # expect_type doesn't have an inverted version
-  expect_lint("expect_true(!is.numeric(x))", NULL, linter)
+  expect_no_lint("expect_true(!is.numeric(x))", linter)
   # NB: also applies to tinytest, but it's sufficient to test testthat
-  expect_lint("testthat::expect_true(!is.numeric(x))", NULL, linter)
+  expect_no_lint("testthat::expect_true(!is.numeric(x))", linter)
 
   # other is.<x> calls are not suitable for expect_type in particular
-  expect_lint("expect_true(is.data.frame(x))", NULL, linter)
+  expect_no_lint("expect_true(is.data.frame(x))", linter)
 
   # expect_type(x, ...) cannot be cleanly used here:
-  expect_lint("expect_true(typeof(x) %in% c('builtin', 'closure'))", NULL, linter)
+  expect_no_lint("expect_true(typeof(x) %in% c('builtin', 'closure'))", linter)
 
   # expect_type() doesn't have info= or label= arguments
-  expect_lint("expect_equal(typeof(x), t, info = 'x should have type t')", NULL, linter)
-  expect_lint("expect_equal(typeof(x), t, label = 'x type')", NULL, linter)
-  expect_lint("expect_equal(typeof(x), t, expected.label = 'type')", NULL, linter)
-  expect_lint("expect_true(is.double(x), info = 'x should be double')", NULL, linter)
+  expect_no_lint("expect_equal(typeof(x), t, info = 'x should have type t')", linter)
+  expect_no_lint("expect_equal(typeof(x), t, label = 'x type')", linter)
+  expect_no_lint("expect_equal(typeof(x), t, expected.label = 'type')", linter)
+  expect_no_lint("expect_true(is.double(x), info = 'x should be double')", linter)
 })
 
 test_that("expect_type_linter blocks simple disallowed usages", {

@@ -117,9 +117,7 @@ parse_exclusions <- function(file,
                              exclude_linter_sep = settings$exclude_linter_sep,
                              lines = NULL,
                              linter_names = NULL) {
-  if (is.null(lines)) {
-    lines <- read_lines(file)
-  }
+  lines <- lines %||% ensure_utf8(read_lines(file), settings$encoding)
 
   exclusions <- list()
 
@@ -128,8 +126,8 @@ parse_exclusions <- function(file,
     return(list())
   }
 
-  start_locations <- re_matches(lines, exclude_start, locations = TRUE)[, "end"] + 1L
-  end_locations <- re_matches(lines, exclude_end, locations = TRUE)[, "start"]
+  start_locations <- re_matches_locations(lines, exclude_start)[, "end"] + 1L
+  end_locations <- re_matches_locations(lines, exclude_end)[, "start"]
   starts <- which(!is.na(start_locations))
   ends <- which(!is.na(end_locations))
 
@@ -152,10 +150,10 @@ parse_exclusions <- function(file,
     }
   }
 
-  next_locations <- re_matches(lines, exclude_next, locations = TRUE)[, "end"] + 1L
+  next_locations <- re_matches_locations(lines, exclude_next)[, "end"] + 1L
   nexts <- which(!is.na(next_locations))
 
-  nolint_locations <- re_matches(lines, exclude, locations = TRUE)[, "end"] + 1L
+  nolint_locations <- re_matches_locations(lines, exclude)[, "end"] + 1L
   nolints <- which(!is.na(nolint_locations))
 
   # Disregard nolint tags if they also match nolint next / start / end
@@ -346,13 +344,11 @@ normalize_exclusions <- function(x, normalize_path = TRUE,
     x <- x[file.exists(paths)] # remove exclusions for non-existing files
     names(x) <- normalize_path(names(x)) # get full path for remaining files
   }
-  remove_line_duplicates(
-    remove_linter_duplicates(
-      remove_file_duplicates(
-        remove_empty(x)
-      )
-    )
-  )
+  x |>
+    remove_empty() |>
+    remove_file_duplicates() |>
+    remove_linter_duplicates() |>
+    remove_line_duplicates()
 }
 
 # Combines file exclusions for identical files.

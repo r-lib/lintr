@@ -42,15 +42,13 @@ is_numeric_linter <- function() {
 
   # testing things like is.numeric(x) || is.integer(x)
   or_xpath <- glue("
-  //OR2
-    /parent::expr[
-      expr/{is_numeric_expr}
-      and expr/{is_integer_expr}
-      and
-        expr/{is_numeric_expr}/following-sibling::expr[1]
-        = expr/{is_integer_expr}/following-sibling::expr[1]
-    ]
-  ")
+  self::*[
+    expr/{is_numeric_expr}
+    and expr/{is_integer_expr}
+    and
+      expr/{is_numeric_expr}/following-sibling::expr[1]
+      = expr/{is_integer_expr}/following-sibling::expr[1]
+  ]")
 
   # testing class(x) %in% c("numeric", "integer")
   class_xpath <- "
@@ -69,7 +67,11 @@ is_numeric_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    or_expr <- xml_find_all(xml, or_xpath)
+    or_expr <- xml |>
+      xml_find_all_("//OR2") |>
+      xml_parent() |>
+      strip_comments_from_subtree() |>
+      xml_find_all_(or_xpath)
     or_lints <- xml_nodes_to_lints(
       or_expr,
       source_expression = source_expression,
@@ -80,7 +82,7 @@ is_numeric_linter <- function() {
       type = "warning"
     )
 
-    class_expr <- xml_find_all(xml, class_xpath)
+    class_expr <- xml_find_all_(xml, class_xpath)
     if (length(class_expr) > 0L) {
       class_strings <- c(
         get_r_string(class_expr, "expr[2]/expr[2]/STR_CONST"),
