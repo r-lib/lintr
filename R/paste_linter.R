@@ -129,22 +129,17 @@ paste_linter <- function(allow_empty_sep = FALSE,
   allow_file_path <- match.arg(allow_file_path)
   check_file_paths <- allow_file_path %in% c("double_slash", "never")
 
-  paste_sep_xpath <- "
-  following-sibling::SYMBOL_SUB[
-    text() = 'sep'
-    and following-sibling::expr[1][STR_CONST]
-    and not(parent::expr/ancestor-or-self::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression'])
-  ]
+  ancestor_expr_cond <-
+    "parent::expr/ancestor-or-self::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']"
+  paste_sep_xpath <- glue("
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST] and not({ancestor_expr_cond})]
     /parent::expr
-  "
-  expression_paste_sep_xpath <- "
-  following-sibling::SYMBOL_SUB[
-    text() = 'sep'
-    and following-sibling::expr[1][STR_CONST]
-    and parent::expr/ancestor-or-self::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']
-  ]
+  ")
+  paste_sep_xpath <- glue("
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST] and {ancestor_expr_cond}]
     /parent::expr
-  "
+  ")
+
   to_string_xpath <- "
   parent::expr[
     count(expr) = 3
