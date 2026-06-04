@@ -221,7 +221,7 @@ test_that("next-line exclusion works", { # nofuzz
   )
 })
 
-test_that("capture groups work as intended (#2831)", { # nofuzz: assignment
+test_that("capture groups work as intended (#2831)", { # nofuzz: assignment comment_injection
   expect_lint(
     "x = 1",
     list(rex::rex("Use <- for assignment, not =.")),
