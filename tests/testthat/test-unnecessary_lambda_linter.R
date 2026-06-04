@@ -96,6 +96,11 @@ test_that("unnecessary_lambda_linter skips allowed inner comparisons", {
   expect_no_lint("sapply(x, function(xi) -foo(xi))", linter)
   expect_no_lint("sapply(x, function(xi) +foo(xi))", linter)
   expect_no_lint("sapply(x, function(xi) ~foo(xi))", linter)
+
+  # parenthesized/braced unary operators
+  expect_no_lint("sapply(x, function(xi) (!foo(xi)))", linter)
+  expect_no_lint("sapply(x, function(xi) (-foo(xi)))", linter)
+  expect_no_lint("sapply(x, function(xi) { -foo(xi) })", linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
@@ -126,6 +131,18 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
   expect_lint(
     "eapply(env, function(x) return(sum(x, na.rm = TRUE)))",
     rex::rex("Pass sum directly as a symbol to eapply()"),
+    linter
+  )
+
+  # parenthesized/braced valid simplifications
+  expect_lint(
+    "sapply(x, function(xi) (foo(xi)))",
+    rex::rex("Pass foo directly as a symbol to sapply()"),
+    linter
+  )
+  expect_lint(
+    "sapply(x, function(xi) { foo(xi) })",
+    rex::rex("Pass foo directly as a symbol to sapply()"),
     linter
   )
 })
