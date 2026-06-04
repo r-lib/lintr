@@ -104,7 +104,7 @@ seq_linter <- function() {
   ## The actual order of the nodes is document order
   ## In practice we need to handle length(x):1
   get_fun <- function(expr, n) {
-    funcall <- xml_find_chr(expr, sprintf("string(./expr[%d])", n))
+    funcall <- xml_find_chr_(expr, sprintf("string(./expr[%d])", n))
 
     # `dplyr::n()` is special because it has no arguments, so the lint message
     # should mention `n()`, and not `n(...)`
@@ -123,8 +123,8 @@ seq_linter <- function() {
     seq_calls <- source_expression$xml_find_function_calls("seq")
 
     seq_expr <- combine_nodesets(
-      xml_find_all(seq_calls, seq_xpath),
-      xml_find_all(xml, colon_xpath)
+      xml_find_all_(seq_calls, seq_xpath),
+      xml_find_all_(xml, colon_xpath)
     )
     seq_expr <- strip_comments_from_subtree(seq_expr)
 
@@ -152,7 +152,7 @@ seq_linter <- function() {
     seq_lints <- xml_nodes_to_lints(seq_expr, source_expression, lint_message, type = "warning")
 
     seq_len_calls <- source_expression$xml_find_function_calls("seq_len")
-    seq_len_expr <- xml_find_all(seq_len_calls, seq_len_xpath)
+    seq_len_expr <- xml_find_all_(seq_len_calls, seq_len_xpath)
     seq_len_lints <- xml_nodes_to_lints(
       seq_len_expr,
       source_expression,
@@ -161,7 +161,7 @@ seq_linter <- function() {
     )
 
     xml_map_calls <- source_expression$xml_find_function_calls(map_funcs)
-    potential_sequence_calls <- xml_find_all(xml_map_calls, sequence_xpath)
+    potential_sequence_calls <- xml_find_all_(xml_map_calls, sequence_xpath)
     sequence_lints <- xml_nodes_to_lints(
       potential_sequence_calls,
       source_expression,

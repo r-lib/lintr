@@ -15,8 +15,8 @@ conjunction with \code{seq()} (e.g., \code{seq(length(...))}, \code{seq(nrow(...
 Additionally, it checks for \code{1:n()} (from \code{{dplyr}}) and \code{1:.N} (from \code{{data.table}}).
 
 These often cause bugs when the right-hand side is zero.
-Instead, it is safer to use \code{\link[base:seq]{base::seq_len()}} (to create a sequence of a specified \emph{length}) or
-\code{\link[base:seq]{base::seq_along()}} (to create a sequence \emph{along} an object).
+Instead, it is safer to use \code{\link[base:seq_len]{base::seq_len()}} (to create a sequence of a specified \emph{length}) or
+\code{\link[base:seq_along]{base::seq_along()}} (to create a sequence \emph{along} an object).
 }
 \examples{
 # will produce lints

@@ -49,7 +49,7 @@ all_equal_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     all_equal_calls <- source_expression$xml_find_function_calls("all.equal")
 
-    dangerous_unwrapped_all_equal <- xml_find_all(
+    dangerous_unwrapped_all_equal <- xml_find_all_(
       all_equal_calls,
       "parent::expr[
         preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]
@@ -58,7 +58,7 @@ all_equal_linter <- function() {
     )
 
     has_tolerance_arg <- !is.na(
-      xml_find_first(dangerous_unwrapped_all_equal, "SYMBOL_SUB[text() = 'tolerance']")
+      xml_find_first_(dangerous_unwrapped_all_equal, "SYMBOL_SUB[text() = 'tolerance']")
     )
 
     unwrapped_all_equal_lints <- xml_nodes_to_lints(
@@ -72,7 +72,7 @@ all_equal_linter <- function() {
       type = "warning"
     )
 
-    is_false_all_equal <- xml_find_all(
+    is_false_all_equal <- xml_find_all_(
       all_equal_calls,
       "parent::expr[preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL/text() = 'isFALSE']"
     )

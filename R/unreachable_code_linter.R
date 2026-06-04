@@ -136,8 +136,8 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     expr <- lapply(
       expr,
       function(x) {
-        if (xml_name(xml2::xml_child(x)) == "OP-LEFT-BRACE") {
-          xml_find_first(x, "expr")
+        if (xml_name_(xml_child_(x)) == "OP-LEFT-BRACE") {
+          xml_find_first_(x, "expr")
         } else {
           x
         }
@@ -153,13 +153,13 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     # also build with '|', not rex::rex(or(.)), the latter which will double-escape the regex.
     allow_comment_regex <- paste(union(allow_comment_regex, settings$exclude_end), collapse = "|")
 
-    expr_after_terminal_node <- xml_find_all(xml, xpath_after_terminal_node)
+    expr_after_terminal_node <- xml_find_all_(xml, xpath_after_terminal_node)
 
-    is_valid_comment <- xml2::xml_name(expr_after_terminal_node) == "COMMENT" &
+    is_valid_comment <- xml_name_(expr_after_terminal_node) == "COMMENT" &
       re_matches_logical(xml_text(expr_after_terminal_node), allow_comment_regex)
 
     expr_after_terminal_node <- expr_after_terminal_node[!is_valid_comment]
-    terminal_node <- xml_text(xml_find_first(expr_after_terminal_node, xpath_terminal_node))
+    terminal_node <- xml_text(xml_find_first_(expr_after_terminal_node, xpath_terminal_node))
     terminal_node <-
       ifelse(terminal_node %in% c("return", "stop"), paste0(terminal_node, "()"), paste0("`", terminal_node, "`"))
 
@@ -170,7 +170,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
       type = "warning"
     )
 
-    expr_if_while <- handle_inline_conditions(xml_find_all(xml, xpath_if_while))
+    expr_if_while <- handle_inline_conditions(xml_find_all_(xml, xpath_if_while))
 
     lints_if_while <- xml_nodes_to_lints(
       expr_if_while,
@@ -179,7 +179,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
       type = "warning"
     )
 
-    expr_else <- handle_inline_conditions(xml_find_all(xml, xpath_else))
+    expr_else <- handle_inline_conditions(xml_find_all_(xml, xpath_else))
 
     lints_else <- xml_nodes_to_lints(
       expr_else,
