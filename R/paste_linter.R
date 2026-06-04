@@ -130,14 +130,18 @@ paste_linter <- function(allow_empty_sep = FALSE,
   check_file_paths <- allow_file_path %in% c("double_slash", "never")
 
   paste_sep_xpath <- "
-  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
+  following-sibling::SYMBOL_SUB[
+    text() = 'sep'
+    and following-sibling::expr[1][STR_CONST]
+    and not(parent::expr/ancestor-or-self::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression'])
+  ]
     /parent::expr
   "
   expression_paste_sep_xpath <- "
   following-sibling::SYMBOL_SUB[
     text() = 'sep'
     and following-sibling::expr[1][STR_CONST]
-    and parent::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']
+    and parent::expr/ancestor-or-self::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']
   ]
     /parent::expr
   "
@@ -204,15 +208,15 @@ paste_linter <- function(allow_empty_sep = FALSE,
     }
 
     ## check if we are inside an expression()
-    expression_paste_sep_expr <- xml_find_all(paste_calls, expression_paste_sep_xpath)
-    if (length(expression_paste_sep_expr) > 0L) {
-      optional_lints <- c(optional_lints, xml_nodes_to_lints(
-        expression_paste_sep_expr[1L],
-        source_expression = source_expression,
-        lint_message = "inside expression(...), paste does not accept a 'sep' argument.",
-        type = "warning"
-      ))
-    } else if (!allow_empty_sep) {
+    expression_paste_sep_expr <- xml_find_all_(paste_calls, expression_paste_sep_xpath)
+    optional_lints <- c(optional_lints, xml_nodes_to_lints(
+      expression_paste_sep_expr,
+      source_expression = source_expression,
+      lint_message = "inside expression(...), paste does not accept a 'sep' argument.",
+      type = "warning"
+    ))
+
+    if (!allow_empty_sep) {
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         paste_sep_expr[!nzchar(paste_sep_value)],
         source_expression = source_expression,
