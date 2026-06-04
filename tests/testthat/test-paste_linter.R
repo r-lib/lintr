@@ -13,67 +13,32 @@ test_that("paste_linter skips allowed usages for sep=''", {
 })
 
 test_that("paste_linter blocks simple disallowed usages for sep=''", {
-  expect_lint(
-    "paste(sep = '', 'a', 'b')",
-    rex::rex('paste0(...) is better than paste(..., sep = "").'),
-    paste_linter()
-  )
+  linter <- paste_linter()
+  paste_sep_msg <- rex::rex('paste0(...) is better than paste(..., sep = "").')
+  expr_sep_msg <- rex::rex("inside expression(...), paste does not accept a 'sep' argument.")
 
-  expect_lint(
-    "paste('a', 'b', sep = '')",
-    rex::rex('paste0(...) is better than paste(..., sep = "").'),
-    paste_linter()
-  )
+  expect_lint("paste(sep = '', 'a', 'b')", paste_sep_msg, linter)
+  expect_lint("paste('a', 'b', sep = '')", paste_sep_msg, linter)
+  expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
 
-  expect_lint(
-    "paste('a', 'b', expression(2), sep = '')",
-    rex::rex('paste0(...) is better than paste(..., sep = "").'),
-    paste_linter()
-  )
+  expect_lint("expression(paste('a', 'b', sep = ','))", expr_sep_msg, linter)
+  expect_lint("cxpression(paste('a', 'b', sep = ''))", expr_sep_msg, linter)
+  expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
+  expect_lint("expression(paste('a', 'b', sep = ','))", expr_sep_msg, linter)
+  expect_lint("expression(paste('a', 'b', sep = ''))", expr_sep_msg, linter)
+  expect_lint("expression(italic(paste('a', sep = '')))", expr_sep_msg, linter)
 
+  # Correct differentiation of lints in/out of expression()
   expect_lint(
-    "c(expression(paste('a', 'b', sep = ',')))",
-    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
-    paste_linter()
-  )
-  expect_lint(
-    "c(expression(paste('a', 'b', sep = '')))",
-    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
-    paste_linter()
-  )
-
-  expect_lint(
-    "paste('a', 'b', expression(2), sep = '')",
-    rex::rex('paste0(...) is better than paste(..., sep = "").'),
-    paste_linter()
-  )
-
-  expect_lint(
-    "c(expression(paste('a', 'b', sep = ',')))",
-    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
-    paste_linter()
-  )
-  expect_lint(
-    "c(expression(paste('a', 'b', sep = '')))",
-    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
-    paste_linter()
-  )
-
-  # Bug 1: Multiple lints in same expression, one inside expression(), one outside
-  expect_lint(
-    "{\n  paste('a', sep = '')\n  expression(paste('b', sep = ''))\n}",
+    trim_some("{
+      paste('a', sep = '')
+      expression(paste('b', sep = ''))
+    }"),
     list(
-      rex::rex('paste0(...) is better than paste(..., sep = "").'),
-      rex::rex("inside expression(...), paste does not accept a 'sep' argument.")
+      list(paste_sep_msg, line_number = 2L),
+      list(expr_sep_msg, line_number = 3L)
     ),
-    paste_linter()
-  )
-
-  # Bug 2: Nested expression
-  expect_lint(
-    "expression(italic(paste('a', sep = '')))",
-    rex::rex("inside expression(...), paste does not accept a 'sep' argument."),
-    paste_linter()
+    linter
   )
 })
 
