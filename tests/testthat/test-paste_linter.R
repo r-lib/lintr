@@ -22,7 +22,7 @@ test_that("paste_linter blocks simple disallowed usages for sep=''", {
   expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
 
   expect_lint("expression(paste('a', 'b', sep = ','))", expr_sep_msg, linter)
-  expect_lint("cxpression(paste('a', 'b', sep = ''))", expr_sep_msg, linter)
+  expect_lint("cxpression(paste('a', 'b', sep = ''))", paste_sep_msg, linter)
   expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
   expect_lint("expression(paste('a', 'b', sep = ','))", expr_sep_msg, linter)
   expect_lint("expression(paste('a', 'b', sep = ''))", expr_sep_msg, linter)
