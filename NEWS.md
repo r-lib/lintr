@@ -51,6 +51,7 @@
    + `unreachable_code_linter()` #2827
    + `vector_logic_linter()` #2826
 * `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
+* `paste_linter()` lints `expression(paste(., sep = ""))` because the `paste` inside an expression doesn't support the `sep` argument (#2945, @mcol).
 
 ### Lint accuracy fixes: removing false positives
 
