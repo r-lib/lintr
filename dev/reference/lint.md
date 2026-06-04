@@ -143,10 +143,10 @@ lint(text = "a = 123")
 f <- tempfile()
 writeLines("a=1", f)
 lint(f)
-#> /tmp/RtmppuvXjj/file1a9c4741a626:1:2: style: [assignment_linter] Use <- for assignment, not =.
+#> /tmp/RtmpAGp2ds/file1abd5968e001:1:2: style: [assignment_linter] Use <- for assignment, not =.
 #> a=1
 #>  ^
-#> /tmp/RtmppuvXjj/file1a9c4741a626:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
+#> /tmp/RtmpAGp2ds/file1abd5968e001:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
 #> a=1
 #>  ^
 unlink(f)

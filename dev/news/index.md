@@ -135,6 +135,11 @@
   [`filter()`](https://rdrr.io/r/stats/filter.html)/[`subset()`](https://rdrr.io/r/base/subset.html)
   ([\#2935](https://github.com/r-lib/lintr/issues/2935),
   [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
+- [`unnecessary_lambda_linter()`](https://lintr.r-lib.org/dev/reference/unnecessary_lambda_linter.md)
+  skips lambdas with an outer unary operators like
+  `sapply(x, \(xi) !all(xi))`
+  ([\#2742](https://github.com/r-lib/lintr/issues/2742),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
 
 ### Notes
 
