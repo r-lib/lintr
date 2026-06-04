@@ -116,12 +116,19 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   #     c. that call's _first_ argument is just the function argument (a SYMBOL)
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
+  unary_op <- infix_metadata$xml_tag[infix_metadata$unary]
   default_fun_xpath <- glue("
   following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
     /expr[last()][
       count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
       and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
-      and not(OP-EXCLAMATION or OP-PLUS or OP-MINUS or OP-TILDE)
+      and not(
+        ({ xp_or(unary_op) })
+        or (
+          *[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-LEFT-BRACE]
+          and expr[{ xp_or(unary_op) }]
+        )
+      )
       and preceding-sibling::SYMBOL_FORMALS =
         .//expr[
           position() = 2
