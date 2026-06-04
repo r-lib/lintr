@@ -2,7 +2,6 @@
 #'
 #' [return()] inside a magrittr pipeline does not actually execute `return()`
 #'   like you'd expect:
-#'
 #'   ```r
 #'   bad_usage <- function(x) {
 #'     x %>%

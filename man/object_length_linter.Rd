@@ -12,15 +12,14 @@ object_length_linter(length = 30L)
 \description{
 Check that object names are not too long.
 The length of an object name is defined as the length in characters, after removing extraneous parts:
-}
-\details{
 \itemize{
 \item generic prefixes for implementations of S3 generics, e.g. \code{as.data.frame.my_class} has length 8.
 \item leading \code{.}, e.g. \code{.my_hidden_function} has length 18.
 \item "\%\%" for infix operators, e.g. \verb{\%my_op\%} has length 5.
 \item trailing \verb{<-} for assignment functions, e.g. \verb{my_attr<-} has length 7.
 }
-
+}
+\details{
 Note that this behavior relies in part on having packages in your Imports available;
 see the detailed note in \code{\link[=object_name_linter]{object_name_linter()}} for more details.
 }

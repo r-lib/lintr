@@ -116,11 +116,19 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   #     c. that call's _first_ argument is just the function argument (a SYMBOL)
   #       - and it has to be passed positionally (not as a keyword)
   #     d. the function argument doesn't appear elsewhere in the call
+  unary_op <- infix_metadata$xml_tag[infix_metadata$unary]
   default_fun_xpath <- glue("
   following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
     /expr[last()][
       count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
       and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
+      and not(
+        ({ xp_or(unary_op) })
+        or (
+          *[not(self::COMMENT)][1][self::OP-LEFT-PAREN or self::OP-LEFT-BRACE]
+          and expr[{ xp_or(unary_op) }]
+        )
+      )
       and preceding-sibling::SYMBOL_FORMALS =
         .//expr[
           position() = 2
@@ -163,11 +171,11 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
 
   Linter(linter_level = "expression", function(source_expression) {
     default_calls <- source_expression$xml_find_function_calls(apply_funs)
-    default_fun_expr <- xml_find_all(default_calls, default_fun_xpath)
+    default_fun_expr <- xml_find_all_(default_calls, default_fun_xpath)
 
     # TODO(#2478): Give a specific recommendation in the message.
-    default_call_fun <- xml_text(xml_find_first(default_fun_expr, fun_xpath))
-    default_symbol <- xml_text(xml_find_first(default_fun_expr, symbol_xpath))
+    default_call_fun <- xml_text(xml_find_first_(default_fun_expr, fun_xpath))
+    default_symbol <- xml_text(xml_find_first_(default_fun_expr, symbol_xpath))
     default_fun_lints <- xml_nodes_to_lints(
       default_fun_expr,
       source_expression = source_expression,
@@ -182,9 +190,9 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     inner_comparison_lints <- NULL
     if (!allow_comparison) {
       sapply_vapply_calls <- source_expression$xml_find_function_calls(c("sapply", "vapply"))
-      inner_comparison_expr <- xml_find_all(sapply_vapply_calls, inner_comparison_xpath)
+      inner_comparison_expr <- xml_find_all_(sapply_vapply_calls, inner_comparison_xpath)
 
-      mapper <- xp_call_name(xml_find_first(inner_comparison_expr, "parent::expr/parent::expr"))
+      mapper <- xp_call_name(xml_find_first_(inner_comparison_expr, "parent::expr/parent::expr"))
       if (length(mapper) > 0L) fun_value <- if (mapper == "sapply") "" else ", FUN.VALUE = <intermediate>"
 
       inner_comparison_lints <- xml_nodes_to_lints(
@@ -202,10 +210,10 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     }
 
     purrr_calls <- source_expression$xml_find_function_calls(purrr_mappers)
-    purrr_fun_expr <- xml_find_all(purrr_calls, purrr_fun_xpath)
+    purrr_fun_expr <- xml_find_all_(purrr_calls, purrr_fun_xpath)
 
-    purrr_call_fun <- xml_text(xml_find_first(purrr_fun_expr, fun_xpath))
-    purrr_symbol <- xml_text(xml_find_first(purrr_fun_expr, symbol_xpath))
+    purrr_call_fun <- xml_text(xml_find_first_(purrr_fun_expr, fun_xpath))
+    purrr_symbol <- xml_text(xml_find_first_(purrr_fun_expr, symbol_xpath))
     purrr_fun_lints <- xml_nodes_to_lints(
       purrr_fun_expr,
       source_expression = source_expression,

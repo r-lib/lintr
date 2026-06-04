@@ -298,6 +298,40 @@ test_that("explicit parse_settings=TRUE works for inline data", {
   expect_length(lint(text = lint_str), 2L)
 })
 
+test_that("lint(text=) handles unmarked UTF-8 text correctly", {
+  skip_if_not_utf8_locale()
+
+  tf <- withr::local_tempfile()
+  writeLines('x <- "\u00e4"', tf, useBytes = TRUE)
+  text_native <- readLines(tf)
+
+  expect_no_error(
+    expect_length(lint(text = text_native, linters = absolute_path_linter()), 0L)
+  )
+
+  writeLines(c('x <- "\u00e4"', 'y <- "/absolute/path"'), tf, useBytes = TRUE)
+  text_native_lint <- readLines(tf)
+
+  expect_no_error({
+    res_lint <- lint(text = text_native_lint, linters = absolute_path_linter(lax = FALSE))
+  })
+  expect_identical(res_lint[[1L]]$line_number, 2L)
+  expect_identical(res_lint[[1L]]$message, "Do not use absolute paths.")
+})
+
+test_that("lint(text=) handles UTF-8 marked text in non-UTF-8 locale", {
+  # Set LC_CTYPE to C to simulate non-UTF-8 locale
+  withr::local_locale(c(LC_CTYPE = "C"))
+
+  # Create UTF-8 marked text
+  text <- 'x <- "\u00e4"'
+  expect_identical(Encoding(text), "UTF-8")
+
+  expect_no_error(
+    expect_length(lint(text = text, linters = absolute_path_linter()), 0L)
+  )
+})
+
 # Mode 3: lint(filename, text=) — content from text, identity from filename
 
 test_that("lint(filename, text=) uses identity path in output", {

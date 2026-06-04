@@ -58,8 +58,8 @@ expect_type_linter <- function() {
     expect_equal_identical_calls <- source_expression$xml_find_function_calls(c("expect_equal", "expect_identical"))
     expect_true_calls <- source_expression$xml_find_function_calls("expect_true")
     bad_expr <- combine_nodesets(
-      xml_find_all(expect_equal_identical_calls, expect_equal_identical_xpath),
-      xml_find_all(expect_true_calls, expect_true_xpath)
+      xml_find_all_(expect_equal_identical_calls, expect_equal_identical_xpath),
+      xml_find_all_(expect_true_calls, expect_true_xpath)
     )
     matched_function <- xp_call_name(bad_expr)
     msg <- ifelse(

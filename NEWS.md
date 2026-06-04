@@ -3,6 +3,7 @@
 ## Deprecations & breaking changes
 
 * Six linters fully deprecated in the previous release are now removed: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`.
+* `assignment_linter()` only allows `<-` by default, i.e., `<<-` is now excluded (consistent with the defaults for `undesirable_operator_linter()`; #2717, @MichaelChirico).
 * Arguments `allow_cascading_assign=`, `allow_right_assign=`, and `allow_pipe_assign=` to `assignment_linter()` are now removed. Use `operator=` instead.
 * Argument `interpret_glue` to `object_usage_linter()`, marked deprecated in the previous release, is now defunct. Use `interpret_extensions=` instead; see the 3.3.0-1 release notes and `?object_usage_linter` for more.
 
@@ -10,6 +11,8 @@
 
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
 * `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
+* `get_source_expression(lines=)` and `lint(text=)` correctly handle text with unmarked encoding (#3046, @MichaelChirico).
+* `lint(exclude=)` doesn't fail cryptically when provided a regex with capture groups (#2831, @MichaelChirico).
 
 ## New and improved features
 
@@ -60,10 +63,12 @@
 * `undesirable_operator_linter(call_is_undesirable = FALSE)` now correctly skips prefix notation like `` `:::`(pkg, fun) `` (#2999, @emmanuel-ferdman).
 * `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
 * `vector_logic_linter()` ignores scalar operators (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` (#2935, @emmanuel-ferdman).
+* `unnecessary_lambda_linter()` skips lambdas with an outer unary operators like `sapply(x, \(xi) !all(xi))` (#2742, @MichaelChirico).
 
 ## Notes
 
 * {lintr} now requires R 4.1.0
+* Internal code is refactored to avoid `xml2::xml_ns()` for e.g. 5-30% end-to-end speed improvement in `lint_package()`
 
 # lintr (3.3.0-1)
 

@@ -118,7 +118,7 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    infix_expr <- xml_find_all(xml, infix_xpath)
+    infix_expr <- xml_find_all_(xml, infix_xpath)
 
     all_expr <- infix_expr
     operator <- xml_text(infix_expr)

@@ -70,7 +70,7 @@ pipe_continuation_linter <- function() {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    pipe_exprs <- xml_find_all(xml, xpath)
+    pipe_exprs <- xml_find_all_(xml, xpath)
     pipe_text <- xml_text(pipe_exprs)
 
     xml_nodes_to_lints(

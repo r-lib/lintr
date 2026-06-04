@@ -97,7 +97,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
   }
 
   get_regex_lint_data <- function(xml, xpath) {
-    expr <- xml_find_all(xml, xpath)
+    expr <- xml_find_all_(xml, xpath)
     patterns <- get_r_string(expr)
     initial_anchor <- startsWith(patterns, "^")
     terminal_anchor <- endsWith(patterns, "$")
@@ -162,10 +162,10 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     substr_calls <- xml_parent(xml_parent(
       source_expression$xml_find_function_calls(c("substr", "substring"))
     ))
-    is_str_comparison <- !is.na(xml_find_first(substr_calls, string_comparison_xpath))
+    is_str_comparison <- !is.na(xml_find_first_(substr_calls, string_comparison_xpath))
     substr_calls <- strip_comments_from_subtree(substr_calls[is_str_comparison])
-    substr_expr <- xml_find_all(substr_calls, substr_xpath)
-    substr_one <- xml_find_chr(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
+    substr_expr <- xml_find_all_(substr_calls, substr_xpath)
+    substr_one <- xml_find_chr_(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
     substr_lint_message <- paste(
       ifelse(
         substr_one,
