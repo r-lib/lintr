@@ -10,6 +10,7 @@ test_that("paste_linter skips allowed usages for sep=''", {
   expect_no_lint("paste0('a', 'b', 'c')", linter)
   expect_no_lint("expression(2); paste('a', 'b', 'c', sep = ',')", linter)
   expect_no_lint("paste('a', 'b', expression(2), sep = ',')", linter)
+  expect_no_lint("expression(paste('a', 'b')", linter)
 })
 
 test_that("paste_linter blocks simple disallowed usages for sep=''", {
@@ -22,10 +23,8 @@ test_that("paste_linter blocks simple disallowed usages for sep=''", {
   expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
 
   expect_lint("expression(paste('a', 'b', sep = ','))", expr_sep_msg, linter)
-  expect_lint("cxpression(paste('a', 'b', sep = ''))", paste_sep_msg, linter)
-  expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
-  expect_lint("expression(paste('a', 'b', sep = ','))", expr_sep_msg, linter)
   expect_lint("expression(paste('a', 'b', sep = ''))", expr_sep_msg, linter)
+  expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
   expect_lint("expression(italic(paste('a', sep = '')))", expr_sep_msg, linter)
 
   # Correct differentiation of lints in/out of expression()
