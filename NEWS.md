@@ -11,6 +11,7 @@
 
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
 * `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
+* `get_source_expression(lines=)` and `lint(text=)` correctly handle text with unmarked encoding (#3046, @MichaelChirico).
 
 ## New and improved features
 
