@@ -5,7 +5,9 @@
 #' The following issues are linted by default by this linter
 #'   (see arguments for which can be de-activated optionally):
 #'
-#'  1. Block usage of [base::paste()] with `sep = ""`. [base::paste0()] is a faster, more concise alternative.
+#'  1. Block usage of [base::paste()] with `sep = ""`. [base::paste0()] is a faster, more concise alternative;
+#'     this is valid unless `paste` occurs inside [base::expression], which according to [grDevices::plotmath]
+#'     does not support the `sep` argument.
 #'  2. Block usage of `paste()` or `paste0()` with `collapse = ", "`. [toString()] is a direct
 #'     wrapper for this, and alternatives like [glue::glue_collapse()] might give better messages for humans.
 #'  3. Block usage of `paste0()` that supplies `sep=` -- this is not a formal argument to `paste0`, and
@@ -63,6 +65,11 @@
 #'   linters = paste_linter()
 #' )
 #'
+#' lint(
+#'   text = 'expression(paste("a", "b", sep = ""))',
+#'   linters = paste_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = 'paste0("a", "b")',
@@ -109,6 +116,11 @@
 #'   linters = paste_linter()
 #' )
 #'
+#' lint(
+#'   text = 'expression(paste("a", "b"))',
+#'   linters = paste_linter()
+#' )
+#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paste_linter <- function(allow_empty_sep = FALSE,
@@ -117,10 +129,16 @@ paste_linter <- function(allow_empty_sep = FALSE,
   allow_file_path <- match.arg(allow_file_path)
   check_file_paths <- allow_file_path %in% c("double_slash", "never")
 
-  paste_sep_xpath <- "
-  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
+  ancestor_expr_cond <-
+    "parent::expr/ancestor-or-self::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']"
+  paste_sep_xpath <- glue("
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST] and not({ancestor_expr_cond})]
     /parent::expr
-  "
+  ")
+  expression_paste_sep_xpath <- glue("
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST] and {ancestor_expr_cond}]
+    /parent::expr
+  ")
 
   to_string_xpath <- "
   parent::expr[
@@ -183,6 +201,15 @@ paste_linter <- function(allow_empty_sep = FALSE,
       paste_sep_expr <- xml_find_all_(paste_calls, paste_sep_xpath)
       paste_sep_value <- get_r_string(paste_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
     }
+
+    ## check if we are inside an expression()
+    expression_paste_sep_expr <- xml_find_all_(paste_calls, expression_paste_sep_xpath)
+    optional_lints <- c(optional_lints, xml_nodes_to_lints(
+      expression_paste_sep_expr,
+      source_expression = source_expression,
+      lint_message = "inside expression(...), paste does not accept a 'sep' argument.",
+      type = "warning"
+    ))
 
     if (!allow_empty_sep) {
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
