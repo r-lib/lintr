@@ -11,6 +11,8 @@
 
 * Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
 * `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
+* `get_source_expression(lines=)` and `lint(text=)` correctly handle text with unmarked encoding (#3046, @MichaelChirico).
+* `lint(exclude=)` doesn't fail cryptically when provided a regex with capture groups (#2831, @MichaelChirico).
 
 ## New and improved features
 
@@ -49,6 +51,7 @@
    + `unreachable_code_linter()` #2827
    + `vector_logic_linter()` #2826
 * `sort_linter()` recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
+* `paste_linter()` lints `expression(paste(., sep = ""))` because the `paste` inside an expression doesn't support the `sep` argument (#2945, @mcol).
 
 ### Lint accuracy fixes: removing false positives
 
@@ -56,6 +59,7 @@
 * `undesirable_operator_linter(call_is_undesirable = FALSE)` now correctly skips prefix notation like `` `:::`(pkg, fun) `` (#2999, @emmanuel-ferdman).
 * `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
 * `vector_logic_linter()` ignores scalar operators (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` (#2935, @emmanuel-ferdman).
+* `unnecessary_lambda_linter()` skips lambdas with an outer unary operators like `sapply(x, \(xi) !all(xi))` (#2742, @MichaelChirico).
 
 ## Notes
 

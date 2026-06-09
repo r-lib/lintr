@@ -167,7 +167,7 @@ infix_metadata$parse_tag <- ifelse(
   infix_metadata$xml_tag
 )
 # treated separately because spacing rules are different for unary operators
-infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP-TILDE")
+infix_metadata$unary <- infix_metadata$xml_tag %in% c("OP-PLUS", "OP-MINUS", "OP-TILDE", "OP-EXCLAMATION")
 # high-precedence operators are ignored by this linter; see
 #   https://style.tidyverse.org/syntax.html#infix-operators
 infix_metadata$low_precedence <- infix_metadata$string_value %in% c(
