@@ -27,6 +27,7 @@ The following tags exist:
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
+\item{\link[=portability_linters]{portability} (5 linters)}
 \item{\link[=readability_linters]{readability} (66 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (19 linters)}
@@ -37,8 +38,8 @@ The following tags exist:
 \section{Linters}{
 The following linters exist:
 \itemize{
-\item{\code{\link{absolute_path_linter}} (tags: best_practices, configurable, robustness)}
-\item{\code{\link{all_equal_linter}} (tags: common_mistakes, robustness)}
+\item{\code{\link{absolute_path_linter}} (tags: best_practices, configurable, portability, robustness)}
+\item{\code{\link{all_equal_linter}} (tags: common_mistakes, portability, robustness)}
 \item{\code{\link{any_duplicated_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{any_is_na_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{assignment_linter}} (tags: configurable, consistency, default, style)}
@@ -56,7 +57,7 @@ The following linters exist:
 \item{\code{\link{consecutive_assertion_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{consecutive_mutate_linter}} (tags: configurable, consistency, efficiency, readability)}
 \item{\code{\link{cyclocomp_linter}} (tags: best_practices, configurable, readability, style)}
-\item{\code{\link{download_file_linter}} (tags: best_practices, common_mistakes, robustness)}
+\item{\code{\link{download_file_linter}} (tags: best_practices, common_mistakes, portability, robustness)}
 \item{\code{\link{duplicate_argument_linter}} (tags: common_mistakes, configurable, correctness)}
 \item{\code{\link{empty_assignment_linter}} (tags: best_practices, readability)}
 \item{\code{\link{equals_na_linter}} (tags: common_mistakes, correctness, default, robustness)}
@@ -99,7 +100,7 @@ The following linters exist:
 \item{\code{\link{namespace_linter}} (tags: configurable, correctness, executing, robustness)}
 \item{\code{\link{nested_ifelse_linter}} (tags: efficiency, readability)}
 \item{\code{\link{nested_pipe_linter}} (tags: configurable, consistency, readability)}
-\item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
+\item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, portability, robustness)}
 \item{\code{\link{nrow_subset_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
 \item{\code{\link{nzchar_linter}} (tags: best_practices, consistency, efficiency)}
@@ -135,7 +136,7 @@ The following linters exist:
 \item{\code{\link{sprintf_linter}} (tags: common_mistakes, correctness)}
 \item{\code{\link{stopifnot_all_linter}} (tags: best_practices, readability)}
 \item{\code{\link{string_boundary_linter}} (tags: configurable, efficiency, readability, regex)}
-\item{\code{\link{strings_as_factors_linter}} (tags: robustness)}
+\item{\code{\link{strings_as_factors_linter}} (tags: portability, robustness)}
 \item{\code{\link{system_file_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{T_and_F_symbol_linter}} (tags: best_practices, consistency, default, readability, robustness, style)}
 \item{\code{\link{terminal_close_linter}} (tags: best_practices, robustness)}
