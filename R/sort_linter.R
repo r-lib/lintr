@@ -101,9 +101,9 @@ sort_linter <- function() {
 
   selectors <- c("order", "sort", "identical")
   Linter(linter_level = "expression", selectors = selectors, function(source_expression) {
-    order_calls <- strip_comments_from_subtree(xml_parent(xml_parent(
-      source_expression$xml_find_function_calls("order")
-    )))
+    order_calls <- source_expression$xml_find_function_calls("order") |>
+      xml_find_all_("parent::*/parent::*") |>
+      strip_comments_from_subtree()
 
     order_expr <- xml_find_all_(order_calls, order_xpath)
 
@@ -138,8 +138,9 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    sort_calls <- xml_parent(xml_parent(xml_parent(source_expression$xml_find_function_calls("sort"))))
-    sort_calls <- strip_comments_from_subtree(sort_calls)
+    sort_calls <- source_expression$xml_find_function_calls("sort") |>
+      xml_find_all_("parent::*/parent::*/parent::*") |>
+      strip_comments_from_subtree()
     sorted_expr <- xml_find_all_(sort_calls, sorted_xpath)
 
     sorted_op <- xml_text(xml_find_first_(sorted_expr, "*[2]"))

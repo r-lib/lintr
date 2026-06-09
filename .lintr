@@ -23,15 +23,16 @@ linters: all_linters(
       library = NULL,
       options = NULL,
       normalizePath = "use normalize_path()",
+      xml_attr = "use xml_attr_",
+      xml_attrs = "use xml_attrs_",
+      xml_child = "use xml_child_",
       xml_find_all = "use xml_find_all_",
       xml_find_first = "use xml_find_first_",
       xml_find_chr = "use xml_find_chr_",
       xml_find_num = "use xml_find_num_",
       xml_find_lgl = "use xml_find_lgl_",
-      xml_attr = "use xml_attr_",
-      xml_attrs = "use xml_attrs_",
-      xml_child = "use xml_child_",
-      xml_name = "use xml_name_"
+      xml_name = "use xml_name_",
+      xml_parent = "prefer parent::* in previous XPath"
     )),
     undesirable_function_call_linter = undesirable_function_linter(
       c(
