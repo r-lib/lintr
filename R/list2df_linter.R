@@ -49,6 +49,7 @@ list2df_linter <- function() {
     ]
 
     xml_nodes_to_lints(
+      # nolint next: undesirable_function_name_linter.
       xml_parent(bad_expr),
       source_expression = source_expression,
       lint_message = paste(

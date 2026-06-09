@@ -284,6 +284,7 @@ get_imported_symbols <- function(xml, library_lint_hook) {
   import_exprs <- xml_find_all_(xml, import_exprs_xpath)
   imported_pkgs <- get_r_string(import_exprs)
 
+  # nolint next: undesirable_function_name_linter.
   unlist(Map(pkg = imported_pkgs, expr = xml_parent(import_exprs), function(pkg, expr) {
     tryCatch(
       getNamespaceExports(pkg),
