@@ -19,7 +19,7 @@ c.f. \code{startsWith(x, "abc")}, \code{grepl("^abc", x)},
 \code{substr(x, 1L, 3L) == "abc"}.
 }
 \details{
-Ditto for using \code{\link[base:startsWith]{base::endsWith()}} to detect fixed terminal substrings.
+Ditto for using \code{\link[base:endsWith]{base::endsWith()}} to detect fixed terminal substrings.
 
 Note that there is a difference in behavior between how \code{grepl()} and \code{startsWith()}
 (and \code{endsWith()}) handle missing values. In particular, for \code{grepl()}, \code{NA} inputs

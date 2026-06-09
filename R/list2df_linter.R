@@ -39,7 +39,7 @@ list2df_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("do.call")
 
-    xml_calls_nolambda <- xml_find_all(
+    xml_calls_nolambda <- xml_find_all_(
       xml_calls,
       "./following-sibling::expr[1][SYMBOL or STR_CONST]"
     )

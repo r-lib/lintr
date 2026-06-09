@@ -65,7 +65,7 @@ regex_subset_linter <- function() {
       "parent::*/parent::*/parent::*"
     )
     grep_calls <- strip_comments_from_subtree(grep_calls)
-    grep_expr <- xml_find_all(grep_calls, grep_xpath)
+    grep_expr <- xml_find_all_(grep_calls, grep_xpath)
 
     grep_lints <- xml_nodes_to_lints(
       grep_expr,
@@ -82,7 +82,7 @@ regex_subset_linter <- function() {
       "parent::*/parent::*/parent::*"
     )
     stringr_calls <- strip_comments_from_subtree(stringr_calls)
-    stringr_expr <- xml_find_all(stringr_calls, stringr_xpath)
+    stringr_expr <- xml_find_all_(stringr_calls, stringr_xpath)
 
     stringr_lints <- xml_nodes_to_lints(
       stringr_expr,

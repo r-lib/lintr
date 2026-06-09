@@ -8,19 +8,43 @@ test_that("paste_linter skips allowed usages for sep=''", {
   expect_no_lint("sep <- ''; paste('a', sep)", linter)
   expect_no_lint("paste(sep = ',', '', 'a')", linter)
   expect_no_lint("paste0('a', 'b', 'c')", linter)
+  expect_no_lint("expression(2); paste('a', 'b', 'c', sep = ',')", linter)
+  expect_no_lint("paste('a', 'b', expression(2), sep = ',')", linter)
+  expect_no_lint("expression(paste('a', 'b'))", linter)
 })
 
 test_that("paste_linter blocks simple disallowed usages for sep=''", {
-  expect_lint(
-    "paste(sep = '', 'a', 'b')",
-    rex::rex('paste0(...) is better than paste(..., sep = "").'),
-    paste_linter()
-  )
+  linter <- paste_linter()
+  paste_sep_msg <- rex::rex('paste0(...) is better than paste(..., sep = "").')
+  expr_sep_msg <- rex::rex("inside expression(...), paste does not accept a 'sep' argument.")
 
+  expect_lint("paste(sep = '', 'a', 'b')", paste_sep_msg, linter)
+  expect_lint("paste('a', 'b', sep = '')", paste_sep_msg, linter)
+  expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
+
+  expect_lint("expression(paste('a', 'b', sep = ','))", expr_sep_msg, linter)
+  expect_lint("expression(paste('a', 'b', sep = ''))", expr_sep_msg, linter)
+  expect_lint("paste('a', 'b', expression(2), sep = '')", paste_sep_msg, linter)
+  expect_lint("expression(italic(paste('a', sep = '')))", expr_sep_msg, linter)
+
+  # Correct differentiation of lints in/out of expression()
   expect_lint(
-    "paste('a', 'b', sep = '')",
-    rex::rex('paste0(...) is better than paste(..., sep = "").'),
-    paste_linter()
+    trim_some('{
+      expression(paste(x, y, sep=""))
+      paste(x, y, sep="")
+      expression(paste(a, b, sep=""))
+      paste(a, b, sep="")
+      expression(c(paste(d, e, sep=""), paste(f, g), paste(h, i, sep="")))
+    }'),
+    list(
+      list(expr_sep_msg, line_number = 2L),
+      list(paste_sep_msg, line_number = 3L),
+      list(expr_sep_msg, line_number = 4L),
+      list(paste_sep_msg, line_number = 5L),
+      list(expr_sep_msg, line_number = 6L, column_number = 16L),
+      list(expr_sep_msg, line_number = 6L, column_number = 50L)
+    ),
+    linter
   )
 })
 

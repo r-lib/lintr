@@ -104,3 +104,13 @@ test_that("Default recommendations can be specified multiple ways", {
   expect_lint(lint_str, lint_message, linter_mixed1)
   expect_lint(lint_str, lint_message, linter_mixed2)
 })
+
+test_that("call_is_undesirable = FALSE doesn't lint prefix notation", {
+  linter <- undesirable_operator_linter(call_is_undesirable = FALSE)
+  lint_message <- rex::rex("Avoid undesirable operator `:::`.")
+
+  expect_no_lint("`:::`(utils, hasName)", linter)
+  expect_no_lint("`<<-`(x, 1)", linter)
+
+  expect_lint("utils:::hasName", lint_message, linter)
+})

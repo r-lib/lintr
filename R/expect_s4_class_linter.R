@@ -35,7 +35,7 @@ expect_s4_class_linter <- function() {
     #   this seems empirically rare, but didn't check many S4-heavy packages.
 
     xml_calls <- source_expression$xml_find_function_calls("expect_true")
-    bad_expr <- xml_find_all(xml_calls, xpath)
+    bad_expr <- xml_find_all_(xml_calls, xpath)
 
     xml_nodes_to_lints(
       bad_expr,

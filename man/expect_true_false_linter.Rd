@@ -7,9 +7,9 @@
 expect_true_false_linter()
 }
 \description{
-\code{\link[testthat:logical-expectations]{testthat::expect_true()}} and \code{\link[testthat:logical-expectations]{testthat::expect_false()}} exist specifically
+\code{\link[testthat:expect_true]{testthat::expect_true()}} and \code{\link[testthat:expect_false]{testthat::expect_false()}} exist specifically
 for testing the \code{TRUE}/\code{FALSE} value of an object.
-\code{\link[testthat:equality-expectations]{testthat::expect_equal()}} and \code{\link[testthat:equality-expectations]{testthat::expect_identical()}} can also be
+\code{\link[testthat:expect_equal]{testthat::expect_equal()}} and \code{\link[testthat:expect_identical]{testthat::expect_identical()}} can also be
 used for such tests, but it is better to use the tailored function instead.
 }
 \examples{

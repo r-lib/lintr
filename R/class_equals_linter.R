@@ -44,9 +44,9 @@ class_equals_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("class")
-    bad_expr <- xml_find_all(xml_calls, xpath)
+    bad_expr <- xml_find_all_(xml_calls, xpath)
 
-    operator <- xml_find_chr(bad_expr, "string(*[2])")
+    operator <- xml_find_chr_(bad_expr, "string(*[2])")
     lint_message <- paste0(
       "Use inherits(x, 'class-name'), is.<class> for S3 classes, ",
       "or is(x, 'S4Class') for S4 classes, ",

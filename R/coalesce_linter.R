@@ -75,8 +75,8 @@ coalesce_linter <- function() {
       "parent::*/parent::*/parent::*"
     )
     null_calls <- strip_comments_from_subtree(null_calls)
-    bad_expr <- xml_find_all(null_calls, xpath)
-    is_negation <- !is.na(xml_find_first(bad_expr, "expr/OP-EXCLAMATION"))
+    bad_expr <- xml_find_all_(null_calls, xpath)
+    is_negation <- !is.na(xml_find_first_(bad_expr, "expr/OP-EXCLAMATION"))
     observed <- ifelse(is_negation, "if (!is.null(x)) x else y", "if (is.null(x)) y else x")
 
     xml_nodes_to_lints(

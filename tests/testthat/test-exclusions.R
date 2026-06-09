@@ -206,7 +206,7 @@ test_that("next-line exclusion works", { # nofuzz
       # NLN: line_length_linter.
       x = 1
     "),
-    rex::rex("Use one of <-, <<- for assignment, not =."),
+    rex::rex("Use <- for assignment, not =."),
     list(linter, line_length_linter())
   )
 
@@ -216,7 +216,75 @@ test_that("next-line exclusion works", { # nofuzz
       x = 1 # NLN: assignment_linter.
       x = 2
     "),
-    list(rex::rex("Use one of <-, <<- for assignment, not =."), line_number = 1L),
+    list(rex::rex("Use <- for assignment, not =."), line_number = 1L),
     linter
+  )
+})
+
+test_that("capture groups work as intended (#2831)", { # nofuzz: assignment comment_injection
+  expect_lint(
+    "x = 1",
+    list(rex::rex("Use <- for assignment, not =.")),
+    linters = assignment_linter(),
+    exclude = "(a)|(b)"
+  )
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(a)|(b)"
+  )
+
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(?:a)|(?:b)"
+  )
+
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(?:a)|(b)"
+  )
+  expect_lint(
+    "b = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(a)|(?:b)"
+  )
+
+  # named groups
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "(?<group1>a)|(?<group2>b)"
+  )
+
+  # nested groups
+  expect_lint(
+    "a = 1",
+    NULL,
+    linters = assignment_linter(),
+    exclude = "((a)|(b))"
+  )
+
+  # exclude_start / exclude_end with capture groups
+  expect_lint(
+    "x = 1 # nolint start\ny = 2\nz = 3 # nolint end",
+    NULL,
+    linters = assignment_linter(),
+    exclude_start = "(# nolint start)",
+    exclude_end = "(# nolint end)"
+  )
+
+  # exclude_next with capture groups
+  expect_lint(
+    "x = 1 # nolint next\ny = 2",
+    list(message = "Use <- for assignment, not =.", line_number = 1L),
+    linters = assignment_linter(),
+    exclude_next = "(# nolint next)"
   )
 })

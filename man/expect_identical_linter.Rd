@@ -7,10 +7,10 @@
 expect_identical_linter()
 }
 \description{
-This linter enforces the usage of \code{\link[testthat:equality-expectations]{testthat::expect_identical()}} as the
+This linter enforces the usage of \code{\link[testthat:expect_identical]{testthat::expect_identical()}} as the
 default expectation for comparisons in a testthat suite. \code{expect_true(identical(x, y))}
 is an equivalent but unadvised method of the same test. Further,
-\code{\link[testthat:equality-expectations]{testthat::expect_equal()}} should only be used when \code{expect_identical()}
+\code{\link[testthat:expect_equal]{testthat::expect_equal()}} should only be used when \code{expect_identical()}
 is inappropriate, i.e., when \code{x} and \code{y} need only be \emph{numerically
 equivalent} instead of fully identical (in which case, provide the
 \verb{tolerance=} argument to \code{expect_equal()} explicitly). This also applies

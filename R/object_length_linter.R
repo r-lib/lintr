@@ -2,7 +2,6 @@
 #'
 #' Check that object names are not too long.
 #' The length of an object name is defined as the length in characters, after removing extraneous parts:
-#'
 #'  * generic prefixes for implementations of S3 generics, e.g. `as.data.frame.my_class` has length 8.
 #'  * leading `.`, e.g. `.my_hidden_function` has length 18.
 #'  * "%%" for infix operators, e.g. `%my_op%` has length 5.
@@ -40,7 +39,7 @@ object_length_linter <- function(length = 30L) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    assignments <- xml_find_all(xml, object_name_xpath)
+    assignments <- xml_find_all_(xml, object_name_xpath)
 
     # Retrieve assigned name
     nms <- strip_names(
