@@ -284,18 +284,18 @@ get_imported_symbols <- function(xml, library_lint_hook) {
   import_exprs <- xml_find_all_(xml, import_exprs_xpath)
   imported_pkgs <- get_r_string(import_exprs)
 
-  unlist(Map(pkg = imported_pkgs, expr = import_exprs, function(pkg, expr) {
+  # nolint next: undesirable_function_name_linter.
+  unlist(Map(pkg = imported_pkgs, expr = xml_parent(import_exprs), function(pkg, expr) {
     tryCatch(
       getNamespaceExports(pkg),
       error = function(e) {
-        lint_node <- xml2::xml_parent(expr)
         lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is necessary here.
         lib_noun <- if (length(lib_paths) == 1L) "library" else "libraries"
         lint_msg <- paste0(
           "Could not find exported symbols for package \"", pkg, "\" in ", lib_noun, " ",
           toString(shQuote(lib_paths)), " (", conditionMessage(e), "). This may lead to false positives."
         )
-        library_lint_hook(lint_node, lint_msg)
+        library_lint_hook(expr, lint_msg)
         character()
       }
     )
