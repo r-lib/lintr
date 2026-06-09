@@ -8,7 +8,7 @@ Linters that check for code portability issues, i.e., code patterns that might f
 on different platforms.
 }
 \seealso{
-\link{linters} for a complete list of linters available in lintr
+\link{linters} for a complete list of linters available in lintr.
 }
 \section{Linters}{
 The following linters are tagged with 'portability':
