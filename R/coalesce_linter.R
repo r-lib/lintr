@@ -70,7 +70,7 @@ coalesce_linter <- function() {
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    null_calls <- xml_find_all(
+    null_calls <- xml_find_all_(
       source_expression$xml_find_function_calls("is.null"),
       "parent::*/parent::*/parent::*"
     )

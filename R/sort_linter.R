@@ -101,7 +101,7 @@ sort_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     order_calls <- source_expression$xml_find_function_calls("order") |>
-      xml_find_all("parent::*/parent::*") |>
+      xml_find_all_("parent::*/parent::*") |>
       strip_comments_from_subtree()
 
     order_expr <- xml_find_all_(order_calls, order_xpath)
