@@ -129,3 +129,12 @@ NULL
 #'  - [linters] for a complete list of linters available in lintr.
 #'  - <https://design.tidyverse.org/>
 NULL
+
+#' Portability linters
+#' @name portability_linters
+#' @description
+#' Linters that check for code portability issues, i.e., code patterns that might fail, or work differently, 
+#' on different platforms.
+#' @evalRd rd_linters("portability")
+#' @seealso [linters] for a complete list of linters available in lintr
+NULL
