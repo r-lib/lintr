@@ -1,5 +1,5 @@
 linters: all_linters(
-    backport_linter("3.6.0", except = c("R_user_dir", "deparse1", "...names")),
+    backport_linter("auto", except = c("R_user_dir", "deparse1", "...names")),
     line_length_linter(120L),
     object_overwrite_linter(allow_names = c("line", "lines", "pipe", "symbols")),
     todo_comment_linter(

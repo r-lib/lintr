@@ -4,12 +4,14 @@
 \alias{backport_linter}
 \title{Backport linter}
 \usage{
-backport_linter(r_version = getRversion(), except = character())
+backport_linter(r_version = "auto", except = character())
 }
 \arguments{
-\item{r_version}{Minimum R version to test for compatibility. Defaults to
-the R version currently in use. The version can be specified as a version
-number, or as a version alias (such as \code{"devel"}, \code{"oldrel"}, \code{"oldrel-1"}).}
+\item{r_version}{Minimum R version to test for compatibility. The version
+can be specified as a version number, or as a version alias (such as \code{"devel"},
+\code{"oldrel"}, \code{"oldrel-1"}). It can also be \code{"auto"} (the default) to use the minimum R version
+declared in the \code{DESCRIPTION} file of R packages, and the R version in the current
+R session outside of packages.}
 
 \item{except}{Character vector of functions to be excluded from linting.
 Use this to list explicitly defined backports, e.g. those imported from the \code{{backports}} package or manually
