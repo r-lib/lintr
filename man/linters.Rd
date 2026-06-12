@@ -27,7 +27,7 @@ The following tags exist:
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (14 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (12 linters)}
-\item{\link[=portability_linters]{portability} (5 linters)}
+\item{\link[=portability_linters]{portability} (9 linters)}
 \item{\link[=readability_linters]{readability} (66 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (19 linters)}
@@ -43,7 +43,7 @@ The following linters exist:
 \item{\code{\link{any_duplicated_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{any_is_na_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{assignment_linter}} (tags: configurable, consistency, default, style)}
-\item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
+\item{\code{\link{backport_linter}} (tags: configurable, package_development, portability, robustness)}
 \item{\code{\link{boolean_arithmetic_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
@@ -112,9 +112,9 @@ The following linters exist:
 \item{\code{\link{outer_negation_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
 \item{\code{\link{paren_body_linter}} (tags: default, readability, style)}
-\item{\code{\link{paste_linter}} (tags: best_practices, configurable, consistency)}
+\item{\code{\link{paste_linter}} (tags: best_practices, configurable, consistency, portability)}
 \item{\code{\link{pipe_call_linter}} (tags: readability, style)}
-\item{\code{\link{pipe_consistency_linter}} (tags: configurable, default, readability, style)}
+\item{\code{\link{pipe_consistency_linter}} (tags: configurable, default, portability, readability, style)}
 \item{\code{\link{pipe_continuation_linter}} (tags: default, readability, style)}
 \item{\code{\link{pipe_return_linter}} (tags: best_practices, common_mistakes)}
 \item{\code{\link{print_linter}} (tags: best_practices, consistency)}
@@ -137,7 +137,7 @@ The following linters exist:
 \item{\code{\link{stopifnot_all_linter}} (tags: best_practices, readability)}
 \item{\code{\link{string_boundary_linter}} (tags: configurable, efficiency, readability, regex)}
 \item{\code{\link{strings_as_factors_linter}} (tags: portability, robustness)}
-\item{\code{\link{system_file_linter}} (tags: best_practices, consistency, readability)}
+\item{\code{\link{system_file_linter}} (tags: best_practices, consistency, portability, readability)}
 \item{\code{\link{T_and_F_symbol_linter}} (tags: best_practices, consistency, default, readability, robustness, style)}
 \item{\code{\link{terminal_close_linter}} (tags: best_practices, robustness)}
 \item{\code{\link{todo_comment_linter}} (tags: configurable, style)}
