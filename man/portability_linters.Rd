@@ -15,8 +15,12 @@ The following linters are tagged with 'portability':
 \itemize{
 \item{\code{\link{absolute_path_linter}}}
 \item{\code{\link{all_equal_linter}}}
+\item{\code{\link{backport_linter}}}
 \item{\code{\link{download_file_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
+\item{\code{\link{paste_linter}}}
+\item{\code{\link{pipe_consistency_linter}}}
 \item{\code{\link{strings_as_factors_linter}}}
+\item{\code{\link{system_file_linter}}}
 }
 }
