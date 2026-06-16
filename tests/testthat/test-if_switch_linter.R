@@ -556,4 +556,48 @@ test_that("max_branch_lines= and max_branch_expressions= are guided by the most 
   expect_lint(switch_one_branch_lines, lint_msg, max_lines2_linter)
   expect_lint(switch_one_branch_lines, lint_msg, max_expr2_linter)
 })
+
+test_that("max_branch_lines= and max_branch_expressions= work for non-braced branches", {
+  max_lines2_linter <- if_switch_linter(max_branch_lines = 2L)
+  max_expr1_linter <- if_switch_linter(max_branch_expressions = 1L)
+  lint_msg_if <- rex::rex("Prefer switch() statements over repeated if/else equality tests")
+  lint_msg_switch <- rex::rex("Prefer repeated if/else statements over overly-complicated switch() statements.")
+
+  # Multi-line non-braced branch in if-else (too complex for switch)
+  if_multi_line_nobrace <- trim_some("
+    if (x == 'a') foo(
+      1,
+      2
+    ) else if (x == 'b') 2 else if (x == 'c') 3 else 4
+  ")
+  expect_no_lint(if_multi_line_nobrace, max_lines2_linter)
+
+  # Multi-line non-braced branch in switch (too complex)
+  switch_multi_line_nobrace <- trim_some("
+    switch(x,
+      a = foo(
+        1,
+        2
+      ),
+      b = 2,
+      3
+    )
+  ")
+  expect_lint(switch_multi_line_nobrace, lint_msg_switch, max_lines2_linter)
+
+  # Multi-expression check on non-braced (always 1 expr, so should not exceed max_branch_expressions = 1)
+  if_single_expr_nobrace <- "if (x == 'a') foo(1) else if (x == 'b') 2 else if (x == 'c') 3 else 4"
+  expect_lint(if_single_expr_nobrace, lint_msg_if, max_expr1_linter)
+
+  switch_single_expr_nobrace <- trim_some("
+    switch(x,
+      a = foo(1),
+      b = 2,
+      3
+    )
+  ")
+  expect_no_lint(switch_single_expr_nobrace, max_expr1_linter)
+})
+
 # fuzzer enable: comment_injection
+
