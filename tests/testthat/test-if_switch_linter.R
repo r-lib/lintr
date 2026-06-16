@@ -600,4 +600,3 @@ test_that("max_branch_lines= and max_branch_expressions= work for non-braced bra
 })
 
 # fuzzer enable: comment_injection
-

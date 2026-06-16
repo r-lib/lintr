@@ -162,18 +162,15 @@ if_switch_linter <- function(max_branch_lines = 0L, max_branch_expressions = 0L)
   equal_str_cond <- "expr[1][EQ and expr/STR_CONST[string-length(text()) > 2]]"
 
   if (max_branch_lines > 0L || max_branch_expressions > 0L) {
-    complexity_conds <- c(
+    complexity_cond <- xp_or(c(
       if (max_branch_lines > 0L) {
-        glue::glue(
-          "(OP-LEFT-BRACE and (OP-RIGHT-BRACE/@line2 - OP-LEFT-BRACE/@line1 > 1 + {max_branch_lines})) ",
-          "or (not(OP-LEFT-BRACE) and (@line2 - @line1 >= {max_branch_lines}))"
+        c(
+          paste("OP-LEFT-BRACE and (OP-RIGHT-BRACE/@line2 - OP-LEFT-BRACE/@line1 > 1 +", max_branch_lines, ")"),
+          paste("not(OP-LEFT-BRACE) and (@line2 - @line1 >=", max_branch_lines, ")")
         )
       },
-      if (max_branch_expressions > 0L) {
-        glue::glue("OP-LEFT-BRACE and count(expr) > {max_branch_expressions}")
-      }
-    )
-    complexity_cond <- xp_or(complexity_conds)
+      if (max_branch_expressions > 0L) paste("OP-LEFT-BRACE and count(expr) >", max_branch_expressions)
+    ))
     branch_expr_cond <- xp_and(c(
       xp_or(
         # if (x) { <this expr> } ...
