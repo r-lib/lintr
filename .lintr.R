@@ -1,64 +1,64 @@
-linters: all_linters(
-    backport_linter("3.6.0", except = c("R_user_dir", "deparse1", "...names")),
-    line_length_linter(120L),
-    object_overwrite_linter(allow_names = c("line", "lines", "pipe", "symbols")),
-    todo_comment_linter(
-      except_regex = c(
-        rex::rex(
-          "TODO(",
-          # GitHub issue number #1234, possibly from another repo org/repo#5678
-          maybe(one_or_more(character_class("a-zA-Z0-9-")), "/", one_or_more(character_class("a-zA-Z0-9._-"))),
-          "#", one_or_more(digit),
-          ")"
-        ),
-        rex::rex(
-          "TODO(",
-          "R>", maybe("="), digit, ".", digit, maybe(".", digit),
-          ")"
-        )
-      )
-    ),
-    undesirable_function_name_linter = undesirable_function_linter(modify_defaults(
-      defaults = default_undesirable_functions,
-      library = NULL,
-      options = NULL,
-      normalizePath = "use normalize_path()",
-      xml_attr = "use xml_attr_",
-      xml_attrs = "use xml_attrs_",
-      xml_child = "use xml_child_",
-      xml_find_all = "use xml_find_all_",
-      xml_find_first = "use xml_find_first_",
-      xml_find_chr = "use xml_find_chr_",
-      xml_find_num = "use xml_find_num_",
-      xml_find_lgl = "use xml_find_lgl_",
-      xml_name = "use xml_name_",
-      xml_parent = "prefer parent::* in previous XPath"
-    )),
-    undesirable_function_call_linter = undesirable_function_linter(
-      c(
-        message = "use cli::cli_inform()",
-        warning = "use cli::cli_warn()",
-        stop = "use cli::cli_abort()"
+linters <- all_linters(
+  backport_linter("3.6.0", except = c("R_user_dir", "deparse1", "...names")),
+  line_length_linter(120L),
+  object_overwrite_linter(allow_names = c("line", "lines", "pipe", "symbols")),
+  todo_comment_linter(
+    except_regex = c(
+      rex::rex(
+        "TODO(",
+        # GitHub issue number #1234, possibly from another repo org/repo#5678
+        maybe(one_or_more(character_class("a-zA-Z0-9-")), "/", one_or_more(character_class("a-zA-Z0-9._-"))),
+        "#", one_or_more(digit),
+        ")"
       ),
-      symbol_is_undesirable = FALSE
+      rex::rex(
+        "TODO(",
+        "R>", maybe("="), digit, ".", digit, maybe(".", digit),
+        ")"
+      )
+    )
+  ),
+  undesirable_function_name_linter = undesirable_function_linter(modify_defaults(
+    defaults = default_undesirable_functions,
+    library = NULL,
+    options = NULL,
+    normalizePath = "use normalize_path()",
+    xml_attr = "use xml_attr_",
+    xml_attrs = "use xml_attrs_",
+    xml_child = "use xml_child_",
+    xml_find_all = "use xml_find_all_",
+    xml_find_first = "use xml_find_first_",
+    xml_find_chr = "use xml_find_chr_",
+    xml_find_num = "use xml_find_num_",
+    xml_find_lgl = "use xml_find_lgl_",
+    xml_name = "use xml_name_",
+    xml_parent = "prefer parent::* in previous XPath"
+  )),
+  undesirable_function_call_linter = undesirable_function_linter(
+    c(
+      message = "use cli::cli_inform()",
+      warning = "use cli::cli_warn()",
+      stop = "use cli::cli_abort()"
     ),
-    unnecessary_concatenation_linter(allow_single_expression = FALSE),
-    absolute_path_linter = NULL,
-    library_call_linter = NULL,
-    nonportable_path_linter = NULL,
-    # We now require R>=4.0.0
-    strings_as_factors_linter = NULL,
-    todo_comment_linter = NULL,
-    # exclude; we use customized version above
-    undesirable_function_linter = NULL
-  )
-exclusions: list(
-    "inst/doc/creating_linters.R" = 1L,
-    "inst/example/bad.R",
-    "tests/testthat.R" = list(unused_import_linter = Inf),
-    "tests/testthat/*" = list(undesirable_function_name_linter = Inf),
-    "tests/testthat/default_linter_testcode.R",
-    "tests/testthat/dummy_*",
-    "tests/testthat/exclusions-test",
-    "tests/testthat/knitr_*"
-  )
+    symbol_is_undesirable = FALSE
+  ),
+  unnecessary_concatenation_linter(allow_single_expression = FALSE),
+  absolute_path_linter = NULL,
+  library_call_linter = NULL,
+  nonportable_path_linter = NULL,
+  # We now require R>=4.0.0
+  strings_as_factors_linter = NULL,
+  todo_comment_linter = NULL,
+  # exclude; we use customized version above
+  undesirable_function_linter = NULL
+)
+exclusions <- list(
+  `inst/doc/creating_linters.R` = 1L,
+  "inst/example/bad.R",
+  `tests/testthat.R` = list(unused_import_linter = Inf),
+  `tests/testthat/*` = list(undesirable_function_name_linter = Inf),
+  "tests/testthat/default_linter_testcode.R",
+  "tests/testthat/dummy_*",
+  "tests/testthat/exclusions-test",
+  "tests/testthat/knitr_*"
+)
