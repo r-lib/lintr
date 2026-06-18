@@ -1,4 +1,4 @@
-linters: all_linters(
+linters <- all_linters(
     backport_linter("3.6.0", except = c("R_user_dir", "deparse1", "...names")),
     line_length_linter(120L),
     object_overwrite_linter(allow_names = c("line", "lines", "pipe", "symbols")),
@@ -52,7 +52,7 @@ linters: all_linters(
     # exclude; we use customized version above
     undesirable_function_linter = NULL
   )
-exclusions: list(
+exclusions <- list(
     "inst/doc/creating_linters.R" = 1L,
     "inst/example/bad.R",
     "tests/testthat.R" = list(unused_import_linter = Inf),
