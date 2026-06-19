@@ -1,3 +1,9 @@
+expect_no_lint_linter <- make_linter_from_xpath(
+  "//SYMBOL_FUNCTION_CALL[text() = 'expect_lint']
+    /parent::expr
+    /parent::expr[expr[3][NULL_CONST]]",
+  "Use expect_no_lint() to test for the lack of lints"
+)
 linters <- all_linters(
   backport_linter("3.6.0", except = c("R_user_dir", "deparse1", "...names")),
   line_length_linter(120L),
@@ -43,6 +49,7 @@ linters <- all_linters(
     symbol_is_undesirable = FALSE
   ),
   unnecessary_concatenation_linter(allow_single_expression = FALSE),
+  expect_no_lint_linter(),
   absolute_path_linter = NULL,
   library_call_linter = NULL,
   nonportable_path_linter = NULL,
@@ -52,6 +59,8 @@ linters <- all_linters(
   # exclude; we use customized version above
   undesirable_function_linter = NULL
 )
+rm(expect_no_lint_linter)
+
 exclusions <- list(
   `inst/doc/creating_linters.R` = 1L,
   "inst/example/bad.R",
