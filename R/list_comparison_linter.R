@@ -30,12 +30,11 @@ list_comparison_linter <- function() {
 
   # NB: anchor to the comparison expr so that we can easily include the comparator
   #   in the lint message.
-  xpath <- glue("
-  parent::expr
-    /parent::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
-  ")
+  comparators <- infix_metadata$xml_tag[infix_metadata$comparator]
+  xpath <- glue("parent::expr/parent::expr[ {xp_or(comparators)} ]")
 
-  Linter(linter_level = "expression", function(source_expression) {
+  selectors <- c(names(list_mapper_alternatives), comparators)
+  Linter(linter_level = "expression", selectors = selectors, function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(names(list_mapper_alternatives))
     bad_expr <- xml_find_all_(xml_calls, xpath)
 

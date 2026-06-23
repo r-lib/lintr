@@ -103,7 +103,17 @@ lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
 
   lints <- list()
   for (expr in source_expressions$expressions) {
+    pd <- expr$parsed_content %||% expr$full_parsed_content
     for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
+      selectors <- attr(linters[[linter]], "selectors")
+      if (length(selectors) > 0L) {
+        has_backtick <- "BACKTICK" %in% selectors && any(startsWith(pd$text, "`"))
+        other_selectors <- setdiff(selectors, "BACKTICK")
+        token_match <- any(other_selectors %in% pd$token) || any(other_selectors %in% pd$text)
+        if (!token_match && !has_backtick) {
+          next
+        }
+      }
       # use withCallingHandlers for friendlier failures on unexpected linter errors
       lints[[length(lints) + 1L]] <- withCallingHandlers(
         get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),

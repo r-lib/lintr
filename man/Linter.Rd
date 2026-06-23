@@ -7,7 +7,8 @@
 Linter(
   fun,
   name = linter_auto_name(),
-  linter_level = c(NA_character_, "file", "expression")
+  linter_level = c(NA_character_, "file", "expression"),
+  selectors = character()
 )
 }
 \arguments{
@@ -20,6 +21,13 @@ Lints produced by the linter will be labelled with \code{name} by default.}
 \code{"expression"} means an individual expression in \code{xml_parsed_content}, while \code{"file"} means all expressions
 in the current file are available in \code{full_xml_parsed_content}.
 \code{NA} means the linter will be run with both, expression-level and file-level source expressions.}
+
+\item{selectors}{Optional character vector of necessary (but not typically sufficient) strings to
+find among a given expression's tokens (e.g. \code{':'}) or text (e.g. \code{'startsWith'}). This can be
+used as an optimization to quickly filter out the large majority of expressions that do not have
+any match (i.e. don't use \code{:}, or don't call \code{startsWith()}). The tokens matched are those found
+in the result of \code{\link[utils:getParseData]{utils::getParseData()}}, except for \code{BACKTICK}, which is a special sentinel used
+to find symbols starting with \verb{`}.}
 }
 \value{
 The same function with its class set to 'linter'.

@@ -118,7 +118,8 @@ seq_linter <- function() {
     fun
   }
 
-  Linter(linter_level = "expression", function(source_expression) {
+  selectors <- c("':'", "seq", "seq_len")
+  Linter(linter_level = "expression", selectors = selectors, function(source_expression) {
     xml <- source_expression$xml_parsed_content
     seq_calls <- source_expression$xml_find_function_calls("seq")
 

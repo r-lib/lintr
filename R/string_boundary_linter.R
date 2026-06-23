@@ -131,7 +131,8 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
 
   substr_arg2_xpath <- "string(./expr[expr[1][SYMBOL_FUNCTION_CALL]]/expr[3])"
 
-  Linter(linter_level = "expression", function(source_expression) {
+  selectors <- c("str_detect", "substr", "substring", if (!allow_grepl) "grepl")
+  Linter(linter_level = "expression", selectors = selectors, function(source_expression) {
     lints <- list()
 
     str_detect_lint_data <- get_regex_lint_data(
