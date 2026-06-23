@@ -185,3 +185,12 @@ test_that("settings can be put in a sub-directory", {
   withr::local_options(lintr.linter_file = .lintr)
   expect_length(lint_package(), 1L)
 })
+
+test_that("find_package() returns NULL for non-existent paths", {
+  expect_null(find_package("/no/such/path/anywhere"))
+})
+
+test_that("find_package() works for existing paths", {
+  pkg_path <- test_path("dummy_packages", "assignmentLinter")
+  expect_identical(find_package(pkg_path), normalize_path(pkg_path))
+})
