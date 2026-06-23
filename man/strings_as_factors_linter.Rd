@@ -49,5 +49,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=robustness_linters]{robustness}
+\link[=portability_linters]{portability}, \link[=robustness_linters]{robustness}
 }
