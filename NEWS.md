@@ -16,6 +16,10 @@
 
 ## New and improved features
 
+### New linters
+
+* `deparse1_linter()` recommends `deparse1(x)` over `paste(deparse(x), collapse = ...)` (#2615, @emmanuel-ferdman).
+
 ### Linter improvements
 
 * General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:

@@ -88,6 +88,7 @@ Collate:
     'consecutive_mutate_linter.R'
     'cyclocomp_linter.R'
     'declared_functions.R'
+    'deparse1_linter.R'
     'deprecated.R'
     'download_file_linter.R'
     'duplicate_argument_linter.R'

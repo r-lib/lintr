@@ -22,6 +22,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{consecutive_assertion_linter}}}
 \item{\code{\link{consecutive_mutate_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
+\item{\code{\link{deparse1_linter}}}
 \item{\code{\link{empty_assignment_linter}}}
 \item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_named_linter}}}
