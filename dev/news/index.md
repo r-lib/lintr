@@ -121,11 +121,14 @@
 #### Lint accuracy fixes: removing false positives
 
 - [`if_switch_linter()`](https://lintr.r-lib.org/dev/reference/if_switch_linter.md)
-  no longer produces a false positive when comparing to empty strings
-  (`""`, `''`, or raw strings like `R"()"`), which cannot be used as
-  [`switch()`](https://rdrr.io/r/base/switch.html) case names
-  ([\#2835](https://github.com/r-lib/lintr/issues/2835),
-  [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
+  - no longer produces a false positive when comparing to empty strings
+    (`""`, `''`, or raw strings like `R"()"`), which cannot be used as
+    [`switch()`](https://rdrr.io/r/base/switch.html) case names
+    ([\#2835](https://github.com/r-lib/lintr/issues/2835),
+    [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
+  - handles expressions/branches without `{` correctly
+    ([\#3042](https://github.com/r-lib/lintr/issues/3042),
+    [@MichaelChirico](https://github.com/MichaelChirico))
 - `undesirable_operator_linter(call_is_undesirable = FALSE)` now
   correctly skips prefix notation like `` `:::`(pkg, fun) ``
   ([\#2999](https://github.com/r-lib/lintr/issues/2999),

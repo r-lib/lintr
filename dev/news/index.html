@@ -131,7 +131,10 @@
 <div class="section level4">
 <h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>
 <ul><li>
-<code><a href="../reference/if_switch_linter.html">if_switch_linter()</a></code> no longer produces a false positive when comparing to empty strings (<code>""</code>, <code>''</code>, or raw strings like <code>R"()"</code>), which cannot be used as <code><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch()</a></code> case names (<a href="https://github.com/r-lib/lintr/issues/2835" class="external-link">#2835</a>, <a href="https://github.com/emmanuel-ferdman" class="external-link">@emmanuel-ferdman</a>).</li>
+<code><a href="../reference/if_switch_linter.html">if_switch_linter()</a></code>
+<ul><li>no longer produces a false positive when comparing to empty strings (<code>""</code>, <code>''</code>, or raw strings like <code>R"()"</code>), which cannot be used as <code><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch()</a></code> case names (<a href="https://github.com/r-lib/lintr/issues/2835" class="external-link">#2835</a>, <a href="https://github.com/emmanuel-ferdman" class="external-link">@emmanuel-ferdman</a>).</li>
+<li>handles expressions/branches without <code>{</code> correctly (<a href="https://github.com/r-lib/lintr/issues/3042" class="external-link">#3042</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>)</li>
+</ul></li>
 <li>
 <code>undesirable_operator_linter(call_is_undesirable = FALSE)</code> now correctly skips prefix notation like <code>`:::`(pkg, fun)</code> (<a href="https://github.com/r-lib/lintr/issues/2999" class="external-link">#2999</a>, <a href="https://github.com/emmanuel-ferdman" class="external-link">@emmanuel-ferdman</a>).</li>
 <li>
