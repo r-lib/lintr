@@ -138,6 +138,7 @@ expect_lint_impl_ <- function(lints, checks, trace_env = rlang::caller_env()) {
 #' @export
 expect_no_lint <- function(content, ..., file = NULL, language = "en") {
   require_testthat()
+  # nolint next: expect_no_lint_linter.
   expect_lint(content, NULL, ..., file = file, language = language)
 }
 
