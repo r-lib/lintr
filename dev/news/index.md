@@ -109,9 +109,12 @@
   - [`vector_logic_linter()`](https://lintr.r-lib.org/dev/reference/vector_logic_linter.md)
     [\#2826](https://github.com/r-lib/lintr/issues/2826)
 - [`sort_linter()`](https://lintr.r-lib.org/dev/reference/sort_linter.md)
-  recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))`
-  ([\#2921](https://github.com/r-lib/lintr/issues/2921),
-  [@Bisaloo](https://github.com/Bisaloo)).
+  - recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))`
+    ([\#2921](https://github.com/r-lib/lintr/issues/2921),
+    [@Bisaloo](https://github.com/Bisaloo)).
+  - recommends usage of `sort(x, decreasing = TRUE)` over `rev(sort(x))`
+    ([\#3066](https://github.com/r-lib/lintr/issues/3066),
+    [@Bisaloo](https://github.com/Bisaloo)).
 - [`paste_linter()`](https://lintr.r-lib.org/dev/reference/paste_linter.md)
   lints `expression(paste(., sep = ""))` because the `paste` inside an
   expression doesn’t support the `sep` argument

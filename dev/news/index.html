@@ -124,7 +124,10 @@
 <code><a href="../reference/vector_logic_linter.html">vector_logic_linter()</a></code> <a href="https://github.com/r-lib/lintr/issues/2826" class="external-link">#2826</a></li>
 </ul></li>
 <li>
-<code><a href="../reference/sort_linter.html">sort_linter()</a></code> recommends usage of <code>!is.unsorted(x)</code> over <code>identical(x, sort(x))</code> (<a href="https://github.com/r-lib/lintr/issues/2921" class="external-link">#2921</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
+<code><a href="../reference/sort_linter.html">sort_linter()</a></code>
+<ul><li>recommends usage of <code>!is.unsorted(x)</code> over <code>identical(x, sort(x))</code> (<a href="https://github.com/r-lib/lintr/issues/2921" class="external-link">#2921</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
+<li>recommends usage of <code>sort(x, decreasing = TRUE)</code> over <code>rev(sort(x))</code> (<a href="https://github.com/r-lib/lintr/issues/3066" class="external-link">#3066</a>, <a href="https://github.com/Bisaloo" class="external-link">@Bisaloo</a>).</li>
+</ul></li>
 <li>
 <code><a href="../reference/paste_linter.html">paste_linter()</a></code> lints <code>expression(paste(., sep = ""))</code> because the <code>paste</code> inside an expression doesn’t support the <code>sep</code> argument (<a href="https://github.com/r-lib/lintr/issues/2945" class="external-link">#2945</a>, <a href="https://github.com/mcol" class="external-link">@mcol</a>).</li>
 </ul></div>
