@@ -36,6 +36,11 @@
 #'   linters = sort_linter()
 #' )
 #'
+#' lint(
+#'   text = "rev(sort(x))",
+#'   linters = sort_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "x[sample(order(x))]",
@@ -49,6 +54,11 @@
 #'
 #' lint(
 #'   text = "sort(x, decreasing = TRUE) == x",
+#'   linters = sort_linter()
+#' )
+#'
+#' lint(
+#'   text = "sort(x, decreasing = TRUE)",
 #'   linters = sort_linter()
 #' )
 #'
@@ -170,6 +180,15 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    c(order_lints, sorted_lints)
+    rev_sort_calls <- xml_find_all_(sort_calls, "expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'rev']]")
+    rev_sort_lints <- xml_nodes_to_lints(
+      rev_sort_calls,
+      source_expression = source_expression,
+      lint_message =
+        "Use sort(x, decreasing = TRUE) instead of rev(sort(x)). If present, `na.last` value needs to be flipped",
+      type = "warning"
+    )
+
+    c(order_lints, sorted_lints, rev_sort_lints)
   })
 }

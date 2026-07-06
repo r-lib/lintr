@@ -135,9 +135,11 @@ test_that("sort_linter blocks simple disallowed usages for is.sorted cases", {
   linter <- sort_linter()
   unsorted_msg <- rex::rex("Use is.unsorted(x) to test the unsortedness of a vector.")
   sorted_msg <- rex::rex("Use !is.unsorted(x) to test the sortedness of a vector.")
+  rev_sort_msg <- rex::rex("Use sort(x, decreasing = TRUE) instead of rev(sort(x)).")
 
   expect_lint("sort(x) == x", sorted_msg, linter)
   expect_lint("identical(x, sort(x))", sorted_msg, linter)
+  expect_lint("rev(sort(x))", rev_sort_msg, linter)
 
   # argument order doesn't matter
   expect_lint("x == sort(x)", sorted_msg, linter)
@@ -151,6 +153,7 @@ test_that("sort_linter blocks simple disallowed usages for is.sorted cases", {
   expect_lint("sort(foo(x)) == foo(x)", sorted_msg, linter)
   expect_lint("identical(foo(x), sort(foo(x)))", sorted_msg, linter)
   expect_lint("identical(sort(foo(x)), foo(x))", sorted_msg, linter)
+  expect_lint("rev(sort(foo(x)))", rev_sort_msg, linter)
 
   expect_lint(
     trim_some("
