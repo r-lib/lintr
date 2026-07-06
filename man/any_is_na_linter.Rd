@@ -11,6 +11,11 @@ any_is_na_linter()
 for simple objects, and is at worst equally efficient.
 Therefore, it should be used in all situations instead of the latter.
 }
+\details{
+This also lints \code{NA \%in\% x}, which is also more readably expressed as \code{anyNA(x)}. In
+this case, note a subtle difference of behavior, namely that \code{is.na(NaN)} is \code{TRUE}
+while \code{NA \%in\% NaN} is \code{FALSE}.
+}
 \examples{
 # will produce lints
 lint(
