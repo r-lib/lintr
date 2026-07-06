@@ -184,10 +184,8 @@ sort_linter <- function() {
     rev_sort_lints <- xml_nodes_to_lints(
       rev_sort_calls,
       source_expression = source_expression,
-      lint_message = paste(
-        "Use sort(x, decreasing = TRUE) instead of rev(sort(x)). 
-        If present, `na.last` value needs to be flipped"
-      ),
+      lint_message =
+        "Use sort(x, decreasing = TRUE) instead of rev(sort(x)). If present, `na.last` value needs to be flipped",
       type = "warning"
     )
 
