@@ -1,3 +1,14 @@
+test_that("read_config_file() warns if the config file does not end in a newline", {
+  .lintr <- withr::local_tempfile()
+  withr::local_options(lintr.linter_file = .lintr)
+  withr::local_dir(withr::local_tempdir())
+
+  # cat() not writeLines() to ensure no trailing \n
+  cat("linters: linters_with_defaults(brace_linter = NULL)", file = .lintr)
+  writeLines("a <- 1", "aaa.R")
+  expect_warning(lint_dir(), "Warning encountered while loading config", fixed = TRUE)
+})
+
 test_that("it gives informative errors if the config file contains errors", {
   .lintr <- withr::local_tempfile(lines = c(
     "linters: linters_with_defaults(",
