@@ -61,12 +61,15 @@ test_that("No .Rbuildignore is filled if pattern already present", {
   )
   ignore_path <- file.path(tmp, ".Rbuildignore")
   ignore <- c("^fu$", "^\\.lintr$", "^bar$")
-  writeLines(
-    ignore,
-    ignore_path
-  )
+  writeLines(ignore, ignore_path)
 
-  lintr_file <- use_lintr(path = tmp, type = "full")
+  expect_message(
+    {
+      lintr_file <- use_lintr(path = tmp, type = "full")
+    },
+    "^\\.lintr$ is already ignored in `.Rbuildignore`.",
+    fixed = TRUE
+  )
   expect_identical(readLines(ignore_path), ignore)
 })
 
