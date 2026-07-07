@@ -1,6 +1,7 @@
 test_that("read_config_file() warns if the config file does not end in a newline", {
   .lintr <- withr::local_tempfile()
-  withr::local_options(lintr.linter_file = .lintr)
+  # temporarily disable warning->error conversion, see below
+  withr::local_options(lintr.linter_file = .lintr, warn = 0)
   withr::local_dir(withr::local_tempdir())
 
   # cat() not writeLines() to ensure no trailing \n
