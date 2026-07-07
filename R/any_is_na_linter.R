@@ -4,6 +4,10 @@
 #'   for simple objects, and is at worst equally efficient.
 #'   Therefore, it should be used in all situations instead of the latter.
 #'
+#' This also lints `NA %in% x`, which is also more readably expressed as `anyNA(x)`. In
+#'   this case, note a subtle difference of behavior, namely that `is.na(NaN)` is `TRUE`
+#'   while `NA %in% NaN` is `FALSE`.
+#'
 #' @examples
 #' # will produce lints
 #' lint(
