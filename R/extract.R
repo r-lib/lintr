@@ -160,9 +160,8 @@ chunk_evals_to_false <- function(start, end, lines, pattern) {
     return(FALSE)
   }
   header <- lines[start]
-  extract_fn <- "knitr" %:::% "extract_params_src"
-  params_src <- extract_fn(pattern$chunk.begin, header)
-  params_src <- sub("\\s*-->.*$", "", params_src)
+  # essentially knitr:::extract_params_src
+  params_src <- trimws(sub("\\s*-->.*$", "", gsub(pattern$chunk.begin, "\\1", header)))
   if (identical(pattern, knitr::all_patterns$md)) {
     params_src <- ("knitr" %:::% "get_chunk_params")(params_src)
   }
