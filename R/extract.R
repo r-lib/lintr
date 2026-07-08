@@ -162,11 +162,7 @@ non_eval_chunk <- function(start, end, lines, pattern) {
   header_params <- xfun::csv_options(params_src)
 
   code <- lines[(start + 1L):(end - 1L)]
-  body_params <-
-    suppressMessages(suppressWarnings(tryCatch(
-      xfun::divide_chunk("r", code)$options,
-      error = \(e) list()
-    )))
+  body_params <- xfun::divide_chunk("r", code)$options
 
   eval_value <- body_params$eval %||% header_params$eval
   if (identical(eval_value, quote(F))) {
