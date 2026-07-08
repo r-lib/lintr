@@ -159,10 +159,7 @@ non_eval_chunk <- function(start, end, lines, pattern) {
   header <- lines[start]
   # essentially knitr:::extract_params_src
   params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
-  header_params <- suppressMessages(suppressWarnings(tryCatch(
-    xfun::csv_options(params_src),
-    error = \(e) list()
-  )))
+  header_params <- xfun::csv_options(params_src)
 
   code <- lines[(start + 1L):(end - 1L)]
   body_params <-
