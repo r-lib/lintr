@@ -165,6 +165,7 @@ non_eval_chunk <- function(start, end, lines, pattern) {
   body_params <- xfun::divide_chunk("r", code)$options
 
   eval_value <- body_params$eval %||% header_params$eval
+  # nolint next: T_and_F_symbol_linter.
   if (identical(eval_value, quote(F))) {
     return(TRUE)
   }
