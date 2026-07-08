@@ -48,7 +48,7 @@ get_knitr_pattern <- function(filename, lines) {
   #   correctly by converting to a lint. It would require some refactoring to get that
   #   right here as well, but it would avoid the duplication.
   pattern <- withCallingHandlers(
-    ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
+    ("knitr" %:::% "detect_pattern")(lines, tolower(xfun::file_ext(filename))),
     warning = function(cond) {
       if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
         cli_warn(cond) # nocov. No known way to reach here.
