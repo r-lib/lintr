@@ -78,7 +78,7 @@ get_chunk_positions <- function(pattern, lines) {
   starts <- starts[nonempty_keep]
   ends <- ends[nonempty_keep]
 
-  eval_keep <- !unlist(Map(\(start, end) chunk_evals_to_false(start, end, lines, pattern), starts, ends))
+  eval_keep <- !unlist(Map(\(start, end) non_eval_chunk(start, end, lines, pattern), starts, ends))
   starts <- starts[eval_keep]
   ends <- ends[eval_keep]
 
@@ -155,10 +155,7 @@ defines_knitr_engine <- function(start_lines) {
     re_matches(start_lines, bare_engine_pattern)
 }
 
-chunk_evals_to_false <- function(start, end, lines, pattern) {
-  if (is.null(pattern$chunk.begin) || !grepl("\\(.+\\)", pattern$chunk.begin)) {
-    return(FALSE)
-  }
+non_eval_chunk <- function(start, end, lines, pattern) {
   header <- lines[start]
   # essentially knitr:::extract_params_src
   params_src <- trimws(sub("\\s*-->.*$", "", gsub(pattern$chunk.begin, "\\1", header)))
