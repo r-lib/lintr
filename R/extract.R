@@ -172,19 +172,11 @@ chunk_evals_to_false <- function(start, end, lines, pattern) {
   )))
 
   code <- lines[(start + 1L):(end - 1L)]
-  has_partition <- exists(
-    "partition_chunk",
-    envir = asNamespace("knitr"),
-    inherits = FALSE
-  )
-  body_params <- if (has_partition) {
+  body_params <-
     suppressMessages(suppressWarnings(tryCatch(
-      ("knitr" %:::% "partition_chunk")("r", code)$options,
+      xfun::divide_chunk("r", code)$options,
       error = \(e) list()
     )))
-  } else {
-    list()
-  }
 
   eval_value <- body_params$eval %||% header_params$eval
   if (identical(eval_value, quote(F))) {
