@@ -78,7 +78,7 @@ get_chunk_positions <- function(pattern, lines) {
   starts <- starts[nonempty_keep]
   ends <- ends[nonempty_keep]
 
-  eval_keep <- !unlist(Map(\(start, end) non_eval_chunk(start, end, lines, pattern), starts, ends))
+  eval_keep <- !as.logical(Map(\(start, end) non_eval_chunk(start, end, lines, pattern), starts, ends))
   starts <- starts[eval_keep]
   ends <- ends[eval_keep]
 

@@ -199,6 +199,16 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
   }
 })
 
+test_that("chunkless files are fine", {
+  tmp <- withr::local_tempfile(fileext = ".Rmd", lines = c(
+    "---",
+    "some_option: true",
+    "---",
+    "Some text!"
+  ))
+  expect_no_lint(file = tmp, linters = assignment_linter())
+})
+
 test_that("it skips eval=FALSE chunks (#1964)", {
   linter <- assignment_linter()
 
