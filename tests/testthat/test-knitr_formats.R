@@ -200,72 +200,61 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
 })
 
 test_that("it skips eval=FALSE chunks (#1964)", {
-  # .Rmd with eval=FALSE in chunk header
-  rmd_content <- trim_some("
-    ```{r, eval=FALSE}
-    bad_code = 1
-    ```
+  linter <- assignment_linter()
 
-    ```{r}
-    good_code = 2
-    ```
-  ")
   expect_lint(
-    rmd_content,
-    list(regexes[["assign"]], line_number = 6L),
-    assignment_linter()
-  )
+    trim_some("
+      ```{r label, eval=FALSE}
+      bad_code = 1
+      ```
 
-  # .Rmd with eval = F
-  rmd_content_symbols <- trim_some("
-    ```{r, eval=F}
-    bad_code = 1
-    ```
+      ```{r}
+      good_code = 2
+      ```
 
-    ```{r, eval=TRUE}
-    good_code = 3
-    ```
-  ")
-  expect_lint(
-    rmd_content_symbols,
-    list(regexes[["assign"]], line_number = 6L),
-    assignment_linter()
+      ```{r, eval=F}
+      bad_code = 1
+      ```
+
+      ```{r, eval=TRUE}
+      good_code = 3
+      ```
+    "),
+    list(
+      list(regexes[["assign"]], line_number = 6L),
+      list(regexes[["assign"]], line_number = 14L)
+    ),
+    linter
   )
 
   # .qmd with #| eval: false in chunk body
-  qmd_file <- withr::local_tempfile(fileext = ".qmd")
-  writeLines(
-    c(
-      "```{r}",
-      "#| eval: false",
-      "bad_code = 1",
-      "```",
-      "",
-      "```{r}",
-      "good_code = 2",
-      "```"
-    ),
-    qmd_file
-  )
+  qmd_file <- withr::local_tempfile(fileext = ".qmd", lines = c(
+    "```{r}",
+    "#| eval: false",
+    "bad_code = 1",
+    "```",
+    "```{r}",
+    "good_code = 2",
+    "```"
+  ))
   expect_lint(
     file = qmd_file,
-    checks = list(regexes[["assign"]], line_number = 7L),
-    assignment_linter()
+    checks = list(regexes[["assign"]], line_number = 6L),
+    linter
   )
 
   # .Rnw with eval=FALSE
-  rnw_content <- trim_some("
-    <<chunk-1, eval=FALSE>>=
-    bad_code = 1
-    @
-
-    <<chunk-2, eval=TRUE>>=
-    good_code = 2
-    @
-  ")
   expect_lint(
-    rnw_content,
+    trim_some("
+      <<chunk-1, eval=FALSE>>=
+      bad_code = 1
+      @
+
+      <<chunk-2, eval=TRUE>>=
+      good_code = 2
+      @
+    "),
     list(regexes[["assign"]], line_number = 6L),
-    assignment_linter()
+    linter
   )
 })
