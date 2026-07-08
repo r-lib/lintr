@@ -166,7 +166,7 @@ chunk_evals_to_false <- function(start, end, lines, pattern) {
     params_src <- sub("^[a-zA-Z0-9_]+", "", params_src)
   }
   header_params <- suppressMessages(suppressWarnings(tryCatch(
-    ("knitr" %:::% "parse_params")(params_src),
+    xfun::csv_options(params_src),
     error = \(e) list()
   )))
 
