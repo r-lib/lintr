@@ -73,16 +73,12 @@ get_chunk_positions <- function(pattern, lines) {
     ends = grep(pattern$chunk.end, lines, perl = TRUE)
   )
   # only keep those blocks that contain at least one line of code
-  keep <- which(ends - starts > 1L)
+  nonempty_keep <- which(ends - starts > 1L)
 
-  starts <- starts[keep]
-  ends <- ends[keep]
+  starts <- starts[nonempty_keep]
+  ends <- ends[nonempty_keep]
 
-  eval_keep <- !vapply(
-    seq_along(starts),
-    \(i) chunk_evals_to_false(starts[i], ends[i], lines, pattern),
-    logical(1L)
-  )
+  eval_keep <- !unlist(Map(\(start, end) chunk_evals_to_false(start, end, lines, pattern), starts, ends))
   starts <- starts[eval_keep]
   ends <- ends[eval_keep]
 
@@ -190,22 +186,11 @@ chunk_evals_to_false <- function(start, end, lines, pattern) {
     list()
   }
 
-  eval_opt <- body_params$eval %||% header_params$eval
-  is_eval_false(eval_opt)
-}
-
-is_eval_false <- function(eval_opt) {
-  if (is.null(eval_opt)) {
-    return(FALSE)
+  eval_value <- body_params$eval %||% header_params$eval
+  if (identical(eval_value, quote(F))) {
+    return(TRUE)
   }
-  if (is.call(eval_opt) || is.symbol(eval_opt) || is.expression(eval_opt)) {
-    eval_opt <- tryCatch(
-      eval(eval_opt, envir = baseenv()),
-      error = \(e) eval_opt
-    )
-  }
-  isFALSE(eval_opt) || identical(eval_opt, 0) || identical(eval_opt, 0L) ||
-    (is.numeric(eval_opt) && length(eval_opt) == 0L)
+  isFALSE(eval_value)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {

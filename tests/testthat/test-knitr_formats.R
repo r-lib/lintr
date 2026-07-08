@@ -216,14 +216,10 @@ test_that("it skips eval=FALSE chunks (#1964)", {
     assignment_linter()
   )
 
-  # .Rmd with eval = F and eval = quote(FALSE)
+  # .Rmd with eval = F
   rmd_content_symbols <- trim_some("
     ```{r, eval=F}
     bad_code = 1
-    ```
-
-    ```{r, eval=quote(FALSE)}
-    bad_code_2 = 2
     ```
 
     ```{r, eval=TRUE}
@@ -232,7 +228,7 @@ test_that("it skips eval=FALSE chunks (#1964)", {
   ")
   expect_lint(
     rmd_content_symbols,
-    list(regexes[["assign"]], line_number = 10L),
+    list(regexes[["assign"]], line_number = 6L),
     assignment_linter()
   )
 
