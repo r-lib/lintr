@@ -198,3 +198,78 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
     expect_lint(contents[[i]], expected[[i]], linters = list())
   }
 })
+
+test_that("it skips eval=FALSE chunks (#1964)", {
+  # .Rmd with eval=FALSE in chunk header
+  rmd_content <- trim_some("
+    ```{r, eval=FALSE}
+    bad_code = 1
+    ```
+
+    ```{r}
+    good_code = 2
+    ```
+  ")
+  expect_lint(
+    rmd_content,
+    list(regexes[["assign"]], line_number = 6L),
+    assignment_linter()
+  )
+
+  # .Rmd with eval = F and eval = quote(FALSE)
+  rmd_content_symbols <- trim_some("
+    ```{r, eval=F}
+    bad_code = 1
+    ```
+
+    ```{r, eval=quote(FALSE)}
+    bad_code_2 = 2
+    ```
+
+    ```{r, eval=TRUE}
+    good_code = 3
+    ```
+  ")
+  expect_lint(
+    rmd_content_symbols,
+    list(regexes[["assign"]], line_number = 10L),
+    assignment_linter()
+  )
+
+  # .qmd with #| eval: false in chunk body
+  qmd_file <- withr::local_tempfile(fileext = ".qmd")
+  writeLines(
+    c(
+      "```{r}",
+      "#| eval: false",
+      "bad_code = 1",
+      "```",
+      "",
+      "```{r}",
+      "good_code = 2",
+      "```"
+    ),
+    qmd_file
+  )
+  expect_lint(
+    file = qmd_file,
+    checks = list(regexes[["assign"]], line_number = 7L),
+    assignment_linter()
+  )
+
+  # .Rnw with eval=FALSE
+  rnw_content <- trim_some("
+    <<chunk-1, eval=FALSE>>=
+    bad_code = 1
+    @
+
+    <<chunk-2, eval=TRUE>>=
+    good_code = 2
+    @
+  ")
+  expect_lint(
+    rnw_content,
+    list(regexes[["assign"]], line_number = 6L),
+    assignment_linter()
+  )
+})

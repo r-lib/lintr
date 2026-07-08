@@ -78,6 +78,14 @@ get_chunk_positions <- function(pattern, lines) {
   starts <- starts[keep]
   ends <- ends[keep]
 
+  eval_keep <- !vapply(
+    seq_along(starts),
+    \(i) chunk_evals_to_false(starts[i], ends[i], lines, pattern),
+    logical(1L)
+  )
+  starts <- starts[eval_keep]
+  ends <- ends[eval_keep]
+
   # Check indent on all lines in the chunk to allow for staggered indentation within a chunk;
   #   set the initial column to the leftmost one within each chunk (including the start+end gates). See tests.
   # use 'ws_re' to make clear that we're matching knitr's definition of initial whitespace.
@@ -149,6 +157,55 @@ defines_knitr_engine <- function(start_lines) {
 
   re_matches(start_lines, explicit_engine_pattern) |
     re_matches(start_lines, bare_engine_pattern)
+}
+
+chunk_evals_to_false <- function(start, end, lines, pattern) {
+  if (is.null(pattern$chunk.begin) || !grepl("\\(.+\\)", pattern$chunk.begin)) {
+    return(FALSE)
+  }
+  header <- lines[start]
+  extract_fn <- "knitr" %:::% "extract_params_src"
+  params_src <- extract_fn(pattern$chunk.begin, header)
+  params_src <- sub("\\s*-->.*$", "", params_src)
+  if (identical(pattern, knitr::all_patterns$md)) {
+    params_src <- ("knitr" %:::% "get_chunk_params")(params_src)
+  }
+  header_params <- suppressMessages(suppressWarnings(tryCatch(
+    ("knitr" %:::% "parse_params")(params_src),
+    error = \(e) list()
+  )))
+
+  code <- lines[(start + 1L):(end - 1L)]
+  has_partition <- exists(
+    "partition_chunk",
+    envir = asNamespace("knitr"),
+    inherits = FALSE
+  )
+  body_params <- if (has_partition) {
+    suppressMessages(suppressWarnings(tryCatch(
+      ("knitr" %:::% "partition_chunk")("r", code)$options,
+      error = \(e) list()
+    )))
+  } else {
+    list()
+  }
+
+  eval_opt <- body_params$eval %||% header_params$eval
+  is_eval_false(eval_opt)
+}
+
+is_eval_false <- function(eval_opt) {
+  if (is.null(eval_opt)) {
+    return(FALSE)
+  }
+  if (is.call(eval_opt) || is.symbol(eval_opt) || is.expression(eval_opt)) {
+    eval_opt <- tryCatch(
+      eval(eval_opt, envir = baseenv()),
+      error = \(e) eval_opt
+    )
+  }
+  isFALSE(eval_opt) || identical(eval_opt, 0) || identical(eval_opt, 0L) ||
+    (is.numeric(eval_opt) && length(eval_opt) == 0L)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
