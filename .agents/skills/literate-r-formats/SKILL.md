@@ -13,8 +13,7 @@ When modifying how `lintr` extracts R source code from literate programming and 
 
 ## 2. Chunk Bounds & `eval=FALSE` Filtering
 - **Two-phase chunk boundary detection:** `get_chunk_positions(pattern, lines)` determines chunk bounds by pairing opening pattern matches (`filter_chunk_start_positions()`) with closing pattern matches (`filter_chunk_end_positions()`), then retaining only blocks containing at least one line of inner code (`ends - starts > 1L`).
-- **Filter non-evaluated chunks cleanly:** Filter out unevaluated chunks by inspecting both chunk header options and inside-chunk YAML/pipe options (`#| eval: false`).
-- **Use exported `xfun` parsers:** Extract and parse chunk parameters using exported utilities from `xfun` (`xfun::csv_options()` for header strings and `xfun::divide_chunk("r", code)$options` for body lines) rather than invoking unexported `knitr` functions (`"knitr" %:::% "parse_params"`):
+- **Filter non-evaluated chunks:** Filter out unevaluated chunks by inspecting both chunk header options and inside-chunk YAML/pipe options (`#| eval: false`):
   ```r
   non_eval_chunk <- function(start, end, lines, pattern) {
     header <- lines[start]
@@ -33,9 +32,8 @@ When modifying how `lintr` extracts R source code from literate programming and 
   }
   ```
 
-## 3. Engine Detection and Extension Handling
+## 3. Engine Detection
 - **Detect non-R engines on opening lines:** `defines_knitr_engine()` inspects chunk start lines to drop chunks explicitly targeting non-R engines (`{python}`, `engine = "bash"`).
-- **Use `xfun::file_ext()`:** When detecting file extensions to look up `knitr::all_patterns` (e.g. inside `get_knitr_pattern()`), use `tolower(xfun::file_ext(filename))` cleanly rather than `("knitr" %:::% "file_ext")(filename)`.
 
 ## 4. Multi-Format Testing Conventions
 - **Test across document families:** When modifying `R/extract.R`, verify extraction behavior across all major literate families (`.Rmd`, `.qmd`, and `.Rnw`) inside `tests/testthat/test-knitr_formats.R`.
