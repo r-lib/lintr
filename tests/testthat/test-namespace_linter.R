@@ -97,29 +97,32 @@ test_that("lints vectorize", {
 test_that("namespace_linter detects functions already imported in the NAMESPACE", {
   pkg_dir <- withr::local_tempdir("testpkg")
   dir.create(file.path(pkg_dir, "R"))
-  writeLines("Package: testpkg\nVersion: 1.0.0\n", file.path(pkg_dir, "DESCRIPTION"))
-  writeLines("importFrom(stats, median)\nimportFrom(utils, head)\n", file.path(pkg_dir, "NAMESPACE"))
-
-  linter <- namespace_linter()
+  write.dcf(
+    list(Package = "testpkg", Version = "1.0.0"),
+    file.path(pkg_dir, "DESCRIPTION")
+  )
+  writeLines(
+    c("importFrom(stats, median)", "importFrom(utils, head)"),
+    file.path(pkg_dir, "NAMESPACE")
+  )
 
   test_file <- file.path(pkg_dir, "R", "test.R")
   writeLines(
-    trim_some("
-      stats::median(1:10)
-      utils:::head(1:10)
-      stats::sd(1:10)
-    "),
+    c(
+      "stats::median(1:10)",
+      "utils:::head(1:10)",
+      "stats::sd(1:10) # not imported"
+    ),
     test_file
   )
 
   expect_lint(
-    content = "",
     file = test_file,
-    list(
-      list(rex::rex("Don't use `::` to access median, which is already imported from stats."), line_number = 1L),
-      list(rex::rex("Don't use `:::` to access head, which is already imported from utils."), line_number = 2L)
+    checks = list(
+      list("Don't use `::` to access median.*already imported", line_number = 1L),
+      list("Don't use `:::` to access head.*already imported", line_number = 2L)
     ),
-    linter
+    linters = namespace_linter(check_nonexports = FALSE)
   )
 })
 

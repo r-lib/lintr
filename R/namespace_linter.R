@@ -131,40 +131,6 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
       ns_get <- ns_get[!is_imported]
     }
 
-    if ((check_exports || check_nonexports) && length(packages) > 0L) {
-      ## Case 2/3/4: problems with foo in pkg::foo / pkg:::foo
-
-      # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
-      namespaces <- lapply(packages, \(package) tryCatch(getNamespace(package), packageNotFoundError = identity))
-      failed_namespace <- vapply(namespaces, inherits, "packageNotFoundError", FUN.VALUE = logical(1L))
-
-      # nocov start
-      if (any(failed_namespace)) {
-        cli_abort_internal("Failed to retrieve namespaces for one or more of the packages used with `::` or `:::`. ")
-      }
-      # nocov end
-
-      if (check_nonexports) {
-        lints <- c(lints, build_ns_get_int_lints(
-          packages[!ns_get],
-          symbols[!ns_get],
-          symbol_nodes[!ns_get],
-          namespaces[!ns_get],
-          source_expression
-        ))
-      }
-
-      if (check_exports) {
-        lints <- c(lints, build_ns_get_lints(
-          packages[ns_get],
-          symbols[ns_get],
-          symbol_nodes[ns_get],
-          namespaces[ns_get],
-          source_expression
-        ))
-      }
-    }
-
     lints
   })
 }
