@@ -115,7 +115,15 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 
     pkg_path <- find_package(source_expression$filename)
     ns_imports <- namespace_imports(pkg_path)
-    is_imported <- is_in_imports(packages, symbols, ns_imports)
+    if (nrow(ns_imports) == 0L) {
+      return(lints)
+    }
+
+    is_imported <- vapply(
+      seq_along(symbols),
+      \(ii) any(ns_imports$pkg == packages[ii] & ns_imports$fun == symbols[ii]),
+      logical(1L)
+    )
     if (any(is_imported)) {
       lints <- c(lints, xml_nodes_to_lints(
         symbol_nodes[is_imported],
@@ -143,16 +151,6 @@ is_in_pkg <- function(symbols, namespaces, exported = TRUE) {
   vapply(
     seq_along(symbols),
     \(ii) symbols[[ii]] %in% namespace_symbols(namespaces[[ii]], exported = exported),
-    logical(1L)
-  )
-}
-is_in_imports <- function(packages, symbols, ns_imports) {
-  if (nrow(ns_imports) == 0L) {
-    return(FALSE)
-  }
-  vapply(
-    seq_along(symbols),
-    \(ii) any(ns_imports$pkg == packages[[ii]] & ns_imports$fun == symbols[[ii]]),
     logical(1L)
   )
 }
