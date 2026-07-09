@@ -91,7 +91,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     ns_get <- xml_text(ns_nodes) == "::"
     symbol_nodes <- xml_find_all_(ns_nodes, "following-sibling::*[1]")
     symbols <- get_r_string(symbol_nodes)
-    symbols <- gsub("^`(.*)`$", "\\1", symbols)
+    symbols <- sub("^`(.*)`$", "\\1", symbols)
 
     if (check_nonexports) {
       lints <- c(lints, build_ns_get_int_lints(
