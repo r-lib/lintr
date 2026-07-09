@@ -151,7 +151,7 @@ is_in_pkg <- function(symbols, namespaces, exported = TRUE) {
 }
 is_in_imports <- function(packages, symbols, ns_imports) {
   if (nrow(ns_imports) == 0L) {
-    return(rep(FALSE, length(symbols)))
+    return(FALSE)
   }
   vapply(
     seq_along(symbols),
