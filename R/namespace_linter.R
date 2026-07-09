@@ -117,12 +117,14 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     ns_imports <- if (!is.null(pkg_path)) namespace_imports(pkg_path) else empty_namespace_data()
     is_imported <- is_in_imports(packages, symbols, ns_imports)
     if (any(is_imported)) {
-      lints <- c(lints, build_ns_imports_lints(
-        packages[is_imported],
-        symbols[is_imported],
+      lints <- c(lints, xml_nodes_to_lints(
         symbol_nodes[is_imported],
-        ns_get[is_imported],
-        source_expression
+        source_expression = source_expression,
+        lint_message = sprintf(
+          "Don't use `%s` to access %s, which is already imported from %s.",
+          ifelse(ns_get[is_imported], "::", ":::"), symbols[is_imported], packages[is_imported]
+        ),
+        type = "warning"
       ))
       packages <- packages[!is_imported]
       symbols <- symbols[!is_imported]
@@ -157,19 +159,6 @@ is_in_imports <- function(packages, symbols, ns_imports) {
     seq_along(symbols),
     \(ii) any(ns_imports$pkg == packages[[ii]] & ns_imports$fun == symbols[[ii]]),
     logical(1L)
-  )
-}
-
-build_ns_imports_lints <- function(packages, symbols, symbol_nodes, ns_get, source_expression) {
-  ns_get_text <- ifelse(ns_get, "::", ":::")
-  xml_nodes_to_lints(
-    symbol_nodes,
-    source_expression = source_expression,
-    lint_message = sprintf(
-      "Don't use `%s` to access %s, which is already imported from %s.",
-      ns_get_text, symbols, packages
-    ),
-    type = "warning"
   )
 }
 
