@@ -94,7 +94,7 @@ test_that("lints vectorize", {
   )
 })
 
-test_that("namespace_linter detects functions already imported in the NAMESPACE", {
+test_that("namespace_linter detects functions already imported in the NAMESPACE", { # nofuzz
   pkg_dir <- withr::local_tempdir("testpkg")
   dir.create(file.path(pkg_dir, "R"))
   write.dcf(
@@ -126,7 +126,7 @@ test_that("namespace_linter detects functions already imported in the NAMESPACE"
   )
 })
 
-test_that("namespace_linter works with backticked symbols", {
+test_that("namespace_linter works with backticked symbols", { # nofuzz
   skip_if_not_installed("rlang")
 
   pkg_dir <- withr::local_tempdir("testpkg_rlang")
