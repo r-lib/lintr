@@ -131,18 +131,18 @@ test_that("namespace_linter works with backticked symbols", {
 
   pkg_dir <- withr::local_tempdir("testpkg_rlang")
   dir.create(file.path(pkg_dir, "R"))
-  writeLines("Package: testpkg_rlang\nVersion: 1.0.0\n", file.path(pkg_dir, "DESCRIPTION"))
-  writeLines('importFrom("rlang", "%||%")\n', file.path(pkg_dir, "NAMESPACE"))
-
-  linter <- namespace_linter()
+  write.dcf(
+    list(Package = "testpkg_rlang", Version = "1.0.0"),
+    file.path(pkg_dir, "DESCRIPTION")
+  )
+  writeLines('importFrom("rlang", "%||%")', file.path(pkg_dir, "NAMESPACE"))
 
   test_file <- file.path(pkg_dir, "R", "test.R")
-  writeLines("rlang::`%||%`\n", test_file)
+  writeLines("rlang::`%||%`", test_file)
 
   expect_lint(
-    content = "",
     file = test_file,
-    rex::rex("Don't use `::` to access %||%, which is already imported from rlang."),
-    linter
+    checks = rex::rex("Don't use `::` to access %||%, which is already imported from rlang."),
+    linters = namespace_linter()
   )
 })
