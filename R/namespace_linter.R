@@ -72,10 +72,46 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
       package_nodes <- package_nodes[installed]
     }
 
+    if (length(packages) == 0L) {
+      return(lints)
+    }
+
+    ## Case 2/3/4/5: problems with foo in pkg::foo / pkg:::foo
+
+    # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
+    namespaces <- lapply(packages, \(package) tryCatch(getNamespace(package), packageNotFoundError = identity))
+    failed_namespace <- vapply(namespaces, inherits, "packageNotFoundError", FUN.VALUE = logical(1L))
+
+    # nocov start
+    if (any(failed_namespace)) {
+      cli_abort_internal("Failed to retrieve namespaces for one or more of the packages used with `::` or `:::`. ")
+    }
+    # nocov end
+
     ns_get <- xml_text(ns_nodes) == "::"
     symbol_nodes <- xml_find_all_(ns_nodes, "following-sibling::*[1]")
     symbols <- get_r_string(symbol_nodes)
     symbols <- gsub("^`(.*)`$", "\\1", symbols)
+
+    if (check_nonexports) {
+      lints <- c(lints, build_ns_get_int_lints(
+        packages[!ns_get],
+        symbols[!ns_get],
+        symbol_nodes[!ns_get],
+        namespaces[!ns_get],
+        source_expression
+      ))
+    }
+
+    if (check_exports) {
+      lints <- c(lints, build_ns_get_lints(
+        packages[ns_get],
+        symbols[ns_get],
+        symbol_nodes[ns_get],
+        namespaces[ns_get],
+        source_expression
+      ))
+    }
 
     pkg_path <- find_package(source_expression$filename)
     ns_imports <- if (!is.null(pkg_path)) namespace_imports(pkg_path) else empty_namespace_data()
@@ -99,8 +135,8 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
       ## Case 2/3/4: problems with foo in pkg::foo / pkg:::foo
 
       # run here, not in the factory, to allow for run- vs. "compile"-time differences in package structure
-      namespaces <- lapply(packages, \(package) tryCatch(getNamespace(package), error = identity))
-      failed_namespace <- vapply(namespaces, inherits, "condition", FUN.VALUE = logical(1L))
+      namespaces <- lapply(packages, \(package) tryCatch(getNamespace(package), packageNotFoundError = identity))
+      failed_namespace <- vapply(namespaces, inherits, "packageNotFoundError", FUN.VALUE = logical(1L))
 
       # nocov start
       if (any(failed_namespace)) {
