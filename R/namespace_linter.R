@@ -6,8 +6,6 @@
 #'
 #' @param check_exports Check if `symbol` is exported from `namespace` in `namespace::symbol` calls.
 #' @param check_nonexports Check if `symbol` exists in `namespace` in `namespace:::symbol` calls.
-#' @param check_imports Check if `symbol` is already imported from `namespace` in `namespace::symbol` or
-#'   `namespace:::symbol` calls.
 #'
 #' @examples
 #' # will produce lints
@@ -37,15 +35,10 @@
 #'   linters = namespace_linter(check_nonexports = FALSE)
 #' )
 #'
-#' lint(
-#'   text = "stats::sd(c(1, 2, 3))",
-#'   linters = namespace_linter(check_imports = FALSE)
-#' )
-#'
 #' @evalRd rd_tags("namespace_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE, check_imports = TRUE) {
+namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
@@ -79,33 +72,27 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE, chec
       package_nodes <- package_nodes[installed]
     }
 
-    if (!check_exports && !check_nonexports && !check_imports) {
-      return(lints)
-    }
-
     ns_get <- xml_text(ns_nodes) == "::"
     symbol_nodes <- xml_find_all_(ns_nodes, "following-sibling::*[1]")
     symbols <- get_r_string(symbol_nodes)
     symbols <- gsub("^`(.*)`$", "\\1", symbols)
 
-    if (check_imports) {
-      pkg_path <- find_package(source_expression$filename)
-      ns_imports <- if (!is.null(pkg_path)) namespace_imports(pkg_path) else empty_namespace_data()
-      is_imported <- is_in_imports(packages, symbols, ns_imports)
-      if (any(is_imported)) {
-        lints <- c(lints, build_ns_imports_lints(
-          packages[is_imported],
-          symbols[is_imported],
-          symbol_nodes[is_imported],
-          ns_get[is_imported],
-          source_expression
-        ))
-        packages <- packages[!is_imported]
-        symbols <- symbols[!is_imported]
-        symbol_nodes <- symbol_nodes[!is_imported]
-        ns_nodes <- ns_nodes[!is_imported]
-        ns_get <- ns_get[!is_imported]
-      }
+    pkg_path <- find_package(source_expression$filename)
+    ns_imports <- if (!is.null(pkg_path)) namespace_imports(pkg_path) else empty_namespace_data()
+    is_imported <- is_in_imports(packages, symbols, ns_imports)
+    if (any(is_imported)) {
+      lints <- c(lints, build_ns_imports_lints(
+        packages[is_imported],
+        symbols[is_imported],
+        symbol_nodes[is_imported],
+        ns_get[is_imported],
+        source_expression
+      ))
+      packages <- packages[!is_imported]
+      symbols <- symbols[!is_imported]
+      symbol_nodes <- symbol_nodes[!is_imported]
+      ns_nodes <- ns_nodes[!is_imported]
+      ns_get <- ns_get[!is_imported]
     }
 
     if ((check_exports || check_nonexports) && length(packages) > 0L) {

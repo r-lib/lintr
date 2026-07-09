@@ -121,17 +121,9 @@ test_that("namespace_linter detects functions already imported in the NAMESPACE"
     ),
     linter
   )
-
-  test_file2 <- file.path(pkg_dir, "R", "test2.R")
-  writeLines("stats::median(1:10)\n", test_file2)
-  expect_no_lint(
-    content = "",
-    file = test_file2,
-    namespace_linter(check_imports = FALSE)
-  )
 })
 
-test_that("namespace_linter check_imports works with backticked symbols", {
+test_that("namespace_linter works with backticked symbols", {
   skip_if_not_installed("rlang")
 
   pkg_dir <- withr::local_tempdir("testpkg_rlang")
