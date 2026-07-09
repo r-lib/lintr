@@ -126,11 +126,6 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
         ),
         type = "warning"
       ))
-      packages <- packages[!is_imported]
-      symbols <- symbols[!is_imported]
-      symbol_nodes <- symbol_nodes[!is_imported]
-      ns_nodes <- ns_nodes[!is_imported]
-      ns_get <- ns_get[!is_imported]
     }
 
     lints
