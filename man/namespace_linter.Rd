@@ -4,12 +4,19 @@
 \alias{namespace_linter}
 \title{Namespace linter}
 \usage{
-namespace_linter(check_exports = TRUE, check_nonexports = TRUE)
+namespace_linter(
+  check_exports = TRUE,
+  check_nonexports = TRUE,
+  check_imports = TRUE
+)
 }
 \arguments{
 \item{check_exports}{Check if \code{symbol} is exported from \code{namespace} in \code{namespace::symbol} calls.}
 
 \item{check_nonexports}{Check if \code{symbol} exists in \code{namespace} in \code{namespace:::symbol} calls.}
+
+\item{check_imports}{Check if \code{symbol} is already imported from \code{namespace} in \code{namespace::symbol} or
+\code{namespace:::symbol} calls.}
 }
 \description{
 Check for missing packages and symbols in namespace calls.
@@ -42,6 +49,11 @@ lint(
 lint(
   text = "stats:::ssd(c(1, 2, 3))",
   linters = namespace_linter(check_nonexports = FALSE)
+)
+
+lint(
+  text = "stats::sd(c(1, 2, 3))",
+  linters = namespace_linter(check_imports = FALSE)
 )
 
 }

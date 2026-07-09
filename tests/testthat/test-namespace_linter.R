@@ -93,3 +93,61 @@ test_that("lints vectorize", {
     namespace_linter()
   )
 })
+
+test_that("namespace_linter detects functions already imported in the NAMESPACE", {
+  pkg_dir <- withr::local_tempdir("testpkg")
+  dir.create(file.path(pkg_dir, "R"))
+  writeLines("Package: testpkg\nVersion: 1.0.0\n", file.path(pkg_dir, "DESCRIPTION"))
+  writeLines("importFrom(stats, median)\nimportFrom(utils, head)\n", file.path(pkg_dir, "NAMESPACE"))
+
+  linter <- namespace_linter()
+
+  test_file <- file.path(pkg_dir, "R", "test.R")
+  writeLines(
+    trim_some("
+      stats::median(1:10)
+      utils:::head(1:10)
+      stats::sd(1:10)
+    "),
+    test_file
+  )
+
+  expect_lint(
+    content = "",
+    file = test_file,
+    list(
+      list(rex::rex("Don't use `::` to access median, which is already imported from stats."), line_number = 1L),
+      list(rex::rex("Don't use `:::` to access head, which is already imported from utils."), line_number = 2L)
+    ),
+    linter
+  )
+
+  test_file2 <- file.path(pkg_dir, "R", "test2.R")
+  writeLines("stats::median(1:10)\n", test_file2)
+  expect_no_lint(
+    content = "",
+    file = test_file2,
+    namespace_linter(check_imports = FALSE)
+  )
+})
+
+test_that("namespace_linter check_imports works with backticked symbols", {
+  skip_if_not_installed("rlang")
+
+  pkg_dir <- withr::local_tempdir("testpkg_rlang")
+  dir.create(file.path(pkg_dir, "R"))
+  writeLines("Package: testpkg_rlang\nVersion: 1.0.0\n", file.path(pkg_dir, "DESCRIPTION"))
+  writeLines('importFrom("rlang", "%||%")\n', file.path(pkg_dir, "NAMESPACE"))
+
+  linter <- namespace_linter()
+
+  test_file <- file.path(pkg_dir, "R", "test.R")
+  writeLines("rlang::`%||%`\n", test_file)
+
+  expect_lint(
+    content = "",
+    file = test_file,
+    rex::rex("Don't use `::` to access %||%, which is already imported from rlang."),
+    linter
+  )
+})
