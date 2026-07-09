@@ -46,3 +46,24 @@ When writing or updating unit tests in `tests/testthat/test-*.R`, adhere to the 
   )
   ```
 - **No `rex::rex()` wrapper required for pattern strings:** `expect_lint()` automatically treats string literals in check lists as regular expressions. You do not need to wrap strings in `rex::rex(...)` unless constructing complex `rex` grammar objects.
+- **Pass file paths using the `file = ` keyword argument:** When testing a file on disk (`tmp_file`), always pass it using `file = tmp_file`. Passing a file path as the first positional argument (`expect_lint(tmp_file, ...)`) passes it as `content`, causing `expect_lint()` to treat the file path string itself as R code (resulting in false-positive syntax errors like `unexpected '/'`).
+
+## 4. Concise File Fixtures (`withr::local_tempfile`)
+- **Create and populate tempfiles in one step:** When creating single-file test fixtures for `expect_lint()` or `expect_no_lint()` (such as `.Rmd` or `.qmd` documents), use `withr::local_tempfile(fileext = ".Rmd", lines = c(...))` to create and write the file in a single, clean step:
+  ```r
+  test_that("chunkless files are fine", {
+    tmp <- withr::local_tempfile(fileext = ".Rmd", lines = c(
+      "---",
+      "some_option: true",
+      "---",
+      "Some text!"
+    ))
+    expect_no_lint(file = tmp, linters = assignment_linter())
+  })
+  ```
+
+## 5. Testing Document Structure & Boundary States
+- **Test zero-chunk and edge-case document structures:** When modifying file parsing, source extraction, or chunk boundary detection (`get_chunk_positions`), explicitly test boundary conditions. Always include test cases for:
+  - Files with zero code chunks (e.g., plain markdown or YAML frontmatter only).
+  - Multi-chunk documents with varied evaluation flags (`eval=FALSE`, `eval=TRUE`, and `#| eval: false`).
+  - Different literate formats (`.Rmd`, `.qmd`, `.Rnw`) when format-specific logic is involved.

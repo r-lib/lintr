@@ -24,3 +24,12 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 ## 4. Self-Linting & Repository Health
 - **Verify zero new violations in `lintr` itself:** Whenever a linter is made more strict or extended with new rules, run the modified linter across `lintr`'s own `R/` codebase (`R/condition_call_linter.R`, `R/cyclocomp_linter.R`, etc.).
 - **Keep `lintr` 100% lint-free:** Immediately clean up any newly triggered violations across the repository (e.g., changing redundant `glue::glue()` or `cli::cli_warn()` calls to `glue()` and `cli_warn()`) before proposing the PR.
+
+## 5. Upstream Exported APIs vs. Unexported Internals (`%:::%`)
+- **Prefer exported utilities over `%:::%` calls:** Even though `lintr` provides the internal helper `%:::%` (`p %:::% f`) to access unexported package functions cleanly without violating namespace checks, always prefer exported functions from imported packages (`DESCRIPTION` `Imports:`) whenever available.
+- **Eliminate fragile internal wrappers:** For example, when extracting or parsing `knitr` chunk options, use `xfun::csv_options(params_src)` and `xfun::divide_chunk("r", code)$options` instead of calling unexported internals like `("knitr" %:::% "parse_params")` or `("knitr" %:::% "partition_chunk")`. Relying on exported utilities (`xfun::file_ext()`, `xfun::csv_options()`) keeps code robust across dependency updates and avoids unnecessary runtime checks (`if (exists("partition_chunk", ...))`).
+
+## 6. Simple & Idiomatic AST and Condition Checks
+- **Avoid over-engineered evaluation constructs:** When checking parsed parameter values or AST expressions (such as `eval` options from chunk headers), do not write complex, over-defensive constructs like `tryCatch(eval(..., envir = baseenv()))` to handle theoretical runtime expressions.
+- **Check exact parser representations:** Inspect and match the exact R objects produced by the parser (`xfun::csv_options()` produces `logical` `FALSE` for `eval=FALSE` and symbol `quote(F)` for `eval=F`). A direct, concise check such as `if (identical(eval_value, quote(F))) return(TRUE)` followed by `isFALSE(eval_value)` is simpler, safer, and much easier to maintain.
+- **Annotate symbol checks for self-linting:** When comparing against `quote(F)` or `quote(T)`, add `# nolint next: T_and_F_symbol_linter.` immediately above the line to prevent `lintr`'s self-linting checks from flagging the symbol name.

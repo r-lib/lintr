@@ -16,6 +16,7 @@
 ^COPYING$
 ^bad\.R$
 ^\.github$
+^\.agents$
 ^codecov\.yaml$
 ^\.covrignore$
 ^script[.]R$
