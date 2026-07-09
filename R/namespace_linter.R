@@ -114,7 +114,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     }
 
     pkg_path <- find_package(source_expression$filename)
-    ns_imports <- if (!is.null(pkg_path)) namespace_imports(pkg_path) else empty_namespace_data()
+    ns_imports <- namespace_imports(pkg_path)
     is_imported <- is_in_imports(packages, symbols, ns_imports)
     if (any(is_imported)) {
       lints <- c(lints, xml_nodes_to_lints(
