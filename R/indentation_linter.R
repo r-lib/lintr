@@ -281,36 +281,30 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     }
 
     if (length(bad_lines) > 0L) {
-      is_misindented_hanging <- hanging_indent_cols[bad_lines] > 0L &
-        indent_levels[bad_lines] == hanging_indent_cols[bad_lines]
+      expected_indent_levels <- expected_indent_levels[bad_lines]
+      indent_levels <- indent_levels[bad_lines]
+      hanging_indent_cols <- hanging_indent_cols[bad_lines]
+      is_misindented_hanging <- hanging_indent_cols > 0L & indent_levels == hanging_indent_cols
+      file_lines <- source_expression$file_lines[bad_lines]
 
       lint_messages <- sprintf(
-        ifelse(
-          is_misindented_hanging,
-          "%s should be %d spaces but is %d spaces (or start argument on previous line).",
-          "%s should be %d spaces but is %d spaces."
-        ),
+        "%s should be %d spaces but is %d spaces%s.",
         ifelse(is_hanging[bad_lines], "Hanging indent", "Indentation"),
-        expected_indent_levels[bad_lines],
-        indent_levels[bad_lines]
+        expected_indent_levels,
+        indent_levels,
+        ifelse(is_misindented_hanging, " (or start argument on previous line)", "")
       )
 
-      lint_lines <- unname(as.integer(names(source_expression$file_lines)[bad_lines]))
+      lint_lines <- unname(as.integer(names(file_lines)))
+      lint_cols <- indent_levels
       lint_ranges <- cbind(
         # when indent_levels==0, need to start ranges at column 1.
-        pmax(
-          pmin(expected_indent_levels[bad_lines] + 1L, indent_levels[bad_lines]),
-          1L
-        ),
+        pmax(pmin(expected_indent_levels + 1L, lint_cols), 1L),
         # If the expected indent is larger than the current line width, the lint range would become invalid.
         # Therefore, limit range end to end of line.
-        pmin(
-          pmax(expected_indent_levels[bad_lines], indent_levels[bad_lines]),
-          nchar(source_expression$file_lines[bad_lines]) + 1L
-        )
+        pmin(pmax(expected_indent_levels, lint_cols), nchar(file_lines) + 1L)
       )
       lint_ranges_list <- apply(lint_ranges, 1L, list, simplify = FALSE)
-      lint_cols <- indent_levels[bad_lines]
     } else {
       lint_messages <- character()
       lint_lines <- integer()
@@ -363,7 +357,7 @@ check_bad_closing_node <- function(node, end_line, xp_self_last_on_line, xp_foll
 }
 
 compute_indent_changes <- function(indent_changes, change_types, change_begins, change_ends, col2s, indent,
-                                 n_lines, xp_self_last_on_line, xp_following_right_paren) {
+                                   n_lines, xp_self_last_on_line, xp_following_right_paren) {
   expected_indent_levels <- integer(n_lines)
   is_hanging <- logical(n_lines)
   hanging_indent_cols <- integer(n_lines)
