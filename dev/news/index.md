@@ -120,6 +120,11 @@
   expression doesn’t support the `sep` argument
   ([\#2945](https://github.com/r-lib/lintr/issues/2945),
   [@mcol](https://github.com/mcol)).
+- [`namespace_linter()`](https://lintr.r-lib.org/dev/reference/namespace_linter.md)
+  detects functions accessed with `::` or `:::` when they are already
+  imported into the package’s `NAMESPACE`
+  ([\#2081](https://github.com/r-lib/lintr/issues/2081),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
 
 #### Lint accuracy fixes: removing false positives
 
