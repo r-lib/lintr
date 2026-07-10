@@ -121,6 +121,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                                assignment_as_infix = TRUE) {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
+  paren_token_right_names <- c(`)` = "parenthesis", `}` = "brace", `]` = "bracket")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
   no_paren_keywords <- c("ELSE", "REPEAT")
   keyword_tokens <- c("FUNCTION", "OP-LAMBDA", "IF", "WHILE")
@@ -293,8 +294,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       closing_texts <- vapply(bad_closing_list, xml_text, character(1L))
       closing_messages <- sprintf(
         "Closing %s '%s' should be on its own line for block-indented calls.",
-        ifelse(closing_texts == ")", "parenthesis", ifelse(closing_texts == "}", "brace", "bracket")),
-        closing_texts
+        paren_token_right_names[closing_texts], closing_texts
       )
       closing_lints <- Map(
         Lint,
