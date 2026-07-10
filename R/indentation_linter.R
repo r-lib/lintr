@@ -8,8 +8,6 @@
 #'   line and a hanging indent if not.
 #'   Note that function multi-line function calls without arguments on their first line will always be expected to have
 #'   block-indented arguments.
-#'   If `hanging_indent_style` is `"tidy"`, multi-line function definitions are expected to be double-indented if the
-#'   first line of the function definition contains no arguments and the closing parenthesis is not on its own line.
 #'
 #'   ```r
 #'   # complies to any style
@@ -36,13 +34,6 @@
 #'   # complies to "never"
 #'   map(x, f,
 #'     additional_arg = 42)
-#'
-#'   # complies to "tidy"
-#'   function(
-#'       a,
-#'       b) {
-#'     # body
-#'   }
 #'   ```
 #' @param assignment_as_infix Treat `<-` as a regular (i.e. left-associative) infix operator?
 #'   This means, that infix operators on the right hand side of an assignment do not trigger a second level of
@@ -323,7 +314,6 @@ find_new_indent <- function(current_indent, change_type, indent, hanging_indent)
   switch(change_type,
     suppress = current_indent,
     hanging = hanging_indent,
-    double = current_indent + 2L * indent,
     block = current_indent + indent
   )
 }
@@ -333,28 +323,6 @@ build_indentation_style_tidy <- function() {
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
   xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
-
-  # double indent is tidyverse style for function definitions
-  # triggered only if the closing parenthesis of the function definition is not on its own line and the opening
-  # parenthesis has no arguments behind it.
-  # this allows both of these styles:
-  #
-  #> function(
-  #>     a,
-  #>     b) {
-  #>   body
-  #> }
-  #
-  #> function(
-  #>   a,
-  #>   b
-  #> ) {
-  #>   body
-  #> }
-  xp_is_double_indent <- "
-    parent::expr[(FUNCTION or OP-LAMBDA) and not(@line1 = SYMBOL_FORMALS/@line1)]
-      /OP-RIGHT-PAREN[@line1 = preceding-sibling::*[not(self::COMMENT)][1]/@line2]
-  "
 
   xp_suppress <- paste(
     glue("
@@ -378,9 +346,7 @@ build_indentation_style_tidy <- function() {
   )
 
   function(change) {
-    if (length(xml_find_first_(change, xp_is_double_indent)) > 0L) {
-      "double"
-    } else if (length(xml_find_first_(change, xp_suppress)) > 0L) {
+    if (length(xml_find_first_(change, xp_suppress)) > 0L) {
       "suppress"
     } else if (length(xml_find_first_(change, xp_is_not_hanging)) == 0L) {
       "hanging"

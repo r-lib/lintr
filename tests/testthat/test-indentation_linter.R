@@ -165,8 +165,8 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
     linter
   )
 
-  # new style (#1754)
-  expect_no_lint(
+  # old double-indent style (#1754, #2830) lints under tidyverse style
+  expect_lint(
     trim_some("
       function(
           a = 1L,
@@ -174,6 +174,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
+    "Hanging",
     linter
   )
 
@@ -185,12 +186,12 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 4",
+    "Hanging",
     linter
   )
 
-  # Hanging is only allowed if there is an argument next to "("
-  expect_lint(
+  # Hanging is allowed if it aligns with "("
+  expect_no_lint(
     trim_some("
       function(
                a = 1L,
@@ -198,7 +199,6 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 4",
     linter
   )
 
@@ -211,7 +211,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 4",
+    "Hanging",
     linter
   )
 
@@ -850,8 +850,9 @@ test_that("function shorthand is handled", {
   expect_no_lint(
     trim_some(R"(
       \(
-          a = 1L,
-          b = 2L) {
+        a = 1L,
+        b = 2L
+      ) {
         a + b
       }
     )"),
