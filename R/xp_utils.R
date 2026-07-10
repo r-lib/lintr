@@ -124,7 +124,7 @@ xpath_comment_re <- rex(
   zero_or_more(not(":)")),
   ":)"
 )
-xp_strip_comments <- function(xpath) rex::re_substitutes(xpath, xpath_comment_re, "", global = TRUE)
+xp_strip_comments <- function(xpath) re_substitutes(xpath, xpath_comment_re, "", global = TRUE)
 
 #' Combine two or more nodesets to a single nodeset
 #'
