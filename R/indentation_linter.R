@@ -251,45 +251,16 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
     change_ends <- xml_find_num_(indent_changes, xp_block_ends)
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
-    hanging_indent_cols <- integer(length(indent_levels))
-    bad_closing_list <- list()
-    bad_closing_block_begins <- integer()
-    bad_closing_block_ends <- integer()
-    for (ii in which(change_begins <= change_ends)) {
-      to_indent <- seq(from = change_begins[ii], to = change_ends[ii])
-      expected_indent_levels[to_indent] <- find_new_indent(
-        current_indent = expected_indent_levels[to_indent],
-        change_type = change_types[ii],
-        indent = indent,
-        hanging_indent = col2s[ii]
-      )
-      is_hanging[to_indent] <- change_types[ii] == "hanging"
-      if (change_types[ii] == "block") {
-        hanging_indent_cols[to_indent] <- col2s[ii]
-        if (length(xml_find_first_(indent_changes[[ii]], xp_self_last_on_line)) > 0L) {
-          closing_node <- xml_find_first_(indent_changes[[ii]], xp_following_right_paren)
-          if (
-            length(closing_node) > 0L &&
-              !is.na(xml_attr_(closing_node, "line1")) &&
-              as.integer(xml_attr_(closing_node, "line1")) == change_ends[ii]
-          ) {
-            bad_closing_list[[length(bad_closing_list) + 1L]] <- closing_node
-            bad_closing_block_begins <- c(bad_closing_block_begins, change_begins[ii])
-            bad_closing_block_ends <- c(bad_closing_block_ends, change_ends[ii])
-          }
-        }
-      }
-    }
+    computed <- compute_indent_changes(
+      indent_changes, change_types, change_begins, change_ends, col2s, indent,
+      length(indent_levels), xp_self_last_on_line, xp_following_right_paren
+    )
+    expected_indent_levels <- computed$expected_indent_levels
+    is_hanging <- computed$is_hanging
+    hanging_indent_cols <- computed$hanging_indent_cols
+    bad_closing_list <- computed$bad_closing_list
 
-    in_str_const <- logical(length(indent_levels))
-    multiline_strings <- xml_find_all_(xml, xp_multiline_string)
-    for (string in multiline_strings) {
-      is_in_str <- seq(
-        from = as.integer(xml_attr_(string, "line1")) + 1L,
-        to = as.integer(xml_attr_(string, "line2"))
-      )
-      in_str_const[is_in_str] <- TRUE
-    }
+    in_str_const <- find_in_str_const(xml, length(indent_levels), xp_multiline_string)
 
     # Only lint non-empty lines if the indentation level doesn't match.
     # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
@@ -348,35 +319,17 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       lint_cols <- integer()
     }
 
-    if (length(bad_closing_list) > 0L) {
-      for (jj in seq_along(bad_closing_list)) {
-        in_block <- which(lint_lines >= bad_closing_block_begins[jj] & lint_lines <= bad_closing_block_ends[jj])
-        if (length(in_block) > 0L) {
-          first_idx <- in_block[1L]
-          closing_text <- xml_text(bad_closing_list[[jj]])
-          lint_messages[first_idx] <- sprintf(
-            "%s; closing %s '%s' should be on its own line.",
-            sub("\\.$", "", lint_messages[first_idx]),
-            paren_token_right_names[closing_text],
-            closing_text
-          )
-        } else {
-          closing_node <- bad_closing_list[[jj]]
-          closing_line <- as.integer(xml_attr_(closing_node, "line1"))
-          closing_col1 <- as.integer(xml_attr_(closing_node, "col1"))
-          closing_col2 <- as.integer(xml_attr_(closing_node, "col2"))
-          closing_text <- xml_text(closing_node)
-          closing_message <- sprintf(
-            "Closing %s '%s' should be on its own line for block-indented calls.",
-            paren_token_right_names[closing_text], closing_text
-          )
-          lint_lines <- c(lint_lines, closing_line)
-          lint_cols <- c(lint_cols, closing_col1)
-          lint_messages <- c(lint_messages, closing_message)
-          lint_ranges_list <- c(lint_ranges_list, list(list(c(closing_col1, closing_col2))))
-        }
-      }
-    }
+    res <- incorporate_closing_lints(
+      bad_closing_list,
+      computed$bad_closing_block_begins,
+      computed$bad_closing_block_ends,
+      lint_lines, lint_cols, lint_messages, lint_ranges_list,
+      paren_token_right_names
+    )
+    lint_lines <- res$lint_lines
+    lint_cols <- res$lint_cols
+    lint_messages <- res$lint_messages
+    lint_ranges_list <- res$lint_ranges_list
 
     if (length(lint_lines) == 0L) {
       return(list())
@@ -393,6 +346,123 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       ranges = lint_ranges_list
     )
   })
+}
+
+check_bad_closing_node <- function(node, end_line, xp_self_last_on_line, xp_following_right_paren) {
+  if (length(xml_find_first_(node, xp_self_last_on_line)) == 0L) {
+    return(NULL)
+  }
+  closing_node <- xml_find_first_(node, xp_following_right_paren)
+  if (length(closing_node) == 0L || is.na(xml_attr_(closing_node, "line1"))) {
+    return(NULL)
+  }
+  if (as.integer(xml_attr_(closing_node, "line1")) == end_line) {
+    closing_node
+  } else {
+    NULL
+  }
+}
+
+compute_indent_changes <- function(indent_changes, change_types, change_begins, change_ends, col2s, indent,
+                                 n_lines, xp_self_last_on_line, xp_following_right_paren) {
+  expected_indent_levels <- integer(n_lines)
+  is_hanging <- logical(n_lines)
+  hanging_indent_cols <- integer(n_lines)
+  bad_closing_list <- list()
+  bad_closing_block_begins <- integer()
+  bad_closing_block_ends <- integer()
+
+  for (ii in which(change_begins <= change_ends)) {
+    to_indent <- seq(from = change_begins[ii], to = change_ends[ii])
+    expected_indent_levels[to_indent] <- find_new_indent(
+      current_indent = expected_indent_levels[to_indent],
+      change_type = change_types[ii],
+      indent = indent,
+      hanging_indent = col2s[ii]
+    )
+    is_hanging[to_indent] <- change_types[ii] == "hanging"
+    if (change_types[ii] == "block") {
+      hanging_indent_cols[to_indent] <- col2s[ii]
+      closing_node <- check_bad_closing_node(
+        indent_changes[[ii]], change_ends[ii], xp_self_last_on_line, xp_following_right_paren
+      )
+      if (!is.null(closing_node)) {
+        bad_closing_list[[length(bad_closing_list) + 1L]] <- closing_node
+        bad_closing_block_begins <- c(bad_closing_block_begins, change_begins[ii])
+        bad_closing_block_ends <- c(bad_closing_block_ends, change_ends[ii])
+      }
+    }
+  }
+
+  list(
+    expected_indent_levels = expected_indent_levels,
+    is_hanging = is_hanging,
+    hanging_indent_cols = hanging_indent_cols,
+    bad_closing_list = bad_closing_list,
+    bad_closing_block_begins = bad_closing_block_begins,
+    bad_closing_block_ends = bad_closing_block_ends
+  )
+}
+
+find_in_str_const <- function(xml, n_lines, xp_multiline_string) {
+  in_str_const <- logical(n_lines)
+  multiline_strings <- xml_find_all_(xml, xp_multiline_string)
+  for (string in multiline_strings) {
+    is_in_str <- seq(
+      from = as.integer(xml_attr_(string, "line1")) + 1L,
+      to = as.integer(xml_attr_(string, "line2"))
+    )
+    in_str_const[is_in_str] <- TRUE
+  }
+  in_str_const
+}
+
+incorporate_closing_lints <- function(bad_closing_list, bad_closing_block_begins, bad_closing_block_ends,
+                                      lint_lines, lint_cols, lint_messages, lint_ranges_list,
+                                      paren_token_right_names) {
+  if (length(bad_closing_list) == 0L) {
+    return(list(
+      lint_lines = lint_lines,
+      lint_cols = lint_cols,
+      lint_messages = lint_messages,
+      lint_ranges_list = lint_ranges_list
+    ))
+  }
+
+  for (jj in seq_along(bad_closing_list)) {
+    in_block <- which(lint_lines >= bad_closing_block_begins[jj] & lint_lines <= bad_closing_block_ends[jj])
+    if (length(in_block) > 0L) {
+      first_idx <- in_block[1L]
+      closing_text <- xml_text(bad_closing_list[[jj]])
+      lint_messages[first_idx] <- sprintf(
+        "%s; closing %s '%s' should be on its own line.",
+        sub("\\.$", "", lint_messages[first_idx]),
+        paren_token_right_names[closing_text],
+        closing_text
+      )
+    } else {
+      closing_node <- bad_closing_list[[jj]]
+      closing_line <- as.integer(xml_attr_(closing_node, "line1"))
+      closing_col1 <- as.integer(xml_attr_(closing_node, "col1"))
+      closing_col2 <- as.integer(xml_attr_(closing_node, "col2"))
+      closing_text <- xml_text(closing_node)
+      closing_message <- sprintf(
+        "Closing %s '%s' should be on its own line for block-indented calls.",
+        paren_token_right_names[closing_text], closing_text
+      )
+      lint_lines <- c(lint_lines, closing_line)
+      lint_cols <- c(lint_cols, closing_col1)
+      lint_messages <- c(lint_messages, closing_message)
+      lint_ranges_list <- c(lint_ranges_list, list(list(c(closing_col1, closing_col2))))
+    }
+  }
+
+  list(
+    lint_lines = lint_lines,
+    lint_cols = lint_cols,
+    lint_messages = lint_messages,
+    lint_ranges_list = lint_ranges_list
+  )
 }
 
 find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
