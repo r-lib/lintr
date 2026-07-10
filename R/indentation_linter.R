@@ -249,14 +249,14 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
     change_ends <- xml_find_num_(indent_changes, xp_block_ends)
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
-    computed <- compute_indent_changes(
+    indent_change_metadata <- compute_indent_changes(
       indent_changes, change_types, change_begins, change_ends, col2s, indent,
       length(indent_levels), xp_self_last_on_line, xp_following_right_paren
     )
-    expected_indent_levels <- computed$expected_indent_levels
-    is_hanging <- computed$is_hanging
-    hanging_indent_cols <- computed$hanging_indent_cols
-    bad_closing_list <- computed$bad_closing_list
+    expected_indent_levels <- indent_change_metadata$expected_indent_levels
+    is_hanging <- indent_change_metadata$is_hanging
+    hanging_indent_cols <- indent_change_metadata$hanging_indent_cols
+    bad_closing_list <- indent_change_metadata$bad_closing_list
 
     in_str_const <- rep(FALSE, length(indent_levels))
     in_str_const[is_in_str_const(xml)] <- TRUE
@@ -320,8 +320,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     res <- incorporate_closing_lints(
       bad_closing_list,
-      computed$bad_closing_block_begins,
-      computed$bad_closing_block_ends,
+      indent_change_metadata$bad_closing_block_begins,
+      indent_change_metadata$bad_closing_block_ends,
       lint_lines, lint_cols, lint_messages, lint_ranges_list,
       paren_token_right_names
     )
