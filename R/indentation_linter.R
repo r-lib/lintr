@@ -320,6 +320,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
 find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
   switch(change_type,
+    "0" = 0L,
     suppress = current_indent,
     hanging = hanging_indent,
     block = current_indent + indent
@@ -331,6 +332,11 @@ build_indentation_style_tidy <- function() {
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
   xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
+
+  xp_is_invalid_combo <- "
+    parent::expr[(FUNCTION or OP-LAMBDA) and not(@line1 = SYMBOL_FORMALS/@line1)]
+      /OP-RIGHT-PAREN[@line1 = preceding-sibling::*[not(self::COMMENT)][1]/@line2]
+  "
 
   xp_suppress <- paste(
     glue("
@@ -354,7 +360,9 @@ build_indentation_style_tidy <- function() {
   )
 
   function(change) {
-    if (length(xml_find_first_(change, xp_suppress)) > 0L) {
+    if (length(xml_find_first_(change, xp_is_invalid_combo)) > 0L) {
+      "0"
+    } else if (length(xml_find_first_(change, xp_suppress)) > 0L) {
       "suppress"
     } else if (length(xml_find_first_(change, xp_is_not_hanging)) == 0L) {
       "hanging"

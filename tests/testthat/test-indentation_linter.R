@@ -174,7 +174,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Hanging",
+    "Indentation",
     linter
   )
 
@@ -186,12 +186,12 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Hanging",
+    "Indentation",
     linter
   )
 
-  # Hanging is allowed if it aligns with "("
-  expect_no_lint(
+  # Hanging is only allowed if there is an argument next to "("
+  expect_lint(
     trim_some("
       function(
                a = 1L,
@@ -199,6 +199,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
+    "Indentation",
     linter
   )
 
@@ -211,7 +212,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Hanging",
+    "Indentation",
     linter
   )
 
