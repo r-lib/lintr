@@ -253,6 +253,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
     hanging_indent_cols <- integer(length(indent_levels))
     bad_closing_list <- list()
+    bad_closing_block_begins <- integer()
+    bad_closing_block_ends <- integer()
     for (ii in which(change_begins <= change_ends)) {
       to_indent <- seq(from = change_begins[ii], to = change_ends[ii])
       expected_indent_levels[to_indent] <- find_new_indent(
@@ -272,6 +274,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
               as.integer(xml_attr_(closing_node, "line1")) == change_ends[ii]
           ) {
             bad_closing_list[[length(bad_closing_list) + 1L]] <- closing_node
+            bad_closing_block_begins <- c(bad_closing_block_begins, change_begins[ii])
+            bad_closing_block_ends <- c(bad_closing_block_ends, change_ends[ii])
           }
         }
       }
@@ -287,7 +291,17 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       in_str_const[is_in_str] <- TRUE
     }
 
-    if (length(bad_closing_list) > 0L) {
+    # Only lint non-empty lines if the indentation level doesn't match.
+    # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
+    # styler: off
+    bad_lines <- which(indent_levels != expected_indent_levels &
+                         nzchar(trimws(source_expression$file_lines)) &
+                         !in_str_const)
+    # styler: on
+    if (length(bad_lines) == 0L && length(bad_closing_list) == 0L) {
+      return(list())
+    }
+    if (length(bad_lines) == 0L) {
       closing_lines <- vapply(bad_closing_list, \(x) as.integer(xml_attr_(x, "line1")), integer(1L))
       closing_col1s <- vapply(bad_closing_list, \(x) as.integer(xml_attr_(x, "col1")), integer(1L))
       closing_col2s <- vapply(bad_closing_list, \(x) as.integer(xml_attr_(x, "col2")), integer(1L))
@@ -296,7 +310,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         "Closing %s '%s' should be on its own line for block-indented calls.",
         paren_token_right_names[closing_texts], closing_texts
       )
-      closing_lints <- Map(
+      return(Map(
         Lint,
         filename = source_expression$filename,
         line_number = closing_lines,
@@ -305,23 +319,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         message = closing_messages,
         line = unname(source_expression$file_lines[closing_lines]),
         ranges = lapply(Map(c, closing_col1s, closing_col2s), list)
-      )
-    } else {
-      closing_lints <- list()
-    }
-
-    # Only lint non-empty lines if the indentation level doesn't match.
-    # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
-    # styler: off
-    bad_lines <- which(indent_levels != expected_indent_levels &
-                         nzchar(trimws(source_expression$file_lines)) &
-                         !in_str_const)
-    # styler: on
-    if (length(bad_lines) == 0L && length(closing_lints) == 0L) {
-      return(list())
-    }
-    if (length(bad_lines) == 0L) {
-      return(closing_lints)
+      ))
     }
 
     # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
@@ -344,6 +342,50 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       expected_indent_levels[bad_lines],
       indent_levels[bad_lines]
     )
+
+    unhandled_closing <- integer()
+    if (length(bad_closing_list) > 0L) {
+      for (jj in seq_along(bad_closing_list)) {
+        in_block <- which(bad_lines >= bad_closing_block_begins[jj] & bad_lines <= bad_closing_block_ends[jj])
+        if (length(in_block) > 0L) {
+          first_idx <- in_block[1L]
+          closing_text <- xml_text(bad_closing_list[[jj]])
+          lint_messages[first_idx] <- sprintf(
+            "%s; closing %s '%s' should be on its own line.",
+            sub("\\.$", "", lint_messages[first_idx]),
+            paren_token_right_names[closing_text],
+            closing_text
+          )
+        } else {
+          unhandled_closing <- c(unhandled_closing, jj)
+        }
+      }
+    }
+
+    if (length(unhandled_closing) > 0L) {
+      closing_nodes <- bad_closing_list[unhandled_closing]
+      closing_lines <- vapply(closing_nodes, \(x) as.integer(xml_attr_(x, "line1")), integer(1L))
+      closing_col1s <- vapply(closing_nodes, \(x) as.integer(xml_attr_(x, "col1")), integer(1L))
+      closing_col2s <- vapply(closing_nodes, \(x) as.integer(xml_attr_(x, "col2")), integer(1L))
+      closing_texts <- vapply(closing_nodes, xml_text, character(1L))
+      closing_messages <- sprintf(
+        "Closing %s '%s' should be on its own line for block-indented calls.",
+        paren_token_right_names[closing_texts], closing_texts
+      )
+      closing_lints <- Map(
+        Lint,
+        filename = source_expression$filename,
+        line_number = closing_lines,
+        column_number = closing_col1s,
+        type = "style",
+        message = closing_messages,
+        line = unname(source_expression$file_lines[closing_lines]),
+        ranges = lapply(Map(c, closing_col1s, closing_col2s), list)
+      )
+    } else {
+      closing_lints <- list()
+    }
+
     lint_lines <- unname(as.integer(names(source_expression$file_lines)[bad_lines]))
     lint_ranges <- cbind(
       # when indent_levels==0, need to start ranges at column 1.

@@ -175,18 +175,10 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
       }
     "),
     list(
-      list(
-        message = rex::escape("Indentation should be 2 spaces but is 4 spaces."),
-        line_number = 2L,
-        column_number = 4L,
-        ranges = list(3L:4L)
-      ),
-      list(
-        message = rex::escape("Closing parenthesis ')' should be on its own line for block-indented calls."),
-        line_number = 3L,
-        column_number = 11L,
-        ranges = list(c(11L, 11L))
-      )
+      message = rex::escape("Indentation should be 2 spaces but is 4 spaces; closing parenthesis ')' should be on its own line."),
+      line_number = 2L,
+      column_number = 4L,
+      ranges = list(3L:4L)
     ),
     linter
   )
@@ -200,18 +192,10 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
       }
     "),
     list(
-      list(
-        message = rex::escape("Indentation should be 2 spaces but is 6 spaces."),
-        line_number = 2L,
-        column_number = 6L,
-        ranges = list(c(3L, 6L))
-      ),
-      list(
-        message = rex::escape("Closing parenthesis ')' should be on its own line for block-indented calls."),
-        line_number = 3L,
-        column_number = 13L,
-        ranges = list(c(13L, 13L))
-      )
+      message = rex::escape("Indentation should be 2 spaces but is 6 spaces; closing parenthesis ')' should be on its own line."),
+      line_number = 2L,
+      column_number = 6L,
+      ranges = list(c(3L, 6L))
     ),
     linter
   )
@@ -226,18 +210,10 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
       }
     "),
     list(
-      list(
-        message = rex::escape("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)."),
-        line_number = 2L,
-        column_number = 9L,
-        ranges = list(c(3L, 9L))
-      ),
-      list(
-        message = rex::escape("Closing parenthesis ')' should be on its own line for block-indented calls."),
-        line_number = 3L,
-        column_number = 16L,
-        ranges = list(c(16L, 16L))
-      )
+      message = rex::escape("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line); closing parenthesis ')' should be on its own line."),
+      line_number = 2L,
+      column_number = 9L,
+      ranges = list(c(3L, 9L))
     ),
     linter
   )
