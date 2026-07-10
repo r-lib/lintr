@@ -219,6 +219,20 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     collapse = " | "
   )
 
+  check_bad_closing_node <- function(node, end_line) {
+    if (length(xml_find_first_(node, xp_self_last_on_line)) == 0L) {
+      return(NULL)
+    }
+    closing_node <- xml_find_first_(node, xp_following_right_paren)
+    if (length(closing_node) == 0L) {
+      return(NULL)
+    }
+    if (as.integer(xml_attr_(closing_node, "line1")) != end_line) {
+      return(NULL)
+    }
+    closing_node
+  }
+
   compute_indent_changes <- function(xml, n_lines) {
     expected_indent_levels <- integer(n_lines)
     is_hanging <- logical(n_lines)
@@ -242,17 +256,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         hanging_indent = col2s[ii]
       )
       is_hanging[to_indent] <- change_types[ii] == "hanging"
-      if (change_types[ii] == "block") {
-        hanging_indent_cols[to_indent] <- col2s[ii]
-        closing_node <- check_bad_closing_node(
-          indent_changes[[ii]], change_ends[ii], xp_self_last_on_line, xp_following_right_paren
-        )
-        if (!is.null(closing_node)) {
-          bad_closing_list[[length(bad_closing_list) + 1L]] <- closing_node
-          bad_closing_block_begins <- c(bad_closing_block_begins, change_begins[ii])
-          bad_closing_block_ends <- c(bad_closing_block_ends, change_ends[ii])
-        }
-      }
+      if (change_types[ii] != "block") next
+      hanging_indent_cols[to_indent] <- col2s[ii]
+      closing_node <- check_bad_closing_node(indent_changes[[ii]], change_ends[ii])
+      if (is.null(closing_node)) next
+      bad_closing_list[[length(bad_closing_list) + 1L]] <- closing_node
+      bad_closing_block_begins <- c(bad_closing_block_begins, change_begins[ii])
+      bad_closing_block_ends <- c(bad_closing_block_ends, change_ends[ii])
     }
 
     list(
@@ -375,21 +385,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       ranges = lint_ranges_list
     )
   })
-}
-
-check_bad_closing_node <- function(node, end_line, xp_self_last_on_line, xp_following_right_paren) {
-  if (length(xml_find_first_(node, xp_self_last_on_line)) == 0L) {
-    return(NULL)
-  }
-  closing_node <- xml_find_first_(node, xp_following_right_paren)
-  if (length(closing_node) == 0L || is.na(xml_attr_(closing_node, "line1"))) {
-    return(NULL)
-  }
-  if (as.integer(xml_attr_(closing_node, "line1")) == end_line) {
-    closing_node
-  } else {
-    NULL
-  }
 }
 
 is_in_str_const <- function(xml) {
