@@ -246,6 +246,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
     change_ends <- xml_find_num_(indent_changes, xp_block_ends)
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
+    hanging_indent_cols <- integer(length(indent_levels))
+    bad_closing_list <- list()
     for (ii in which(change_begins <= change_ends)) {
       to_indent <- seq(from = change_begins[ii], to = change_ends[ii])
       expected_indent_levels[to_indent] <- find_new_indent(
@@ -255,6 +257,19 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         hanging_indent = col2s[ii]
       )
       is_hanging[to_indent] <- change_types[ii] == "hanging"
+      if (change_types[ii] == "block") {
+        hanging_indent_cols[to_indent] <- col2s[ii]
+        if (length(xml_find_first_(indent_changes[[ii]], glue("self::*[{xp_last_on_line}]"))) > 0L) {
+          closing_node <- xml_find_first_(
+            indent_changes[[ii]],
+            glue("following-sibling::*[{xp_or(paste0('self::', paren_tokens_right))}][1]")
+          )
+          if (length(closing_node) > 0L && !is.na(xml_attr_(closing_node, "line1")) &&
+                as.integer(xml_attr_(closing_node, "line1")) == change_ends[ii]) {
+            bad_closing_list[[length(bad_closing_list) + 1L]] <- closing_node
+          }
+        }
+      }
     }
 
     in_str_const <- logical(length(indent_levels))
@@ -267,6 +282,30 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       in_str_const[is_in_str] <- TRUE
     }
 
+    if (length(bad_closing_list) > 0L) {
+      closing_lines <- vapply(bad_closing_list, \(x) as.integer(xml_attr_(x, "line1")), integer(1L))
+      closing_col1s <- vapply(bad_closing_list, \(x) as.integer(xml_attr_(x, "col1")), integer(1L))
+      closing_col2s <- vapply(bad_closing_list, \(x) as.integer(xml_attr_(x, "col2")), integer(1L))
+      closing_texts <- vapply(bad_closing_list, xml_text, character(1L))
+      closing_messages <- sprintf(
+        "Closing %s '%s' should be on its own line for block-indented calls.",
+        ifelse(closing_texts == ")", "parenthesis", ifelse(closing_texts == "}", "brace", "bracket")),
+        closing_texts
+      )
+      closing_lints <- Map(
+        Lint,
+        filename = source_expression$filename,
+        line_number = closing_lines,
+        column_number = closing_col1s,
+        type = "style",
+        message = closing_messages,
+        line = unname(source_expression$file_lines[closing_lines]),
+        ranges = lapply(Map(c, closing_col1s, closing_col2s), list)
+      )
+    } else {
+      closing_lints <- list()
+    }
+
     # Only lint non-empty lines if the indentation level doesn't match.
     # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
     # styler: off
@@ -274,8 +313,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                          nzchar(trimws(source_expression$file_lines)) &
                          !in_str_const)
     # styler: on
-    if (length(bad_lines) == 0L) {
+    if (length(bad_lines) == 0L && length(closing_lints) == 0L) {
       return(list())
+    }
+    if (length(bad_lines) == 0L) {
+      return(closing_lints)
     }
 
     # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
@@ -285,8 +327,15 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     bad_lines <- bad_lines[!(is_consecutive_lint & is_same_diff)]
 
+    is_misindented_hanging <- hanging_indent_cols[bad_lines] > 0L &
+      indent_levels[bad_lines] == hanging_indent_cols[bad_lines]
+
     lint_messages <- sprintf(
-      "%s should be %d spaces but is %d spaces.",
+      ifelse(
+        is_misindented_hanging,
+        "%s should be %d spaces but is %d spaces (or start argument on previous line).",
+        "%s should be %d spaces but is %d spaces."
+      ),
       ifelse(is_hanging[bad_lines], "Hanging indent", "Indentation"),
       expected_indent_levels[bad_lines],
       indent_levels[bad_lines]
@@ -305,7 +354,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         nchar(source_expression$file_lines[bad_lines]) + 1L
       )
     )
-    Map(
+    indent_lints <- Map(
       Lint,
       filename = source_expression$filename,
       line_number = lint_lines,
@@ -315,12 +364,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       line = unname(source_expression$file_lines[bad_lines]),
       ranges = apply(lint_ranges, 1L, list, simplify = FALSE)
     )
+    c(indent_lints, closing_lints)
   })
 }
 
 find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
   switch(change_type,
-    "0" = 0L,
     suppress = current_indent,
     hanging = hanging_indent,
     block = current_indent + indent
@@ -332,11 +381,6 @@ build_indentation_style_tidy <- function() {
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
   xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
-
-  xp_is_invalid_combo <- "
-    parent::expr[(FUNCTION or OP-LAMBDA) and not(@line1 = SYMBOL_FORMALS/@line1)]
-      /OP-RIGHT-PAREN[@line1 = preceding-sibling::*[not(self::COMMENT)][1]/@line2]
-  "
 
   xp_suppress <- paste(
     glue("
@@ -354,15 +398,14 @@ build_indentation_style_tidy <- function() {
         self::{paren_tokens_left}
           /following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
       "),
-      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
+      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]"),
+      glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]")
     ),
     collapse = "\n|  "
   )
 
   function(change) {
-    if (length(xml_find_first_(change, xp_is_invalid_combo)) > 0L) {
-      "0"
-    } else if (length(xml_find_first_(change, xp_suppress)) > 0L) {
+    if (length(xml_find_first_(change, xp_suppress)) > 0L) {
       "suppress"
     } else if (length(xml_find_first_(change, xp_is_not_hanging)) == 0L) {
       "hanging"
