@@ -219,7 +219,18 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     collapse = " | "
   )
 
-  xp_multiline_string <- "//STR_CONST[@line1 < @line2]"
+  find_in_str_const <- function(xml, n_lines) {
+    in_str_const <- logical(n_lines)
+    multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
+    for (string in multiline_strings) {
+      is_in_str <- seq(
+        from = as.integer(xml_attr_(string, "line1")) + 1L,
+        to = as.integer(xml_attr_(string, "line2"))
+      )
+      in_str_const[is_in_str] <- TRUE
+   }
+    in_str_const
+  }
 
   Linter(linter_level = "file", function(source_expression) {
     # must run on file level because a line can contain multiple expressions, losing indentation information, e.g.
@@ -260,7 +271,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     hanging_indent_cols <- computed$hanging_indent_cols
     bad_closing_list <- computed$bad_closing_list
 
-    in_str_const <- find_in_str_const(xml, length(indent_levels), xp_multiline_string)
+    in_str_const <- find_in_str_const(xml, length(indent_levels))
 
     # Only lint non-empty lines if the indentation level doesn't match.
     # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
@@ -402,19 +413,6 @@ compute_indent_changes <- function(indent_changes, change_types, change_begins, 
     bad_closing_block_begins = bad_closing_block_begins,
     bad_closing_block_ends = bad_closing_block_ends
   )
-}
-
-find_in_str_const <- function(xml, n_lines, xp_multiline_string) {
-  in_str_const <- logical(n_lines)
-  multiline_strings <- xml_find_all_(xml, xp_multiline_string)
-  for (string in multiline_strings) {
-    is_in_str <- seq(
-      from = as.integer(xml_attr_(string, "line1")) + 1L,
-      to = as.integer(xml_attr_(string, "line2"))
-    )
-    in_str_const[is_in_str] <- TRUE
-  }
-  in_str_const
 }
 
 incorporate_closing_lints <- function(bad_closing_list, bad_closing_block_begins, bad_closing_block_ends,
