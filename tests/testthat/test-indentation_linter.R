@@ -186,7 +186,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation",
+    "Indentation should be 4",
     linter
   )
 
@@ -199,7 +199,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation",
+    "Indentation should be 4",
     linter
   )
 
@@ -212,7 +212,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation",
+    "Indentation should be 4",
     linter
   )
 
