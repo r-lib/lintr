@@ -18,7 +18,7 @@ Defaults to 2.}
 \item{hanging_indent_style}{Indentation style for multi-line function calls with arguments in their first line.
 Defaults to tidyverse style, i.e. a block indent is used if the function call terminates with \verb{)} on a separate
 line and a hanging indent if not.
-Note that function multi-line function calls without arguments on their first line will always be expected to have
+Note that multi-line function calls without arguments on their first line will always be expected to have
 block-indented arguments.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{# complies to any style
@@ -45,6 +45,14 @@ map(x, f,
 # complies to "never"
 map(x, f,
   additional_arg = 42)
+
+# complies to "tidy"
+function(
+  a,
+  b
+) \{
+  # body
+\}
 }\if{html}{\out{</div>}}}
 
 \item{assignment_as_infix}{Treat \verb{<-} as a regular (i.e. left-associative) infix operator?

@@ -6,7 +6,7 @@
 #' @param hanging_indent_style Indentation style for multi-line function calls with arguments in their first line.
 #'   Defaults to tidyverse style, i.e. a block indent is used if the function call terminates with `)` on a separate
 #'   line and a hanging indent if not.
-#'   Note that function multi-line function calls without arguments on their first line will always be expected to have
+#'   Note that multi-line function calls without arguments on their first line will always be expected to have
 #'   block-indented arguments.
 #'
 #'   ```r
@@ -34,6 +34,14 @@
 #'   # complies to "never"
 #'   map(x, f,
 #'     additional_arg = 42)
+#'
+#'   # complies to "tidy"
+#'   function(
+#'     a,
+#'     b
+#'   ) {
+#'     # body
+#'   }
 #'   ```
 #' @param assignment_as_infix Treat `<-` as a regular (i.e. left-associative) infix operator?
 #'   This means, that infix operators on the right hand side of an assignment do not trigger a second level of
