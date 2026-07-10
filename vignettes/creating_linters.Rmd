@@ -25,11 +25,7 @@ A good example of a simple linter is the `pipe_call_linter`.
 pipe_call_linter <- function() {
   xpath <- "//expr[preceding-sibling::SPECIAL[text() = '%>%'] and *[1][self::SYMBOL]]"
 
-  Linter(linter_level = "expression", function(source_expression) {
-    if (!is_lint_level(source_expression, "expression")) {
-      return(list())
-    }
-
+  Linter(linter_level = "expression", selectors = "%>%", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     if (is.null(xml)) return(list())
 
@@ -112,10 +108,13 @@ implements XPath 1.0, which lacks some helpful features available in XPath 2.0.
 
 
 ```r
-Linter(function(source_expression) {
+Linter(linter_level = "expression", selectors = "%>%", function(source_expression) {
 ```
 
-This is the closure. It will be called on the `source_expression` variable that
+`Linter()` creates a `linter` object, which houses the actual linting logic (the closure in the third argument)
+and specifies some metadata about the linter.
+
+First, about the closure. It will be called on the `source_expression` variable that
 contains the top level expressions in the file to be linted. The call to
 `Linter()` gives this closure the class 'linter' (it also guesses the name of the linter; see `?Linter` for more details).
 
@@ -139,25 +138,21 @@ which enables writing linter logic in [XPath](https://www.w3schools.com/xml/xpat
 for expressing paths within the nested XML data structure. Most linters in `lintr` are built using XPath because it is a
 powerful language for computation on the abstract syntax tree / parse tree.
 
-```r
-if (!is_lint_level(source_expression, "expression")) {
-  return(list())
-}
-```
-
-Here, we return early if `source_expression` is not the expression-level object. `get_source_expression()` returns an
-object that parses the input file in two ways -- once is done expression-by-expression, the other contains all of the
-expressions in the file. This is done to facilitate caching. Suppose your package has a long source file (e.g., 100s of expressions) --
-rather than run linters on every expression every time the file is updated, when caching is activated `lintr` will
-only run the linter again on expressions that have changed.
-
-Note that this check is unnecessary because we provided `linter_level = "expression"` which guarantees that `source_expression` will be at the expression level and not at the file level.
+Next, about `linter_level = "expression"`. This lets `lint()` return early if `source_expression` is not the expression-level object.
+`get_source_expression()` returns an object that parses the input file in two ways -- once is done expression-by-expression, the other
+contains all of the expressions in the file. This is done to facilitate caching. Suppose your package has a long source file (e.g.,
+100s of expressions) -- rather than run linters on every expression every time the file is updated, when caching is activated `lintr`
+will only run the linter again on expressions that have changed.
 
 Therefore, it is preferable to write expression-level linters whenever possible. Two types of exceptions observed in `lintr` are
 (1) when several or all expressions are _required_ to ensure the linter logic applies (e.g., `conjunct_test_linter` looks for
 consecutive calls to `stopifnot()`, which will typically appear on consecutive expressions) or (2) when the linter logic
 is very simple & fast to compute, so that the overhead of re-running the linter is low (e.g., `quotes_linter`). In those cases,
-use `is_lint_level(source_expression, "file")`.
+use `linter_level = "file"`.
+
+Finally, about `selectors = "%>%"`. This lets `lint()` return early if the expression (or file, depending on `linter_level`)
+does not have `%>%`. `selectors` provide necessary-but-not-sufficient conditions on the tokens/text found in `source_expression`
+in order to skip expensive checks on irrelevant expressions. Providing `selectors` is optional but can greatly improve performance.
 
 ```r
 xml <- source_expression$xml_parsed_content
