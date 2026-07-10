@@ -219,16 +219,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     collapse = " | "
   )
 
-  find_in_str_const <- function(xml, n_lines) {
-    in_str_const <- logical(n_lines)
-    multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
-    line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
-    line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
-    is_in_str <- unlist(Map(`:`, line1, line2))
-    in_str_const[is_in_str] <- TRUE
-    in_str_const
-  }
-
   Linter(linter_level = "file", function(source_expression) {
     # must run on file level because a line can contain multiple expressions, losing indentation information, e.g.
     #
@@ -268,7 +258,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     hanging_indent_cols <- computed$hanging_indent_cols
     bad_closing_list <- computed$bad_closing_list
 
-    in_str_const <- find_in_str_const(xml, length(indent_levels))
+    in_str_const <- rep(FALSE, length(indent_levels))
+    in_str_const[is_in_str_const(xml)] <- TRUE
 
     # Only lint non-empty lines if the indentation level doesn't match.
     # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
@@ -410,6 +401,13 @@ compute_indent_changes <- function(indent_changes, change_types, change_begins, 
     bad_closing_block_begins = bad_closing_block_begins,
     bad_closing_block_ends = bad_closing_block_ends
   )
+}
+
+is_in_str_const <- function(xml) {
+  multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
+  line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
+  line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
+  unlist(Map(`:`, line1, line2))
 }
 
 incorporate_closing_lints <- function(bad_closing_list, bad_closing_block_begins, bad_closing_block_ends,
