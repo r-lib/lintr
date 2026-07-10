@@ -126,6 +126,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   keyword_tokens <- c("FUNCTION", "OP-LAMBDA", "IF", "WHILE")
 
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
+  xp_self_last_on_line <- glue("self::*[{xp_last_on_line}]")
+
+  xp_following_right_paren <-
+    glue("following-sibling::*[{xp_or(paste0('self::', paren_tokens_right))}][1]")
 
   hanging_indent_style <- match.arg(hanging_indent_style)
 
@@ -259,13 +263,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       is_hanging[to_indent] <- change_types[ii] == "hanging"
       if (change_types[ii] == "block") {
         hanging_indent_cols[to_indent] <- col2s[ii]
-        if (length(xml_find_first_(indent_changes[[ii]], glue("self::*[{xp_last_on_line}]"))) > 0L) {
-          closing_node <- xml_find_first_(
-            indent_changes[[ii]],
-            glue("following-sibling::*[{xp_or(paste0('self::', paren_tokens_right))}][1]")
-          )
-          if (length(closing_node) > 0L && !is.na(xml_attr_(closing_node, "line1")) &&
-                as.integer(xml_attr_(closing_node, "line1")) == change_ends[ii]) {
+        if (length(xml_find_first_(indent_changes[[ii]], xp_self_last_on_line)) > 0L) {
+          closing_node <- xml_find_first_(indent_changes[[ii]], xp_following_right_paren)
+          if (
+            length(closing_node) > 0L &&
+              !is.na(xml_attr_(closing_node, "line1")) &&
+              as.integer(xml_attr_(closing_node, "line1")) == change_ends[ii]
+          ) {
             bad_closing_list[[length(bad_closing_list) + 1L]] <- closing_node
           }
         }
