@@ -349,9 +349,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                          nzchar(trimws(source_expression$file_lines)) &
                          !is_in_str_const(xml, n_indents))
     # styler: on
-    if (length(bad_lines) == 0L && nrow(bad_closing_block) == 0L) {
-      return(list())
-    }
 
     # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
     if (length(bad_lines) > 0L) {
