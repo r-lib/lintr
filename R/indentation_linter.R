@@ -402,10 +402,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     lint_messages <- res$lint_messages
     lint_ranges_list <- res$lint_ranges_list
 
-    if (length(lint_lines) == 0L) {
-      return(list())
-    }
-
     Map(
       Lint,
       filename = source_expression$filename,
