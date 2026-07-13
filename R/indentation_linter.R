@@ -269,6 +269,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     }
 
     bad_closing_block <- bad_closing_block[seq_len(bad_closing_nrow), ]
+    bad_closing_block$node <- combine_nodesets(bad_closing_block$node)
+    bad_closing_block$text <- xml_text(bad_closing_block$node)
+    bad_closing_block$line <- as.integer(xml_attr_(bad_closing_block$node, "line1"))
+    bad_closing_block$col1 <- as.integer(xml_attr_(bad_closing_block$node, "col1"))
+    bad_closing_block$col2 <- as.integer(xml_attr_(bad_closing_block$node, "col2"))
+    bad_closing_block$node <- NULL
 
     list(
       expected_indent_levels = expected_indent_levels,
@@ -293,7 +299,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       in_block <- which(lint_lines >= bad_closing_block$begin[jj] & lint_lines <= bad_closing_block$end[jj])
       if (length(in_block) > 0L) {
         first_idx <- in_block[1L]
-        closing_text <- xml_text(bad_closing_block$node[[jj]])
+        closing_text <- bad_closing_block$text[jj]
         lint_messages[first_idx] <- sprintf(
           "%s; closing %s '%s' should be on its own line.",
           sub("\\.$", "", lint_messages[first_idx]),
@@ -301,19 +307,14 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
           closing_text
         )
       } else {
-        closing_node <- bad_closing_block$node[[jj]]
-        closing_line <- as.integer(xml_attr_(closing_node, "line1"))
-        closing_col1 <- as.integer(xml_attr_(closing_node, "col1"))
-        closing_col2 <- as.integer(xml_attr_(closing_node, "col2"))
-        closing_text <- xml_text(closing_node)
         closing_message <- sprintf(
           "Closing %s '%s' should be on its own line for block-indented calls.",
-          paren_token_right_names[closing_text], closing_text
+          paren_token_right_names[bad_closing_block$text[jj]], bad_closing_block$text[jj]
         )
-        lint_lines <- c(lint_lines, closing_line)
-        lint_cols <- c(lint_cols, closing_col1)
+        lint_lines <- c(lint_lines, bad_closing_block$line[jj])
+        lint_cols <- c(lint_cols, bad_closing_block$col1[jj])
         lint_messages <- c(lint_messages, closing_message)
-        lint_ranges_list <- c(lint_ranges_list, list(list(c(closing_col1, closing_col2))))
+        lint_ranges_list <- c(lint_ranges_list, list(list(c(bad_closing_block$col1[jj], bad_closing_block$col2[jj]))))
       }
     }
 

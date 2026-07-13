@@ -913,8 +913,6 @@ test_that("for loop gets correct linting", {
 })
 
 test_that("multiple bad closing blocks are handled (#2830)", {
-  linter <- indentation_linter()
-
   expect_lint(
     trim_some("
       function(
@@ -923,16 +921,16 @@ test_that("multiple bad closing blocks are handled (#2830)", {
         a + b
       }
       function(
-        a = 1L,
-        b = 2L) {
-        a + b
+        c = 1L,
+        d = 2L) {
+        c - d
       }
     "),
     list(
-      list(line_number = 3L, message = rex::rex("Closing parenthesis ')' should be on its own line")),
-      list(line_number = 8L, message = rex::rex("Closing parenthesis ')' should be on its own line"))
+      list(rex::rex("Closing parenthesis ')' should be on its own line"), line_number = 3L),
+      list(rex::rex("Closing parenthesis ')' should be on its own line"), line_number = 8L)
     ),
-    linter
+    indentation_linter()
   )
 })
 # fuzzer enable: comment_injection
