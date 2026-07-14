@@ -117,7 +117,6 @@
 #' - <https://style.tidyverse.org/functions.html#long-lines-1>
 #'
 #' @export
-# nolint next: cyclocomp_linter. I think a false positive: https://github.com/gaborcsardi/cyclocomp/issues/30
 indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never"),
                                assignment_as_infix = TRUE) {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
@@ -127,9 +126,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
   keyword_tokens <- c("FUNCTION", "OP-LAMBDA", "IF", "WHILE")
 
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
-
-  xp_following_right_paren <-
-    glue("following-sibling::*[{xp_or(paste0('self::', paren_tokens_right))}][1]")
 
   hanging_indent_style <- match.arg(hanging_indent_style)
 
@@ -218,7 +214,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     collapse = " | "
   )
 
-  compute_indent_changes <- function(xml, line_metadata) {
+  build_line_metadata <- function(source_expression) {
+    xml <- source_expression$full_xml_parsed_content
+
     indent_changes <- xml_find_all_(xml, xp_indent_changes)
     change_types <- vapply(indent_changes, find_indent_type, character(1L))
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
@@ -226,7 +224,19 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
 
     check_idx <- which(change_begins <= change_ends)
-    n_check <- length(check_idx)
+
+    line_metadata <- data.frame(
+      line = source_expression$file_lines,
+      number = as.integer(names(source_expression$file_lines))
+    )
+    line_metadata$indent_level <- re_matches(line_metadata$line, rex(start, any_spaces), locations = TRUE)[, "end"]
+    line_metadata$in_str_const = logical(nrow(line_metadata)) # FALSE, but also logical() for 0-row case
+
+    multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
+    string_line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
+    string_line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
+
+    line_metadata$in_str_const[unlist(Map(`:`, string_line1 + 1L, string_line2))] <- TRUE
 
     line_metadata$expected_level <- integer(nrow(line_metadata))
     line_metadata$is_hanging <- logical(nrow(line_metadata))
@@ -256,8 +266,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #
     # will have "# comment" as a separate expression
 
-    xml <- source_expression$full_xml_parsed_content
-
     # Indentation increases by 1 for:
     #  - { } blocks that span multiple lines
     #  - ( ), [ ], or [[ ]] calls that span multiple lines
@@ -265,20 +273,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    line_metadata <- data.frame(
-      line = source_expression$file_lines,
-      number = as.integer(names(source_expression$file_lines))
-    )
-    line_metadata$indent_level <- re_matches(line_metadata$line, rex(start, any_spaces), locations = TRUE)[, "end"]
-    line_metadata$in_str_const = logical(nrow(line_metadata)) # FALSE, but also logical() for 0-row case
-
-    multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
-    string_line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
-    string_line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
-
-    line_metadata$in_str_const[unlist(Map(`:`, string_line1 + 1L, string_line2))] <- TRUE
-
-    result <- indent_lint_metadata(compute_indent_changes(xml, line_metadata))
+    result <- indent_lint_metadata(build_line_metadata(source_expression))
 
     if (is.null(result)) {
       return(list())
