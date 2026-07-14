@@ -218,11 +218,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     xml <- source_expression$full_xml_parsed_content
 
     indent_changes <- xml_find_all_(xml, xp_indent_changes)
+    change_tags <- xml_name_(indent_changes)
     change_types <- vapply(indent_changes, find_indent_type, character(1L))
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
     change_ends <- xml_find_num_(indent_changes, xp_block_ends)
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
-    change_tags <- xml_name(indent_changes)
 
     check_idx <- which(change_begins <= change_ends)
 
@@ -252,7 +252,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         hanging_indent = col2s[ii]
       )
       line_metadata$is_hanging[to_indent] <- change_types[ii] == "hanging"
-      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% c("OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% paren_tokens_left
       line_metadata$hanging_cols[to_indent] <- if (is_paren_block) col2s[ii] else 0L
     }
 
