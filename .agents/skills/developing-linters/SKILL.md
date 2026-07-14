@@ -16,9 +16,6 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 - **Avoid single-use wrapper functions:** Do not create private helper functions (e.g., `is_in_imports()`, `build_ns_imports_lints()`) solely to wrap a few lines of `vapply(...)` or `xml_nodes_to_lints(...)` that are only called once inside a linter callback. Inline the logic directly to keep the control flow linear and self-contained.
 - **Early returns on empty state:** Always check for empty prerequisites early and exit (`if (nrow(ns_imports) == 0L) return(lints)`) rather than allocating boolean vectors (`rep(FALSE, length(symbols))`) or executing vectorized checks over empty data frames.
 - **Rely on existing safe fallbacks:** Do not write defensive wrappers around functions that already handle `NULL` cleanly. For example, `namespace_imports(NULL)` safely returns `empty_namespace_data()`, so `if (!is.null(pkg_path)) namespace_imports(pkg_path)` is redundant.
-- **Cyclomatic complexity (`cyclocomp`) limits vs. readability:** `lintr` checks its own codebase with `cyclocomp_linter()`. If your linter function becomes too complex, do not reflexively extract small, single-use helper functions that disrupt the linear flow of the code. Instead:
-  1. Try to simplify the logic using vectorization or lookup tables.
-  2. If the logic is already clean and minimal but still exceeds the cyclocomp limit (often due to complex branching or nested XML queries), **prefer to bypass the check using `# nolint next: cyclocomp_linter.`** rather than compromising the codebase readability with artificial helper functions.
 
 ## 3. Minimal Diffs & Logical Execution Order
 - **Structure execution to avoid intermediate mutations:** Structure the execution order of sub-checks within a linter to avoid mutating, subsetting, or filtering shared XML node lists and symbol vectors midway through the function.
