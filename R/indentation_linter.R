@@ -311,7 +311,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     string_line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
     string_line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
 
-    line_metadata$in_str_const[unlist(Map(`:`, string_line1, string_line2))] <- TRUE
+    line_metadata$in_str_const[unlist(Map(`:`, string_line1 + 1L, string_line2))] <- TRUE
 
     result <- indent_lint_metadata(compute_indent_changes(xml, line_metadata))
 

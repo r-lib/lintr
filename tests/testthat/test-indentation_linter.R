@@ -524,6 +524,30 @@ test_that("indentation within string constants is ignored", {
     "),
     linter
   )
+
+  # first line of a multi-line string can induce a lint
+  expect_lint(
+    trim_some("
+      foo(
+      '
+        string
+      ')
+      bar('
+        string2
+      ')
+      baz('
+      string3
+      ')
+        x <- '
+        string4
+      '
+    "),
+    list(
+      list("Hanging indent should be 4 spaces but is 0 spaces.", line_number = 2L),
+      list("Indentation should be 0 spaces but is 2 spaces", line_number = 11L)
+    ),
+    linter
+  )
 })
 
 test_that("combined hanging and block indent works", {
