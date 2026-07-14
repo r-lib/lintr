@@ -358,12 +358,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     # styler: on
 
     # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
-    if (length(bad_lines) > 0L) {
-      is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
-      indent_diff <- indent_metadata$expected_level[bad_lines] - indent_levels[bad_lines]
-      is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
-      bad_lines <- bad_lines[!(is_consecutive_lint & is_same_diff)]
-    }
+    bad_lines <-
+      remove_repetitive_lines(bad_lines, indent_metadata$expected_level[bad_lines] - indent_levels[bad_lines])
 
     if (length(bad_lines) > 0L) {
       expected_indent_levels <- indent_metadata$expected_level[bad_lines]
@@ -425,6 +421,15 @@ find_new_indent <- function(current_indent, change_type, indent, hanging_indent)
     hanging = hanging_indent,
     block = current_indent + indent
   )
+}
+
+remove_repetitive_lines <- function(bad_lines, indent_diff) {
+  if (length(bad_lines) == 0L) {
+    return(bad_lines)
+  }
+  is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
+  is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
+  bad_lines[!(is_consecutive_lint & is_same_diff)]
 }
 
 build_indentation_style_tidy <- function() {
