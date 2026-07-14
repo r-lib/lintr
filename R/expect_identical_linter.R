@@ -60,7 +60,7 @@ expect_identical_linter <- function() {
   #   - skip cases like expect_equal(x, 1.02) or the constant vector version
   #     where a numeric constant indicates inexact testing is preferable
   #   - skip calls using dots (`...`); see tests
-  non_integer <- glue::glue("
+  non_integer <- glue("
     NUM_CONST[contains(text(), '.')]
     or (
       OP-MINUS
@@ -69,7 +69,7 @@ expect_identical_linter <- function() {
     )
   ")
 
-  expect_equal_xpath <- glue::glue("
+  expect_equal_xpath <- glue("
   self::*[not(
       following-sibling::EQ_SUB
       or following-sibling::expr[

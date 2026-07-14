@@ -6,7 +6,14 @@ test_that("read_config_file() warns if the config file does not end in a newline
   # cat() not writeLines() to ensure no trailing \n
   cat("linters: linters_with_defaults(brace_linter = NULL)", file = .lintr)
   writeLines("a <- 1", "aaa.R")
-  expect_warning(lint_dir(), "Warning encountered while loading config", fixed = TRUE)
+
+  # on R 4.7.0+, read.dcf() uses warn=FALSE in internal readLines(), so we
+  #   no longer catch a warning here as part of the fix for old #160.
+  if (inherits(tryCatch(read.dcf(.lintr, all = TRUE), condition = identity), "warning")) {
+    expect_warning(lint_dir(), "Warning encountered while loading config", fixed = TRUE)
+  } else {
+    expect_silent(lint_dir())
+  }
 })
 
 test_that("it gives informative errors if the config file contains errors", {
