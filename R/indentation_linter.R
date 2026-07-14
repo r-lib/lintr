@@ -339,6 +339,7 @@ find_bad_lines <- function(line_metadata) {
   is_bad <-
     with(line_metadata, indent_level != expected_level & nzchar(trimws(line, "left"), keepNA = TRUE) & !in_str_const)
   if (!any(is_bad, na.rm = TRUE)) {
+    is_bad[is.na(is_bad)] <- FALSE
     return(is_bad)
   }
 
@@ -347,10 +348,13 @@ find_bad_lines <- function(line_metadata) {
   code_lines <- !is.na(is_bad)
   indent_diff <- line_metadata$expected_level[code_lines] - line_metadata$indent_level[code_lines]
 
-  is_consecutive <- c(FALSE, diff(is_bad[code_lines]) == 0L)
-  is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
+  is_adjacent <- c(FALSE, diff(line_metadata$number[code_lines]) == 1L)
+
+  is_consecutive <- c(FALSE, diff(is_bad[code_lines]) == 0L) & is_adjacent
+  is_same_diff <- c(FALSE, diff(indent_diff) == 0L) & is_adjacent
 
   is_bad[code_lines] <- is_bad[code_lines] & !(is_consecutive & is_same_diff)
+  is_bad[is.na(is_bad)] <- FALSE
   is_bad
 }
 
