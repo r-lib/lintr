@@ -117,6 +117,7 @@
 #' - <https://style.tidyverse.org/functions.html#long-lines-1>
 #'
 #' @export
+# nolint next: cyclocomp_linter. I think a false positive: https://github.com/gaborcsardi/cyclocomp/issues/30
 indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never"),
                                assignment_as_infix = TRUE) {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
