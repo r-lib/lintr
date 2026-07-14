@@ -336,28 +336,21 @@ find_new_indent <- function(current_indent, change_type, indent, hanging_indent)
 }
 
 find_bad_lines <- function(line_metadata) {
-  is_na_line <- is.na(line_metadata$line)
-
-  is_bad <- with(line_metadata, indent_level != expected_level & nzchar(trimws(line, "left")) & !in_str_const)
+  is_bad <-
+    with(line_metadata, indent_level != expected_level & nzchar(trimws(line, "left"), keepNA = TRUE) & !in_str_const)
   if (!any(is_bad, na.rm = TRUE)) {
     return(is_bad)
   }
 
   # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
-  non_na_idx <- which(!is_na_line)
 
-  if (length(non_na_idx) > 1L) {
-    is_bad_sub <- is_bad[non_na_idx]
-    indent_diff_sub <- line_metadata$expected_level[non_na_idx] - line_metadata$indent_level[non_na_idx]
+  code_lines <- !is.na(is_bad)
+  indent_diff <- line_metadata$expected_level[code_lines] - line_metadata$indent_level[code_lines]
 
-    is_adjacent <- c(FALSE, diff(non_na_idx) == 1L)
+  is_consecutive <- c(FALSE, diff(is_bad[code_lines]) == 0L)
+  is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
 
-    is_consecutive_sub <- c(FALSE, diff(is_bad_sub) == 0L) & is_adjacent
-    is_same_diff_sub <- c(FALSE, diff(indent_diff_sub) == 0L) & is_adjacent
-
-    is_bad[non_na_idx] <- is_bad_sub & !(is_consecutive_sub & is_same_diff_sub)
-  }
-  is_bad[is.na(is_bad)] <- FALSE
+  is_bad[code_lines] <- is_bad[code_lines] & !(is_consecutive & is_same_diff)
   is_bad
 }
 
