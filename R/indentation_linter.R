@@ -338,6 +338,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     n_indents <- length(indent_levels)
 
+    in_str_const <- rep(FALSE, n_indents)
+    multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
+    line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
+    line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
+
+    in_str_const[unlist(Map(`:`, line1, line2))] <- TRUE
+
     result <- compute_indent_changes(xml, n_indents)
     indent_metadata <- result$indent_metadata
     bad_closing_block <- result$bad_closing_block
@@ -347,7 +354,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     # styler: off
     bad_lines <- which(indent_levels != indent_metadata$expected_level &
                          nzchar(trimws(source_expression$file_lines)) &
-                         !is_in_str_const(xml, n_indents))
+                         !in_str_const)
     # styler: on
 
     # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
@@ -410,17 +417,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       ranges = lint_ranges_list
     )
   })
-}
-
-is_in_str_const <- function(xml, n) {
-  in_str_const <- rep(FALSE, n)
-
-  multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
-  line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
-  line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
-
-  in_str_const[unlist(Map(`:`, line1, line2))] <- TRUE
-  in_str_const
 }
 
 find_new_indent <- function(current_indent, change_type, indent, hanging_indent) {
