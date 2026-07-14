@@ -48,7 +48,7 @@ get_knitr_pattern <- function(filename, lines) {
   #   correctly by converting to a lint. It would require some refactoring to get that
   #   right here as well, but it would avoid the duplication.
   pattern <- withCallingHandlers(
-    ("knitr" %:::% "detect_pattern")(lines, tolower(("knitr" %:::% "file_ext")(filename))),
+    ("knitr" %:::% "detect_pattern")(lines, tolower(xfun::file_ext(filename))),
     warning = function(cond) {
       if (!grepl("invalid UTF-8", conditionMessage(cond), fixed = TRUE)) {
         cli_warn(cond) # nocov. No known way to reach here.
@@ -73,10 +73,18 @@ get_chunk_positions <- function(pattern, lines) {
     ends = grep(pattern$chunk.end, lines, perl = TRUE)
   )
   # only keep those blocks that contain at least one line of code
-  keep <- which(ends - starts > 1L)
+  nonempty_keep <- which(ends - starts > 1L)
 
-  starts <- starts[keep]
-  ends <- ends[keep]
+  starts <- starts[nonempty_keep]
+  ends <- ends[nonempty_keep]
+
+  eval_keep <- vapply(
+    seq_along(starts),
+    \(ii) is_eval_chunk(starts[ii], ends[ii], lines, pattern),
+    logical(1L)
+  )
+  starts <- starts[eval_keep]
+  ends <- ends[eval_keep]
 
   # Check indent on all lines in the chunk to allow for staggered indentation within a chunk;
   #   set the initial column to the leftmost one within each chunk (including the start+end gates). See tests.
@@ -149,6 +157,26 @@ defines_knitr_engine <- function(start_lines) {
 
   re_matches(start_lines, explicit_engine_pattern) |
     re_matches(start_lines, bare_engine_pattern)
+}
+
+is_eval_chunk <- function(start, end, lines, pattern) {
+  header <- lines[start]
+  # essentially knitr:::extract_params_src
+  params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
+  header_params <- tryCatch(suppressMessages(xfun::csv_options(params_src)), error = \(e) NULL)
+
+  code <- lines[(start + 1L):(end - 1L)]
+  body_params <- tryCatch(
+    suppressMessages(suppressWarnings(xfun::divide_chunk("r", code)))$options,
+    error = \(e) NULL
+  )
+
+  eval_value <- body_params$eval %||% header_params$eval
+  # nolint next: T_and_F_symbol_linter.
+  if (identical(eval_value, quote(F))) {
+    return(FALSE)
+  }
+  !isFALSE(eval_value)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
