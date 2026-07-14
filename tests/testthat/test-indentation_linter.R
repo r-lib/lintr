@@ -174,7 +174,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 2.*closing parenthesis.*should be on its own line",
+    "Indentation should be 2 spaces but is 4 spaces",
     linter
   )
 
@@ -186,7 +186,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 2.*closing parenthesis.*should be on its own line",
+    "Indentation should be 2 spaces but is 6 spaces",
     linter
   )
 
@@ -199,20 +199,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 2 spaces.*or start argument on previous line.*closing parenthesis.*on its own line",
-    linter
-  )
-
-  # Block is only allowed if there is no argument next to ")"
-  expect_lint(
-    trim_some("
-      function(
-        a = 1L,
-        b = 2L) {
-        a + b
-      }
-    "),
-    rex::rex("Closing parenthesis ')' should be on its own line"),
+    rex::rex("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)"),
     linter
   )
 
@@ -272,10 +259,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a()
       }
     "),
-    list(
-      rex::rex("Indentation should be 4 spaces but is 8 spaces; closing parenthesis ')' should be on its own line."),
-      line_number = 3L
-    ),
+    list("Indentation should be 4 spaces but is 8 spaces", line_number = 3L),
     linter
   )
 })
@@ -949,48 +933,6 @@ test_that("for loop gets correct linting", {
        }
     "),
     lint_msg,
-    linter
-  )
-})
-
-test_that("multiple bad closing blocks are handled (#2830)", {
-  linter <- indentation_linter()
-
-  expect_lint(
-    trim_some("
-      function(
-        a = 1L,
-        b = 2L) {
-        a + b
-      }
-      function(
-        c = 1L,
-        d = 2L) {
-        c - d
-      }
-    "),
-    list(
-      list(rex::rex("Closing parenthesis ')' should be on its own line"), line_number = 3L),
-      list(rex::rex("Closing parenthesis ')' should be on its own line"), line_number = 8L)
-    ),
-    linter
-  )
-
-  expect_lint(
-    trim_some("
-      function(
-        a = function(
-          x,
-          y) {
-          x + y
-        }) {
-        a(1, 2)
-      }
-    "),
-    list(
-      list(rex::rex("Closing parenthesis ')' should be on its own line"), line_number = 4L),
-      list(rex::rex("Closing parenthesis ')' should be on its own line"), line_number = 6L)
-    ),
     linter
   )
 })
