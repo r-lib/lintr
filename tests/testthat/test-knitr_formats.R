@@ -198,3 +198,121 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
     expect_lint(contents[[i]], expected[[i]], linters = list())
   }
 })
+
+test_that("chunkless files are fine", {
+  tmp <- withr::local_tempfile(fileext = ".Rmd", lines = c(
+    "---",
+    "some_option: true",
+    "---",
+    "Some text!"
+  ))
+  expect_no_lint(file = tmp, linters = assignment_linter())
+})
+
+test_that("it skips eval=FALSE chunks (#1964)", {
+  linter <- assignment_linter()
+
+  expect_lint(
+    trim_some("
+      ```{r label, eval=FALSE}
+      bad_code = 1
+      ```
+
+      ```{r}
+      good_code = 2
+      ```
+
+      ```{r, eval=F}
+      bad_code = 1
+      ```
+
+      ```{r, eval=TRUE}
+      good_code = 3
+      ```
+    "),
+    list(
+      list(regexes[["assign"]], line_number = 6L),
+      list(regexes[["assign"]], line_number = 14L)
+    ),
+    linter
+  )
+
+  # .qmd with #| eval: false in chunk body
+  qmd_file <- withr::local_tempfile(fileext = ".qmd", lines = c(
+    "```{r}",
+    "#| eval: false",
+    "bad_code = 1",
+    "```",
+    "```{r}",
+    "good_code = 2",
+    "```"
+  ))
+  expect_lint(
+    file = qmd_file,
+    checks = list(regexes[["assign"]], line_number = 6L),
+    linter
+  )
+
+  # .Rnw with eval=FALSE
+  expect_lint(
+    trim_some("
+      <<chunk-1, eval=FALSE>>=
+      bad_code = 1
+      @
+
+      <<chunk-2, eval=TRUE>>=
+      good_code = 2
+      @
+    "),
+    list(regexes[["assign"]], line_number = 6L),
+    linter
+  )
+})
+
+test_that("malformed chunk options don't crash linting and fallback to evaluated", {
+  linter <- assignment_linter()
+
+  # syntax error in header options
+  tmp_csv_err <- withr::local_tempfile(fileext = ".Rmd", lines = c(
+    "```{r, eval=1+}",
+    "bad_code = 1",
+    "```"
+  ))
+  expect_silent(
+    expect_lint(
+      file = tmp_csv_err,
+      checks = list(regexes[["assign"]], line_number = 2L),
+      linters = linter
+    )
+  )
+
+  # divide_chunk error (YAML syntax error in body options)
+  tmp_yaml_err <- withr::local_tempfile(fileext = ".qmd", lines = c(
+    "```{r}",
+    "#| eval: {",
+    "bad_code = 1",
+    "```"
+  ))
+  expect_silent(
+    expect_lint(
+      file = tmp_yaml_err,
+      checks = list(regexes[["assign"]], line_number = 3L),
+      linters = linter
+    )
+  )
+
+  # divide_chunk warning (YAML warning - not a list)
+  tmp_yaml_warn <- withr::local_tempfile(fileext = ".qmd", lines = c(
+    "```{r}",
+    '#| "key: 1"',
+    "bad_code = 1",
+    "```"
+  ))
+  expect_silent(
+    expect_lint(
+      file = tmp_yaml_warn,
+      checks = list(regexes[["assign"]], line_number = 3L),
+      linters = linter
+    )
+  )
+})
