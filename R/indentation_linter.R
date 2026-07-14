@@ -304,7 +304,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       number = as.integer(names(source_expression$file_lines))
     )
     line_metadata$indent_level <- re_matches(line_metadata$line, rex(start, any_spaces), locations = TRUE)[, "end"]
-    line_metadata$in_str_const = FALSE
+    line_metadata$in_str_const = logical(nrow(line_metadata)) # FALSE, but also logical() for 0-row case
 
     multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
     string_line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
@@ -337,7 +337,7 @@ find_new_indent <- function(current_indent, change_type, indent, hanging_indent)
 
 find_bad_lines <- function(line_metadata) {
   is_bad <- with(line_metadata, indent_level != expected_level & nzchar(trimws(line, "left")) & !in_str_const)
-  if (!any(is_bad)) {
+  if (!any(is_bad, na.rm = TRUE)) {
     return(is_bad)
   }
 
@@ -388,7 +388,7 @@ indent_lint_metadata <- function(computed_indent_changes) {
   # Only lint non-empty lines if the indentation level doesn't match.
   line_metadata$is_bad <- find_bad_lines(line_metadata)
 
-  if (any(line_metadata$is_bad)) {
+  if (any(line_metadata$is_bad, na.rm = TRUE)) {
     line_metadata <- line_metadata[line_metadata$is_bad, ]
 
     lint_messages <- with(line_metadata, sprintf(
