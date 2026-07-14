@@ -51,7 +51,7 @@ use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
 
   rbuildignore_path <- file.path(pkg_path, ".Rbuildignore")
   rel_path <- xfun::relative_path(config_file, pkg_path)
-  escaped_config_path <- rex::rex(start, rel_path, end)
+  escaped_config_path <- rex(start, rel_path, end)
 
   if (!file.exists(rbuildignore_path)) {
     writeLines(escaped_config_path, rbuildignore_path)
