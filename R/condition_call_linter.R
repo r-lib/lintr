@@ -58,18 +58,18 @@
 condition_call_linter <- function(display_call = FALSE) {
 
   str_fct <- c("sprintf", "gettextf", "paste", "paste0", "format", "tr_")
-  str_literal_or_fct <- glue::glue("
+  str_literal_or_fct <- glue("
     STR_CONST
     or expr/SYMBOL_FUNCTION_CALL[ { xp_text_in_table(str_fct) }]
   ")
 
-  call_xpath <- glue::glue("
+  call_xpath <- glue("
     following-sibling::expr[ {str_literal_or_fct} ]
     and following-sibling::SYMBOL_SUB[text() = 'call.']
       /following-sibling::expr[1]
       /NUM_CONST[text() = '{!display_call}']
   ")
-  no_call_xpath <- glue::glue("
+  no_call_xpath <- glue("
     following-sibling::expr[ {str_literal_or_fct} ]
     and parent::expr[not(SYMBOL_SUB[text() = 'call.'])]
   ")
@@ -88,7 +88,7 @@ condition_call_linter <- function(display_call = FALSE) {
     msg_fmt <- "Use %s(., call. = FALSE) not to display the call in an error message."
   }
 
-  xpath <- glue::glue("./self::*[{call_cond}]/parent::expr")
+  xpath <- glue("./self::*[{call_cond}]/parent::expr")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("stop", "warning"))

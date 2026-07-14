@@ -43,7 +43,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 length_test_linter <- function() {
-  xpath <- glue::glue("
+  xpath <- glue("
   following-sibling::expr[{ xp_or(infix_metadata$xml_tag[infix_metadata$comparator]) }]
     /parent::expr
   ")

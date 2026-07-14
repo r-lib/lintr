@@ -180,7 +180,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
   empty_paste_note <-
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
 
-  paste0_collapse_xpath <- glue::glue("
+  paste0_collapse_xpath <- glue("
   parent::expr[
     SYMBOL_SUB[text() = 'collapse']
     and count(expr) =
