@@ -16,6 +16,9 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 - **Avoid single-use wrapper functions:** Do not create private helper functions (e.g., `is_in_imports()`, `build_ns_imports_lints()`) solely to wrap a few lines of `vapply(...)` or `xml_nodes_to_lints(...)` that are only called once inside a linter callback. Inline the logic directly to keep the control flow linear and self-contained.
 - **Early returns on empty state:** Always check for empty prerequisites early and exit (`if (nrow(ns_imports) == 0L) return(lints)`) rather than allocating boolean vectors (`rep(FALSE, length(symbols))`) or executing vectorized checks over empty data frames.
 - **Rely on existing safe fallbacks:** Do not write defensive wrappers around functions that already handle `NULL` cleanly. For example, `namespace_imports(NULL)` safely returns `empty_namespace_data()`, so `if (!is.null(pkg_path)) namespace_imports(pkg_path)` is redundant.
+- **Cyclomatic complexity (`cyclocomp`) limits vs. readability:** `lintr` checks its own codebase with `cyclocomp_linter()`. If your linter function becomes too complex, do not reflexively extract small, single-use helper functions that disrupt the linear flow of the code. Instead:
+  1. Try to simplify the logic using vectorization or lookup tables.
+  2. If the logic is already clean and minimal but still exceeds the cyclocomp limit (often due to complex branching or nested XML queries), **prefer to bypass the check using `# nolint next: cyclocomp_linter.`** rather than compromising the codebase readability with artificial helper functions.
 
 ## 3. Minimal Diffs & Logical Execution Order
 - **Structure execution to avoid intermediate mutations:** Structure the execution order of sub-checks within a linter to avoid mutating, subsetting, or filtering shared XML node lists and symbol vectors midway through the function.
@@ -34,3 +37,26 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 - **Avoid over-engineered evaluation constructs:** When checking parsed parameter values or AST expressions (such as `eval` options from chunk headers), do not write complex, over-defensive constructs like `tryCatch(eval(..., envir = baseenv()))` to handle theoretical runtime expressions.
 - **Check exact parser representations:** Inspect and match the exact R objects produced by the parser (`xfun::csv_options()` produces `logical` `FALSE` for `eval=FALSE` and symbol `quote(F)` for `eval=F`). A direct, concise check such as `if (identical(eval_value, quote(F))) return(TRUE)` followed by `isFALSE(eval_value)` is simpler, safer, and much easier to maintain.
 - **Annotate symbol checks for self-linting:** When comparing against `quote(F)` or `quote(T)`, add `# nolint next: T_and_F_symbol_linter.` immediately above the line to prevent `lintr`'s self-linting checks from flagging the symbol name.
+
+## 7. Centralized State Management (Data Frames for Line Metadata)
+- **Use a single data frame for per-line metadata:** When a linter needs to track multiple state vectors per line (e.g. current indentation, expected indentation, whether a line is in a string constant, etc.), avoid maintaining and passing around separate parallel vectors.
+- **Structure as `line_metadata`:** Combine these vectors into a single `data.frame` (e.g., with columns `line`, `number`, `indent_level`, `expected_level`, `in_str_const`, `is_bad`). This makes the code much easier to read, maintain, and pass to external helper functions if they are truly needed.
+
+## 8. Idiomatic R Vectorization over Loops
+- **Prefer vectorized operations:** Avoid using `for` loops to iterate over lines or XML nodes if a vectorized alternative exists. Use `Map()`, `vapply()`, or logical subsetting.
+- **Vectorized sequence generation:** For example, to generate a sequence of indices to mark as inside a string constant:
+  ```r
+  line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
+  line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
+  is_in_str <- unlist(Map(`:`, line1, line2))
+  in_str_const[is_in_str] <- TRUE
+  ```
+  This is much cleaner and faster than a `for (string in multiline_strings)` loop.
+
+## 9. Robust Handling of Literate R Formats (NA Lines)
+- **Expect `NA_character_` in line content:** When linting files, remember that literate programming formats (like `.Rmd`, `.qmd`) extract R code by masking non-R lines with `NA_character_` to preserve line numbers.
+- **Avoid NA propagation in logical expressions:** In functions like `find_bad_lines()`, ensure that logical vectors used for indexing or checking conditions do not contain `NA`. For example, use `!is.na(line)` explicitly:
+  ```r
+  is_bad <- !is.na(line) & indent_level != expected_level & nzchar(trimws(line, "left")) & !in_str_const
+  ```
+- **Leverage defined logicals for boundary checking:** Since `is_bad` is `FALSE` (not `NA`) for non-code lines, you can safely compute consecutive differences using `diff(is_bad)`. The `FALSE` values will naturally break sequences of `TRUE` values across gaps (like markdown blocks), making complex adjacency checks (e.g. tracking original line numbers) unnecessary.
