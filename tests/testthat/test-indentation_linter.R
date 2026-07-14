@@ -422,6 +422,16 @@ test_that("indentation with operators works", {
     list("Indentation should be 2 spaces but is 12 spaces.", line_number = 2L),
     linter
   )
+
+  # don't suggest 'argument' start on previous line
+  expect_lint(
+    trim_some("
+      first_step() +
+                    second_step()
+    "),
+    list(rex::rex("Indentation should be 2 spaces but is 14 spaces."), line_number = 2L),
+    linter
+  )
 })
 
 test_that("indentation with bracket works", {
@@ -718,6 +728,18 @@ test_that("hanging_indent_stlye works", {
       )
     "),
     list("Hanging indent should be 10 spaces but is 2 spaces.", line_number = 3L),
+    tidy_linter
+  )
+
+  # don't suggest starting argument on previous line
+  expect_lint(
+    trim_some("
+      outer_f(
+        inner_g(x,
+              y = 2)
+      )
+    "),
+    list(rex::rex("Hanging indent should be 10 spaces but is 8 spaces."), line_number = 3L),
     tidy_linter
   )
 })
