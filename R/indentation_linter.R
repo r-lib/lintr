@@ -121,7 +121,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
                                assignment_as_infix = TRUE) {
   paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
-  paren_token_right_names <- c(`)` = "parenthesis", `}` = "brace", `]` = "bracket")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
   no_paren_keywords <- c("ELSE", "REPEAT")
   keyword_tokens <- c("FUNCTION", "OP-LAMBDA", "IF", "WHILE")
@@ -283,39 +282,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     list(line_metadata = line_metadata, bad_closing_block = bad_closing_block)
   }
 
-  incorporate_closing_lints <- function(bad_closing_block,
-                                        lint_lines, lint_cols, lint_messages, lint_ranges_list) {
-    for (jj in seq_len(nrow(bad_closing_block))) {
-      in_block <- which(lint_lines >= bad_closing_block$begin[jj] & lint_lines <= bad_closing_block$end[jj])
-      if (length(in_block) > 0L) {
-        first_idx <- in_block[1L]
-        closing_text <- bad_closing_block$text[jj]
-        lint_messages[first_idx] <- sprintf(
-          "%s; closing %s '%s' should be on its own line.",
-          sub("\\.$", "", lint_messages[first_idx]),
-          paren_token_right_names[closing_text],
-          closing_text
-        )
-      } else {
-        closing_message <- sprintf(
-          "Closing %s '%s' should be on its own line for block-indented calls.",
-          paren_token_right_names[bad_closing_block$text[jj]], bad_closing_block$text[jj]
-        )
-        lint_lines <- c(lint_lines, bad_closing_block$line[jj])
-        lint_cols <- c(lint_cols, bad_closing_block$col1[jj])
-        lint_messages <- c(lint_messages, closing_message)
-        lint_ranges_list <- c(lint_ranges_list, list(list(c(bad_closing_block$col1[jj], bad_closing_block$col2[jj]))))
-      }
-    }
-
-    list(
-      lint_lines = lint_lines,
-      lint_cols = lint_cols,
-      lint_messages = lint_messages,
-      lint_ranges_list = lint_ranges_list
-    )
-  }
-
   Linter(linter_level = "file", function(source_expression) {
     # must run on file level because a line can contain multiple expressions, losing indentation information, e.g.
     #
@@ -346,58 +312,17 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     line_metadata$in_str_const[unlist(Map(`:`, string_line1, string_line2))] <- TRUE
 
-    result <- compute_indent_changes(xml, line_metadata)
-    line_metadata <- result$line_metadata
-    bad_closing_block <- result$bad_closing_block
-
-    # Only lint non-empty lines if the indentation level doesn't match.
-    line_metadata$is_bad <- find_bad_lines(line_metadata)
-
-    if (any(line_metadata$is_bad)) {
-      line_metadata <- line_metadata[line_metadata$is_bad, ]
-
-      lint_messages <- with(line_metadata, sprintf(
-        "%s should be %d spaces but is %d spaces%s.",
-        ifelse(is_hanging, "Hanging indent", "Indentation"),
-        expected_level,
-        indent_level,
-        ifelse(hanging_cols > 0L & indent_level == hanging_cols, " (or start argument on previous line)", "")
-      ))
-
-      lint_lines <- line_metadata$number
-      lint_cols <- line_metadata$indent_level
-      lint_ranges_list <- Map(\(x, y) list(c(x, y)),
-        # when indent_levels==0, need to start ranges at column 1.
-        pmax(pmin(line_metadata$expected_level + 1L, lint_cols), 1L),
-        # If the expected indent is larger than the current line width, the lint range would become invalid.
-        # Therefore, limit range end to end of line.
-        pmin(pmax(line_metadata$expected_level, lint_cols), nchar(line_metadata$line) + 1L)
-      )
-    } else {
-      lint_messages <- character()
-      lint_lines <- integer()
-      lint_ranges_list <- list()
-      lint_cols <- integer()
-    }
-
-    res <- incorporate_closing_lints(
-      bad_closing_block,
-      lint_lines, lint_cols, lint_messages, lint_ranges_list
-    )
-    lint_lines <- res$lint_lines
-    lint_cols <- res$lint_cols
-    lint_messages <- res$lint_messages
-    lint_ranges_list <- res$lint_ranges_list
+    result <- indent_lint_metadata(compute_indent_changes(xml, line_metadata))
 
     Map(
       Lint,
       filename = source_expression$filename,
-      line_number = lint_lines,
-      column_number = lint_cols,
+      line_number = result$lint_lines,
+      column_number = result$lint_cols,
       type = "style",
-      message = lint_messages,
-      line = unname(source_expression$file_lines[lint_lines]),
-      ranges = lint_ranges_list
+      message = result$lint_messages,
+      line = unname(source_expression$file_lines[result$lint_lines]),
+      ranges = result$lint_ranges_list
     )
   })
 }
@@ -421,6 +346,80 @@ find_bad_lines <- function(line_metadata) {
   indent_diff <- line_metadata$expected_level - line_metadata$indent_level
   is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
   is_bad & !(is_consecutive & is_same_diff)
+}
+
+incorporate_closing_lints <- function(bad_closing_block,
+                                      lint_lines, lint_cols, lint_messages, lint_ranges_list) {
+  paren_token_right_names <- c(`)` = "parenthesis", `}` = "brace", `]` = "bracket")
+  for (jj in seq_len(nrow(bad_closing_block))) {
+    in_block <- which(lint_lines >= bad_closing_block$begin[jj] & lint_lines <= bad_closing_block$end[jj])
+    if (length(in_block) > 0L) {
+      first_idx <- in_block[1L]
+      closing_text <- bad_closing_block$text[jj]
+      lint_messages[first_idx] <- sprintf(
+        "%s; closing %s '%s' should be on its own line.",
+        sub("\\.$", "", lint_messages[first_idx]),
+        paren_token_right_names[closing_text],
+        closing_text
+      )
+    } else {
+      closing_message <- sprintf(
+        "Closing %s '%s' should be on its own line for block-indented calls.",
+        paren_token_right_names[bad_closing_block$text[jj]], bad_closing_block$text[jj]
+      )
+      lint_lines <- c(lint_lines, bad_closing_block$line[jj])
+      lint_cols <- c(lint_cols, bad_closing_block$col1[jj])
+      lint_messages <- c(lint_messages, closing_message)
+      lint_ranges_list <- c(lint_ranges_list, list(list(c(bad_closing_block$col1[jj], bad_closing_block$col2[jj]))))
+    }
+  }
+
+  list(
+    lint_lines = lint_lines,
+    lint_cols = lint_cols,
+    lint_messages = lint_messages,
+    lint_ranges_list = lint_ranges_list
+  )
+}
+
+indent_lint_metadata <- function(computed_indent_changes) {
+  line_metadata <- computed_indent_changes$line_metadata
+
+  # Only lint non-empty lines if the indentation level doesn't match.
+  line_metadata$is_bad <- find_bad_lines(line_metadata)
+
+  if (any(line_metadata$is_bad)) {
+    line_metadata <- line_metadata[line_metadata$is_bad, ]
+
+    lint_messages <- with(line_metadata, sprintf(
+      "%s should be %d spaces but is %d spaces%s.",
+      ifelse(is_hanging, "Hanging indent", "Indentation"),
+      expected_level,
+      indent_level,
+      ifelse(hanging_cols > 0L & indent_level == hanging_cols, " (or start argument on previous line)", "")
+    ))
+
+    lint_lines <- line_metadata$number
+    lint_cols <- line_metadata$indent_level
+    lint_ranges_list <- Map(\(x, y) list(c(x, y)),
+      # when indent_levels==0, need to start ranges at column 1.
+      pmax(pmin(line_metadata$expected_level + 1L, lint_cols), 1L),
+      # If the expected indent is larger than the current line width, the lint range would become invalid.
+      # Therefore, limit range end to end of line.
+      pmin(pmax(line_metadata$expected_level, lint_cols), nchar(line_metadata$line) + 1L)
+    )
+  } else {
+    lint_messages <- character()
+    lint_lines <- integer()
+    lint_ranges_list <- list()
+    lint_cols <- integer()
+  }
+
+  res <- incorporate_closing_lints(
+    computed_indent_changes$bad_closing_block,
+    lint_lines, lint_cols, lint_messages, lint_ranges_list
+  )
+  res
 }
 
 build_indentation_style_tidy <- function() {
