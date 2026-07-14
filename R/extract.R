@@ -78,9 +78,9 @@ get_chunk_positions <- function(pattern, lines) {
   starts <- starts[nonempty_keep]
   ends <- ends[nonempty_keep]
 
-  eval_keep <- !vapply(
+  eval_keep <- vapply(
     seq_along(starts),
-    \(ii) non_eval_chunk(starts[ii], ends[ii], lines, pattern),
+    \(ii) is_eval_chunk(starts[ii], ends[ii], lines, pattern),
     logical(1L)
   )
   starts <- starts[eval_keep]
@@ -159,7 +159,7 @@ defines_knitr_engine <- function(start_lines) {
     re_matches(start_lines, bare_engine_pattern)
 }
 
-non_eval_chunk <- function(start, end, lines, pattern) {
+is_eval_chunk <- function(start, end, lines, pattern) {
   header <- lines[start]
   # essentially knitr:::extract_params_src
   params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
@@ -171,9 +171,9 @@ non_eval_chunk <- function(start, end, lines, pattern) {
   eval_value <- body_params$eval %||% header_params$eval
   # nolint next: T_and_F_symbol_linter.
   if (identical(eval_value, quote(F))) {
-    return(TRUE)
+    return(FALSE)
   }
-  isFALSE(eval_value)
+  !isFALSE(eval_value)
 }
 
 replace_prefix <- function(lines, prefix_pattern) {
