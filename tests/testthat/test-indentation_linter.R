@@ -261,6 +261,23 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
     "),
     linter
   )
+
+  expect_lint(
+    trim_some("
+      function(
+        a = function(
+              x) {
+          x
+        }) {
+        a()
+      }
+    "),
+    list(
+      rex::rex("Indentation should be 4 spaces but is 8 spaces; closing parenthesis ')' should be on its own line."),
+      line_number = 3L
+    ),
+    linter
+  )
 })
 
 test_that("function argument indentation works in always-hanging-style", { # nofuzz: function_lambda
