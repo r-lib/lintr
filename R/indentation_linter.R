@@ -333,11 +333,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    indent_level <- re_matches(source_expression$file_lines, rex(start, any_spaces), locations = TRUE)[, "end"]
     line_metadata <- data.frame(
-      indent_level = indent_level,
-      in_str_const = logical(length(indent_level))
+      line = source_expression$file_lines,
+      number = as.integer(names(source_expression$file_lines))
     )
+    line_metadata$indent_level <- re_matches(line_metadata$line, rex(start, any_spaces), locations = TRUE)[, "end"]
+    line_metadata$in_str_const = FALSE
 
     multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
     string_line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
@@ -350,42 +351,28 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     bad_closing_block <- result$bad_closing_block
 
     # Only lint non-empty lines if the indentation level doesn't match.
-    # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
-    # styler: off
-    bad_lines <- which(line_metadata$indent_level != line_metadata$expected_level &
-                         nzchar(trimws(source_expression$file_lines)) &
-                         !line_metadata$in_str_const)
-    # styler: on
+    line_metadata$is_bad <- find_bad_lines(line_metadata)
 
-    # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
-    bad_lines <-
-      remove_repetitive_lines(bad_lines, line_metadata$expected_level[bad_lines] - line_metadata$indent_level[bad_lines])
+    if (any(line_metadata$is_bad)) {
+      line_metadata <- line_metadata[line_metadata$is_bad, ]
 
-    if (length(bad_lines) > 0L) {
-      expected_indent_levels <- line_metadata$expected_level[bad_lines]
-      indent_levels <- line_metadata$indent_level[bad_lines]
-      hanging_indent_cols <- line_metadata$hanging_cols[bad_lines]
-      is_misindented_hanging <- hanging_indent_cols > 0L & indent_levels == hanging_indent_cols
-      file_lines <- source_expression$file_lines[bad_lines]
-
-      lint_messages <- sprintf(
+      lint_messages <- with(line_metadata, sprintf(
         "%s should be %d spaces but is %d spaces%s.",
-        ifelse(line_metadata$is_hanging[bad_lines], "Hanging indent", "Indentation"),
-        expected_indent_levels,
-        indent_levels,
-        ifelse(is_misindented_hanging, " (or start argument on previous line)", "")
-      )
+        ifelse(is_hanging, "Hanging indent", "Indentation"),
+        expected_level,
+        indent_level,
+        ifelse(hanging_cols > 0L & indent_level == hanging_cols, " (or start argument on previous line)", "")
+      ))
 
-      lint_lines <- unname(as.integer(names(file_lines)))
-      lint_cols <- indent_levels
-      lint_ranges <- cbind(
+      lint_lines <- line_metadata$number
+      lint_cols <- line_metadata$indent_level
+      lint_ranges_list <- Map(\(x, y) list(c(x, y)),
         # when indent_levels==0, need to start ranges at column 1.
-        pmax(pmin(expected_indent_levels + 1L, lint_cols), 1L),
+        pmax(pmin(line_metadata$expected_level + 1L, lint_cols), 1L),
         # If the expected indent is larger than the current line width, the lint range would become invalid.
         # Therefore, limit range end to end of line.
-        pmin(pmax(expected_indent_levels, lint_cols), nchar(file_lines) + 1L)
+        pmin(pmax(line_metadata$expected_level, lint_cols), nchar(line_metadata$line) + 1L)
       )
-      lint_ranges_list <- apply(lint_ranges, 1L, list, simplify = FALSE)
     } else {
       lint_messages <- character()
       lint_lines <- integer()
@@ -423,13 +410,17 @@ find_new_indent <- function(current_indent, change_type, indent, hanging_indent)
   )
 }
 
-remove_repetitive_lines <- function(bad_lines, indent_diff) {
-  if (length(bad_lines) == 0L) {
-    return(bad_lines)
+find_bad_lines <- function(line_metadata) {
+  is_bad <- with(line_metadata, indent_level != expected_level & nzchar(trimws(line, "left")) & !in_str_const)
+  if (!any(is_bad)) {
+    return(is_bad)
   }
-  is_consecutive_lint <- c(FALSE, diff(bad_lines) == 1L)
+
+  # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
+  is_consecutive <- c(FALSE, diff(is_bad) == 0L)
+  indent_diff <- line_metadata$expected_level - line_metadata$indent_level
   is_same_diff <- c(FALSE, diff(indent_diff) == 0L)
-  bad_lines[!(is_consecutive_lint & is_same_diff)]
+  is_bad & !(is_consecutive & is_same_diff)
 }
 
 build_indentation_style_tidy <- function() {
