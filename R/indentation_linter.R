@@ -314,6 +314,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     result <- indent_lint_metadata(compute_indent_changes(xml, line_metadata))
 
+    if (length(result$lint_lines) == 0L) {
+      return(list())
+    }
+
     Map(
       Lint,
       filename = source_expression$filename,
