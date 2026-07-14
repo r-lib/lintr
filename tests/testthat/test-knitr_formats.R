@@ -316,4 +316,3 @@ test_that("malformed chunk options don't crash linting and fallback to evaluated
     )
   )
 })
-
