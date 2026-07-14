@@ -222,6 +222,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
     change_ends <- xml_find_num_(indent_changes, xp_block_ends)
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
+    change_tags <- xml_name(indent_changes)
 
     check_idx <- which(change_begins <= change_ends)
 
@@ -251,8 +252,8 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         hanging_indent = col2s[ii]
       )
       line_metadata$is_hanging[to_indent] <- change_types[ii] == "hanging"
-      if (change_types[ii] != "block") next
-      line_metadata$hanging_cols[to_indent] <- col2s[ii]
+      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% c("OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+      line_metadata$hanging_cols[to_indent] <- if (is_paren_block) col2s[ii] else 0L
     }
 
     # Only lint non-empty lines if the indentation level doesn't match.
