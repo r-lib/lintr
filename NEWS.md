@@ -16,6 +16,8 @@
 
 ## New and improved features
 
+* Rmd files with explicit `eval=FALSE` chunks are skipped (#1964, @MichaelChirico). Complex cases like `eval=obj` where `obj=FALSE` and `opts_chunk$set(eval = FALSE)` are not yet supported. This obviates the previous workaround requiring such chunks to use plain markdown highlighting gates like ```` ```r ```` (i.e., without {knitr} mark-up).
+
 ### Linter improvements
 
 * General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
