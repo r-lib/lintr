@@ -72,7 +72,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="new-and-improved-features-development-version">New and improved features<a class="anchor" aria-label="anchor" href="#new-and-improved-features-development-version"></a></h3>
-<div class="section level4">
+<ul><li>Rmd files with explicit <code>eval=FALSE</code> chunks are skipped (<a href="https://github.com/r-lib/lintr/issues/1964" class="external-link">#1964</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). Complex cases like <code>eval=obj</code> where <code>obj=FALSE</code> and <code>opts_chunk$set(eval = FALSE)</code> are not yet supported. This obviates the previous workaround requiring such chunks to use plain markdown highlighting gates like <code>```r</code> (i.e., without {knitr} mark-up).</li>
+</ul><div class="section level4">
 <h4 id="linter-improvements-development-version">Linter improvements<a class="anchor" aria-label="anchor" href="#linter-improvements-development-version"></a></h4>
 <ul><li>General handling of logic around where comments can appear in code has been improved (<a href="https://github.com/r-lib/lintr/issues/2822" class="external-link">#2822</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
 <ul><li><code><a href="../reference/brace_linter.html">brace_linter()</a></code></li>
