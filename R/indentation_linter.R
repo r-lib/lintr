@@ -232,13 +232,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     closing_node
   }
 
-  compute_indent_changes <- function(xml, n_lines) {
-    indent_metadata <- data.frame(
-      expected_level = integer(n_lines),
-      is_hanging = logical(n_lines),
-      hanging_cols = integer(n_lines)
-    )
-
+  compute_indent_changes <- function(xml, line_metadata) {
     indent_changes <- xml_find_all_(xml, xp_indent_changes)
     change_types <- vapply(indent_changes, find_indent_type, character(1L))
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
@@ -246,31 +240,36 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
 
     check_idx <- which(change_begins <= change_ends)
-    n_check <- length(check_idx)
-    bad_closing_block <- data.frame(
-      node = I(vector("list", n_check)),
-      begin = integer(n_check),
-      end = integer(n_check)
-    )
-    bad_closing_nrow <- 0L
+
+    line_metadata$bad_closing_text <- NA_character_
+    line_metadata[c(
+      "expected_level", "hanging_cols",
+      "bad_closing_begin", "bad_closing_end", "bad_closing_line1", "bad_closing_col1", "bad_closing_col2"
+    )] <-
+      NA_integer_
+    line_metadata[c("is_hanging", "is_bad_closing")] <- FALSE
+
+    bad_closing_block <- vector("list", length(check_idx))
+    n_bad_closing <- 0L
 
     for (ii in check_idx) {
       to_indent <- seq(change_begins[ii], change_ends[ii])
-      indent_metadata$expected_level[to_indent] <- find_new_indent(
-        current_indent = indent_metadata$expected_level[to_indent],
+      line_metadata$expected_level[to_indent] <- find_new_indent(
+        current_indent = line_metadata$expected_level[to_indent],
         change_type = change_types[ii],
         indent = indent,
         hanging_indent = col2s[ii]
       )
-      indent_metadata$is_hanging[to_indent] <- change_types[ii] == "hanging"
+      line_metadata$is_hanging[to_indent] <- change_types[ii] == "hanging"
       if (change_types[ii] != "block") next
-      indent_metadata$hanging_cols[to_indent] <- col2s[ii]
+      line_metadata$hanging_cols[to_indent] <- col2s[ii]
       closing_node <- check_bad_closing_node(indent_changes[[ii]], change_ends[ii])
       if (is.null(closing_node)) next
-      bad_closing_nrow <- bad_closing_nrow + 1L
-      bad_closing_block$node[[bad_closing_nrow]] <- closing_node
-      bad_closing_block$begin[bad_closing_nrow] <- change_begins[ii]
-      bad_closing_block$end[bad_closing_nrow] <- change_ends[ii]
+      line_metadata$is_bad_closing[ii] <- TRUE
+      n_bad_closing <- n_bad_closing + 1L
+      bad_closing_block[[n_bad_closing]] <- closing_node
+      line_metadata$bad_closing_begin[ii] <- change_begins[ii]
+      line_metadata$bad_closing_end[ii] <- change_ends[ii]
     }
 
     bad_closing_block <- bad_closing_block[seq_len(bad_closing_nrow), ]
@@ -334,18 +333,18 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    indent_levels <- re_matches(source_expression$file_lines, rex(start, any_spaces), locations = TRUE)[, "end"]
+    line_metadata <- data.frame(
+      indent_level = re_matches(source_expression$file_lines, rex(start, any_spaces), locations = TRUE)[, "end"],
+      in_str_const = FALSE
+    )
 
-    n_indents <- length(indent_levels)
-
-    in_str_const <- rep(FALSE, n_indents)
     multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
-    line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
-    line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
+    string_line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
+    string_line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
 
-    in_str_const[unlist(Map(`:`, line1, line2))] <- TRUE
+    line_metadata$in_str_const[unlist(Map(`:`, string_line1, string_line2))] <- TRUE
 
-    result <- compute_indent_changes(xml, n_indents)
+    line_metadata <- compute_indent_changes(xml, line_metadata)
     indent_metadata <- result$indent_metadata
     bad_closing_block <- result$bad_closing_block
 
