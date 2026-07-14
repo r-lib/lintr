@@ -240,17 +240,18 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
 
     check_idx <- which(change_begins <= change_ends)
+    n_check <- length(check_idx)
 
-    line_metadata$bad_closing_text <- NA_character_
-    line_metadata[c(
-      "expected_level", "hanging_cols",
-      "bad_closing_begin", "bad_closing_end", "bad_closing_line1", "bad_closing_col1", "bad_closing_col2"
-    )] <-
-      NA_integer_
-    line_metadata[c("is_hanging", "is_bad_closing")] <- FALSE
+    line_metadata$expected_level <- integer(nrow(line_metadata))
+    line_metadata$is_hanging <- logical(nrow(line_metadata))
+    line_metadata$hanging_cols <- integer(nrow(line_metadata))
 
-    bad_closing_block <- vector("list", length(check_idx))
-    n_bad_closing <- 0L
+    bad_closing_block <- data.frame(
+      node = I(vector("list", n_check)),
+      begin = integer(n_check),
+      end = integer(n_check)
+    )
+    bad_closing_nrow <- 0L
 
     for (ii in check_idx) {
       to_indent <- seq(change_begins[ii], change_ends[ii])
@@ -265,11 +266,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       line_metadata$hanging_cols[to_indent] <- col2s[ii]
       closing_node <- check_bad_closing_node(indent_changes[[ii]], change_ends[ii])
       if (is.null(closing_node)) next
-      line_metadata$is_bad_closing[ii] <- TRUE
-      n_bad_closing <- n_bad_closing + 1L
-      bad_closing_block[[n_bad_closing]] <- closing_node
-      line_metadata$bad_closing_begin[ii] <- change_begins[ii]
-      line_metadata$bad_closing_end[ii] <- change_ends[ii]
+      bad_closing_nrow <- bad_closing_nrow + 1L
+      bad_closing_block$node[[bad_closing_nrow]] <- closing_node
+      bad_closing_block$begin[bad_closing_nrow] <- change_begins[ii]
+      bad_closing_block$end[bad_closing_nrow] <- change_ends[ii]
     }
 
     bad_closing_block <- bad_closing_block[seq_len(bad_closing_nrow), ]
@@ -280,7 +280,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     bad_closing_block$col2 <- as.integer(xml_attr_(bad_closing_block$node, "col2"))
     bad_closing_block$node <- NULL
 
-    list(indent_metadata = indent_metadata, bad_closing_block = bad_closing_block)
+    list(line_metadata = line_metadata, bad_closing_block = bad_closing_block)
   }
 
   incorporate_closing_lints <- function(bad_closing_block,
@@ -333,9 +333,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
+    indent_level <- re_matches(source_expression$file_lines, rex(start, any_spaces), locations = TRUE)[, "end"]
     line_metadata <- data.frame(
-      indent_level = re_matches(source_expression$file_lines, rex(start, any_spaces), locations = TRUE)[, "end"],
-      in_str_const = FALSE
+      indent_level = indent_level,
+      in_str_const = logical(length(indent_level))
     )
 
     multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
@@ -344,32 +345,32 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
 
     line_metadata$in_str_const[unlist(Map(`:`, string_line1, string_line2))] <- TRUE
 
-    line_metadata <- compute_indent_changes(xml, line_metadata)
-    indent_metadata <- result$indent_metadata
+    result <- compute_indent_changes(xml, line_metadata)
+    line_metadata <- result$line_metadata
     bad_closing_block <- result$bad_closing_block
 
     # Only lint non-empty lines if the indentation level doesn't match.
     # TODO: remove styler ignore directives once tidyverse/style/issues/197 is resolved
     # styler: off
-    bad_lines <- which(indent_levels != indent_metadata$expected_level &
+    bad_lines <- which(line_metadata$indent_level != line_metadata$expected_level &
                          nzchar(trimws(source_expression$file_lines)) &
-                         !in_str_const)
+                         !line_metadata$in_str_const)
     # styler: on
 
     # Suppress consecutive lints with the same indentation difference, to not generate an excessive number of lints
     bad_lines <-
-      remove_repetitive_lines(bad_lines, indent_metadata$expected_level[bad_lines] - indent_levels[bad_lines])
+      remove_repetitive_lines(bad_lines, line_metadata$expected_level[bad_lines] - line_metadata$indent_level[bad_lines])
 
     if (length(bad_lines) > 0L) {
-      expected_indent_levels <- indent_metadata$expected_level[bad_lines]
-      indent_levels <- indent_levels[bad_lines]
-      hanging_indent_cols <- indent_metadata$hanging_cols[bad_lines]
+      expected_indent_levels <- line_metadata$expected_level[bad_lines]
+      indent_levels <- line_metadata$indent_level[bad_lines]
+      hanging_indent_cols <- line_metadata$hanging_cols[bad_lines]
       is_misindented_hanging <- hanging_indent_cols > 0L & indent_levels == hanging_indent_cols
       file_lines <- source_expression$file_lines[bad_lines]
 
       lint_messages <- sprintf(
         "%s should be %d spaces but is %d spaces%s.",
-        ifelse(indent_metadata$is_hanging[bad_lines], "Hanging indent", "Indentation"),
+        ifelse(line_metadata$is_hanging[bad_lines], "Hanging indent", "Indentation"),
         expected_indent_levels,
         indent_levels,
         ifelse(is_misindented_hanging, " (or start argument on previous line)", "")
