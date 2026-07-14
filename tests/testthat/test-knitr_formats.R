@@ -268,3 +268,52 @@ test_that("it skips eval=FALSE chunks (#1964)", {
     linter
   )
 })
+
+test_that("malformed chunk options don't crash linting and fallback to evaluated", {
+  linter <- assignment_linter()
+
+  # syntax error in header options
+  tmp_csv_err <- withr::local_tempfile(fileext = ".Rmd", lines = c(
+    "```{r, eval=1+}",
+    "bad_code = 1",
+    "```"
+  ))
+  expect_silent(
+    expect_lint(
+      file = tmp_csv_err,
+      checks = list(regexes[["assign"]], line_number = 2L),
+      linters = linter
+    )
+  )
+
+  # divide_chunk error (YAML syntax error in body options)
+  tmp_yaml_err <- withr::local_tempfile(fileext = ".qmd", lines = c(
+    "```{r}",
+    "#| eval: {",
+    "bad_code = 1",
+    "```"
+  ))
+  expect_silent(
+    expect_lint(
+      file = tmp_yaml_err,
+      checks = list(regexes[["assign"]], line_number = 3L),
+      linters = linter
+    )
+  )
+
+  # divide_chunk warning (YAML warning - not a list)
+  tmp_yaml_warn <- withr::local_tempfile(fileext = ".qmd", lines = c(
+    "```{r}",
+    '#| "key: 1"',
+    "bad_code = 1",
+    "```"
+  ))
+  expect_silent(
+    expect_lint(
+      file = tmp_yaml_warn,
+      checks = list(regexes[["assign"]], line_number = 3L),
+      linters = linter
+    )
+  )
+})
+
