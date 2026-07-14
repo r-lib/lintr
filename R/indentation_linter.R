@@ -230,7 +230,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       number = as.integer(names(source_expression$file_lines))
     )
     line_metadata$indent_level <- re_matches(line_metadata$line, rex(start, any_spaces), locations = TRUE)[, "end"]
-    line_metadata$in_str_const = logical(nrow(line_metadata)) # FALSE, but also logical() for 0-row case
+    line_metadata$in_str_const <- logical(nrow(line_metadata)) # FALSE, but also logical() for 0-row case
 
     multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
     string_line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
@@ -255,7 +255,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       line_metadata$hanging_cols[to_indent] <- col2s[ii]
     }
 
-    line_metadata
+    # Only lint non-empty lines if the indentation level doesn't match.
+    line_metadata$is_bad <- find_bad_lines(line_metadata)
+
+    line_metadata[line_metadata$is_bad, ]
   }
 
   Linter(linter_level = "file", function(source_expression) {
@@ -273,11 +276,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    result <- indent_lint_metadata(build_line_metadata(source_expression))
+    lint_line_df <- build_line_metadata(source_expression)
 
-    if (is.null(result)) {
+    if (nrow(lint_line_df) == 0L) {
       return(list())
     }
+
+    result <- indent_lint_metadata(lint_line_df)
 
     Map(
       Lint,
@@ -318,15 +323,6 @@ find_bad_lines <- function(line_metadata) {
 }
 
 indent_lint_metadata <- function(line_metadata) {
-  # Only lint non-empty lines if the indentation level doesn't match.
-  line_metadata$is_bad <- find_bad_lines(line_metadata)
-
-  if (!any(line_metadata$is_bad, na.rm = TRUE)) {
-    return(NULL)
-  }
-
-  line_metadata <- line_metadata[line_metadata$is_bad, ]
-
   lint_messages <- with(line_metadata, sprintf(
     "%s should be %d spaces but is %d spaces%s.",
     ifelse(is_hanging, "Hanging indent", "Indentation"),
