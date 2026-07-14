@@ -163,10 +163,13 @@ is_eval_chunk <- function(start, end, lines, pattern) {
   header <- lines[start]
   # essentially knitr:::extract_params_src
   params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
-  header_params <- xfun::csv_options(params_src)
+  header_params <- tryCatch(suppressMessages(xfun::csv_options(params_src)), error = \(e) NULL)
 
   code <- lines[(start + 1L):(end - 1L)]
-  body_params <- xfun::divide_chunk("r", code)$options
+  body_params <- tryCatch(
+    suppressMessages(suppressWarnings(xfun::divide_chunk("r", code)))$options,
+    error = \(e) NULL
+  )
 
   eval_value <- body_params$eval %||% header_params$eval
   # nolint next: T_and_F_symbol_linter.
