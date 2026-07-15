@@ -140,6 +140,11 @@
   the function body by a line with `) {`
   ([\#2830](https://github.com/r-lib/lintr/issues/2830),
   [@MichaelChirico](https://github.com/MichaelChirico)).
+- [`paste_linter()`](https://lintr.r-lib.org/dev/reference/paste_linter.md)
+  recommends `deparse1(x)` in favor of
+  `paste(deparse(x), collapse = ...)`
+  ([\#2615](https://github.com/r-lib/lintr/issues/2615),
+  [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
 
 #### Lint accuracy fixes: removing false positives
 

@@ -38,6 +38,13 @@ for which can be de-activated optionally):
     cases (e.g. `strrep(letters, 26:1)`, but those aren't as easily
     translated from a `paste(collapse=)` call.
 
+5.  Block usage of [`paste()`](https://rdrr.io/r/base/paste.html) or
+    [`paste0()`](https://rdrr.io/r/base/paste.html) to collapse the
+    output of [`base::deparse()`](https://rdrr.io/r/base/deparse.html),
+    e.g. `paste(deparse(x), collapse = " ")`.
+    [`base::deparse1()`](https://rdrr.io/r/base/deparse.html) is a more
+    readable equivalent, i.e. `deparse1(x)`.
+
 ## Usage
 
 ``` r
@@ -153,6 +160,14 @@ lint(
 #> expression(paste("a", "b", sep = ""))
 #>            ^~~~~~~~~~~~~~~~~~~~~~~~~
 
+lint(
+  text = 'paste(deparse(x), collapse = " ")',
+  linters = paste_linter()
+)
+#> <text>:1:1: warning: [paste_linter] Use deparse1(x) instead of paste(deparse(x), collapse = ...).
+#> paste(deparse(x), collapse = " ")
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # okay
 lint(
   text = 'paste0("a", "b")',
@@ -210,6 +225,12 @@ lint(
 
 lint(
   text = 'expression(paste("a", "b"))',
+  linters = paste_linter()
+)
+#> ℹ No lints found.
+
+lint(
+  text = "deparse1(x)",
   linters = paste_linter()
 )
 #> ℹ No lints found.
