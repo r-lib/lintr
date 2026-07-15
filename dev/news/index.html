@@ -133,6 +133,8 @@
 <code><a href="../reference/paste_linter.html">paste_linter()</a></code> lints <code>expression(paste(., sep = ""))</code> because the <code>paste</code> inside an expression doesn’t support the <code>sep</code> argument (<a href="https://github.com/r-lib/lintr/issues/2945" class="external-link">#2945</a>, <a href="https://github.com/mcol" class="external-link">@mcol</a>).</li>
 <li>
 <code><a href="../reference/namespace_linter.html">namespace_linter()</a></code> detects functions accessed with <code>::</code> or <code>:::</code> when they are already imported into the package’s <code>NAMESPACE</code> (<a href="https://github.com/r-lib/lintr/issues/2081" class="external-link">#2081</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
+<li>
+<code><a href="../reference/indentation_linter.html">indentation_linter()</a></code> correctly enforces the updated Tidyverse guidelines around multi-line function definitions, namely that double-indented functions are no longer recommended, in favor of single-indented formals separated from the function body by a line with <code>) {</code> (<a href="https://github.com/r-lib/lintr/issues/2830" class="external-link">#2830</a>, <a href="https://github.com/MichaelChirico" class="external-link">@MichaelChirico</a>).</li>
 </ul></div>
 <div class="section level4">
 <h4 id="lint-accuracy-fixes-removing-false-positives-development-version">Lint accuracy fixes: removing false positives<a class="anchor" aria-label="anchor" href="#lint-accuracy-fixes-removing-false-positives-development-version"></a></h4>

@@ -133,6 +133,13 @@
   imported into the package’s `NAMESPACE`
   ([\#2081](https://github.com/r-lib/lintr/issues/2081),
   [@MichaelChirico](https://github.com/MichaelChirico)).
+- [`indentation_linter()`](https://lintr.r-lib.org/dev/reference/indentation_linter.md)
+  correctly enforces the updated Tidyverse guidelines around multi-line
+  function definitions, namely that double-indented functions are no
+  longer recommended, in favor of single-indented formals separated from
+  the function body by a line with `) {`
+  ([\#2830](https://github.com/r-lib/lintr/issues/2830),
+  [@MichaelChirico](https://github.com/MichaelChirico)).
 
 #### Lint accuracy fixes: removing false positives
 
