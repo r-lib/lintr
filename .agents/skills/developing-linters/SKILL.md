@@ -13,7 +13,7 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 - **Keep signatures clean:** Preserving existing function signatures (`namespace_linter(check_exports = TRUE, check_nonexports = TRUE)`) reduces API complexity and documentation churn.
 
 ## 2. Inlining vs. Overkill Helper Functions
-- **Avoid single-use wrapper functions:** Do not create private helper functions (e.g., `is_in_imports()`, `build_ns_imports_lints()`) solely to wrap a few lines of `vapply(...)` or `xml_nodes_to_lints(...)` that are only called once inside a linter callback. Inline the logic directly to keep the control flow linear and self-contained.
+- **Avoid single-use wrapper functions:** Do not create trivial private helper functions (e.g., `is_in_imports()`, `build_ns_imports_lints()`) solely to wrap a few lines of `vapply(...)` or `xml_nodes_to_lints(...)` that are only called once inside a linter callback. Inline the logic directly to keep the control flow linear and self-contained. A good helper encapsulates a lot of logic in a readable fashion.
 - **Early returns on empty state:** Always check for empty prerequisites early and exit (`if (nrow(ns_imports) == 0L) return(lints)`) rather than allocating boolean vectors (`rep(FALSE, length(symbols))`) or executing vectorized checks over empty data frames.
 - **Rely on existing safe fallbacks:** Do not write defensive wrappers around functions that already handle `NULL` cleanly. For example, `namespace_imports(NULL)` safely returns `empty_namespace_data()`, so `if (!is.null(pkg_path)) namespace_imports(pkg_path)` is redundant.
 
@@ -35,9 +35,9 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 - **Check exact parser representations:** Inspect and match the exact R objects produced by the parser (`xfun::csv_options()` produces `logical` `FALSE` for `eval=FALSE` and symbol `quote(F)` for `eval=F`). A direct, concise check such as `if (identical(eval_value, quote(F))) return(TRUE)` followed by `isFALSE(eval_value)` is simpler, safer, and much easier to maintain.
 - **Annotate symbol checks for self-linting:** When comparing against `quote(F)` or `quote(T)`, add `# nolint next: T_and_F_symbol_linter.` immediately above the line to prevent `lintr`'s self-linting checks from flagging the symbol name.
 
-## 7. Centralized State Management (Data Frames for Line Metadata)
-- **Use a single data frame for per-line metadata:** When a linter needs to track multiple state vectors per line (e.g. current indentation, expected indentation, whether a line is in a string constant, etc.), avoid maintaining and passing around separate parallel vectors.
-- **Structure as `line_metadata`:** Combine these vectors into a single `data.frame` (e.g., with columns `line`, `number`, `indent_level`, `expected_level`, `in_str_const`, `is_bad`). This makes the code much easier to read, maintain, and pass to external helper functions if they are truly needed.
+## 7. Data engineering / data structures
+
+- **Consider the optimal way to structure intermediate objects in each implementation.** For example, if you need to compute many line-by-line properties of a file (e.g. current indentation, expected indentation, whether a line is in a string constant, etc.), a `line_metadata` `data.frame` is highly appropriate for enforcing the parallel nature of the constituent vectors. This makes the code much easier to read, maintain, and pass to external helper functions if they are truly needed.
 
 ## 8. Idiomatic R Vectorization over Loops
 - **Prefer vectorized operations:** Avoid using `for` loops to iterate over lines or XML nodes if a vectorized alternative exists. Use `Map()`, `vapply()`, or logical subsetting.
