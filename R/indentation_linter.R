@@ -119,7 +119,8 @@
 #' @export
 indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "always", "never"),
                                assignment_as_infix = TRUE) {
-  paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_left_no_brace <- c("OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_left <- c("OP-LEFT-BRACE", paren_tokens_left_no_brace)
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   infix_tokens <- setdiff(infix_metadata$xml_tag, c("OP-LEFT-BRACE", "OP-COMMA", paren_tokens_left))
   no_paren_keywords <- c("ELSE", "REPEAT")
@@ -252,7 +253,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         hanging_indent = col2s[ii]
       )
       line_metadata$is_hanging[to_indent] <- change_types[ii] == "hanging"
-      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% setdiff(paren_tokens_left, "OP-LEFT-BRACE")
+      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% paren_tokens_left_no_brace
       line_metadata$hanging_cols[to_indent] <- if (is_paren_block) col2s[ii] else 0L
     }
 
