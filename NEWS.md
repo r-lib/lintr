@@ -57,7 +57,7 @@
    + recommends usage of `sort(x, decreasing = TRUE)` over `rev(sort(x))` (#3066, @Bisaloo).
 * `paste_linter()` lints `expression(paste(., sep = ""))` because the `paste` inside an expression doesn't support the `sep` argument (#2945, @mcol).
 * `namespace_linter()` detects functions accessed with `::` or `:::` when they are already imported into the package's `NAMESPACE` (#2081, @MichaelChirico).
-
+* `indentation_linter()` correctly enforces the updated Tidyverse guidelines around multi-line function definitions, namely that double-indented functions are no longer recommended, in favor of single-indented formals separated from the function body by a line with `) {` (#2830, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 

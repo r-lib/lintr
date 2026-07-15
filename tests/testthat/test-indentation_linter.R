@@ -165,8 +165,8 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
     linter
   )
 
-  # new style (#1754)
-  expect_no_lint(
+  # old double-indent style (#1754, #2830) lints under tidyverse style
+  expect_lint(
     trim_some("
       function(
           a = 1L,
@@ -174,6 +174,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
+    rex::rex("Indentation should be 2 spaces but is 4 spaces."),
     linter
   )
 
@@ -185,7 +186,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 4",
+    rex::rex("Indentation should be 2 spaces but is 6 spaces."),
     linter
   )
 
@@ -198,20 +199,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 4",
-    linter
-  )
-
-  # Block is only allowed if there is no argument next to ")"
-  expect_lint(
-    trim_some("
-      function(
-        a = 1L,
-        b = 2L) {
-        a + b
-      }
-    "),
-    "Indentation should be 4",
+    rex::rex("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)"),
     linter
   )
 
@@ -256,6 +244,36 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
                b = 2L)
       {
         a + b
+      }
+    "),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+        a = function(
+              x) {
+          x
+        }) {
+        a()
+      }
+    "),
+    list(rex::rex("Indentation should be 4 spaces but is 8 spaces."), line_number = 3L),
+    linter
+  )
+
+  # proper single indentation of nested function definitions.
+  expect_no_lint(
+    trim_some("
+      function(
+        a = function(
+          x
+        ) {
+          x
+        }
+      ) {
+        a()
       }
     "),
     linter
@@ -411,6 +429,15 @@ test_that("indentation with operators works", {
     "),
     linter
   )
+
+  expect_lint(
+    trim_some("
+      first_step() +
+                  second_step()
+    "),
+    list(rex::rex("Indentation should be 2 spaces but is 12 spaces."), line_number = 2L),
+    linter
+  )
 })
 
 test_that("indentation with bracket works", {
@@ -521,6 +548,30 @@ test_that("indentation within string constants is ignored", {
          an indented string with 3 spaces indentation
       '
     "),
+    linter
+  )
+
+  # first line of a multi-line string can induce a lint
+  expect_lint(
+    trim_some("
+      foo(
+      '
+        string
+      ')
+      bar('
+        string2
+      ')
+      baz('
+      string3
+      ')
+        x <- '
+        string4
+      '
+    "),
+    list(
+      list(rex::rex("Hanging indent should be 4 spaces but is 0 spaces."), line_number = 2L),
+      list(rex::rex("Indentation should be 0 spaces but is 2 spaces"), line_number = 11L)
+    ),
     linter
   )
 })
@@ -673,6 +724,54 @@ test_that("hanging_indent_stlye works", {
       )
     "),
     tidy_linter
+  )
+
+  expect_lint(
+    trim_some("
+      outer_f(
+        inner_g(x,
+        y = 2)
+      )
+    "),
+    list(rex::rex("Hanging indent should be 10 spaces but is 2 spaces."), line_number = 3L),
+    tidy_linter
+  )
+
+  # don't suggest starting argument on previous line
+  expect_lint(
+    trim_some("
+      outer_f(
+        inner_g(x,
+              y = 2)
+      )
+    "),
+    list(rex::rex("Hanging indent should be 10 spaces but is 8 spaces."), line_number = 3L),
+    tidy_linter
+  )
+})
+
+test_that("previous token is respected when recommending to 'start argument on previous line'", {
+  expect_lint(
+    trim_some("
+      result <- {
+                 do_something()
+      }
+      abc[[
+           'elem'
+      ]]
+      def[
+          'key'
+      ]
+      first_step() +
+                    second_step()
+    "),
+    list(
+      list(rex::rex("should be 2 spaces but is 11 spaces."), line_number = 2L),
+      list(rex::rex("should be 2 spaces but is 5 spaces (or start argument on previous line)."), line_number = 5L),
+      list(rex::rex("should be 2 spaces but is 4 spaces (or start argument on previous line)."), line_number = 8L),
+      list(rex::rex("should be 2 spaces but is 14 spaces."), line_number = 11L)
+    ),
+    indentation_linter()
   )
 })
 
@@ -850,8 +949,9 @@ test_that("function shorthand is handled", {
   expect_no_lint(
     trim_some(R"(
       \(
-          a = 1L,
-          b = 2L) {
+        a = 1L,
+        b = 2L
+      ) {
         a + b
       }
     )"),
