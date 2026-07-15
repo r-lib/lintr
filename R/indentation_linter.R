@@ -215,6 +215,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     collapse = " | "
   )
 
+  xp_multiline_string <- "//STR_CONST[@line1 < @line2]"
   build_line_metadata <- function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
@@ -234,7 +235,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     line_metadata$indent_level <- re_matches(line_metadata$line, rex(start, any_spaces), locations = TRUE)[, "end"]
     line_metadata$in_str_const <- logical(nrow(line_metadata)) # FALSE, but also logical() for 0-row case
 
-    multiline_strings <- xml_find_all_(xml, "//STR_CONST[@line1 < @line2]")
+    multiline_strings <- xml_find_all_(xml, xp_multiline_string)
     string_line1 <- as.integer(xml_attr_(multiline_strings, "line1"))
     string_line2 <- as.integer(xml_attr_(multiline_strings, "line2"))
 
