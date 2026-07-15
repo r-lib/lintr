@@ -263,7 +263,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
     linter
   )
 
-  # proper indentation of nested single-line indentation
+  # proper single indentation of nested function definitions.
   expect_no_lint(
     trim_some("
       function(
