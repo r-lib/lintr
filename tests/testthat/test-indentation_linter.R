@@ -262,6 +262,22 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
     list("Indentation should be 4 spaces but is 8 spaces", line_number = 3L),
     linter
   )
+
+  # proper indentation of nested single-line indentation
+  expect_no_lint(
+    trim_some("
+      function(
+        a = function(
+          x
+        ) {
+          x
+        }
+      ) {
+        a()
+      }
+    "),
+    linter
+  )
 })
 
 test_that("function argument indentation works in always-hanging-style", { # nofuzz: function_lambda
