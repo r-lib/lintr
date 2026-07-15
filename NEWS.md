@@ -1,4 +1,4 @@
-# lintr (development version)
+# lintr (3.4.0)
 
 ## Deprecations & breaking changes
 
@@ -9,17 +9,26 @@
 
 ## Bug fixes
 
-* Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning (#2909, @MichaelChirico).
-* `repeat_linter()` no longer errors when `while` is in a column to the right of `}` (#2828, @MichaelChirico).
+* Excluding `cyclocomp_linter()` in `available_linters()` or `linters_with_tags()`, which requires the weak dependency {cyclocomp}, no longer emits a warning if {cyclocomp} is not available (#2909, @MichaelChirico).
+* `repeat_linter()` no longer errors when `while` in `while (TRUE)` is in a column to the right of `}` (#2828, @MichaelChirico).
 * `get_source_expression(lines=)` and `lint(text=)` correctly handle text with unmarked encoding (#3046, @MichaelChirico).
 * `lint(exclude=)` doesn't fail cryptically when provided a regex with capture groups (#2831, @MichaelChirico).
 
 ## New and improved features
 
-* Rmd files with explicit `eval=FALSE` chunks are skipped (#1964, @MichaelChirico). Complex cases like `eval=obj` where `obj=FALSE` and `opts_chunk$set(eval = FALSE)` are not yet supported. This obviates the previous workaround requiring such chunks to use plain markdown highlighting gates like ```` ```r ```` (i.e., without {knitr} mark-up).
+* Rmd files with explicit `eval=FALSE` chunks are skipped (#1964, @MichaelChirico). Complex cases like `eval=obj` where `obj=FALSE` and `opts_chunk$set(eval = FALSE)` are not yet supported; the former likely never will be. This obviates the previous workaround requiring such chunks to use plain markdown highlighting gates like ```` ```r ```` (i.e., without {knitr} mark-up).
 
 ### Linter improvements
 
+* `indentation_linter()` correctly enforces the updated Tidyverse guidelines around multi-line function definitions, namely that double-indented functions are no longer recommended, in favor of single-indented formals separated from the function body by a line with `) {` (#2830, @MichaelChirico).
+* `sort_linter()`
+   + recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
+   + recommends usage of `sort(x, decreasing = TRUE)` over `rev(sort(x))` (#3066, @Bisaloo).
+* `paste_linter()`
+   + lints `expression(paste(., sep = ""))` because the `paste` inside an expression doesn't support the `sep` argument (#2945, @mcol).
+   + recommends `deparse1(x)` in favor of `paste(deparse(x), collapse = ...)` (#2615, @emmanuel-ferdman).
+* `namespace_linter()` detects functions accessed with `::` or `:::` when they are already imported into the package's `NAMESPACE` (#2081, @MichaelChirico).
+* `backport_linter()` now exhaustively covers all exported symbols introduced throughout R's history back to R 3.0.0, including many symbols never mentioned in NEWS.
 * General handling of logic around where comments can appear in code has been improved (#2822, @MichaelChirico). In many cases, this is a tiny robustness fix for weird edge cases unlikely to be found in practice, but in others, this improves practical linter precision (reduced false positives and/or false negatives). The affected linters (with annotations for changes noteworthy enough to have gotten a dedicated bug) are:
    + `brace_linter()`
    + `coalesce_linter()`
@@ -52,13 +61,6 @@
    + `unnecessary_placeholder_linter()`
    + `unreachable_code_linter()` #2827
    + `vector_logic_linter()` #2826
-* `sort_linter()`
-   + recommends usage of `!is.unsorted(x)` over `identical(x, sort(x))` (#2921, @Bisaloo).
-   + recommends usage of `sort(x, decreasing = TRUE)` over `rev(sort(x))` (#3066, @Bisaloo).
-* `paste_linter()` lints `expression(paste(., sep = ""))` because the `paste` inside an expression doesn't support the `sep` argument (#2945, @mcol).
-* `namespace_linter()` detects functions accessed with `::` or `:::` when they are already imported into the package's `NAMESPACE` (#2081, @MichaelChirico).
-* `indentation_linter()` correctly enforces the updated Tidyverse guidelines around multi-line function definitions, namely that double-indented functions are no longer recommended, in favor of single-indented formals separated from the function body by a line with `) {` (#2830, @MichaelChirico).
-* `paste_linter()` recommends `deparse1(x)` in favor of `paste(deparse(x), collapse = ...)` (#2615, @emmanuel-ferdman).
 
 ### Lint accuracy fixes: removing false positives
 
@@ -68,7 +70,7 @@
 * `undesirable_operator_linter(call_is_undesirable = FALSE)` now correctly skips prefix notation like `` `:::`(pkg, fun) `` (#2999, @emmanuel-ferdman).
 * `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
 * `vector_logic_linter()` ignores scalar operators (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` (#2935, @emmanuel-ferdman).
-* `unnecessary_lambda_linter()` skips lambdas with an outer unary operators like `sapply(x, \(xi) !all(xi))` (#2742, @MichaelChirico).
+* `unnecessary_lambda_linter()` skips lambdas with an outer unary operator like `sapply(x, \(xi) !all(xi))` (#2742, @MichaelChirico).
 
 ## Notes
 

@@ -29,7 +29,7 @@ testthat-problems[.]rds$
 ^docs$
 ^pkgdown$
 # large files not needed for CRAN
-^man/figures/logo[.]png$
+^man/figures$
 # keep '-still.gif' compact versions
 ^vignettes/.*([^l]|[^l]l|[^i]ll|[^t]ill|[^s]till)[.]gif$
 ^CRAN-SUBMISSION$

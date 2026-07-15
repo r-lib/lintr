@@ -321,7 +321,8 @@ is_tainted <- function(lines) {
 #' @noRd
 check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
   valid_args <- unlist(lapply(ref_calls, \(f) names(formals(f))))
-  is_valid <- dot_names %in% valid_args
+  # TODO(#2502): needn't check is.na() after R 4.2.0
+  is_valid <- is.na(dot_names) | !nzchar(dot_names) | dot_names %in% valid_args
   if (all(is_valid)) {
     return(invisible())
   }
