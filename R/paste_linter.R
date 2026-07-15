@@ -19,6 +19,9 @@
 #'
 #'     Only target scalar usages -- `strrep` can handle more complicated cases (e.g. `strrep(letters, 26:1)`,
 #'     but those aren't as easily translated from a `paste(collapse=)` call.
+#'  5. Block usage of `paste()` or `paste0()` to collapse the output of [base::deparse()], e.g.
+#'     `paste(deparse(x), collapse = " ")`. [base::deparse1()] is a more readable equivalent,
+#'     i.e. `deparse1(x)`.
 #'
 #' @evalRd rd_tags("paste_linter")
 #' @param allow_empty_sep Logical, default `FALSE`. If `TRUE`, usage of
@@ -70,6 +73,11 @@
 #'   linters = paste_linter()
 #' )
 #'
+#' lint(
+#'   text = 'paste(deparse(x), collapse = " ")',
+#'   linters = paste_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = 'paste0("a", "b")',
@@ -118,6 +126,11 @@
 #'
 #' lint(
 #'   text = 'expression(paste("a", "b"))',
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = "deparse1(x)",
 #'   linters = paste_linter()
 #' )
 #'
@@ -187,6 +200,19 @@ paste_linter <- function(allow_empty_sep = FALSE,
       3 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
     and not(expr/SYMBOL[text() = '...'])
   ]")
+
+  # Skip collapse = NULL (does not collapse, so not deparse1()) and deparse() supplied
+  #   as the collapse separator rather than as the collapsed vector.
+  deparse1_xpath <- "
+  parent::expr[
+    count(expr) = 3
+    and SYMBOL_SUB[text() = 'collapse']
+    and not(SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]/NULL_CONST)
+    and expr[
+      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'deparse']
+      and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
+    ]
+  ]"
 
   Linter(linter_level = "expression", function(source_expression) {
     paste_calls <- source_expression$xml_find_function_calls("paste")
@@ -267,6 +293,14 @@ paste_linter <- function(allow_empty_sep = FALSE,
       type = "warning"
     )
 
+    deparse1_expr <- xml_find_all_(both_calls, deparse1_xpath)
+    deparse1_lints <- xml_nodes_to_lints(
+      deparse1_expr,
+      source_expression = source_expression,
+      lint_message = "Use deparse1(x) instead of paste(deparse(x), collapse = ...).",
+      type = "warning"
+    )
+
     if (check_file_paths) {
       paste_sep_slash_expr <- paste_sep_expr[paste_sep_value == "/"]
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
@@ -296,7 +330,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       ))
     }
 
-    c(optional_lints, paste0_sep_lints, paste_strrep_lints, paste0_collapse_lints)
+    c(optional_lints, paste0_sep_lints, paste_strrep_lints, paste0_collapse_lints, deparse1_lints)
   })
 }
 
