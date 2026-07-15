@@ -12,9 +12,10 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 - **Natural zero-lint fallback:** If a check naturally produces zero lints when not applicable (e.g., inspecting `namespace_imports()` on a file outside an R package or in a directory without a `NAMESPACE` file returns `empty_namespace_data()`), run the check unconditionally as part of the standard linter flow.
 - **Keep signatures clean:** Preserving existing function signatures (`namespace_linter(check_exports = TRUE, check_nonexports = TRUE)`) reduces API complexity and documentation churn.
 
-## 2. Inlining vs. Overkill Helper Functions
-- **Avoid single-use wrapper functions:** Do not create trivial private helper functions (e.g., `is_in_imports()`, `build_ns_imports_lints()`) solely to wrap a few lines of `vapply(...)` or `xml_nodes_to_lints(...)` that are only called once inside a linter callback. Inline the logic directly to keep the control flow linear and self-contained. A good helper encapsulates a lot of logic in a readable fashion.
-- **Early returns on empty state:** Always check for empty prerequisites early and exit (`if (nrow(ns_imports) == 0L) return(lints)`) rather than allocating boolean vectors (`rep(FALSE, length(symbols))`) or executing vectorized checks over empty data frames.
+## 2. Helper Functions, Readability, & Safe Fallbacks
+- **Encapsulating non-trivial logic in helper functions is encouraged:** While trivial single-use wrappers purely around basic line lookups or single `vapply(...)` steps should generally be avoided if they merely fragment linear control flow, **helper functions that encapsulate non-trivial logic (such as `build_line_metadata()` or `indent_lint_metadata()`) are highly valued, even if invoked only once inside a linter callback.** The immense readability improvement and clear domain encapsulation far outweigh their single-use nature.
+- **Early returns on domain empty states:** Check for domain empty states early and exit (`if (nrow(ns_imports) == 0L) return(lints)` or `if (nrow(lint_line_df) == 0L) return(list())`) rather than executing checks over empty data structures.
+- **Avoid distracting checks for 0-line files:** Do not recommend or implement defensive guards for truly empty zero-line files (`if (length(source_expression$file_lines) == 0L)`). Encountering a 0-line file in practical active extraction and parsing is virtually impossible; suggesting such checks during code reviews creates unnecessary distraction and code clutter.
 - **Rely on existing safe fallbacks:** Do not write defensive wrappers around functions that already handle `NULL` cleanly. For example, `namespace_imports(NULL)` safely returns `empty_namespace_data()`, so `if (!is.null(pkg_path)) namespace_imports(pkg_path)` is redundant.
 
 ## 3. Minimal Diffs & Logical Execution Order
@@ -35,9 +36,9 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 - **Check exact parser representations:** Inspect and match the exact R objects produced by the parser (`xfun::csv_options()` produces `logical` `FALSE` for `eval=FALSE` and symbol `quote(F)` for `eval=F`). A direct, concise check such as `if (identical(eval_value, quote(F))) return(TRUE)` followed by `isFALSE(eval_value)` is simpler, safer, and much easier to maintain.
 - **Annotate symbol checks for self-linting:** When comparing against `quote(F)` or `quote(T)`, add `# nolint next: T_and_F_symbol_linter.` immediately above the line to prevent `lintr`'s self-linting checks from flagging the symbol name.
 
-## 7. Data engineering / data structures
-
-- **Consider the optimal way to structure intermediate objects in each implementation.** For example, if you need to compute many line-by-line properties of a file (e.g. current indentation, expected indentation, whether a line is in a string constant, etc.), a `line_metadata` `data.frame` is highly appropriate for enforcing the parallel nature of the constituent vectors. This makes the code much easier to read, maintain, and pass to external helper functions if they are truly needed.
+## 7. Data Engineering, Centralized State, & Readability First
+- **Use cohesive data frames (`line_metadata`):** When computing many parallel line-by-line properties (current indentation, expected indentation, whether a line is inside a string constant, etc.), structure intermediate objects as a single `line_metadata` `data.frame`. This enforces parallel alignment and makes code far cleaner to inspect or pass to dedicated helpers.
+- **Prioritize `with()` to eliminate repetitive visual noise:** When writing compound logical filtering conditions over multi-column metadata frames (`find_bad_lines()`), embrace `with(line_metadata, !is.na(line) & indent_level != expected_level & !in_str_const)` over repetitive `$` accesses (`line_metadata$line`, `line_metadata$indent_level`). The immense readability benefit of eliminating repetitive visual noise far outweighs negligible environment evaluation overhead.
 
 ## 8. Idiomatic R Vectorization over Loops
 - **Prefer vectorized operations:** Avoid using `for` loops to iterate over lines or XML nodes if a vectorized alternative exists. Use `Map()`, `vapply()`, or logical subsetting.
@@ -50,10 +51,7 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
   ```
   This is much cleaner and faster than a `for (string in multiline_strings)` loop.
 
-## 9. Robust Handling of Literate R Formats (NA Lines)
+## 9. Robust Handling of Literate R Formats & Readable Transitions
 - **Expect `NA_character_` in line content:** When linting files, remember that literate programming formats (like `.Rmd`, `.qmd`) extract R code by masking non-R lines with `NA_character_` to preserve line numbers.
-- **Avoid NA propagation in logical expressions:** In functions like `find_bad_lines()`, ensure that logical vectors used for indexing or checking conditions do not contain `NA`. For example, use `!is.na(line)` explicitly:
-  ```r
-  is_bad <- !is.na(line) & indent_level != expected_level & nzchar(trimws(line, "left")) & !in_str_const
-  ```
-- **Leverage defined logicals for boundary checking:** Since `is_bad` is `FALSE` (not `NA`) for non-code lines, you can safely compute consecutive differences using `diff(is_bad)`. The `FALSE` values will naturally break sequences of `TRUE` values across gaps (like markdown blocks), making complex adjacency checks (e.g. tracking original line numbers) unnecessary.
+- **Avoid NA propagation in logical expressions:** Ensure logical expressions checking conditions over lines immediately guard against `NA` (`!is.na(line) & ...`) to keep resulting booleans clean (`FALSE & NA -> FALSE`).
+- **Prioritize clear consecutive logic (`diff()`) over micro-optimizations:** Because `is_bad` evaluates to `FALSE` (not `NA`) across non-code gaps, computing consecutive state differences using simple arithmetic (`diff(is_bad) == 0L`) cleanly isolates block transitions across gaps. **Never replace clear, readable difference computations with obscure logical shifting constructs solely to avoid implicit conversions or save negligible compute.** Readability is paramount.

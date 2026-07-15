@@ -27,21 +27,18 @@ When writing or updating unit tests in `tests/testthat/test-*.R`, adhere to the 
   )
   ```
 
-## 2. Fuzz Testing Compatibility (`# nofuzz`)
-
-- **Mark multi-file package fixtures with `# nofuzz`:** `lintr` includes an automated test consistency and fuzz-testing harness that mutates and runs `expect_lint()` expressions across various permutations. Tests that create temporary directories (`withr::local_tempdir()`) or multi-file package fixtures (`DESCRIPTION`, `NAMESPACE`) on disk will fail or behave unpredictably under automated fuzzing.
-- **Add `# nofuzz` comments:** Explicitly mark any `test_that()` block that creates package files or relies on disk state with `# nofuzz` on the test definition line:
-
+## 2. Fuzz Testing & Syntax Permutations (`# nofuzz`)
+- **Mark multi-file package fixtures with `# nofuzz`:** `lintr` includes an automated test consistency and fuzz-testing harness that mutates and runs `expect_lint()` expressions across various permutations. Tests that create temporary directories (`withr::local_tempdir()`) or multi-file package fixtures (`DESCRIPTION`, `NAMESPACE`) on disk will fail or behave unpredictably under automated fuzzing. Explicitly mark any such block with `# nofuzz` on the test definition line:
   ```r
   test_that("namespace_linter detects functions already imported in the NAMESPACE", { # nofuzz
     pkg_dir <- withr::local_tempdir("testpkg")
     ...
   })
   ```
+- **Trust the fuzzing suite for standard syntax permutations:** Because the automated fuzzing harness exercises interchangeable R syntax structures across tests (such as mutating `function(...)` definitions into lambda shorthand `\(...)`), **do not demand separate positive/negative unit tests for interchangeable syntax variations** (`\()` vs `function()`) unless the individual linter implementation has custom code explicitly handling `OP-LAMBDA` vs `FUNCTION` differently.
 
 ## 3. Writing `expect_lint()` Assertions
 - **Explicit argument names:** When asserting lints against a file path (`file = test_file`), explicitly name the `checks` and `linters` arguments rather than relying on positional ordering:
-
   ```r
   expect_lint(
     file = test_file,
@@ -52,14 +49,11 @@ When writing or updating unit tests in `tests/testthat/test-*.R`, adhere to the 
     linters = namespace_linter()
   )
   ```
-
-- **Minimize `rex::rex()` for `lint_messsage` checks:** `expect_lint()` automatically treats string literals in check lists as regular expressions. Avoid the clutter of `rex::rex()` if no regex escapes are required.
+- **Avoid `rex::rex()` around un-escaped strings to reduce visual noise:** `expect_lint()` natively interprets check strings as regular expressions. Do not wrap plain target strings in `rex::rex("...")` when no regex metacharacters require escaping (`()`, `[]`, etc.) or advanced composition. The specific purpose of omitting `rex::rex()` on clean literal matches is to directly eliminate repetitive visual noise in test suites.
 - **Pass file paths using the `file = ` keyword argument:** When testing a file on disk (`tmp_file`), always pass it using `file = tmp_file`. Passing a file path as the first positional argument (`expect_lint(tmp_file, ...)`) passes it as `content`, causing `expect_lint()` to treat the file path string itself as R code (resulting in false-positive syntax errors like `unexpected '/'`).
 
 ## 4. Concise File Fixtures (`withr::local_tempfile`)
-
-- **Create and populate tempfiles in one step:** When creating single-file test fixtures for `expect_lint()` or `expect_no_lint()` (such as `.Rmd` or `.qmd` documents), use `withr::local_tempfile(fileext = ".Rmd", lines = c(...))` to create and write the file in a single, clean step:
-
+- **Create and populate tempfiles in one step:** When creating single-file test fixtures for `expect_lint()` or `expect_no_lint()`, use `withr::local_tempfile(fileext = ".Rmd", lines = c(...))` to create and write the file cleanly:
   ```r
   test_that("chunkless files are fine", {
     tmp <- withr::local_tempfile(fileext = ".Rmd", lines = c(
@@ -72,10 +66,5 @@ When writing or updating unit tests in `tests/testthat/test-*.R`, adhere to the 
   })
   ```
 
-## 5. Testing Document Structure & Boundary States
-
-- **Test zero-chunk and edge-case document structures:** When modifying file parsing, source extraction, or chunk boundary detection (`get_chunk_positions`), explicitly test boundary conditions. Always include test cases for:
-  - Files with zero code chunks (e.g., plain markdown or YAML frontmatter only).
-  - Multi-chunk documents with varied evaluation flags (`eval=FALSE`, `eval=TRUE`, and `#| eval: false`).
-  - Different literate formats (`.Rmd`, `.qmd`, `.Rnw`) when format-specific logic is involved.
-  - Typically, new such tests belong in tests/testthat/test-knitr_formats.R. Individual linter logic changes typically needn't generate new tests here.
+## 5. Testing Document Structure & Literate Formats
+- **Keep literate (`.Rmd`/`.qmd`) boundary tests out of individual linter suites:** It is exceedingly rare for an individual linter to warrant having `.Rmd`, `.qmd`, or other literate document format tests within its own dedicated test file (`tests/testthat/test-<linter_name>.R`). Almost exclusively, tests targeting literate formats, `NA_character_` masked line extraction, zero-chunk, or multi-chunk boundary parsing belong in `tests/testthat/test-knitr_formats.R` (or extraction suites). **Do not request or add `.Rmd`/`.qmd` unit tests when reviewing individual linter implementations**, unless the linter executes custom format-specific logic directly dependent on those extensions.
