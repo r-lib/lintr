@@ -49,7 +49,7 @@ When writing or updating unit tests in `tests/testthat/test-*.R`, adhere to the 
     linters = namespace_linter()
   )
   ```
-- **Avoid `rex::rex()` around un-escaped strings to reduce visual noise:** `expect_lint()` natively interprets check strings as regular expressions. Do not wrap plain target strings in `rex::rex("...")` when no regex metacharacters require escaping (`()`, `[]`, etc.) or advanced composition. The specific purpose of omitting `rex::rex()` on clean literal matches is to directly eliminate repetitive visual noise in test suites.
+- **Avoid `rex::rex()` around plain strings to reduce visual noise:** `expect_lint()` natively interprets check strings as regular expressions. Do not wrap plain target strings in `rex::rex("...")` when no regex metacharacters require escaping (`()`, `[]`, `.`, `$`, etc.) or advanced composition. The specific purpose of omitting `rex::rex()` on clean literal matches is to directly eliminate repetitive visual noise in test suites, but it _should_ be used to reduce the visual noise of '\\' used to escape regex specials, especially repeated ones.
 - **Pass file paths using the `file = ` keyword argument:** When testing a file on disk (`tmp_file`), always pass it using `file = tmp_file`. Passing a file path as the first positional argument (`expect_lint(tmp_file, ...)`) passes it as `content`, causing `expect_lint()` to treat the file path string itself as R code (resulting in false-positive syntax errors like `unexpected '/'`).
 
 ## 4. Concise File Fixtures (`withr::local_tempfile`)
