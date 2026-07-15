@@ -422,16 +422,6 @@ test_that("indentation with operators works", {
     list("Indentation should be 2 spaces but is 12 spaces.", line_number = 2L),
     linter
   )
-
-  # don't suggest 'argument' start on previous line
-  expect_lint(
-    trim_some("
-      first_step() +
-                    second_step()
-    "),
-    list(rex::rex("Indentation should be 2 spaces but is 14 spaces."), line_number = 2L),
-    linter
-  )
 })
 
 test_that("indentation with bracket works", {
@@ -742,15 +732,30 @@ test_that("hanging_indent_stlye works", {
     list(rex::rex("Hanging indent should be 10 spaces but is 8 spaces."), line_number = 3L),
     tidy_linter
   )
+})
 
+test_that("previous token is respected when recommending to 'start argument on previous line'", {
   expect_lint(
     trim_some("
       result <- {
                  do_something()
       }
+      abc[[
+           'elem'
+      ]]
+      def[
+          'key'
+      ]
+      first_step() +
+                    second_step()
     "),
-    list(rex::rex("Indentation should be 2 spaces but is 11 spaces."), line_number = 2L),
-    tidy_linter
+    list(
+      list(rex::rex("should be 2 spaces but is 11 spaces."), line_number = 2L),
+      list(rex::rex("should be 2 spaces but is 5 spaces (or start argument on previous line)."), line_number = 5L),
+      list(rex::rex("should be 2 spaces but is 4 spaces (or start argument on previous line)."), line_number = 8L),
+      list(rex::rex("should be 2 spaces but is 14 spaces."), line_number = 11L)
+    ),
+    indentation_linter()
   )
 })
 
