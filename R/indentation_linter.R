@@ -283,17 +283,17 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       return(list())
     }
 
-    result <- indent_lint_metadata(lint_line_df)
+    lint_metadata <- indent_lint_metadata(lint_line_df)
 
     Map(
       Lint,
       filename = source_expression$filename,
-      line_number = result$lint_lines,
-      column_number = result$lint_cols,
+      line_number = lint_metadata$line_numbers,
+      column_number = lint_metadata$column_numbers,
       type = "style",
-      message = result$lint_messages,
-      line = unname(source_expression$file_lines[result$lint_lines]),
-      ranges = result$lint_ranges_list
+      message = lint_metadata$lint_messages,
+      line = lint_metadata$lines,
+      ranges = lint_metadata$ranges
     )
   })
 }
@@ -332,21 +332,20 @@ indent_lint_metadata <- function(line_metadata) {
     ifelse(hanging_cols > 0L & indent_level == hanging_cols, " (or start argument on previous line)", "")
   ))
 
-  lint_lines <- line_metadata$number
-  lint_cols <- line_metadata$indent_level
-  lint_ranges_list <- Map(\(x, y) list(c(x, y)),
+  ranges <- with(line_metadata, Map(\(x, y) list(c(x, y)),
     # when indent_levels==0, need to start ranges at column 1.
-    pmax(pmin(line_metadata$expected_level + 1L, lint_cols), 1L),
+    pmax(pmin(expected_level + 1L, indent_level), 1L),
     # If the expected indent is larger than the current line width, the lint range would become invalid.
     # Therefore, limit range end to end of line.
-    pmin(pmax(line_metadata$expected_level, lint_cols), nchar(line_metadata$line) + 1L)
-  )
+    pmin(pmax(expected_level, indent_level), nchar(line) + 1L)
+  ))
 
   list(
-    lint_lines = lint_lines,
-    lint_cols = lint_cols,
+    lines = line_metadata$line,
+    line_numbers = line_metadata$number,
+    column_numbers = line_metadata$indent_level,
     lint_messages = lint_messages,
-    lint_ranges_list = lint_ranges_list
+    ranges = ranges
   )
 }
 
