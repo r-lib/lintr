@@ -174,7 +174,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 2 spaces but is 4 spaces",
+    rex::rex("Indentation should be 2 spaces but is 4 spaces."),
     linter
   )
 
@@ -186,7 +186,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    "Indentation should be 2 spaces but is 6 spaces",
+    rex::rex("Indentation should be 2 spaces but is 6 spaces."),
     linter
   )
 
@@ -259,7 +259,7 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a()
       }
     "),
-    list("Indentation should be 4 spaces but is 8 spaces", line_number = 3L),
+    list(rex::rex("Indentation should be 4 spaces but is 8 spaces."), line_number = 3L),
     linter
   )
 
@@ -435,7 +435,7 @@ test_that("indentation with operators works", {
       first_step() +
                   second_step()
     "),
-    list("Indentation should be 2 spaces but is 12 spaces.", line_number = 2L),
+    list(rex::rex("Indentation should be 2 spaces but is 12 spaces."), line_number = 2L),
     linter
   )
 })
@@ -569,8 +569,8 @@ test_that("indentation within string constants is ignored", {
       '
     "),
     list(
-      list("Hanging indent should be 4 spaces but is 0 spaces.", line_number = 2L),
-      list("Indentation should be 0 spaces but is 2 spaces", line_number = 11L)
+      list(rex::rex("Hanging indent should be 4 spaces but is 0 spaces."), line_number = 2L),
+      list(rex::rex("Indentation should be 0 spaces but is 2 spaces"), line_number = 11L)
     ),
     linter
   )
@@ -733,7 +733,7 @@ test_that("hanging_indent_stlye works", {
         y = 2)
       )
     "),
-    list("Hanging indent should be 10 spaces but is 2 spaces.", line_number = 3L),
+    list(rex::rex("Hanging indent should be 10 spaces but is 2 spaces."), line_number = 3L),
     tidy_linter
   )
 
