@@ -742,6 +742,16 @@ test_that("hanging_indent_stlye works", {
     list(rex::rex("Hanging indent should be 10 spaces but is 8 spaces."), line_number = 3L),
     tidy_linter
   )
+
+  expect_lint(
+    trim_some("
+      result <- {
+                 do_something()
+      }
+    "),
+    list(rex::rex("Indentation should be 2 spaces but is 11 spaces."), line_number = 2L),
+    tidy_linter
+  )
 })
 
 test_that("assignment_as_infix works", {

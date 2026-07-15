@@ -252,7 +252,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         hanging_indent = col2s[ii]
       )
       line_metadata$is_hanging[to_indent] <- change_types[ii] == "hanging"
-      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% paren_tokens_left
+      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% setdiff(paren_tokens_left, "OP-LEFT-BRACE")
       line_metadata$hanging_cols[to_indent] <- if (is_paren_block) col2s[ii] else 0L
     }
 
