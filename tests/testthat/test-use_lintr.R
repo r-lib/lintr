@@ -100,10 +100,7 @@ test_that("use_lintr creates .Rbuildignore if none exists inside a package struc
   ignore_path <- file.path(tmp, ".Rbuildignore")
   expect_false(file.exists(ignore_path))
 
-  expect_message(
-    use_lintr(path = tmp),
-    regexp = rex::rex("Added ^\\.lintr$ to `.Rbuildignore`")
-  )
+  expect_message(use_lintr(path = tmp), "Added ^\\.lintr$ to `.Rbuildignore`", fixed = TRUE)
   expect_true(file.exists(ignore_path))
   expect_identical(readLines(ignore_path), "^\\.lintr$")
 })
