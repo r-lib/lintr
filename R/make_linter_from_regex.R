@@ -1,7 +1,8 @@
 make_linter_from_regex <- function(regex,
                                    lint_type,
                                    lint_msg) {
-  function() { # nocov: only run at namespace load time
+  # nocov start: only run at namespace load time, and unexported.
+  function() {
     Linter(linter_level = "file", function(source_expression) {
       all_matches <- re_matches(
         source_expression[["file_lines"]],
@@ -29,7 +30,8 @@ make_linter_from_regex <- function(regex,
       })
       lints[lengths(lints) > 0L]
     })
-  } # nocov: ditto opening brace
+  }
+  # nocov end.
 }
 
 #' Determine if a regex match is covered by an expression in a source_expression
