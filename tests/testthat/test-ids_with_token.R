@@ -8,4 +8,3 @@ test_that("ids_with_token works as expected", {
 test_that("ids_with_token returns empty integer vector when source_expression is not at expression level", {
   expect_identical(ids_with_token(list(full_parsed_content = 1L), value = "expr"), integer())
 })
-

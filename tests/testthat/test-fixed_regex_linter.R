@@ -382,17 +382,10 @@ test_that("pipe-aware lint logic survives adversarial comments", {
     fixed_regex_linter()
   )
 })
-test_that("fixed_regex_linter properly simplifies escaped character groups and character escape codes right via public API", {
-  expect_lint(
-    'grep("[\\\\$]", x)',
-    rex::rex("This regular expression is static"),
-    fixed_regex_linter()
-  )
-  expect_lint(
-    'grep("\\u0020", x)',
-    rex::rex("This regular expression is static"),
-    fixed_regex_linter()
-  )
+test_that("fixed_regex_linter properly simplifies escaped character groups and character escape codes", {
+  linter <- fixed_regex_linter()
+  lint_message <- rex::rex("This regular expression is static")
+
+  expect_lint(R'[grep("[\\$]", x)]', lint_message, linter)
+  expect_lint(R'[grep("\u0020", x)]', lint_message, linter)
 })
-
-

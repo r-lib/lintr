@@ -107,4 +107,3 @@ test_that("use_lintr creates .Rbuildignore if none exists inside a package struc
   expect_true(file.exists(ignore_path))
   expect_identical(readLines(ignore_path), "^\\.lintr$")
 })
-

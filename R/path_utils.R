@@ -113,7 +113,7 @@ split_path <- function(dirs, prefix) {
   }
 
   # add // to protocols (like http, smb, ...)
-  # nocov start: Protocol strings yield FALSE from is_path()/is_absolute_path() so split_paths is unreachable on URLs via public path linters
+  # nocov start: Protocol strings yield FALSE from is_path()/is_absolute_path() so split_paths is unreachable on URLs
   if (length(dirs) > 0L && grepl("..:$", dirs[[1L]])) {
     dirs[[1L]] <- paste0(dirs[[1L]], "//")
   }

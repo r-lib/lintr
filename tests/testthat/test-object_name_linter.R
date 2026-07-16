@@ -375,9 +375,7 @@ test_that("generics assigned with '=' or <<- are registered", {
 
 test_that("object_name_linter checks that regexes is a character vector", {
   expect_error(
-    object_name_linter(styles = "snake_case", regexes = 123),
+    object_name_linter(styles = "snake_case", regexes = 123L),
     "must be a.*character.*vector"
   )
 })
-
-

@@ -121,5 +121,3 @@ test_that("undesirable_operator_linter checks that call_is_undesirable is logica
     "must be a logical"
   )
 })
-
-

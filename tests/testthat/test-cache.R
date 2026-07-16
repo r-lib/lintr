@@ -101,7 +101,7 @@ test_that("cache = TRUE works with nolint", {
   expect_length(lint(file, linters, cache = TRUE), 0L)
 })
 
-test_that("cached lints adjust correctly right when line numbers shift up, shift down, or vanish (using purely public API)", {
+test_that("cached lints adjust correctly right when line numbers shift up, shift down, or vanish", {
   path <- withr::local_tempdir()
   file <- withr::local_tempfile(fileext = ".R")
   linter <- commas_linter()
@@ -145,26 +145,21 @@ test_that("cache loading muffles load warnings and warns gracefully on read fail
   expect_length(lint(filename = file, linters = linter, cache = path), 0L)
 
   # When load emits a warning during public lint(), suppressWarnings handles it silently
-  local_mocked_bindings(load = \(...) warning("fake warning"), .package = "base")
+  local_mocked_bindings(load = \(...) cli::cli_warn("fake warning"), .package = "base")
   expect_length(lint(filename = file, linters = linter, cache = path), 0L)
 
   # When load encounters an error during public lint(), a descriptive warning is bubbled up
-  local_mocked_bindings(load = \(...) stop("fake error"), .package = "base")
+  local_mocked_bindings(load = \(...) cli::cli_abort("fake error"), .package = "base")
   expect_warning(lint(filename = file, linters = linter, cache = path), "Could not load cache file")
 })
-
-
 
 test_that("parser errors and parser warnings are cached appropriately via public API", {
   path <- withr::local_tempdir("cond_cache_dir")
   file_err <- withr::local_tempfile(fileext = ".R", lines = "function() {)")
-  expect_true(length(lint(file_err, cache = path)) > 0L)
-  expect_true(length(lint(file_err, cache = path)) > 0L)
+  expect_gt(length(lint(file_err, cache = path)), 0L)
+  expect_gt(length(lint(file_err, cache = path)), 0L)
 
   file_warn <- withr::local_tempfile(fileext = ".R", lines = "100000000000000000000000000000000000L")
-  expect_true(length(lint(file_warn, cache = path)) > 0L)
-  expect_true(length(lint(file_warn, cache = path)) > 0L)
+  expect_gt(length(lint(file_warn, cache = path)), 0L)
+  expect_gt(length(lint(file_warn, cache = path)), 0L)
 })
-
-
-

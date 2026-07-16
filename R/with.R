@@ -197,7 +197,8 @@ linters_with_defaults <- function(..., defaults = default_linters) {
 call_linter_factory <- function(linter_factory, linter_name, package) {
   linter <- tryCatch(
     linter_factory(),
-    # nocov start: built-in and valid third-party linters instantiate without throwing errors when called with default arguments
+    # nocov start: built-in and valid third-party linters instantiate without
+    #   throwing errors when called with default arguments
     error = function(e) {
       cli_abort(
         "Could not create linter with {.fun {package}::{linter_name}}.",

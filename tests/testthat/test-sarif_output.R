@@ -70,4 +70,3 @@ test_that("`sarif_output` handles multiple distinct rules properly", {
     expect_length(sarif$runs[[1L]]$tool$driver$rules, 2L)
   })
 })
-

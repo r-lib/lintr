@@ -51,4 +51,3 @@ test_that("checkstyle_output formats relative path from package attribute", {
   checkstyle_output(lints, tmp)
   expect_true(any(grepl("pkg/R/test_file.R", readLines(tmp), fixed = TRUE)))
 })
-

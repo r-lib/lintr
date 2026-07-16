@@ -209,4 +209,3 @@ test_that("validate_true_false ensures error_on_lint is logical during public li
   withr::local_options(lintr.linter_file = good_cfg)
   expect_length(lint(file = tmp), 0L)
 })
-

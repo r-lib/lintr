@@ -178,7 +178,7 @@ return_linter <- function(
 
 nested_return_lints <- function(expr, params) {
   child_expr <- xml_children(expr)
-  # nocov start: XML expressions produced by R parse trees strictly contain at least one child node, making 0-child expressions unreachable via public linter execution
+  # nocov start: XML expressions produced by R parse trees strictly contain at least one child node
   if (length(child_expr) == 0L) {
     return(list())
   }

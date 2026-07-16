@@ -11,4 +11,3 @@ test_that("with_id works as expected", {
 test_that("with_id returns empty data frame when source_expression is not at expression level", {
   expect_identical(with_id(list(full_parsed_content = 1L), id = 1L), data.frame())
 })
-
