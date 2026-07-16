@@ -9,5 +9,7 @@ test_that("with_id works as expected", {
 })
 
 test_that("with_id returns empty data frame when source_expression is not at expression level", {
-  expect_identical(with_id(list(full_parsed_content = 1L), id = 1L), data.frame())
+  source_expressions <- get_source_expressions("tmp.R", "a <- 42L")$expressions
+  file_level_expr <- source_expressions[[length(source_expressions)]]
+  expect_identical(with_id(file_level_expr, id = 1L), data.frame())
 })

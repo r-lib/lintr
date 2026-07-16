@@ -134,3 +134,13 @@ test_that("cyclocomp_linter does warn as intended", {
 
   expect_warning(linters_with_tags("configurable"), "cyclocomp::cyclocomp")
 })
+
+test_that("call_linter_factory reports informative abort when a linter factory fails instantiation", {
+  local_mocked_bindings(
+    assignment_linter = function(...) stop("simulated factory failure")
+  )
+  expect_error(
+    linters_with_tags("default"),
+    "Could not create linter with"
+  )
+})
