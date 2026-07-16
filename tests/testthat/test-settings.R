@@ -209,3 +209,12 @@ test_that("incorrect argument type for error_on_lint is caught", {
   withr::local_options(lintr.linter_file = good_cfg)
   expect_length(lint(filename = tmp), 0L)
 })
+
+test_that("missing Encoding field inside an Rproj file defaults cleanly across public lint() flow", {
+  pkg_dir <- withr::local_tempdir()
+  write.dcf(list(Version = "1.0"), file.path(pkg_dir, "testpkg.Rproj"))
+  tmp <- file.path(pkg_dir, "test.R")
+  writeLines("a <- 1", tmp)
+
+  expect_length(lint(filename = tmp, linters = assignment_linter()), 0L)
+})
