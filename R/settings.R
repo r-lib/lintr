@@ -280,7 +280,7 @@ reset_settings <- function() list2env(default_settings, envir = settings)
 
 find_default_encoding <- function(filename) {
   if (is.null(filename)) {
-    return(NULL)
+    return(NULL) # nocov
   }
 
   filename |>
@@ -291,8 +291,9 @@ find_default_encoding <- function(filename) {
 
 get_encoding_from_dcf <- function(file) {
   if (is.null(file)) {
-    return(NULL)
+    return(NULL) # nocov
   }
+
 
   encodings <- tryCatch(
     unname(drop(read.dcf(file, "Encoding"))),

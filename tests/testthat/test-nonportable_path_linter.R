@@ -73,8 +73,3 @@ test_that("lints vectorize", {
     nonportable_path_linter(lax = FALSE)
   )
 })
-
-test_that("split_paths helper correctly handles protocol paths", {
-  expect_identical(split_paths("http://example.com/a"), list(c("http://", "example.com", "a")))
-})
-

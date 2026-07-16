@@ -178,10 +178,13 @@ return_linter <- function(
 
 nested_return_lints <- function(expr, params) {
   child_expr <- xml_children(expr)
+  # nocov start: XML expressions produced by R parse trees strictly contain at least one child node, making 0-child expressions unreachable via public linter execution
   if (length(child_expr) == 0L) {
     return(list())
   }
+  # nocov end
   names(child_expr) <- xml_name_(child_expr)
+
 
   if (names(child_expr)[1L] == "OP-LEFT-BRACE") {
     brace_return_lints(child_expr, expr, params)

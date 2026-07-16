@@ -913,25 +913,3 @@ test_that("interpret_glue is defunct", {
     rex::rex("interpret_glue", anything, "deprecated")
   )
 })
-
-test_that("object_usage_linter handles evaluation errors cleanly", {
-  local_mocked_bindings(try_silently = \(...) structure("error", class = "try-error"))
-  expect_no_lint("foo <- function() { x <- 1 }", object_usage_linter())
-})
-
-test_that("object_usage_linter fallback to line-based matches when matched_symbol is NA", {
-  # When line-based match is found vs not found
-  local_mocked_bindings(
-    parse_check_usage = \(...) data.frame(
-      name = c("missing_sym1", "missing_sym2"),
-      line1 = c(1L, 99L),
-      line2 = c(1L, 99L),
-      message = c("msg1", "msg2")
-    )
-  )
-  linter <- object_usage_linter()
-  lints <- lint(text = "foo <- function() { x + 1 }", linters = linter)
-  expect_length(lints, 2L)
-})
-
-

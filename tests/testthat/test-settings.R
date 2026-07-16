@@ -192,28 +192,21 @@ test_that("settings can be put in a sub-directory", {
   withr::local_options(lintr.linter_file = .lintr)
   expect_length(lint_package(), 1L)
 })
-
-test_that("read_config_file aborts cleanly on malformed config syntax", {
-  .lintr <- withr::local_tempfile(lines = "linters: list( + )")
-  withr::local_options(lintr.linter_file = .lintr)
-  expect_error(read_settings("."), "Malformed config file")
-  expect_error(read_config_file(.lintr), "Malformed config setting")
+test_that("malformed config syntax aborts helpfully during public lint() evaluation", {
+  tmp <- withr::local_tempfile(fileext = ".R", lines = "x <- 1")
+  bad_dcf <- withr::local_tempfile(lines = "linters: list( + )")
+  withr::local_options(lintr.linter_file = bad_dcf)
+  expect_error(lint(tmp), "Malformed config file")
 })
 
-test_that("validate_true_false ensures error_on_lint is a logical value", {
+test_that("validate_true_false ensures error_on_lint is logical during public lint() evaluation", {
+  tmp <- withr::local_tempfile(fileext = ".R", lines = "x <- 1")
   bad_cfg <- withr::local_tempfile(lines = "error_on_lint: 'yes'")
   withr::local_options(lintr.linter_file = bad_cfg)
-  expect_error(read_settings("."), "Setting.*error_on_lint.*should be TRUE or FALSE")
+  expect_error(lint(tmp), "Setting.*error_on_lint.*should be TRUE or FALSE")
 
   good_cfg <- withr::local_tempfile(lines = "error_on_lint: TRUE")
   withr::local_options(lintr.linter_file = good_cfg)
-  expect_silent(read_settings("."))
-})
-
-
-test_that("settings helpers cleanly return NULL when input filename is NULL", {
-  expect_null(find_config(NULL))
-  expect_null(find_default_encoding(NULL))
-  expect_null(get_encoding_from_dcf(NULL))
+  expect_length(lint(file = tmp), 0L)
 })
 

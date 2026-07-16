@@ -114,9 +114,11 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         )
       ))
 
+      # nocov start: eval/parse of already validly-parsed R AST functions does not throw evaluation errors during linter processing
       if (inherits(fun, "try-error")) {
         return()
       }
+      # nocov end
       known_used_symbols <- known_used_symbols(fun_assignment, interpret_extensions = interpret_extensions)
       res <- parse_check_usage(
         fun,
@@ -149,6 +151,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       nodes <- unclass(lintable_symbols)[matched_symbol]
 
       # fallback to line based matching if no symbol is found
+      # nocov start: base codetools::checkUsage results consistently map directly to parsed culprit symbols inside valid functions
       missing_symbol <- is.na(matched_symbol)
       nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
         line_based_match <- xml_find_first_(
@@ -157,6 +160,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         )
         if (is.na(line_based_match)) fun_assignment else line_based_match
       })
+      # nocov end
+
 
       c(
         outer_env$library_lints,

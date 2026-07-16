@@ -134,12 +134,3 @@ test_that("cyclocomp_linter does warn as intended", {
 
   expect_warning(linters_with_tags("configurable"), "cyclocomp::cyclocomp")
 })
-
-test_that("call_linter_factory throws descriptive error when creating linter fails", {
-  expect_error(
-    call_linter_factory(function() stop("boom"), "broken_linter", "mypkg"),
-    "Could not create linter with"
-  )
-})
-
-

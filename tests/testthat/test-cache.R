@@ -101,47 +101,61 @@ test_that("cache = TRUE works with nolint", {
   expect_length(lint(file, linters, cache = TRUE), 0L)
 })
 
-test_that("load_cache muffles warnings and catches corrupted files", {
+test_that("cached lints adjust correctly right when line numbers shift up, shift down, or vanish (using purely public API)", {
   path <- withr::local_tempdir()
-  file <- "dummy.R"
-  cache_path <- file.path(path, digest::digest(file, algo = "sha1"))
+  file <- withr::local_tempfile(fileext = ".R")
+  linter <- commas_linter()
 
-  # Test warning handling during load (file must exist first)
-  writeLines("dummy content", cache_path)
+  # 1. Initial run and exact match at line 2 (`x <- c(1,2)` triggers a comma spacing lint)
+  writeLines(c("# top", "x <- c(1,2)", "# bottom"), file)
+  l1 <- lint(filename = file, linters = linter, cache = path)
+  expect_length(l1, 1L)
+  expect_identical(l1[[1L]]$line_number, 2L)
+
+  # Exact hit right inside retrieve_lint when exact line matches after modifying surrounding comments
+  writeLines(c("# top modified", "x <- c(1,2)", "# bottom modified"), file)
+  l2 <- lint(filename = file, linters = linter, cache = path)
+  expect_length(l2, 1L)
+  expect_identical(l2[[1L]]$line_number, 2L)
+
+  # 2. Line shifts earlier (low match): move expression to line 1
+  writeLines(c("x <- c(1,2)", "# mid modified", "# bottom"), file)
+  l_low <- lint(filename = file, linters = linter, cache = path)
+  expect_length(l_low, 1L)
+  expect_identical(l_low[[1L]]$line_number, 1L)
+
+  # 3. Line shifts later (high match): move expression to line 3
+  writeLines(c("# top modified again", "# mid modified again", "x <- c(1,2)"), file)
+  l_high <- lint(filename = file, linters = linter, cache = path)
+  expect_length(l_high, 1L)
+  expect_identical(l_high[[1L]]$line_number, 3L)
+
+  # 4. Line text no longer present (NA / NULL fallback): append # nolint directly on line 3
+  writeLines(c("# top modified again", "# mid modified again", "x <- c(1,2) # nolint"), file)
+  expect_length(lint(filename = file, linters = linter, cache = path), 0L)
+})
+
+
+test_that("cache loading muffles load warnings and warns gracefully on read failures right via public lint()", {
+  path <- withr::local_tempdir()
+  file <- withr::local_tempfile(fileext = ".R", lines = "a <- 1")
+  linter <- assignment_linter()
+
+  # Populate cache
+  expect_length(lint(filename = file, linters = linter, cache = path), 0L)
+
+  # When load emits a warning during public lint(), suppressWarnings handles it silently
   local_mocked_bindings(load = \(...) warning("fake warning"), .package = "base")
-  expect_silent(load_cache(file, path))
+  expect_length(lint(filename = file, linters = linter, cache = path), 0L)
 
-
-  # Test error handling when cache file is corrupted or cannot be read by load
+  # When load encounters an error during public lint(), a descriptive warning is bubbled up
   local_mocked_bindings(load = \(...) stop("fake error"), .package = "base")
-  writeLines("not rdata", cache_path)
-  expect_warning(load_cache(file, path), "Could not load cache file")
+  expect_warning(lint(filename = file, linters = linter, cache = path), "Could not load cache file")
 })
 
-test_that("retrieve_lint and find_new_line handle moved and removed lines", {
-  cache <- new.env(parent = emptyenv())
-  expr <- list(content = "x <- 1\n", parsed_content = data.frame())
-  linter <- "dummy_linter"
-  lints <- list(
-    Lint("test.R", line_number = 2L, line = "line_exact"),
-    Lint("test.R", line_number = 2L, line = "line_low"),
-    Lint("test.R", line_number = 2L, line = "line_high"),
-    Lint("test.R", line_number = 2L, line = "line_missing")
-  )
 
-  # When a line cannot be found, retrieve_lint returns NULL
-  cache_lint(cache, expr, linter, lints)
-  lines <- c("line_low", "line_exact", "line_high")
-  expect_null(retrieve_lint(cache, expr, linter, lines))
 
-  # When all lines are found across exact, lower, or higher offsets
-  cache_lint(cache, expr, linter, lints[1L:3L])
-  ret <- retrieve_lint(cache, expr, linter, lines)
-  expect_length(ret, 3L)
-  expect_identical(vapply(ret, `[[`, integer(1L), "line_number"), c(2L, 1L, 3L))
-})
-
-test_that("parser errors and parser warnings are cached appropriately", {
+test_that("parser errors and parser warnings are cached appropriately via public API", {
   path <- withr::local_tempdir("cond_cache_dir")
   file_err <- withr::local_tempfile(fileext = ".R", lines = "function() {)")
   expect_true(length(lint(file_err, cache = path)) > 0L)
@@ -151,5 +165,6 @@ test_that("parser errors and parser warnings are cached appropriately", {
   expect_true(length(lint(file_warn, cache = path)) > 0L)
   expect_true(length(lint(file_warn, cache = path)) > 0L)
 })
+
 
 
