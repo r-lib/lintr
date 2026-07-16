@@ -279,10 +279,6 @@ get_setting <- function(setting, config, defaults) {
 reset_settings <- function() list2env(default_settings, envir = settings)
 
 find_default_encoding <- function(filename) {
-  if (is.null(filename)) {
-    return(NULL) # nocov
-  }
-
   filename |>
     find_package(allow_rproj = TRUE) |>
     find_rproj_at() |>

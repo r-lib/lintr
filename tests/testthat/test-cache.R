@@ -143,7 +143,8 @@ test_that("cache loading muffles load warnings and warns gracefully on read fail
   # Populate cache
   expect_length(lint(filename = file, linters = linter, cache = path), 0L)
 
-  # When load emits a warning during public lint(), suppressWarnings handles it silently
+  # Very rare for load() to warn(), but previously we used tryCatch() incorrectly
+  #   for that case, so here we mock it to warn to ensure we handle it correctly.
   local_mocked_bindings(load = \(...) cli::cli_warn("fake warning"), .package = "base")
   expect_length(lint(filename = file, linters = linter, cache = path), 0L)
 
