@@ -5,7 +5,7 @@ expect_no_lint_linter <- make_linter_from_xpath(
   "Use expect_no_lint() to test for the lack of lints"
 )
 linters <- all_linters(
-  backport_linter("3.6.0", except = c("R_user_dir", "deparse1", "...names")),
+  backport_linter("4.1.0", except = "%||%"),
   line_length_linter(120L),
   object_overwrite_linter(allow_names = c("line", "lines", "pipe", "symbols")),
   todo_comment_linter(
