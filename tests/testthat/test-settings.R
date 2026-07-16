@@ -207,5 +207,5 @@ test_that("validate_true_false ensures error_on_lint is logical during public li
 
   good_cfg <- withr::local_tempfile(lines = "error_on_lint: TRUE")
   withr::local_options(lintr.linter_file = good_cfg)
-  expect_length(lint(file = tmp), 0L)
+  expect_length(lint(filename = tmp), 0L)
 })

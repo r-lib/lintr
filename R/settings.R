@@ -290,8 +290,8 @@ find_default_encoding <- function(filename) {
 }
 
 get_encoding_from_dcf <- function(file) {
-  if (is.null(file)) {
-    return(NULL) # nocov
+  if (length(file) == 0L) {
+    return(NULL)
   }
 
   encodings <- tryCatch(

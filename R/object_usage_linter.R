@@ -151,7 +151,6 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       nodes <- unclass(lintable_symbols)[matched_symbol]
 
       # fallback to line based matching if no symbol is found
-      # nocov start: checkUsage results consistently map directly to parsed culprit symbols inside valid functions
       missing_symbol <- is.na(matched_symbol)
       nodes[missing_symbol] <- lapply(which(missing_symbol), function(i) {
         line_based_match <- xml_find_first_(
@@ -160,7 +159,6 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         )
         if (is.na(line_based_match)) fun_assignment else line_based_match
       })
-      # nocov end
 
       c(
         outer_env$library_lints,

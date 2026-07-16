@@ -111,20 +111,16 @@ assignment_linter <- function(operator = "<-",
     glue("//LEFT_ASSIGN[{ xp_text_in_table(setdiff(c('<-', '<<-'), operator)) }]"),
     if (!"%<>%" %in% operator) "//SPECIAL[text() = '%<>%']"
   )
-  if (!is.null(op_xpath_parts)) {
-    implicit_assignment_xpath <- "[not(ancestor::expr[
-      preceding-sibling::*[
-        self::expr/SYMBOL_FUNCTION_CALL
-        or self::IF
-        or self::WHILE
-        or self::IN
-      ]
-      and not(descendant-or-self::expr/*[1][self::OP-LEFT-PAREN])
-    ])]"
-    op_xpath <- paste0(op_xpath_parts, implicit_assignment_xpath, collapse = " | ")
-  } else {
-    op_xpath <- NULL # nocov
-  }
+  implicit_assignment_xpath <- "[not(ancestor::expr[
+    preceding-sibling::*[
+      self::expr/SYMBOL_FUNCTION_CALL
+      or self::IF
+      or self::WHILE
+      or self::IN
+    ]
+    and not(descendant-or-self::expr/*[1][self::OP-LEFT-PAREN])
+  ])]"
+  op_xpath <- paste0(op_xpath_parts, implicit_assignment_xpath, collapse = " | ")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content

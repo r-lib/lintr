@@ -384,8 +384,9 @@ test_that("pipe-aware lint logic survives adversarial comments", {
 })
 test_that("fixed_regex_linter properly simplifies escaped character groups and character escape codes", {
   linter <- fixed_regex_linter()
-  lint_message <- rex::rex("This regular expression is static")
+  lint_message <- "This regular expression is static"
 
   expect_lint(R'[grep("[\\$]", x)]', lint_message, linter)
   expect_lint(R'[grep("\u0020", x)]', lint_message, linter)
+  expect_lint(R'[grep("\\u0020", x)]', lint_message, linter)
 })

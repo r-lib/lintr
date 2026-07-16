@@ -106,10 +106,7 @@ get_token_replacement <- function(token_content, token_type) {
   } else if (re_matches(token_content, rex("\\", one_of(rx_escapable_tokens)))) {
     substr(token_content, start = 2L, stop = nchar(token_content))
   } else {
-    # nocov start: all non-escaped char_escape sequences like \n or \x20 are unescaped by R parser
-    #   at AST construction prior to linter evaluation
     eval(parse(text = paste0('"', token_content, '"')))
-    # nocov end
   }
 }
 

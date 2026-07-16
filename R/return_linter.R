@@ -178,9 +178,9 @@ return_linter <- function(
 
 nested_return_lints <- function(expr, params) {
   child_expr <- xml_children(expr)
-  # nocov start: XML expressions produced by R parse trees strictly contain at least one child node
+  # nocov start
   if (length(child_expr) == 0L) {
-    return(list())
+    cli_abort_internal("Reached an expression with no children in return_linter(); please report.")
   }
   # nocov end
   names(child_expr) <- xml_name_(child_expr)
