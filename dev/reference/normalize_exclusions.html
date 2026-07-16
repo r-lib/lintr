@@ -57,7 +57,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">normalize_exclusions</span><span class="op">(</span><span class="va">x</span>, normalize_path <span class="op">=</span> <span class="cn">TRUE</span>, root <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">normalize_exclusions</span><span class="op">(</span><span class="va">x</span>, root <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -69,11 +69,6 @@
 <li><p>A named list of integers specifying lines to be excluded per file</p></li>
 <li><p>A named list of named lists specifying linters and lines to be excluded for the linters per file.</p></li>
 </ul></dd>
-
-
-<dt id="arg-normalize-path">normalize_path<a class="anchor" aria-label="anchor" href="#arg-normalize-path"></a></dt>
-<dd><p>Should the names of the returned exclusion list be normalized paths?
-If <code>FALSE</code>, they will be relative to <code>root</code>.</p></dd>
 
 
 <dt id="arg-root">root<a class="anchor" aria-label="anchor" href="#arg-root"></a></dt>
@@ -92,9 +87,6 @@ The names of the list specify the filenames to be excluded.</p>
 <p>Each file exclusion is a possibly named list containing line numbers to exclude, or the sentinel <code>Inf</code> for
 completely excluded files. If the an entry is named, the exclusions only take effect for the linter with
 the same name.</p>
-<p>If <code>normalize_path</code> is <code>TRUE</code>, file names will be normalized relative to <code>root</code>.
-Otherwise the paths are left as provided (relative to <code>root</code> or absolute). That also means
-existence is not checked.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

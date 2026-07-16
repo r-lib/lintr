@@ -5,7 +5,7 @@ Normalize lint exclusions
 ## Usage
 
 ``` r
-normalize_exclusions(x, normalize_path = TRUE, root = getwd(), pattern = NULL)
+normalize_exclusions(x, root = getwd(), pattern = NULL)
 ```
 
 ## Arguments
@@ -22,11 +22,6 @@ normalize_exclusions(x, normalize_path = TRUE, root = getwd(), pattern = NULL)
 
   - A named list of named lists specifying linters and lines to be
     excluded for the linters per file.
-
-- normalize_path:
-
-  Should the names of the returned exclusion list be normalized paths?
-  If `FALSE`, they will be relative to `root`.
 
 - root:
 
@@ -48,7 +43,3 @@ Each file exclusion is a possibly named list containing line numbers to
 exclude, or the sentinel `Inf` for completely excluded files. If the an
 entry is named, the exclusions only take effect for the linter with the
 same name.
-
-If `normalize_path` is `TRUE`, file names will be normalized relative to
-`root`. Otherwise the paths are left as provided (relative to `root` or
-absolute). That also means existence is not checked.
