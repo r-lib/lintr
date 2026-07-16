@@ -133,7 +133,7 @@ Simply install `sublimeLinter-contrib-lintr` using [Package
 Control](https://packagecontrol.io/).
 
 For more information see [Sublime Linter
-Docs](http://sublimelinter.readthedocs.io/en/latest/installation.html#installing-via-pc)
+Docs](https://sublimelinter.readthedocs.io/en/latest/installation.html#installing-via-pc)
 
 ### Configuration
 

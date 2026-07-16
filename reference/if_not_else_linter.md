@@ -30,7 +30,7 @@ It also applies to [`ifelse()`](https://rdrr.io/r/base/ifelse.html) and
 the package equivalents
 [`dplyr::if_else()`](https://dplyr.tidyverse.org/reference/if_else.html)
 and
-[`data.table::fifelse()`](https://rdatatable.gitlab.io/data.table/reference/fifelse.html).
+[`data.table::fifelse()`](https://rdrr.io/pkg/data.table/man/fifelse.html).
 
 ## See also
 

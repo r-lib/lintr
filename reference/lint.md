@@ -130,11 +130,11 @@ linters.
 ``` r
 # linting inline-code
 lint("a = 123\n")
-#> <text>:1:3: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+#> <text>:1:3: style: [assignment_linter] Use <- for assignment, not =.
 #> a = 123
 #>   ^
 lint(text = "a = 123")
-#> <text>:1:3: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+#> <text>:1:3: style: [assignment_linter] Use <- for assignment, not =.
 #> a = 123
 #>   ^
 
@@ -142,10 +142,10 @@ lint(text = "a = 123")
 f <- tempfile()
 writeLines("a=1", f)
 lint(f)
-#> /tmp/RtmpbSvlBw/file190f72d7c23f:1:2: style: [assignment_linter] Use one of <-, <<- for assignment, not =.
+#> /tmp/RtmpvkMYUC/file18f240f81740:1:2: style: [assignment_linter] Use <- for assignment, not =.
 #> a=1
 #>  ^
-#> /tmp/RtmpbSvlBw/file190f72d7c23f:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
+#> /tmp/RtmpvkMYUC/file18f240f81740:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
 #> a=1
 #>  ^
 unlink(f)

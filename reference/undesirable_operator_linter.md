@@ -117,9 +117,7 @@ lint(
   text = "`:::`(utils, hasName)",
   linters = undesirable_operator_linter(call_is_undesirable = FALSE)
 )
-#> <text>:1:1: warning: [undesirable_operator_linter] Avoid undesirable operator `:::`. It accesses non-exported functions inside packages. Code relying on these is likely to break in future versions of the package because the functions are not part of the public interface and may be changed or removed by the maintainers without notice. Use public functions via `::` instead.
-#> `:::`(utils, hasName)
-#> ^~~~~
+#> ℹ No lints found.
 
 lint(
   text = 'mtcars[["wt"]]',

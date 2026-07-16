@@ -4,6 +4,12 @@
 pipeline does not actually execute
 [`return()`](https://rdrr.io/r/base/function.html) like you'd expect:
 
+    bad_usage <- function(x) {
+      x %>%
+        return()
+      FALSE
+    }
+
 ## Usage
 
 ``` r
@@ -11,12 +17,6 @@ pipe_return_linter()
 ```
 
 ## Details
-
-    bad_usage <- function(x) {
-      x %>%
-        return()
-      FALSE
-    }
 
 `bad_usage(TRUE)` will return `FALSE`! It will technically work "as
 expected" if this is the final statement in the function body, but such

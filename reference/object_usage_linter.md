@@ -19,11 +19,7 @@ object_usage_linter(
 
 - interpret_glue:
 
-  (Deprecated) If `TRUE`, interpret
-  [`glue::glue()`](https://glue.tidyverse.org/reference/glue.html) calls
-  to avoid false positives caused by local variables which are only used
-  in a glue expression. Provide `interpret_extensions` instead, see
-  below.
+  (Defunct)
 
 - interpret_extensions:
 

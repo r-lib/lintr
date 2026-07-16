@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A Linter for R Code">
 <meta name="description" content="Checks adherence to a given style, syntax errors and possible semantic issues. Supports on the fly checking of R code edited with RStudio IDE, Emacs, Vim, Sublime Text, Atom and Visual Studio Code.">
@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.3.0-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,17 +84,75 @@
 </h1>
 </div>
 <p><a href="https://github.com/r-lib/lintr/actions" class="external-link"><img src="https://github.com/r-lib/lintr/workflows/R-CMD-check/badge.svg" alt="R build status"></a> <a href="https://app.codecov.io/gh/r-lib/lintr?branch=main" class="external-link"><img src="https://codecov.io/gh/r-lib/lintr/branch/main/graphs/badge.svg" alt="codecov.io"></a> <a href="https://cran.r-project.org/package=lintr" class="external-link"><img src="https://www.r-pkg.org/badges/version/lintr" alt="CRAN_Status_Badge"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="lifecycle"></a> <a href="https://doi.org/10.21105/joss.07240" class="external-link"><img src="https://joss.theoj.org/papers/10.21105/joss.07240/status.svg" alt="DOI"></a></p>
-<p><a href="https://lintr.r-lib.org">lintr</a> provides <a href="https://en.wikipedia.org/wiki/Static_program_analysis" class="external-link">static code analysis for R</a>. It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action. Watch lintr in action in the following animation:</p>
-<p><img src="reference/figures/demo.gif" title="lintr demo"></p>
+<p><a href="https://lintr.r-lib.org">lintr</a> provides <a href="https://en.wikipedia.org/wiki/Static_program_analysis" class="external-link">static code analysis for R</a>. It checks for adherence to a given style, identifying syntax errors and possible semantic issues, then reports them to you so you can take action.</p>
+<p>For example, given a file <code>bad.R</code> with the following contents:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">my_func</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Positive"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw">else</span> <span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Not positive"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Running <code><a href="reference/lint.html">lintr::lint()</a></code> on this file would produce the following output:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/lint.html">lint</a></span><span class="op">(</span><span class="st">"bad.R"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>bad.R:1:9: style: [assignment_linter] Use one of &lt;-, &lt;&lt;- for assignment, not =.
+my_func = function(x){
+        ^
+bad.R:1:22: style: [brace_linter] There should be a space before an opening curly brace.
+my_func = function(x){
+                     ^
+bad.R:1:22: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+my_func = function(x){
+                     ^
+bad.R:2:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    if(x &gt; 0){
+  ~^
+bad.R:2:7: style: [spaces_left_parentheses_linter] Place a space before left parenthesis, except in a function call.
+    if(x &gt; 0){
+      ^
+bad.R:2:14: style: [brace_linter] There should be a space before an opening curly brace.
+    if(x &gt; 0){
+             ^
+bad.R:2:14: style: [paren_body_linter] Put a space between a right parenthesis and a body expression.
+    if(x &gt; 0){
+             ^
+bad.R:3:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+        print("Positive")
+    ~~~^
+bad.R:4:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    }
+  ~^
+bad.R:5:5: style: [brace_linter] `else` should come on the same line as the previous `}`.
+    else {
+    ^~~~
+bad.R:6:8: style: [indentation_linter] Indentation should be 4 spaces but is 8 spaces.
+        print("Not positive")
+    ~~~^
+bad.R:7:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+    }
+  ~^
+bad.R:8:5: style: [return_linter] Use implicit return behavior; explicit return() is not needed.
+    return(T)
+    ^~~~~~
+bad.R:8:13: style: [T_and_F_symbol_linter] Use TRUE instead of the symbol T.
+    return(T)
+           ~^
+bad.R:10:1: style: [trailing_blank_lines_linter] Remove trailing blank lines.
+
+^</code></pre>
 <p><a href="https://lintr.r-lib.org">lintr</a> is complementary to <a href="https://github.com/r-lib/styler" class="external-link">the <code>{styler}</code> package</a> which automatically restyles code, eliminating some of the problems that <a href="https://lintr.r-lib.org">lintr</a> can detect.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install the stable version from CRAN:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"lintr"</span><span class="op">)</span></span></code></pre></div>
 <p>Or the development version from GitHub:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"r-lib/lintr"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -102,7 +160,7 @@
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
 <p>And then you can create a configuration file and run selected linters:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/use_lintr.html">use_lintr</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"tidyverse"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># in a project:</span></span>
@@ -111,7 +169,7 @@
 <span><span class="co"># in a package:</span></span>
 <span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/lint.html">lint_package</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>To see a list of linters included for each configuration:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># tidyverse (default)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="reference/linters_with_defaults.html">linters_with_defaults</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -121,7 +179,7 @@
 <h3 id="setting-up-github-actions">Setting up GitHub Actions<a class="anchor" aria-label="anchor" href="#setting-up-github-actions"></a>
 </h3>
 <p><a href="https://usethis.r-lib.org" class="external-link">usethis</a> provides helper functions to generate lint workflows for GitHub Actions:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># in a project:</span></span>
 <span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_github_action</span><span class="op">(</span><span class="st">"lint-project"</span><span class="op">)</span></span>
 <span></span>
@@ -179,8 +237,10 @@
 <li>Michael Chirico <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-0787-087X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Kun Ren <br><small class="roles"> Author </small>   </li>
 <li>Alexander Rosenstock <br><small class="roles"> Author </small>   </li>
-<li>Indrajeet Patil <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-1995-6531" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>
+<a href="https://indrajeetpatil.github.io/" class="external-link">Indrajeet Patil</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-1995-6531" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Hugo Gruson <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-4094-1476" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Emmanuel Ferdman <br><small class="roles"> Author </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -192,11 +252,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Jim Hester, Florent Angly, Russ Hyde, Michael Chirico, Kun Ren, Alexander Rosenstock, Indrajeet Patil, Hugo Gruson.</p>
+  <p>Developed by Jim Hester, Florent Angly, Russ Hyde, Michael Chirico, Kun Ren, Alexander Rosenstock, <a href="https://indrajeetpatil.github.io/" class="external-link">Indrajeet Patil</a>, Hugo Gruson, Emmanuel Ferdman.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

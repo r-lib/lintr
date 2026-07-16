@@ -1,12 +1,12 @@
-pandoc: 3.1.11
-pkgdown: 2.2.0
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   continuous-integration: continuous-integration.html
   creating_linters: creating_linters.html
   editors: editors.html
   lintr: lintr.html
-last_built: 2025-12-07T13:44Z
+last_built: 2026-07-16T04:57Z
 urls:
   reference: https://lintr.r-lib.org/reference
   article: https://lintr.r-lib.org/articles

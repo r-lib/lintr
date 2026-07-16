@@ -26,12 +26,9 @@ indentation_linter(
   Indentation style for multi-line function calls with arguments in
   their first line. Defaults to tidyverse style, i.e. a block indent is
   used if the function call terminates with `)` on a separate line and a
-  hanging indent if not. Note that function multi-line function calls
-  without arguments on their first line will always be expected to have
-  block-indented arguments. If `hanging_indent_style` is `"tidy"`,
-  multi-line function definitions are expected to be double-indented if
-  the first line of the function definition contains no arguments and
-  the closing parenthesis is not on its own line.
+  hanging indent if not. Note that multi-line function calls without
+  arguments on their first line will always be expected to have
+  block-indented arguments.
 
       # complies to any style
       map(
@@ -60,8 +57,9 @@ indentation_linter(
 
       # complies to "tidy"
       function(
-          a,
-          b) {
+        a,
+        b
+      ) {
         # body
       }
 
@@ -155,7 +153,7 @@ lint(
   text = code_lines,
   linters = indentation_linter(hanging_indent_style = "never")
 )
-#> <text>:2:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
+#> <text>:2:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces (or start argument on previous line).
 #>     additional_arg = 42)
 #>   ~^
 

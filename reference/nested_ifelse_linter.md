@@ -34,7 +34,7 @@ Let's say this is our original code:
 Here are a few ways to avoid nesting and make the code more readable:
 
 - Use
-  [`data.table::fcase()`](https://rdatatable.gitlab.io/data.table/reference/fcase.html)
+  [`data.table::fcase()`](https://rdrr.io/pkg/data.table/man/fcase.html)
 
       data.table::fcase(
         x == "a", 2L,

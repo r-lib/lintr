@@ -50,7 +50,7 @@ lint(
   text = "str2lang(x)",
   linters = backport_linter("3.2.0")
 )
-#> <text>:1:1: warning: [backport_linter] str2lang (R 3.6.0) is not always available for requested dependency (R >= 3.2.0).
+#> <text>:1:1: warning: [backport_linter] str2lang (R 3.6.1) is not always available for requested dependency (R >= 3.2.0).
 #> str2lang(x)
 #> ^~~~~~~~
 

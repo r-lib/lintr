@@ -73,6 +73,14 @@ lint(
 #> sort(x) == x
 #> ^~~~~~~~~~~~
 
+lint(
+  text = "rev(sort(x))",
+  linters = sort_linter()
+)
+#> <text>:1:1: warning: [sort_linter] Use sort(x, decreasing = TRUE) instead of rev(sort(x)). If present, `na.last` value needs to be flipped
+#> rev(sort(x))
+#> ^~~~~~~~~~~~
+
 # okay
 lint(
   text = "x[sample(order(x))]",
@@ -88,6 +96,12 @@ lint(
 
 lint(
   text = "sort(x, decreasing = TRUE) == x",
+  linters = sort_linter()
+)
+#> ℹ No lints found.
+
+lint(
+  text = "sort(x, decreasing = TRUE)",
   linters = sort_linter()
 )
 #> ℹ No lints found.

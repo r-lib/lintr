@@ -20,8 +20,7 @@ conjunct_test_linter(
 - allow_named_stopifnot:
 
   Logical, `TRUE` by default. If `FALSE`, "named" calls to
-  [`stopifnot()`](https://rdrr.io/r/base/stopifnot.html), available
-  since R 4.0.0 to provide helpful messages for test failures, are also
+  [`stopifnot()`](https://rdrr.io/r/base/stopifnot.html) are also
   linted.
 
 - allow_filter:

@@ -6,7 +6,11 @@ for which can be de-activated optionally):
 1.  Block usage of [`base::paste()`](https://rdrr.io/r/base/paste.html)
     with `sep = ""`.
     [`base::paste0()`](https://rdrr.io/r/base/paste.html) is a faster,
-    more concise alternative.
+    more concise alternative; this is valid unless `paste` occurs inside
+    [base::expression](https://rdrr.io/r/base/expression.html), which
+    according to
+    [grDevices::plotmath](https://rdrr.io/r/grDevices/plotmath.html)
+    does not support the `sep` argument.
 
 2.  Block usage of [`paste()`](https://rdrr.io/r/base/paste.html) or
     [`paste0()`](https://rdrr.io/r/base/paste.html) with
@@ -33,6 +37,13 @@ for which can be de-activated optionally):
     Only target scalar usages – `strrep` can handle more complicated
     cases (e.g. `strrep(letters, 26:1)`, but those aren't as easily
     translated from a `paste(collapse=)` call.
+
+5.  Block usage of [`paste()`](https://rdrr.io/r/base/paste.html) or
+    [`paste0()`](https://rdrr.io/r/base/paste.html) to collapse the
+    output of [`base::deparse()`](https://rdrr.io/r/base/deparse.html),
+    e.g. `paste(deparse(x), collapse = " ")`.
+    [`base::deparse1()`](https://rdrr.io/r/base/deparse.html) is a more
+    readable equivalent, i.e. `deparse1(x)`.
 
 ## Usage
 
@@ -141,6 +152,22 @@ lint(
 #> paste0(x, collapse = "")
 #> ^~~~~~~~~~~~~~~~~~~~~~~~
 
+lint(
+  text = 'expression(paste("a", "b", sep = ""))',
+  linters = paste_linter()
+)
+#> <text>:1:12: warning: [paste_linter] inside expression(...), paste does not accept a 'sep' argument.
+#> expression(paste("a", "b", sep = ""))
+#>            ^~~~~~~~~~~~~~~~~~~~~~~~~
+
+lint(
+  text = 'paste(deparse(x), collapse = " ")',
+  linters = paste_linter()
+)
+#> <text>:1:1: warning: [paste_linter] Use deparse1(x) instead of paste(deparse(x), collapse = ...).
+#> paste(deparse(x), collapse = " ")
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # okay
 lint(
   text = 'paste0("a", "b")',
@@ -192,6 +219,18 @@ lint(
 
 lint(
   text = 'paste(x, collapse = "")',
+  linters = paste_linter()
+)
+#> ℹ No lints found.
+
+lint(
+  text = 'expression(paste("a", "b"))',
+  linters = paste_linter()
+)
+#> ℹ No lints found.
+
+lint(
+  text = "deparse1(x)",
   linters = paste_linter()
 )
 #> ℹ No lints found.

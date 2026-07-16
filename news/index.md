@@ -1,398 +1,5 @@
 # Changelog
 
-## lintr 3.3.0-1
-
-CRAN release: 2025-11-27
-
-### Deprecations & breaking changes
-
-- The default for
-  [`pipe_consistency_linter()`](https://lintr.r-lib.org/reference/pipe_consistency_linter.md)
-  is changed from `"auto"` (require one pipe style, either magrittr or
-  native) to `"|>"` (R native pipe required) to coincide with the same
-  change in the Tidyverse Style Guide
-  ([\#2707](https://github.com/r-lib/lintr/issues/2707),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`lint()`](https://lintr.r-lib.org/reference/lint.md) no longer picks
-  up settings automatically in *ad hoc* invocations like
-  `lint("text\n")` or `lint(text = "str")`. You should set
-  `parse_settings=TRUE` to force settings to be read. Emacs ESS users
-  may need to update to a recent version, e.g. `ESS>20251003`.
-- Arguments `allow_cascading_assign=`, `allow_right_assign=`, and
-  `allow_pipe_assign=` to
-  [`assignment_linter()`](https://lintr.r-lib.org/reference/assignment_linter.md)
-  are now defunct.
-- Six linters marked as deprecated with warning in the previous release
-  are now fully deprecated:
-  [`consecutive_stopifnot_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md),
-  [`extraction_operator_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md),
-  [`no_tab_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md),
-  [`single_quotes_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md),
-  [`unnecessary_nested_if_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md),
-  and
-  [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md).
-  They will be removed in the next release.
-- As previously announced, the following fully-deprecated items are now
-  removed from the package:
-  - `source_file=` argument to
-    [`ids_with_token()`](https://lintr.r-lib.org/reference/ids_with_token.md)
-    and
-    [`with_id()`](https://lintr.r-lib.org/reference/ids_with_token.md).
-  - Passing linters by name or as non-`"linter"`-classed functions.
-  - `linter=` argument of
-    [`Lint()`](https://lintr.r-lib.org/reference/lint-s3.md).
-  - `with_defaults()`.
-  - Linters `closed_curly_linter()`, `open_curly_linter()`,
-    `paren_brace_linter()`, and `semicolon_terminator_linter()`.
-- Argument `interpret_glue` to
-  [`object_usage_linter()`](https://lintr.r-lib.org/reference/object_usage_linter.md)
-  is deprecated in favor of the more general `interpret_extensions`, in
-  which `"glue"` is present by default
-  ([\#1472](https://github.com/r-lib/lintr/issues/1472),
-  [@MichaelChirico](https://github.com/MichaelChirico)). See the
-  description below under ‘New and improved features’.
-- [`Lint()`](https://lintr.r-lib.org/reference/lint-s3.md), and thus all
-  linters, require that the returned object’s `message` attribute is
-  consistently a simple character string (and not, for example, an
-  object of class `"glue"`;
-  [\#2740](https://github.com/r-lib/lintr/issues/2740),
-  [@MichaelChirico](https://github.com/MichaelChirico)). In general it
-  is good to avoid slower string builders like `glue()` inside a loop (a
-  linter might be run on every expression in your pakcage). Classed
-  character strings return a warning in this release, which will be
-  upgraded to an error subsequently.
-
-### Bug fixes
-
-- Files with encoding inferred from settings read more robustly under
-  `lint(parse_settings = TRUE)`
-  ([\#2803](https://github.com/r-lib/lintr/issues/2803),
-  [@MichaelChirico](https://github.com/MichaelChirico)). Thanks also to
-  [@bastistician](https://github.com/bastistician) for detecting a
-  regression caused by the initial change for users of Emacs
-  ([\#2847](https://github.com/r-lib/lintr/issues/2847)).
-- [`assignment_linter()`](https://lintr.r-lib.org/reference/assignment_linter.md)
-  no longer errors if `"%<>%"` is an allowed operator
-  ([\#2850](https://github.com/r-lib/lintr/issues/2850),
-  [@AshesITR](https://github.com/AshesITR)).
-- [`expect_lint()`](https://lintr.r-lib.org/reference/expect_lint.md)
-  conforms to {testthat} v3.3.0+ rules for custom expectations, namely
-  that they produce either exactly one success or exactly one failure
-  ([\#2937](https://github.com/r-lib/lintr/issues/2937),
-  [@hadley](https://github.com/hadley)).
-
-### Changes to default linters
-
-- [`pipe_consistency_linter()`](https://lintr.r-lib.org/reference/pipe_consistency_linter.md),
-  with its new default to enforce the native pipe `|>`, is now a default
-  linter, since it corresponds directly to a rule in the Tidyverse Style
-  Guide ([\#2707](https://github.com/r-lib/lintr/issues/2707),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-
-### New and improved features
-
-#### New linters
-
-- [`all_equal_linter()`](https://lintr.r-lib.org/reference/all_equal_linter.md)
-  warns about incorrect use of
-  [`all.equal()`](https://rdrr.io/r/base/all.equal.html) in `if` clauses
-  or preceded by `!`
-  ([\#2885](https://github.com/r-lib/lintr/issues/2885),
-  [@Bisaloo](https://github.com/Bisaloo)). Such usages should wrap
-  [`all.equal()`](https://rdrr.io/r/base/all.equal.html) with
-  [`isTRUE()`](https://rdrr.io/r/base/Logic.html), for example.
-- [`download_file_linter()`](https://lintr.r-lib.org/reference/download_file_linter.md)
-  encourages the use of `mode = "wb"` (or `mode = "ab"`) when using
-  [`download.file()`](https://rdrr.io/r/utils/download.file.html),
-  rather than `mode = "w"` or `mode = "a"`, as the latter can produce
-  broken files in Windows
-  ([\#2882](https://github.com/r-lib/lintr/issues/2882),
-  [@Bisaloo](https://github.com/Bisaloo)).
-- [`list2df_linter()`](https://lintr.r-lib.org/reference/list2df_linter.md)
-  encourages the use of the
-  [`list2DF()`](https://rdrr.io/r/base/list2DF.html) function, or the
-  [`data.frame()`](https://rdrr.io/r/base/data.frame.html) function when
-  recycling is required, over the slower and less readable
-  `do.call(cbind.data.frame, )` alternative
-  ([\#2834](https://github.com/r-lib/lintr/issues/2834),
-  [@Bisaloo](https://github.com/Bisaloo)).
-- [`coalesce_linter()`](https://lintr.r-lib.org/reference/coalesce_linter.md)
-  encourages the use of the infix operator `x %||% y`, which is
-  equivalent to `if (is.null(x)) y else x`
-  ([\#2246](https://github.com/r-lib/lintr/issues/2246),
-  [@MichaelChirico](https://github.com/MichaelChirico)). While this has
-  long been used in many tidyverse packages (it was added to {ggplot2}
-  in 2008), it became part of every R installation from R 4.4.0. Thanks
-  also to [@emmanuel-ferdman](https://github.com/emmanuel-ferdman) for
-  fixing a false positive before release.
-
-#### Linter improvements
-
-- [`brace_linter()`](https://lintr.r-lib.org/reference/brace_linter.md)
-  has a new argument `function_bodies` (default `"multi_line"`) which
-  controls when to require function bodies to be wrapped in curly
-  braces, with the options `"always"`, `"multi_line"` (only require
-  curly braces when a function body spans multiple lines),
-  `"not_inline"` (only require curly braces when a function body starts
-  on a new line) and `"never"`
-  ([\#1807](https://github.com/r-lib/lintr/issues/1807),
-  [\#2240](https://github.com/r-lib/lintr/issues/2240),
-  [@salim-b](https://github.com/salim-b)).
-- [`seq_linter()`](https://lintr.r-lib.org/reference/seq_linter.md):
-  - recommends using `seq_along(x)` instead of `seq_len(length(x))`
-    ([\#2577](https://github.com/r-lib/lintr/issues/2577),
-    [@MichaelChirico](https://github.com/MichaelChirico)).
-  - recommends using
-    [`sequence()`](https://rdrr.io/r/base/sequence.html) instead of
-    `unlist(lapply(ints, seq))`
-    ([\#2618](https://github.com/r-lib/lintr/issues/2618),
-    [@Bisaloo](https://github.com/Bisaloo)).
-- [`undesirable_operator_linter()`](https://lintr.r-lib.org/reference/undesirable_operator_linter.md):
-  - Lints operators in prefix form, e.g. `` `%%`(x, 2) ``
-    ([\#1910](https://github.com/r-lib/lintr/issues/1910),
-    [@MichaelChirico](https://github.com/MichaelChirico)). Disable this
-    by setting `call_is_undesirable=FALSE`.
-  - Accepts unnamed entries, treating them as undesirable operators,
-    e.g. `undesirable_operator_linter("%%")`
-    ([\#2536](https://github.com/r-lib/lintr/issues/2536),
-    [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`undesirable_function_linter()`](https://lintr.r-lib.org/reference/undesirable_function_linter.md)
-  accepts unnamed entries, treating them as undesirable functions,
-  e.g. `undesirable_function_linter("sum")`
-  ([\#2536](https://github.com/r-lib/lintr/issues/2536),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`indentation_linter()`](https://lintr.r-lib.org/reference/indentation_linter.md)
-  handles un-braced `for` loops correctly
-  ([\#2564](https://github.com/r-lib/lintr/issues/2564),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- Setting `exclusions` supports globs like `knitr*` to exclude
-  files/directories with a pattern
-  ([\#1554](https://github.com/r-lib/lintr/issues/1554),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`object_name_linter()`](https://lintr.r-lib.org/reference/object_name_linter.md)
-  and
-  [`object_length_linter()`](https://lintr.r-lib.org/reference/object_length_linter.md)
-  apply to objects assigned with
-  [`assign()`](https://rdrr.io/r/base/assign.html) or generics created
-  with `setGeneric()`
-  ([\#1665](https://github.com/r-lib/lintr/issues/1665),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`object_usage_linter()`](https://lintr.r-lib.org/reference/object_usage_linter.md)
-  gains argument `interpret_extensions` to govern which false
-  positive-prone common syntaxes should be checked for used objects
-  ([\#1472](https://github.com/r-lib/lintr/issues/1472),
-  [@MichaelChirico](https://github.com/MichaelChirico)). Currently
-  `"glue"` (renamed from earlier argument `interpret_glue`) and
-  `"rlang"` are supported. The latter newly covers usage of the `.env`
-  pronoun like `.env$key`, where `key` was previously missed as being a
-  used variable.
-- [`boolean_arithmetic_linter()`](https://lintr.r-lib.org/reference/boolean_arithmetic_linter.md)
-  finds many more cases like `sum(x | y) == 0` where the total of a
-  known-logical vector is compared to 0
-  ([\#1580](https://github.com/r-lib/lintr/issues/1580),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`any_duplicated_linter()`](https://lintr.r-lib.org/reference/any_duplicated_linter.md)
-  is extended to recognize some usages from {dplyr} and {data.table}
-  that could be replaced by
-  [`anyDuplicated()`](https://rdrr.io/r/base/duplicated.html),
-  e.g. `n_distinct(col) == n()` or `uniqueN(col) == .N`
-  ([\#2482](https://github.com/r-lib/lintr/issues/2482),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`fixed_regex_linter()`](https://lintr.r-lib.org/reference/fixed_regex_linter.md)
-  recognizes usage of the new (R 4.5.0)
-  [`grepv()`](https://rdrr.io/r/base/grep.html) wrapper of
-  [`grep()`](https://rdrr.io/r/base/grep.html);
-  [`regex_subset_linter()`](https://lintr.r-lib.org/reference/regex_subset_linter.md)
-  also recommends [`grepv()`](https://rdrr.io/r/base/grep.html)
-  alternatives ([\#2855](https://github.com/r-lib/lintr/issues/2855),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`object_usage_linter()`](https://lintr.r-lib.org/reference/object_usage_linter.md)
-  lints missing packages that may cause false positives
-  ([\#2872](https://github.com/r-lib/lintr/issues/2872),
-  [@AshesITR](https://github.com/AshesITR))
-- [`sprintf_linter()`](https://lintr.r-lib.org/reference/sprintf_linter.md)
-  lints [`sprintf()`](https://rdrr.io/r/base/sprintf.html) and
-  [`gettextf()`](https://rdrr.io/r/base/sprintf.html) calls when a
-  constant string is passed to `fmt`
-  ([\#2894](https://github.com/r-lib/lintr/issues/2894),
-  [@Bisaloo](https://github.com/Bisaloo)).
-- [`length_test_linter()`](https://lintr.r-lib.org/reference/length_test_linter.md)
-  is extended to check incorrect usage of
-  [`nrow()`](https://rdrr.io/r/base/nrow.html),
-  [`ncol()`](https://rdrr.io/r/base/nrow.html),
-  [`NROW()`](https://rdrr.io/r/base/nrow.html),
-  [`NCOL()`](https://rdrr.io/r/base/nrow.html)
-  ([\#2933](https://github.com/r-lib/lintr/issues/2933),
-  [@mcol](https://github.com/mcol)).
-- [`implicit_assignment_linter()`](https://lintr.r-lib.org/reference/implicit_assignment_linter.md)
-  gains argument `allow_paren_print` to disable lints for the use of `(`
-  for auto-printing
-  ([\#2962](https://github.com/r-lib/lintr/issues/2962),
-  [@TimTaylor](https://github.com/TimTaylor)).
-- [`line_length_linter()`](https://lintr.r-lib.org/reference/line_length_linter.md)
-  has a new argument `ignore_string_bodies` (defaulting to `FALSE`)
-  which governs whether the contents of multi-line string bodies should
-  be linted ([\#856](https://github.com/r-lib/lintr/issues/856),
-  [@MichaelChirico](https://github.com/MichaelChirico)). We think the
-  biggest use case for this is writing SQL in R strings, especially in
-  cases where the recommended string width for SQL & R differ.
-- [`package_hooks_linter()`](https://lintr.r-lib.org/reference/package_hooks_linter.md)
-  now validates `.onUnload()` hook signatures, requiring exactly one
-  argument starting with ‘lib’
-  ([\#2940](https://github.com/r-lib/lintr/issues/2940),
-  [@emmanuel-ferdman](https://github.com/emmanuel-ferdman)).
-
-#### Lint accuracy fixes: removing false positives
-
-- [`unnecessary_nesting_linter()`](https://lintr.r-lib.org/reference/unnecessary_nesting_linter.md):
-  - Treats function bodies under the shorthand lambda (`\()`) the same
-    as normal function bodies
-    ([\#2748](https://github.com/r-lib/lintr/issues/2748),
-    [@MichaelChirico](https://github.com/MichaelChirico)).
-  - Treats `=` assignment the same as `<-` when deciding to combine
-    consecutive `if()` clauses
-    ([\#2245](https://github.com/r-lib/lintr/issues/2245),
-    [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`string_boundary_linter()`](https://lintr.r-lib.org/reference/string_boundary_linter.md)
-  omits lints of patterns like `\\^` which have an anchor but are not
-  regular expressions
-  ([\#2636](https://github.com/r-lib/lintr/issues/2636),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- `implicit_integer_linter(allow_colon = TRUE)` is OK with negative
-  literals, e.g. `-1:1` or `1:-1`
-  ([\#2673](https://github.com/r-lib/lintr/issues/2673),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`missing_argument_linter()`](https://lintr.r-lib.org/reference/missing_argument_linter.md)
-  allows empty calls like `foo()` even if there are comments between `(`
-  and `)` ([\#2741](https://github.com/r-lib/lintr/issues/2741),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`return_linter()`](https://lintr.r-lib.org/reference/return_linter.md)
-  works on functions that happen to use braced expressions in their
-  formals ([\#2616](https://github.com/r-lib/lintr/issues/2616),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`object_name_linter()`](https://lintr.r-lib.org/reference/object_name_linter.md)
-  and
-  [`object_length_linter()`](https://lintr.r-lib.org/reference/object_length_linter.md)
-  account for S3 class correctly when the generic is assigned with `=`
-  ([\#2507](https://github.com/r-lib/lintr/issues/2507),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`assignment_linter()`](https://lintr.r-lib.org/reference/assignment_linter.md)
-  with `operator = "="` does a better job of skipping implicit
-  assignments, which are intended to be governed by
-  [`implicit_assignment_linter()`](https://lintr.r-lib.org/reference/implicit_assignment_linter.md)
-  ([\#2765](https://github.com/r-lib/lintr/issues/2765),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`implicit_assignment_linter()`](https://lintr.r-lib.org/reference/implicit_assignment_linter.md)
-  with `allow_scoped=TRUE` doesn’t lint for `if (a <- 1) print(a)`
-  ([\#2913](https://github.com/r-lib/lintr/issues/2913),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`expect_true_false_linter()`](https://lintr.r-lib.org/reference/expect_true_false_linter.md)
-  is pipe-aware, so that `42 |> expect_identical(x, ignore_attr = TRUE)`
-  no longer lints ([\#1520](https://github.com/r-lib/lintr/issues/1520),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`T_and_F_symbol_linter()`](https://lintr.r-lib.org/reference/T_and_F_symbol_linter.md)
-  ignores `T` and `F`:
-  - When used as symbols in formulas (`y ~ T + F`), which can represent
-    variables in data not controlled by the author
-    ([\#2637](https://github.com/r-lib/lintr/issues/2637),
-    [@MichaelChirico](https://github.com/MichaelChirico)).
-  - If followed by `[` or `[[`
-    ([\#2944](https://github.com/r-lib/lintr/issues/2944),
-    [@mcol](https://github.com/mcol)).
-
-#### Lint accuracy fixes: removing false negatives
-
-- [`todo_comment_linter()`](https://lintr.r-lib.org/reference/todo_comment_linter.md)
-  finds comments inside {roxygen2} markup comments
-  ([\#2447](https://github.com/r-lib/lintr/issues/2447),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- Linters with logic around function declarations consistently include
-  the R 4.0.0 shorthand `\()`
-  ([\#2818](https://github.com/r-lib/lintr/issues/2818), continuation of
-  earlier [\#2190](https://github.com/r-lib/lintr/issues/2190),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-  - [`library_call_linter()`](https://lintr.r-lib.org/reference/library_call_linter.md)
-  - [`terminal_close_linter()`](https://lintr.r-lib.org/reference/terminal_close_linter.md)
-  - [`unnecessary_lambda_linter()`](https://lintr.r-lib.org/reference/unnecessary_lambda_linter.md)
-- More consistency on handling `@` extractions to match how similar `$`
-  extractions would be linted
-  ([\#2820](https://github.com/r-lib/lintr/issues/2820),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-  - [`function_left_parentheses_linter()`](https://lintr.r-lib.org/reference/function_left_parentheses_linter.md)
-  - [`indentation_linter()`](https://lintr.r-lib.org/reference/indentation_linter.md)
-  - [`library_call_linter()`](https://lintr.r-lib.org/reference/library_call_linter.md)
-  - [`missing_argument_linter()`](https://lintr.r-lib.org/reference/missing_argument_linter.md)
-- [`condition_call_linter()`](https://lintr.r-lib.org/reference/condition_call_linter.md)
-  no longer covers cases where the object type in the ellipsis cannot be
-  determined with certainty
-  ([\#2888](https://github.com/r-lib/lintr/issues/2888),
-  [\#2890](https://github.com/r-lib/lintr/issues/2890),
-  [@Bisaloo](https://github.com/Bisaloo)). In particular, this fixes the
-  known false positive of custom conditions created via
-  [`errorCondition()`](https://rdrr.io/r/base/conditions.html) or
-  [`warningCondition()`](https://rdrr.io/r/base/conditions.html) not
-  being compatible with the `call.` argument in
-  [`stop()`](https://rdrr.io/r/base/stop.html) or
-  [`warning()`](https://rdrr.io/r/base/warning.html).
-
-#### Other improvements
-
-- `get_source_expression()` captures warnings emitted by the R parser
-  (currently always for mis-specified literal integers like `1.1L`) and
-  [`lint()`](https://lintr.r-lib.org/reference/lint.md) returns them as
-  lints ([\#2065](https://github.com/r-lib/lintr/issues/2065),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`expect_lint()`](https://lintr.r-lib.org/reference/expect_lint.md)
-  has a new argument `ignore_order` (default `FALSE`), which, if `TRUE`,
-  allows the `checks=` to be provided in arbitary order vs. how
-  [`lint()`](https://lintr.r-lib.org/reference/lint.md) produces them
-  ([@MichaelChirico](https://github.com/MichaelChirico)).
-- New
-  [`gitlab_output()`](https://lintr.r-lib.org/reference/gitlab_output.md)
-  function to output lints to GitLab format
-  ([\#2858](https://github.com/r-lib/lintr/issues/2858),
-  [@lschneiderbauer](https://github.com/lschneiderbauer)).
-- New argument `include_s4_slots` for the `xml_find_function_calls()`
-  entry in the
-  [`get_source_expressions()`](https://lintr.r-lib.org/reference/get_source_expressions.md)
-  to govern whether calls of the form `s4Obj@fun()` are included in the
-  result ([\#2820](https://github.com/r-lib/lintr/issues/2820),
-  [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`use_lintr()`](https://lintr.r-lib.org/reference/use_lintr.md) adds
-  the created `.lintr` file to the `.Rbuildignore` if run in a package
-  ([\#2926](https://github.com/r-lib/lintr/issues/2926), initial work by
-  [@MEO265](https://github.com/MEO265), finalized by
-  [@Bisaloo](https://github.com/Bisaloo)).
-
-### Notes
-
-- [lintr](https://lintr.r-lib.org) now has an associated paper at the
-  [Journal of Open Source Software](https://doi.org/10.21105/joss.07240)
-  that you can use to cite the package if you use it in a paper - see
-  citation(“lintr”) for details.
-- [`expect_lint_free()`](https://lintr.r-lib.org/reference/expect_lint_free.md)
-  and other functions that rely on the {testthat} framework now have a
-  consistent error message.
-  ([\#2585](https://github.com/r-lib/lintr/issues/2585),
-  [@F-Noelle](https://github.com/F-Noelle)).
-- [`unnecessary_nesting_linter()`](https://lintr.r-lib.org/reference/unnecessary_nesting_linter.md)
-  gives a more specific lint message identifying:
-  - the unmatched “exit call” that prompts the recommendation to reduce
-    nesting ([\#2316](https://github.com/r-lib/lintr/issues/2316),
-    [@MichaelChirico](https://github.com/MichaelChirico)).
-  - the specific `if()` statement that can be combined with the linted
-    one ([\#1891](https://github.com/r-lib/lintr/issues/1891),
-    [@MichaelChirico](https://github.com/MichaelChirico)).
-- The description in
-  [`?paste_linter`](https://lintr.r-lib.org/reference/paste_linter.md)
-  of `allow_file_path=` has been corrected
-  ([\#2675](https://github.com/r-lib/lintr/issues/2675),
-  [@MichaelChirico](https://github.com/MichaelChirico)). In particular,
-  `allow_file_path="never"` is the most strict form,
-  `allow_file_path="always"` is the most lax form.
-- `comment_token` is removed from settings. This was a vestige of the
-  now-defunct support for posting GitHub comments.
-
 ## lintr 3.2.0
 
 CRAN release: 2025-02-12
@@ -427,17 +34,17 @@ CRAN release: 2025-02-12
   favor lint messages to be phrased like “Action, reason” to put the
   “what” piece of the message front-and-center. This may be a breaking
   change for code that tests the specific phrasing of lints.
-- [`extraction_operator_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  is deprecated. Although switching from `$` to `[[` has some robustness
-  benefits for package code, it can lead to non-idiomatic code in many
-  contexts (e.g. R6 classes, Shiny applications, etc.)
+- `extraction_operator_linter()` is deprecated. Although switching from
+  `$` to `[[` has some robustness benefits for package code, it can lead
+  to non-idiomatic code in many contexts (e.g. R6 classes, Shiny
+  applications, etc.)
   ([\#2409](https://github.com/r-lib/lintr/issues/2409),
   [@IndrajeetPatil](https://github.com/IndrajeetPatil)). One reason to
   avoid `$` is that it allows partial matching where `[[` does not. Use
   `options(warnPartialMatchDollar = TRUE)` to disable this feature and
   restore some parity to using `$` vs. `[[`.
-- [`unnecessary_nested_if_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  is deprecated and subsumed into the new/more general
+- `unnecessary_nested_if_linter()` is deprecated and subsumed into the
+  new/more general
   [`unnecessary_nesting_linter()`](https://lintr.r-lib.org/reference/unnecessary_nesting_linter.md).
 - Dropped support for posting GitHub comments from inside GitHub comment
   bot, Travis, Wercker, and Jenkins CI tools (spurred by
@@ -502,7 +109,7 @@ CRAN release: 2025-02-12
   ([\#2375](https://github.com/r-lib/lintr/issues/2375),
   [@MichaelChirico](https://github.com/MichaelChirico)). These have
   always been valid (since
-  [`rex::re_matches()`](https://rdrr.io/pkg/rex/man/re_matches.html),
+  [`rex::re_matches()`](https://rex.r-lib.org/reference/re_matches.html),
   which powers the lint exclusion logic, also uses this setting), but
   the new up-front validation in v3.1.1 incorrectly used `perl = FALSE`.
 - `.lintr` configs set by option `lintr.linter_file` or environment
@@ -1340,8 +947,8 @@ CRAN release: 2023-07-19
   ([\#1746](https://github.com/r-lib/lintr/issues/1746),
   [@tonyk7440](https://github.com/tonyk7440) and
   [@klmr](https://github.com/klmr)).
-- [`single_quotes_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  is deprecated in favor of the more generalizable
+- `single_quotes_linter()` is deprecated in favor of the more
+  generalizable
   [`quotes_linter()`](https://lintr.r-lib.org/reference/quotes_linter.md)
   ([\#1729](https://github.com/r-lib/lintr/issues/1729),
   [@MichaelChirico](https://github.com/MichaelChirico)).
@@ -1350,13 +957,12 @@ CRAN release: 2023-07-19
   for naming consistency
   ([\#1707](https://github.com/r-lib/lintr/issues/1707),
   [@IndrajeetPatil](https://github.com/IndrajeetPatil)).
-- [`consecutive_stopifnot_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  is deprecated in favor of the more general (see below)
+- `consecutive_stopifnot_linter()` is deprecated in favor of the more
+  general (see below)
   [`consecutive_assertion_linter()`](https://lintr.r-lib.org/reference/consecutive_assertion_linter.md)
   ([\#1604](https://github.com/r-lib/lintr/issues/1604),
   [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`no_tab_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  is deprecated in favor of
+- `no_tab_linter()` is deprecated in favor of
   [`whitespace_linter()`](https://lintr.r-lib.org/reference/whitespace_linter.md)
   for naming consistency and future generalization
   ([\#1954](https://github.com/r-lib/lintr/issues/1954),
@@ -1622,10 +1228,9 @@ CRAN release: 2023-07-19
   [@AshesITR](https://github.com/AshesITR))
 
 - [`unnecessary_concatenation_linter()`](https://lintr.r-lib.org/reference/unnecessary_concatenation_linter.md)
-  (f.k.a.
-  [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md))
-  no longer lints on `c(...)` (i.e., passing `...` in a function call)
-  when `allow_single_expression = FALSE`
+  (f.k.a. `unneeded_concatenation_linter()`) no longer lints on `c(...)`
+  (i.e., passing `...` in a function call) when
+  `allow_single_expression = FALSE`
   ([\#1696](https://github.com/r-lib/lintr/issues/1696),
   [@MichaelChirico](https://github.com/MichaelChirico))
 
@@ -1765,9 +1370,9 @@ CRAN release: 2023-07-19
   [\#1792](https://github.com/r-lib/lintr/issues/1792),
   [\#1898](https://github.com/r-lib/lintr/issues/1898)).
 
-- [`unnecessary_nested_if_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  for checking unnecessary nested `if` statements where a single `if`
-  statement with appropriate conditional expression would suffice
+- `unnecessary_nested_if_linter()` for checking unnecessary nested `if`
+  statements where a single `if` statement with appropriate conditional
+  expression would suffice
   ([@IndrajeetPatil](https://github.com/IndrajeetPatil) and
   [@AshesITR](https://github.com/AshesITR),
   [\#1778](https://github.com/r-lib/lintr/issues/1778)).
@@ -1779,32 +1384,24 @@ CRAN release: 2023-07-19
   [\#1777](https://github.com/r-lib/lintr/issues/1777)).
 
 - [`quotes_linter()`](https://lintr.r-lib.org/reference/quotes_linter.md)
-  is a generalized version of (now deprecated)
-  [`single_quotes_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md).
+  is a generalized version of (now deprecated) `single_quotes_linter()`.
   It accepts an argument `delimiter` to specify whether `"` or `'`
   should be the accepted method for delimiting character literals. The
   default, `"`, reflects the Tidyverse style guide recommendation and
-  matches the behavior of
-  [`single_quotes_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md).
+  matches the behavior of `single_quotes_linter()`.
 
 - [`unnecessary_concatenation_linter()`](https://lintr.r-lib.org/reference/unnecessary_concatenation_linter.md)
-  is simply
-  [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md),
-  renamed.
+  is simply `unneeded_concatenation_linter()`, renamed.
 
 - [`consecutive_assertion_linter()`](https://lintr.r-lib.org/reference/consecutive_assertion_linter.md)
-  (f.k.a.
-  [`consecutive_stopifnot_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md))
-  now lints for consecutive calls to `assertthat::assert_that()` (as
-  long as the `msg=` argument is not used;
-  [\#1604](https://github.com/r-lib/lintr/issues/1604),
+  (f.k.a. `consecutive_stopifnot_linter()`) now lints for consecutive
+  calls to `assertthat::assert_that()` (as long as the `msg=` argument
+  is not used; [\#1604](https://github.com/r-lib/lintr/issues/1604),
   [@MichaelChirico](https://github.com/MichaelChirico)).
 
 - [`whitespace_linter()`](https://lintr.r-lib.org/reference/whitespace_linter.md)
-  is simply
-  [`no_tab_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md),
-  renamed. In the future, we plan to extend it to work for different
-  whitespace preferences.
+  is simply `no_tab_linter()`, renamed. In the future, we plan to extend
+  it to work for different whitespace preferences.
 
 ### Notes
 
@@ -2043,6 +1640,7 @@ CRAN release: 2022-06-13
   for custom linters:
 
   ``` r
+
   my_custom_linter <- function(source_expression) { ... }
 
   # becomes
@@ -2264,9 +1862,8 @@ CRAN release: 2022-06-13
   user experience during de-linting – just press Return
   ([\#735](https://github.com/r-lib/lintr/issues/735),
   [@AshesITR](https://github.com/AshesITR)).\*
-- [`no_tab_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md):
-  use more reliable matching (e.g., excluding matches found in comments;
-  [\#441](https://github.com/r-lib/lintr/issues/441),
+- `no_tab_linter()`: use more reliable matching (e.g., excluding matches
+  found in comments; [\#441](https://github.com/r-lib/lintr/issues/441),
   [@russHyde](https://github.com/russHyde)).
 - [`object_length_linter()`](https://lintr.r-lib.org/reference/object_length_linter.md):
   correctly detect generics and only count the implementation class
@@ -2501,8 +2098,7 @@ future releases. See, e.g.
 - [`conjunct_test_linter()`](https://lintr.r-lib.org/reference/conjunct_test_linter.md)
   Require usage of `expect_true(x); expect_true(y)` over
   `expect_true(x && y)` and similar.
-- [`consecutive_stopifnot_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  Require consecutive calls to
+- `consecutive_stopifnot_linter()` Require consecutive calls to
   [`stopifnot()`](https://rdrr.io/r/base/stopifnot.html) to be unified
   into one.
 - [`expect_comparison_linter()`](https://lintr.r-lib.org/reference/expect_comparison_linter.md)
@@ -2536,10 +2132,9 @@ future releases. See, e.g.
   Require usage of `expect_type(x, t)` over `expect_equal(typeof(x), t)`
   and similar.
 - [`fixed_regex_linter()`](https://lintr.r-lib.org/reference/fixed_regex_linter.md)
-  Require `fixed = TRUE` or
-  [`stringr::fixed()`](https://stringr.tidyverse.org/reference/modifiers.html)
-  for regular expressions that can be expressed statically,
-  e.g. `strsplit(x, "[.]")` can be `strsplit(x, ".", fixed = TRUE)`.
+  Require `fixed = TRUE` or `stringr::fixed()` for regular expressions
+  that can be expressed statically, e.g. `strsplit(x, "[.]")` can be
+  `strsplit(x, ".", fixed = TRUE)`.
   - Added parameter `allow_grepl` (default `FALSE`) to toggle whether
     [`grepl()`](https://rdrr.io/r/base/grep.html) usages should be
     linted. These might be treated separately because `grepl("^x", NA)`
@@ -2683,15 +2278,13 @@ future releases. See, e.g.
   several preceding expressions
   ([\#846](https://github.com/r-lib/lintr/issues/846),
   [@jonkeane](https://github.com/jonkeane)).
-- [`extraction_operator_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md):
-  no longer lint `x[NULL]`
+- `extraction_operator_linter()`: no longer lint `x[NULL]`
   ([\#1273](https://github.com/r-lib/lintr/issues/1273),
   [@AshesITR](https://github.com/AshesITR)).
 - [`is_lint_level()`](https://lintr.r-lib.org/reference/is_lint_level.md):
   new exported helper for readably explaining which type of expression
   is required for a custom linter. Some linters are written to require
-  the full file’s parse tree (for example,
-  [`single_quotes_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)).
+  the full file’s parse tree (for example, `single_quotes_linter()`).
   Others only need single expressions, which is more cache-friendly
   (most linters are written this way to leverage caching)
   ([\#921](https://github.com/r-lib/lintr/issues/921),
@@ -2709,7 +2302,7 @@ future releases. See, e.g.
   improve lint message to be clearer about the reason for linting
   ([\#522](https://github.com/r-lib/lintr/issues/522),
   [@MichaelChirico](https://github.com/MichaelChirico)).
-- [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md):
+- `unneeded_concatenation_linter()`:
   - Correctly considers arguments in pipelines (`%>%` or `|>`;
     [\#573](https://github.com/r-lib/lintr/issues/573),
     [\#1270](https://github.com/r-lib/lintr/issues/1270),
@@ -2934,10 +2527,9 @@ since the last major release (1.0.0) in 2016-04-16.
   ([\#143](https://github.com/r-lib/lintr/issues/143),
   [\#326](https://github.com/r-lib/lintr/issues/326),
   [@jabranham](https://github.com/jabranham))
-- New
-  [`extraction_operator_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  checks that the `[[` operator is used when extracting a single element
-  from an object, not `[` (subsetting) nor `$` (interactive use)
+- New `extraction_operator_linter()` checks that the `[[` operator is
+  used when extracting a single element from an object, not `[`
+  (subsetting) nor `$` (interactive use)
   ([@fangly](https://github.com/fangly)).
 - New
   [`function_left_parentheses_linter()`](https://lintr.r-lib.org/reference/function_left_parentheses_linter.md)
@@ -2983,10 +2575,8 @@ since the last major release (1.0.0) in 2016-04-16.
   ([\#48](https://github.com/r-lib/lintr/issues/48),
   [\#149](https://github.com/r-lib/lintr/issues/149),
   [@fangly](https://github.com/fangly)).
-- New
-  [`unneeded_concatenation_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  lints uses of c() with a constant or no arguments
-  ([@fangly](https://github.com/fangly)).
+- New `unneeded_concatenation_linter()` lints uses of c() with a
+  constant or no arguments ([@fangly](https://github.com/fangly)).
 
 ### New functions for writing linters
 
@@ -3034,8 +2624,7 @@ since the last major release (1.0.0) in 2016-04-16.
 - [`function_left_parentheses_linter()`](https://lintr.r-lib.org/reference/function_left_parentheses_linter.md)
   now allows spaces if a function starts with a left parenthesis
   ([\#311](https://github.com/r-lib/lintr/issues/311))
-- [`no_tab_linter()`](https://lintr.r-lib.org/reference/lintr-deprecated.md)
-  now reports proper line in all cases
+- `no_tab_linter()` now reports proper line in all cases
   ([\#134](https://github.com/r-lib/lintr/issues/134),
   [@fangly](https://github.com/fangly))
 - [`object_length_linter()`](https://lintr.r-lib.org/reference/object_length_linter.md)
