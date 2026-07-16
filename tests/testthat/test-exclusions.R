@@ -259,3 +259,15 @@ test_that("capture groups work as intended (#2831)", { # nofuzz: assignment comm
     exclude_next = "(# nolint next)"
   )
 })
+
+test_that("malformed exclusions abort informatively via public API evaluation", {
+  path <- withr::local_tempdir()
+  expect_error(
+    lint_dir(path, exclusions = list(123L)),
+    "Full file exclusions must be.*character.*vectors of length 1"
+  )
+  expect_error(
+    lint_dir(path, exclusions = list(file.R = "bad_lines")),
+    "Full line exclusions must be.*numeric.*or.*integer.*vectors"
+  )
+})

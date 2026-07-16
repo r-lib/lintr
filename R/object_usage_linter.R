@@ -114,9 +114,11 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         )
       ))
 
+      # nocov start
       if (inherits(fun, "try-error")) {
-        return()
+        cli_abort_internal("Invalid code reached in object_usage_linter: {code}\nPlease report.")
       }
+      # nocov end
       known_used_symbols <- known_used_symbols(fun_assignment, interpret_extensions = interpret_extensions)
       res <- parse_check_usage(
         fun,
@@ -155,7 +157,12 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
           fun_assignment,
           glue::glue_data(res[i, ], "descendant::expr[@line1 = {line1} and @line2 = {line2}]")
         )
-        if (is.na(line_based_match)) fun_assignment else line_based_match
+        # nocov start
+        if (is.na(line_based_match)) {
+          cli_abort_internal("Didn't find an expression matching {res$name}. Please report")
+        }
+        # nocov end
+        line_based_match
       })
 
       c(

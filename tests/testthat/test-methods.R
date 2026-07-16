@@ -210,3 +210,9 @@ local({
     wrapped_string = wrapped_strings
   )
 })
+
+test_that("build_line_ref formats hyperlinks when ansi hyperlink support is active", {
+  local_mocked_bindings(ansi_has_hyperlink_support = \(...) TRUE, .package = "cli")
+  l1 <- Lint("dummy.R", line_number = 1L, type = "style", message = "msg", line = "x")
+  expect_match(format(l1), "\033]8;.*file://")
+})

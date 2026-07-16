@@ -192,3 +192,29 @@ test_that("settings can be put in a sub-directory", {
   withr::local_options(lintr.linter_file = .lintr)
   expect_length(lint_package(), 1L)
 })
+test_that("malformed config syntax aborts helpfully", {
+  tmp <- withr::local_tempfile(fileext = ".R", lines = "x <- 1")
+  bad_dcf <- withr::local_tempfile(lines = "linters: list( + )")
+  withr::local_options(lintr.linter_file = bad_dcf)
+  expect_error(lint(tmp), "Malformed config file")
+})
+
+test_that("incorrect argument type for error_on_lint is caught", {
+  tmp <- withr::local_tempfile(fileext = ".R", lines = "x <- 1")
+  bad_cfg <- withr::local_tempfile(lines = "error_on_lint: 'yes'")
+  withr::local_options(lintr.linter_file = bad_cfg)
+  expect_error(lint(tmp), "Setting.*error_on_lint.*should be TRUE or FALSE")
+
+  good_cfg <- withr::local_tempfile(lines = "error_on_lint: TRUE")
+  withr::local_options(lintr.linter_file = good_cfg)
+  expect_length(lint(filename = tmp), 0L)
+})
+
+test_that("missing Encoding field inside an Rproj file defaults cleanly across public lint() flow", {
+  pkg_dir <- withr::local_tempdir()
+  write.dcf(list(Version = "1.0"), file.path(pkg_dir, "testpkg.Rproj"))
+  tmp <- file.path(pkg_dir, "test.R")
+  writeLines("a <- 1", tmp)
+
+  expect_length(lint(filename = tmp, linters = assignment_linter()), 0L)
+})
