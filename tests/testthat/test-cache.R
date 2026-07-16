@@ -157,8 +157,10 @@ test_that("cache loading warns gracefully on read failures from a corrupted disk
   # Populate cache cleanly
   expect_length(lint(filename = file, linters = linter, cache = path), 0L)
 
-  # Simulate a corrupted or truncated binary cache file (e.g., interrupted session right during save)
-  cache_file <- get_cache_file_path(file, path)
+  # Simulate a corrupted or truncated binary cache file (e.g., interrupted session right during save).
+  # normalize_path() ensures exact SHA1 hash match across Windows path separators and short filenames.
+  cache_file <- get_cache_file_path(normalize_path(file), path)
+  expect_true(file.exists(cache_file))
   writeLines("corrupted non-Rda binary header", cache_file)
 
   # When load encounters an invalid header during public lint(), a descriptive warning is bubbled up
