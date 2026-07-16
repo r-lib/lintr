@@ -56,7 +56,6 @@ load_cache <- function(file, path = NULL) {
         )
       }
     )
-
   } # else nothing to do for source file that has no cache
 
   env

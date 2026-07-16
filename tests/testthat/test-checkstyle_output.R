@@ -35,19 +35,17 @@ test_that("return lint report as checkstyle xml", {
 })
 
 test_that("checkstyle_output formats relative path from package attribute", {
-  lints <- list(
-    Lint(
-      filename = "R/test_file.R",
-      line_number = 1L,
-      column_number = 2L,
-      type = "style",
-      line = "a line",
-      message = "foo"
-    )
-  )
+  lints <- list(Lint(
+    filename = "R/test_file.R",
+    line_number = 1L,
+    column_number = 2L,
+    type = "style",
+    line = "a line",
+    message = "foo"
+  ))
   class(lints) <- "lints"
   attr(lints, "path") <- "pkg"
   tmp <- withr::local_tempfile()
   checkstyle_output(lints, tmp)
-  expect_true(any(grepl("pkg/R/test_file.R", readLines(tmp), fixed = TRUE)))
+  expect_match(readLines(tmp), "pkg/R/test_file.R", fixed = TRUE, all = FALSE)
 })
