@@ -135,7 +135,7 @@ test_that("cached lints adjust correctly right when line numbers shift up/down o
   expect_length(lint(filename = file, linters = linter, cache = path), 0L)
 })
 
-test_that("cache loading muffles load warnings and warns gracefully on read failures", {
+test_that("cache loading muffles load warnings", {
   path <- withr::local_tempdir()
   file <- withr::local_tempfile(fileext = ".R", lines = "a <- 1")
   linter <- assignment_linter()
@@ -147,9 +147,21 @@ test_that("cache loading muffles load warnings and warns gracefully on read fail
   #   for that case, so here we mock it to warn to ensure we handle it correctly.
   local_mocked_bindings(load = \(...) cli::cli_warn("fake warning"), .package = "base")
   expect_length(lint(filename = file, linters = linter, cache = path), 0L)
+})
 
-  # When load encounters an error during public lint(), a descriptive warning is bubbled up
-  local_mocked_bindings(load = \(...) cli::cli_abort("fake error"), .package = "base")
+test_that("cache loading warns gracefully on read failures from a corrupted disk cache", {
+  path <- withr::local_tempdir()
+  file <- withr::local_tempfile(fileext = ".R", lines = "a <- 1")
+  linter <- assignment_linter()
+
+  # Populate cache cleanly
+  expect_length(lint(filename = file, linters = linter, cache = path), 0L)
+
+  # Simulate a corrupted or truncated binary cache file (e.g., interrupted session right during save)
+  cache_file <- get_cache_file_path(file, path)
+  writeLines("corrupted non-Rda binary header", cache_file)
+
+  # When load encounters an invalid header during public lint(), a descriptive warning is bubbled up
   expect_warning(lint(filename = file, linters = linter, cache = path), "Could not load cache file")
 })
 
