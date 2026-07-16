@@ -135,7 +135,6 @@ test_that("cached lints adjust correctly right when line numbers shift up, shift
   expect_length(lint(filename = file, linters = linter, cache = path), 0L)
 })
 
-
 test_that("cache loading muffles load warnings and warns gracefully on read failures right via public lint()", {
   path <- withr::local_tempdir()
   file <- withr::local_tempfile(fileext = ".R", lines = "a <- 1")

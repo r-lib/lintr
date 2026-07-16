@@ -113,7 +113,6 @@ get_token_replacement <- function(token_content, token_type) {
   }
 }
 
-
 # some metadata about infix operators on the R parse tree.
 #   xml_tag gives the XML tag as returned by xmlparsedata::xml_parse_data().
 #   r_string gives the operator as you would write it in R code.

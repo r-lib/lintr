@@ -119,7 +119,6 @@ split_path <- function(dirs, prefix) {
   }
   # nocov end
 
-
   # remove empty dirs
   dirs[nzchar(dirs)]
 }

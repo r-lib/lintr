@@ -294,7 +294,6 @@ get_encoding_from_dcf <- function(file) {
     return(NULL) # nocov
   }
 
-
   encodings <- tryCatch(
     unname(drop(read.dcf(file, "Encoding"))),
     error = \(e) NULL,

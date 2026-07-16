@@ -207,7 +207,6 @@ call_linter_factory <- function(linter_factory, linter_name, package) {
     }
     # nocov end
   )
-
   # Otherwise, all linters would be called "linter_factory".
   attr(linter, "name") <- linter_name
   linter

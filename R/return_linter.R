@@ -185,7 +185,6 @@ nested_return_lints <- function(expr, params) {
   # nocov end
   names(child_expr) <- xml_name_(child_expr)
 
-
   if (names(child_expr)[1L] == "OP-LEFT-BRACE") {
     brace_return_lints(child_expr, expr, params)
   } else if (names(child_expr)[1L] == "IF") {

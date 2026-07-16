@@ -161,9 +161,6 @@ find_new_line <- function(line_number, line, lines) {
     return(line_number)
   }
 
-
-
-
   width <- 1L
 
   while (width <= length(lines)) {
