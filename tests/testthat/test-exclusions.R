@@ -260,13 +260,14 @@ test_that("capture groups work as intended (#2831)", { # nofuzz: assignment comm
   )
 })
 
-test_that("normalize_exclusions checks input and handles unmatched globs", {
+test_that("malformed exclusions abort informatively via public API evaluation", {
+  path <- withr::local_tempdir()
   expect_error(
-    normalize_exclusions(list(123L)),
+    lint_dir(path, exclusions = list(123L)),
     "Full file exclusions must be.*character.*vectors of length 1"
   )
   expect_error(
-    normalize_exclusions(list(file.R = "bad_lines")),
+    lint_dir(path, exclusions = list(file.R = "bad_lines")),
     "Full line exclusions must be.*numeric.*or.*integer.*vectors"
   )
 })
