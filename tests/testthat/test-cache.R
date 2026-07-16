@@ -100,3 +100,56 @@ test_that("cache = TRUE works with nolint", {
   writeLines("1+1 # nolint\n", file)
   expect_length(lint(file, linters, cache = TRUE), 0L)
 })
+
+test_that("load_cache muffles warnings and catches corrupted files", {
+  path <- withr::local_tempdir()
+  file <- "dummy.R"
+  cache_path <- file.path(path, digest::digest(file, algo = "sha1"))
+
+  # Test warning handling during load (file must exist first)
+  writeLines("dummy content", cache_path)
+  local_mocked_bindings(load = \(...) warning("fake warning"), .package = "base")
+  expect_silent(load_cache(file, path))
+
+
+  # Test error handling when cache file is corrupted or cannot be read by load
+  local_mocked_bindings(load = \(...) stop("fake error"), .package = "base")
+  writeLines("not rdata", cache_path)
+  expect_warning(load_cache(file, path), "Could not load cache file")
+})
+
+test_that("retrieve_lint and find_new_line handle moved and removed lines", {
+  cache <- new.env(parent = emptyenv())
+  expr <- list(content = "x <- 1\n", parsed_content = data.frame())
+  linter <- "dummy_linter"
+  lints <- list(
+    Lint("test.R", line_number = 2L, line = "line_exact"),
+    Lint("test.R", line_number = 2L, line = "line_low"),
+    Lint("test.R", line_number = 2L, line = "line_high"),
+    Lint("test.R", line_number = 2L, line = "line_missing")
+  )
+
+  # When a line cannot be found, retrieve_lint returns NULL
+  cache_lint(cache, expr, linter, lints)
+  lines <- c("line_low", "line_exact", "line_high")
+  expect_null(retrieve_lint(cache, expr, linter, lines))
+
+  # When all lines are found across exact, lower, or higher offsets
+  cache_lint(cache, expr, linter, lints[1L:3L])
+  ret <- retrieve_lint(cache, expr, linter, lines)
+  expect_length(ret, 3L)
+  expect_identical(vapply(ret, `[[`, integer(1L), "line_number"), c(2L, 1L, 3L))
+})
+
+test_that("parser errors and parser warnings are cached appropriately", {
+  path <- withr::local_tempdir("cond_cache_dir")
+  file_err <- withr::local_tempfile(fileext = ".R", lines = "function() {)")
+  expect_true(length(lint(file_err, cache = path)) > 0L)
+  expect_true(length(lint(file_err, cache = path)) > 0L)
+
+  file_warn <- withr::local_tempfile(fileext = ".R", lines = "100000000000000000000000000000000000L")
+  expect_true(length(lint(file_warn, cache = path)) > 0L)
+  expect_true(length(lint(file_warn, cache = path)) > 0L)
+})
+
+

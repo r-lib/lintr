@@ -382,3 +382,9 @@ test_that("pipe-aware lint logic survives adversarial comments", {
     fixed_regex_linter()
   )
 })
+
+test_that("get_token_replacement handles escaped characters within character groups and escape literals", {
+  expect_identical(get_token_replacement("[\\n]", "trivial_char_group"), "\n")
+  expect_identical(get_token_replacement("\\n", "char_escape"), "\n")
+})
+

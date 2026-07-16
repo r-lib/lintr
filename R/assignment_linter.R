@@ -123,7 +123,7 @@ assignment_linter <- function(operator = "<-",
     ])]"
     op_xpath <- paste0(op_xpath_parts, implicit_assignment_xpath, collapse = " | ")
   } else {
-    op_xpath <- NULL
+    op_xpath <- NULL # nocov
   }
 
   Linter(linter_level = "expression", function(source_expression) {

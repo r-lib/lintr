@@ -259,3 +259,20 @@ test_that("capture groups work as intended (#2831)", { # nofuzz: assignment comm
     exclude_next = "(# nolint next)"
   )
 })
+
+test_that("normalize_exclusions checks input and handles unmatched globs without normalizing path", {
+  expect_error(
+    normalize_exclusions(list(123)),
+    "Full file exclusions must be.*character.*vectors of length 1"
+  )
+  expect_error(
+    normalize_exclusions(list("file.R" = "bad_lines")),
+    "Full line exclusions must be.*numeric.*or.*integer.*vectors"
+  )
+  expect_identical(
+    names(normalize_exclusions(list("nonexistent_file.R" = 1L:5L), normalize_path = FALSE)),
+    "nonexistent_file.R"
+  )
+})
+
+

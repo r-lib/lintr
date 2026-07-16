@@ -4,3 +4,8 @@ test_that("ids_with_token works as expected", {
   expect_identical(ref, c(1L, 3L, 6L))
   expect_identical(source_expression$parsed_content$token[ref], rep_len("expr", length(ref)))
 })
+
+test_that("ids_with_token returns empty integer vector when source_expression is not at expression level", {
+  expect_identical(ids_with_token(list(full_parsed_content = 1L), value = "expr"), integer())
+})
+

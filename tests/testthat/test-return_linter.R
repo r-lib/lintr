@@ -1895,3 +1895,23 @@ test_that("functions with braced expressions in formals lint correctly", {
     explicit_linter
   )
 })
+
+test_that("return_linter handles switch statements with empty branches cleanly", {
+  expect_no_lint(
+    trim_some("
+      foo <- function(x) {
+        switch(x,
+          a = ,
+          b = 1
+        )
+      }
+    "),
+    return_linter()
+  )
+})
+
+test_that("nested_return_lints handles empty XML node defensively", {
+  expect_identical(nested_return_lints(xml2::xml_new_document(), list()), list())
+})
+
+

@@ -48,10 +48,7 @@ load_cache <- function(file, path = NULL) {
   file <- get_cache_file_path(file, path)
   if (file.exists(file)) {
     tryCatch(
-      load(file = file, envir = env),
-      warning = function(w) {
-        invokeRestart("muffleWarning")
-      },
+      suppressWarnings(load(file = file, envir = env)),
       error = function(e) {
         cli_warn(
           "Could not load cache file {.file {file}}:",
@@ -59,6 +56,7 @@ load_cache <- function(file, path = NULL) {
         )
       }
     )
+
   } # else nothing to do for source file that has no cache
 
   env
