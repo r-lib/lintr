@@ -195,6 +195,17 @@ test_that("vector logic in if conditions inside anonymous functions is still lin
   expect_no_lint("subset(x, sapply(col, function(x) { if (any(a | b)) x }))", linter)
 })
 
+test_that("subset and filter logic when enclosed in outer functions", {
+  linter <- vector_logic_linter()
+  and_msg <- rex::rex("Use `&` in subsetting expressions.")
+  or_msg <- rex::rex("Use `|` in subsetting expressions.")
+
+  expect_lint("foo <- function(x) filter(x, A && B)", and_msg, linter)
+  expect_lint("foo <- function(x) subset(x, A || B)", or_msg, linter)
+  expect_no_lint("foo <- function(x) filter(x, vapply(y, function(i) is.numeric(i) && mean(i) > 1, NA))", linter)
+  expect_lint("filter(df1, sapply(col, function(df2) filter(df2, A && B)))", and_msg, linter)
+})
+
 test_that("filter() handling is conservative about stats::filter()", {
   linter <- vector_logic_linter()
   and_msg <- rex::rex("Use `&` in subsetting expressions")
