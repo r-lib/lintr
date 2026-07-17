@@ -98,18 +98,21 @@ vector_logic_linter <- function() {
   subset_xpath <- "
   self::*[not(SYMBOL_PACKAGE[text() = 'stats'])]
     /parent::expr
-    //expr[
+    /expr[
+      preceding-sibling::OP-LEFT-PAREN
+      and not(
+        expr/SYMBOL_FUNCTION_CALL
+        or OP-LEFT-BRACKET
+        or FUNCTION
+        or OP-LAMBDA
+        or preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'circular']
+      )
+    ]
+    /descendant-or-self::expr[
       (AND2 or OR2)
       and not(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[not(text() = 'subset' or text() = 'filter')])
       and not(preceding-sibling::OP-LEFT-BRACKET)
       and not(preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB and text() = 'circular'])
-      and not(
-        ancestor::expr[
-          FUNCTION
-          or OP-LAMBDA
-          or expr/SYMBOL_FUNCTION_CALL[text() = 'subset' or text() = 'filter']
-        ][1][FUNCTION or OP-LAMBDA]
-      )
     ]
     /*[not(self::COMMENT)][2]
   "
