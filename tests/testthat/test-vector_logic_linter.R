@@ -149,6 +149,8 @@ test_that("subsetting logic handles nesting", {
   expect_no_lint("filter(x, y < mean(y, na.rm = AA && BB))", linter)
   expect_no_lint("subset(x, y < mean(y, na.rm = AA && BB) & y > 0)", linter)
   expect_no_lint("subset(x, y < x[y > 0, drop = AA && BB, y])", linter)
+  expect_no_lint("subset(x, A %in% ifelse1((B && C), y, z))", linter)
+  expect_no_lint("subset(x, A %in% ifelse1(B && C, y, z))", linter)
 })
 
 test_that("scalar logic in anonymous functions within filter/subset is allowed", {
