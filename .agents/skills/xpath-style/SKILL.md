@@ -5,7 +5,7 @@ description: Guidelines and conventions for writing, composing, and formatting X
 
 # XPath Style and Composition in {lintr}
 
-When implementing, refactoring, or reviewing XPath expressions inside `lintr` (`R/`), follow these design, composition, and formatting guidelines established by project maintainers:
+When implementing, refactoring, or reviewing XPath expressions across `lintr` (`R/`), adhere to the following composition, styling, robust AST targeting, and performance guidelines established by project maintainers:
 
 ## 1. Direct Path Steps & Predicates over `self::*` Transitions
 
@@ -48,10 +48,26 @@ When implementing, refactoring, or reviewing XPath expressions inside `lintr` (`
     ][1]"
   ```
 
-## 4. AST Structural Precision & Parent Container Awareness
-- **Guard against unconstrained `//expr` searches matching inside call arguments:** Using deep (`//expr`) matches inside functions or loop arms matches expressions nested inside function call arguments (`switch(...)`, `ifelse(...)`, `tryCatch(...)`, or parenthesized expressions `(...)`). When targeting sequential statements inside procedural blocks, verify the structural block container (`parent::expr/OP-LEFT-BRACE` or `parent::exprlist/OP-SEMICOLON`) so argument separators (`OP-COMMA`) or closing delimiters (`OP-RIGHT-PAREN`) inside nested calls are not falsely matched as sequential siblings.
-- **Differentiate whitespace sequences from `<exprlist>` (`OP-SEMICOLON`) boundaries:** Statements separated by semicolons (`return(x); y <- 2`) in R's AST are grouped under `<exprlist[OP-SEMICOLON]>` nodes rather than basic `<expr>` siblings.
+## 4. XPath Performance & Entry Point Anchoring
 
-## 5. Self-Documentation & Explicit Exclusion Comments
-- **Annotate structural transitions:** Provide brief, clear comments above multi-line modular XPath definitions explaining architectural tradeoffs or distinct handling regimes (e.g., `# normal case: expression after terminal call is on the next line` vs `# robustness case: expression after terminal call is on the same line`).
-- **Document precise syntax exclusions right where they are defined:** Whenever an XPath guards against edge-case node structures (`not(OP-DOLLAR or OP-AT)` or `not(self::ELSE or preceding-sibling::ELSE)`), note the practical rationale or tracking reference directly above (`# NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051`) so regressions are avoided during future structural updates.
+- **Avoid `//*` XPaths entirely:** Wildcard descendant scanning (`//*`) is a severe performance bottleneck across `{xml2}` and `libxml2`. Even an extensive union chain of specific node names (`//A[expr] | //B[expr]`) consistently yields substantial speed optimizations (often 3x or greater) compared to unconstrained wildcard matching.
+- **Avoid `//expr` XPaths as entry points:** Because over one-third of all AST nodes in an R codebase are `<expr>`, querying `//expr` as an initial anchor only eliminates a minimal portion of the parse tree. Always anchor initial traversals on more specific syntax nodes (`//IF`, `//FOR`, `//RIGHT_ASSIGN`, `//EQ_SUB`).
+- **Use `xml_find_function_calls()` over `//SYMBOL_FUNCTION_CALL` entry points:** Whenever a linter checks for calls to specific functions, never anchor directly on `//SYMBOL_FUNCTION_CALL[text() = 'foo' or text() = 'bar']`. Instead, fetch pre-cached structures via `source_expression$xml_find_function_calls(c("foo", "bar"))`, which executes significantly faster across multi-option lookups.
+
+## 5. AST Structural Precision & Robust Node Matching
+- **Guard against unconstrained `//expr` searches inside call arguments:** Using deep (`//expr`) traversals inside function bodies or loops captures expressions nested deep inside argument lists (`switch(...)`, `ifelse(...)`, `tryCatch(...)`, or parenthesized `(...)` blocks). When verifying sequential procedural statements within code blocks, explicitly verify the structural block container (`parent::expr/OP-LEFT-BRACE` or `parent::exprlist/OP-SEMICOLON`) so function argument commas (`OP-COMMA`) or closing delimiters (`OP-RIGHT-PAREN`) are not falsely identified as procedural sequence steps.
+- **Anchor on `EQ_SUB` instead of `SYMBOL_SUB` when matching named arguments:** Because valid string literal parameter names (`foo("a" = 1)`) parse as `<STR_CONST>` rather than `<SYMBOL_SUB>`, queries anchored strictly on `SYMBOL_SUB` skip quoted argument names. Anchoring on `<EQ_SUB>` reliably matches all named assignment arguments.
+- **Be cautious with wildcard (`*`) and bare `expr` sibling lookups:**
+  - Sibling lookups like `preceding-sibling::*[1]` and `following-sibling::*[1]` frequently land on `<COMMENT>` nodes because comments can appear almost anywhere across the AST. Explicitly filter out comment nodes when tracing syntax structure (`preceding-sibling::*[not(self::COMMENT)][1]`).
+  - Depending on the active R version, `=` assignment expressions (`a = 1`) may wrap in `<equal_assign>` or `<expr_or_assign_or_help>` nodes rather than standard `<expr>` nodes (unlike `a <- 1`). Therefore, rigid lookups such as `preceding-sibling::expr[1]` can silently jump over assignments.
+- **Differentiate whitespace sequences from `<exprlist>` (`OP-SEMICOLON`) boundaries:** Statements separated by semicolons (`return(x); y <- 2`) in R's AST are enclosed inside `<exprlist[OP-SEMICOLON]>` nodes rather than typical `<expr>` sibling sequences.
+- **Account for grammar specificities and node representations:**
+  - **Logical Constants vs Shorthands:** `TRUE` and `FALSE` appear as `<NUM_CONST>` nodes (`NUM_CONST[text() = 'TRUE']`), while shorthands `T` and `F` appear as `<SYMBOL>` nodes (`SYMBOL[text() = 'T']`).
+  - **Magrittr vs Native Pipes (`SPECIAL` vs `PIPE`):** Native pipe `|>` appears as `<PIPE>`, whereas magrittr `%>%` appears as `<SPECIAL>`. Since all custom infix operators (`%%`, `%in%`, `%*%`) also parse as `<SPECIAL>`, verify node text explicitly (`SPECIAL[text() = '%>%']`). Keep pipeline restructuring in mind when designing positional checking (`x |> f(arg)` makes `arg` positional argument 2 inside the underlying evaluation).
+  - **`for` loop AST structure:** `for` loops differ sharply from `while()` and `if()` constructs by enclosing their header elements inside a `<forcond>` node (`<forcond>` containing `<OP-LEFT-PAREN>`, `<SYMBOL>`, `<IN>`, `<expr>`, and `<OP-RIGHT-PAREN>`).
+  - **S4 slot (`@`) vs Dollar (`$`) extraction:** For `x$y`, the right-hand side directly separates property symbols (`SYMBOL`) from method calls (`SYMBOL_FUNCTION_CALL`). However, the right-hand side of `x@y` (or `x@y()`) always resolves to a `<SLOT>` node. To distinguish between property access and function invocations across `@`, check whether an `<OP-LEFT-PAREN>` (`(`) sibling follows.
+  - **Sub-tree value equality (`<expr1> = <expr2>`):** Comparing two node branches with XPath `=` tests aggregate string equality across all descendant text nodes. Because child `<COMMENT>` nodes inside either branch change the aggregate string value, guard against or exclude embedded comments before checking structural equality.
+
+## 6. Self-Documentation & Explicit Exclusion Comments
+- **Annotate structural distinctions:** Provide brief, explicit comments above multi-line modular XPath definitions clarifying structural design decisions or separate handling regimes (`# normal case: expression after terminal call is on the next line` vs `# robustness case: expression after terminal call is on the same line`).
+- **Document syntax exclusions right where defined:** Whenever an XPath guards against edge-case structures (`not(OP-DOLLAR or OP-AT)` or `not(self::ELSE or preceding-sibling::ELSE)`), document the practical rationale or tracking reference directly above (`# NB: use not(OP-DOLLAR) to prevent matching process$stop(), #1051`) so regressions are prevented during future structural iterations.
