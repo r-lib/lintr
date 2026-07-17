@@ -795,7 +795,7 @@ test_that("unreachable_code_linter does not trigger inside function calls like s
     trim_some("
       foo <- function(x) {
         y <- switch(x, a = 1, b = 2, stop('bad x'))
-        return(x + y)
+        x + y
       }
     "),
     linter
@@ -805,7 +805,7 @@ test_that("unreachable_code_linter does not trigger inside function calls like s
     trim_some("
       foo <- function(x) {
         y <- switch(x, a = stop('bad x'), b = 2)
-        return(x + y)
+        x + y
       }
     "),
     linter
@@ -815,7 +815,7 @@ test_that("unreachable_code_linter does not trigger inside function calls like s
     trim_some("
       foo <- function(x) {
         y <- ifelse(x > 0, x, stop('negative x'))
-        return(y)
+        y
       }
     "),
     linter
@@ -828,7 +828,7 @@ test_that("unreachable_code_linter does not trigger inside function calls like s
           stop('bad x')
           2 + 2
         })
-        return(x + y)
+        x + y
       }
     "),
     rex::rex("Remove code and comments coming after stop()."),
