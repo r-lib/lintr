@@ -821,6 +821,18 @@ test_that("unreachable_code_linter does not trigger inside function calls like s
     linter
   )
 
+  expect_no_lint(
+    trim_some('
+      repeat {
+        switch(x,
+          a = break,
+          b = "d"
+        )
+      }
+    '),
+    linter
+  )
+
   expect_lint(
     trim_some("
       foo <- function(x) {
