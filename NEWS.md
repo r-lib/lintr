@@ -1,5 +1,9 @@
 # lintr (in development)
 
+### Lint accuracy fixes: removing false positives
+
+* `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
+
 # lintr (3.4.0)
 
 ## Deprecations & breaking changes
