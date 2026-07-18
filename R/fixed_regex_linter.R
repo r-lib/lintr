@@ -83,7 +83,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   # regular expression pattern is the second argument
   pos_2_regex_funs <- c(
     # base functions.
-    "strsplit",
+    "dir", "list.files", "strsplit",
     # data.table functions.
     "tstrsplit",
     # stringr functions.
@@ -127,14 +127,21 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
   pos_2_xpath <- glue("
   self::*[
     not(following-sibling::SYMBOL_SUB[
-      text() = 'fixed'
+      (text() = 'fixed' or text() = 'ignore.case')
       and following-sibling::expr[1][NUM_CONST[text() = 'TRUE'] or SYMBOL[text() = 'T']]
     ])
   ]
     /following-sibling::expr[
-      position() = 2 - count({ in_pipe_cond })
-      and STR_CONST
-      and not(EQ_SUB)
+      (
+        position() = 2 - count({ in_pipe_cond })
+        and STR_CONST
+        and not(EQ_SUB)
+      ) or (
+        STR_CONST
+        and preceding-sibling::*[not(self::COMMENT)][2][
+          self::SYMBOL_SUB[text() = 'pattern' or text() = 'split']
+        ]
+      )
     ]
   ")
 
