@@ -132,15 +132,13 @@ fixed_regex_linter <- function(allow_unescaped = FALSE) {
     ])
   ]
     /following-sibling::expr[
-      (
-        position() = 2 - count({ in_pipe_cond })
-        and STR_CONST
-        and not(EQ_SUB)
-      ) or (
-        STR_CONST
-        and preceding-sibling::*[not(self::COMMENT)][2][
+      STR_CONST and (
+        preceding-sibling::*[not(self::COMMENT)][2][
           self::SYMBOL_SUB[text() = 'pattern' or text() = 'split']
-        ]
+        ] or (
+          position() = 2 - count({ in_pipe_cond })
+          and not(EQ_SUB)
+        )
       )
     ]
   ")
