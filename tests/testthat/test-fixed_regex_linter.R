@@ -397,18 +397,18 @@ test_that("fixed_regex_linter checks realistic list.files and dir usages", {
 
   # allowed usages with realistic regex patterns, flags, and paths
   expect_no_lint(R'{list.files("src", pattern = ".*\\.o$", full.names = TRUE)}', linter)
-  expect_no_lint(R'{list.files(pattern = "csv$", full.names = TRUE)}', linter)
+  expect_no_lint('list.files(pattern = "csv$", full.names = TRUE)', linter)
   expect_no_lint(R'{list.files("./source/", pattern = "^\\d{2}-.*\\.md$", full.names = TRUE)}', linter)
-  expect_no_lint(R'{list.files(pattern = paste0(prefix, "[[:alnum:]_]+_result.rds"), recursive = TRUE)}', linter)
+  expect_no_lint('list.files(pattern = paste0(prefix, "[[:alnum:]_]+_result.rds"), recursive = TRUE)', linter)
   expect_no_lint(R'{list.files("data", pattern = "\\.rds$", ignore.case = TRUE, recursive = TRUE)}', linter)
-  expect_no_lint(R'{list.files(pattern = "_analysis", fixed = TRUE, recursive = TRUE)}', linter)
-  expect_no_lint(R'{list.files("foo", full.names = TRUE, recursive = TRUE)}', linter)
+  expect_no_lint('list.files(pattern = "_analysis", fixed = TRUE, recursive = TRUE)', linter)
+  expect_no_lint('list.files("foo", full.names = TRUE, recursive = TRUE)', linter)
   expect_no_lint(R'{getwd() |> list.files(pattern = ".*\\.RData$")}', linter)
 
   expect_no_lint(R'{dir("data", pattern = "\\.(wav|png)$", full.names = TRUE)}', linter)
-  expect_no_lint(R'{dir("data", pattern = "^abc", recursive = TRUE)}', linter)
-  expect_no_lint(R'{dir("data", pattern = "abc", fixed = TRUE, full.names = TRUE)}', linter)
-  expect_no_lint(R'{dir("data", pattern = "abc", ignore.case = TRUE, recursive = TRUE)}', linter)
+  expect_no_lint('dir("data", pattern = "^abc", recursive = TRUE)', linter)
+  expect_no_lint('dir("data", pattern = "abc", fixed = TRUE, full.names = TRUE)', linter)
+  expect_no_lint('dir("data", pattern = "abc", ignore.case = TRUE, recursive = TRUE)', linter)
 
   # disallowed usages where static or escaped literal patterns are passed with typical configuration arguments
   expect_lint('list.files(pattern = "_analysis", full.names = TRUE)', lint_msg, linter)
@@ -418,7 +418,5 @@ test_that("fixed_regex_linter checks realistic list.files and dir usages", {
   expect_lint('dir("data", pattern = "pdf", recursive = TRUE)', lint_msg, linter)
   expect_lint('dir(recursive = TRUE, full.names = TRUE, pattern = "solved")', lint_msg, linter)
   expect_lint(R'{"data" |> list.files(pattern = "_bmarks\\.csv", full.names = TRUE)}', lint_msg, linter)
-  expect_lint(R'{"data" |> list.files(pattern = "_bmarks[.]csv", full.names = TRUE)}', lint_msg, linter)
+  expect_lint('"data" |> list.files(pattern = "_bmarks[.]csv", full.names = TRUE)', lint_msg, linter)
 })
-
-
