@@ -420,3 +420,11 @@ test_that("fixed_regex_linter checks realistic list.files and dir usages", {
   expect_lint(R'{"data" |> list.files(pattern = "_bmarks\\.csv", full.names = TRUE)}', lint_msg, linter)
   expect_lint('"data" |> list.files(pattern = "_bmarks[.]csv", full.names = TRUE)', lint_msg, linter)
 })
+
+test_that("check_file_listing allows disabling file listing checks", {
+  linter <- fixed_regex_linter(check_file_listing = FALSE)
+
+  expect_no_lint('list.files(pattern = "_analysis", full.names = TRUE)', linter)
+  expect_no_lint('dir(recursive = TRUE, full.names = TRUE, pattern = "solved")', linter)
+  expect_lint("grepl('abcdefg', x)", "This regular expression is static", linter)
+})
