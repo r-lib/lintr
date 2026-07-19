@@ -410,10 +410,6 @@ test_that("fixed_regex_linter checks realistic list.files and dir usages", {
   expect_no_lint('dir("data", pattern = "abc", fixed = TRUE, full.names = TRUE)', linter)
   expect_no_lint('dir("data", pattern = "abc", ignore.case = TRUE, recursive = TRUE)', linter)
 
-  # allowed positional pattern usages
-  expect_no_lint('list.files("data", "^test$")', linter)
-  expect_no_lint(R'{dir("data", "\\.R$")}', linter)
-
   # disallowed usages where static or escaped literal patterns are passed with typical configuration arguments
   expect_lint('list.files(pattern = "_analysis", full.names = TRUE)', lint_msg, linter)
   expect_lint('list.files(pattern = "prepare_", full.names = TRUE)', lint_msg, linter)
@@ -422,6 +418,15 @@ test_that("fixed_regex_linter checks realistic list.files and dir usages", {
   expect_lint('dir(recursive = TRUE, full.names = TRUE, pattern = "solved")', lint_msg, linter)
   expect_lint(R'{"data" |> list.files(pattern = "_bmarks\\.csv", full.names = TRUE)}', lint_msg, linter)
   expect_lint('"data" |> list.files(pattern = "_bmarks[.]csv", full.names = TRUE)', lint_msg, linter)
+})
+
+test_that("pattern= inferred positionally is handled correctly", {
+  linter <- fixed_regex_linter()
+  lint_msg <- "This regular expression is static"
+
+  # position= inferred positionally
+  expect_no_lint('list.files("data", "^test$")', linter)
+  expect_no_lint(R'{dir("data", "\\.R$")}', linter)
 
   # disallowed positional pattern usages (including pipelines)
   expect_lint('list.files("data", "RDS")', lint_msg, linter)
@@ -443,16 +448,13 @@ test_that("check_file_listing allows disabling file listing checks while retaini
   expect_no_lint('dir(recursive = TRUE, full.names = TRUE, pattern = "solved")', linter)
   expect_no_lint('dir("data", "pdf")', linter)
 
-  # pos_1_regex_funs still enforced
+  # other behavior of the linter continues WAI
   expect_lint("grepl('abcdefg', x)", lint_msg, linter)
   expect_lint("gsub('[.]', '', x)", lint_msg, linter)
   expect_lint("sub('a[*]b', 'c', x)", lint_msg, linter)
-
-  # other pos_2_regex_funs still strictly enforced when check_file_listing = FALSE
   expect_lint(R'{strsplit(x, "\\.")}', lint_msg, linter)
   expect_lint("tstrsplit(x, 'abcdefg')", lint_msg, linter)
   expect_lint("str_detect(x, 'abcdefg')", lint_msg, linter)
   expect_lint(R'{str_subset(x, "\\$")}', lint_msg, linter)
   expect_lint(R'{str_replace_all(x, "\\.", "")}', lint_msg, linter)
 })
-
