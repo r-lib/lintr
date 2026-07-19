@@ -52,8 +52,8 @@ expect_shape_linter <- function() {
     shape_function <- xp_call_name(bad_expr, depth = 2L, condition = shape_funs)
     shape_arg_var <- ifelse(shape_function == "dim", "d", "n")
     lint_message <- sprintf(
-      "expect_shape(x, %s = %s) is better than %s(%s(x), %s)",
-      shape_function, shape_arg_var, matched_function, shape_function, shape_arg_var
+      "expect_shape(x, %1$s = %2$s) is better than %3$s(%1$s(x), %2$s)",
+      shape_function, shape_arg_var, matched_function
     )
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")
   })

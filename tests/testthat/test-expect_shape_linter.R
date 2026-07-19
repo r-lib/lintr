@@ -57,8 +57,8 @@ test_that("lints vectorize", {
       expect_identical(dim(x), d)
     }"),
     list(
-      list("expect_equal", line_number = 2L),
-      list("expect_identical", line_number = 3L)
+      list("nrow = n.*expect_equal", line_number = 2L),
+      list("dim = d.*expect_identical", line_number = 3L)
     ),
     expect_shape_linter()
   )
