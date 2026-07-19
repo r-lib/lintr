@@ -1,5 +1,9 @@
 # lintr (in development)
 
+### Lint accuracy fixes: removing false negatives
+
+* `vector_logic_linter()` again finds `&&`/`||` usage in filtering expressions in function bodies like `\() filter(x, A && B)` (#3082, @MichaelChirico).
+
 # lintr (3.4.0)
 
 ## Deprecations & breaking changes
