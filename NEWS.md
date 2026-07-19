@@ -1,5 +1,9 @@
 # lintr (in development)
 
+## New and improved features
+
+### New linters
+
 * `expect_shape_linter()` recommends usage of `testthat::expect_shape(x, ...)` over `expect_equal(nrow(x), n)`, `expect_equal(ncol(x), n)`, and `expect_equal(dim(x), d)` (#2893, @MichaelChirico).
 
 # lintr (3.4.0)
