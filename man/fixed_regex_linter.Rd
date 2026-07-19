@@ -10,10 +10,9 @@ fixed_regex_linter(allow_unescaped = FALSE, check_file_listing = TRUE)
 \item{allow_unescaped}{Logical, default \code{FALSE}. If \code{TRUE}, only patterns that
 require regex escapes (e.g. \code{"\\\\$"} or \code{"[$]"}) will be linted. See examples.}
 
-\item{check_file_listing}{Logical, default \code{TRUE}. If \code{TRUE}, \code{\link[=list.files]{list.files()}} and \code{\link[=dir]{dir()}}
-are checked for static patterns. Since \code{fixed = TRUE} for file listing functions
-was introduced in R 4.6.0, packages requiring compatibility with earlier R versions
-can set this to \code{FALSE}.}
+\item{check_file_listing}{Logical, default \code{TRUE}, governing whether to require
+\code{\link[=list.files]{list.files()}} and \code{\link[=dir]{dir()}} to use \code{fixed = TRUE} for non-regex \verb{pattern=}. Note
+that \code{fixed = TRUE} is only available from R 4.6.0.}
 }
 \description{
 Invoking a regular expression engine is overkill for cases when the search
@@ -60,7 +59,7 @@ lint(
 
 lint(
   text = 'list.files(pattern = "RDS")',
-  linters = fixed_regex_linter()
+  linters = fixed_regex_linter(check_file_listing = TRUE)
 )
 
 # okay
@@ -93,12 +92,7 @@ lint(
 
 lint(
   text = 'list.files(pattern = "RDS", fixed = TRUE)',
-  linters = fixed_regex_linter()
-)
-
-lint(
-  text = 'list.files(pattern = "RDS")',
-  linters = fixed_regex_linter(check_file_listing = FALSE)
+  linters = fixed_regex_linter(check_file_listing = TRUE)
 )
 
 }

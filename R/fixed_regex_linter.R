@@ -12,10 +12,9 @@
 #'
 #' @param allow_unescaped Logical, default `FALSE`. If `TRUE`, only patterns that
 #'   require regex escapes (e.g. `"\\$"` or `"[$]"`) will be linted. See examples.
-#' @param check_file_listing Logical, default `TRUE`. If `TRUE`, [list.files()] and [dir()]
-#'   are checked for static patterns. Since `fixed = TRUE` for file listing functions
-#'   was introduced in R 4.6.0, packages requiring compatibility with earlier R versions
-#'   can set this to `FALSE`.
+#' @param check_file_listing Logical, default `TRUE`, governing whether to require
+#'   [list.files()] and [dir()] to use `fixed = TRUE` for non-regex `pattern=`. Note
+#'   that `fixed = TRUE` is only available from R 4.6.0.
 #' @examples
 #' # will produce lints
 #' code_lines <- 'gsub("\\\\.", "", x)'
@@ -49,7 +48,7 @@
 #'
 #' lint(
 #'   text = 'list.files(pattern = "RDS")',
-#'   linters = fixed_regex_linter()
+#'   linters = fixed_regex_linter(check_file_listing = TRUE)
 #' )
 #'
 #' # okay
@@ -82,12 +81,7 @@
 #'
 #' lint(
 #'   text = 'list.files(pattern = "RDS", fixed = TRUE)',
-#'   linters = fixed_regex_linter()
-#' )
-#'
-#' lint(
-#'   text = 'list.files(pattern = "RDS")',
-#'   linters = fixed_regex_linter(check_file_listing = FALSE)
+#'   linters = fixed_regex_linter(check_file_listing = TRUE)
 #' )
 #'
 #' @evalRd rd_tags("fixed_regex_linter")
@@ -100,12 +94,10 @@ fixed_regex_linter <- function(allow_unescaped = FALSE, check_file_listing = TRU
     "grep", "grepv", "gsub", "sub", "regexec", "grepl", "regexpr", "gregexpr"
   )
 
-  file_listing_funs <- if (check_file_listing) c("dir", "list.files")
-
   # regular expression pattern is the second argument
   pos_2_regex_funs <- c(
     # base functions.
-    file_listing_funs, "strsplit",
+    "strsplit", if (check_file_listing) c("dir", "list.files"),
     # data.table functions.
     "tstrsplit",
     # stringr functions.
