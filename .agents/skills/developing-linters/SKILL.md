@@ -9,6 +9,7 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 
 ## 1. Minimalist API Surface & Defaults ("On by Default")
 - **Avoid unnecessary configuration knobs:** When extending a linter with a new check (e.g., adding namespace import checking to `namespace_linter`), do not reflexively add new boolean parameters (like `check_imports = TRUE`) to the public function signature unless there is a clear, compelling user need to toggle only that specific sub-check independently.
+- **Bleeding-edge upstream R features (`TODO(R>=x.y.z)`):** When recommending new syntax or parameters introduced in recent or upcoming upstream R releases (`fixed = TRUE` added to `list.files()` in R 4.6.0), package authors may not wish to immediately incur that bleeding-edge dependency. In such cases, providing a toggle (`check_file_listing = TRUE`) allows authors supporting older R versions to opt out (`FALSE`). Always mark such transitionary options or workarounds with an explicit `TODO(R>=x.y.z)` comment right above the function signature (`# TODO(R>=4.6.0): Deprecate check_file_listing once R 4.6.0 is the minimum supported version.`) indicating exactly when the option should be deprecated and enforced universally.
 - **Natural zero-lint fallback:** If a check naturally produces zero lints when not applicable (e.g., inspecting `namespace_imports()` on a file outside an R package or in a directory without a `NAMESPACE` file returns `empty_namespace_data()`), run the check unconditionally as part of the standard linter flow.
 - **Keep signatures clean:** Preserving existing function signatures (`namespace_linter(check_exports = TRUE, check_nonexports = TRUE)`) reduces API complexity and documentation churn.
 
@@ -20,11 +21,13 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 
 ## 3. Minimal Diffs & Logical Execution Order
 - **Structure execution to avoid intermediate mutations:** Structure the execution order of sub-checks within a linter to avoid mutating, subsetting, or filtering shared XML node lists and symbol vectors midway through the function.
+- **Inline condition-dependent vector additions over intermediate state:** When conditionally appending items to a list or character vector, inline the check right inside `c()` (`c("strsplit", if (check_file_listing) c("dir", "list.files"))`) instead of assigning an intermediate temporary variable. Because `if (FALSE)` evaluates to `NULL` (which automatically drops out of `c()`), inlining cleanly eliminates unnecessary temporary variable assignments.
 - **Append new checks cleanly:** When adding a check to an existing linter (`check_exports`, `check_nonexports`), place the new check cleanly after existing checks so that existing code blocks and variables (`packages`, `symbols`, `ns_nodes`) remain untouched. This keeps diffs small, readable, and easy to review.
 
-## 4. Self-Linting & Repository Health
+## 4. Self-Linting, Repository Health, & `NEWS.md`
 - **Verify zero new violations in `lintr` itself:** Whenever a linter is made more strict or extended with new rules, run the modified linter across `lintr`'s own `R/` codebase (`R/condition_call_linter.R`, `R/cyclocomp_linter.R`, etc.).
 - **Keep `lintr` 100% lint-free:** Immediately clean up any newly triggered violations across the repository (e.g., changing redundant `glue::glue()` or `cli::cli_warn()` calls to `glue()` and `cli_warn()`) before proposing the PR.
+- **Always update `NEWS.md` for user-facing improvements:** Whenever implementing a new user-facing linter enhancement, parameter option, or significant bug fix, always append a concise, well-formatted entry under `# lintr (in development)` in `NEWS.md` detailing the improvement and referencing the issue/PR right away.
 
 ## 5. Respecting Contract Boundaries & Avoiding Unexported Internals (`:::`)
 - **Strictly respect contract boundaries:** Take seriously that `:::` means *private* and avoid violating contract boundaries across packages. While `lintr` provides `%:::%` (`p %:::% f`) to bypass self-lint checks when calling private functions, reaching across package boundaries into unexported internals (`knitr:::parse_params`, `knitr:::file_ext`) should be avoided except in rare, justified cases.
@@ -55,3 +58,26 @@ When implementing, extending, or refactoring linters in `lintr`, adhere to the f
 - **Expect `NA_character_` in line content:** When linting files, remember that literate programming formats (like `.Rmd`, `.qmd`) extract R code by masking non-R lines with `NA_character_` to preserve line numbers.
 - **Avoid NA propagation in logical expressions:** Ensure logical expressions checking conditions over lines immediately guard against `NA` (`!is.na(line) & ...`) to keep resulting booleans clean (`FALSE & NA -> FALSE`).
 - **Prioritize clear consecutive logic (`diff()`) over micro-optimizations:** Because `is_bad` evaluates to `FALSE` (not `NA`) across non-code gaps, computing consecutive state differences using simple arithmetic (`diff(is_bad) == 0L`) cleanly isolates block transitions across gaps. **Never replace clear, readable difference computations with obscure logical shifting constructs solely to avoid implicit conversions or save negligible compute.** Readability is paramount.
+
+## 10. Direct Documentation Workflow & `roxygen2` Example Style
+- **Crisp parameter descriptions:** Keep `@param` documentation for linter configuration knobs concise and precise (e.g., `Logical, default \code{TRUE}, governing whether to require \code{\link[=list.files]{list.files()}} and \code{\link[=dir]{dir()}} to use \code{fixed = TRUE} for non-regex \verb{pattern=}.`), avoiding overly lengthy background explanations.
+- **Roxygen example structure (`@examples`) for new or extended linters:** When creating or extending a linter, adhere strictly to `lintr`'s standard roxygen examples layout:
+  1. **Section Division (`# will produce lints` and `# okay`):** Always partition `@examples` into distinct sections beginning with `# will produce lints` at top, directly followed by `# okay`.
+  2. **Explicit `lint()` calls:** Format each demonstration cleanly across lines using `lint(text = ..., linters = ...)`:
+     ```r
+     #' lint(
+     #'   text = "list.files(pattern = 'RDS')",
+     #'   linters = fixed_regex_linter()
+     #' )
+     ```
+  3. **Multi-line or escaped code (`writeLines`):** For simple single-line invocations without complex escapes, pass `text = "..."` directly inside `lint()`. For multi-line snippets (containing `\n`) or regex patterns containing heavy backslash escaping (`"\\\\."`), assign the target code to `code_lines <- "..."`, display it first using `writeLines(code_lines)`, and then pass `text = code_lines` to `lint()`. This allows users executing help examples to view the rendered target code exactly as seen by the parser:
+     ```r
+     #' code_lines <- 'gsub("\\\\.", "", x)'
+     #' writeLines(code_lines)
+     #' lint(
+     #'   text = code_lines,
+     #'   linters = fixed_regex_linter()
+     #' )
+     ```
+  4. **Mirrored 1:1 problem-to-solution pairs:** Maintain 1:1 structural correspondence between cases under `# will produce lints` and their corresponding resolutions right under `# okay` so users clearly observe both the targeted violation and exactly how to fix or configure it (e.g. passing `fixed = TRUE` or adjusting options like `check_file_listing = TRUE`).
+  5. **Standard footer tags:** Always conclude linter roxygen blocks right after `@examples` with `@evalRd rd_tags("<linter_name>")`, `@seealso [linters] for a complete list of linters available in lintr.`, and `@export`.

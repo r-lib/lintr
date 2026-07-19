@@ -35,6 +35,9 @@ When implementing, refactoring, or reviewing XPath expressions across `lintr` (`
   ")
   ```
 - **Use built-in `{lintr}` XPath helpers:** Use internal helper functions like `xp_or()`, `xp_and()`, and `xp_text_in_table()` (e.g. `xp_text_in_table(c("sprintf", "paste"))`) rather than constructing verbose repetitive conditions (`text() = 'sprintf' or text() = 'paste'`).
+- **Factor shared invariant predicates out of compound disjunctions:** When matching multiple candidate structures inside a predicate using `or`, factor shared conjuncts out to the surrounding scope instead of distributing them inside every branch. For example, use `STR_CONST and (branch_A or branch_B)` rather than `(branch_A and STR_CONST) or (branch_B and STR_CONST)`. This reduces evaluation duplication and instantly exposes what truly separates the target branches.
+- **Order unnested single conditions before multi-condition parenthesized expressions:** Inside compound `or` structures (`STR_CONST and (...)`), place single-condition branches (`preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB[...]]`) ahead of multi-condition compound branches (`(position() = 2 - count(...) and not(EQ_SUB))`). Ordering unnested conditions first eliminates distracting double-bracket indentation right at the opening transition (`(( ... ) or ... )`), markedly improving visual structure and readability.
+
 
 ## 3. Multi-Line Formatting, Indentation, & Visual Hierarchy
 - **Format multi-line strings clearly:** For non-trivial predicates or sequential criteria, break strings across lines with clean leading whitespace indentation that accurately reflects logical depth and bracket scope (`[` ... `]`).
