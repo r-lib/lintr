@@ -11,7 +11,7 @@ test_that("available_linters returns a data frame", {
 
   expect_s3_class(avail, "data.frame")
   expect_identical(avail, avail2)
-  expect_identical(nrow(empty), 0L)
+  expect_shape(empty, nrow = 0L)
   expect_named(avail, c("linter", "package", "tags"))
   expect_type(avail[["linter"]], "character")
   expect_type(avail[["package"]], "character")
