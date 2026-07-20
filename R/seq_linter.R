@@ -136,60 +136,44 @@ seq_linter <- function() {
     funcalls_clean
   }
 
-  get_seq_args <- function(seq_expr) {
+  get_seq_metadata <- function(seq_expr) {
     if (length(seq_expr) == 0L) {
-      return(list(is_seq = logical(0L), dot_expr1 = character(0L), dot_expr2 = character(0L)))
-    }
-    n_expr <- length(seq_expr)
-    dot_expr1 <- character(n_expr)
-    dot_expr2 <- character(n_expr)
-    is_seq <- logical(n_expr)
-
-    for (i in seq_len(n_expr)) {
-      node <- seq_expr[[i]]
-      expr_children <- xml_find_all_(node, "./expr")
-      is_seq_call <- inherits(xml_find_first_(node, "./OP-COLON"), "xml_missing")
-
-      if (!is_seq_call) {
-        dot_expr1[i] <- xml_text(expr_children[[1L]])
-        dot_expr2[i] <- xml_text(expr_children[[2L]])
-      } else if (length(expr_children) == 2L) {
-        is_seq[i] <- TRUE
-        dot_expr1[i] <- "seq"
-        dot_expr2[i] <- xml_text(expr_children[[2L]])
-      } else {
-        is_seq[i] <- TRUE
-        is_expr2_to <-
-          !is.na(xml_text(xml_find_first_(node, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
-        from_idx <- if (is_expr2_to) 3L else 2L
-        to_idx <- if (is_expr2_to) 2L else 3L
-
-        dot_expr1[i] <- xml_text(expr_children[[from_idx]])
-        dot_expr2[i] <- xml_text(expr_children[[to_idx]])
-      }
+      return(data.frame(
+        is_seq = logical(0L),
+        dot_expr1 = character(0L),
+        dot_expr2 = character(0L),
+        replacement = character(0L),
+        lint_message = character(0L),
+        stringsAsFactors = FALSE
+      ))
     }
 
-    list(
-      is_seq = is_seq,
-      dot_expr1 = format_arg(dot_expr1),
-      dot_expr2 = format_arg(dot_expr2)
+    is_colon <- !is.na(xml_name(xml_find_first(seq_expr, "./OP-COLON")))
+    is_seq <- !is_colon
+
+    expr_counts <- as.integer(xml_find_chr_(seq_expr, "string(count(./expr))"))
+    expr1_text <- xml_find_chr_(seq_expr, "string(./expr[1])")
+    expr2_text <- xml_find_chr_(seq_expr, "string(./expr[2])")
+    expr3_text <- xml_find_chr_(seq_expr, "string(./expr[3])")
+
+    is_expr2_to <-
+      !is.na(xml_text(xml_find_first(seq_expr, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
+
+    raw_expr1 <- ifelse(
+      is_colon,
+      expr1_text,
+      ifelse(expr_counts == 2L, "seq", ifelse(is_expr2_to, expr3_text, expr2_text))
     )
-  }
 
-  Linter(linter_level = "expression", function(source_expression) {
-    xml <- source_expression$xml_parsed_content
-    seq_calls <- source_expression$xml_find_function_calls("seq")
-
-    seq_expr <- combine_nodesets(
-      xml_find_all_(seq_calls, seq_xpath),
-      xml_find_all_(xml, colon_xpath)
+    raw_expr2 <- ifelse(
+      is_colon,
+      expr2_text,
+      ifelse(expr_counts == 2L, expr2_text, ifelse(is_expr2_to, expr2_text, expr3_text))
     )
-    seq_expr <- strip_comments_from_subtree(seq_expr)
 
-    args_info <- get_seq_args(seq_expr)
+    dot_expr1 <- format_arg(raw_expr1)
+    dot_expr2 <- format_arg(raw_expr2)
 
-    dot_expr1 <- args_info$dot_expr1
-    dot_expr2 <- args_info$dot_expr2
     seq_along_idx <- dot_expr1 == "length(...)" | dot_expr2 == "length(...)"
     rev_idx <- dot_expr2 %in% c("1", "1L")
 
@@ -203,14 +187,36 @@ seq_linter <- function() {
       paste0("seq(", dot_expr1, ", ", dot_expr2, ")")
     )
     colon_call <- paste0(dot_expr1, ":", dot_expr2)
-    got_expr <- ifelse(args_info$is_seq, seq_call, colon_call)
+    got_expr <- ifelse(is_seq, seq_call, colon_call)
 
     lint_message <- sprintf(
       "Use %s instead of %s, which is likely to be wrong in the empty edge case.",
       replacement, got_expr
     )
 
-    seq_lints <- xml_nodes_to_lints(seq_expr, source_expression, lint_message, type = "warning")
+    data.frame(
+      is_seq = is_seq,
+      dot_expr1 = dot_expr1,
+      dot_expr2 = dot_expr2,
+      replacement = replacement,
+      lint_message = lint_message,
+      stringsAsFactors = FALSE
+    )
+  }
+
+  Linter(linter_level = "expression", function(source_expression) {
+    xml <- source_expression$xml_parsed_content
+    seq_calls <- source_expression$xml_find_function_calls("seq")
+
+    seq_expr <- combine_nodesets(
+      xml_find_all_(seq_calls, seq_xpath),
+      xml_find_all_(xml, colon_xpath)
+    )
+    seq_expr <- strip_comments_from_subtree(seq_expr)
+
+    seq_meta <- get_seq_metadata(seq_expr)
+
+    seq_lints <- xml_nodes_to_lints(seq_expr, source_expression, seq_meta$lint_message, type = "warning")
 
     seq_len_calls <- source_expression$xml_find_function_calls("seq_len")
     seq_len_expr <- xml_find_all_(seq_len_calls, seq_len_xpath)
