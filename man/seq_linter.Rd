@@ -54,12 +54,22 @@ lint(
 )
 
 lint(
+  text = "seq_len(10)",
+  linters = seq_linter()
+)
+
+lint(
   text = "seq_len(nrow(x))",
   linters = seq_linter()
 )
 
 lint(
   text = "dplyr::mutate(x, .id = seq_len(n()))",
+  linters = seq_linter()
+)
+
+lint(
+  text = "seq_along(x)",
   linters = seq_linter()
 )
 
