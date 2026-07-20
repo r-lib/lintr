@@ -136,28 +136,25 @@ seq_linter <- function() {
 
     for (i in seq_len(n_expr)) {
       node <- seq_expr[[i]]
+      expr_children <- xml_find_all_(node, "./expr")
       is_seq_call <- inherits(xml_find_first_(node, "./OP-COLON"), "xml_missing")
 
-      expr_children <- xml_find_all_(node, "./expr")
-      if (is_seq_call) {
-        is_seq[i] <- TRUE
-        if (length(expr_children) == 2L) {
-          dot_expr1[i] <- "seq"
-          dot_expr2[i] <- xml_text(expr_children[[2L]])
-        } else {
-          is_expr2_to <-
-            !is.na(xml_text(xml_find_first_(node, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
-          if (is_expr2_to) {
-            dot_expr1[i] <- xml_text(expr_children[[3L]])
-            dot_expr2[i] <- xml_text(expr_children[[2L]])
-          } else {
-            dot_expr1[i] <- xml_text(expr_children[[2L]])
-            dot_expr2[i] <- xml_text(expr_children[[3L]])
-          }
-        }
-      } else {
+      if (!is_seq_call) {
         dot_expr1[i] <- xml_text(expr_children[[1L]])
         dot_expr2[i] <- xml_text(expr_children[[2L]])
+      } else if (length(expr_children) == 2L) {
+        is_seq[i] <- TRUE
+        dot_expr1[i] <- "seq"
+        dot_expr2[i] <- xml_text(expr_children[[2L]])
+      } else {
+        is_seq[i] <- TRUE
+        is_expr2_to <-
+          !is.na(xml_text(xml_find_first_(node, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
+        from_idx <- if (is_expr2_to) 3L else 2L
+        to_idx <- if (is_expr2_to) 2L else 3L
+
+        dot_expr1[i] <- xml_text(expr_children[[from_idx]])
+        dot_expr2[i] <- xml_text(expr_children[[to_idx]])
       }
     }
 
@@ -193,23 +190,17 @@ seq_linter <- function() {
     replacement[!seq_along_idx] <- paste0("seq_len(", ifelse(rev_idx, dot_expr1, dot_expr2)[!seq_along_idx], ")")
     replacement[rev_idx] <- paste0("rev(", replacement[rev_idx], ")")
 
-    lint_message <- ifelse(
-      args_info$is_seq,
-      ifelse(
-        dot_expr1 == "seq",
-        sprintf(
-          "Use %s instead of seq(%s), which is likely to be wrong in the empty edge case.",
-          replacement, dot_expr2
-        ),
-        sprintf(
-          "Use %s instead of seq(%s, %s), which is likely to be wrong in the empty edge case.",
-          replacement, dot_expr1, dot_expr2
-        )
-      ),
-      sprintf(
-        "Use %s instead of %s:%s, which is likely to be wrong in the empty edge case.",
-        replacement, dot_expr1, dot_expr2
-      )
+    seq_call <- ifelse(
+      dot_expr1 == "seq",
+      paste0("seq(", dot_expr2, ")"),
+      paste0("seq(", dot_expr1, ", ", dot_expr2, ")")
+    )
+    colon_call <- paste0(dot_expr1, ":", dot_expr2)
+    got_expr <- ifelse(args_info$is_seq, seq_call, colon_call)
+
+    lint_message <- sprintf(
+      "Use %s instead of %s, which is likely to be wrong in the empty edge case.",
+      replacement, got_expr
     )
 
     seq_lints <- xml_nodes_to_lints(seq_expr, source_expression, lint_message, type = "warning")
