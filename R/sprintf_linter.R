@@ -54,37 +54,29 @@ sprintf_linter <- function() {
     ]"
   )
 
-  is_missing_symbol <- function(x) is.symbol(x) && !nzchar(x)
+  is_non_atomic <- function(x) !(is.symbol(x) && !nzchar(x)) && !is.atomic(x)
 
   find_fmt_loc <- function(parsed_expr) {
-    if ("fmt" %in% names(parsed_expr)) {
-      which(names(parsed_expr) == "fmt")[1L]
-    } else {
-      arg_names <- names(parsed_expr)
-      if (is.null(arg_names)) {
-        2L
-      } else {
-        1L + match("", arg_names[-1L], nomatch = 1L)
-      }
+    arg_names <- names(parsed_expr)
+    if ("fmt" %in% arg_names) {
+      return(which(names(parsed_expr) == "fmt")[1L])
     }
+
+    1L + match("", arg_names[-1L], nomatch = 1L)
   }
 
   zap_extra_args <- function(parsed_expr) {
     fmt_loc <- find_fmt_loc(parsed_expr)
 
-    if (length(parsed_expr) >= 3L) {
-      arg_names <- names(parsed_expr)
-      if (is.null(arg_names)) {
-        arg_names <- rep("", length(parsed_expr))
-      }
-      for (i in setdiff(seq_along(parsed_expr), c(1L, fmt_loc))) {
-        if (arg_names[i] == "domain") {
-          if (!is.atomic(parsed_expr[[i]])) {
-            parsed_expr[i] <- list(NULL)
-          }
-        } else if (!is_missing_symbol(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
-          parsed_expr[[i]] <- 0L
-        }
+    if (length(parsed_expr) < 3L) {
+      return(parsed_expr)
+    }
+    arg_names <- names2(parsed_expr)
+    domain_loc <- arg_names == "domain"
+    parsed_expr[domain_loc] <- list(NULL)
+    for (i in setdiff(2L:length(parsed_expr), c(fmt_loc, which(domain_loc)))) {
+      if (is_non_atomic(parsed_expr[[i]])) {
+        parsed_expr[[i]] <- 0L
       }
     }
     parsed_expr
