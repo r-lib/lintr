@@ -169,12 +169,7 @@ any_duplicated_linter <- function() {
     distinct_lint_message_fmt[!is.na(xml_find_first_(distinct_expr, uses_dplyr_xpath))] <-
       "anyDuplicated(x) == 0L is better than %s(x) == n()."
 
-    distinct_call_name <- xp_call_name(
-      distinct_expr,
-      depth = 2L,
-      condition = xp_text_in_table(c("uniqueN", "n_distinct"))
-    )
-    distinct_lint_message <- sprintf(distinct_lint_message_fmt, distinct_call_name)
+    distinct_lint_message <- sprintf(distinct_lint_message_fmt, xp_call_name(distinct_expr, depth = 2L))
     distinct_lints <- xml_nodes_to_lints(
       distinct_expr,
       source_expression = source_expression,
