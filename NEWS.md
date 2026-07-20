@@ -16,8 +16,8 @@
 
 ### Lint accuracy fixes: removing false negatives
 
-* `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with only one argument (#2980, @MichaelChirico).
 * `vector_logic_linter()` again finds `&&`/`||` usage in filtering expressions in function bodies like `\() filter(x, A && B)` (#3082, @MichaelChirico).
+* `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with only one argument (#2980, @MichaelChirico).
 
 # lintr (3.4.0)
 

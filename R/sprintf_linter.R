@@ -40,7 +40,7 @@ is_missing_symbol <- function(x) is.symbol(x) && !nzchar(x)
 
 find_fmt_loc <- function(parsed_expr) {
   if ("fmt" %in% names(parsed_expr)) {
-    which(names(parsed_expr) == "fmt")[1L]
+    which(names(parsed_expr) == "fmt")
   } else {
     arg_names <- names(parsed_expr)
     if (is.null(arg_names)) {
