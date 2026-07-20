@@ -120,10 +120,13 @@ sprintf_linter <- function() {
       sprintf_calls,
       "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
     )
-    fmt_by_pos_xpath <- paste0(
-      "expr[preceding-sibling::OP-LEFT-PAREN and ",
-      "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])][1]/STR_CONST"
-    )
+    fmt_by_pos_xpath <- "
+      expr[
+        preceding-sibling::OP-LEFT-PAREN
+        and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
+      ][1]
+        /STR_CONST
+    "
     fmt_by_pos <- ifelse(
       in_pipeline,
       get_r_string(sprintf_calls, "preceding-sibling::*[not(self::COMMENT)][2]/STR_CONST"),
@@ -142,16 +145,15 @@ sprintf_linter <- function() {
       type = "warning"
     )
 
-    num_args_xpath <- paste0(
-      "./expr[preceding-sibling::OP-LEFT-PAREN and ",
-      "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]/",
-      "preceding-sibling::*[not(self::COMMENT)][1][self::SYMBOL_SUB[text() = 'domain']])]"
-    )
+    num_args_xpath <- "
+      ./expr[
+        preceding-sibling::OP-LEFT-PAREN
+        and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][1][self::SYMBOL_SUB[text() = 'domain']])
+      ]
+    "
     num_args_in_parens <- vapply(
       sprintf_calls,
-      function(call) {
-        length(xml_find_all_(call, num_args_xpath))
-      },
+      \(call) length(xml_find_all_(call, num_args_xpath)),
       integer(1L)
     )
     num_args <- num_args_in_parens + as.integer(in_pipeline)
