@@ -20,7 +20,7 @@ discovery; see also
 The following tags exist:
 
 - [best_practices](https://lintr.r-lib.org/dev/reference/best_practices_linters.md)
-  (65 linters)
+  (66 linters)
 
 - [common_mistakes](https://lintr.r-lib.org/dev/reference/common_mistakes_linters.md)
   (13 linters)
@@ -44,13 +44,13 @@ The following tags exist:
   (6 linters)
 
 - [package_development](https://lintr.r-lib.org/dev/reference/package_development_linters.md)
-  (14 linters)
+  (15 linters)
 
 - [pkg_testthat](https://lintr.r-lib.org/dev/reference/pkg_testthat_linters.md)
-  (12 linters)
+  (13 linters)
 
 - [readability](https://lintr.r-lib.org/dev/reference/readability_linters.md)
-  (66 linters)
+  (67 linters)
 
 - [regex](https://lintr.r-lib.org/dev/reference/regex_linters.md) (4
   linters)
@@ -161,6 +161,9 @@ The following linters exist:
 
 - [`expect_s4_class_linter`](https://lintr.r-lib.org/dev/reference/expect_s4_class_linter.md)
   (tags: best_practices, package_development, pkg_testthat)
+
+- [`expect_shape_linter`](https://lintr.r-lib.org/dev/reference/expect_shape_linter.md)
+  (tags: best_practices, package_development, pkg_testthat, readability)
 
 - [`expect_true_false_linter`](https://lintr.r-lib.org/dev/reference/expect_true_false_linter.md)
   (tags: best_practices, package_development, pkg_testthat, readability)

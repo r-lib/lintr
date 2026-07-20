@@ -326,6 +326,12 @@ By contributing to this project, you agree to abide by its terms.
 
   Require usage of `expect_s4_class(x, k)` over `expect_true(is(x, k))`
 
+- [`expect_shape_linter()`](https://lintr.r-lib.org/dev/reference/expect_shape_linter.md)
+  :
+
+  Require usage of `expect_shape(x, ...)` over
+  `expect_equal(nrow(x), n)` and similar
+
 - [`expect_true_false_linter()`](https://lintr.r-lib.org/dev/reference/expect_true_false_linter.md)
   :
 

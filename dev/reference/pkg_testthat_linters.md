@@ -33,6 +33,8 @@ The following linters are tagged with 'pkg_testthat':
 
 - [`expect_s4_class_linter`](https://lintr.r-lib.org/dev/reference/expect_s4_class_linter.md)
 
+- [`expect_shape_linter`](https://lintr.r-lib.org/dev/reference/expect_shape_linter.md)
+
 - [`expect_true_false_linter`](https://lintr.r-lib.org/dev/reference/expect_true_false_linter.md)
 
 - [`expect_type_linter`](https://lintr.r-lib.org/dev/reference/expect_type_linter.md)

@@ -39,6 +39,8 @@ The following linters are tagged with 'readability':
 
 - [`expect_not_linter`](https://lintr.r-lib.org/dev/reference/expect_not_linter.md)
 
+- [`expect_shape_linter`](https://lintr.r-lib.org/dev/reference/expect_shape_linter.md)
+
 - [`expect_true_false_linter`](https://lintr.r-lib.org/dev/reference/expect_true_false_linter.md)
 
 - [`fixed_regex_linter`](https://lintr.r-lib.org/dev/reference/fixed_regex_linter.md)
