@@ -68,8 +68,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 seq_linter <- function() {
-  bad_funcs <- c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim")
-  bad_funcs_table <- xp_text_in_table(bad_funcs)
+  bad_funcs_table <- xp_text_in_table(c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim"))
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   # or if seq() is called with 2 arguments (from = 1, to = n)
@@ -137,16 +136,17 @@ seq_linter <- function() {
 
     for (i in seq_len(n_expr)) {
       node <- seq_expr[[i]]
-      is_seq_call <- inherits(xml_find_first(node, "./OP-COLON"), "xml_missing")
+      is_seq_call <- inherits(xml_find_first_(node, "./OP-COLON"), "xml_missing")
 
+      expr_children <- xml_find_all_(node, "./expr")
       if (is_seq_call) {
         is_seq[i] <- TRUE
-        expr_children <- xml_find_all(node, "./expr")
         if (length(expr_children) == 2L) {
           dot_expr1[i] <- "seq"
           dot_expr2[i] <- xml_text(expr_children[[2L]])
         } else {
-          is_expr2_to <- xml_text(xml_find_first(node, "./expr[2]/preceding-sibling::SYMBOL_SUB[1]")) %in% "to"
+          is_expr2_to <-
+            !is.na(xml_text(xml_find_first_(node, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
           if (is_expr2_to) {
             dot_expr1[i] <- xml_text(expr_children[[3L]])
             dot_expr2[i] <- xml_text(expr_children[[2L]])
@@ -156,7 +156,6 @@ seq_linter <- function() {
           }
         }
       } else {
-        expr_children <- xml_find_all(node, "./expr")
         dot_expr1[i] <- xml_text(expr_children[[1L]])
         dot_expr2[i] <- xml_text(expr_children[[2L]])
       }
@@ -180,7 +179,7 @@ seq_linter <- function() {
     seq_expr <- strip_comments_from_subtree(seq_expr)
 
     if (length(seq_expr) == 0L) {
-      args_info <- list(is_seq = logical(0), dot_expr1 = character(0), dot_expr2 = character(0))
+      args_info <- list(is_seq = logical(0L), dot_expr1 = character(0L), dot_expr2 = character(0L))
     } else {
       args_info <- get_seq_args(seq_expr)
     }
