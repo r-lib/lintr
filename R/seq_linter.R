@@ -143,12 +143,11 @@ seq_linter <- function() {
         dot_expr1 = character(0L),
         dot_expr2 = character(0L),
         replacement = character(0L),
-        lint_message = character(0L),
-        stringsAsFactors = FALSE
+        lint_message = character(0L)
       ))
     }
 
-    is_colon <- !is.na(xml_name(xml_find_first(seq_expr, "./OP-COLON")))
+    is_colon <- !is.na(xml_find_first_(seq_expr, "./OP-COLON"))
     is_seq <- !is_colon
 
     expr_counts <- as.integer(xml_find_chr_(seq_expr, "string(count(./expr))"))
@@ -157,19 +156,22 @@ seq_linter <- function() {
     expr3_text <- xml_find_chr_(seq_expr, "string(./expr[3])")
 
     is_expr2_to <-
-      !is.na(xml_text(xml_find_first(seq_expr, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
+      !is.na(xml_text(xml_find_first_(seq_expr, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
 
-    raw_expr1 <- ifelse(
-      is_colon,
-      expr1_text,
-      ifelse(expr_counts == 2L, "seq", ifelse(is_expr2_to, expr3_text, expr2_text))
-    )
+    raw_expr1 <- character(length(seq_expr))
+    raw_expr2 <- character(length(seq_expr))
 
-    raw_expr2 <- ifelse(
-      is_colon,
-      expr2_text,
-      ifelse(expr_counts == 2L, expr2_text, ifelse(is_expr2_to, expr2_text, expr3_text))
-    )
+    is_1arg_seq <- is_seq & expr_counts == 2L
+    is_2arg_seq <- is_seq & expr_counts != 2L
+
+    raw_expr1[is_colon] <- expr1_text[is_colon]
+    raw_expr2[is_colon] <- expr2_text[is_colon]
+
+    raw_expr1[is_1arg_seq] <- "seq"
+    raw_expr2[is_1arg_seq] <- expr2_text[is_1arg_seq]
+
+    raw_expr1[is_2arg_seq] <- ifelse(is_expr2_to[is_2arg_seq], expr3_text[is_2arg_seq], expr2_text[is_2arg_seq])
+    raw_expr2[is_2arg_seq] <- ifelse(is_expr2_to[is_2arg_seq], expr2_text[is_2arg_seq], expr3_text[is_2arg_seq])
 
     dot_expr1 <- format_arg(raw_expr1)
     dot_expr2 <- format_arg(raw_expr2)
