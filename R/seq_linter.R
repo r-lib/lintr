@@ -1,15 +1,11 @@
 #' Sequence linter
 #'
-#' This linter checks for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
-#' `1:NROW(...)` and `1:NCOL(...)` expressions in base-R, `seq(1, n)` /
-#' `seq(from = 1, to = n)` expressions, or their usage in
-#' conjunction with `seq()` (e.g., `seq(length(...))`, `seq(nrow(...))`, etc.).
+#' This linter checks for expressions like `1:length(...)` (and many other spiritually
+#'   equivalent variations) which are a common source of bugs when the right-hand side is zero.
+#'   It is safer to use [base::seq_len()] (to create a sequence of a specified *length*) or
+#'   [base::seq_along()] (to create a sequence *along* an object).
 #'
 #' Additionally, it checks for `1:n()` (from `{dplyr}`) and `1:.N` (from `{data.table}`).
-#'
-#' These often cause bugs when the right-hand side is zero.
-#' Instead, it is safer to use [base::seq_len()] (to create a sequence of a specified *length*) or
-#'   [base::seq_along()] (to create a sequence *along* an object).
 #'
 #' @examples
 #' # will produce lints
