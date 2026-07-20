@@ -98,13 +98,13 @@ any_duplicated_linter <- function() {
   distinct_xpath <- glue("
   expr[expr[
     expr[1][
-      SYMBOL_FUNCTION_CALL[{xp_text_in_table(c('uniqueN', 'n_distinct'))}]
+      SYMBOL_FUNCTION_CALL[text() = 'uniqueN' or text() = 'n_distinct']
       and (
         following-sibling::expr =
           parent::expr
             /parent::expr
             /expr
-            /expr[1][SYMBOL_FUNCTION_CALL[{xp_text_in_table(c('length', 'nrow'))}]]
+            /expr[1][SYMBOL_FUNCTION_CALL[text() = 'length' or text() = 'nrow']]
             /following-sibling::expr
         or following-sibling::expr[OP-DOLLAR or LBB]/expr[1] =
           parent::expr
