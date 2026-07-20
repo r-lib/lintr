@@ -6,6 +6,10 @@
 
 * `expect_shape_linter()` recommends usage of `testthat::expect_shape(x, ...)` over `expect_equal(nrow(x), n)`, `expect_equal(ncol(x), n)`, and `expect_equal(dim(x), d)` (#2893, @MichaelChirico).
 
+### Linter improvements
+
+* `any_duplicated_linter()` highlights the full comparison expression (`==`, `!=`, `<`, `>`) instead of just one operand when linting expressions like `length(unique(x)) == length(x)` or `uniqueN(col) == .N` (#2860, @MichaelChirico).
+
 ### Lint accuracy fixes: removing false positives
 
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).

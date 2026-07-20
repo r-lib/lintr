@@ -102,4 +102,29 @@ test_that("any_duplicated_linter catches expression with two types of lint", {
     linter
   )
 })
+
+test_that("any_duplicated_linter highlights the entire comparison expression", {
+  linter <- any_duplicated_linter()
+
+  expect_lint(
+    "x[, length(unique(col)) == .N]",
+    list(
+      message = rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == .N"),
+      column_number = 5L,
+      ranges = list(c(5L, 29L))
+    ),
+    linter
+  )
+
+  expect_lint(
+    "x[, uniqueN(col) == .N]",
+    list(
+      message = rex::rex("anyDuplicated(x) == 0L is better than uniqueN(x) == .N"),
+      column_number = 5L,
+      ranges = list(c(5L, 22L))
+    ),
+    linter
+  )
+})
 # fuzzer enable: dollar_at
+
