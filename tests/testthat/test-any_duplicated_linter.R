@@ -187,5 +187,3 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   )
 })
 # fuzzer enable: dollar_at
-
-
