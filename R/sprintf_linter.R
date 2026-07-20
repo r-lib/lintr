@@ -33,45 +33,14 @@
 #'   linters = sprintf_linter()
 #' )
 #'
+#' lint(
+#'   text = 'paste0(x, y)',
+#'   linters = sprintf_linter()
+#' )
+#'
 #' @evalRd rd_tags("sprintf_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
-is_missing_symbol <- function(x) is.symbol(x) && !nzchar(x)
-
-find_fmt_loc <- function(parsed_expr) {
-  if ("fmt" %in% names(parsed_expr)) {
-    which(names(parsed_expr) == "fmt")
-  } else {
-    arg_names <- names(parsed_expr)
-    if (is.null(arg_names)) {
-      2L
-    } else {
-      1L + match("", arg_names[-1L], nomatch = 1L)
-    }
-  }
-}
-
-zap_extra_args <- function(parsed_expr) {
-  fmt_loc <- find_fmt_loc(parsed_expr)
-
-  if (length(parsed_expr) >= 3L) {
-    arg_names <- names(parsed_expr)
-    if (is.null(arg_names)) {
-      arg_names <- rep("", length(parsed_expr))
-    }
-    for (i in setdiff(seq_along(parsed_expr), c(1L, fmt_loc))) {
-      if (arg_names[i] == "domain") {
-        if (!is.atomic(parsed_expr[[i]])) {
-          parsed_expr[i] <- list(NULL)
-        }
-      } else if (!is_missing_symbol(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
-        parsed_expr[[i]] <- 0L
-      }
-    }
-  }
-  parsed_expr
-}
-
 sprintf_linter <- function() {
   call_xpath <- "
   parent::expr[
@@ -180,4 +149,40 @@ sprintf_linter <- function() {
 
     c(constant_fmt_lint, single_arg_lint, invalid_sprintf_lint)
   })
+}
+
+is_missing_symbol <- function(x) is.symbol(x) && !nzchar(x)
+
+find_fmt_loc <- function(parsed_expr) {
+  if ("fmt" %in% names(parsed_expr)) {
+    which(names(parsed_expr) == "fmt")[1L]
+  } else {
+    arg_names <- names(parsed_expr)
+    if (is.null(arg_names)) {
+      2L
+    } else {
+      1L + match("", arg_names[-1L], nomatch = 1L)
+    }
+  }
+}
+
+zap_extra_args <- function(parsed_expr) {
+  fmt_loc <- find_fmt_loc(parsed_expr)
+
+  if (length(parsed_expr) >= 3L) {
+    arg_names <- names(parsed_expr)
+    if (is.null(arg_names)) {
+      arg_names <- rep("", length(parsed_expr))
+    }
+    for (i in setdiff(seq_along(parsed_expr), c(1L, fmt_loc))) {
+      if (arg_names[i] == "domain") {
+        if (!is.atomic(parsed_expr[[i]])) {
+          parsed_expr[i] <- list(NULL)
+        }
+      } else if (!is_missing_symbol(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
+        parsed_expr[[i]] <- 0L
+      }
+    }
+  }
+  parsed_expr
 }

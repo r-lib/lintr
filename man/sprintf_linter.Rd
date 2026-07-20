@@ -41,6 +41,11 @@ lint(
   linters = sprintf_linter()
 )
 
+lint(
+  text = 'paste0(x, y)',
+  linters = sprintf_linter()
+)
+
 }
 \seealso{
 \link{linters} for a complete list of linters available in lintr.
