@@ -109,7 +109,7 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   expect_lint(
     "any(duplicated(x))",
     list(
-      message = rex::rex("anyDuplicated(x, ...) > 0 is better"),
+      rex::rex("anyDuplicated(x, ...) > 0 is better"),
       column_number = 1L,
       ranges = list(c(1L, 18L))
     ),
@@ -119,7 +119,7 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   expect_lint(
     "length(unique(x)) == length(x)",
     list(
-      message = rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
+      rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
       column_number = 1L,
       ranges = list(c(1L, 30L))
     ),
@@ -129,7 +129,7 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   expect_lint(
     "length(unique(DF$col)) == nrow(DF)",
     list(
-      message = rex::rex("anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"),
+      rex::rex("anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"),
       column_number = 1L,
       ranges = list(c(1L, 34L))
     ),
@@ -139,7 +139,7 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   expect_lint(
     "n_distinct(DF$col) == nrow(DF)",
     list(
-      message = rex::rex("anyDuplicated(DF$col) == 0L is better than n_distinct(DF$col) == nrow(DF)"),
+      rex::rex("anyDuplicated(DF$col) == 0L is better than n_distinct(DF$col) == nrow(DF)"),
       column_number = 1L,
       ranges = list(c(1L, 30L))
     ),
@@ -149,7 +149,7 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   expect_lint(
     "x %>% summarize(length(unique(col)) == n())",
     list(
-      message = rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == n()"),
+      rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == n()"),
       column_number = 17L,
       ranges = list(c(17L, 42L))
     ),
@@ -159,7 +159,7 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   expect_lint(
     "x %>% summarize(n_distinct(col) == n())",
     list(
-      message = rex::rex("anyDuplicated(x) == 0L is better than n_distinct(x) == n()"),
+      rex::rex("anyDuplicated(x) == 0L is better than n_distinct(x) == n()"),
       column_number = 17L,
       ranges = list(c(17L, 38L))
     ),
@@ -169,7 +169,7 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   expect_lint(
     "x[, length(unique(col)) == .N]",
     list(
-      message = rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == .N"),
+      rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == .N"),
       column_number = 5L,
       ranges = list(c(5L, 29L))
     ),
@@ -179,7 +179,7 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
   expect_lint(
     "x[, uniqueN(col) == .N]",
     list(
-      message = rex::rex("anyDuplicated(x) == 0L is better than uniqueN(x) == .N"),
+      rex::rex("anyDuplicated(x) == 0L is better than uniqueN(x) == .N"),
       column_number = 5L,
       ranges = list(c(5L, 22L))
     ),
