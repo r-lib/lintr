@@ -150,18 +150,18 @@ seq_linter <- function() {
     }
 
     expr_metadata$is_seq <- is.na(xml_find_first_(seq_expr, "./OP-COLON"))
-    expr_metadata$expr_counts <- as.integer(xml_find_chr_(seq_expr, "string(count(./expr))"))
+    expr_counts <- as.integer(xml_find_chr_(seq_expr, "string(count(./expr))"))
     expr_metadata$expr1_text <- xml_find_chr_(seq_expr, "string(./expr[1])")
     expr_metadata$expr2_text <- xml_find_chr_(seq_expr, "string(./expr[2])")
     expr_metadata$expr3_text <- xml_find_chr_(seq_expr, "string(./expr[3])")
-    expr_metadata$is_expr2_to <-
+    is_expr2_to <-
       !is.na(xml_text(xml_find_first_(seq_expr, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
 
     expr_metadata$raw_expr1 <- character(n_expr)
     expr_metadata$raw_expr2 <- character(n_expr)
 
-    expr_metadata$is_1arg_seq <- with(expr_metadata, is_seq & expr_counts == 2L)
-    expr_metadata$is_2arg_seq <- with(expr_metadata, is_seq & expr_counts != 2L)
+    expr_metadata$is_1arg_seq <- expr_metadata$is_seq & expr_counts == 2L
+    is_2arg_seq <- expr_metadata$is_seq & expr_counts != 2L
 
     expr_metadata[!expr_metadata$is_seq, c("raw_expr1", "raw_expr2")] <-
       expr_metadata[!expr_metadata$is_seq, c("expr1_text", "expr2_text")]
@@ -169,38 +169,38 @@ seq_linter <- function() {
     expr_metadata[expr_metadata$is_1arg_seq, c("raw_expr1", "raw_expr2")] <-
       list("seq", expr_metadata$expr2_text[expr_metadata$is_1arg_seq])
 
-    second_arg_is_to <- expr_metadata$is_2arg_seq & expr_metadata$is_expr2_to
+    second_arg_is_to <- is_2arg_seq & is_expr2_to
     expr_metadata[second_arg_is_to, c("raw_expr1", "raw_expr2")] <-
       expr_metadata[second_arg_is_to, c("expr3_text", "expr2_text")]
-    second_arg_not_to <- expr_metadata$is_2arg_seq & !expr_metadata$is_expr2_to
+    second_arg_not_to <- is_2arg_seq & !is_expr2_to
     expr_metadata[second_arg_not_to, c("raw_expr1", "raw_expr2")] <-
       expr_metadata[second_arg_not_to, c("expr2_text", "expr3_text")]
 
     expr_metadata$dot_expr1 <- format_arg(expr_metadata$raw_expr1)
     expr_metadata$dot_expr2 <- format_arg(expr_metadata$raw_expr2)
 
-    expr_metadata$seq_along_idx <- expr_metadata$dot_expr1 == "length(...)" | expr_metadata$dot_expr2 == "length(...)"
-    expr_metadata$rev_idx <- expr_metadata$dot_expr2 %in% c("1", "1L")
+    not_seq_along <- expr_metadata$dot_expr1 != "length(...)" & expr_metadata$dot_expr2 != "length(...)"
+    is_decreasing <- expr_metadata$dot_expr2 %in% c("1", "1L")
 
     expr_metadata$replacement <- "seq_along(...)"
-    is_seq_len <- !expr_metadata$seq_along_idx & !expr_metadata$rev_idx
+    is_seq_len <- not_seq_along & !is_decreasing
     expr_metadata$replacement[is_seq_len] <- paste0("seq_len(", expr_metadata$dot_expr2[is_seq_len], ")")
-    is_rev_seq_len <- !expr_metadata$seq_along_idx & expr_metadata$rev_idx
+    is_rev_seq_len <- not_seq_along & is_decreasing
     expr_metadata$replacement[is_rev_seq_len] <- paste0("seq_len(", expr_metadata$dot_expr1[is_rev_seq_len], ")")
-    expr_metadata$replacement[expr_metadata$rev_idx] <-
-      paste0("rev(", expr_metadata$replacement[expr_metadata$rev_idx], ")")
+    expr_metadata$replacement[is_decreasing] <-
+      paste0("rev(", expr_metadata$replacement[is_decreasing], ")")
 
-    expr_metadata$seq_call <- ifelse(
+    seq_call <- ifelse(
       expr_metadata$dot_expr1 == "seq",
       paste0("seq(", expr_metadata$dot_expr2, ")"),
       paste0("seq(", expr_metadata$dot_expr1, ", ", expr_metadata$dot_expr2, ")")
     )
-    expr_metadata$colon_call <- paste0(expr_metadata$dot_expr1, ":", expr_metadata$dot_expr2)
-    expr_metadata$got_expr <- ifelse(expr_metadata$is_seq, expr_metadata$seq_call, expr_metadata$colon_call)
+    colon_call <- paste0(expr_metadata$dot_expr1, ":", expr_metadata$dot_expr2)
+    got_expr <- ifelse(expr_metadata$is_seq, seq_call, colon_call)
 
     expr_metadata$lint_message <- sprintf(
       "Use %s instead of %s, which is likely to be wrong in the empty edge case.",
-      expr_metadata$replacement, expr_metadata$got_expr
+      expr_metadata$replacement, got_expr
     )
 
     expr_metadata
