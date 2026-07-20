@@ -22,7 +22,8 @@ patrick::with_parameters_test_that(
     linter <- sprintf_linter()
     unused_arg_msg <- "one argument not used by format"
 
-    expect_lint(paste0(call_name, "('hello', 1)"), "constant", linter)
+    expect_lint(paste0(call_name, "('hello', 1)"), unused_arg_msg, linter)
+    expect_lint(paste0(call_name, "('abc', 'def', 'ghi')"), "arguments not used by format", linter)
 
     expect_lint(paste0(call_name, "('hello')"), "single argument", linter)
     expect_lint(paste0(call_name, "(paste0(x, y))"), "single argument", linter)
@@ -32,7 +33,7 @@ patrick::with_parameters_test_that(
     expect_lint(paste0(call_name, "('100%% automated')"), "single argument", linter)
     expect_lint(paste0(call_name, "('100%%%% automated')"), "single argument", linter)
     expect_lint(paste0(call_name, "('100%%%s')"), "too few", linter)
-    expect_lint(paste0(call_name, "('100%%%%s', x)"), "constant", linter)
+    expect_lint(paste0(call_name, "('100%%%%s', x)"), unused_arg_msg, linter)
 
     expect_lint(
       paste0(call_name, "('hello %d', 'a')"),
@@ -155,7 +156,7 @@ local({
       # Nested pipes
       expect_lint(
         paste("'%%sb'", pipe, "sprintf('%s')", pipe, "sprintf('a')"),
-        list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = "constant"),
+        list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = unused_arg_msg),
         linter
       )
       expect_lint(

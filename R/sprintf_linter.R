@@ -159,17 +159,7 @@ sprintf_linter <- function() {
       type = "warning"
     )
 
-    constant_fmt_lint <- xml_nodes_to_lints(
-      sprintf_calls[constant_fmt & num_args > 1L],
-      source_expression = source_expression,
-      lint_message = sprintf(
-        "%s call can be removed when a constant string is provided.",
-        fct_name[constant_fmt & num_args > 1L]
-      ),
-      type = "warning"
-    )
-
-    templated_sprintf_calls <- sprintf_calls[!constant_fmt & !is.na(fmt)]
+    templated_sprintf_calls <- sprintf_calls[!single_arg & !is.na(fmt)]
     sprintf_warning <- vapply(templated_sprintf_calls, capture_sprintf_warning, character(1L))
 
     has_warning <- !is.na(sprintf_warning)
@@ -180,6 +170,6 @@ sprintf_linter <- function() {
       type = "warning"
     )
 
-    c(single_arg_lint, constant_fmt_lint, invalid_sprintf_lint)
+    c(single_arg_lint, invalid_sprintf_lint)
   })
 }
