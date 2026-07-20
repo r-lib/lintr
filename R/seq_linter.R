@@ -136,38 +136,33 @@ seq_linter <- function() {
     funcalls_clean
   }
 
-  get_seq_metadata <- function(seq_expr) {
+  get_seq_lint_message <- function(seq_expr) {
     n_expr <- length(seq_expr)
-    seq_metadata <- data.frame(
-      is_seq = logical(n_expr),
-      dot_expr1 = character(n_expr),
-      dot_expr2 = character(n_expr),
-      replacement = character(n_expr),
-      lint_message = character(n_expr)
-    )
     if (n_expr == 0L) {
-      return(seq_metadata)
+      return(character())
     }
+    # vectors which are read/updated in parallel
+    seq_metadata <- data.frame(
+      raw_expr1 = character(n_expr),
+      raw_expr2 = character(n_expr),
+      expr1_text = xml_find_chr_(seq_expr, "string(./expr[1])"),
+      expr2_text = xml_find_chr_(seq_expr, "string(./expr[2])"),
+      expr3_text = xml_find_chr_(seq_expr, "string(./expr[3])")
+    )
 
-    seq_metadata$is_seq <- is.na(xml_find_first_(seq_expr, "./OP-COLON"))
+    is_seq <- is.na(xml_find_first_(seq_expr, "./OP-COLON"))
     expr_counts <- as.integer(xml_find_chr_(seq_expr, "string(count(./expr))"))
-    seq_metadata$expr1_text <- xml_find_chr_(seq_expr, "string(./expr[1])")
-    seq_metadata$expr2_text <- xml_find_chr_(seq_expr, "string(./expr[2])")
-    seq_metadata$expr3_text <- xml_find_chr_(seq_expr, "string(./expr[3])")
     is_expr2_to <-
       !is.na(xml_text(xml_find_first_(seq_expr, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
 
-    seq_metadata$raw_expr1 <- character(n_expr)
-    seq_metadata$raw_expr2 <- character(n_expr)
+    is_1arg_seq <- is_seq & expr_counts == 2L
+    is_2arg_seq <- is_seq & expr_counts != 2L
 
-    seq_metadata$is_1arg_seq <- seq_metadata$is_seq & expr_counts == 2L
-    is_2arg_seq <- seq_metadata$is_seq & expr_counts != 2L
+    seq_metadata[!is_seq, c("raw_expr1", "raw_expr2")] <-
+      seq_metadata[!is_seq, c("expr1_text", "expr2_text")]
 
-    seq_metadata[!seq_metadata$is_seq, c("raw_expr1", "raw_expr2")] <-
-      seq_metadata[!seq_metadata$is_seq, c("expr1_text", "expr2_text")]
-
-    seq_metadata[seq_metadata$is_1arg_seq, c("raw_expr1", "raw_expr2")] <-
-      list("seq", seq_metadata$expr2_text[seq_metadata$is_1arg_seq])
+    seq_metadata[is_1arg_seq, c("raw_expr1", "raw_expr2")] <-
+      list("seq", seq_metadata$expr2_text[is_1arg_seq])
 
     second_arg_is_to <- is_2arg_seq & is_expr2_to
     seq_metadata[second_arg_is_to, c("raw_expr1", "raw_expr2")] <-
@@ -176,34 +171,32 @@ seq_linter <- function() {
     seq_metadata[second_arg_not_to, c("raw_expr1", "raw_expr2")] <-
       seq_metadata[second_arg_not_to, c("expr2_text", "expr3_text")]
 
-    seq_metadata$dot_expr1 <- format_arg(seq_metadata$raw_expr1)
-    seq_metadata$dot_expr2 <- format_arg(seq_metadata$raw_expr2)
+    dot_expr1 <- format_arg(seq_metadata$raw_expr1)
+    dot_expr2 <- format_arg(seq_metadata$raw_expr2)
 
-    not_seq_along <- seq_metadata$dot_expr1 != "length(...)" & seq_metadata$dot_expr2 != "length(...)"
-    is_decreasing <- seq_metadata$dot_expr2 %in% c("1", "1L")
+    not_seq_along <- dot_expr1 != "length(...)" & dot_expr2 != "length(...)"
+    is_decreasing <- dot_expr2 %in% c("1", "1L")
 
-    seq_metadata$replacement <- "seq_along(...)"
+    preferred_usage <- "seq_along(...)"
     is_seq_len <- not_seq_along & !is_decreasing
-    seq_metadata$replacement[is_seq_len] <- paste0("seq_len(", seq_metadata$dot_expr2[is_seq_len], ")")
+    preferred_usage[is_seq_len] <- paste0("seq_len(", dot_expr2[is_seq_len], ")")
     is_rev_seq_len <- not_seq_along & is_decreasing
-    seq_metadata$replacement[is_rev_seq_len] <- paste0("seq_len(", seq_metadata$dot_expr1[is_rev_seq_len], ")")
-    seq_metadata$replacement[is_decreasing] <-
-      paste0("rev(", seq_metadata$replacement[is_decreasing], ")")
+    preferred_usage[is_rev_seq_len] <- paste0("seq_len(", dot_expr1[is_rev_seq_len], ")")
+    preferred_usage[is_decreasing] <-
+      paste0("rev(", preferred_usage[is_decreasing], ")")
 
     seq_call <- ifelse(
-      seq_metadata$dot_expr1 == "seq",
-      paste0("seq(", seq_metadata$dot_expr2, ")"),
-      paste0("seq(", seq_metadata$dot_expr1, ", ", seq_metadata$dot_expr2, ")")
+      dot_expr1 == "seq",
+      paste0("seq(", dot_expr2, ")"),
+      paste0("seq(", dot_expr1, ", ", dot_expr2, ")")
     )
-    colon_call <- paste0(seq_metadata$dot_expr1, ":", seq_metadata$dot_expr2)
-    got_expr <- ifelse(seq_metadata$is_seq, seq_call, colon_call)
+    colon_call <- paste0(dot_expr1, ":", dot_expr2)
+    observed_usage <- ifelse(is_seq, seq_call, colon_call)
 
-    seq_metadata$lint_message <- sprintf(
+    sprintf(
       "Use %s instead of %s, which is likely to be wrong in the empty edge case.",
-      seq_metadata$replacement, got_expr
+      preferred_usage, observed_usage
     )
-
-    seq_metadata
   }
 
   Linter(linter_level = "expression", function(source_expression) {
@@ -216,9 +209,9 @@ seq_linter <- function() {
     )
     seq_expr <- strip_comments_from_subtree(seq_expr)
 
-    seq_meta <- get_seq_metadata(seq_expr)
+    lint_message <- get_seq_lint_message(seq_expr)
 
-    seq_lints <- xml_nodes_to_lints(seq_expr, source_expression, seq_meta$lint_message, type = "warning")
+    seq_lints <- xml_nodes_to_lints(seq_expr, source_expression, lint_message, type = "warning")
 
     seq_len_calls <- source_expression$xml_find_function_calls("seq_len")
     seq_len_expr <- xml_find_all_(seq_len_calls, seq_len_xpath)
