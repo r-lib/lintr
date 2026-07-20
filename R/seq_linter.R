@@ -137,6 +137,9 @@ seq_linter <- function() {
   }
 
   get_seq_args <- function(seq_expr) {
+    if (length(seq_expr) == 0L) {
+      return(list(is_seq = logical(0L), dot_expr1 = character(0L), dot_expr2 = character(0L)))
+    }
     n_expr <- length(seq_expr)
     dot_expr1 <- character(n_expr)
     dot_expr2 <- character(n_expr)
@@ -183,11 +186,7 @@ seq_linter <- function() {
     )
     seq_expr <- strip_comments_from_subtree(seq_expr)
 
-    if (length(seq_expr) == 0L) {
-      args_info <- list(is_seq = logical(0L), dot_expr1 = character(0L), dot_expr2 = character(0L))
-    } else {
-      args_info <- get_seq_args(seq_expr)
-    }
+    args_info <- get_seq_args(seq_expr)
 
     dot_expr1 <- args_info$dot_expr1
     dot_expr2 <- args_info$dot_expr2
