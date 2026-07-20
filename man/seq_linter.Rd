@@ -8,7 +8,8 @@ seq_linter()
 }
 \description{
 This linter checks for \code{1:length(...)}, \code{1:nrow(...)}, \code{1:ncol(...)},
-\code{1:NROW(...)} and \code{1:NCOL(...)} expressions in base-R, or their usage in
+\code{1:NROW(...)} and \code{1:NCOL(...)} expressions in base-R, \code{seq(1, n)} /
+\code{seq(from = 1, to = n)} expressions, or their usage in
 conjunction with \code{seq()} (e.g., \code{seq(length(...))}, \code{seq(nrow(...))}, etc.).
 }
 \details{
@@ -22,6 +23,11 @@ Instead, it is safer to use \code{\link[base:seq_len]{base::seq_len()}} (to crea
 # will produce lints
 lint(
   text = "seq(length(x))",
+  linters = seq_linter()
+)
+
+lint(
+  text = "seq(1, 10)",
   linters = seq_linter()
 )
 
@@ -58,11 +64,6 @@ lint(
 
 lint(
   text = "dplyr::mutate(x, .id = seq_len(n()))",
-  linters = seq_linter()
-)
-
-lint(
-  text = "seq_along(x)",
   linters = seq_linter()
 )
 

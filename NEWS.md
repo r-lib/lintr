@@ -18,6 +18,7 @@
 ### Lint accuracy fixes: removing false negatives
 
 * `vector_logic_linter()` again finds `&&`/`||` usage in filtering expressions in function bodies like `\() filter(x, A && B)` (#3082, @MichaelChirico).
+* `seq_linter()` now flags `seq(1, n)` and `seq(from = 1, to = n)` calls, recommending `seq_len()` or `seq_along()` (#2661, @chiricom).
 
 # lintr (3.4.0)
 
