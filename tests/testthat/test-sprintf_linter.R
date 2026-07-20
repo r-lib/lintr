@@ -25,6 +25,10 @@ patrick::with_parameters_test_that(
     expect_lint(paste0(call_name, "('hello', 1)"), "constant", linter)
 
     expect_lint(paste0(call_name, "('hello')"), "constant", linter)
+    expect_lint(paste0(call_name, "(paste0(x, y))"), "single argument", linter)
+    expect_lint(paste0(call_name, "(foo())"), "single argument", linter)
+    expect_lint(paste0(call_name, "(x)"), "single argument", linter)
+    expect_lint(paste0(call_name, "(fmt = x)"), "single argument", linter)
     expect_lint(paste0(call_name, "('100%% automated')"), "constant", linter)
     expect_lint(paste0(call_name, "('100%%%% automated')"), "constant", linter)
     expect_lint(paste0(call_name, "('100%%%s')"), "too few", linter)
@@ -118,6 +122,19 @@ test_that("edge cases are detected correctly", {
   expect_no_lint("sprintf('%s', if (A) '' else y)", linter)
 
   expect_no_lint("sprintf('100%%%s', x)", linter)
+})
+
+test_that("gettextf keyword arguments work correctly", {
+  linter <- sprintf_linter()
+
+  expect_lint("gettextf(domain = 'R', paste0(x, y))", "single argument", linter)
+  expect_lint("gettextf(paste0(x, y), domain = 'R')", "single argument", linter)
+  expect_lint("gettextf(domain = dom, paste0(x, y))", "single argument", linter)
+  expect_no_lint("gettextf(domain = 'R', 'hello %s', x)", linter)
+  expect_no_lint("gettextf('hello %s', domain = 'R', x)", linter)
+  expect_lint("gettextf(domain = 'R', 'hello')", "constant", linter)
+  expect_no_lint("gettextf(domain = dom, 'hello %s', x)", linter)
+  expect_lint("gettextf(domain = dom, 'hello %s')", "too few", linter)
 })
 
 local({

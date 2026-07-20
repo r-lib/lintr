@@ -17,6 +17,11 @@
 #'   linters = sprintf_linter()
 #' )
 #'
+#' lint(
+#'   text = 'sprintf(paste0(x, y))',
+#'   linters = sprintf_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = 'sprintf("hello %s %s %d", x, y, z)',
@@ -31,6 +36,42 @@
 #' @evalRd rd_tags("sprintf_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
+is_missing_symbol <- function(x) is.symbol(x) && !nzchar(x)
+
+find_fmt_loc <- function(parsed_expr) {
+  if ("fmt" %in% names(parsed_expr)) {
+    which(names(parsed_expr) == "fmt")[1L]
+  } else {
+    arg_names <- names(parsed_expr)
+    if (is.null(arg_names)) {
+      2L
+    } else {
+      1L + match("", arg_names[-1L], nomatch = 1L)
+    }
+  }
+}
+
+zap_extra_args <- function(parsed_expr) {
+  fmt_loc <- find_fmt_loc(parsed_expr)
+
+  if (length(parsed_expr) >= 3L) {
+    arg_names <- names(parsed_expr)
+    if (is.null(arg_names)) {
+      arg_names <- rep("", length(parsed_expr))
+    }
+    for (i in setdiff(seq_along(parsed_expr), c(1L, fmt_loc))) {
+      if (arg_names[i] == "domain") {
+        if (!is.atomic(parsed_expr[[i]])) {
+          parsed_expr[i] <- list(NULL)
+        }
+      } else if (!is_missing_symbol(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
+        parsed_expr[[i]] <- 0L
+      }
+    }
+  }
+  parsed_expr
+}
+
 sprintf_linter <- function() {
   call_xpath <- "
   parent::expr[
@@ -43,33 +84,6 @@ sprintf_linter <- function() {
       preceding-sibling::*[not(self::COMMENT)][1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
     ]"
   )
-
-  is_missing <- function(x) is.symbol(x) && !nzchar(x)
-
-  # Zap sprintf() call to contain only constants
-  #
-  # Set all extra arguments to 0L if they aren't a constant
-  #
-  # @param parsed_expr A parsed `sprintf()` call
-  #
-  # @return A `sprintf()` call with all non-constants replaced by `0L`
-  # (which is compatible with all sprintf format specifiers)
-  zap_extra_args <- function(parsed_expr) {
-    if ("fmt" %in% names(parsed_expr)) {
-      fmt_loc <- which(names(parsed_expr) == "fmt")
-    } else {
-      fmt_loc <- 2L
-    }
-
-    if (length(parsed_expr) >= 3L) {
-      for (i in setdiff(seq_along(parsed_expr), c(1L, fmt_loc))) {
-        if (!is_missing(parsed_expr[[i]]) && !is.atomic(parsed_expr[[i]])) {
-          parsed_expr[[i]] <- 0L
-        }
-      }
-    }
-    parsed_expr
-  }
 
   # Anticipate warnings of a sprintf() call
   #
@@ -109,10 +123,14 @@ sprintf_linter <- function() {
       sprintf_calls,
       "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
     )
+    fmt_by_pos_xpath <- paste0(
+      "expr[preceding-sibling::OP-LEFT-PAREN and ",
+      "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])][1]/STR_CONST"
+    )
     fmt_by_pos <- ifelse(
       in_pipeline,
       get_r_string(sprintf_calls, "preceding-sibling::*[not(self::COMMENT)][2]/STR_CONST"),
-      get_r_string(sprintf_calls, "OP-LEFT-PAREN/following-sibling::expr[1]/STR_CONST")
+      get_r_string(sprintf_calls, fmt_by_pos_xpath)
     )
 
     fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, fmt_by_pos)
@@ -127,6 +145,28 @@ sprintf_linter <- function() {
       type = "warning"
     )
 
+    num_args_xpath <- paste0(
+      "./expr[preceding-sibling::OP-LEFT-PAREN and ",
+      "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]/",
+      "preceding-sibling::*[not(self::COMMENT)][1][self::SYMBOL_SUB[text() = 'domain']])]"
+    )
+    num_args_in_parens <- vapply(
+      sprintf_calls,
+      function(call) {
+        length(xml_find_all_(call, num_args_xpath))
+      },
+      integer(1L)
+    )
+    num_args <- num_args_in_parens + as.integer(in_pipeline)
+    single_arg <- is.na(fmt) & num_args == 1L
+
+    single_arg_lint <- xml_nodes_to_lints(
+      sprintf_calls[single_arg],
+      source_expression = source_expression,
+      lint_message = sprintf("%s call can be removed when a single argument is provided.", fct_name[single_arg]),
+      type = "warning"
+    )
+
     templated_sprintf_calls <- sprintf_calls[!constant_fmt & !is.na(fmt)]
     sprintf_warning <- vapply(templated_sprintf_calls, capture_sprintf_warning, character(1L))
 
@@ -138,6 +178,6 @@ sprintf_linter <- function() {
       type = "warning"
     )
 
-    c(constant_fmt_lint, invalid_sprintf_lint)
+    c(constant_fmt_lint, single_arg_lint, invalid_sprintf_lint)
   })
 }
