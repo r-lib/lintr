@@ -74,7 +74,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 seq_linter <- function() {
-  bad_funcs_table <- xp_text_in_table(c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim"))
+  bad_funcs <- xp_text_in_table(c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim"))
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   # or if seq() is called with 2 arguments (from = 1, to = n)
@@ -82,7 +82,7 @@ seq_linter <- function() {
   parent::expr[
     (
       count(expr) = 2
-      and expr[2][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs_table} ]]
+      and expr[2][expr/SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]
     )
     or (
       count(expr) = 3
@@ -106,7 +106,7 @@ seq_linter <- function() {
     /parent::expr[
       expr[NUM_CONST[text() = '1' or text() = '1L']]
       and (
-        expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {bad_funcs_table} ]]]]
+        expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]]]
         or expr[SYMBOL = '.N']
       )
     ]
