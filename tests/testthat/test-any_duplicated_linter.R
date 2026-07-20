@@ -160,8 +160,8 @@ test_that("any_duplicated_linter highlights the entire comparison expression", {
     "x |> summarize(n_distinct(col) == n())",
     list(
       rex::rex("anyDuplicated(x) == 0L is better than n_distinct(x) == n()"),
-      column_number = 17L,
-      ranges = list(c(17L, 38L))
+      column_number = 16L,
+      ranges = list(c(16L, 37L))
     ),
     linter
   )
