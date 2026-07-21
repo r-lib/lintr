@@ -115,6 +115,20 @@ sprintf_linter <- function() {
     }
   }
 
+  fmt_by_pos_xpath <- "
+    expr[
+      preceding-sibling::OP-LEFT-PAREN
+      and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
+    ][1]
+      /STR_CONST
+  "
+  num_args_xpath <- "count(
+    ./expr[
+      preceding-sibling::OP-LEFT-PAREN
+      and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][1][self::SYMBOL_SUB[text() = 'domain']])
+    ]
+  )"
+
   Linter(linter_level = "file", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
     sprintf_calls <- xml_find_all_(xml_calls, call_xpath)
@@ -124,13 +138,6 @@ sprintf_linter <- function() {
       sprintf_calls,
       "SYMBOL_SUB[text() = 'fmt']/following-sibling::expr[1]/STR_CONST"
     )
-    fmt_by_pos_xpath <- "
-      expr[
-        preceding-sibling::OP-LEFT-PAREN
-        and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
-      ][1]
-        /STR_CONST
-    "
     fmt_by_pos <- ifelse(
       in_pipeline,
       get_r_string(sprintf_calls, "preceding-sibling::*[not(self::COMMENT)][2]/STR_CONST"),
@@ -140,21 +147,16 @@ sprintf_linter <- function() {
     fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, fmt_by_pos)
     constant_fmt <- !is.na(fmt) & !grepl("%", gsub("%%", "", fmt, fixed = TRUE), fixed = TRUE)
 
-    fct_name <- xp_call_name(sprintf_calls)
-
-    num_args_xpath <- "count(
-      ./expr[
-        preceding-sibling::OP-LEFT-PAREN
-        and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][1][self::SYMBOL_SUB[text() = 'domain']])
-      ]
-    )"
     num_args <- in_pipeline + xml_find_num_(sprintf_calls, num_args_xpath)
-
     single_arg <- (is.na(fmt) | constant_fmt) & num_args == 1L
+
     single_arg_lint <- xml_nodes_to_lints(
       sprintf_calls[single_arg],
       source_expression = source_expression,
-      lint_message = sprintf("%s call can be removed when a single argument is provided.", fct_name[single_arg]),
+      lint_message = sprintf(
+        "%s call can be removed when a single argument is provided.",
+        xp_call_name(sprintf_calls[single_arg])
+      ),
       type = "warning"
     )
 
