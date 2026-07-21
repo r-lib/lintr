@@ -16,17 +16,18 @@ When reviewing a PR, you must evaluate the following aspects:
 1.  **Correctness**: Does the change actually fix the issue or implement the feature correctly?
 2.  **Design**: Is the solution well-designed? Does it fit well with the existing architecture?
 3.  **Maintenance Burden**: Does this change introduce unnecessary complexity or future maintenance overhead?
-4.  **Minimality**: Is the PR as minimal as possible to achieve its goal?
-5.  **NEWS Entry**: Is a NEWS entry required? If so, is it concise and informative? (Internal test fixes usually do not need a NEWS entry).
-6.  **Implementation Quality**: Is the code readable, clean, efficient, and idiomatic R?
-    *   **Data Engineering**: Look for correct management of data structures. For example, instead of maintaining several "loose" parallel vectors, they should be a single `data.frame`.
-    *   **Vectorization**: Look for loop patterns and suggest vectorized alternatives (e.g. using `Map()`, logical indexing, or vector sequences) to keep R code idiomatic.
-    *   **NA Safety (Literate Formats)**: Check that linters handling line text account for `NA_character_` (used to mask markdown blocks in Rmd/qmd). Ensure logical assertions on line content (e.g. `is_bad`) exclude NAs safely (using `!is.na(...)`) so they do not propagate or cause runtime evaluation failures.
-7.  **Test Coverage & Cleanliness**:
-    *   Are new tests appropriate?
-    *   Do they cover reasonable edge cases?
-    *   **Test Suite Cleanliness**: Ensure tests do not leave stray warnings in the test run. Use `expect_warning` to capture expected warnings, or `expect_no_warning`/`expect_silent` to assert silence.
-    *   **Feature Detection vs. Version Checks**: When adapting to upstream R changes (e.g., R-devel), prefer feature detection (testing if a function behaves a certain way in the current R session) over hardcoded version checks (`getRversion()`).
+4.  **Minimality**: Is the PR as minimal as possible to achieve its goal? Look out for redundant helper assignments when conditionals can be factored cleanly inside vectors (`c("strsplit", if (check_file_listing) c("dir", "list.files"))`).
+5.  **NEWS Entry**: Is a NEWS entry required? If so, is it concise, accurately formatted under `# lintr (in development)`, and referencing the relevant PR or issue? (Internal test fixes usually do not need a NEWS entry, whereas user-facing enhancements and newly checked functions always do).
+6.  **Implementation Quality & Skill Compliance**: Is the code readable, clean, efficient, and idiomatic R? Before proposing feedback on specific domain areas, read the relevant skills using `view_file` and strictly enforce their structural and best-practice requirements:
+    *   **Linter Development Standards**: Check against the `developing-linters` skill (`/usr/local/google/home/chiricom/git/lintr/.agents/skills/developing-linters/SKILL.md`). Verify clear minimalist signatures, cohesive data engineering (`data.frame` over parallel loose vectors), idiomatic vectorization (`Map()`, `vapply()`), exact AST condition checks, transitionary upstream R feature gates annotated with `# TODO(R>=x.y.z)`, and crisp roxygen documentation containing matched lints/OK `@examples` pairs in structured sections.
+    *   **XPath Composition & Readability**: Check against the `xpath-style` skill (`/usr/local/google/home/chiricom/git/lintr/.agents/skills/xpath-style/SKILL.md`). Ensure exact AST node entry points, modular composition via `glue()`, factored common predicates out of disjunctions (`STR_CONST and (...)`), and unnested single conditions placed before multi-condition parenthesized blocks right inside `or` queries.
+    *   **Literate Programming Robustness**: Check against the `literate-r-formats` skill (`/usr/local/google/home/chiricom/git/lintr/.agents/skills/literate-r-formats/SKILL.md`). Verify NA safety (`!is.na(...)`) over masked line extraction structures (`NA_character_` in `.Rmd`/`.qmd`).
+7.  **Test Coverage & Cleanliness (`testing-linters` Skill)**: Check unit tests against the `testing-linters` skill (`/usr/local/google/home/chiricom/git/lintr/.agents/skills/testing-linters/SKILL.md`). Verify:
+    *   Appropriate coverage of real-world, empirical patterns (e.g. `full.names = TRUE`, `recursive = TRUE`, pipelines, literal escapes) over abstract toys.
+    *   Modular test organization across distinct, cleanly labeled `test_that()` blocks (separating keyword lookups, positional inference, and option toggles).
+    *   **Option Override WAI Checks**: Whenever an option disables checking specific targeted functions (`check_file_listing = FALSE`), ensure assertions confirm all remaining targets monitored by the linter continue to function as working-as-intended (WAI).
+    *   **Clean Syntax & High-Level Comments**: Verify selective use of raw strings (`R'{...}'`) purely when backslash escaping requires them, consolidation of repetitive assertion comments into clean high-level summary notes, and absence of stray test run warnings (`expect_warning`, `expect_no_warning`).
+    *   **Feature Detection vs. Version Checks**: Prefer feature detection (testing if a function behaves a certain way in the current session) over hardcoded version lookups (`getRversion()`).
 
 ## Methodology
 
