@@ -148,7 +148,7 @@ sprintf_linter <- function() {
         and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][1][self::SYMBOL_SUB[text() = 'domain']])
       ]
     )"
-    num_args <- as.integer(xml_find_num_(sprintf_calls, num_args_xpath)) + as.integer(in_pipeline)
+    num_args <- in_pipeline + xml_find_num_(sprintf_calls, num_args_xpath)
 
     single_arg <- (is.na(fmt) | constant_fmt) & num_args == 1L
     single_arg_lint <- xml_nodes_to_lints(
