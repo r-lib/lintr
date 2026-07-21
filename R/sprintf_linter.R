@@ -141,7 +141,7 @@ sprintf_linter <- function() {
     num_args_xpath <- "count(
       ./expr[
         preceding-sibling::OP-LEFT-PAREN
-        and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][self::SYMBOL_SUB[text() = 'domain']])
+        and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][1][self::SYMBOL_SUB[text() = 'domain']])
       ]
     )"
     num_args <- as.integer(xml_find_num_(sprintf_calls, num_args_xpath)) + as.integer(in_pipeline)
