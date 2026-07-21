@@ -56,15 +56,6 @@ sprintf_linter <- function() {
 
   is_non_atomic <- function(x) !(is.symbol(x) && !nzchar(x)) && !is.atomic(x)
 
-  find_fmt_loc <- function(parsed_expr) {
-    arg_names <- names(parsed_expr)
-    if ("fmt" %in% arg_names) {
-      return(which(names(parsed_expr) == "fmt")[1L])
-    }
-
-    1L + match("", arg_names[-1L], nomatch = 1L)
-  }
-
   # Zap sprintf() call to contain only constants
   #
   # Set all extra arguments to 0L if they aren't a constant
@@ -74,12 +65,16 @@ sprintf_linter <- function() {
   # @return A `sprintf()` call with all non-constants replaced by `0L`
   # (which is compatible with all sprintf format specifiers)
   zap_extra_args <- function(parsed_expr) {
-    fmt_loc <- find_fmt_loc(parsed_expr)
-
     if (length(parsed_expr) < 3L) {
       return(parsed_expr)
     }
+
     arg_names <- names2(parsed_expr)
+    if ("fmt" %in% arg_names) {
+      fmt_loc <- which(names(parsed_expr) == "fmt")[1L]
+    } else {
+      fmt_loc <- 1L + match("", arg_names[-1L], nomatch = 1L)
+    }
     domain_loc <- arg_names == "domain"
     parsed_expr[domain_loc] <- list(NULL)
     check_arg_idx <- setdiff(2L:length(parsed_expr), c(fmt_loc, which(domain_loc)))
