@@ -71,7 +71,7 @@ sprintf_linter <- function() {
 
     arg_names <- names2(parsed_expr)
     if ("fmt" %in% arg_names) {
-      fmt_loc <- which(names(parsed_expr) == "fmt")[1L]
+      fmt_loc <- which(names(parsed_expr) == "fmt")
     } else {
       fmt_loc <- 1L + match("", arg_names[-1L], nomatch = 1L)
     }
