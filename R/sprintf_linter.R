@@ -138,11 +138,12 @@ sprintf_linter <- function() {
 
     fct_name <- xp_call_name(sprintf_calls)
 
-    num_args_xpath <- paste0(
-      "count(./expr[preceding-sibling::OP-LEFT-PAREN and ",
-      "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]/",
-      "preceding-sibling::*[not(self::COMMENT)][1][self::SYMBOL_SUB[text() = 'domain']])])"
-    )
+    num_args_xpath <- "count(
+      ./expr[
+        preceding-sibling::OP-LEFT-PAREN
+        and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][self::SYMBOL_SUB[text() = 'domain']])
+      ]
+    )"
     num_args <- as.integer(xml_find_num_(sprintf_calls, num_args_xpath)) + as.integer(in_pipeline)
 
     single_arg <- (is.na(fmt) | constant_fmt) & num_args == 1L
