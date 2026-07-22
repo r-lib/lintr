@@ -65,7 +65,6 @@ class_equals_linter <- function() {
     operator <- xml_find_chr_(bad_expr, "string(*[2])")
     operator[is_element] <- "is.element()"
 
-
     lint_message <- paste0(
       "Use inherits(x, 'class-name'), is.<class> for S3 classes, ",
       "or is(x, 'S4Class') for S4 classes, ",
@@ -79,4 +78,3 @@ class_equals_linter <- function() {
     )
   })
 }
-

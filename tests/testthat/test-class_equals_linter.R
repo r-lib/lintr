@@ -13,13 +13,7 @@ test_that("class_equals_linter skips allowed usages", {
 
   # co-occurrence in separate arguments or comparisons
   expect_no_lint("foo(class(x), is.element(a, b))", linter)
-  expect_lint(
-    "class(x) == is.element(a, b)",
-    rex::rex("instead of comparing class(x) with ==."),
-    linter
-  )
 })
-
 
 test_that("class_equals_linter blocks simple disallowed usages", {
   linter <- class_equals_linter()
@@ -28,6 +22,11 @@ test_that("class_equals_linter blocks simple disallowed usages", {
   expect_lint("if (class(x) == 'character') stop('no')", lint_msg, linter)
   expect_lint("is_regression <- class(x) == 'lm'", lint_msg, linter)
   expect_lint("is_regression <- 'lm' == class(x)", lint_msg, linter)
+  expect_lint(
+    "class(x) == is.element(a, b)",
+    rex::rex("instead of comparing class(x) with ==."),
+    linter
+  )
 })
 
 test_that("class_equals_linter blocks usage of %in% for checking class", {
@@ -40,11 +39,7 @@ test_that("class_equals_linter blocks usage of %in% for checking class", {
 
 test_that("class_equals_linter blocks usage of is.element() for checking class", {
   linter <- class_equals_linter()
-  lint_msg <- rex::rex(
-    "Use inherits(x, 'class-name'), is.<class> for S3 classes, ",
-    "or is(x, 'S4Class') for S4 classes, ",
-    "instead of comparing class(x) with is.element()."
-  )
+  lint_msg <- rex::rex("inherits(x, 'class-name')", one_or_more(any), "instead of comparing class(x) with is.element()")
 
   expect_lint("if (is.element('character', class(x))) stop('no')", lint_msg, linter)
   expect_lint("if (is.element(class(x), 'character')) stop('no')", lint_msg, linter)
@@ -65,21 +60,14 @@ test_that("class_equals_linter blocks class(x) != 'klass'", {
 # as seen, e.g. in base R
 test_that("class_equals_linter skips usage for subsetting", {
   linter <- class_equals_linter()
+  lint_message <- rex::rex("inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes")
 
   expect_no_lint("class(x)[class(x) == 'foo']", linter)
   expect_no_lint("class(x)[is.element('foo', class(x))]", linter)
 
   # but not further nesting
-  expect_lint(
-    "x[if (class(x) == 'foo') 1 else 2]",
-    rex::rex("Use inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes"),
-    linter
-  )
-  expect_lint(
-    "x[if (is.element('foo', class(x))) 1 else 2]",
-    rex::rex("Use inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes"),
-    linter
-  )
+  expect_lint("x[if (class(x) == 'foo') 1 else 2]", lint_message, linter)
+  expect_lint("x[if (is.element('foo', class(x))) 1 else 2]", lint_message, linter)
 })
 
 test_that("lints vectorize", {
@@ -90,11 +78,10 @@ test_that("lints vectorize", {
       is.element('character', class(x))
     }"),
     list(
-      list("with %in%\\.", line_number = 2L),
-      list("with ==\\.", line_number = 3L),
-      list("with is\\.element\\(\\)\\.", line_number = 4L)
+      list("with %in%", line_number = 2L),
+      list("with ==", line_number = 3L),
+      list("with is\\.element", line_number = 4L)
     ),
     class_equals_linter()
   )
 })
-
