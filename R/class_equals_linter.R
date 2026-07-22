@@ -19,6 +19,11 @@
 #'   linters = class_equals_linter()
 #' )
 #'
+#' lint(
+#'   text = 'is_numeric <- is.element("numeric", class(x))',
+#'   linters = class_equals_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = 'is_lm <- inherits(x, "lm")',
@@ -30,6 +35,11 @@
 #'   linters = class_equals_linter()
 #' )
 #'
+#' lint(
+#'   text = 'is_numeric <- is.numeric(x)',
+#'   linters = class_equals_linter()
+#' )
+#'
 #' @evalRd rd_tags("class_equals_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
@@ -38,7 +48,12 @@ class_equals_linter <- function() {
   parent::expr
     /parent::expr[
       not(preceding-sibling::OP-LEFT-BRACKET)
-      and (EQ or NE or SPECIAL[text() = '%in%'])
+      and (
+        EQ
+        or NE
+        or SPECIAL[text() = '%in%']
+        or expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.element']
+      )
     ]
   "
 
@@ -46,7 +61,11 @@ class_equals_linter <- function() {
     xml_calls <- source_expression$xml_find_function_calls("class")
     bad_expr <- xml_find_all_(xml_calls, xpath)
 
+    is_element <- xml_find_lgl_(bad_expr, "boolean(expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.element'])")
     operator <- xml_find_chr_(bad_expr, "string(*[2])")
+    operator[is_element] <- "is.element()"
+
+
     lint_message <- paste0(
       "Use inherits(x, 'class-name'), is.<class> for S3 classes, ",
       "or is(x, 'S4Class') for S4 classes, ",
@@ -60,3 +79,4 @@ class_equals_linter <- function() {
     )
   })
 }
+

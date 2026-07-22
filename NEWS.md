@@ -6,6 +6,10 @@
 
 * `expect_shape_linter()` recommends usage of `testthat::expect_shape(x, ...)` over `expect_equal(nrow(x), n)`, `expect_equal(ncol(x), n)`, and `expect_equal(dim(x), d)` (#2893, @MichaelChirico).
 
+### Linter improvements
+
+* `class_equals_linter()` blocks checking class membership with `is.element(x, class(obj))` or `is.element(class(obj), x)` (#2849, @MichaelChirico).
+
 ### Lint accuracy fixes: removing false positives
 
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).

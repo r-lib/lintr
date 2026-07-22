@@ -27,6 +27,11 @@ lint(
   linters = class_equals_linter()
 )
 
+lint(
+  text = 'is_numeric <- is.element("numeric", class(x))',
+  linters = class_equals_linter()
+)
+
 # okay
 lint(
   text = 'is_lm <- inherits(x, "lm")',
@@ -35,6 +40,11 @@ lint(
 
 lint(
   text = 'if (inherits(x, "lm")) is_lm <- TRUE',
+  linters = class_equals_linter()
+)
+
+lint(
+  text = 'is_numeric <- is.numeric(x)',
   linters = class_equals_linter()
 )
 
