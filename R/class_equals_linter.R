@@ -61,7 +61,7 @@ class_equals_linter <- function() {
     xml_calls <- source_expression$xml_find_function_calls("class")
     bad_expr <- xml_find_all_(xml_calls, xpath)
 
-    is_element <- xml_find_lgl_(bad_expr, "boolean(expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.element'])")
+    is_element <- !is.na(xml_find_first_(bad_expr, "expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.element']"))
     operator <- xml_find_chr_(bad_expr, "string(*[2])")
     operator[is_element] <- "is.element()"
 
