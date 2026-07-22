@@ -20,7 +20,7 @@
 #' )
 #'
 #' lint(
-#'   text = 'is_numeric <- is.element("numeric", class(x))',
+#'   text = 'is.element("numeric", class(x))',
 #'   linters = class_equals_linter()
 #' )
 #'
@@ -36,7 +36,7 @@
 #' )
 #'
 #' lint(
-#'   text = 'is_numeric <- is.numeric(x)',
+#'   text = 'is.numeric(x)',
 #'   linters = class_equals_linter()
 #' )
 #'
