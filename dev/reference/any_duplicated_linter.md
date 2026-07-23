@@ -44,7 +44,7 @@ lint(
 )
 #> <text>:1:1: warning: [any_duplicated_linter] anyDuplicated(x) == 0L is better than length(unique(x)) == length(x).
 #> length(unique(x)) == length(x)
-#> ^~~~~~~~~~~~~~~~~
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 lint(
   text = "DT[, uniqueN(col) == .N]",
@@ -52,7 +52,7 @@ lint(
 )
 #> <text>:1:6: warning: [any_duplicated_linter] anyDuplicated(x) == 0L is better than uniqueN(x) == .N
 #> DT[, uniqueN(col) == .N]
-#>      ^~~~~~~~~~~~
+#>      ^~~~~~~~~~~~~~~~~~
 
 # okay
 lint(
