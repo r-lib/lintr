@@ -5,7 +5,8 @@
 #'   `inherits(x, "character")`. Often, class `k` will have an `is.` equivalent,
 #'   for example [is.character()] or [is.data.frame()].
 #'
-#' Similar reasoning applies for `class(x) %in% "character"`.
+#' Similar reasoning applies for `class(x) %in% "character"` and
+#'   `is.element("character", class(x))`.
 #'
 #' @examples
 #' # will produce lints
