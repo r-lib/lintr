@@ -62,7 +62,7 @@ class_equals_linter <- function() {
     xml_calls <- source_expression$xml_find_function_calls("class")
     bad_expr <- xml_find_all_(xml_calls, xpath)
 
-    operator <- xml_find_chr_(bad_expr, "string(*[2])")
+    operator <- xml_find_chr_(bad_expr, "string(*[not(self::COMMENT)][2])")
     operator[operator == "("] <- "is.element()" # only non-operator case.
 
     lint_message <- paste0(

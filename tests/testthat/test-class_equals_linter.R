@@ -47,6 +47,16 @@ test_that("class_equals_linter blocks usage of is.element() for checking class",
   expect_lint("is.element(set = class(x), el = 'character')", lint_msg, linter)
   expect_lint("base::is.element('character', class(x))", lint_msg, linter)
   expect_lint("utils::is.element('character', class(x))", lint_msg, linter)
+
+  # AST edge case
+  expect_lint(
+    trim_some("
+      if (is.element #comment
+      ('character', class(x))) TRUE
+    "),
+    lint_msg,
+    linter
+  )
 })
 
 test_that("class_equals_linter blocks class(x) != 'klass'", {
