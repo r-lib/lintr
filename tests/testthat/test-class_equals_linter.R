@@ -48,6 +48,14 @@ test_that("class_equals_linter blocks usage of is.element() for checking class",
   expect_lint("base::is.element('character', class(x))", lint_msg, linter)
   expect_lint("utils::is.element('character', class(x))", lint_msg, linter)
 
+  # piped calls
+  expect_lint("class(x) |> is.element('character')", lint_msg, linter)
+  expect_lint("class(x) %>% is.element('character')", lint_msg, linter)
+  expect_lint("class(x) |> base::is.element('character')", lint_msg, linter)
+  expect_lint("class(x) |> is.element(set = 'character')", lint_msg, linter)
+  expect_lint("class(x) |> is.element(el = 'character')", lint_msg, linter)
+  expect_lint("if (class(x) |> is.element('character')) stop('no')", lint_msg, linter)
+
   # AST edge case
   expect_lint(
     trim_some("
@@ -74,10 +82,12 @@ test_that("class_equals_linter skips usage for subsetting", {
 
   expect_no_lint("class(x)[class(x) == 'foo']", linter)
   expect_no_lint("class(x)[is.element('foo', class(x))]", linter)
+  expect_no_lint("class(x)[class(x) |> is.element('foo')]", linter)
 
   # but not further nesting
   expect_lint("x[if (class(x) == 'foo') 1 else 2]", lint_message, linter)
   expect_lint("x[if (is.element('foo', class(x))) 1 else 2]", lint_message, linter)
+  expect_lint("x[if (class(x) |> is.element('foo')) 1 else 2]", lint_message, linter)
 })
 
 test_that("lints vectorize", {
@@ -86,11 +96,13 @@ test_that("lints vectorize", {
       'character' %in% class(x)
       class(x) == 'character'
       is.element('character', class(x))
+      class(x) |> is.element('character')
     }"),
     list(
       list("with %in%", line_number = 2L),
       list("with ==", line_number = 3L),
-      list("with is\\.element", line_number = 4L)
+      list("with is\\.element", line_number = 4L),
+      list("with is\\.element", line_number = 5L)
     ),
     class_equals_linter()
   )

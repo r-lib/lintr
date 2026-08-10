@@ -45,7 +45,12 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 class_equals_linter <- function() {
-  xpath <- "
+  pipes <- setdiff(magrittr_pipes, c("%$%", "%<>%"))
+  pipe_is_element_cond <- glue("
+    (PIPE or SPECIAL[{ xp_text_in_table(pipes) }])
+    and expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.element']
+  ")
+  xpath <- glue("
   parent::expr
     /parent::expr[
       not(preceding-sibling::OP-LEFT-BRACKET)
@@ -54,16 +59,17 @@ class_equals_linter <- function() {
         or NE
         or SPECIAL[text() = '%in%']
         or expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.element']
+        or ({pipe_is_element_cond})
       )
     ]
-  "
+  ")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("class")
     bad_expr <- xml_find_all_(xml_calls, xpath)
 
     operator <- xml_find_chr_(bad_expr, "string(*[not(self::COMMENT)][2])")
-    operator[operator == "("] <- "is.element()" # only non-operator case.
+    operator[!operator %in% c("==", "!=", "%in%")] <- "is.element()" # non-operator case.
 
     lint_message <- paste0(
       "Use inherits(x, 'class-name'), is.<class> for S3 classes, ",
