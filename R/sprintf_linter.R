@@ -75,14 +75,10 @@ sprintf_linter <- function() {
     }
 
     arg_names <- names2(parsed_expr)
-    if ("fmt" %in% arg_names) {
-      fmt_loc <- which(arg_names == "fmt")
-    } else {
-      fmt_loc <- 1L + match("", arg_names[-1L], nomatch = 1L)
-    }
+    fmt_loc <- match("fmt", arg_names, nomatch = 1L + match("", arg_names[-1L], nomatch = 1L))
     domain_loc <- arg_names == "domain"
     parsed_expr[domain_loc] <- list(NULL)
-    check_arg_idx <- setdiff(2L:length(parsed_expr), c(fmt_loc, which(domain_loc)))
+    check_arg_idx <- setdiff(2L:length(parsed_expr), c(fmt_loc[1L], which(domain_loc)))
     for (i in check_arg_idx) {
       if (is_non_atomic(parsed_expr[[i]])) {
         parsed_expr[[i]] <- 0L
