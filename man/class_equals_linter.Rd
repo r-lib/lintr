@@ -13,7 +13,8 @@ is in general a vector. The correct version for S3 classes is \code{\link[=inher
 for example \code{\link[=is.character]{is.character()}} or \code{\link[=is.data.frame]{is.data.frame()}}.
 }
 \details{
-Similar reasoning applies for \code{class(x) \%in\% "character"}.
+Similar reasoning applies for \code{class(x) \%in\% "character"} and
+\code{is.element("character", class(x))}.
 }
 \examples{
 # will produce lints
@@ -27,6 +28,11 @@ lint(
   linters = class_equals_linter()
 )
 
+lint(
+  text = 'is.element("numeric", class(x))',
+  linters = class_equals_linter()
+)
+
 # okay
 lint(
   text = 'is_lm <- inherits(x, "lm")',
@@ -35,6 +41,11 @@ lint(
 
 lint(
   text = 'if (inherits(x, "lm")) is_lm <- TRUE',
+  linters = class_equals_linter()
+)
+
+lint(
+  text = 'is.numeric(x)',
   linters = class_equals_linter()
 )
 
