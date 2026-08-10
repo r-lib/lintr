@@ -16,7 +16,8 @@ class_equals_linter()
 
 ## Details
 
-Similar reasoning applies for `class(x) %in% "character"`.
+Similar reasoning applies for `class(x) %in% "character"` and
+`is.element("character", class(x))`.
 
 ## See also
 
@@ -49,6 +50,14 @@ lint(
 #> if ("lm" %in% class(x)) is_lm <- TRUE
 #>     ^~~~~~~~~~~~~~~~~~
 
+lint(
+  text = 'is.element("numeric", class(x))',
+  linters = class_equals_linter()
+)
+#> <text>:1:1: warning: [class_equals_linter] Use inherits(x, 'class-name'), is.<class> for S3 classes, or is(x, 'S4Class') for S4 classes, instead of comparing class(x) with is.element().
+#> is.element("numeric", class(x))
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # okay
 lint(
   text = 'is_lm <- inherits(x, "lm")',
@@ -58,6 +67,12 @@ lint(
 
 lint(
   text = 'if (inherits(x, "lm")) is_lm <- TRUE',
+  linters = class_equals_linter()
+)
+#> ℹ No lints found.
+
+lint(
+  text = 'is.numeric(x)',
   linters = class_equals_linter()
 )
 #> ℹ No lints found.
