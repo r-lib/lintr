@@ -9,7 +9,7 @@
 ### Linter improvements
 
 * `class_equals_linter()` blocks checking class membership with `is.element(cls, class(obj))` or `is.element(class(obj), cls)`, matching existing behavior for `class(obj) %in% cls` (#2849, @MichaelChirico).
-* `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with only one argument (#2980, @MichaelChirico).
+* `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with zero or one argument (#2980, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
