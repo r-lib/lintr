@@ -8,7 +8,8 @@
 
 ### Linter improvements
 
-* `class_equals_linter()` blocks checking class membership with `is.element(cls, class(obj))` or `is.element(class(obj), cls)`, matching e>
+* `class_equals_linter()` blocks checking class membership with `is.element(cls, class(obj))` or `is.element(class(obj), cls)`, matching existing behavior for `class(obj) %in% cls` (#2849, @MichaelChirico).
+* `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with only one argument (#2980, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
@@ -17,7 +18,6 @@
 ### Lint accuracy fixes: removing false negatives
 
 * `vector_logic_linter()` again finds `&&`/`||` usage in filtering expressions in function bodies like `\() filter(x, A && B)` (#3082, @MichaelChirico).
-* `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with only one argument (#2980, @MichaelChirico).
 
 # lintr (3.4.0)
 
