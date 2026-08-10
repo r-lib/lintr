@@ -37,6 +37,11 @@ lint(
 )
 
 lint(
+  text = "hello",
+  linters = sprintf_linter()
+)
+
+lint(
   text = 'sprintf("hello \%s \%s \%d", x, y, ...)',
   linters = sprintf_linter()
 )

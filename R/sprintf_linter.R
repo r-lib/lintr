@@ -29,6 +29,11 @@
 #' )
 #'
 #' lint(
+#'   text = "hello",
+#'   linters = sprintf_linter()
+#' )
+#'
+#' lint(
 #'   text = 'sprintf("hello %s %s %d", x, y, ...)',
 #'   linters = sprintf_linter()
 #' )
@@ -71,7 +76,7 @@ sprintf_linter <- function() {
 
     arg_names <- names2(parsed_expr)
     if ("fmt" %in% arg_names) {
-      fmt_loc <- which(names(parsed_expr) == "fmt")
+      fmt_loc <- which(arg_names == "fmt")
     } else {
       fmt_loc <- 1L + match("", arg_names[-1L], nomatch = 1L)
     }
@@ -122,12 +127,10 @@ sprintf_linter <- function() {
     ][1]
       /STR_CONST
   "
-  num_args_xpath <- "count(
-    ./expr[
-      preceding-sibling::OP-LEFT-PAREN
-      and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][1][self::SYMBOL_SUB[text() = 'domain']])
-    ]
-  )"
+  num_args_xpath <- "count(expr[
+    preceding-sibling::OP-LEFT-PAREN
+    and not(preceding-sibling::*[not(self::COMMENT or self::EQ_SUB)][1][self::SYMBOL_SUB[text() = 'domain']])
+  ])"
 
   Linter(linter_level = "file", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
@@ -148,7 +151,7 @@ sprintf_linter <- function() {
     has_fmt <- !is.na(fmt)
     constant_fmt <- has_fmt & !grepl("%", gsub("%%", "", fmt, fixed = TRUE), fixed = TRUE)
 
-    num_args <- in_pipeline + xml_find_num_(sprintf_calls, num_args_xpath)
+    num_args <- in_pipeline + as.integer(xml_find_num_(sprintf_calls, num_args_xpath))
     single_arg <- (!has_fmt | constant_fmt) & num_args == 1L
 
     single_arg_lint <- xml_nodes_to_lints(
