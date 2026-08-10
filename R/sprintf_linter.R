@@ -145,10 +145,11 @@ sprintf_linter <- function() {
     )
 
     fmt <- ifelse(!is.na(fmt_by_name), fmt_by_name, fmt_by_pos)
-    constant_fmt <- !is.na(fmt) & !grepl("%", gsub("%%", "", fmt, fixed = TRUE), fixed = TRUE)
+    has_fmt <- !is.na(fmt)
+    constant_fmt <- has_fmt & !grepl("%", gsub("%%", "", fmt, fixed = TRUE), fixed = TRUE)
 
     num_args <- in_pipeline + xml_find_num_(sprintf_calls, num_args_xpath)
-    single_arg <- (is.na(fmt) | constant_fmt) & num_args == 1L
+    single_arg <- (!has_fmt | constant_fmt) & num_args == 1L
 
     single_arg_lint <- xml_nodes_to_lints(
       sprintf_calls[single_arg],
@@ -160,7 +161,8 @@ sprintf_linter <- function() {
       type = "warning"
     )
 
-    templated_sprintf_calls <- sprintf_calls[!single_arg & !is.na(fmt)]
+    # num_args==0 to get the right error for 'sprintf()'
+    templated_sprintf_calls <- sprintf_calls[(has_fmt | num_args == 0L) & !single_arg]
     sprintf_warning <- vapply(templated_sprintf_calls, capture_sprintf_warning, character(1L))
 
     has_warning <- !is.na(sprintf_warning)

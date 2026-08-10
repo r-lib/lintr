@@ -67,6 +67,12 @@ patrick::with_parameters_test_that(
       rex::rex("invalid format '%d'; use format %f, %e, %g or %a for numeric objects"),
       linter
     )
+
+    expect_lint(
+      paste0(call_name, "()"),
+      'argument "fmt" is missing',
+      linter
+    )
   },
   .test_name = c("sprintf", "gettextf"),
   call_name = c("sprintf", "gettextf")
