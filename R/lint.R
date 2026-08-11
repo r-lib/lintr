@@ -45,10 +45,9 @@
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = !inline_data, text = NULL) {
   check_dots(...names(), c("exclude", "parse_exclusions"))
 
-  needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
+  has_filename <- !missing(filename) && isTRUE(nzchar(filename)) && !re_matches(filename, rex(newline))
+  needs_tempfile <- !has_filename
   inline_data <- !is.null(text) || needs_tempfile
-
-  has_filename <- !missing(filename) && !re_matches(filename, rex(newline))
 
   if (parse_settings) {
     read_settings(filename)
