@@ -15,32 +15,32 @@ test_that("seq_len(...) or seq_along(...) expressions are fine", {
   expect_no_lint("seq(length(x), 2)", linter)
 })
 
+skip_if_not_installed("tibble")
 patrick::with_parameters_test_that(
   "finds seq(...) expressions",
-  {
-    want <- if (fun == "length") "seq_along(...)" else sprintf("seq_len(%s(...))", fun)
-    expect_lint(
-      sprintf(wrapper, sprintf("seq(%s(x))", fun)),
-      rex::rex("Use ", want, " instead of seq(", fun, "(...))"),
-      seq_linter()
-    )
-  },
-  .cases = expand.grid(
-    wrapper = c("%s", "rev(%s)"),
-    fun = c("length", "nrow")
+  expect_lint(
+    target_code,
+    rex::rex("Use ", good_usage, " instead of ", bad_usage),
+    seq_linter()
+  ),
+  .cases = tibble::tribble(
+    ~target_code,          ~good_usage,          ~bad_usage,
+    "seq(length(x))",      "seq_along(...)",     "seq(length(...))",
+    "seq(nrow(x))",        "seq_len(nrow(...))", "seq(nrow(...))",
+    "rev(seq(length(x)))", "seq_along(...)",     "seq(length(...))",
+    "rev(seq(nrow(x)))",   "seq_len(nrow(...))", "seq(nrow(...))"
   )
 )
 
-skip_if_not_installed("tibble")
 patrick::with_parameters_test_that(
   "finds 1:x expressions",
   expect_lint(
     target_code,
-    rex::rex("Use ", want, " instead of ", got),
+    rex::rex("Use ", good_usage, " instead of ", bad_usage),
     seq_linter()
   ),
   .cases = tibble::tribble(
-    ~target_code,                    ~want,                    ~got,
+    ~target_code,                    ~good_usage,              ~bad_usage,
     "1:length(x)",                   "seq_along(...)",         "1:length(...)",
     "1L:length(x)",                  "seq_along(...)",         "1L:length(...)",
     "1:nrow(x)",                     "seq_len(nrow(...))",     "1:nrow(...)",
@@ -160,17 +160,17 @@ test_that("Message vectorization works for multiple lints", {
 patrick::with_parameters_test_that(
   "Message recommends rev() correctly",
   expect_lint(
-    sprintf("%s:1", expr),
-    rex::rex("Use ", want, " instead of ", got, ":1"),
+    target_code,
+    rex::rex("Use ", good_usage, " instead of ", bad_usage),
     seq_linter()
   ),
   .cases = tibble::tribble(
-    ~expr,        ~want,                      ~got,
-    ".N",         "rev(seq_len(.N))",         ".N",
-    "n()",        "rev(seq_len(n()))",        "n()",
-    "dplyr::n()", "rev(seq_len(dplyr::n()))", "dplyr::n()",
-    "nrow(x)",    "rev(seq_len(nrow(...)))",  "nrow(...)",
-    "length(x)",  "rev(seq_along(...))",      "length(...)"
+    ~target_code,   ~good_usage,                ~bad_usage,
+    ".N:1",         "rev(seq_len(.N))",         ".N:1",
+    "n():1",        "rev(seq_len(n()))",        "n():1",
+    "dplyr::n():1", "rev(seq_len(dplyr::n()))", "dplyr::n():1",
+    "nrow(x):1",    "rev(seq_len(nrow(...)))",  "nrow(...):1",
+    "length(x):1",  "rev(seq_along(...))",      "length(...):1"
   )
 )
 
@@ -188,11 +188,11 @@ patrick::with_parameters_test_that(
   "finds seq(1, n) and seq(from = 1, to = n) expressions",
   expect_lint(
     target_code,
-    rex::rex("Use ", want, " instead of ", got),
+    rex::rex("Use ", good_usage, " instead of ", bad_usage),
     seq_linter()
   ),
   .cases = tibble::tribble(
-    ~target_code,                    ~want,                     ~got,
+    ~target_code,                    ~good_usage,               ~bad_usage,
     "seq(1, 10)",                     "seq_len(10)",             "seq(1, 10)",
     "seq(1, 1)",                      "seq_len(1)",              "seq(1, 1)",
     "base::seq(1, 10)",               "seq_len(10)",             "seq(1, 10)",
