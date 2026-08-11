@@ -248,6 +248,13 @@ test_that("fixed replacements vectorize and recognize str_detect", {
     rex::rex('Use stringr::fixed("abc") as the pattern'),
     linter
   )
+
+  # list.files hint works
+  expect_lint(
+    'list.files(pattern = "RDS")',
+    rex::rex('Use "RDS" with fixed = TRUE here'),
+    linter
+  )
 })
 
 test_that("fixed replacement is correct with UTF-8", {
@@ -342,7 +349,9 @@ test_that("'unescaped' regex can optionally be skipped", {
 
   expect_no_lint("grepl('a', x)", linter)
   expect_no_lint("str_detect(x, 'a')", linter)
+  expect_no_lint('list.files(pattern = "RDS")', linter)
   expect_lint("grepl('[$]', x)", rex::rex('Use "$" with fixed = TRUE'), linter)
+  expect_lint(R'{list.files(pattern = "RDS\\.csv")}', rex::rex('Use "RDS.csv" with fixed = TRUE'), linter)
 })
 
 local({
@@ -410,6 +419,15 @@ test_that("fixed_regex_linter checks realistic list.files and dir usages", {
   expect_no_lint('dir("data", pattern = "abc", fixed = TRUE, full.names = TRUE)', linter)
   expect_no_lint('dir("data", pattern = "abc", ignore.case = TRUE, recursive = TRUE)', linter)
 
+  # non-pattern named arguments at position 1 or 2 are not falsely flagged
+  expect_no_lint('list.files("data", full.names = "foo")', linter)
+  expect_no_lint('dir("data", recursive = "solved")', linter)
+  expect_no_lint('gsub(x = "abc", replacement = "def")', linter)
+
+  # explicit fixed = FALSE or ignore.case = FALSE does not suppress lint
+  expect_lint('list.files(pattern = "RDS", fixed = FALSE)', lint_msg, linter)
+  expect_lint('dir("data", pattern = "pdf", ignore.case = FALSE)', lint_msg, linter)
+
   # disallowed usages where static or escaped literal patterns are passed with typical configuration arguments
   expect_lint('list.files(pattern = "_analysis", full.names = TRUE)', lint_msg, linter)
   expect_lint('list.files(pattern = "prepare_", full.names = TRUE)', lint_msg, linter)
@@ -424,7 +442,7 @@ test_that("pattern= inferred positionally is handled correctly", {
   linter <- fixed_regex_linter()
   lint_msg <- "This regular expression is static"
 
-  # position= inferred positionally
+  # pattern= inferred positionally
   expect_no_lint('list.files("data", "^test$")', linter)
   expect_no_lint(R'{dir("data", "\\.R$")}', linter)
 
