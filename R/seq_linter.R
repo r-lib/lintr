@@ -110,7 +110,7 @@ seq_linter <- function() {
       expr[NUM_CONST[{ literal_one }]]
       and (
         expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]]]
-        or expr[SYMBOL = '.N']
+        or expr[SYMBOL[text() = '.N']]
       )
     ]
   ")
