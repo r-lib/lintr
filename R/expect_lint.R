@@ -51,7 +51,7 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   on.exit(reset_lang(old_lang))
 
   if (!is.null(file) && !missing(content) && is.character(content)) {
-    # Both file and content → Mode 3 (identity-aware linting)
+    # Both file and content -> Mode 3 (identity-aware linting)
     lints <- lint(file, ..., text = content)
   } else {
     if (is.null(file)) on.exit(unlink(file), add = TRUE)

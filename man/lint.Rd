@@ -38,7 +38,7 @@ lint_package(
 \item{filename}{Either the filename for a file to lint, or a character string of inline R code for linting.
 The latter (inline data) applies whenever \code{filename} has a newline character (\\n).
 When combined with \code{text}, \code{filename} serves as the file identity for config discovery, exclusions,
-knitr detection, and output — the file need not exist on disk.}
+knitr detection, and output; the file need not exist on disk.}
 
 \item{linters}{A named list of linter functions to apply. See \link{linters} for a full list of default and available
 linters.}

@@ -332,7 +332,7 @@ test_that("lint(text=) handles UTF-8 marked text in non-UTF-8 locale", {
   )
 })
 
-# Mode 3: lint(filename, text=) — content from text, identity from filename
+# Mode 3: lint(filename, text=) -- content from text, identity from filename
 
 test_that("lint(filename, text=) uses identity path in output", {
   lints <- lint("R/foo.R", text = "x = 1\n", linters = assignment_linter())
