@@ -48,10 +48,7 @@ load_cache <- function(file, path = NULL) {
   file <- get_cache_file_path(file, path)
   if (file.exists(file)) {
     tryCatch(
-      load(file = file, envir = env),
-      warning = function(w) {
-        invokeRestart("muffleWarning")
-      },
+      suppressWarnings(load(file = file, envir = env)),
       error = function(e) {
         cli_warn(
           "Could not load cache file {.file {file}}:",
@@ -158,6 +155,7 @@ digest_content <- function(linters, obj) {
 }
 
 find_new_line <- function(line_number, line, lines) {
+  lines <- as.character(lines)
   if (lines[line_number] %==% line) {
     return(line_number)
   }

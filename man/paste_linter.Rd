@@ -29,7 +29,9 @@ when it comes at the beginning or end of the input, to avoid requiring empty inp
 The following issues are linted by default by this linter
 (see arguments for which can be de-activated optionally):
 \enumerate{
-\item Block usage of \code{\link[base:paste]{base::paste()}} with \code{sep = ""}. \code{\link[base:paste0]{base::paste0()}} is a faster, more concise alternative.
+\item Block usage of \code{\link[base:paste]{base::paste()}} with \code{sep = ""}. \code{\link[base:paste0]{base::paste0()}} is a faster, more concise alternative;
+this is valid unless \code{paste} occurs inside \link[base:expression]{base::expression}, which according to \link[grDevices:plotmath]{grDevices::plotmath}
+does not support the \code{sep} argument.
 \item Block usage of \code{paste()} or \code{paste0()} with \code{collapse = ", "}. \code{\link[=toString]{toString()}} is a direct
 wrapper for this, and alternatives like \code{\link[glue:glue_collapse]{glue::glue_collapse()}} might give better messages for humans.
 \item Block usage of \code{paste0()} that supplies \verb{sep=} -- this is not a formal argument to \code{paste0}, and
@@ -41,6 +43,9 @@ skips the (likely small) overhead of putting two strings into the global string 
 
 Only target scalar usages -- \code{strrep} can handle more complicated cases (e.g. \code{strrep(letters, 26:1)},
 but those aren't as easily translated from a \code{paste(collapse=)} call.
+\item Block usage of \code{paste()} or \code{paste0()} to collapse the output of \code{\link[base:deparse]{base::deparse()}}, e.g.
+\code{paste(deparse(x), collapse = " ")}. \code{\link[base:deparse1]{base::deparse1()}} is a more readable equivalent,
+i.e. \code{deparse1(x)}.
 }
 }
 \examples{
@@ -72,6 +77,16 @@ lint(
 
 lint(
   text = 'paste0(x, collapse = "")',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'expression(paste("a", "b", sep = ""))',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'paste(deparse(x), collapse = " ")',
   linters = paste_linter()
 )
 
@@ -118,6 +133,16 @@ lint(
 
 lint(
   text = 'paste(x, collapse = "")',
+  linters = paste_linter()
+)
+
+lint(
+  text = 'expression(paste("a", "b"))',
+  linters = paste_linter()
+)
+
+lint(
+  text = "deparse1(x)",
   linters = paste_linter()
 )
 

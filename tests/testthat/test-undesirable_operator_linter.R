@@ -114,3 +114,10 @@ test_that("call_is_undesirable = FALSE doesn't lint prefix notation", {
 
   expect_lint("utils:::hasName", lint_message, linter)
 })
+
+test_that("undesirable_operator_linter checks that call_is_undesirable is logical", {
+  expect_error(
+    undesirable_operator_linter(call_is_undesirable = "no"),
+    "must be a logical"
+  )
+})

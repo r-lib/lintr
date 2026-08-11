@@ -7,21 +7,23 @@
 seq_linter()
 }
 \description{
-This linter checks for \code{1:length(...)}, \code{1:nrow(...)}, \code{1:ncol(...)},
-\code{1:NROW(...)} and \code{1:NCOL(...)} expressions in base-R, or their usage in
-conjunction with \code{seq()} (e.g., \code{seq(length(...))}, \code{seq(nrow(...))}, etc.).
+This linter checks for expressions like \code{1:length(...)} (and many other spiritually
+equivalent variations) which are a common source of bugs when the right-hand side is zero.
+It is safer to use \code{\link[base:seq_len]{base::seq_len()}} (to create a sequence of a specified \emph{length}) or
+\code{\link[base:seq_along]{base::seq_along()}} (to create a sequence \emph{along} an object).
 }
 \details{
 Additionally, it checks for \code{1:n()} (from \code{{dplyr}}) and \code{1:.N} (from \code{{data.table}}).
-
-These often cause bugs when the right-hand side is zero.
-Instead, it is safer to use \code{\link[base:seq_len]{base::seq_len()}} (to create a sequence of a specified \emph{length}) or
-\code{\link[base:seq_along]{base::seq_along()}} (to create a sequence \emph{along} an object).
 }
 \examples{
 # will produce lints
 lint(
   text = "seq(length(x))",
+  linters = seq_linter()
+)
+
+lint(
+  text = "seq(1, 10)",
   linters = seq_linter()
 )
 
@@ -48,6 +50,11 @@ lint(
 # okay
 lint(
   text = "seq_along(x)",
+  linters = seq_linter()
+)
+
+lint(
+  text = "seq_len(10)",
   linters = seq_linter()
 )
 

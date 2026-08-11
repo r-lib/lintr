@@ -231,7 +231,7 @@ test_that("returned data structure is complete", {
     expect_identical(expr$line, i)
     expect_identical(expr$column, 1L)
     expect_identical(expr$lines, setNames(lines[i], i))
-    expect_identical(nrow(expr$parsed_content), 2L)
+    expect_shape(expr$parsed_content, nrow = 2L)
     expect_true(xml2::xml_find_lgl(expr$xml_parsed_content, "count(//SYMBOL) > 0"))
     expect_identical(expr$content, lines[i])
   }
@@ -243,7 +243,7 @@ test_that("returned data structure is complete", {
   expect_identical(full_expr$filename, temp_file)
   expect_identical(full_expr$file_lines, lines_with_attr)
   expect_identical(full_expr$content, lines_with_attr)
-  expect_identical(nrow(full_expr$full_parsed_content), 2L * length(lines))
+  expect_shape(full_expr$full_parsed_content, nrow = 2L * length(lines))
   expect_identical(
     xml2::xml_find_num(full_expr$full_xml_parsed_content, "count(//SYMBOL)"),
     as.numeric(length(lines))

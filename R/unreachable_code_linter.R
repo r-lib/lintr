@@ -84,7 +84,8 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
   # normal case: expression after terminal call is on the next line
   unreachable_expr_cond_ws <- "
   following-sibling::*[
-    not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON or self::ELSE or preceding-sibling::ELSE)
+    parent::expr/OP-LEFT-BRACE
+    and not(self::OP-RIGHT-BRACE or self::OP-SEMICOLON or self::ELSE or preceding-sibling::ELSE)
     and (not(self::COMMENT) or @line2 > preceding-sibling::*[not(self::COMMENT)][1]/@line2)
   ][1]"
   # robustness case: expression after terminal call is on the same line (after a semicolon),

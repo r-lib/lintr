@@ -61,12 +61,15 @@ test_that("No .Rbuildignore is filled if pattern already present", {
   )
   ignore_path <- file.path(tmp, ".Rbuildignore")
   ignore <- c("^fu$", "^\\.lintr$", "^bar$")
-  writeLines(
-    ignore,
-    ignore_path
-  )
+  writeLines(ignore, ignore_path)
 
-  lintr_file <- use_lintr(path = tmp, type = "full")
+  expect_message(
+    {
+      lintr_file <- use_lintr(path = tmp, type = "full")
+    },
+    "^\\.lintr$ is already ignored in `.Rbuildignore`.",
+    fixed = TRUE
+  )
   expect_identical(readLines(ignore_path), ignore)
 })
 
@@ -89,4 +92,15 @@ test_that("use_lintr creates the correct regex", {
     regexp = rex::rex("Added ^\\.lintr$ to `.Rbuildignore`")
   )
   expect_identical(readLines(ignore_path), c("^fu$", "^bar$", "^\\.lintr$"))
+})
+
+test_that("use_lintr creates .Rbuildignore if none exists inside a package structure", { # nofuzz
+  tmp <- withr::local_tempdir("testpkg")
+  write.dcf(list(Package = "testpkg", Version = "1.0.0"), file.path(tmp, "DESCRIPTION"))
+  ignore_path <- file.path(tmp, ".Rbuildignore")
+  expect_false(file.exists(ignore_path))
+
+  expect_message(use_lintr(path = tmp), "Added ^\\.lintr$ to `.Rbuildignore`", fixed = TRUE)
+  expect_true(file.exists(ignore_path))
+  expect_identical(readLines(ignore_path), "^\\.lintr$")
 })

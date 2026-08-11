@@ -787,3 +787,63 @@ test_that("allow_comment_regex= obeys covr's custom exclusion when set", {
     linter_covr
   )
 })
+
+test_that("unreachable_code_linter does not trigger inside function calls like switch", {
+  linter <- unreachable_code_linter()
+
+  expect_no_lint(
+    trim_some("
+      foo <- function(x) {
+        y <- switch(x, a = 1, b = 2, stop('bad x'))
+        x + y
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      foo <- function(x) {
+        y <- switch(x, a = stop('bad x'), b = 2)
+        x + y
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      foo <- function(x) {
+        y <- ifelse(x > 0, x, stop('negative x'))
+        y
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some('
+      repeat {
+        switch(x,
+          a = break,
+          b = "d"
+        )
+      }
+    '),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        y <- switch(x, a = {
+          stop('bad x')
+          2 + 2
+        })
+        x + y
+      }
+    "),
+    rex::rex("Remove code and comments coming after stop()."),
+    linter
+  )
+})

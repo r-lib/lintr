@@ -25,6 +25,7 @@ The following linters are tagged with 'pkg_testthat':
 \item{\code{\link{expect_null_linter}}}
 \item{\code{\link{expect_s3_class_linter}}}
 \item{\code{\link{expect_s4_class_linter}}}
+\item{\code{\link{expect_shape_linter}}}
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
 \item{\code{\link{yoda_test_linter}}}

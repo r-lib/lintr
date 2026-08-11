@@ -248,6 +248,13 @@ test_that("fixed replacements vectorize and recognize str_detect", {
     rex::rex('Use stringr::fixed("abc") as the pattern'),
     linter
   )
+
+  # list.files hint works
+  expect_lint(
+    'list.files(pattern = "RDS")',
+    rex::rex('Use "RDS" with fixed = TRUE here'),
+    linter
+  )
 })
 
 test_that("fixed replacement is correct with UTF-8", {
@@ -342,7 +349,9 @@ test_that("'unescaped' regex can optionally be skipped", {
 
   expect_no_lint("grepl('a', x)", linter)
   expect_no_lint("str_detect(x, 'a')", linter)
+  expect_no_lint('list.files(pattern = "RDS")', linter)
   expect_lint("grepl('[$]', x)", rex::rex('Use "$" with fixed = TRUE'), linter)
+  expect_lint(R'{list.files(pattern = "RDS\\.csv")}', rex::rex('Use "RDS.csv" with fixed = TRUE'), linter)
 })
 
 local({
@@ -381,4 +390,89 @@ test_that("pipe-aware lint logic survives adversarial comments", {
     "This regular expression is static",
     fixed_regex_linter()
   )
+})
+test_that("fixed_regex_linter properly simplifies escaped character groups and character escape codes", {
+  linter <- fixed_regex_linter()
+  lint_message <- "This regular expression is static"
+
+  expect_lint(R'[grep("[\\$]", x)]', lint_message, linter)
+  expect_lint(R'[grep("\u0020", x)]', lint_message, linter)
+  expect_lint(R'[grep("\\u0020", x)]', lint_message, linter)
+})
+
+test_that("fixed_regex_linter checks realistic list.files and dir usages", {
+  linter <- fixed_regex_linter()
+  lint_msg <- "This regular expression is static"
+
+  # allowed usages with realistic regex patterns, flags, and paths
+  expect_no_lint(R'{list.files("src", pattern = ".*\\.o$", full.names = TRUE)}', linter)
+  expect_no_lint('list.files(pattern = "csv$", full.names = TRUE)', linter)
+  expect_no_lint(R'{list.files("./source/", pattern = "^\\d{2}-.*\\.md$", full.names = TRUE)}', linter)
+  expect_no_lint('list.files(pattern = paste0(prefix, "[[:alnum:]_]+_result.rds"), recursive = TRUE)', linter)
+  expect_no_lint(R'{list.files("data", pattern = "\\.rds$", ignore.case = TRUE, recursive = TRUE)}', linter)
+  expect_no_lint('list.files(pattern = "_analysis", fixed = TRUE, recursive = TRUE)', linter)
+  expect_no_lint('list.files("foo", full.names = TRUE, recursive = TRUE)', linter)
+  expect_no_lint(R'{getwd() |> list.files(pattern = ".*\\.RData$")}', linter)
+
+  expect_no_lint(R'{dir("data", pattern = "\\.(wav|png)$", full.names = TRUE)}', linter)
+  expect_no_lint('dir("data", pattern = "^abc", recursive = TRUE)', linter)
+  expect_no_lint('dir("data", pattern = "abc", fixed = TRUE, full.names = TRUE)', linter)
+  expect_no_lint('dir("data", pattern = "abc", ignore.case = TRUE, recursive = TRUE)', linter)
+
+  # non-pattern named arguments at position 1 or 2 are not falsely flagged
+  expect_no_lint('list.files("data", full.names = "foo")', linter)
+  expect_no_lint('dir("data", recursive = "solved")', linter)
+  expect_no_lint('gsub(x = "abc", replacement = "def")', linter)
+
+  # explicit fixed = FALSE or ignore.case = FALSE does not suppress lint
+  expect_lint('list.files(pattern = "RDS", fixed = FALSE)', lint_msg, linter)
+  expect_lint('dir("data", pattern = "pdf", ignore.case = FALSE)', lint_msg, linter)
+
+  # disallowed usages where static or escaped literal patterns are passed with typical configuration arguments
+  expect_lint('list.files(pattern = "_analysis", full.names = TRUE)', lint_msg, linter)
+  expect_lint('list.files(pattern = "prepare_", full.names = TRUE)', lint_msg, linter)
+  expect_lint('list.files("data/raw", pattern = "RDS", full.names = TRUE, recursive = TRUE)', lint_msg, linter)
+  expect_lint('dir("data", pattern = "pdf", recursive = TRUE)', lint_msg, linter)
+  expect_lint('dir(recursive = TRUE, full.names = TRUE, pattern = "solved")', lint_msg, linter)
+  expect_lint(R'{"data" |> list.files(pattern = "_bmarks\\.csv", full.names = TRUE)}', lint_msg, linter)
+  expect_lint('"data" |> list.files(pattern = "_bmarks[.]csv", full.names = TRUE)', lint_msg, linter)
+})
+
+test_that("pattern= inferred positionally is handled correctly", {
+  linter <- fixed_regex_linter()
+  lint_msg <- "This regular expression is static"
+
+  # pattern= inferred positionally
+  expect_no_lint('list.files("data", "^test$")', linter)
+  expect_no_lint(R'{dir("data", "\\.R$")}', linter)
+
+  # disallowed positional pattern usages (including pipelines)
+  expect_lint('list.files("data", "RDS")', lint_msg, linter)
+  expect_lint('list.files("data", "RDS", full.names = TRUE, recursive = TRUE)', lint_msg, linter)
+  expect_lint('list.files("src", "prepare_")', lint_msg, linter)
+  expect_lint('dir("data", "pdf")', lint_msg, linter)
+  expect_lint('dir("source", "_analysis")', lint_msg, linter)
+  expect_lint('"data" |> list.files("RDS")', lint_msg, linter)
+  expect_lint('"data" %>% dir("RDS")', lint_msg, linter)
+})
+
+test_that("check_file_listing allows disabling file listing checks while retaining standard behavior", {
+  linter <- fixed_regex_linter(check_file_listing = FALSE)
+  lint_msg <- "This regular expression is static"
+
+  # file listing functions skipped when option is disabled
+  expect_no_lint('list.files(pattern = "_analysis", full.names = TRUE)', linter)
+  expect_no_lint('list.files("data", "RDS")', linter)
+  expect_no_lint('dir(recursive = TRUE, full.names = TRUE, pattern = "solved")', linter)
+  expect_no_lint('dir("data", "pdf")', linter)
+
+  # other behavior of the linter continues WAI
+  expect_lint("grepl('abcdefg', x)", lint_msg, linter)
+  expect_lint("gsub('[.]', '', x)", lint_msg, linter)
+  expect_lint("sub('a[*]b', 'c', x)", lint_msg, linter)
+  expect_lint(R'{strsplit(x, "\\.")}', lint_msg, linter)
+  expect_lint("tstrsplit(x, 'abcdefg')", lint_msg, linter)
+  expect_lint("str_detect(x, 'abcdefg')", lint_msg, linter)
+  expect_lint(R'{str_subset(x, "\\$")}', lint_msg, linter)
+  expect_lint(R'{str_replace_all(x, "\\.", "")}', lint_msg, linter)
 })

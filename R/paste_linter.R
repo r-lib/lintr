@@ -5,7 +5,9 @@
 #' The following issues are linted by default by this linter
 #'   (see arguments for which can be de-activated optionally):
 #'
-#'  1. Block usage of [base::paste()] with `sep = ""`. [base::paste0()] is a faster, more concise alternative.
+#'  1. Block usage of [base::paste()] with `sep = ""`. [base::paste0()] is a faster, more concise alternative;
+#'     this is valid unless `paste` occurs inside [base::expression], which according to [grDevices::plotmath]
+#'     does not support the `sep` argument.
 #'  2. Block usage of `paste()` or `paste0()` with `collapse = ", "`. [toString()] is a direct
 #'     wrapper for this, and alternatives like [glue::glue_collapse()] might give better messages for humans.
 #'  3. Block usage of `paste0()` that supplies `sep=` -- this is not a formal argument to `paste0`, and
@@ -17,6 +19,9 @@
 #'
 #'     Only target scalar usages -- `strrep` can handle more complicated cases (e.g. `strrep(letters, 26:1)`,
 #'     but those aren't as easily translated from a `paste(collapse=)` call.
+#'  5. Block usage of `paste()` or `paste0()` to collapse the output of [base::deparse()], e.g.
+#'     `paste(deparse(x), collapse = " ")`. [base::deparse1()] is a more readable equivalent,
+#'     i.e. `deparse1(x)`.
 #'
 #' @evalRd rd_tags("paste_linter")
 #' @param allow_empty_sep Logical, default `FALSE`. If `TRUE`, usage of
@@ -60,6 +65,16 @@
 #'
 #' lint(
 #'   text = 'paste0(x, collapse = "")',
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = 'expression(paste("a", "b", sep = ""))',
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = 'paste(deparse(x), collapse = " ")',
 #'   linters = paste_linter()
 #' )
 #'
@@ -109,6 +124,16 @@
 #'   linters = paste_linter()
 #' )
 #'
+#' lint(
+#'   text = 'expression(paste("a", "b"))',
+#'   linters = paste_linter()
+#' )
+#'
+#' lint(
+#'   text = "deparse1(x)",
+#'   linters = paste_linter()
+#' )
+#'
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 paste_linter <- function(allow_empty_sep = FALSE,
@@ -117,10 +142,16 @@ paste_linter <- function(allow_empty_sep = FALSE,
   allow_file_path <- match.arg(allow_file_path)
   check_file_paths <- allow_file_path %in% c("double_slash", "never")
 
-  paste_sep_xpath <- "
-  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST]]
+  ancestor_expr_cond <-
+    "parent::expr/ancestor-or-self::expr/preceding-sibling::expr/SYMBOL_FUNCTION_CALL[text() = 'expression']"
+  paste_sep_xpath <- glue("
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST] and not({ancestor_expr_cond})]
     /parent::expr
-  "
+  ")
+  expression_paste_sep_xpath <- glue("
+  following-sibling::SYMBOL_SUB[text() = 'sep' and following-sibling::expr[1][STR_CONST] and {ancestor_expr_cond}]
+    /parent::expr
+  ")
 
   to_string_xpath <- "
   parent::expr[
@@ -162,13 +193,26 @@ paste_linter <- function(allow_empty_sep = FALSE,
   empty_paste_note <-
     'Note that paste() converts empty inputs to "", whereas file.path() leaves it empty.'
 
-  paste0_collapse_xpath <- glue::glue("
+  paste0_collapse_xpath <- glue("
   parent::expr[
     SYMBOL_SUB[text() = 'collapse']
     and count(expr) =
       3 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
     and not(expr/SYMBOL[text() = '...'])
   ]")
+
+  # Skip collapse = NULL (does not collapse, so not deparse1()) and deparse() supplied
+  #   as the collapse separator rather than as the collapsed vector.
+  deparse1_xpath <- "
+  parent::expr[
+    count(expr) = 3
+    and SYMBOL_SUB[text() = 'collapse']
+    and not(SYMBOL_SUB[text() = 'collapse']/following-sibling::expr[1]/NULL_CONST)
+    and expr[
+      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'deparse']
+      and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
+    ]
+  ]"
 
   Linter(linter_level = "expression", function(source_expression) {
     paste_calls <- source_expression$xml_find_function_calls("paste")
@@ -183,6 +227,15 @@ paste_linter <- function(allow_empty_sep = FALSE,
       paste_sep_expr <- xml_find_all_(paste_calls, paste_sep_xpath)
       paste_sep_value <- get_r_string(paste_sep_expr, xpath = "./SYMBOL_SUB[text() = 'sep']/following-sibling::expr[1]")
     }
+
+    ## check if we are inside an expression()
+    expression_paste_sep_expr <- xml_find_all_(paste_calls, expression_paste_sep_xpath)
+    optional_lints <- c(optional_lints, xml_nodes_to_lints(
+      expression_paste_sep_expr,
+      source_expression = source_expression,
+      lint_message = "inside expression(...), paste does not accept a 'sep' argument.",
+      type = "warning"
+    ))
 
     if (!allow_empty_sep) {
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
@@ -240,6 +293,14 @@ paste_linter <- function(allow_empty_sep = FALSE,
       type = "warning"
     )
 
+    deparse1_expr <- xml_find_all_(both_calls, deparse1_xpath)
+    deparse1_lints <- xml_nodes_to_lints(
+      deparse1_expr,
+      source_expression = source_expression,
+      lint_message = "Use deparse1(x) instead of paste(deparse(x), collapse = ...).",
+      type = "warning"
+    )
+
     if (check_file_paths) {
       paste_sep_slash_expr <- paste_sep_expr[paste_sep_value == "/"]
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
@@ -269,7 +330,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       ))
     }
 
-    c(optional_lints, paste0_sep_lints, paste_strrep_lints, paste0_collapse_lints)
+    c(optional_lints, paste0_sep_lints, paste_strrep_lints, paste0_collapse_lints, deparse1_lints)
   })
 }
 

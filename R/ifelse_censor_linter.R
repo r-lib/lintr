@@ -43,6 +43,7 @@ ifelse_censor_linter <- function() {
   ]]")
 
   Linter(linter_level = "expression", function(source_expression) {
+    # nolint next: undesirable_function_name_linter.
     ifelse_calls <- xml_parent(source_expression$xml_find_function_calls(ifelse_funs))
     ifelse_calls <- strip_comments_from_subtree(ifelse_calls)
     bad_expr <- xml_find_all_(ifelse_calls, xpath)

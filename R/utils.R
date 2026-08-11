@@ -21,6 +21,28 @@ flatten_lints <- function(x) {
 # any function using unlist or c was dropping the classnames,
 # so need to brute force copy the objects
 flatten_list <- function(x, class) {
+  if (length(x) == 0L) {
+    return(list())
+  }
+  if (inherits(x, class)) {
+    return(list(x))
+  }
+  if (is.list(x)) {
+    is_flat <- TRUE
+    for (i in seq_along(x)) {
+      if (!inherits(x[[i]], class)) {
+        is_flat <- FALSE
+        break
+      }
+    }
+    if (is_flat) {
+      if (!is.null(names(x))) {
+        names(x) <- NULL
+      }
+      return(x)
+    }
+  }
+
   outer_env <- new.env(parent = emptyenv())
   outer_env$res <- list()
   outer_env$itr <- 1L
@@ -50,7 +72,7 @@ fix_names <- function(x, default) {
 
 linter_auto_name <- function(which = -3L) {
   sys_call <- sys.call(which = which)
-  nm <- paste(deparse(sys_call, 500L), collapse = " ")
+  nm <- deparse1(sys_call)
   regex <- rex(start, one_or_more(alnum %or% "." %or% "_" %or% ":"))
   if (re_matches(nm, regex)) {
     match_data <- re_matches(nm, regex, locations = TRUE)
@@ -299,7 +321,8 @@ is_tainted <- function(lines) {
 #' @noRd
 check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1L)[[1L]])) {
   valid_args <- unlist(lapply(ref_calls, \(f) names(formals(f))))
-  is_valid <- dot_names %in% valid_args
+  # TODO(#2502): needn't check is.na() after R 4.2.0
+  is_valid <- is.na(dot_names) | !nzchar(dot_names) | dot_names %in% valid_args
   if (all(is_valid)) {
     return(invisible())
   }

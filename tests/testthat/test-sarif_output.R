@@ -47,3 +47,26 @@ test_that("`sarif_output` produces valid files", {
     expect_false(is.null(sarif$runs[[1L]]$results))
   })
 })
+
+test_that("`sarif_output` handles multiple distinct rules properly", {
+  skip_if_not_installed("jsonlite")
+
+  l1 <- Lint(filename = "R/foo.R", line_number = 1L, type = "warning", message = "msg1", line = "x")
+  l1$linter <- "rule1"
+  l2 <- Lint(filename = "R/foo.R", line_number = 2L, type = "warning", message = "msg2", line = "y")
+  l2$linter <- "rule2"
+  lints <- list(l1, l2)
+  class(lints) <- "lints"
+  attr(lints, "path") <- "pkg"
+
+  withr::with_tempdir({
+    sarif_output(lints, filename = "multi.sarif")
+    sarif <- jsonlite::fromJSON(
+      "multi.sarif",
+      simplifyVector = TRUE,
+      simplifyDataFrame = FALSE,
+      simplifyMatrix = FALSE
+    )
+    expect_length(sarif$runs[[1L]]$tool$driver$rules, 2L)
+  })
+})

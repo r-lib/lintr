@@ -102,4 +102,88 @@ test_that("any_duplicated_linter catches expression with two types of lint", {
     linter
   )
 })
+
+test_that("any_duplicated_linter highlights the entire comparison expression", {
+  linter <- any_duplicated_linter()
+
+  expect_lint(
+    "any(duplicated(x))",
+    list(
+      rex::rex("anyDuplicated(x, ...) > 0 is better"),
+      column_number = 1L,
+      ranges = list(c(1L, 18L))
+    ),
+    linter
+  )
+
+  expect_lint(
+    "length(unique(x)) == length(x)",
+    list(
+      rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == length(x)"),
+      column_number = 1L,
+      ranges = list(c(1L, 30L))
+    ),
+    linter
+  )
+
+  expect_lint(
+    "length(unique(DF$col)) == nrow(DF)",
+    list(
+      rex::rex("anyDuplicated(DF$col) == 0L is better than length(unique(DF$col)) == nrow(DF)"),
+      column_number = 1L,
+      ranges = list(c(1L, 34L))
+    ),
+    linter
+  )
+
+  expect_lint(
+    "n_distinct(DF$col) == nrow(DF)",
+    list(
+      rex::rex("anyDuplicated(DF$col) == 0L is better than n_distinct(DF$col) == nrow(DF)"),
+      column_number = 1L,
+      ranges = list(c(1L, 30L))
+    ),
+    linter
+  )
+
+  expect_lint(
+    "x %>% summarize(length(unique(col)) == n())",
+    list(
+      rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == n()"),
+      column_number = 17L,
+      ranges = list(c(17L, 42L))
+    ),
+    linter
+  )
+
+  expect_lint(
+    "x |> summarize(n_distinct(col) == n())",
+    list(
+      rex::rex("anyDuplicated(x) == 0L is better than n_distinct(x) == n()"),
+      column_number = 16L,
+      ranges = list(c(16L, 37L))
+    ),
+    linter
+  )
+
+  expect_lint(
+    "x[, length(unique(col)) == .N]",
+    list(
+      rex::rex("anyDuplicated(x) == 0L is better than length(unique(x)) == .N"),
+      column_number = 5L,
+      ranges = list(c(5L, 29L))
+    ),
+    linter
+  )
+
+  expect_lint(
+    "x[, uniqueN(col) == .N]",
+    list(
+      rex::rex("anyDuplicated(x) == 0L is better than uniqueN(x) == .N"),
+      column_number = 5L,
+      ranges = list(c(5L, 22L))
+    ),
+    linter
+  )
+})
 # fuzzer enable: dollar_at

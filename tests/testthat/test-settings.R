@@ -6,7 +6,14 @@ test_that("read_config_file() warns if the config file does not end in a newline
   # cat() not writeLines() to ensure no trailing \n
   cat("linters: linters_with_defaults(brace_linter = NULL)", file = .lintr)
   writeLines("a <- 1", "aaa.R")
-  expect_warning(lint_dir(), "Warning encountered while loading config", fixed = TRUE)
+
+  # on R 4.7.0+, read.dcf() uses warn=FALSE in internal readLines(), so we
+  #   no longer catch a warning here as part of the fix for old #160.
+  if (inherits(tryCatch(read.dcf(.lintr, all = TRUE), condition = identity), "warning")) {
+    expect_warning(lint_dir(), "Warning encountered while loading config", fixed = TRUE)
+  } else {
+    expect_silent(lint_dir())
+  }
 })
 
 test_that("it gives informative errors if the config file contains errors", {
@@ -184,6 +191,33 @@ test_that("settings can be put in a sub-directory", {
 
   withr::local_options(lintr.linter_file = .lintr)
   expect_length(lint_package(), 1L)
+})
+
+test_that("malformed config syntax aborts helpfully", {
+  tmp <- withr::local_tempfile(fileext = ".R", lines = "x <- 1")
+  bad_dcf <- withr::local_tempfile(lines = "linters: list( + )")
+  withr::local_options(lintr.linter_file = bad_dcf)
+  expect_error(lint(tmp), "Malformed config file")
+})
+
+test_that("incorrect argument type for error_on_lint is caught", {
+  tmp <- withr::local_tempfile(fileext = ".R", lines = "x <- 1")
+  bad_cfg <- withr::local_tempfile(lines = "error_on_lint: 'yes'")
+  withr::local_options(lintr.linter_file = bad_cfg)
+  expect_error(lint(tmp), "Setting.*error_on_lint.*should be TRUE or FALSE")
+
+  good_cfg <- withr::local_tempfile(lines = "error_on_lint: TRUE")
+  withr::local_options(lintr.linter_file = good_cfg)
+  expect_length(lint(filename = tmp), 0L)
+})
+
+test_that("missing Encoding field inside an Rproj file defaults cleanly across public lint() flow", {
+  pkg_dir <- withr::local_tempdir()
+  write.dcf(list(Version = "1.0"), file.path(pkg_dir, "testpkg.Rproj"))
+  tmp <- file.path(pkg_dir, "test.R")
+  writeLines("a <- 1", tmp)
+
+  expect_length(lint(filename = tmp, linters = assignment_linter()), 0L)
 })
 
 test_that("find_package() returns NULL for non-existent paths", {

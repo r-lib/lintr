@@ -52,9 +52,6 @@ first_exists <- function(files) {
 }
 
 find_config <- function(filename) {
-  if (is.null(filename)) {
-    return(NULL)
-  }
   linter_file <- lintr_option("linter_file")
 
   ## if users changed lintr.linter_file, return immediately.

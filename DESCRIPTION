@@ -1,6 +1,6 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 3.3.0.9000
+Version: 3.4.0.9000
 Authors@R: c(
     person("Jim", "Hester", , role = "aut"),
     person("Florent", "Angly", role = "aut",
@@ -36,7 +36,7 @@ Imports:
     stats,
     utils,
     xfun,
-    xml2 (>= 1.0.0),
+    xml2 (>= 1.3.4),
     xmlparsedata (>= 1.0.5)
 Suggests:
     bookdown,
@@ -103,6 +103,7 @@ Collate:
     'expect_null_linter.R'
     'expect_s3_class_linter.R'
     'expect_s4_class_linter.R'
+    'expect_shape_linter.R'
     'expect_true_false_linter.R'
     'expect_type_linter.R'
     'extract.R'

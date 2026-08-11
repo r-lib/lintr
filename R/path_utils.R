@@ -112,10 +112,11 @@ split_path <- function(dirs, prefix) {
     dirs <- c(strrep(prefix, i), tail(dirs, -i))
   }
 
-  # add // to protocols (like http, smb, ...)
+  # nocov start
   if (length(dirs) > 0L && grepl("..:$", dirs[[1L]])) {
-    dirs[[1L]] <- paste0(dirs[[1L]], "//")
+    cli_abort_internal("Reached ':'-terminated directory {dirs[[1L]]}, which shouldn't happen for URLs. Please report.")
   }
+  # nocov end
 
   # remove empty dirs
   dirs[nzchar(dirs)]

@@ -5,7 +5,8 @@
 #'   `inherits(x, "character")`. Often, class `k` will have an `is.` equivalent,
 #'   for example [is.character()] or [is.data.frame()].
 #'
-#' Similar reasoning applies for `class(x) %in% "character"`.
+#' Similar reasoning applies for `class(x) %in% "character"` and
+#'   `is.element("character", class(x))`.
 #'
 #' @examples
 #' # will produce lints
@@ -16,6 +17,11 @@
 #'
 #' lint(
 #'   text = 'if ("lm" %in% class(x)) is_lm <- TRUE',
+#'   linters = class_equals_linter()
+#' )
+#'
+#' lint(
+#'   text = 'is.element("numeric", class(x))',
 #'   linters = class_equals_linter()
 #' )
 #'
@@ -30,23 +36,41 @@
 #'   linters = class_equals_linter()
 #' )
 #'
+#' lint(
+#'   text = 'is.numeric(x)',
+#'   linters = class_equals_linter()
+#' )
+#'
 #' @evalRd rd_tags("class_equals_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 class_equals_linter <- function() {
-  xpath <- "
+  pipes <- setdiff(magrittr_pipes, c("%$%", "%<>%"))
+  pipe_is_element_cond <- glue("
+    (PIPE or SPECIAL[{ xp_text_in_table(pipes) }])
+    and expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.element']
+  ")
+  xpath <- glue("
   parent::expr
     /parent::expr[
       not(preceding-sibling::OP-LEFT-BRACKET)
-      and (EQ or NE or SPECIAL[text() = '%in%'])
+      and (
+        EQ
+        or NE
+        or SPECIAL[text() = '%in%']
+        or expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.element']
+        or ({pipe_is_element_cond})
+      )
     ]
-  "
+  ")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("class")
     bad_expr <- xml_find_all_(xml_calls, xpath)
 
-    operator <- xml_find_chr_(bad_expr, "string(*[2])")
+    operator <- xml_find_chr_(bad_expr, "string(*[not(self::COMMENT)][2])")
+    operator[!operator %in% c("==", "!=", "%in%")] <- "is.element()" # non-operator case.
+
     lint_message <- paste0(
       "Use inherits(x, 'class-name'), is.<class> for S3 classes, ",
       "or is(x, 'S4Class') for S4 classes, ",

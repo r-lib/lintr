@@ -18,10 +18,8 @@ Defaults to 2.}
 \item{hanging_indent_style}{Indentation style for multi-line function calls with arguments in their first line.
 Defaults to tidyverse style, i.e. a block indent is used if the function call terminates with \verb{)} on a separate
 line and a hanging indent if not.
-Note that function multi-line function calls without arguments on their first line will always be expected to have
+Note that multi-line function calls without arguments on their first line will always be expected to have
 block-indented arguments.
-If \code{hanging_indent_style} is \code{"tidy"}, multi-line function definitions are expected to be double-indented if the
-first line of the function definition contains no arguments and the closing parenthesis is not on its own line.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{# complies to any style
 map(
@@ -50,8 +48,9 @@ map(x, f,
 
 # complies to "tidy"
 function(
-    a,
-    b) \{
+  a,
+  b
+) \{
   # body
 \}
 }\if{html}{\out{</div>}}}

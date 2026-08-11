@@ -63,7 +63,7 @@ any_duplicated_linter <- function() {
   #  this lets us match on either side of EQ, where following-sibling
   #  assumes we are before EQ, preceding-sibling assumes we are after EQ.
   length_unique_xpath_parts <- glue("
-  expr/expr[
+  expr[expr[
     expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
     and expr/expr[1][
       SYMBOL_FUNCTION_CALL[text() = 'unique']
@@ -91,12 +91,12 @@ any_duplicated_linter <- function() {
           ]
       )
     ]
-  ]
+  ]]
   ")
   length_unique_xpath <- paste(length_unique_xpath_parts, collapse = " | ")
 
   distinct_xpath <- glue("
-  expr/expr[
+  expr[expr[
     expr[1][
       SYMBOL_FUNCTION_CALL[text() = 'uniqueN' or text() = 'n_distinct']
       and (
@@ -120,19 +120,17 @@ any_duplicated_linter <- function() {
           ]
       )
     ]
-  ]
+  ]]
   ")
 
-  uses_nrow_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
-  uses_dtn_xpath <- "./parent::expr/expr/SYMBOL[text() = '.N']"
-  uses_dplyr_xpath <- "./parent::expr/expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
+  uses_nrow_xpath <- "expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'nrow']"
+  uses_dtn_xpath <- "expr/SYMBOL[text() = '.N']"
+  uses_dplyr_xpath <- "expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'n']"
 
   Linter(linter_level = "expression", function(source_expression) {
     # NB: need two parents given three parent::expr in XPath and stripped comments.
     xml <- source_expression$xml_parsed_content |>
-      xml_find_all_("//EQ | //NE | //GT | //LT") |>
-      xml_parent() |>
-      xml_parent() |>
+      xml_find_all_("(//EQ | //NE | //GT | //LT)/parent::*/parent::*") |>
       strip_comments_from_subtree()
 
     xml_calls <- source_expression$xml_find_function_calls("any")
@@ -171,7 +169,7 @@ any_duplicated_linter <- function() {
     distinct_lint_message_fmt[!is.na(xml_find_first_(distinct_expr, uses_dplyr_xpath))] <-
       "anyDuplicated(x) == 0L is better than %s(x) == n()."
 
-    distinct_lint_message <- sprintf(distinct_lint_message_fmt, xp_call_name(distinct_expr))
+    distinct_lint_message <- sprintf(distinct_lint_message_fmt, xp_call_name(distinct_expr, depth = 2L))
     distinct_lints <- xml_nodes_to_lints(
       distinct_expr,
       source_expression = source_expression,

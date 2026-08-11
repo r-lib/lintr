@@ -22,13 +22,18 @@ patrick::with_parameters_test_that(
     linter <- sprintf_linter()
     unused_arg_msg <- "one argument not used by format"
 
-    expect_lint(paste0(call_name, "('hello', 1)"), "constant", linter)
+    expect_lint(paste0(call_name, "('hello', 1)"), unused_arg_msg, linter)
+    expect_lint(paste0(call_name, "('abc', 'def', 'ghi')"), "arguments not used by format", linter)
 
-    expect_lint(paste0(call_name, "('hello')"), "constant", linter)
-    expect_lint(paste0(call_name, "('100%% automated')"), "constant", linter)
-    expect_lint(paste0(call_name, "('100%%%% automated')"), "constant", linter)
+    expect_lint(paste0(call_name, "('hello')"), "single argument", linter)
+    expect_lint(paste0(call_name, "(paste0(x, y))"), "single argument", linter)
+    expect_lint(paste0(call_name, "(foo())"), "single argument", linter)
+    expect_lint(paste0(call_name, "(x)"), "single argument", linter)
+    expect_lint(paste0(call_name, "(fmt = x)"), "single argument", linter)
+    expect_lint(paste0(call_name, "('100%% automated')"), "single argument", linter)
+    expect_lint(paste0(call_name, "('100%%%% automated')"), "single argument", linter)
     expect_lint(paste0(call_name, "('100%%%s')"), "too few", linter)
-    expect_lint(paste0(call_name, "('100%%%%s', x)"), "constant", linter)
+    expect_lint(paste0(call_name, "('100%%%%s', x)"), unused_arg_msg, linter)
 
     expect_lint(
       paste0(call_name, "('hello %d', 'a')"),
@@ -60,6 +65,12 @@ patrick::with_parameters_test_that(
     expect_lint(
       paste0(call_name, "('hello %1$s %1$s %2$d %3$d', x, y, 1.5)"),
       rex::rex("invalid format '%d'; use format %f, %e, %g or %a for numeric objects"),
+      linter
+    )
+
+    expect_lint(
+      paste0(call_name, "()"),
+      'argument "fmt" is missing',
       linter
     )
   },
@@ -96,7 +107,7 @@ test_that("edge cases are detected correctly", {
       'test fmt' |>   # this is a pipe comment
         sprintf()
     "),
-    "constant",
+    "single argument",
     linter
   )
 
@@ -120,6 +131,19 @@ test_that("edge cases are detected correctly", {
   expect_no_lint("sprintf('100%%%s', x)", linter)
 })
 
+test_that("gettextf keyword arguments work correctly", {
+  linter <- sprintf_linter()
+
+  expect_lint("gettextf(domain = 'R', paste0(x, y))", "single argument", linter)
+  expect_lint("gettextf(paste0(x, y), domain = 'R')", "single argument", linter)
+  expect_lint("gettextf(domain = dom, paste0(x, y))", "single argument", linter)
+  expect_no_lint("gettextf(domain = 'R', 'hello %s', x)", linter)
+  expect_no_lint("gettextf('hello %s', domain = 'R', x)", linter)
+  expect_lint("gettextf(domain = 'R', 'hello')", "single argument", linter)
+  expect_no_lint("gettextf(domain = dom, 'hello %s', x)", linter)
+  expect_lint("gettextf(domain = dom, 'hello %s')", "too few", linter)
+})
+
 local({
   linter <- sprintf_linter()
   unused_fmt_msg <- "too few arguments"
@@ -138,7 +162,7 @@ local({
       # Nested pipes
       expect_lint(
         paste("'%%sb'", pipe, "sprintf('%s')", pipe, "sprintf('a')"),
-        list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = "constant"),
+        list(column_number = nchar(paste("'%%sb'", pipe, "x")), message = unused_arg_msg),
         linter
       )
       expect_lint(

@@ -36,6 +36,11 @@
 #'   linters = sort_linter()
 #' )
 #'
+#' lint(
+#'   text = "rev(sort(x))",
+#'   linters = sort_linter()
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "x[sample(order(x))]",
@@ -49,6 +54,11 @@
 #'
 #' lint(
 #'   text = "sort(x, decreasing = TRUE) == x",
+#'   linters = sort_linter()
+#' )
+#'
+#' lint(
+#'   text = "sort(x, decreasing = TRUE)",
 #'   linters = sort_linter()
 #' )
 #'
@@ -100,9 +110,9 @@ sort_linter <- function() {
   arg_values_xpath <- glue("{arguments_xpath}/following-sibling::expr[1]")
 
   Linter(linter_level = "expression", function(source_expression) {
-    order_calls <- strip_comments_from_subtree(xml_parent(xml_parent(
-      source_expression$xml_find_function_calls("order")
-    )))
+    order_calls <- source_expression$xml_find_function_calls("order") |>
+      xml_find_all_("parent::*/parent::*") |>
+      strip_comments_from_subtree()
 
     order_expr <- xml_find_all_(order_calls, order_xpath)
 
@@ -137,8 +147,9 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    sort_calls <- xml_parent(xml_parent(xml_parent(source_expression$xml_find_function_calls("sort"))))
-    sort_calls <- strip_comments_from_subtree(sort_calls)
+    sort_calls <- source_expression$xml_find_function_calls("sort") |>
+      xml_find_all_("parent::*/parent::*/parent::*") |>
+      strip_comments_from_subtree()
     sorted_expr <- xml_find_all_(sort_calls, sorted_xpath)
 
     sorted_op <- xml_text(xml_find_first_(sorted_expr, "*[2]"))
@@ -169,6 +180,15 @@ sort_linter <- function() {
       type = "warning"
     )
 
-    c(order_lints, sorted_lints)
+    rev_sort_calls <- xml_find_all_(sort_calls, "expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'rev']]")
+    rev_sort_lints <- xml_nodes_to_lints(
+      rev_sort_calls,
+      source_expression = source_expression,
+      lint_message =
+        "Use sort(x, decreasing = TRUE) instead of rev(sort(x)). If present, `na.last` value needs to be flipped",
+      type = "warning"
+    )
+
+    c(order_lints, sorted_lints, rev_sort_lints)
   })
 }
