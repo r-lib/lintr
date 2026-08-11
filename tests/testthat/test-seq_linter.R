@@ -163,10 +163,14 @@ test_that("Message vectorization works for multiple lints", {
     trim_some("{
       1:length(x)
       1:nrow(y)
+      seq(1, 10)
+      seq(to = 1, from = 10)
     }"),
     list(
       list(rex::rex("seq_along(...)", anything, "1:length(...)"), line_number = 2L),
-      list(rex::rex("seq_len(nrow(...))", anything, "1:nrow(...)"), line_number = 3L)
+      list(rex::rex("seq_len(nrow(...))", anything, "1:nrow(...)"), line_number = 3L),
+      list(rex::rex("seq_len(10)", anything, "seq(1, 10)"), line_number = 4L),
+      list(rex::rex("seq_len(nrow(...))", anything, "1:nrow(...)"), line_number = 5L)
     ),
     linter
   )
@@ -268,6 +272,7 @@ test_that("finds seq(1, n) and seq(from = 1, to = n) expressions", {
   expect_lint("seq(to = length(x), 1)",         lint_msg("seq_along(...)",     "seq(1, length(...))"), linter)
 
   # Complex expressions or other arguments
+  expect_no_lint("seq(0, 10)", linter)
   expect_no_lint("seq(2, 10)", linter)
   expect_no_lint("seq(10, from = 2)", linter)
   expect_no_lint("seq(from = 2, 10)", linter)
@@ -276,7 +281,12 @@ test_that("finds seq(1, n) and seq(from = 1, to = n) expressions", {
   expect_no_lint("seq(from = 1, 10, by = 2)", linter)
   expect_no_lint("seq(to = 10, 1, by = 2)", linter)
   expect_no_lint("seq(1, 10, length.out = 5)", linter)
+  expect_no_lint("seq(1, 10, along.with = x)", linter)
   expect_no_lint("seq(1, 10, 2)", linter)
   expect_no_lint("seq(from = 2, to = 10)", linter)
   expect_no_lint("seq(from = 1, to = 10, by = 2)", linter)
+  expect_no_lint("seq(-1, 10)", linter)
+  expect_no_lint("seq(from = -1, 10)", linter)
+  expect_no_lint("seq(10, from = -1)", linter)
+  expect_no_lint("seq(from = -1, to = 10)", linter)
 })
