@@ -6,7 +6,7 @@ search pattern only involves static patterns.
 ## Usage
 
 ``` r
-fixed_regex_linter(allow_unescaped = FALSE)
+fixed_regex_linter(allow_unescaped = FALSE, check_file_listing = TRUE)
 ```
 
 ## Arguments
@@ -15,6 +15,14 @@ fixed_regex_linter(allow_unescaped = FALSE)
 
   Logical, default `FALSE`. If `TRUE`, only patterns that require regex
   escapes (e.g. `"\\$"` or `"[$]"`) will be linted. See examples.
+
+- check_file_listing:
+
+  Logical, default `TRUE`, governing whether to require
+  [`list.files()`](https://rdrr.io/r/base/list.files.html) and
+  [`dir()`](https://rdrr.io/r/base/list.files.html) to use
+  `fixed = TRUE` for non-regex `pattern=`. Note that `fixed = TRUE` is
+  only available from R 4.6.0.
 
 ## Details
 
@@ -89,6 +97,14 @@ lint(
 #> grepl("Munich", address)
 #>       ^~~~~~~~
 
+lint(
+  text = 'list.files(pattern = "RDS")',
+  linters = fixed_regex_linter(check_file_listing = TRUE)
+)
+#> <text>:1:22: warning: [fixed_regex_linter] Use "RDS" with fixed = TRUE here. This regular expression is static, i.e., its matches can be expressed as a fixed substring expression, which is faster to compute.
+#> list.files(pattern = "RDS")
+#>                      ^~~~~
+
 # okay
 code_lines <- 'gsub("\\\\.", "", x, fixed = TRUE)'
 writeLines(code_lines)
@@ -120,6 +136,12 @@ lint(
 lint(
   text = 'grepl("Munich", address)',
   linters = fixed_regex_linter(allow_unescaped = TRUE)
+)
+#> ℹ No lints found.
+
+lint(
+  text = 'list.files(pattern = "RDS", fixed = TRUE)',
+  linters = fixed_regex_linter(check_file_listing = TRUE)
 )
 #> ℹ No lints found.
 ```
