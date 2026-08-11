@@ -181,7 +181,7 @@ seq_linter <- function() {
     dot_expr2 <- format_arg(seq_metadata$raw_expr2)
 
     not_seq_along <- dot_expr1 != "length(...)" & dot_expr2 != "length(...)"
-    is_decreasing <- dot_expr2 %in% c("1", "1L")
+    is_decreasing <- !is_seq & dot_expr2 %in% c("1", "1L")
 
     preferred_usage <- "seq_along(...)"
     is_seq_len <- not_seq_along & !is_decreasing

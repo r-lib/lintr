@@ -238,6 +238,7 @@ test_that("finds seq(1, n) and seq(from = 1, to = n) expressions", {
   lint_msg <- function(want, got) rex::rex("Use ", want, " instead of ", got)
 
   expect_lint("seq(1, 10)",                     lint_msg("seq_len(10)",        "seq(1, 10)"), linter)
+  expect_lint("seq(1, 1)",                      lint_msg("seq_len(1)",         "seq(1, 1)"), linter)
   expect_lint("base::seq(1, 10)",               lint_msg("seq_len(10)",        "seq(1, 10)"), linter)
   expect_lint("seq(1L, 10L)",                   lint_msg("seq_len(10L)",       "seq(1L, 10L)"), linter)
   expect_lint("seq(1, n)",                      lint_msg("seq_len(n)",         "seq(1, n)"), linter)
