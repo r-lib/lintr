@@ -25,6 +25,11 @@ lint(
   linters = sprintf_linter()
 )
 
+lint(
+  text = 'sprintf(paste0(x, y))',
+  linters = sprintf_linter()
+)
+
 # okay
 lint(
   text = 'sprintf("hello \%s \%s \%d", x, y, z)',
@@ -32,7 +37,17 @@ lint(
 )
 
 lint(
+  text = "hello",
+  linters = sprintf_linter()
+)
+
+lint(
   text = 'sprintf("hello \%s \%s \%d", x, y, ...)',
+  linters = sprintf_linter()
+)
+
+lint(
+  text = 'paste0(x, y)',
   linters = sprintf_linter()
 )
 
