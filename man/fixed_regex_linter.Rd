@@ -4,11 +4,15 @@
 \alias{fixed_regex_linter}
 \title{Require usage of \code{fixed=TRUE} in regular expressions where appropriate}
 \usage{
-fixed_regex_linter(allow_unescaped = FALSE)
+fixed_regex_linter(allow_unescaped = FALSE, check_file_listing = TRUE)
 }
 \arguments{
 \item{allow_unescaped}{Logical, default \code{FALSE}. If \code{TRUE}, only patterns that
 require regex escapes (e.g. \code{"\\\\$"} or \code{"[$]"}) will be linted. See examples.}
+
+\item{check_file_listing}{Logical, default \code{TRUE}, governing whether to require
+\code{\link[=list.files]{list.files()}} and \code{\link[=dir]{dir()}} to use \code{fixed = TRUE} for non-regex \verb{pattern=}. Note
+that \code{fixed = TRUE} is only available from R 4.6.0.}
 }
 \description{
 Invoking a regular expression engine is overkill for cases when the search
@@ -53,6 +57,11 @@ lint(
   linters = fixed_regex_linter()
 )
 
+lint(
+  text = 'list.files(pattern = "RDS")',
+  linters = fixed_regex_linter(check_file_listing = TRUE)
+)
+
 # okay
 code_lines <- 'gsub("\\\\\\\\.", "", x, fixed = TRUE)'
 writeLines(code_lines)
@@ -79,6 +88,11 @@ lint(
 lint(
   text = 'grepl("Munich", address)',
   linters = fixed_regex_linter(allow_unescaped = TRUE)
+)
+
+lint(
+  text = 'list.files(pattern = "RDS", fixed = TRUE)',
+  linters = fixed_regex_linter(check_file_listing = TRUE)
 )
 
 }
