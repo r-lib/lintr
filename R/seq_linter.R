@@ -154,8 +154,16 @@ seq_linter <- function() {
 
     is_seq <- is.na(xml_find_first_(seq_expr, "./OP-COLON"))
     expr_counts <- as.integer(xml_find_chr_(seq_expr, "string(count(./expr))"))
-    is_expr2_to <-
-      !is.na(xml_text(xml_find_first_(seq_expr, "./expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']")))
+    is_expr2_to <- !is.na(xml_find_first_(
+      seq_expr,
+      paste(
+        "./expr[2]/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]",
+        "/preceding-sibling::*[not(self::COMMENT)][1][self::SYMBOL_SUB[text() = 'to']]",
+        "|",
+        "./expr[3]/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]",
+        "/preceding-sibling::*[not(self::COMMENT)][1][self::SYMBOL_SUB[text() = 'from']]"
+      )
+    ))
 
     is_1arg_seq <- is_seq & expr_counts == 2L
     is_2arg_seq <- is_seq & expr_counts != 2L
@@ -166,12 +174,12 @@ seq_linter <- function() {
     seq_metadata[is_1arg_seq, c("raw_expr1", "raw_expr2")] <-
       list("seq", seq_metadata$expr2_text[is_1arg_seq])
 
-    second_arg_is_to <- is_2arg_seq & is_expr2_to
-    seq_metadata[second_arg_is_to, c("raw_expr1", "raw_expr2")] <-
-      seq_metadata[second_arg_is_to, c("expr3_text", "expr2_text")]
-    second_arg_not_to <- is_2arg_seq & !is_expr2_to
-    seq_metadata[second_arg_not_to, c("raw_expr1", "raw_expr2")] <-
-      seq_metadata[second_arg_not_to, c("expr2_text", "expr3_text")]
+    first_arg_is_to <- is_2arg_seq & is_expr2_to
+    seq_metadata[first_arg_is_to, c("raw_expr1", "raw_expr2")] <-
+      seq_metadata[first_arg_is_to, c("expr3_text", "expr2_text")]
+    first_arg_not_to <- is_2arg_seq & !is_expr2_to
+    seq_metadata[first_arg_not_to, c("raw_expr1", "raw_expr2")] <-
+      seq_metadata[first_arg_not_to, c("expr2_text", "expr3_text")]
 
     dot_expr1 <- format_arg(seq_metadata$raw_expr1)
     dot_expr2 <- format_arg(seq_metadata$raw_expr2)
