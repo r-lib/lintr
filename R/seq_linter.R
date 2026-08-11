@@ -90,6 +90,7 @@ seq_linter <- function() {
       count(expr) = 3
       and not(SYMBOL_SUB[text() != 'from' and text() != 'to'])
       and expr[NUM_CONST[{ literal_one }]]
+      and not(expr[NUM_CONST[text() = '0' or text() = '0L'] or OP-MINUS])
     )
   ]
   ")
@@ -144,12 +145,10 @@ seq_linter <- function() {
 
     is_seq <- is.na(xml_find_first_(seq_expr, "./OP-COLON"))
     expr_counts <- as.integer(xml_find_num_(seq_expr, "count(./expr)"))
-    is_expr2_to <- !is.na(xml_find_first_(seq_expr, "
-      expr[2]/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]
-        /preceding-sibling::*[not(self::COMMENT)][1][self::SYMBOL_SUB[text() = 'to']]
-      | expr[3]/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]
-        /preceding-sibling::*[not(self::COMMENT)][1][self::SYMBOL_SUB[text() = 'from']]
-    "))
+    is_expr2_to <- !is.na(xml_find_first_(
+      seq_expr,
+      "./expr[2]/preceding-sibling::SYMBOL_SUB[text() = 'to'] | ./expr[2]/following-sibling::SYMBOL_SUB[text() = 'from']"
+    ))
 
     is_1arg_seq <- is_seq & expr_counts == 2L
     is_2arg_seq <- is_seq & expr_counts != 2L
