@@ -97,6 +97,12 @@ test_that("finds 1:length(...) expressions", {
   )
 
   expect_lint(
+    "mutate(x, .id = 1:dplyr::n())",
+    lint_msg("seq_len(dplyr::n())", "1:dplyr::n(),"),
+    linter
+  )
+
+  expect_lint(
     trim_some("
       mutate(x, .id = 1:n( # comment
       ))
@@ -219,6 +225,7 @@ test_that("Message recommends rev() correctly", {
 
   expect_lint(".N:1", rex::rex("Use rev(seq_len(.N))"), linter)
   expect_lint("n():1", rex::rex("Use rev(seq_len(n()))"), linter)
+  expect_lint("dplyr::n():1", rex::rex("Use rev(seq_len(dplyr::n()))"), linter)
   expect_lint("nrow(x):1", rex::rex("Use rev(seq_len(nrow(...)))"), linter)
   expect_lint("length(x):1", rex::rex("Use rev(seq_along(...))"), linter)
 })

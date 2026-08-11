@@ -133,7 +133,7 @@ seq_linter <- function() {
   format_arg <- function(funcalls) {
     # `dplyr::n()` is special because it has no arguments, so the lint message
     # should mention `n()`, and not `n(...)`
-    has_paren <- grepl("(", funcalls, fixed = TRUE) & funcalls != "n()"
+    has_paren <- grepl("(", funcalls, fixed = TRUE) & !grepl("(^|dplyr::)n\\(\\)", funcalls)
     funcalls[has_paren] <- sub("\\(.*\\)", "(...)", funcalls[has_paren])
     funcalls
   }
