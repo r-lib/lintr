@@ -79,7 +79,7 @@ seq_linter <- function() {
   literal_one <- "text() = '1' or text() = '1L'"
 
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
-  # or if seq() is called with 2 arguments (from = 1, to = n)
+  # or if seq() is called with 2 arguments (from = 1, to = n or from = n, to = 1)
   seq_xpath <- glue("
   parent::expr[
     (
@@ -89,17 +89,7 @@ seq_linter <- function() {
     or (
       count(expr) = 3
       and not(SYMBOL_SUB[text() != 'from' and text() != 'to'])
-      and (
-        SYMBOL_SUB[text() = 'from']/following-sibling::expr[1]/NUM_CONST[{ literal_one }]
-        or (
-          expr[2]/NUM_CONST[{ literal_one }]
-          and not(expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to'])
-        )
-        or (
-          expr[3]/NUM_CONST[{ literal_one }]
-          and expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']
-        )
-      )
+      and expr[NUM_CONST[{ literal_one }]]
     )
   ]
   ")
@@ -181,9 +171,9 @@ seq_linter <- function() {
     dot_expr2 <- format_arg(seq_metadata$raw_expr2)
 
     not_seq_along <- dot_expr1 != "length(...)" & dot_expr2 != "length(...)"
-    is_decreasing <- !is_seq & dot_expr2 %in% c("1", "1L")
+    is_decreasing <- !dot_expr1 %in% c("1", "1L") & dot_expr2 %in% c("1", "1L")
 
-    preferred_usage <- "seq_along(...)"
+    preferred_usage <- rep("seq_along(...)", n_expr)
     is_seq_len <- not_seq_along & !is_decreasing
     preferred_usage[is_seq_len] <- paste0("seq_len(", dot_expr2[is_seq_len], ")")
     is_rev_seq_len <- not_seq_along & is_decreasing
