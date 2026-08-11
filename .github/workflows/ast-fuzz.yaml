@@ -2,14 +2,13 @@
 on:
   push:
     branches: [main]
-  # TODO before merging: remove this. Only kept to demonstrate during review.
   pull_request:
     branches: [main]
 
 name: ast-fuzz
 
 jobs:
-  repo-meta-tests:
+  ast-fuzz:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -25,6 +24,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           install-quarto: false
+          extra-packages: local::.
 
       - name: Ensure equivalent code generates equivalent lints
         run: |
