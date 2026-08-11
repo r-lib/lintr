@@ -1,9 +1,12 @@
 # Sequence linter
 
-This linter checks for `1:length(...)`, `1:nrow(...)`, `1:ncol(...)`,
-`1:NROW(...)` and `1:NCOL(...)` expressions in base-R, or their usage in
-conjunction with [`seq()`](https://rdrr.io/r/base/seq.html) (e.g.,
-`seq(length(...))`, `seq(nrow(...))`, etc.).
+This linter checks for expressions like `1:length(...)` (and many other
+spiritually equivalent variations) which are a common source of bugs
+when the right-hand side is zero. It is safer to use
+[`base::seq_len()`](https://rdrr.io/r/base/seq.html) (to create a
+sequence of a specified *length*) or
+[`base::seq_along()`](https://rdrr.io/r/base/seq.html) (to create a
+sequence *along* an object).
 
 ## Usage
 
@@ -15,12 +18,6 @@ seq_linter()
 
 Additionally, it checks for `1:n()` (from `{dplyr}`) and `1:.N` (from
 `{data.table}`).
-
-These often cause bugs when the right-hand side is zero. Instead, it is
-safer to use [`base::seq_len()`](https://rdrr.io/r/base/seq.html) (to
-create a sequence of a specified *length*) or
-[`base::seq_along()`](https://rdrr.io/r/base/seq.html) (to create a
-sequence *along* an object).
 
 ## See also
 
@@ -46,6 +43,14 @@ lint(
 #> <text>:1:1: warning: [seq_linter] Use seq_along(...) instead of seq(length(...)), which is likely to be wrong in the empty edge case.
 #> seq(length(x))
 #> ^~~~~~~~~~~~~~
+
+lint(
+  text = "seq(1, 10)",
+  linters = seq_linter()
+)
+#> <text>:1:1: warning: [seq_linter] Use seq_len(10) instead of seq(1, 10), which is likely to be wrong in the empty edge case.
+#> seq(1, 10)
+#> ^~~~~~~~~~
 
 lint(
   text = "1:nrow(x)",
@@ -82,6 +87,12 @@ lint(
 # okay
 lint(
   text = "seq_along(x)",
+  linters = seq_linter()
+)
+#> ℹ No lints found.
+
+lint(
+  text = "seq_len(10)",
   linters = seq_linter()
 )
 #> ℹ No lints found.
