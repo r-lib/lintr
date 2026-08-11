@@ -153,7 +153,7 @@ seq_linter <- function() {
     )
 
     is_seq <- is.na(xml_find_first_(seq_expr, "./OP-COLON"))
-    expr_counts <- as.integer(xml_find_chr_(seq_expr, "string(count(./expr))"))
+    expr_counts <- as.integer(xml_find_num_(seq_expr, "count(./expr)"))
     is_expr2_to <- !is.na(xml_find_first_(seq_expr, "
       expr[2]/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]
         /preceding-sibling::*[not(self::COMMENT)][1][self::SYMBOL_SUB[text() = 'to']]
