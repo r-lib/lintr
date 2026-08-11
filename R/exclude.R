@@ -49,7 +49,6 @@ exclude <- function(lints, exclusions = settings$exclusions, linter_names = NULL
   names(source_exclusions) <- filenames
 
   # Source exclusions use already-normalized paths from source_expression$filename.
-  source_exclusions <- normalize_exclusions(source_exclusions)
   config_exclusions <- normalize_exclusions(exclusions)
   exclusions <- c(source_exclusions, config_exclusions) |>
     remove_file_duplicates() |>

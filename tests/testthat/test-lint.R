@@ -352,6 +352,30 @@ test_that("lint(filename, text=) works with non-existent files", {
 test_that("lint(filename, text=) respects nolint comments", {
   lints <- lint("new.R", text = "x = 1 # nolint: assignment_linter.\n", linters = assignment_linter())
   expect_length(lints, 0L)
+
+  # nolint start / nolint end block
+  block_code <- paste(
+    "# nolint start: assignment_linter.",
+    "x = 1",
+    "y = 2",
+    "# nolint end",
+    "z = 3",
+    sep = "\n"
+  )
+  lints_block <- lint("R/non_existent.R", text = block_code, linters = assignment_linter())
+  expect_length(lints_block, 1L)
+  expect_identical(lints_block[[1L]]$line_number, 5L)
+
+  # nolint next on multi-line code
+  multiline_code <- paste(
+    "# nolint next: assignment_linter.",
+    "a = 1",
+    "b = 2",
+    sep = "\n"
+  )
+  lints_multiline <- lint("R/non_existent.R", text = multiline_code, linters = assignment_linter())
+  expect_length(lints_multiline, 1L)
+  expect_identical(lints_multiline[[1L]]$line_number, 3L)
 })
 
 test_that("lint(filename, text=) discovers config via identity path with parse_settings", {
@@ -366,7 +390,7 @@ test_that("lint(filename, text=) discovers config via identity path with parse_s
   expect_length(lints, 1L)
 })
 
-test_that("lint(filename, text=) works with cache", {
+test_that("lint(filename, text=) works with cache and updates when content changes", {
   cache_path <- withr::local_tempdir()
   lints <- lint("R/cached_file.R", text = "x = 1\n", linters = assignment_linter(), cache = cache_path)
   expect_length(lints, 1L)
@@ -374,6 +398,10 @@ test_that("lint(filename, text=) works with cache", {
   # Second call should use cache
   lints2 <- lint("R/cached_file.R", text = "x = 1\n", linters = assignment_linter(), cache = cache_path)
   expect_length(lints2, 1L)
+
+  # Changing text with the same identity path should invalidate cache and re-lint
+  lints3 <- lint("R/cached_file.R", text = "x <- 1\n", linters = assignment_linter(), cache = cache_path)
+  expect_length(lints3, 0L)
 })
 
 test_that("lint(filename, text=) detects knitr from extension", {
