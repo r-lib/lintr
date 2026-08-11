@@ -249,6 +249,7 @@ test_that("finds seq(1, n) and seq(from = 1, to = n) expressions", {
   expect_lint("seq(to = length(x), from = 1L)", lint_msg("seq_along(...)",     "seq(1L, length(...))"), linter)
   expect_lint("seq(1, to = 10)",                lint_msg("seq_len(10)",        "seq(1, 10)"), linter)
   expect_lint("seq(to = 10, 1)",                lint_msg("seq_len(10)",        "seq(1, 10)"), linter)
+  expect_lint("seq(10, from = 1)",              lint_msg("seq_len(10)",        "seq(1, 10)"), linter)
 
   # Complex expressions or other arguments
   expect_no_lint("seq(2, 10)", linter)

@@ -76,6 +76,8 @@
 seq_linter <- function() {
   bad_funcs <- xp_text_in_table(c("length", "n", "nrow", "ncol", "NROW", "NCOL", "dim"))
 
+  literal_one <- "text() = '1' or text() = '1L'"
+
   # Exact `xpath` depends on whether bad function was used in conjunction with `seq()`
   # or if seq() is called with 2 arguments (from = 1, to = n)
   seq_xpath <- glue("
@@ -88,12 +90,13 @@ seq_linter <- function() {
       count(expr) = 3
       and not(SYMBOL_SUB[text() != 'from' and text() != 'to'])
       and (
-        (
-          expr[2][NUM_CONST[text() = '1' or text() = '1L']]
+        SYMBOL_SUB[text() = 'from']/following-sibling::expr[1]/NUM_CONST[{ literal_one }]
+        or (
+          expr[2]/NUM_CONST[{ literal_one }]
           and not(expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to'])
         )
         or (
-          expr[3][NUM_CONST[text() = '1' or text() = '1L']]
+          expr[3]/NUM_CONST[{ literal_one }]
           and expr[2]/preceding-sibling::SYMBOL_SUB[1][text() = 'to']
         )
       )
@@ -104,7 +107,7 @@ seq_linter <- function() {
   colon_xpath <- glue("
   //OP-COLON
     /parent::expr[
-      expr[NUM_CONST[text() = '1' or text() = '1L']]
+      expr[NUM_CONST[{ literal_one }]]
       and (
         expr[expr[(expr|self::*)[SYMBOL_FUNCTION_CALL[ {bad_funcs} ]]]]
         or expr[SYMBOL = '.N']
