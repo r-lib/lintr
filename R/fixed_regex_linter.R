@@ -128,7 +128,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE, check_file_listing = TRU
   ]
     /following-sibling::expr[
       STR_CONST and (
-        preceding-sibling::*[not(self::COMMENT)][2][self::SYMBOL_SUB[text() = 'pattern']]
+        preceding-sibling::*[not(self::COMMENT)][2]/self::SYMBOL_SUB[text() = 'pattern']
         or (
           position() = 1
           and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
@@ -146,9 +146,8 @@ fixed_regex_linter <- function(allow_unescaped = FALSE, check_file_listing = TRU
   ]
     /following-sibling::expr[
       STR_CONST and (
-        preceding-sibling::*[not(self::COMMENT)][2][
-          self::SYMBOL_SUB[text() = 'pattern' or text() = 'split']
-        ] or (
+        preceding-sibling::*[not(self::COMMENT)][2]/self::SYMBOL_SUB[text() = 'pattern' or text() = 'split']
+        or (
           position() = 2 - count({ in_pipe_cond })
           and not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])
         )
