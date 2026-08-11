@@ -18,7 +18,9 @@
 #' Named vectors are also accepted instead of named lists, but this is a compatibility feature that
 #'   is not recommended for new code.
 #' @param ... Arguments passed to [lint()], e.g. the linters or cache to use.
-#' @param file If not `NULL`, read content from the specified file rather than from `content`.
+#' @param file If not `NULL`, the path of the file to lint. If `content` is supplied, `file` provides the file
+#'   identity (e.g. for settings discovery and knitr detection) while `content` provides the text without
+#'   requiring the file to exist on disk. If `content` is missing, read content from `file`.
 #' @param language Temporarily override Rs `LANGUAGE` envvar, controlling localization of base R error messages.
 #'   This makes testing them reproducible on all systems irrespective of their native R language setting.
 #' @param ignore_order Logical, default `FALSE`. If `TRUE`, the order of the `checks` does not matter, e.g.
