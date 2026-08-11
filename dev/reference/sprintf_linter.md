@@ -42,9 +42,17 @@ lint(
   text = 'sprintf("hello")',
   linters = sprintf_linter()
 )
-#> <text>:1:1: warning: [sprintf_linter] sprintf call can be removed when a constant string is provided.
+#> <text>:1:1: warning: [sprintf_linter] sprintf call can be removed when a single argument is provided.
 #> sprintf("hello")
 #> ^~~~~~~~~~~~~~~~
+
+lint(
+  text = 'sprintf(paste0(x, y))',
+  linters = sprintf_linter()
+)
+#> <text>:1:1: warning: [sprintf_linter] sprintf call can be removed when a single argument is provided.
+#> sprintf(paste0(x, y))
+#> ^~~~~~~~~~~~~~~~~~~~~
 
 # okay
 lint(
@@ -54,7 +62,19 @@ lint(
 #> ℹ No lints found.
 
 lint(
+  text = "hello",
+  linters = sprintf_linter()
+)
+#> ℹ No lints found.
+
+lint(
   text = 'sprintf("hello %s %s %d", x, y, ...)',
+  linters = sprintf_linter()
+)
+#> ℹ No lints found.
+
+lint(
+  text = 'paste0(x, y)',
   linters = sprintf_linter()
 )
 #> ℹ No lints found.
