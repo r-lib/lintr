@@ -110,29 +110,26 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     )
   }
 
-  get_regex_lint_message <- function(lint_type, fixed_strings, is_grepl = FALSE) {
+  lint_fmt_map <- list(
+    # nolint start: line_length_linter.
+    grepl = c(
+      both = "Use !is.na(x) & x == %1$s to check for an exact string match, or, if missingness is not a concern, just x == %1$s.",
+      initial = "Use !is.na(x) & startsWith(x, %1$s) to detect a fixed initial substring, or, if missingness is not a concern, just startsWith(x, %1$s).",
+      terminal = "Use !is.na(x) & endsWith(x, %1$s) to detect a fixed terminal substring, or, if missingness is not a concern, just endsWith(x, %1$s)."
+    ),
+    # nolint end: line_length_linter.
+    str_detect = c(
+      both = "Use x == %s to check for an exact string match.",
+      initial = "Use startsWith(x, %s) to detect a fixed initial substring.",
+      terminal = "Use endsWith(x, %s) to detect a fixed terminal substring."
+    )
+  )
+  get_regex_lint_message <- function(lint_type, fixed_strings, regex_call) {
     if (length(lint_type) == 0L) {
       return(character())
     }
-    if (is_grepl) {
-      grepl_fmt <- paste(
-        "Use !is.na(x) & %1$s to %2$s, or,",
-        "if missingness is not a concern, just %1$s."
-      )
-      lint_fmt <- c(
-        both = sprintf(grepl_fmt, "x == %1$s", "check for an exact string match"),
-        initial = sprintf(grepl_fmt, "startsWith(x, %1$s)", "detect a fixed initial substring"),
-        terminal = sprintf(grepl_fmt, "endsWith(x, %1$s)", "detect a fixed terminal substring")
-      )
-    } else {
-      lint_fmt <- c(
-        both = "Use x == %s to check for an exact string match.",
-        initial = "Use startsWith(x, %s) to detect a fixed initial substring.",
-        terminal = "Use endsWith(x, %s) to detect a fixed terminal substring."
-      )
-    }
     paste(
-      sprintf(lint_fmt[lint_type], fixed_strings),
+      sprintf(lint_fmt_map[[regex_call]][lint_type], fixed_strings),
       "Doing so is more readable and avoids regular expression overhead."
     )
   }
@@ -162,7 +159,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     str_detect_lint_message <- get_regex_lint_message(
       str_detect_lint_data$lint_type,
       str_detect_lint_data$fixed_strings,
-      is_grepl = FALSE
+      "str_detect"
     )
 
     lints <- c(lints, xml_nodes_to_lints(
@@ -177,7 +174,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       grepl_lint_message <- get_regex_lint_message(
         grepl_lint_data$lint_type,
         grepl_lint_data$fixed_strings,
-        is_grepl = TRUE
+        "grepl"
       )
 
       lints <- c(lints, xml_nodes_to_lints(
