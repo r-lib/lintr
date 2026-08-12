@@ -12,6 +12,8 @@
 #'
 #' @param filename Either the filename for a file to lint, or a character string of inline R code for linting.
 #'   The latter (inline data) applies whenever `filename` has a newline character (\\n).
+#'   When combined with `text`, `filename` serves as the file identity for config discovery, exclusions,
+#'   knitr detection, and output; the file need not exist on disk.
 #' @param linters A named list of linter functions to apply. See [linters] for a full list of default and available
 #'   linters.
 #' @param ... Provide additional arguments to be passed to:
@@ -21,8 +23,10 @@
 #'   directory.
 #' @param parse_settings Logical. Whether to try and parse the [settings][read_settings]. Otherwise, the
 #'   [default_settings()] are used. `TRUE` by default when linting files, as opposed to `text=`.
+#'   Pass `TRUE` explicitly to discover settings when using `text=` with `filename`.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-#'   linting is being done ad hoc.
+#'   linting is being done ad hoc. When combined with `filename`, content comes from `text` while
+#'   `filename` provides file identity.
 #'
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
@@ -41,7 +45,7 @@
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = !inline_data, text = NULL) {
   check_dots(...names(), c("exclude", "parse_exclusions"))
 
-  needs_tempfile <- missing(filename) || re_matches(filename, rex(newline))
+  needs_tempfile <- missing(filename) || !isTRUE(nzchar(filename)) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
 
   if (parse_settings) {
@@ -59,6 +63,10 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     close(con)
   }
 
+  # manually normalize since normalizePath won't do so for non-existant file
+  if (!is.null(text) && !is_absolute_path(filename)) {
+    filename <- file.path(getwd(), filename)
+  }
   filename <- normalize_path(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
 
@@ -82,7 +90,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     reorder_lints()
   class(lints) <- c("lints", "list")
 
-  cache_file(lint_cache, filename, linters, lints)
+  cache_file(lint_cache, lint_obj, linters, lints)
   save_cache(lint_cache, filename, cache_path)
 
   res <- exclude(lints, lines = lines, linter_names = names(linters), ...)

@@ -192,6 +192,7 @@ test_that("settings can be put in a sub-directory", {
   withr::local_options(lintr.linter_file = .lintr)
   expect_length(lint_package(), 1L)
 })
+
 test_that("malformed config syntax aborts helpfully", {
   tmp <- withr::local_tempfile(fileext = ".R", lines = "x <- 1")
   bad_dcf <- withr::local_tempfile(lines = "linters: list( + )")
@@ -217,4 +218,16 @@ test_that("missing Encoding field inside an Rproj file defaults cleanly across p
   writeLines("a <- 1", tmp)
 
   expect_length(lint(filename = tmp, linters = assignment_linter()), 0L)
+})
+
+test_that("settings discovery falls back cleanly for non-existent identity paths", {
+  expect_length(
+    lint(
+      "/no/such/file.R",
+      text = "x <- 1",
+      parse_settings = TRUE,
+      linters = assignment_linter()
+    ),
+    0L
+  )
 })

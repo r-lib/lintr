@@ -271,3 +271,14 @@ test_that("malformed exclusions abort informatively via public API evaluation", 
     "Full line exclusions must be.*numeric.*or.*integer.*vectors"
   )
 })
+
+test_that("source exclusions work on non-existent identity file paths", {
+  expect_length(
+    lint(
+      "/no/such/file.R",
+      text = "x = 1 # nolint: assignment_linter.\n",
+      linters = assignment_linter()
+    ),
+    0L
+  )
+})
