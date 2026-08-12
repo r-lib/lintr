@@ -2,8 +2,7 @@
 
 ## New and improved features
 
-* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (@atusy).
-* `expect_lint()` gains a `file` argument so that both content and file identity can be supplied in tests, matching the new `lint()` capability (@atusy).
+* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, @atusy).
 
 ### New linters
 

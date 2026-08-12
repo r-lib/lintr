@@ -34,9 +34,7 @@ is not recommended for new code.}
 
 \item{...}{Arguments passed to \code{\link[=lint]{lint()}}, e.g. the linters or cache to use.}
 
-\item{file}{If not \code{NULL}, the path of the file to lint. If \code{content} is supplied, \code{file} provides the file
-identity (e.g. for settings discovery and knitr detection) while \code{content} provides the text without
-requiring the file to exist on disk. If \code{content} is missing, read content from \code{file}.}
+\item{file}{If not \code{NULL}, read content from the specified file rather than from \code{content}.}
 
 \item{language}{Temporarily override Rs \code{LANGUAGE} envvar, controlling localization of base R error messages.
 This makes testing them reproducible on all systems irrespective of their native R language setting.}

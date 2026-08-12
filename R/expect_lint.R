@@ -18,9 +18,7 @@
 #' Named vectors are also accepted instead of named lists, but this is a compatibility feature that
 #'   is not recommended for new code.
 #' @param ... Arguments passed to [lint()], e.g. the linters or cache to use.
-#' @param file If not `NULL`, the path of the file to lint. If `content` is supplied, `file` provides the file
-#'   identity (e.g. for settings discovery and knitr detection) while `content` provides the text without
-#'   requiring the file to exist on disk. If `content` is missing, read content from `file`.
+#' @param file If not `NULL`, read content from the specified file rather than from `content`.
 #' @param language Temporarily override Rs `LANGUAGE` envvar, controlling localization of base R error messages.
 #'   This makes testing them reproducible on all systems irrespective of their native R language setting.
 #' @param ignore_order Logical, default `FALSE`. If `TRUE`, the order of the `checks` does not matter, e.g.
@@ -52,21 +50,10 @@ expect_lint <- function(content, checks, ..., file = NULL, language = "en", igno
   old_lang <- set_lang(language)
   on.exit(reset_lang(old_lang))
 
-  if (!is.null(file) && !missing(content) && is.character(content)) {
-    # Both file and content -> Mode 3 (identity-aware linting)
-    lints <- lint(file, ..., text = content)
-  } else {
-    if (is.null(file)) on.exit(unlink(file), add = TRUE)
-    file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
-    lints <- lint(file, ...)
-  }
+  if (is.null(file)) on.exit(unlink(file), add = TRUE)
+  file <- maybe_write_content(file, content) # NB: the lint consistency fuzz suite anchors here.
 
-  check_lints(lints, checks, ignore_order)
-
-  invisible(lints)
-}
-
-check_lints <- function(lints, checks, ignore_order) {
+  lints <- lint(file, ...)
   n_lints <- length(lints)
   lint_str <- if (n_lints) paste(c("", lints), collapse = "\n") else ""
 
@@ -102,6 +89,8 @@ check_lints <- function(lints, checks, ignore_order) {
   }
 
   expect_lint_impl_(lints, checks)
+
+  invisible(lints)
 }
 
 #' NB: must _not_ succeed(), should only fail() or abort()
