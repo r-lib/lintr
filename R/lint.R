@@ -63,6 +63,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     close(con)
   }
 
+  # manually normalize since normalizePath won't do so for non-existant file
   if (!is.null(text) && !is_absolute_path(filename)) {
     filename <- file.path(getwd(), filename)
   }
