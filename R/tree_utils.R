@@ -17,7 +17,3 @@ generate_top_level_map <- function(pc) {
   }
   tl_parent
 }
-
-lag <- function(x) {
-  c(NA, x[seq_len(length(x) - 1L)])
-}
