@@ -387,16 +387,32 @@ test_that("lint(filename, text=) discovers config via identity path with parse_s
 
 test_that("lint(filename, text=) works with cache and updates when content changes", {
   cache_path <- withr::local_tempdir()
-  lints <- lint("R/cached_file.R", text = "x = 1\n", linters = assignment_linter(), cache = cache_path)
-  expect_length(lints, 1L)
+  linter <- assignment_linter()
 
-  # Second call should use cache
-  lints2 <- lint("R/cached_file.R", text = "x = 1\n", linters = assignment_linter(), cache = cache_path)
+  env <- environment()
+  calls <- 0L
+  orig_lint_impl <- lint_impl_
+  local_mocked_bindings(
+    lint_impl_ = function(...) {
+      assign("calls", get("calls", envir = env) + 1L, envir = env)
+      orig_lint_impl(...)
+    }
+  )
+
+  lints <- lint("R/cached_file.R", text = "x = 1\n", linters = linter, cache = cache_path)
+  expect_length(lints, 1L)
+  expect_identical(calls, 1L)
+  expect_length(list.files(cache_path), 1L)
+
+  # Second call should use cache (lint_impl_ not called)
+  lints2 <- lint("R/cached_file.R", text = "x = 1\n", linters = linter, cache = cache_path)
   expect_length(lints2, 1L)
+  expect_identical(calls, 1L)
 
   # Changing text with the same identity path should invalidate cache and re-lint
-  lints3 <- lint("R/cached_file.R", text = "x <- 1\n", linters = assignment_linter(), cache = cache_path)
+  lints3 <- lint("R/cached_file.R", text = "x <- 1\n", linters = linter, cache = cache_path)
   expect_length(lints3, 0L)
+  expect_identical(calls, 2L)
 })
 
 test_that("lint(filename, text=) detects knitr from extension", {
