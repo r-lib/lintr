@@ -158,7 +158,7 @@ defines_knitr_engine <- function(start_lines, pattern = knitr::all_patterns$md) 
     p_src <- params_src[idx]
     p_str <- if (markdown_mode) sub("^([a-zA-Z0-9_]+)", "", p_src) else p_src
     opt <- tryCatch(
-      suppressMessages(xfun::csv_options(gsub("^\\s*,\\s*", "", p_str))),
+      suppressMessages(xfun::csv_options(p_str)),
       error = \(e) NULL
     )
     if (is.character(opt$engine)) {
