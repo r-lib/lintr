@@ -46,7 +46,10 @@ lint_package(
 
   Either the filename for a file to lint, or a character string of
   inline R code for linting. The latter (inline data) applies whenever
-  `filename` has a newline character (\n).
+  `filename` has a newline character (\n). When combined with `text`,
+  `filename` serves as the file identity for config discovery,
+  exclusions, knitr detection, and output; the file need not exist on
+  disk.
 
 - linters:
 
@@ -76,11 +79,15 @@ lint_package(
   Otherwise, the
   [`default_settings()`](https://lintr.r-lib.org/dev/reference/default_settings.md)
   are used. `TRUE` by default when linting files, as opposed to `text=`.
+  Pass `TRUE` explicitly to discover settings when using `text=` with
+  `filename`.
 
 - text:
 
   Optional argument for supplying a string or lines directly, e.g. if
-  the file is already in memory or linting is being done ad hoc.
+  the file is already in memory or linting is being done ad hoc. When
+  combined with `filename`, content comes from `text` while `filename`
+  provides file identity.
 
 - path:
 
@@ -143,10 +150,10 @@ lint(text = "a = 123")
 f <- tempfile()
 writeLines("a=1", f)
 lint(f)
-#> /tmp/RtmpMkT6Sf/file1cda7cc265f9:1:2: style: [assignment_linter] Use <- for assignment, not =.
+#> /tmp/RtmpJxwy0k/file1a32bea3b1b:1:2: style: [assignment_linter] Use <- for assignment, not =.
 #> a=1
 #>  ^
-#> /tmp/RtmpMkT6Sf/file1cda7cc265f9:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
+#> /tmp/RtmpJxwy0k/file1a32bea3b1b:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
 #> a=1
 #>  ^
 unlink(f)

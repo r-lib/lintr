@@ -110,7 +110,9 @@ R/, tests/, inst/, vignettes/, data-raw/, demo/, and exec/.
 
 <dl><dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
 <dd><p>Either the filename for a file to lint, or a character string of inline R code for linting.
-The latter (inline data) applies whenever <code>filename</code> has a newline character (\n).</p></dd>
+The latter (inline data) applies whenever <code>filename</code> has a newline character (\n).
+When combined with <code>text</code>, <code>filename</code> serves as the file identity for config discovery, exclusions,
+knitr detection, and output; the file need not exist on disk.</p></dd>
 
 
 <dt id="arg-linters">linters<a class="anchor" aria-label="anchor" href="#arg-linters"></a></dt>
@@ -131,12 +133,14 @@ directory.</p></dd>
 
 <dt id="arg-parse-settings">parse_settings<a class="anchor" aria-label="anchor" href="#arg-parse-settings"></a></dt>
 <dd><p>Logical. Whether to try and parse the <a href="read_settings.html">settings</a>. Otherwise, the
-<code><a href="default_settings.html">default_settings()</a></code> are used. <code>TRUE</code> by default when linting files, as opposed to <code>text=</code>.</p></dd>
+<code><a href="default_settings.html">default_settings()</a></code> are used. <code>TRUE</code> by default when linting files, as opposed to <code>text=</code>.
+Pass <code>TRUE</code> explicitly to discover settings when using <code>text=</code> with <code>filename</code>.</p></dd>
 
 
 <dt id="arg-text">text<a class="anchor" aria-label="anchor" href="#arg-text"></a></dt>
 <dd><p>Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-linting is being done ad hoc.</p></dd>
+linting is being done ad hoc. When combined with <code>filename</code>, content comes from <code>text</code> while
+<code>filename</code> provides file identity.</p></dd>
 
 
 <dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
@@ -192,10 +196,10 @@ unintelligible error messages from other linters.</p>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"a=1"</span>, <span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">lint</span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpMkT6Sf/file1cda7cc265f9:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;- for assignment, not =.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpJxwy0k/file1a32bea3b1b:1:2: </span><span style="color: #0000BB;">style: </span>[assignment_linter] <span style="font-weight: bold;">Use &lt;- for assignment, not =.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpMkT6Sf/file1cda7cc265f9:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">/tmp/RtmpJxwy0k/file1a32bea3b1b:1:2: </span><span style="color: #0000BB;">style: </span>[infix_spaces_linter] <span style="font-weight: bold;">Put spaces around all infix operators.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ^</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
