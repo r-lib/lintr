@@ -108,10 +108,10 @@ unwrap_parens <- function(node) {
 is_or_root <- function(node) {
   parent <- xml_find_first_(node, "parent::*")
   while (isTRUE(xml_name_(parent) == "expr")) {
-    if (xml_find_num(parent, "count(OR2)") > 0L) {
+    if (xml_find_num_(parent, "count(OR2)") > 0L) {
       return(FALSE)
     }
-    if (xml_find_num_(parent, "count(OP-LEFT-PAREN)") != 1L || xml_find_num_(parent, "count(expr)") != 1L) {
+    if (xml_find_num_(parent, "count(OP-LEFT-PAREN | OP-RIGHT-PAREN | expr)") != 3L) {
       break
     }
     parent <- xml_find_first_(parent, "parent::*")
@@ -120,28 +120,20 @@ is_or_root <- function(node) {
 }
 
 extract_is_numeric_arg <- function(node) {
-  fn_node <- xml_find_first_(node, "expr[1]/SYMBOL_FUNCTION_CALL")
+  fn_node <- xml_find_first_(
+    node,
+    "self::expr[
+      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer']
+      and count(expr) = 2
+      and not(SYMBOL_SUB[text() != 'x'])
+      and not(EQ_SUB/preceding-sibling::STR_CONST[text() != \"'x'\" and text() != '\"x\"'])
+    ]/expr[1]/SYMBOL_FUNCTION_CALL"
+  )
   if (is.na(fn_node)) {
     return(NULL)
   }
   fn <- xml_text(fn_node)
-  if (!fn %in% c("is.numeric", "is.integer")) {
-    return(NULL)
-  }
-
-  expr_children <- xml_find_all_(node, "expr")
-  if (length(expr_children) != 2L) {
-    return(NULL)
-  }
-
-  if (length(xml_find_all_(node, "EQ_SUB")) > 0L) {
-    param_name <- get_r_string(node, "EQ_SUB/preceding-sibling::*[1]")
-    if (length(param_name) > 0L && any(param_name != "x")) {
-      return(NULL)
-    }
-  }
-
-  arg_node <- expr_children[[2L]]
+  arg_node <- xml_find_first_(node, "expr[2]")
   list(fn = fn, arg = xml2lang(arg_node))
 }
 
@@ -164,7 +156,7 @@ has_cross_redundancy <- function(left_res, right_res) {
 check_or_tree <- function(node) {
   node <- unwrap_parens(node)
 
-  if (length(xml_find_all_(node, "OR2")) > 0L) {
+  if (xml_find_num_(node, "count(OR2)") > 0L) {
     exprs <- xml_find_all_(node, "expr")
     if (length(exprs) == 2L) {
       left_res <- check_or_tree(exprs[[1L]])
