@@ -10,7 +10,6 @@
 
 ### Linter improvements
 
-* `string_boundary_linter()` provides fixed-string replacements in its lint message and clarifies the reasons for inefficiency (#1333, @MichaelChirico).
 * `class_equals_linter()` blocks checking class membership with `is.element(cls, class(obj))` or `is.element(class(obj), cls)`, matching existing behavior for `class(obj) %in% cls` (#2849, @MichaelChirico).
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with zero or one argument (#2980, @MichaelChirico).
 * `fixed_regex_linter()` encourages using the recent (R 4.6.0) `fixed = TRUE` arguments to `list.files()` and `dir()` (#3003, @MichaelChirico). To avoid depending on a recent R version, the rule for `list.files()` and `dir()` can be disabled by setting `check_file_listing = FALSE`.
@@ -24,6 +23,10 @@
 * `vector_logic_linter()` again finds `&&`/`||` usage in filtering expressions in function bodies like `\() filter(x, A && B)` (#3082, @MichaelChirico).
 * `seq_linter()` now flags `seq(1, n)` and `seq(from = 1, to = n)` calls, recommending `seq_len()` or `seq_along()` (#2661, @MichaelChirico).
 * `string_boundary_linter()` also recommends `startsWith()` for `substr(s, 0, n)` and `substring(s, 0, n)` (#3029, @fly1d).
+
+### Notes
+
+* `string_boundary_linter()` provides fixed-string replacements in its lint message and clarifies the reasons for inefficiency (#1333, @MichaelChirico).
 
 # lintr (3.4.0)
 
