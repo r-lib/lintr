@@ -577,7 +577,7 @@ get_source_expression <- function(source_expression, error = identity) {
   }
 
   source_expression$parsed_content <- parsed_content
-  fix_octal_escapes(fix_eq_assigns(fix_tab_indentations(source_expression)), source_expression$lines)
+  fix_octal_escapes(fix_tab_indentations(source_expression), source_expression$lines)
 }
 
 maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
@@ -676,89 +676,6 @@ tab_offsets <- function(tab_columns) {
     USE.NAMES = FALSE
   )
 }
-
-# This function wraps equal assign expressions in a parent expression so they
-# are the same as the corresponding <- expression
-fix_eq_assigns <- function(pc) {
-  if (is.null(pc) || any(c("equal_assign", "expr_or_assign_or_help") %in% pc$token)) {
-    return(pc)
-  }
-
-  eq_assign_locs <- which(pc$token == "EQ_ASSIGN")
-  # check whether the equal-assignment is the final entry
-  if (length(eq_assign_locs) == 0L || tail(eq_assign_locs, 1L) == nrow(pc)) {
-    return(pc)
-  }
-
-  prev_locs <- vapply(eq_assign_locs, prev_with_parent, pc = pc, integer(1L))
-  next_locs <- vapply(eq_assign_locs, next_with_parent, pc = pc, integer(1L))
-  expr_locs <- prev_locs != lag(next_locs)
-  expr_locs[is.na(expr_locs)] <- TRUE
-
-  id_itr <- max(pc$id)
-
-  true_locs <- which(expr_locs)
-  n_expr <- length(true_locs)
-
-  supplemental_content <- data.frame(
-    line1 = integer(n_expr),
-    col1 = integer(n_expr),
-    line2 = integer(n_expr),
-    col2 = integer(n_expr),
-    id = integer(n_expr),
-    parent = integer(n_expr),
-    token = character(n_expr),
-    terminal = logical(n_expr),
-    text = character(n_expr)
-  )
-
-  for (i in seq_len(n_expr)) {
-    start_loc <- true_locs[i]
-    end_loc <- true_locs[i]
-
-    prev_loc <- prev_locs[start_loc]
-    next_loc <- next_locs[end_loc]
-
-    id_itr <- id_itr + 1L
-    supplemental_content[i, ] <- list(
-      pc[prev_loc, "line1"],
-      pc[prev_loc, "col1"],
-      pc[next_loc, "line2"],
-      pc[next_loc, "col2"],
-      id_itr,
-      pc[eq_assign_locs[true_locs[i]], "parent"],
-      "expr", # R now uses "equal_assign"
-      FALSE,
-      ""
-    )
-
-    new_parent_locs <- c(
-      prev_locs[start_loc:end_loc],
-      eq_assign_locs[start_loc:end_loc],
-      next_locs[start_loc:end_loc],
-      next_loc
-    )
-    pc[new_parent_locs, "parent"] <- id_itr
-  }
-  rownames(supplemental_content) <- supplemental_content$id
-  res <- rbind(pc, supplemental_content)
-  res[order(res$line1, res$col1, res$line2, res$col2, res$id), ]
-}
-
-step_with_parent <- function(pc, loc, offset) {
-  id <- pc$id[loc]
-  parent_id <- pc$parent[loc]
-
-  with_parent <- pc[pc$parent == parent_id, ]
-  with_parent <- with_parent[order(with_parent$line1, with_parent$col1, with_parent$line2, with_parent$col2), ]
-
-  loc <- which(with_parent$id == id)
-
-  which(pc$id == with_parent$id[loc + offset])
-}
-
-prev_with_parent <- function(pc, loc) step_with_parent(pc, loc, offset = -1L)
-next_with_parent <- function(pc, loc) step_with_parent(pc, loc, offset = 1L)
 
 top_level_expressions <- function(pc) {
   if (is.null(pc)) {
