@@ -45,8 +45,7 @@
 lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = !inline_data, text = NULL) {
   check_dots(...names(), c("exclude", "parse_exclusions"))
 
-  has_filename <- !missing(filename) && isTRUE(nzchar(filename)) && !re_matches(filename, rex(newline))
-  needs_tempfile <- !has_filename
+  needs_tempfile <- missing(filename) || !isTRUE(nzchar(filename)) || re_matches(filename, rex(newline))
   inline_data <- !is.null(text) || needs_tempfile
 
   if (parse_settings) {
@@ -64,7 +63,10 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     close(con)
   }
 
-  filename <- normalize_identity_path(filename, inline_data, has_filename)
+  if (!is.null(text) && !is_absolute_path(filename)) {
+    filename <- file.path(getwd(), filename)
+  }
+  filename <- normalize_path(filename, mustWork = !inline_data) # to ensure a unique file in cache
   source_expressions <- get_source_expressions(filename, lines)
 
   linters <- define_linters(linters)
@@ -769,15 +771,6 @@ maybe_append_condition_lints <- function(lints, source_expression, lint_cache, f
     }
   }
   lints
-}
-
-normalize_identity_path <- function(filename, inline_data, has_filename) {
-  # Normalize relative paths for non-existent files (normalizePath(mustWork=FALSE)
-  # doesn't expand relative paths when the file doesn't exist)
-  if (inline_data && has_filename && !is_absolute_path(filename)) {
-    filename <- file.path(getwd(), filename)
-  }
-  normalize_path(filename, mustWork = !inline_data) # to ensure a unique file in cache
 }
 
 get_lines <- function(filename, text) {
