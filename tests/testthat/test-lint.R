@@ -353,7 +353,7 @@ test_that("lint(filename, text=) respects nolint comments", {
   lints <- lint("new.R", text = "x = 1 # nolint: assignment_linter.\n", linters = assignment_linter())
   expect_length(lints, 0L)
 
-  # nolint start / nolint end block
+  # block of skipped linting
   block_code <- paste(
     "# nolint start: assignment_linter.",
     "x = 1",
@@ -366,7 +366,7 @@ test_that("lint(filename, text=) respects nolint comments", {
   expect_length(lints_block, 1L)
   expect_identical(lints_block[[1L]]$line_number, 5L)
 
-  # nolint next on multi-line code
+  # skip linting subsequent line
   multiline_code <- paste(
     "# nolint next: assignment_linter.",
     "a = 1",
