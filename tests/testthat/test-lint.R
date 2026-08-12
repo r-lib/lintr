@@ -332,21 +332,16 @@ test_that("lint(text=) handles UTF-8 marked text in non-UTF-8 locale", {
   )
 })
 
-# Mode 3: lint(filename, text=) -- content from text, identity from filename
-
 test_that("lint(filename, text=) uses identity path in output", {
   lints <- lint("R/foo.R", text = "x = 1\n", linters = assignment_linter())
   expect_length(lints, 1L)
-  expect_true(grepl("foo.R$", lints[[1L]]$filename))
-  # Should NOT show <text>
-
-  expect_false(identical(lints[[1L]]$filename, "<text>"))
+  expect_match(lints[[1L]]$filename, "foo\\.R$") # Should NOT show <text>
 })
 
 test_that("lint(filename, text=) works with non-existent files", {
-  lints <- lint("R/new_file.R", text = "x = 1\n", linters = assignment_linter())
+  lints <- lint("R/file_that_does_not_exist.R", text = "x = 1\n", linters = assignment_linter())
   expect_length(lints, 1L)
-  expect_true(grepl("new_file.R$", lints[[1L]]$filename))
+  expect_match(lints[[1L]]$filename, "file_that_does_not_exist\\.R$")
 })
 
 test_that("lint(filename, text=) respects nolint comments", {
