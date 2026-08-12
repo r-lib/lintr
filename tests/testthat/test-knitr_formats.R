@@ -322,7 +322,7 @@ test_that("non-R code blocks are ignored (#1896)", {
 
   # {extendr} and {ojs} chunks in .Rmd / .qmd
   expect_lint(
-    trim_some(R'{
+    trim_some(R'[
       ```{extendr}
       fn hello() -> &'static str {
         let x = 1;
@@ -343,7 +343,7 @@ test_that("non-R code blocks are ignored (#1896)", {
       good_code <- 2
       another_bad = 3
       ```
-    }'),
+    ]'),
     list(
       list(regexes[["assign"]], line_number = 9L),
       list(regexes[["assign"]], line_number = 19L)
