@@ -23,6 +23,10 @@
 * `vector_logic_linter()` again finds `&&`/`||` usage in filtering expressions in function bodies like `\() filter(x, A && B)` (#3082, @MichaelChirico).
 * `seq_linter()` now flags `seq(1, n)` and `seq(from = 1, to = n)` calls, recommending `seq_len()` or `seq_along()` (#2661, @MichaelChirico).
 
+## Bug fixes
+
+* Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
+
 # lintr (3.4.0)
 
 ## Deprecations & breaking changes

@@ -316,3 +316,138 @@ test_that("malformed chunk options don't crash linting and fallback to evaluated
     )
   )
 })
+
+test_that("non-R code blocks are ignored (#1896)", {
+  linter <- assignment_linter()
+
+  # {extendr} and {ojs} chunks in .Rmd / .qmd
+  expect_lint(
+    trim_some(R'{
+      ```{extendr}
+      fn hello() -> &'static str {
+        let x = 1;
+        "hello"
+      }
+      ```
+
+      ```{r}
+      bad_code = 1
+      ```
+
+      ```{ojs}
+      data = FileAttachment("seattle-weather.csv")
+        .csv({typed: true})
+      ```
+
+      ```{r}
+      good_code <- 2
+      another_bad = 3
+      ```
+    }'),
+    list(
+      list(regexes[["assign"]], line_number = 9L),
+      list(regexes[["assign"]], line_number = 19L)
+    ),
+    linter
+  )
+
+  # Various other non-R chunk engines ({mermaid}, {dot}, {python}, {rust}, {sql})
+  expect_lint(
+    trim_some("
+      ```{mermaid}
+      graph TD;
+        A-->B;
+      ```
+
+      ```{dot}
+      digraph G {
+        a -> b;
+      }
+      ```
+
+      ```{python}
+      a = [1, 2, 3]
+      b = {'x': 1}
+      ```
+
+      ```{rust}
+      let mut v = vec![1, 2, 3];
+      ```
+
+      ```{sql}
+      SELECT * FROM table WHERE x = 1;
+      ```
+
+      ```{r}
+      bad_code = 1
+      ```
+    "),
+    list(regexes[["assign"]], line_number = 26L),
+    linter
+  )
+
+  # Explicit engine option in chunk header
+  expect_lint(
+    trim_some('
+      ```{r, engine = "python"}
+      a = [1, 2]
+      ```
+
+      ```{r, engine = "R"}
+      bad_code = 1
+      ```
+
+      ```{r, engine = "bash"}
+      echo "hello"
+      ```
+
+      ```{r, engine = "r"}
+      another_bad = 2
+      ```
+    '),
+    list(
+      list(regexes[["assign"]], line_number = 6L),
+      list(regexes[["assign"]], line_number = 14L)
+    ),
+    linter
+  )
+
+  # .qmd with #| engine in chunk body
+  qmd_file <- withr::local_tempfile(fileext = ".qmd", lines = c(
+    "```{r}",
+    "#| engine: python",
+    "a = [1, 2]",
+    "```",
+    "```{r}",
+    "#| engine: r",
+    "bad_code = 1",
+    "```"
+  ))
+  expect_lint(
+    file = qmd_file,
+    checks = list(regexes[["assign"]], line_number = 7L),
+    linter
+  )
+
+  # .Rnw with engine="python" vs engine="R"
+  expect_lint(
+    trim_some('
+      <<chunk-1, engine = "python">>=
+      a = [1, 2]
+      @
+
+      <<chunk-2, engine = "R">>=
+      bad_code = 1
+      @
+
+      <<chunk-3, engine = "r">>=
+      another_bad = 2
+      @
+    '),
+    list(
+      list(regexes[["assign"]], line_number = 6L),
+      list(regexes[["assign"]], line_number = 10L)
+    ),
+    linter
+  )
+})
