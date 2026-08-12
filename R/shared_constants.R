@@ -19,8 +19,8 @@ rx_static_escape <- local({
     "]"
   )
   rex(or(
-    capture(rx_char_escape, name = "char_escape"),
-    capture(rx_trivial_char_group, name = "trivial_char_group")
+    rx_char_escape,
+    rx_trivial_char_group
   ))
 })
 
@@ -35,8 +35,7 @@ rx_unescaped_regex <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char)
 rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
 rx_escapable_tokens <- "^${}().*+?|[]\\<>=:;/_-!@#%&,~"
 rx_escapable_regex <- rex("\\", capture(one_of(rx_escapable_tokens)))
-rx_trivial_char_group <- paste0("(?s)", rex(
-  "[",
+rx_trivial_char_group <- paste0("(?s)(?<!\\\\)(?:\\\\\\\\)*\\K\\[", rex(
   capture(or(
     group("\\", or(
       group("x", between(xdigit, 1L, 2L)),
@@ -48,9 +47,55 @@ rx_trivial_char_group <- paste0("(?s)", rex(
       none_of("dswDSW")
     )),
     any
-  )),
-  "]"
-))
+  ))
+), "\\]")
+
+rx_esc_num <- paste0(
+  "(?s)(?<!\\\\)(?:\\\\\\\\)*\\K\\\\",
+  rex(or(
+    group("x", between(xdigit, 1L, 2L)),
+    group("u{", between(xdigit, 1L, 4L), "}"),
+    group("u", between(xdigit, 1L, 4L)),
+    group("U{", between(xdigit, 1L, 8L), "}"),
+    group("U", between(xdigit, 1L, 8L)),
+    between("0":"7", 1L, 3L)
+  ))
+)
+
+decode_escape_token <- function(esc) {
+  code <- if (startsWith(esc, "x")) {
+    strtoi(substr(esc, 2L, nchar(esc)), 16L)
+  } else if (startsWith(esc, "u{") || startsWith(esc, "U{")) {
+    strtoi(substr(esc, 3L, nchar(esc) - 1L), 16L)
+  } else if (startsWith(esc, "u") || startsWith(esc, "U")) {
+    strtoi(substr(esc, 2L, nchar(esc)), 16L)
+  } else {
+    strtoi(esc, 8L)
+  }
+  if (is.na(code) || code == 0L) {
+    ""
+  } else {
+    intToUtf8(code)
+  }
+}
+
+decode_escapes <- function(s) {
+  m <- gregexpr(rx_esc_num, s, perl = TRUE)
+  has_esc <- vapply(m, \(pos) any(pos != -1L), logical(1L))
+  if (!any(has_esc)) {
+    return(s)
+  }
+  matches <- regmatches(s, m)
+  decoded <- lapply(matches, \(vec) {
+    if (length(vec) == 0L) {
+      return(character(0L))
+    }
+    raw_esc <- substr(vec, 2L, nchar(vec))
+    vapply(raw_esc, decode_escape_token, character(1L), USE.NAMES = FALSE)
+  })
+  regmatches(s, m) <- decoded
+  s
+}
 
 #' Determine whether a regex pattern actually uses regex patterns
 #'
@@ -76,9 +121,9 @@ is_not_regex <- function(str, allow_unescaped = FALSE) {
 
 #' Compute a fixed string equivalent to a static regular expression
 #'
-#' @param static_regex A character vector of regex patterns for which `is_not_regex()` returns `TRUE`
-#' @return A quoted string such that `grepl(static_regex, x)` is equivalent to
-#'   `eval(parse(text = sprintf("grepl(%s, x, fixed = TRUE)", get_fixed_string(static_regex))))`
+#' @param static_regex A character vector of regex patterns for which `is_not_regex()` returns `TRUE`.
+#' @return A character vector of quoted strings such that `grepl(static_regex, x)` is equivalent to
+#'   `eval(parse(text = sprintf("grepl(%s, x, fixed = TRUE)", get_fixed_string(static_regex))))`.
 #'
 #' @noRd
 get_fixed_string <- function(static_regex) {
@@ -86,17 +131,9 @@ get_fixed_string <- function(static_regex) {
     return(character())
   }
   static_regex <- gsub(rx_trivial_char_group, "\\1", static_regex, perl = TRUE)
+  static_regex <- decode_escapes(static_regex)
   static_regex <- gsub(rx_escapable_regex, "\\1", static_regex, perl = TRUE)
 
-  has_esc <- grepl("\\\\[0-9a-fA-FxuUabefnrtv]", static_regex)
-  if (any(has_esc)) {
-    static_regex[has_esc] <- vapply(
-      static_regex[has_esc],
-      function(s) eval(parse(text = paste0('"', s, '"'))),
-      character(1L),
-      USE.NAMES = FALSE
-    )
-  }
   encodeString(static_regex, quote = '"', justify = "none")
 }
 
