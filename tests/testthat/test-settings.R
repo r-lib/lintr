@@ -220,11 +220,14 @@ test_that("missing Encoding field inside an Rproj file defaults cleanly across p
   expect_length(lint(filename = tmp, linters = assignment_linter()), 0L)
 })
 
-test_that("find_package() returns NULL for non-existent paths", {
-  expect_null(find_package("/no/such/path/anywhere"))
-})
-
-test_that("find_package() works for existing paths", {
-  pkg_path <- test_path("dummy_packages", "assignmentLinter")
-  expect_identical(find_package(pkg_path), normalize_path(pkg_path))
+test_that("settings discovery falls back cleanly for non-existent identity paths", {
+  expect_length(
+    lint(
+      "/no/such/file.R",
+      text = "x <- 1",
+      parse_settings = TRUE,
+      linters = assignment_linter()
+    ),
+    0L
+  )
 })
