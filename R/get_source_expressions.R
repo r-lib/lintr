@@ -316,6 +316,7 @@ lint_parse_error_r42 <- function(message_info, source_expression) {
 #' @return A [Lint()] based on trying to extract information from the error message of `e`.
 #'
 #' @noRd
+# TODO(R>=4.3.0): remove this
 lint_parse_error_nonstandard <- function(e, source_expression) {
   if (grepl("invalid multibyte character in parser at line", e$message, fixed = TRUE)) {
     # nocov start: platform-specific
@@ -768,6 +769,7 @@ top_level_expressions <- function(pc) {
 
 # workaround for bad parse data bug for octal escapes
 #   https://bugs.r-project.org/show_bug.cgi?id=18323
+# TODO(R>=4.3.0): remove this
 fix_octal_escapes <- function(pc, lines) {
   # subset first to prevent using nchar() on MBCS input
   is_str_const <- pc$token == "STR_CONST"
