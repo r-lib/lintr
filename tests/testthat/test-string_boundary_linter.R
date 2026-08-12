@@ -83,12 +83,12 @@ test_that("string_boundary_linter blocks simple disallowed str_detect() usages",
 
   expect_lint(
     "str_detect(x, '^a')",
-    rex::rex('Use startsWith(x, "a") to detect a fixed initial substring.'),
+    rex::rex('Use startsWith(x, "a") or str_starts(x, fixed("a")) to detect a fixed initial substring.'),
     linter
   )
   expect_lint(
     "str_detect(x, 'a$')",
-    rex::rex('Use endsWith(x, "a") to detect a fixed terminal substring.'),
+    rex::rex('Use endsWith(x, "a") or str_ends(x, fixed("a")) to detect a fixed terminal substring.'),
     linter
   )
 })
@@ -211,8 +211,8 @@ test_that("vectorization + metadata work as intended", {
       list(rex::rex('startsWith(x, "abc")'), line_number = 6L),
       list(rex::rex('endsWith(x, "abc")'), line_number = 7L),
       list(rex::rex('x == "abc"'), line_number = 8L),
-      list(rex::rex('startsWith(x, "abc")'), line_number = 9L),
-      list(rex::rex('endsWith(x, "abc")'), line_number = 10L),
+      list(rex::rex('str_starts(x, fixed("abc"))'), line_number = 9L),
+      list(rex::rex('str_ends(x, fixed("abc"))'), line_number = 10L),
       list(rex::rex('x == "abc"'), line_number = 11L)
     ),
     linter

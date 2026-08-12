@@ -120,8 +120,8 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     # nolint end: line_length_linter.
     str_detect = c(
       both = "Use x == %s to check for an exact string match.",
-      initial = "Use startsWith(x, %s) to detect a fixed initial substring.",
-      terminal = "Use endsWith(x, %s) to detect a fixed terminal substring."
+      initial = "Use startsWith(x, %1$s) or str_starts(x, fixed(%1$s)) to detect a fixed initial substring.",
+      terminal = "Use endsWith(x, %1$s) or str_ends(x, fixed(%1$s)) to detect a fixed terminal substring."
     )
   )
   get_regex_lint_message <- function(lint_type, fixed_strings, regex_call) {

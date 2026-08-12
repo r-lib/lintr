@@ -24,9 +24,9 @@
 * `seq_linter()` now flags `seq(1, n)` and `seq(from = 1, to = n)` calls, recommending `seq_len()` or `seq_along()` (#2661, @MichaelChirico).
 * `string_boundary_linter()` also recommends `startsWith()` for `substr(s, 0, n)` and `substring(s, 0, n)` (#3029, @fly1d).
 
-### Notes
+## Notes
 
-* `string_boundary_linter()` provides fixed-string replacements in its lint message and clarifies the reasons for inefficiency (#1333, @MichaelChirico).
+* `string_boundary_linter()` provides fixed-string replacements in its lint message, recommends `str_starts()`/`str_ends()` with `fixed()` for `{stringr}` calls, and clarifies the reasons for inefficiency (#1333, @MichaelChirico).
 
 # lintr (3.4.0)
 
