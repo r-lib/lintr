@@ -394,7 +394,7 @@ test_that("lint(filename, text=) works with cache and updates when content chang
   orig_lint_impl <- lint_impl_
   local_mocked_bindings(
     lint_impl_ = function(...) {
-      assign("calls", get("calls", envir = env) + 1L, envir = env)
+      env$calls <- env$calls + 1L
       orig_lint_impl(...)
     }
   )
