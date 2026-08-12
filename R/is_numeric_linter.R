@@ -99,11 +99,7 @@ is_numeric_linter <- function() {
 }
 
 unwrap_parens <- function(node) {
-  while (
-    length(xml_find_all_(node, "OP-LEFT-PAREN")) == 1L &&
-      length(xml_find_all_(node, "OP-RIGHT-PAREN")) == 1L &&
-      length(xml_find_all_(node, "expr")) == 1L
-  ) {
+  while (xml_find_num_(node, "count(OP-LEFT-PAREN | OP-RIGHT-PAREN | expr)") == 3L) {
     node <- xml_find_first_(node, "expr")
   }
   node
@@ -111,14 +107,11 @@ unwrap_parens <- function(node) {
 
 is_or_root <- function(node) {
   parent <- xml_find_first_(node, "parent::*")
-  while (!is.na(parent) && xml_name_(parent) == "expr") {
-    if (length(xml_find_all_(parent, "OR2")) > 0L) {
+  while (isTRUE(xml_name_(parent) == "expr")) {
+    if (xml_find_num(parent, "count(OR2)") > 0L) {
       return(FALSE)
     }
-    if (
-      length(xml_find_all_(parent, "OP-LEFT-PAREN")) != 1L ||
-        length(xml_find_all_(parent, "expr")) != 1L
-    ) {
+    if (xml_find_num_(parent, "count(OP-LEFT-PAREN)") != 1L || xml_find_num_(parent, "count(expr)") != 1L) {
       break
     }
     parent <- xml_find_first_(parent, "parent::*")
