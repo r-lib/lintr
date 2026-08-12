@@ -157,10 +157,7 @@ defines_knitr_engine <- function(start_lines, pattern = knitr::all_patterns$md) 
   for (idx in explicit_engine_idx) {
     p_src <- params_src[idx]
     p_str <- if (markdown_mode) sub("^([a-zA-Z0-9_]+)", "", p_src) else p_src
-    opt <- tryCatch(
-      suppressMessages(xfun::csv_options(p_str)),
-      error = \(e) NULL
-    )
+    opt <- safe_csv_options(p_str)
     if (is.character(opt$engine)) {
       is_non_r[idx] <- tolower(opt$engine) != "r"
     }
@@ -169,11 +166,18 @@ defines_knitr_engine <- function(start_lines, pattern = knitr::all_patterns$md) 
   is_non_r
 }
 
+safe_csv_options <- function(params) {
+  tryCatch(
+    suppressMessages(xfun::csv_options(params)),
+    error = \(e) NULL
+  )
+}
+
 is_eval_chunk <- function(start, end, lines, pattern) {
   header <- lines[start]
   # essentially knitr:::extract_params_src
   params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
-  header_params <- tryCatch(suppressMessages(xfun::csv_options(params_src)), error = \(e) NULL)
+  header_params <- safe_csv_options(params_src)
 
   code <- lines[(start + 1L):(end - 1L)]
   body_params <- tryCatch(
