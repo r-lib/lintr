@@ -46,8 +46,22 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
   # caught when nesting
   expect_lint("all(y > 5) && (is.integer(x) || is.numeric(x))", lint_msg, linter)
 
-  # implicit nesting
+  # implicit nesting and mixed order in || chains (#1636)
   expect_lint("is.integer(x) || is.numeric(x) || is.logical(x)", lint_msg, linter)
+  expect_lint("is.logical(x) || is.integer(x) || is.numeric(x)", lint_msg, linter)
+  expect_lint("is.factor(x) || is.numeric(x) || is.integer(x)", lint_msg, linter)
+  expect_lint("is.numeric(x) || is.logical(x) || is.integer(x)", lint_msg, linter)
+  expect_lint("is.factor(x) || is.numeric(x) || is.logical(x) || is.integer(x)", lint_msg, linter)
+  expect_lint("is.factor(x) || (is.numeric(x) || is.integer(x))", lint_msg, linter)
+  expect_lint("((is.factor(x) || is.numeric(x))) || is.integer(x)", lint_msg, linter)
+  expect_lint(
+    "is.numeric(x) || is.integer(x) || is.numeric(y) || is.integer(y)",
+    list(
+      list(lint_msg, column_number = 1L),
+      list(lint_msg, column_number = 1L)
+    ),
+    linter
+  )
 })
 
 test_that("is_numeric_linter blocks disallowed usages involving %in%", {
@@ -74,10 +88,12 @@ test_that("lints vectorize", {
     trim_some("{
       is.numeric(x) || is.integer(x)
       class(x) %in% c('integer', 'numeric')
+      is.logical(x) || is.integer(x) || is.numeric(x)
     }"),
     list(
       list(rex::rex("`is.numeric(x) || is.integer(x)`"), line_number = 2L),
-      list(rex::rex('class(x) %in% c("integer", "numeric")'), line_number = 3L)
+      list(rex::rex('class(x) %in% c("integer", "numeric")'), line_number = 3L),
+      list(rex::rex("`is.numeric(x) || is.integer(x)`"), line_number = 4L)
     ),
     is_numeric_linter()
   )

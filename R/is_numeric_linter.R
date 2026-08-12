@@ -35,20 +35,7 @@
 #' @export
 is_numeric_linter <- function() {
   # TODO(#2469): This should also cover is.double(x) || is.integer(x).
-  # TODO(#1636): is.numeric(x) || is.integer(x) || is.factor(x) is also redundant.
   # TODO(#2470): Consider usages with class(), typeof(), or inherits().
-  is_numeric_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.numeric']]"
-  is_integer_expr <- "expr[1][SYMBOL_FUNCTION_CALL[text() = 'is.integer']]"
-
-  # testing things like is.numeric(x) || is.integer(x)
-  or_xpath <- glue("
-  self::*[
-    expr/{is_numeric_expr}
-    and expr/{is_integer_expr}
-    and
-      expr/{is_numeric_expr}/following-sibling::expr[1]
-      = expr/{is_integer_expr}/following-sibling::expr[1]
-  ]")
 
   # testing class(x) %in% c("numeric", "integer")
   class_xpath <- "
@@ -66,20 +53,27 @@ is_numeric_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
+    calls <- source_expression$xml_find_function_calls(c("is.numeric", "is.integer"), keep_names = TRUE)
 
-    or_expr <- xml |>
-      xml_find_all_("//OR2/parent::*") |>
-      strip_comments_from_subtree() |>
-      xml_find_all_(or_xpath)
-    or_lints <- xml_nodes_to_lints(
-      or_expr,
-      source_expression = source_expression,
-      lint_message = paste(
-        "Use `is.numeric(x)` instead of the equivalent `is.numeric(x) || is.integer(x)`.",
-        "Use is.double(x) to test for objects stored as 64-bit floating point."
-      ),
-      type = "warning"
-    )
+    or_lints <- list()
+    if ("is.numeric" %in% names(calls) && "is.integer" %in% names(calls)) {
+      all_or <- xml_find_all_(xml, "//OR2/parent::expr")
+      or_roots <- all_or[vapply(all_or, is_or_root, logical(1L))]
+      or_lint_nodes <- list()
+      for (root in or_roots) {
+        res <- check_or_tree(root)
+        or_lint_nodes <- c(or_lint_nodes, res$lints)
+      }
+      or_lints <- xml_nodes_to_lints(
+        or_lint_nodes,
+        source_expression = source_expression,
+        lint_message = paste(
+          "Use `is.numeric(x)` instead of the equivalent `is.numeric(x) || is.integer(x)`.",
+          "Use is.double(x) to test for objects stored as 64-bit floating point."
+        ),
+        type = "warning"
+      )
+    }
 
     class_expr <- xml_find_all_(xml, class_xpath)
     if (length(class_expr) > 0L) {
@@ -102,4 +96,108 @@ is_numeric_linter <- function() {
 
     c(or_lints, class_lints)
   })
+}
+
+unwrap_parens <- function(node) {
+  while (
+    length(xml_find_all_(node, "OP-LEFT-PAREN")) == 1L &&
+      length(xml_find_all_(node, "OP-RIGHT-PAREN")) == 1L &&
+      length(xml_find_all_(node, "expr")) == 1L
+  ) {
+    node <- xml_find_first_(node, "expr")
+  }
+  node
+}
+
+is_or_root <- function(node) {
+  parent <- xml_find_first_(node, "parent::*")
+  while (!is.na(parent) && xml_name_(parent) == "expr") {
+    if (length(xml_find_all_(parent, "OR2")) > 0L) {
+      return(FALSE)
+    }
+    if (
+      length(xml_find_all_(parent, "OP-LEFT-PAREN")) != 1L ||
+        length(xml_find_all_(parent, "expr")) != 1L
+    ) {
+      break
+    }
+    parent <- xml_find_first_(parent, "parent::*")
+  }
+  TRUE
+}
+
+extract_is_numeric_arg <- function(node) {
+  fn_node <- xml_find_first_(node, "expr[1]/SYMBOL_FUNCTION_CALL")
+  if (is.na(fn_node)) {
+    return(NULL)
+  }
+  fn <- xml_text(fn_node)
+  if (!fn %in% c("is.numeric", "is.integer")) {
+    return(NULL)
+  }
+
+  expr_children <- xml_find_all_(node, "expr")
+  if (length(expr_children) != 2L) {
+    return(NULL)
+  }
+
+  if (length(xml_find_all_(node, "EQ_SUB")) > 0L) {
+    param_name <- get_r_string(node, "EQ_SUB/preceding-sibling::*[1]")
+    if (length(param_name) > 0L && any(param_name != "x")) {
+      return(NULL)
+    }
+  }
+
+  arg_node <- expr_children[[2L]]
+  list(fn = fn, arg = xml2lang(arg_node))
+}
+
+matches_any <- function(args1, args2) {
+  for (a1 in args1) {
+    for (a2 in args2) {
+      if (identical(a1, a2)) {
+        return(TRUE)
+      }
+    }
+  }
+  FALSE
+}
+
+has_cross_redundancy <- function(left_res, right_res) {
+  matches_any(left_res$num_args, right_res$int_args) ||
+    matches_any(left_res$int_args, right_res$num_args)
+}
+
+check_or_tree <- function(node) {
+  node <- unwrap_parens(node)
+
+  if (length(xml_find_all_(node, "OR2")) > 0L) {
+    exprs <- xml_find_all_(node, "expr")
+    if (length(exprs) == 2L) {
+      left_res <- check_or_tree(exprs[[1L]])
+      right_res <- check_or_tree(exprs[[2L]])
+
+      lints <- c(left_res$lints, right_res$lints)
+      if (has_cross_redundancy(left_res, right_res)) {
+        lints <- c(lints, list(node))
+      }
+
+      return(list(
+        lints = lints,
+        num_args = c(left_res$num_args, right_res$num_args),
+        int_args = c(left_res$int_args, right_res$int_args)
+      ))
+    }
+  }
+
+  leaf_info <- extract_is_numeric_arg(node)
+  if (is.null(leaf_info)) {
+    return(list(lints = list(), num_args = list(), int_args = list()))
+  }
+
+  list(
+    lints = list(),
+    num_args = if (leaf_info$fn == "is.numeric") list(leaf_info$arg) else list(),
+    int_args = if (leaf_info$fn == "is.integer") list(leaf_info$arg) else list()
+  )
 }
