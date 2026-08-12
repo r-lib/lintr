@@ -57,12 +57,16 @@ test_that("string_boundary_linter skips allowed substr()/substring() usages", {
 
 test_that("string_boundary_linter blocks simple disallowed grepl() usages", {
   linter <- string_boundary_linter()
-  starts_message <- rex::rex("Use !is.na(x) & startsWith(x, string) to detect a fixed initial substring,")
-  ends_message <- rex::rex("Use !is.na(x) & endsWith(x, string) to detect a fixed terminal substring,")
+  starts_message <- rex::rex('Use !is.na(x) & startsWith(x, "a") to detect a fixed initial substring,')
+  ends_message <- rex::rex('Use !is.na(x) & endsWith(x, "a") to detect a fixed terminal substring,')
 
   expect_lint("grepl('^a', x)", starts_message, linter)
   # non-trivially equivalent (but still same as startsWith())
-  expect_lint("grepl('^[.]', x)", starts_message, linter)
+  expect_lint(
+    "grepl('^[.]', x)",
+    rex::rex('Use !is.na(x) & startsWith(x, ".") to detect a fixed initial substring,'),
+    linter
+  )
   expect_lint("grepl('a$', x)", ends_message, linter)
   # also get negation for free
   expect_lint("!grepl('a$', x)", ends_message, linter)
@@ -79,12 +83,12 @@ test_that("string_boundary_linter blocks simple disallowed str_detect() usages",
 
   expect_lint(
     "str_detect(x, '^a')",
-    rex::rex("Use startsWith() to detect a fixed initial substring."),
+    rex::rex('Use startsWith(x, "a") to detect a fixed initial substring.'),
     linter
   )
   expect_lint(
     "str_detect(x, 'a$')",
-    rex::rex("Use endsWith() to detect a fixed terminal substring."),
+    rex::rex('Use endsWith(x, "a") to detect a fixed terminal substring.'),
     linter
   )
 })
@@ -144,7 +148,7 @@ test_that("raw strings are detected", {
   expect_no_lint('grepl(R"(^.{3})", x)', linter)
   expect_lint(
     'grepl(R"(^abc)", x)',
-    rex::rex("Use !is.na(x) & startsWith(x, string) to detect a fixed initial substring,"),
+    rex::rex('Use !is.na(x) & startsWith(x, "abc") to detect a fixed initial substring,'),
     linter
   )
 })
@@ -158,12 +162,29 @@ test_that("grepl() can optionally be ignored", {
 
 test_that("whole-string regex recommends ==, not {starts,ends}With()", {
   linter <- string_boundary_linter()
-  lint_msg <- rex::rex("Use == to check for an exact string match.")
 
-  expect_lint("grepl('^abc$', x)", lint_msg, linter)
-  expect_lint("grepl('^a\\\\.b$', x)", lint_msg, linter)
-  expect_lint("str_detect(x, '^abc$')", lint_msg, linter)
-  expect_lint("str_detect(x, '^a[.]b$')", lint_msg, linter)
+  expect_lint(
+    "grepl('^abc$', x)",
+    rex::rex('Use !is.na(x) & x == "abc" to check for an exact string match,'),
+    linter
+  )
+  expect_lint(
+    "grepl('^a\\\\.b$', x)",
+    rex::rex('Use !is.na(x) & x == "a.b" to check for an exact string match,'),
+    linter
+  )
+  expect_lint("str_detect(x, '^abc$')", rex::rex('Use x == "abc" to check for an exact string match.'), linter)
+  expect_lint("str_detect(x, '^a[.]b$')", rex::rex('Use x == "a.b" to check for an exact string match.'), linter)
+})
+
+test_that("string_boundary_linter messages explain specific inefficiency reasons", {
+  linter <- string_boundary_linter()
+  regex_reason <- "avoids regular expression overhead"
+  substr_reason <- "avoids extracting intermediate substrings before comparison"
+
+  expect_lint("grepl('^abc', x)", regex_reason, linter)
+  expect_lint("str_detect(x, '^abc')", regex_reason, linter)
+  expect_lint("substr(x, 1L, 3L) == 'abc'", substr_reason, linter)
 })
 
 test_that("vectorization + metadata work as intended", {
@@ -187,12 +208,12 @@ test_that("vectorization + metadata work as intended", {
       list("endsWith", line_number = 3L),
       list("startsWith", line_number = 4L),
       list("endsWith", line_number = 5L),
-      list("startsWith", line_number = 6L),
-      list("endsWith", line_number = 7L),
-      list("==", line_number = 8L),
-      list("startsWith", line_number = 9L),
-      list("endsWith", line_number = 10L),
-      list("==", line_number = 11L)
+      list(rex::rex('startsWith(x, "abc")'), line_number = 6L),
+      list(rex::rex('endsWith(x, "abc")'), line_number = 7L),
+      list(rex::rex('x == "abc"'), line_number = 8L),
+      list(rex::rex('startsWith(x, "abc")'), line_number = 9L),
+      list(rex::rex('endsWith(x, "abc")'), line_number = 10L),
+      list(rex::rex('x == "abc"'), line_number = 11L)
     ),
     linter
   )
@@ -203,7 +224,7 @@ test_that("vectorization + metadata work as intended", {
       grepl("\\^", x)
       grepl("^abc", x)
     }]"),
-    list("startsWith", line_number = 3L),
+    list(rex::rex('startsWith(x, "abc")'), line_number = 3L),
     linter
   )
 })

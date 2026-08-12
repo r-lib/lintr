@@ -64,11 +64,6 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
   following-sibling::expr[2]
     /STR_CONST[ {str_cond} ]
   ")
-  str_detect_message_map <- c(
-    both = "Use == to check for an exact string match.",
-    initial = "Use startsWith() to detect a fixed initial substring.",
-    terminal = "Use endsWith() to detect a fixed terminal substring."
-  )
 
   if (!allow_grepl) {
     grepl_xpath <- glue("
@@ -85,15 +80,6 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       /expr[2]
       /STR_CONST[ {str_cond} ]
     ")
-    grepl_lint_fmt <- paste(
-      "Use !is.na(x) & %1$s(x, string) to detect a fixed %2$s substring, or,",
-      "if missingness is not a concern, just %1$s()."
-    )
-    grepl_message_map <- c(
-      both = "Use == to check for an exact string match.",
-      initial = sprintf(grepl_lint_fmt, "startsWith", "initial"),
-      terminal = sprintf(grepl_lint_fmt, "endsWith", "terminal")
-    )
   }
 
   get_regex_lint_data <- function(xml, xpath) {
@@ -103,17 +89,52 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     terminal_anchor <- endsWith(patterns, "$")
     search_start <- 1L + initial_anchor
     search_end <- nchar(patterns) - terminal_anchor
+    sub_patterns <- substr(patterns, search_start, search_end)
     should_lint <- (initial_anchor | terminal_anchor) &
-      is_not_regex(substr(patterns, search_start, search_end))
+      is_not_regex(sub_patterns)
     initial_anchor <- initial_anchor[should_lint]
     terminal_anchor <- terminal_anchor[should_lint]
+    sub_patterns <- sub_patterns[should_lint]
+
+    fixed_strings <- encodeString(get_fixed_string(sub_patterns), quote = '"', justify = "none")
 
     lint_type <- character(length(initial_anchor))
 
     lint_type[initial_anchor & terminal_anchor] <- "both"
     lint_type[initial_anchor & !terminal_anchor] <- "initial"
     lint_type[!initial_anchor & terminal_anchor] <- "terminal"
-    list(lint_expr = expr[should_lint], lint_type = lint_type)
+    list(
+      lint_expr = expr[should_lint],
+      lint_type = lint_type,
+      fixed_strings = fixed_strings
+    )
+  }
+
+  get_regex_lint_message <- function(lint_type, fixed_strings, is_grepl = FALSE) {
+    if (length(lint_type) == 0L) {
+      return(character())
+    }
+    if (is_grepl) {
+      grepl_fmt <- paste(
+        "Use !is.na(x) & %1$s to %2$s, or,",
+        "if missingness is not a concern, just %1$s."
+      )
+      lint_fmt <- c(
+        both = sprintf(grepl_fmt, "x == %1$s", "check for an exact string match"),
+        initial = sprintf(grepl_fmt, "startsWith(x, %1$s)", "detect a fixed initial substring"),
+        terminal = sprintf(grepl_fmt, "endsWith(x, %1$s)", "detect a fixed terminal substring")
+      )
+    } else {
+      lint_fmt <- c(
+        both = "Use x == %s to check for an exact string match.",
+        initial = "Use startsWith(x, %s) to detect a fixed initial substring.",
+        terminal = "Use endsWith(x, %s) to detect a fixed terminal substring."
+      )
+    }
+    paste(
+      sprintf(lint_fmt[lint_type], fixed_strings),
+      "Doing so is more readable and avoids regular expression overhead."
+    )
   }
 
   string_comparison_xpath <- "self::*[(EQ or NE) and expr/STR_CONST]"
@@ -138,23 +159,31 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       source_expression$xml_find_function_calls("str_detect"),
       str_detect_xpath
     )
-    str_detect_lint_message <- str_detect_message_map[str_detect_lint_data$lint_type]
+    str_detect_lint_message <- get_regex_lint_message(
+      str_detect_lint_data$lint_type,
+      str_detect_lint_data$fixed_strings,
+      is_grepl = FALSE
+    )
 
     lints <- c(lints, xml_nodes_to_lints(
       str_detect_lint_data$lint_expr,
       source_expression = source_expression,
-      lint_message = paste(str_detect_lint_message, "Doing so is more readable and more efficient."),
+      lint_message = str_detect_lint_message,
       type = "warning"
     ))
 
     if (!allow_grepl) {
       grepl_lint_data <- get_regex_lint_data(source_expression$xml_find_function_calls("grepl"), grepl_xpath)
-      grepl_lint_message <- grepl_message_map[grepl_lint_data$lint_type]
+      grepl_lint_message <- get_regex_lint_message(
+        grepl_lint_data$lint_type,
+        grepl_lint_data$fixed_strings,
+        is_grepl = TRUE
+      )
 
       lints <- c(lints, xml_nodes_to_lints(
         grepl_lint_data$lint_expr,
         source_expression = source_expression,
-        lint_message = paste(grepl_lint_message, "Doing so is more readable and more efficient."),
+        lint_message = grepl_lint_message,
         type = "warning"
       ))
     }
@@ -173,7 +202,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
         "Use startsWith() to detect an initial substring.",
         "Use endsWith() to detect a terminal substring."
       ),
-      "Doing so is more readable and more efficient."
+      "Doing so is more readable and avoids extracting intermediate substrings before comparison."
     )
 
     lints <- c(lints, xml_nodes_to_lints(substr_expr, source_expression, substr_lint_message, type = "warning"))
