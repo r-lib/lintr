@@ -106,15 +106,15 @@ unwrap_parens <- function(node) {
 }
 
 is_or_root <- function(node) {
-  parent <- xml_find_first_(node, "parent::*")
-  while (isTRUE(xml_name_(parent) == "expr")) {
+  parent <- xml_find_first_(node, "parent::expr")
+  while (!is.na(parent)) {
     if (xml_find_num_(parent, "count(OR2)") > 0L) {
       return(FALSE)
     }
     if (xml_find_num_(parent, "count(OP-LEFT-PAREN | OP-RIGHT-PAREN | expr)") != 3L) {
       break
     }
-    parent <- xml_find_first_(parent, "parent::*")
+    parent <- xml_find_first_(parent, "parent::expr")
   }
   TRUE
 }
