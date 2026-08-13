@@ -148,6 +148,7 @@ is_r_chunk_header <- function(start_lines, pattern = knitr::all_patterns$md) {
   if (markdown_mode) {
     engines <- sub("^([a-zA-Z0-9_]+).*$", "\\1", params_src)
     is_r <- tolower(engines) == "r"
+    params_src <- sub("^[a-zA-Z0-9_]+", "", params_src)
   } else {
     is_r <- rep(TRUE, length(start_lines))
   }
@@ -157,9 +158,8 @@ is_r_chunk_header <- function(start_lines, pattern = knitr::all_patterns$md) {
     return(is_r)
   }
 
-  params_str <- if (markdown_mode) sub("^([a-zA-Z0-9_]+)", "", params_src) else params_src
   explicit_engines <- vapply(
-    params_str[has_explicit_engine],
+    params_src[has_explicit_engine],
     \(p) as.character(safe_csv_options(p)$engine %||% ""),
     character(1L),
     USE.NAMES = FALSE
