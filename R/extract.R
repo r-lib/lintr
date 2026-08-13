@@ -101,9 +101,8 @@ get_chunk_positions <- function(pattern, lines) {
 }
 
 filter_chunk_start_positions <- function(starts, lines, pattern) {
-  # keep blocks that don't set a non-R knitr engine (and so contain evaluated R code)
-  drop_idx <- defines_knitr_engine(lines[starts], pattern = pattern)
-  starts[!drop_idx]
+  # keep blocks that set an R engine (and so contain evaluated R code)
+  starts[is_r_chunk_header(lines[starts], pattern = pattern)]
 }
 
 filter_chunk_end_positions <- function(starts, ends) {
@@ -138,7 +137,7 @@ filter_chunk_end_positions <- function(starts, ends) {
   code_ends
 }
 
-defines_knitr_engine <- function(start_lines, pattern = knitr::all_patterns$md) {
+is_r_chunk_header <- function(start_lines, pattern = knitr::all_patterns$md) {
   if (length(start_lines) == 0L) {
     return(logical())
   }
@@ -148,26 +147,26 @@ defines_knitr_engine <- function(start_lines, pattern = knitr::all_patterns$md) 
 
   if (markdown_mode) {
     engines <- sub("^([a-zA-Z0-9_]+).*$", "\\1", params_src)
-    is_non_r <- tolower(engines) != "r"
+    is_r <- tolower(engines) == "r"
   } else {
-    is_non_r <- rep(FALSE, length(start_lines))
+    is_r <- rep(TRUE, length(start_lines))
   }
 
   has_explicit_engine <- grepl(rex(boundary, "engine", any_spaces, "="), start_lines)
   if (!any(has_explicit_engine)) {
-    return(is_non_r)
+    return(is_r)
   }
 
   params_str <- if (markdown_mode) sub("^([a-zA-Z0-9_]+)", "", params_src) else params_src
   explicit_engines <- vapply(
     params_str[has_explicit_engine],
-    \(p) safe_csv_options(p)$engine %||% "",
+    \(p) tolower(as.character(safe_csv_options(p)$engine %||% "")),
     character(1L),
     USE.NAMES = FALSE
   )
   has_valid_engine <- nzchar(explicit_engines)
-  is_non_r[has_explicit_engine][has_valid_engine] <- tolower(explicit_engines[has_valid_engine]) != "r"
-  is_non_r
+  is_r[has_explicit_engine][has_valid_engine] <- explicit_engines[has_valid_engine] == "r"
+  is_r
 }
 
 safe_csv_options <- function(params) {
@@ -190,7 +189,7 @@ is_eval_chunk <- function(start, end, lines, pattern) {
   )
 
   engine <- body_params$engine %||% header_params$engine
-  if (is.character(engine) && tolower(engine) != "r") {
+  if (!is.null(engine) && tolower(as.character(engine)) != "r") {
     return(FALSE)
   }
 
