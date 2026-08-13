@@ -154,21 +154,22 @@ defines_knitr_engine <- function(start_lines, pattern = knitr::all_patterns$md) 
   }
 
   has_explicit_engine <- grepl(rex(boundary, "engine", any_spaces, "="), start_lines)
-  if (any(has_explicit_engine)) {
-    params_str <- if (markdown_mode) sub("^([a-zA-Z0-9_]+)", "", params_src) else params_src
-    explicit_engines <- vapply(
-      params_str[has_explicit_engine],
-      \(p) {
-        engine <- safe_csv_options(p)$engine
-        if (is.character(engine)) tolower(engine) else ""
-      },
-      character(1L),
-      USE.NAMES = FALSE
-    )
-    has_valid_engine <- nzchar(explicit_engines)
-    is_non_r[has_explicit_engine][has_valid_engine] <- explicit_engines[has_valid_engine] != "r"
+  if (!any(has_explicit_engine)) {
+    return(is_non_r)
   }
 
+  params_str <- if (markdown_mode) sub("^([a-zA-Z0-9_]+)", "", params_src) else params_src
+  explicit_engines <- vapply(
+    params_str[has_explicit_engine],
+    function(p) {
+      engine <- safe_csv_options(p)$engine
+      if (is.character(engine)) tolower(engine) else ""
+    },
+    character(1L),
+    USE.NAMES = FALSE
+  )
+  has_valid_engine <- nzchar(explicit_engines)
+  is_non_r[has_explicit_engine][has_valid_engine] <- explicit_engines[has_valid_engine] != "r"
   is_non_r
 }
 
