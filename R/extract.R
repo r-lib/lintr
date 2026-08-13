@@ -143,12 +143,11 @@ is_r_chunk_header <- function(start_lines, pattern = knitr::all_patterns$md) {
   }
 
   params_src <- trimws(gsub(pattern$chunk.begin, "\\1", start_lines))
-  markdown_mode <- identical(pattern, knitr::all_patterns$md)
 
-  if (markdown_mode) {
+  if (identical(pattern, knitr::all_patterns$md)) {
     engines <- sub("^([a-zA-Z0-9_]+).*$", "\\1", params_src)
-    is_r <- tolower(engines) == "r"
     params_src <- sub("^[a-zA-Z0-9_]+", "", params_src)
+    is_r <- tolower(engines) == "r"
   } else {
     is_r <- rep(TRUE, length(start_lines))
   }
