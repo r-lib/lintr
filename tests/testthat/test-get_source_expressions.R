@@ -584,3 +584,22 @@ test_that("get_source_expressions() handles unmarked UTF-8 lines correctly", {
   expect_identical(str_const$col1, 6L)
   expect_identical(str_const$col2, 8L)
 })
+
+test_that("get_source_expressions() handles #line directives without erroring (#3106)", {
+  # A #line directive resets the parser's line numbering, so the parse data can
+  # report a LINE_DIRECTIVE as a top-level node while the XML does not,
+  # desyncing the two lists and crashing with a subscript out of bounds error.
+  tf <- withr::local_tempfile()
+  writeLines(c("{", '#line 1 "foo.R"', "1+1", "}"), tf)
+  src_exprs <- get_source_expressions(tf)
+  # the braced block plus the appended global expression
+  expect_length(src_exprs$expressions, 2L)
+  expect_null(src_exprs$error)
+
+  # a #line directive at the top level stays aligned too
+  tf2 <- withr::local_tempfile()
+  writeLines(c('#line 10 "x.R"', "1 + 1", "2 + 2"), tf2)
+  src_exprs2 <- get_source_expressions(tf2)
+  expect_length(src_exprs2$expressions, 3L)
+  expect_null(src_exprs2$error)
+})

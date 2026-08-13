@@ -584,8 +584,12 @@ maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
   if (is.null(xml_parsed_content) || is.na(xml_parsed_content)) {
     return(expressions)
   }
+  # Exclude LINE_DIRECTIVE nodes: a #line directive is a parser directive, not a
+  # top-level expression. The parse data sometimes lists it with parent 0 (so
+  # top_level_expressions counts it) while the XML does not always surface it as
+  # a top-level node, desyncing the two lists paired below (#3106).
   expression_xmls <- lapply(
-    xml_find_all_(xml_parsed_content, "/exprlist/*"),
+    xml_find_all_(xml_parsed_content, "/exprlist/*[not(self::LINE_DIRECTIVE)]"),
     \(top_level_expr) xml2::xml_add_parent(xml2::xml_new_root(top_level_expr), "exprlist")
   )
   for (i in seq_along(expressions)) {
@@ -681,7 +685,9 @@ top_level_expressions <- function(pc) {
   if (is.null(pc)) {
     return(integer(0L))
   }
-  which(pc$parent <= 0L)
+  # Exclude LINE_DIRECTIVE (#line) rows: they are parser directives, not
+  # expressions, and must not be paired with an XML expression node (#3106).
+  which(pc$parent <= 0L & pc$token != "LINE_DIRECTIVE")
 }
 
 # workaround for bad parse data bug for octal escapes
