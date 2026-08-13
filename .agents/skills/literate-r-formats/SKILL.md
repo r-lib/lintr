@@ -33,7 +33,7 @@ When modifying how `lintr` extracts R source code from literate programming and 
   ```
 
 ## 3. Engine Detection
-- **Detect non-R engines on opening lines:** `defines_knitr_engine()` inspects chunk start lines to drop chunks explicitly targeting non-R engines (`{python}`, `engine = "bash"`).
+- **Detect R engines on opening lines:** `is_r_chunk_header()` inspects chunk start lines to retain chunks targeting R engines (`{r}`, `engine = "R"`) while skipping non-R engines (`{python}`, `{extendr}`, `{ojs}`, `engine = "bash"`).
 
 ## 4. Multi-Format Testing Conventions
 - **Test across document families:** When modifying `R/extract.R`, verify extraction behavior across all major literate families (`.Rmd`, `.qmd`, and `.Rnw`) inside `tests/testthat/test-knitr_formats.R`.
