@@ -94,6 +94,8 @@ test_that("string_boundary_linter blocks disallowed substr()/substring() usage",
   starts_message <- rex::rex("Use startsWith() to detect an initial substring.")
   ends_message <- rex::rex("Use endsWith() to detect a terminal substring.")
 
+  expect_lint("substr(x, 0, 1) == 'a'", starts_message, linter)
+  expect_lint("substring(x, 0L, 1L) == 'a'", starts_message, linter)
   expect_lint("substr(x, 1L, 2L) == 'ab'", starts_message, linter)
   # end doesn't matter, just anchoring to 1L
   expect_lint("substr(x, 1L, end) == 'ab'", starts_message, linter)
@@ -169,7 +171,7 @@ test_that("vectorization + metadata work as intended", {
 
   expect_lint(
     trim_some("{
-      substring(a, 1, 3) == 'abc'
+      substring(a, 0, 3) == 'abc'
       substring(b, nchar(b) - 3, nchar(b)) == 'defg'
       substr(c, 1, 3) == 'hij'
       substr(d, nchar(d) - 3, nchar(d)) == 'klmn'
