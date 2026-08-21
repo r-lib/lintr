@@ -3,6 +3,7 @@
 ## New and improved features
 
 * `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, @atusy).
+* `get_source_expressions()` no longer errors with "subscript out of bounds" on code containing `#line` directives, e.g. from generated files or `knitr` (#3106, @youdie006).
 
 ### New linters
 
