@@ -6,6 +6,10 @@ test_that("is_numeric_linter skips allowed usages involving ||", {
   expect_no_lint("is.numeric(x) || is.integer(foo(x))", linter)
   # not totally crazy, e.g. if input accepts a vector or a list
   expect_no_lint("is.numeric(x) || is.integer(x[[1]])", linter)
+
+  # closure boundaries
+  expect_no_lint("(\\() is.numeric(x)) || is.integer(x)", linter)
+  expect_no_lint("(function() is.numeric(x)) || is.integer(x)", linter)
 })
 
 test_that("is_numeric_linter skips allowed usages involving %in%", {
@@ -16,6 +20,13 @@ test_that("is_numeric_linter skips allowed usages involving %in%", {
   expect_no_lint("class(x) %in% 'numeric'", linter)
   expect_no_lint("class(x) %in% c('numeric', 'integer', 'factor')", linter)
   expect_no_lint("class(x) %in% c('numeric', 'integer', y)", linter)
+  expect_no_lint(
+    trim_some("{
+      class(a) %in% c('integer', 'factor')
+      class(b) %in% c('logical', 'numeric')
+    }"),
+    linter
+  )
 })
 
 test_that("is_numeric_linter blocks disallowed usages involving ||", {
@@ -33,6 +44,12 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
     lint_msg,
     linter
   )
+  expect_lint("is.numeric(foo(x)) || is.integer(foo(x))", lint_msg, linter)
+
+  # named arguments and namespaces
+  expect_lint("is.numeric(x = a) || is.integer(a)", lint_msg, linter)
+  expect_lint("is.numeric(a) || is.integer(x = a)", lint_msg, linter)
+  expect_lint("base::is.numeric(x) || base::is.integer(x)", lint_msg, linter)
 
   # line breaks don't matter
   lines <- trim_some("

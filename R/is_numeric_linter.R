@@ -53,17 +53,14 @@ is_numeric_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    calls <- source_expression$xml_find_function_calls(c("is.numeric", "is.integer"), keep_names = TRUE)
+    has_both_calls <- length(source_expression$xml_find_function_calls("is.numeric")) > 0L &&
+      length(source_expression$xml_find_function_calls("is.integer")) > 0L
 
     or_lints <- list()
-    if ("is.numeric" %in% names(calls) && "is.integer" %in% names(calls)) {
+    if (has_both_calls) {
       all_or <- xml_find_all_(xml, "//OR2/parent::expr")
       or_roots <- all_or[vapply(all_or, is_or_root, logical(1L))]
-      or_lint_nodes <- list()
-      for (root in or_roots) {
-        res <- check_or_tree(root)
-        or_lint_nodes <- c(or_lint_nodes, res$lints)
-      }
+      or_lint_nodes <- unlist(lapply(or_roots, function(root) check_or_tree(root)$lints), recursive = FALSE)
       or_lints <- xml_nodes_to_lints(
         or_lint_nodes,
         source_expression = source_expression,
@@ -77,11 +74,9 @@ is_numeric_linter <- function() {
 
     class_expr <- xml_find_all_(xml, class_xpath)
     if (length(class_expr) > 0L) {
-      class_strings <- c(
-        get_r_string(class_expr, "expr[2]/expr[2]/STR_CONST"),
-        get_r_string(class_expr, "expr[2]/expr[3]/STR_CONST")
-      )
-      is_lintable <- "integer" %in% class_strings && "numeric" %in% class_strings
+      str1 <- get_r_string(class_expr, "expr[2]/expr[2]/STR_CONST")
+      str2 <- get_r_string(class_expr, "expr[2]/expr[3]/STR_CONST")
+      is_lintable <- (str1 == "integer" & str2 == "numeric") | (str1 == "numeric" & str2 == "integer")
       class_expr <- class_expr[is_lintable]
     }
     class_lints <- xml_nodes_to_lints(
@@ -98,8 +93,17 @@ is_numeric_linter <- function() {
   })
 }
 
+paren_xpath <- "
+  self::expr[
+    count(expr) = 1
+    and count(*[not(self::COMMENT)]) = 3
+    and *[not(self::COMMENT)][1][self::OP-LEFT-PAREN]
+    and *[not(self::COMMENT)][3][self::OP-RIGHT-PAREN]
+  ]
+"
+
 unwrap_parens <- function(node) {
-  while (xml_find_num_(node, "count(OP-LEFT-PAREN | OP-RIGHT-PAREN | expr)") == 3L) {
+  while (!is.na(xml_find_first_(node, paren_xpath))) {
     node <- xml_find_first_(node, "expr")
   }
   node
@@ -111,7 +115,7 @@ is_or_root <- function(node) {
     if (xml_find_num_(parent, "count(OR2)") > 0L) {
       return(FALSE)
     }
-    if (xml_find_num_(parent, "count(OP-LEFT-PAREN | OP-RIGHT-PAREN | expr)") != 3L) {
+    if (is.na(xml_find_first_(parent, paren_xpath))) {
       break
     }
     parent <- xml_find_first_(parent, "parent::expr")
