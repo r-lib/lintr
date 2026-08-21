@@ -171,7 +171,7 @@ test_that("vectorization + metadata work as intended", {
 
   expect_lint(
     trim_some("{
-      substring(a, 0, 3) == 'abc'
+      substring(a, 1, 3) == 'abc'
       substring(b, nchar(b) - 3, nchar(b)) == 'defg'
       substr(c, 1, 3) == 'hij'
       substr(d, nchar(d) - 3, nchar(d)) == 'klmn'
