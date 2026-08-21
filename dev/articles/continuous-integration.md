@@ -11,7 +11,7 @@ First, take special note of the proviso in
 [`?executing_linters`](https://lintr.r-lib.org/dev/reference/executing_linters.md)
 about the need to have your package and its dependencies installed or
 loaded (e.g. with
-[`pkgload::load_all()`](https://pkgload.r-lib.org/reference/load_all.html))
+[`pkgload::load_all()`](https://rdrr.io/pkg/pkgload/man/load_all.html))
 in order for certain linters
 (e.g. [`object_usage_linter()`](https://lintr.r-lib.org/dev/reference/object_usage_linter.md))
 to function as intended.
