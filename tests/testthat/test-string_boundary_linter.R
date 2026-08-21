@@ -128,10 +128,10 @@ test_that("plain ^ or $ are skipped across all quoting formats", {
   expect_no_lint('grepl("^", x)', linter)
   expect_no_lint('grepl("$", x)', linter)
   expect_no_lint('grepl(R"(^)", x)', linter)
-  expect_no_lint('grepl(R"($)", x)', linter)
+  expect_no_lint('grepl(r"[$]", x)', linter)
   expect_no_lint('str_detect(x, "^")', linter)
   expect_no_lint('str_detect(x, "$")', linter)
-  expect_no_lint('str_detect(x, R"(^)")', linter)
+  expect_no_lint('str_detect(x, r"{^}")', linter)
   expect_no_lint('str_detect(x, R"($)")', linter)
 })
 
@@ -217,13 +217,13 @@ test_that("quotes, backslashes, and escaped anchors are correctly handled", {
   linter <- string_boundary_linter()
 
   # double and single quotes
-  expect_lint('grepl(\'^"abc"\', x)', rex::rex('startsWith(x, "\\"abc\\"")'), linter)
-  expect_lint("grepl(\"^'abc'\", x)", rex::rex('startsWith(x, "\'abc\'")'), linter)
-  expect_lint('grepl(\'"abc"$\', x)', rex::rex('endsWith(x, "\\"abc\\"")'), linter)
-  expect_lint("grepl(\"'abc'$\", x)", rex::rex('endsWith(x, "\'abc\'")'), linter)
-  expect_lint('str_detect(x, \'^"abc"\')', rex::rex('str_starts(x, fixed("\\"abc\\""))'), linter)
-  expect_lint('str_detect(x, \'"abc"$\')', rex::rex('str_ends(x, fixed("\\"abc\\""))'), linter)
-  expect_lint('grepl(\'^"abc"$\', x)', rex::rex('x == "\\"abc\\""'), linter)
+  expect_lint(R"[grepl('^"abc"', x)]", rex::rex(R"[startsWith(x, "\"abc\"")]"), linter)
+  expect_lint(R"[grepl("^'abc'", x)]", rex::rex(R"[startsWith(x, "'abc'")]"), linter)
+  expect_lint(R"[grepl('"abc"$', x)]", rex::rex(R"[endsWith(x, "\"abc\"")]"), linter)
+  expect_lint(R"[grepl("'abc'$", x)]", rex::rex(R"[endsWith(x, "'abc'")]"), linter)
+  expect_lint(R"[str_detect(x, '^"abc"')]", rex::rex(R"[str_starts(x, fixed("\"abc\""))]"), linter)
+  expect_lint(R"[str_detect(x, '"abc"$')]", rex::rex(R"[str_ends(x, fixed("\"abc\""))]"), linter)
+  expect_lint(R"[grepl('^"abc"$', x)]", rex::rex(R"[x == "\"abc\""]"), linter)
 
   # literal backslashes
   expect_lint(R"[grepl(R"(^a\\b)", x)]", rex::rex(R"[startsWith(x, "a\\b")]"), linter)

@@ -87,7 +87,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     search_end <- nchar(patterns) - terminal_anchor
     sub_patterns <- substr(patterns, search_start, search_end)
     should_lint <- (initial_anchor | terminal_anchor) &
-      (nchar(patterns) > 1L) &
+      nchar(patterns) > 1L &
       is_not_regex(sub_patterns)
     initial_anchor <- initial_anchor[should_lint]
     terminal_anchor <- terminal_anchor[should_lint]
