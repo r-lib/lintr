@@ -74,7 +74,7 @@ decode_escapes <- function(s) {
   if (any(is_hex)) {
     codes[is_hex] <- strtoi(gsub("[^0-9a-fA-F]", "", all_vec[is_hex]), base = 16L)
   }
-  if (any(!is_hex)) {
+  if (!all(is_hex)) {
     codes[!is_hex] <- strtoi(substr(all_vec[!is_hex], 2L, 4L), base = 8L)
   }
   codes[is.na(codes)] <- 0L
