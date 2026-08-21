@@ -117,9 +117,9 @@ get_fixed_string <- function(static_regex) {
     return(character())
   }
   static_regex <- static_regex |>
-    gsub(rx_trivial_char_group, "\\1", x = _, perl = TRUE) |>
+    gsub(pattern = rx_trivial_char_group, replacement = "\\1", perl = TRUE) |>
     decode_escapes() |>
-    gsub(rx_escapable_regex, "\\1", x = _, perl = TRUE) |>
+    gsub(pattern = rx_escapable_regex, replacement = "\\1", perl = TRUE) |>
     encodeString(quote = '"', justify = "none")
 
   static_regex
