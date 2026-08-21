@@ -116,11 +116,13 @@ get_fixed_string <- function(static_regex) {
   if (length(static_regex) == 0L) {
     return(character())
   }
-  static_regex <- gsub(rx_trivial_char_group, "\\1", static_regex, perl = TRUE)
-  static_regex <- decode_escapes(static_regex)
-  static_regex <- gsub(rx_escapable_regex, "\\1", static_regex, perl = TRUE)
+  static_regex <- static_regex |>
+    gsub(rx_trivial_char_group, "\\1", x = _, perl = TRUE) |>
+    decode_escapes() |>
+    gsub(rx_escapable_regex, "\\1", x = _, perl = TRUE) |>
+    encodeString(quote = '"', justify = "none")
 
-  encodeString(static_regex, quote = '"', justify = "none")
+  static_regex
 }
 
 # some metadata about infix operators on the R parse tree.
