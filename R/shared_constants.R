@@ -35,7 +35,7 @@ rx_unescaped_regex <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char)
 rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
 rx_escapable_tokens <- "^${}().*+?|[]\\<>=:;/_-!@#%&,~"
 rx_escapable_regex <- rex("\\", capture(one_of(rx_escapable_tokens)))
-rx_trivial_char_group <- paste0("(?s)(?<!\\\\)(?:\\\\\\\\)*\\K\\[", rex(
+rx_trivial_char_group <- paste0(R"{(?s)(?<!\\)(?:\\\\)*\K\[}", rex(
   capture(or(
     group("\\", or(
       group("x", between(xdigit, 1L, 2L)),
@@ -51,7 +51,7 @@ rx_trivial_char_group <- paste0("(?s)(?<!\\\\)(?:\\\\\\\\)*\\K\\[", rex(
 ), "\\]")
 
 rx_esc_num <- paste0(
-  "(?s)(?<!\\\\)(?:\\\\\\\\)*\\K\\\\",
+  R"{(?s)(?<!\\)(?:\\\\)*\K\\}",
   rex(or(
     group("x", between(xdigit, 1L, 2L)),
     group("u{", between(xdigit, 1L, 4L), "}"),
