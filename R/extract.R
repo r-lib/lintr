@@ -66,7 +66,8 @@ get_knitr_pattern <- function(filename, lines) {
 get_chunk_positions <- function(pattern, lines) {
   starts <- filter_chunk_start_positions(
     starts = grep(pattern$chunk.begin, lines, perl = TRUE),
-    lines = lines
+    lines = lines,
+    pattern = pattern
   )
   ends <- filter_chunk_end_positions(
     starts = starts,
@@ -99,10 +100,9 @@ get_chunk_positions <- function(pattern, lines) {
   list(starts = starts, ends = ends, indents = indents)
 }
 
-filter_chunk_start_positions <- function(starts, lines) {
-  # keep blocks that don't set a knitr engine (and so contain evaluated R code)
-  drop_idx <- defines_knitr_engine(lines[starts])
-  starts[!drop_idx]
+filter_chunk_start_positions <- function(starts, lines, pattern) {
+  # keep blocks that set an R engine (and so contain evaluated R code)
+  starts[is_r_chunk_header(lines[starts], pattern = pattern)]
 }
 
 filter_chunk_end_positions <- function(starts, ends) {
@@ -137,39 +137,60 @@ filter_chunk_end_positions <- function(starts, ends) {
   code_ends
 }
 
-defines_knitr_engine <- function(start_lines) {
-  # Other packages defining custom engines should have them loaded and thus visible
-  #   via knitr_engines$get() below. It seems the simplest way to accomplish this is
-  #   for those packages to set some code in their .onLoad() hook, but that's not
-  #   always done (nor quite recommended as a "best practice" by knitr).
-  #   See the discussion on #1552.
-  # TODO(#1617): explore running loadNamespace() automatically.
-  engines <- names(knitr::knit_engines$get())
+is_r_chunk_header <- function(start_lines, pattern = knitr::all_patterns$md) {
+  if (length(start_lines) == 0L) {
+    return(logical())
+  }
 
-  # {some_engine}, {some_engine label, ...} or {some_engine, ...}
-  bare_engine_pattern <- rex(
-    "{", or(engines), one_of("}", " ", ",")
-  )
-  # {... engine = "some_engine" ...}
-  explicit_engine_pattern <- rex(
-    boundary, "engine", any_spaces, "="
-  )
+  params_src <- trimws(gsub(pattern$chunk.begin, "\\1", start_lines))
 
-  re_matches(start_lines, explicit_engine_pattern) |
-    re_matches(start_lines, bare_engine_pattern)
+  if (identical(pattern, knitr::all_patterns$md)) {
+    engines <- sub("^([a-zA-Z0-9_]+).*$", "\\1", params_src)
+    params_src <- sub("^[a-zA-Z0-9_]+", "", params_src)
+    is_r <- tolower(engines) == "r"
+  } else {
+    is_r <- rep(TRUE, length(start_lines))
+  }
+
+  has_explicit_engine <- grepl(rex(boundary, "engine", any_spaces, "="), start_lines)
+  if (!any(has_explicit_engine)) {
+    return(is_r)
+  }
+
+  explicit_engines <- vapply(
+    params_src[has_explicit_engine],
+    \(p) as.character(safe_csv_options(p)$engine %||% ""),
+    character(1L),
+    USE.NAMES = FALSE
+  )
+  has_valid_engine <- nzchar(explicit_engines)
+  is_r[has_explicit_engine][has_valid_engine] <- tolower(explicit_engines[has_valid_engine]) == "r"
+  is_r
+}
+
+safe_csv_options <- function(params) {
+  tryCatch(
+    suppressMessages(xfun::csv_options(params)),
+    error = \(e) NULL
+  )
 }
 
 is_eval_chunk <- function(start, end, lines, pattern) {
   header <- lines[start]
   # essentially knitr:::extract_params_src
   params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
-  header_params <- tryCatch(suppressMessages(xfun::csv_options(params_src)), error = \(e) NULL)
+  header_params <- safe_csv_options(params_src)
 
   code <- lines[(start + 1L):(end - 1L)]
   body_params <- tryCatch(
     suppressMessages(suppressWarnings(xfun::divide_chunk("r", code)))$options,
     error = \(e) NULL
   )
+
+  engine <- body_params$engine %||% header_params$engine
+  if (!is.null(engine) && tolower(as.character(engine)) != "r") {
+    return(FALSE)
+  }
 
   eval_value <- body_params$eval %||% header_params$eval
   # nolint next: T_and_F_symbol_linter.
