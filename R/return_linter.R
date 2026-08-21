@@ -193,7 +193,7 @@ nested_return_lints <- function(expr, params) {
     switch_return_lints(child_expr, expr, params)
   } else {
     xml_nodes_to_lints(
-      xml_find_all_(child_expr[[1L]], params$lint_xpath),
+      xml_find_first_(child_expr[[1L]], params$lint_xpath),
       source_expression = params$source_expression,
       lint_message = params$lint_message,
       type = params$type

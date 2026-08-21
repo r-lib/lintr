@@ -357,33 +357,27 @@ build_indentation_style_tidy <- function() {
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
   xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
 
-  xp_suppress <- sprintf(
-    "boolean(%s)",
-    paste(
-      glue("
-          self::{paren_tokens_left}[
-            @line1 = following-sibling::{paren_tokens_right}/{xp_inner_expr}[position() = 1]/@line1
-          ]/following-sibling::{paren_tokens_right}[
-            @line1 > {xp_inner_expr}[position() = last() - 1]/@line2
-          ]"),
-      collapse = " | "
-    )
-  )
+  xp_suppress <- sprintf("boolean(%s)", paste(
+    glue("
+        self::{paren_tokens_left}[
+          @line1 = following-sibling::{paren_tokens_right}/{xp_inner_expr}[position() = 1]/@line1
+        ]/following-sibling::{paren_tokens_right}[
+          @line1 > {xp_inner_expr}[position() = last() - 1]/@line2
+        ]"),
+    collapse = " | "
+  ))
 
-  xp_is_hanging <- sprintf(
-    "not(%s)",
-    paste(
-      c(
-        glue("
-          self::{paren_tokens_left}
-            /following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
-        "),
-        glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]"),
-        glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]")
-      ),
-      collapse = "\n|  "
-    )
-  )
+  xp_is_hanging <- sprintf("not(%s)", paste(
+    c(
+      glue("
+        self::{paren_tokens_left}
+          /following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
+      "),
+      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]"),
+      glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]")
+    ),
+    collapse = "\n|  "
+  ))
 
   function(change) {
     if (xml_find_lgl_(change, xp_suppress)) {
@@ -401,19 +395,16 @@ build_indentation_style_always <- function() {
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
 
-  xp_is_hanging <- sprintf(
-    "not(%s)",
-    paste(
-      c(
-        glue("
-          self::{paren_tokens_left}[{xp_last_on_line}]/
-            following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
-        "),
-        glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
-      ),
-      collapse = " | "
-    )
-  )
+  xp_is_hanging <- sprintf("not(%s)", paste(
+    c(
+      glue("
+        self::{paren_tokens_left}[{xp_last_on_line}]/
+          following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
+      "),
+      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
+    ),
+    collapse = " | "
+  ))
 
   function(change) {
     if (xml_find_lgl_(change, xp_is_hanging)) {

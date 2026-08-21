@@ -111,7 +111,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     # TODO(#2480): Only call //SYMBOL_PACKAGE once.
     is_ns_used <- vapply(
       imported_pkgs,
-      function(pkg) xml_find_lgl_(xml, paste0("boolean(//SYMBOL_PACKAGE[text() = '", pkg, "'])")),
+      \(pkg) xml_find_lgl_(xml, paste0("boolean(//SYMBOL_PACKAGE[text() = '", pkg, "'])")),
       logical(1L)
     )
 

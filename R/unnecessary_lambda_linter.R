@@ -165,17 +165,17 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   ]")
 
   # path to calling function symbol from the matched expressions
-  fun_xpath <- "./parent::expr/expr/SYMBOL_FUNCTION_CALL"
+  fun_xpath <- "string(parent::expr/expr/SYMBOL_FUNCTION_CALL)"
   # path to the symbol of the simpler function that avoids a lambda
-  symbol_xpath <- "expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']]"
+  symbol_xpath <- "string(expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']])"
 
   Linter(linter_level = "expression", function(source_expression) {
     default_calls <- source_expression$xml_find_function_calls(apply_funs)
     default_fun_expr <- xml_find_all_(default_calls, default_fun_xpath)
 
     # TODO(#2478): Give a specific recommendation in the message.
-    default_call_fun <- xml_find_chr_(default_fun_expr, sprintf("string(%s)", fun_xpath))
-    default_symbol <- xml_find_chr_(default_fun_expr, sprintf("string(%s)", symbol_xpath))
+    default_call_fun <- xml_find_chr_(default_fun_expr, fun_xpath)
+    default_symbol <- xml_find_chr_(default_fun_expr, symbol_xpath)
     default_fun_lints <- xml_nodes_to_lints(
       default_fun_expr,
       source_expression = source_expression,
@@ -212,8 +212,8 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     purrr_calls <- source_expression$xml_find_function_calls(purrr_mappers)
     purrr_fun_expr <- xml_find_all_(purrr_calls, purrr_fun_xpath)
 
-    purrr_call_fun <- xml_find_chr_(purrr_fun_expr, sprintf("string(%s)", fun_xpath))
-    purrr_symbol <- xml_find_chr_(purrr_fun_expr, sprintf("string(%s)", symbol_xpath))
+    purrr_call_fun <- xml_find_chr_(purrr_fun_expr, fun_xpath)
+    purrr_symbol <- xml_find_chr_(purrr_fun_expr, symbol_xpath)
     purrr_fun_lints <- xml_nodes_to_lints(
       purrr_fun_expr,
       source_expression = source_expression,

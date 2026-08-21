@@ -42,18 +42,16 @@ consecutive_mutate_linter <- function(invalid_backends = "dbplyr") {
     /*[self::SYMBOL or self::STR_CONST]
   "
 
-  namespace_xpath <- glue("
-  boolean(
+  namespace_xpath <- glue(R"[boolean(
     //SYMBOL_PACKAGE[{ xp_text_in_table(invalid_backends) }]
     |
     //COMMENT[
       contains(text(), '@import')
       and (
-        {xp_or(sprintf(\"contains(text(), '%s')\", invalid_backends))}
+        {xp_or(sprintf("contains(text(), '%s')", invalid_backends))}
       )
     ]
-  )
-  ")
+  )]")
 
   # match on the expr, not the SYMBOL_FUNCTION_CALL, to ensure
   #   namespace-qualified calls only match if the namespaces do.
