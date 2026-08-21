@@ -37,6 +37,97 @@ is_numeric_linter <- function() {
   # TODO(#2469): This should also cover is.double(x) || is.integer(x).
   # TODO(#2470): Consider usages with class(), typeof(), or inherits().
 
+  paren_xpath <- "
+    self::expr[OP-LEFT-PAREN and count(expr) = 1 and count(*[not(self::COMMENT)]) = 3]
+  "
+
+  unwrap_parens <- function(node) {
+    while (!is.na(xml_find_first_(node, paren_xpath))) {
+      node <- xml_find_first_(node, "expr")
+    }
+    node
+  }
+
+  is_or_root <- function(node) {
+    parent <- xml_find_first_(node, "parent::expr")
+    while (!is.na(parent)) {
+      if (xml_find_num_(parent, "count(OR2)") > 0L) {
+        return(FALSE)
+      }
+      if (is.na(xml_find_first_(parent, paren_xpath))) {
+        break
+      }
+      parent <- xml_find_first_(parent, "parent::expr")
+    }
+    TRUE
+  }
+
+  extract_is_numeric_arg <- function(node) {
+    fn_node <- xml_find_first_(
+      node,
+      "self::expr[
+        expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer']
+        and count(expr) = 2
+        and not(SYMBOL_SUB[text() != 'x'])
+        and not(EQ_SUB/preceding-sibling::STR_CONST[text() != \"'x'\" and text() != '\"x\"'])
+      ]/expr[1]/SYMBOL_FUNCTION_CALL"
+    )
+    if (is.na(fn_node)) {
+      return(NULL)
+    }
+    fn <- xml_text(fn_node)
+    arg_node <- xml_find_first_(node, "expr[2]")
+    list(fn = fn, arg = xml2lang(arg_node))
+  }
+
+  matches_any <- function(args1, args2) {
+    for (a1 in args1) {
+      for (a2 in args2) {
+        if (identical(a1, a2)) {
+          return(TRUE)
+        }
+      }
+    }
+    FALSE
+  }
+
+  has_cross_redundancy <- function(left_res, right_res) {
+    matches_any(left_res$num_args, right_res$int_args) ||
+      matches_any(left_res$int_args, right_res$num_args)
+  }
+
+  check_or_tree <- function(node) {
+    node <- unwrap_parens(node)
+
+    # nolint next: implicit_assignment_linter. Allows us to reduce nesting.
+    if (xml_find_num_(node, "count(OR2)") > 0L && length(exprs <- xml_find_all_(node, "expr")) == 2L) {
+      left_res <- check_or_tree(exprs[[1L]])
+      right_res <- check_or_tree(exprs[[2L]])
+
+      lints <- c(left_res$lints, right_res$lints)
+      if (has_cross_redundancy(left_res, right_res)) {
+        lints <- c(lints, list(node))
+      }
+
+      return(list(
+        lints = lints,
+        num_args = c(left_res$num_args, right_res$num_args),
+        int_args = c(left_res$int_args, right_res$int_args)
+      ))
+    }
+
+    leaf_info <- extract_is_numeric_arg(node)
+    if (is.null(leaf_info)) {
+      return(list(lints = list(), num_args = list(), int_args = list()))
+    }
+
+    list(
+      lints = list(),
+      num_args = if (leaf_info$fn == "is.numeric") list(leaf_info$arg) else list(),
+      int_args = if (leaf_info$fn == "is.integer") list(leaf_info$arg) else list()
+    )
+  }
+
   # testing class(x) %in% c("numeric", "integer")
   class_xpath <- "
   //SPECIAL[
@@ -58,10 +149,11 @@ is_numeric_linter <- function() {
     or_lints <- list()
     if (has_both_calls) {
       all_or <- xml_find_all_(xml, "//OR2/parent::expr")
-      or_roots <- all_or[vapply(all_or, is_or_root, logical(1L))]
-      or_lint_nodes <- unlist(lapply(or_roots, \(root) check_or_tree(root)$lints), recursive = FALSE)
+      or_expr <- all_or[vapply(all_or, is_or_root, logical(1L))] |>
+        lapply(\(root) check_or_tree(root)$lints) |>
+        unlist(recursive = FALSE)
       or_lints <- xml_nodes_to_lints(
-        or_lint_nodes,
+        or_expr,
         source_expression = source_expression,
         lint_message = paste(
           "Use `is.numeric(x)` instead of the equivalent `is.numeric(x) || is.integer(x)`.",
@@ -90,100 +182,4 @@ is_numeric_linter <- function() {
 
     c(or_lints, class_lints)
   })
-}
-
-paren_xpath <- "
-  self::expr[
-    count(expr) = 1
-    and count(*[not(self::COMMENT)]) = 3
-    and *[not(self::COMMENT)][1][self::OP-LEFT-PAREN]
-    and *[not(self::COMMENT)][3][self::OP-RIGHT-PAREN]
-  ]
-"
-
-unwrap_parens <- function(node) {
-  while (!is.na(xml_find_first_(node, paren_xpath))) {
-    node <- xml_find_first_(node, "expr")
-  }
-  node
-}
-
-is_or_root <- function(node) {
-  parent <- xml_find_first_(node, "parent::expr")
-  while (!is.na(parent)) {
-    if (xml_find_num_(parent, "count(OR2)") > 0L) {
-      return(FALSE)
-    }
-    if (is.na(xml_find_first_(parent, paren_xpath))) {
-      break
-    }
-    parent <- xml_find_first_(parent, "parent::expr")
-  }
-  TRUE
-}
-
-extract_is_numeric_arg <- function(node) {
-  fn_node <- xml_find_first_(
-    node,
-    "self::expr[
-      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer']
-      and count(expr) = 2
-      and not(SYMBOL_SUB[text() != 'x'])
-      and not(EQ_SUB/preceding-sibling::STR_CONST[text() != \"'x'\" and text() != '\"x\"'])
-    ]/expr[1]/SYMBOL_FUNCTION_CALL"
-  )
-  if (is.na(fn_node)) {
-    return(NULL)
-  }
-  fn <- xml_text(fn_node)
-  arg_node <- xml_find_first_(node, "expr[2]")
-  list(fn = fn, arg = xml2lang(arg_node))
-}
-
-matches_any <- function(args1, args2) {
-  for (a1 in args1) {
-    for (a2 in args2) {
-      if (identical(a1, a2)) {
-        return(TRUE)
-      }
-    }
-  }
-  FALSE
-}
-
-has_cross_redundancy <- function(left_res, right_res) {
-  matches_any(left_res$num_args, right_res$int_args) ||
-    matches_any(left_res$int_args, right_res$num_args)
-}
-
-check_or_tree <- function(node) {
-  node <- unwrap_parens(node)
-
-  # nolint next: implicit_assignment_linter. Allows us to reduce nesting.
-  if (xml_find_num_(node, "count(OR2)") > 0L && length(exprs <- xml_find_all_(node, "expr")) == 2L) {
-    left_res <- check_or_tree(exprs[[1L]])
-    right_res <- check_or_tree(exprs[[2L]])
-
-    lints <- c(left_res$lints, right_res$lints)
-    if (has_cross_redundancy(left_res, right_res)) {
-      lints <- c(lints, list(node))
-    }
-
-    return(list(
-      lints = lints,
-      num_args = c(left_res$num_args, right_res$num_args),
-      int_args = c(left_res$int_args, right_res$int_args)
-    ))
-  }
-
-  leaf_info <- extract_is_numeric_arg(node)
-  if (is.null(leaf_info)) {
-    return(list(lints = list(), num_args = list(), int_args = list()))
-  }
-
-  list(
-    lints = list(),
-    num_args = if (leaf_info$fn == "is.numeric") list(leaf_info$arg) else list(),
-    int_args = if (leaf_info$fn == "is.integer") list(leaf_info$arg) else list()
-  )
 }
