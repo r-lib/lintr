@@ -62,38 +62,24 @@ rx_esc_num <- paste0(
   ))
 )
 
-decode_escape_token <- function(esc) {
-  code <- if (startsWith(esc, "x")) {
-    strtoi(substr(esc, 2L, nchar(esc)), 16L)
-  } else if (startsWith(esc, "u{") || startsWith(esc, "U{")) {
-    strtoi(substr(esc, 3L, nchar(esc) - 1L), 16L)
-  } else if (startsWith(esc, "u") || startsWith(esc, "U")) {
-    strtoi(substr(esc, 2L, nchar(esc)), 16L)
-  } else {
-    strtoi(esc, 8L)
-  }
-  if (is.na(code) || code == 0L) {
-    ""
-  } else {
-    intToUtf8(code)
-  }
-}
-
 decode_escapes <- function(s) {
   m <- gregexpr(rx_esc_num, s, perl = TRUE)
-  has_esc <- vapply(m, \(pos) any(pos != -1L), logical(1L))
-  if (!any(has_esc)) {
+  matches <- regmatches(s, m)
+  all_vec <- unlist(matches, use.names = FALSE)
+  if (length(all_vec) == 0L) {
     return(s)
   }
-  matches <- regmatches(s, m)
-  decoded <- lapply(matches, \(vec) {
-    if (length(vec) == 0L) {
-      return(character(0L))
-    }
-    raw_esc <- substr(vec, 2L, nchar(vec))
-    vapply(raw_esc, decode_escape_token, character(1L), USE.NAMES = FALSE)
-  })
-  regmatches(s, m) <- decoded
+  is_hex <- grepl("^\\\\[xuU]", all_vec)
+  codes <- integer(length(all_vec))
+  if (any(is_hex)) {
+    codes[is_hex] <- strtoi(gsub("[^0-9a-fA-F]", "", all_vec[is_hex]), base = 16L)
+  }
+  if (any(!is_hex)) {
+    codes[!is_hex] <- strtoi(substr(all_vec[!is_hex], 2L, 4L), base = 8L)
+  }
+  codes[is.na(codes)] <- 0L
+  all_chars <- intToUtf8(codes, multiple = TRUE)
+  regmatches(s, m) <- relist(all_chars, matches)
   s
 }
 
