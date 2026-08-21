@@ -116,10 +116,10 @@ sort_linter <- function() {
 
     order_expr <- xml_find_all_(order_calls, order_xpath)
 
-    variable <- xml_text(xml_find_first_(
+    variable <- xml_find_chr_(
       order_expr,
-      ".//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1]"
-    ))
+      "string(.//SYMBOL_FUNCTION_CALL[text() = 'order']/parent::expr[1]/following-sibling::expr[1])"
+    )
 
     orig_call <- sprintf("%s[%s]", variable, get_r_string(order_expr))
 
@@ -152,7 +152,7 @@ sort_linter <- function() {
       strip_comments_from_subtree()
     sorted_expr <- xml_find_all_(sort_calls, sorted_xpath)
 
-    sorted_op <- xml_text(xml_find_first_(sorted_expr, "*[2]"))
+    sorted_op <- xml_find_chr_(sorted_expr, "string(*[2])")
     lint_message <- ifelse(
       sorted_op == "==",
       "Use !is.unsorted(x) to test the sortedness of a vector.",
@@ -160,8 +160,9 @@ sort_linter <- function() {
     )
 
     sorted_identical_expr <- xml_find_all_(sort_calls, sorted_identical_xpath)
-    is_negated <- !is.na(
-      xml_find_first_(sorted_identical_expr, "preceding-sibling::OP-EXCLAMATION")
+    is_negated <- xml_find_lgl_(
+      sorted_identical_expr,
+      "boolean(preceding-sibling::OP-EXCLAMATION)"
     )
 
     lint_message <- c(

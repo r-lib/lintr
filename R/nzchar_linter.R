@@ -112,9 +112,9 @@ nzchar_linter <- function() {
   #   its "opposite" (not inverse) if the bad usage is on the RHS,
   #   e.g. 0 < nchar(x) has to be treated as nchar(x) > 0.
   op_for_msg <- function(expr, const) {
-    op <- xml_name_(xml_find_first_(expr, "*[not(self::COMMENT)][2]"))
+    op <- xml_find_chr_(expr, "name(*[not(self::COMMENT)][2])")
     maybe_needs_flip <-
-      !is.na(xml_find_first_(expr, sprintf("*[not(self::COMMENT)][1][%s]", const)))
+      xml_find_lgl_(expr, sprintf("boolean(*[not(self::COMMENT)][1][%s])", const))
 
     ordered_ops <- c("GT", "GE", "LE", "LT")
     ordered_idx <- match(op, ordered_ops)

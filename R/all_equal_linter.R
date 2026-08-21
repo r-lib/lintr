@@ -57,8 +57,9 @@ all_equal_linter <- function() {
       ]"
     )
 
-    has_tolerance_arg <- !is.na(
-      xml_find_first_(dangerous_unwrapped_all_equal, "SYMBOL_SUB[text() = 'tolerance']")
+    has_tolerance_arg <- xml_find_lgl_(
+      dangerous_unwrapped_all_equal,
+      "boolean(SYMBOL_SUB[text() = 'tolerance'])"
     )
 
     unwrapped_all_equal_lints <- xml_nodes_to_lints(

@@ -143,12 +143,14 @@ seq_linter <- function() {
       expr3_text = xml_find_chr_(seq_expr, "string(./expr[3])")
     )
 
-    is_seq <- is.na(xml_find_first_(seq_expr, "./OP-COLON"))
+    is_seq <- xml_find_lgl_(seq_expr, "not(OP-COLON)")
     expr_counts <- as.integer(xml_find_num_(seq_expr, "count(./expr)"))
-    is_expr2_to <- !is.na(xml_find_first_(seq_expr, "
-      expr[2]/preceding-sibling::SYMBOL_SUB[text() = 'to']
-      | expr[2]/following-sibling::SYMBOL_SUB[text() = 'from']
-    "))
+    is_expr2_to <- xml_find_lgl_(seq_expr, "
+      boolean(
+        expr[2]/preceding-sibling::SYMBOL_SUB[text() = 'to']
+        | expr[2]/following-sibling::SYMBOL_SUB[text() = 'from']
+      )
+    ")
 
     is_1arg_seq <- is_seq & expr_counts == 2L
     is_2arg_seq <- is_seq & expr_counts != 2L

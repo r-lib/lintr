@@ -271,9 +271,14 @@ unnecessary_nesting_linter <- function(
     )
 
     unnecessary_nested_if_expr <- xml_find_all_(xml, unnecessary_nested_if_xpath)
-    corresponding_brace <- xml_find_first_(unnecessary_nested_if_expr, corresponding_if_xpath)
-    corresponding_line <- xml_attr_(corresponding_brace, "line1")
-    corresponding_column <- xml_attr_(corresponding_brace, "col1")
+    corresponding_line <- xml_find_chr_(
+      unnecessary_nested_if_expr,
+      glue("string(({corresponding_if_xpath})/@line1)")
+    )
+    corresponding_column <- xml_find_chr_(
+      unnecessary_nested_if_expr,
+      glue("string(({corresponding_if_xpath})/@col1)")
+    )
     unnecessary_nested_if_lints <- xml_nodes_to_lints(
       unnecessary_nested_if_expr,
       source_expression = source_expression,

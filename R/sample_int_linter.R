@@ -70,8 +70,8 @@ sample_int_linter <- function() {
 
     first_call <- xp_call_name(bad_expr, depth = 2L)
     original <- sprintf("%s(n)", first_call)
-    original[!is.na(xml_find_first_(bad_expr, "expr[2]/OP-COLON"))] <- "1:n"
-    original[!is.na(xml_find_first_(bad_expr, "expr[2]/NUM_CONST"))] <- "n"
+    original[xml_find_lgl_(bad_expr, "boolean(expr[2]/OP-COLON)")] <- "1:n"
+    original[xml_find_lgl_(bad_expr, "boolean(expr[2]/NUM_CONST)")] <- "n"
 
     xml_nodes_to_lints(
       bad_expr,

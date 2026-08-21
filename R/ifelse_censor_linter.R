@@ -50,7 +50,7 @@ ifelse_censor_linter <- function() {
 
     matched_call <- xp_call_name(bad_expr)
     operator <- xml_find_chr_(bad_expr, "string(expr[2]/*[not(self::COMMENT)][2])")
-    match_first <- !is.na(xml_find_first_(bad_expr, "expr[2][expr[1] = following-sibling::expr[1]]"))
+    match_first <- xml_find_lgl_(bad_expr, "boolean(expr[2][expr[1] = following-sibling::expr[1]])")
     optimizer <- ifelse((operator %in% c("<", "<=")) == match_first, "pmin", "pmax")
     first_var <- rep_len("x", length(match_first))
     second_var <- rep_len("y", length(match_first))
