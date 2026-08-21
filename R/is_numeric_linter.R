@@ -53,14 +53,13 @@ is_numeric_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    has_both_calls <- length(source_expression$xml_find_function_calls("is.numeric")) > 0L &&
-      length(source_expression$xml_find_function_calls("is.integer")) > 0L
+    has_both_calls <- all(lengths(source_expression$xml_find_function_calls(c("is.numeric", "is.integer"))))
 
     or_lints <- list()
     if (has_both_calls) {
       all_or <- xml_find_all_(xml, "//OR2/parent::expr")
       or_roots <- all_or[vapply(all_or, is_or_root, logical(1L))]
-      or_lint_nodes <- unlist(lapply(or_roots, function(root) check_or_tree(root)$lints), recursive = FALSE)
+      or_lint_nodes <- unlist(lapply(or_roots, \(root) check_or_tree(root)$lints), recursive = FALSE)
       or_lints <- xml_nodes_to_lints(
         or_lint_nodes,
         source_expression = source_expression,
