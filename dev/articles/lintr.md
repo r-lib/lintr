@@ -54,7 +54,7 @@ Packages](https://r-pkgs.org/structure.html).
 Note that some linters
 (e.g. [`object_usage_linter()`](https://lintr.r-lib.org/dev/reference/object_usage_linter.md))
 require the package to be installed to function properly.
-[`pkgload::load_all()`](https://rdrr.io/pkg/pkgload/man/load_all.html)
+[`pkgload::load_all()`](https://pkgload.r-lib.org/reference/load_all.html)
 will also suffice. See
 [`?executing_linters`](https://lintr.r-lib.org/dev/reference/executing_linters.md)
 for more details.

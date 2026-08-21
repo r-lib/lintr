@@ -5,7 +5,7 @@ referenced packages. These linters should not be used with untrusted
 code, and may need dependencies of the linted package or project to be
 available in order to function correctly. For package authors, note that
 this includes loading the package itself, e.g. with
-[`pkgload::load_all()`](https://rdrr.io/pkg/pkgload/man/load_all.html)
+[`pkgload::load_all()`](https://pkgload.r-lib.org/reference/load_all.html)
 or installing and attaching the package.
 
 ## See also

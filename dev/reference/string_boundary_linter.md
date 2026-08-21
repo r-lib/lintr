@@ -69,7 +69,7 @@ lint(
   text = 'grepl("^a", x)',
   linters = string_boundary_linter()
 )
-#> <text>:1:7: warning: [string_boundary_linter] Use !is.na(x) & startsWith(x, string) to detect a fixed initial substring, or, if missingness is not a concern, just startsWith(). Doing so is more readable and more efficient.
+#> <text>:1:7: warning: [string_boundary_linter] Use !is.na(x) & startsWith(x, "a") to detect a fixed initial substring, or, if missingness is not a concern, just startsWith(x, "a"). Doing so is more readable and avoids regular expression overhead.
 #> grepl("^a", x)
 #>       ^~~~
 
@@ -77,7 +77,7 @@ lint(
   text = 'grepl("z$", x)',
   linters = string_boundary_linter()
 )
-#> <text>:1:7: warning: [string_boundary_linter] Use !is.na(x) & endsWith(x, string) to detect a fixed terminal substring, or, if missingness is not a concern, just endsWith(). Doing so is more readable and more efficient.
+#> <text>:1:7: warning: [string_boundary_linter] Use !is.na(x) & endsWith(x, "z") to detect a fixed terminal substring, or, if missingness is not a concern, just endsWith(x, "z"). Doing so is more readable and avoids regular expression overhead.
 #> grepl("z$", x)
 #>       ^~~~
 
