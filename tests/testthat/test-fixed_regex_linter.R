@@ -264,6 +264,7 @@ test_that("fixed replacements vectorize across mixed escapes, quotes, and litera
       grepl('abc"def', x)
       grepl(r"(\\n)", x)
       grepl(r"(\x41)", x)
+      grepl(r"(\123)", x)
       grepl('a[.]b', x)
       grepl(r"(\[a\])", x)
     })-"),
@@ -271,8 +272,9 @@ test_that("fixed replacements vectorize across mixed escapes, quotes, and litera
       list(rex::rex('Use "abc\\"def" with fixed = TRUE'), line_number = 2L),
       list(rex::rex('Use "\\\\n" with fixed = TRUE'), line_number = 3L),
       list(rex::rex('Use "A" with fixed = TRUE'), line_number = 4L),
-      list(rex::rex('Use "a.b" with fixed = TRUE'), line_number = 5L),
-      list(rex::rex('Use "[a]" with fixed = TRUE'), line_number = 6L)
+      list(rex::rex('Use "S" with fixed = TRUE'), line_number = 5L),
+      list(rex::rex('Use "a.b" with fixed = TRUE'), line_number = 6L),
+      list(rex::rex('Use "[a]" with fixed = TRUE'), line_number = 7L)
     ),
     linter
   )
@@ -297,13 +299,16 @@ test_that("fixed_regex_linter handles quotes, literal backslashes, and escaped b
   expect_lint(R'{grepl(r"(\\[a]\\)", x)}', rex::rex('Use "\\\\a\\\\" with fixed = TRUE'), linter)
   expect_lint(R'{grepl(r"(\\\x41)", x)}', rex::rex('Use "\\\\A" with fixed = TRUE'), linter)
 
-  # character groups with escaped delimiters
+  # character groups and escape codes
   expect_lint("grepl('[\"]', x)", rex::rex('Use "\\"" with fixed = TRUE'), linter)
   expect_lint(R'{grepl(r"([\]])", x)}', rex::rex('Use "]" with fixed = TRUE'), linter)
   expect_lint(R'{grepl(r"([\[])", x)}', rex::rex('Use "[" with fixed = TRUE'), linter)
   expect_lint(R'{grepl(r"([\\])", x)}', rex::rex('Use "\\\\" with fixed = TRUE'), linter)
   expect_lint(R'{grepl(r"([\$])", x)}', rex::rex('Use "$" with fixed = TRUE'), linter)
   expect_lint(R'{grepl(r"([\x41])", x)}', rex::rex('Use "A" with fixed = TRUE'), linter)
+  expect_lint(R'{grepl(r"(\123)", x)}', rex::rex('Use "S" with fixed = TRUE'), linter)
+  expect_lint(R'{grepl(r"([\101])", x)}', rex::rex('Use "A" with fixed = TRUE'), linter)
+  expect_lint(R'{grepl(r"([\041])", x)}', rex::rex('Use "!" with fixed = TRUE'), linter)
 
   # potential code injection payload is safely parsed as string literal without execution
   expect_lint(
