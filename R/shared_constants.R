@@ -19,8 +19,8 @@ rx_static_escape <- local({
     "]"
   )
   rex(or(
-    capture(rx_char_escape, name = "char_escape"),
-    capture(rx_trivial_char_group, name = "trivial_char_group")
+    rx_char_escape,
+    rx_trivial_char_group
   ))
 })
 
@@ -33,8 +33,55 @@ rx_static_token <- local({
 
 rx_unescaped_regex <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), end))
 rx_static_regex <- paste0("(?s)", rex(start, zero_or_more(rx_static_token), end))
-rx_first_static_token <- paste0("(?s)", rex(start, zero_or_more(rx_non_active_char), rx_static_escape))
 rx_escapable_tokens <- "^${}().*+?|[]\\<>=:;/_-!@#%&,~"
+rx_escapable_regex <- rex("\\", capture(one_of(rx_escapable_tokens)))
+rx_trivial_char_group <- paste0(R"{(?s)(?<!\\)(?:\\\\)*\K\[}", rex(
+  capture(or(
+    group("\\", or(
+      group("x", between(xdigit, 1L, 2L)),
+      between("0":"7", 1L, 3L),
+      group("u{", between(xdigit, 1L, 4L), "}"),
+      group("u", between(xdigit, 1L, 4L)),
+      group("U{", between(xdigit, 1L, 8L), "}"),
+      group("U", between(xdigit, 1L, 8L)),
+      none_of("dswDSW")
+    )),
+    any
+  ))
+), "\\]")
+
+rx_esc_num <- paste0(
+  R"{(?s)(?<!\\)(?:\\\\)*\K\\}",
+  rex(or(
+    group("x", between(xdigit, 1L, 2L)),
+    group("u{", between(xdigit, 1L, 4L), "}"),
+    group("u", between(xdigit, 1L, 4L)),
+    group("U{", between(xdigit, 1L, 8L), "}"),
+    group("U", between(xdigit, 1L, 8L)),
+    between("0":"7", 1L, 3L)
+  ))
+)
+
+decode_escapes <- function(s) {
+  m <- gregexpr(rx_esc_num, s, perl = TRUE)
+  matches <- regmatches(s, m)
+  all_vec <- unlist(matches, use.names = FALSE)
+  if (length(all_vec) == 0L) {
+    return(s)
+  }
+  is_hex <- grepl("^\\\\[xuU]", all_vec)
+  codes <- integer(length(all_vec))
+  if (any(is_hex)) {
+    codes[is_hex] <- strtoi(gsub("[^0-9a-fA-F]", "", all_vec[is_hex]), base = 16L)
+  }
+  if (!all(is_hex)) {
+    codes[!is_hex] <- strtoi(substr(all_vec[!is_hex], 2L, 4L), base = 8L)
+  }
+  codes[is.na(codes)] <- 0L
+  all_chars <- intToUtf8(codes, multiple = TRUE)
+  regmatches(s, m) <- relist(all_chars, matches)
+  s
+}
 
 #' Determine whether a regex pattern actually uses regex patterns
 #'
@@ -60,54 +107,22 @@ is_not_regex <- function(str, allow_unescaped = FALSE) {
 
 #' Compute a fixed string equivalent to a static regular expression
 #'
-#' @param static_regex A regex for which `is_not_regex()` returns `TRUE`
-#' @return A string such that `grepl(static_regex, x)` is equivalent to
-#' `grepl(get_fixed_string(static_regex), x, fixed = TRUE)`
+#' @param static_regex A character vector of regex patterns for which `is_not_regex()` returns `TRUE`.
+#' @return A character vector of quoted strings such that `grepl(static_regex, x)` is equivalent to
+#'   `eval(parse(text = sprintf("grepl(%s, x, fixed = TRUE)", get_fixed_string(static_regex))))`.
 #'
 #' @noRd
 get_fixed_string <- function(static_regex) {
   if (length(static_regex) == 0L) {
     return(character())
-  } else if (length(static_regex) > 1L) {
-    return(vapply(static_regex, get_fixed_string, character(1L)))
   }
-  fixed_string <- ""
-  current_match <- regexpr(rx_first_static_token, static_regex, perl = TRUE)
-  while (current_match != -1L) {
-    token_type <- attr(current_match, "capture.names")[attr(current_match, "capture.start") > 0L]
-    token_start <- max(attr(current_match, "capture.start"))
-    if (token_start > 1L) {
-      fixed_string <- paste0(fixed_string, substr(static_regex, 1L, token_start - 1L))
-    }
-    consume_to <- attr(current_match, "match.length")
-    token_content <- substr(static_regex, token_start, consume_to)
-    fixed_string <- paste0(fixed_string, get_token_replacement(token_content, token_type))
-    static_regex <- substr(static_regex, start = consume_to + 1L, stop = nchar(static_regex))
-    current_match <- regexpr(rx_first_static_token, static_regex, perl = TRUE)
-  }
-  paste0(fixed_string, static_regex)
-}
+  static_regex <- static_regex |>
+    gsub(pattern = rx_trivial_char_group, replacement = "\\1", perl = TRUE) |>
+    decode_escapes() |>
+    gsub(pattern = rx_escapable_regex, replacement = "\\1", perl = TRUE) |>
+    encodeString(quote = '"', justify = "none")
 
-#' Get a fixed string equivalent to a regular expression token
-#'
-#' This handles two cases: converting a "trivial" character group like `[$]` to `$`,
-#'   and converting an escaped character like `"\\$"` to `$`. Splitting a full expression
-#'   into tokens is handled by `get_fixed_string()`.
-#'
-#' @noRd
-get_token_replacement <- function(token_content, token_type) {
-  if (token_type == "trivial_char_group") { # otherwise, char_escape
-    token_content <- substr(token_content, start = 2L, stop = nchar(token_content) - 1L)
-    if (startsWith(token_content, "\\")) { # escape within trivial char group
-      get_token_replacement(token_content, "char_escape")
-    } else {
-      token_content
-    }
-  } else if (re_matches(token_content, rex("\\", one_of(rx_escapable_tokens)))) {
-    substr(token_content, start = 2L, stop = nchar(token_content))
-  } else {
-    eval(parse(text = paste0('"', token_content, '"')))
-  }
+  static_regex
 }
 
 # some metadata about infix operators on the R parse tree.

@@ -168,7 +168,7 @@ fixed_regex_linter <- function(allow_unescaped = FALSE, check_file_listing = TRU
     patterns <- patterns[is_static]
     pattern_strings <- pattern_strings[is_static]
 
-    fixed_equivalent <- encodeString(get_fixed_string(pattern_strings), quote = '"', justify = "none")
+    fixed_equivalent <- get_fixed_string(pattern_strings)
     call_name <- xml_find_chr_(patterns, "string(preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL)")
 
     is_stringr <- startsWith(call_name, "str_")

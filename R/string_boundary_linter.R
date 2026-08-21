@@ -93,7 +93,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     terminal_anchor <- terminal_anchor[should_lint]
     sub_patterns <- sub_patterns[should_lint]
 
-    fixed_strings <- encodeString(get_fixed_string(sub_patterns), quote = '"', justify = "none")
+    fixed_strings <- get_fixed_string(sub_patterns)
 
     lint_type <- character(length(initial_anchor))
 
