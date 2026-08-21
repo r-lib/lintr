@@ -121,7 +121,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
   self::*[expr/expr[
     (
       position() = 3
-      and NUM_CONST[text() = '1' or text() = '1L']
+      and NUM_CONST[text() = '0' or text() = '0L' or text() = '1' or text() = '1L']
     ) or (
       position() = 4
       and expr[1][SYMBOL_FUNCTION_CALL[text() = 'nchar']]
@@ -166,10 +166,10 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     is_str_comparison <- !is.na(xml_find_first_(substr_calls, string_comparison_xpath))
     substr_calls <- strip_comments_from_subtree(substr_calls[is_str_comparison])
     substr_expr <- xml_find_all_(substr_calls, substr_xpath)
-    substr_one <- xml_find_chr_(substr_expr, substr_arg2_xpath) %in% c("1", "1L")
+    substr_initial <- xml_find_chr_(substr_expr, substr_arg2_xpath) %in% c("0", "0L", "1", "1L")
     substr_lint_message <- paste(
       ifelse(
-        substr_one,
+        substr_initial,
         "Use startsWith() to detect an initial substring.",
         "Use endsWith() to detect a terminal substring."
       ),

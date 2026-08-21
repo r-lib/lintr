@@ -94,6 +94,8 @@ test_that("string_boundary_linter blocks disallowed substr()/substring() usage",
   starts_message <- rex::rex("Use startsWith() to detect an initial substring.")
   ends_message <- rex::rex("Use endsWith() to detect a terminal substring.")
 
+  expect_lint("substr(x, 0, 1) == 'a'", starts_message, linter)
+  expect_lint("substring(x, 0L, 1L) == 'a'", starts_message, linter)
   expect_lint("substr(x, 1L, 2L) == 'ab'", starts_message, linter)
   # end doesn't matter, just anchoring to 1L
   expect_lint("substr(x, 1L, end) == 'ab'", starts_message, linter)
