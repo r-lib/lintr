@@ -69,11 +69,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     grepl_xpath <- glue("
     parent::expr[
       not(SYMBOL_SUB[
-        text() = 'ignore.case'
-        and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
-      ])
-      and not(SYMBOL_SUB[
-        text() = 'fixed'
+        (text() = 'ignore.case' or text() = 'fixed')
         and not(following-sibling::expr[1][NUM_CONST[text() = 'FALSE'] or SYMBOL[text() = 'F']])
       ])
     ]
@@ -86,11 +82,12 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     expr <- xml_find_all_(xml, xpath)
     patterns <- get_r_string(expr)
     initial_anchor <- startsWith(patterns, "^")
-    terminal_anchor <- endsWith(patterns, "$")
+    terminal_anchor <- grepl(R"[(?<!\\)(?:\\\\)*\$$]", patterns, perl = TRUE)
     search_start <- 1L + initial_anchor
     search_end <- nchar(patterns) - terminal_anchor
     sub_patterns <- substr(patterns, search_start, search_end)
     should_lint <- (initial_anchor | terminal_anchor) &
+      (nchar(patterns) > 1L) &
       is_not_regex(sub_patterns)
     initial_anchor <- initial_anchor[should_lint]
     terminal_anchor <- terminal_anchor[should_lint]
