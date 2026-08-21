@@ -49,29 +49,25 @@ is_numeric_linter <- function() {
   }
 
   is_or_root <- function(node) {
-    parent <- xml_find_first_(node, "parent::expr")
-    while (!is.na(parent)) {
+    parent <- node
+    repeat {
+      parent <- xml_find_first_(parent, "parent::expr")
+      if (is.na(parent)) {
+        return(TRUE)
+      }
       if (xml_find_num_(parent, "count(OR2)") > 0L) {
         return(FALSE)
       }
       if (is.na(xml_find_first_(parent, paren_xpath))) {
-        break
+        return(TRUE)
       }
-      parent <- xml_find_first_(parent, "parent::expr")
     }
     TRUE
   }
 
   extract_is_numeric_arg <- function(node) {
-    fn_node <- xml_find_first_(
-      node,
-      "self::expr[
-        expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer']
-        and count(expr) = 2
-        and not(SYMBOL_SUB[text() != 'x'])
-        and not(EQ_SUB/preceding-sibling::STR_CONST[text() != \"'x'\" and text() != '\"x\"'])
-      ]/expr[1]/SYMBOL_FUNCTION_CALL"
-    )
+    fn_node <-
+      xml_find_first_(node, "expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer']")
     if (is.na(fn_node)) {
       return(NULL)
     }
