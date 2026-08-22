@@ -346,8 +346,8 @@ test_that("lints vectorize", {
       vapply(y, function(yi) bar(yi) == 1, logical(1L))
     }"),
     list(
-      list("sapply", line_number = 2L),
-      list("vapply", line_number = 3L)
+      list(rex::rex("sapply(x, foo)"), line_number = 2L),
+      list(rex::rex("vapply(x, foo, FUN.VALUE = <intermediate>)"), line_number = 3L)
     ),
     linter
   )
