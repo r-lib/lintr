@@ -324,6 +324,8 @@ test_that("function shorthand is handled", {
 })
 
 test_that("lints vectorize", {
+  linter <- unnecessary_lambda_linter()
+
   expect_lint(
     trim_some("{
       sapply(x, function(xi) sd(xi))
@@ -335,6 +337,18 @@ test_that("lints vectorize", {
       list("sd", line_number = 2L),
       list("sum", line_number = 3L)
     ),
-    unnecessary_lambda_linter()
+    linter
+  )
+
+  expect_lint(
+    trim_some("{
+      sapply(x, function(xi) foo(xi) == 2)
+      vapply(y, function(yi) bar(yi) == 1, logical(1L))
+    }"),
+    list(
+      list("sapply", line_number = 2L),
+      list("vapply", line_number = 3L)
+    ),
+    linter
   )
 })
