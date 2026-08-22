@@ -508,11 +508,10 @@ test_that("call-less '(' mentions avoiding implicit printing", {
 })
 
 test_that("allow_paren_print allows `(` for auto printing", {
-  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
   linter <- implicit_assignment_linter(allow_paren_print = TRUE)
   expect_no_lint("(a <- foo())", linter)
 
-  # Doesn't effect other cases
+  # Doesn't affect other cases
   lint_message <- rex::rex("Avoid implicit assignments in function calls.")
   expect_lint("if (x <- 1L) TRUE", lint_message, linter)
   expect_lint("while (x <- 0L) FALSE", lint_message, linter)
