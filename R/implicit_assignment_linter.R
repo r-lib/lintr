@@ -134,12 +134,15 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
     print_only <- !is.na(xml_find_first_(bad_expr, "parent::expr[parent::exprlist and *[1][self::OP-LEFT-PAREN]]"))
     if (allow_paren_print) {
       bad_expr <- bad_expr[!print_only]
+      lint_message <- implicit_message
+    } else {
+      lint_message <- ifelse(print_only, print_message, implicit_message)
     }
 
     xml_nodes_to_lints(
       bad_expr,
       source_expression = source_expression,
-      lint_message = ifelse(print_only, print_message, implicit_message),
+      lint_message = lint_message,
       type = "warning"
     )
   })
