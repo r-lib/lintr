@@ -193,7 +193,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
       inner_comparison_expr <- xml_find_all_(sapply_vapply_calls, inner_comparison_xpath)
 
       mapper <- xp_call_name(xml_find_first_(inner_comparison_expr, "parent::expr/parent::expr"))
-      if (length(mapper) > 0L) fun_value <- if (mapper == "sapply") "" else ", FUN.VALUE = <intermediate>"
+      fun_value <- ifelse(mapper == "sapply", "", ", FUN.VALUE = <intermediate>")
 
       inner_comparison_lints <- xml_nodes_to_lints(
         inner_comparison_expr,
