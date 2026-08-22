@@ -357,7 +357,7 @@ build_indentation_style_tidy <- function() {
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
   xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
 
-  xp_suppress <- paste(
+  xp_suppress <- sprintf("boolean(%s)", paste(
     glue("
         self::{paren_tokens_left}[
           @line1 = following-sibling::{paren_tokens_right}/{xp_inner_expr}[position() = 1]/@line1
@@ -365,9 +365,9 @@ build_indentation_style_tidy <- function() {
           @line1 > {xp_inner_expr}[position() = last() - 1]/@line2
         ]"),
     collapse = " | "
-  )
+  ))
 
-  xp_is_not_hanging <- paste(
+  xp_is_hanging <- sprintf("not(%s)", paste(
     c(
       glue("
         self::{paren_tokens_left}
@@ -377,12 +377,12 @@ build_indentation_style_tidy <- function() {
       glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]")
     ),
     collapse = "\n|  "
-  )
+  ))
 
   function(change) {
-    if (length(xml_find_first_(change, xp_suppress)) > 0L) {
+    if (xml_find_lgl_(change, xp_suppress)) {
       "suppress"
-    } else if (length(xml_find_first_(change, xp_is_not_hanging)) == 0L) {
+    } else if (xml_find_lgl_(change, xp_is_hanging)) {
       "hanging"
     } else {
       "block"
@@ -395,7 +395,7 @@ build_indentation_style_always <- function() {
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
 
-  xp_is_not_hanging <- paste(
+  xp_is_hanging <- sprintf("not(%s)", paste(
     c(
       glue("
         self::{paren_tokens_left}[{xp_last_on_line}]/
@@ -404,10 +404,10 @@ build_indentation_style_always <- function() {
       glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
     ),
     collapse = " | "
-  )
+  ))
 
   function(change) {
-    if (length(xml_find_first_(change, xp_is_not_hanging)) == 0L) {
+    if (xml_find_lgl_(change, xp_is_hanging)) {
       "hanging"
     } else {
       "block"

@@ -163,12 +163,12 @@ library_call_linter <- function(allow_preamble = TRUE) {
 
     char_only_direct_expr <- xml_find_all_(xml, char_only_direct_xpath)
     char_only_direct_calls <- xp_call_name(char_only_direct_expr)
-    character_only <-
-      xml_find_first_(char_only_direct_expr, "./SYMBOL_SUB[text() = 'character.only']")
+    has_character_only <-
+      xml_find_lgl_(char_only_direct_expr, "boolean(SYMBOL_SUB[text() = 'character.only'])")
     char_only_direct_msg_fmt <- ifelse(
-      is.na(character_only),
-      "Use symbols, not strings, in %s calls.",
-      "Use symbols in %s calls to avoid the need for 'character.only'."
+      has_character_only,
+      "Use symbols in %s calls to avoid the need for 'character.only'.",
+      "Use symbols, not strings, in %s calls."
     )
     char_only_direct_msg <-
       sprintf(as.character(char_only_direct_msg_fmt), char_only_direct_calls)

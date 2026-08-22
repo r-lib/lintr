@@ -70,7 +70,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   #   https://bugs.r-project.org/show_bug.cgi?id=18924. If we find such code (which has only ever
   #   arisen in content fuzzing where we inject comments at random to the AST), we have to avoid parsing
   #   it as a standalone expression.
-  xpath_unsafe_lambda <- "OP-LAMBDA[@line1 = following-sibling::*[1][self::COMMENT]/@line1]"
+  xpath_unsafe_lambda <- "boolean(OP-LAMBDA[@line1 = following-sibling::*[1][self::COMMENT]/@line1])"
 
   # not all instances of linted symbols are potential sources for the observed violations -- see #1914
   symbol_exclude_cond <- "preceding-sibling::OP-DOLLAR or preceding-sibling::OP-AT or ancestor::expr[OP-TILDE]"
@@ -104,7 +104,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
 
     lapply(fun_assignments, function(fun_assignment) {
       # this will mess with the source line numbers. but I don't think anybody cares.
-      needs_braces <- !is.na(xml_find_first_(fun_assignment, xpath_unsafe_lambda))
+      needs_braces <- xml_find_lgl_(fun_assignment, xpath_unsafe_lambda)
       code <- get_content(lines = source_expression$content, fun_assignment, needs_braces = needs_braces)
       fun <- try_silently(eval(
         envir = env,

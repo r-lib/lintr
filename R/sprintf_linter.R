@@ -54,9 +54,9 @@ sprintf_linter <- function() {
 
   pipes <- setdiff(magrittr_pipes, "%$%")
   in_pipe_xpath <- glue(
-    "self::expr[
+    "boolean(self::expr[
       preceding-sibling::*[not(self::COMMENT)][1][self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]]
-    ]"
+    ])"
   )
 
   is_non_atomic <- function(x) !(is.symbol(x) && !nzchar(x)) && !is.atomic(x)
@@ -99,7 +99,7 @@ sprintf_linter <- function() {
   capture_sprintf_warning <- function(xml) {
     parsed_expr <- xml2lang(xml)
     # convert x %>% sprintf(...) to sprintf(x, ...)
-    if (length(xml_find_first_(xml, in_pipe_xpath)) > 0L) {
+    if (xml_find_lgl_(xml, in_pipe_xpath)) {
       arg_names <- names(parsed_expr)
       arg_idx <- 2L:length(parsed_expr)
       parsed_expr[arg_idx + 1L] <- parsed_expr[arg_idx]
@@ -131,7 +131,7 @@ sprintf_linter <- function() {
   Linter(linter_level = "file", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(c("sprintf", "gettextf"))
     sprintf_calls <- xml_find_all_(xml_calls, call_xpath)
-    in_pipeline <- !is.na(xml_find_first_(sprintf_calls, in_pipe_xpath))
+    in_pipeline <- xml_find_lgl_(sprintf_calls, in_pipe_xpath)
 
     fmt_by_name <- get_r_string(
       sprintf_calls,

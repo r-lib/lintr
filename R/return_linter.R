@@ -161,7 +161,7 @@ return_linter <- function(
     if (params$implicit && !params$allow_implicit_else) {
       # can't incorporate this into the body_xpath for implicit return style,
       #   since we still lint explicit returns for except= functions.
-      allow_implicit_else <- is.na(xml_find_first_(body_expr, except_xpath))
+      allow_implicit_else <- xml_find_lgl_(body_expr, paste0("not(", except_xpath, ")"))
     } else {
       allow_implicit_else <- rep(params$allow_implicit_else, length(body_expr))
     }
@@ -189,7 +189,7 @@ nested_return_lints <- function(expr, params) {
     brace_return_lints(child_expr, expr, params)
   } else if (names(child_expr)[1L] == "IF") {
     if_return_lints(child_expr, expr, params)
-  } else if (!is.na(xml_find_first_(expr, "expr/SYMBOL_FUNCTION_CALL[text() = 'switch']"))) {
+  } else if (xml_find_lgl_(expr, "boolean(expr/SYMBOL_FUNCTION_CALL[text() = 'switch'])")) {
     switch_return_lints(child_expr, expr, params)
   } else {
     xml_nodes_to_lints(

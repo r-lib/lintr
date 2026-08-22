@@ -131,7 +131,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
     )
   }
 
-  string_comparison_xpath <- "self::*[(EQ or NE) and expr/STR_CONST]"
+  string_comparison_xpath <- "boolean(self::*[(EQ or NE) and expr/STR_CONST])"
   substr_xpath <- glue("
   self::*[expr/expr[
     (
@@ -186,7 +186,7 @@ string_boundary_linter <- function(allow_grepl = FALSE) {
       source_expression$xml_find_function_calls(c("substr", "substring")),
       "parent::*/parent::*"
     )
-    is_str_comparison <- !is.na(xml_find_first_(substr_calls, string_comparison_xpath))
+    is_str_comparison <- xml_find_lgl_(substr_calls, string_comparison_xpath)
     substr_calls <- strip_comments_from_subtree(substr_calls[is_str_comparison])
     substr_expr <- xml_find_all_(substr_calls, substr_xpath)
     substr_initial <- xml_find_chr_(substr_expr, substr_arg2_xpath) %in% c("0", "0L", "1", "1L")

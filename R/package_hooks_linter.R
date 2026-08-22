@@ -92,7 +92,7 @@ package_hooks_linter <- function() {
   # usually any given package will have one or maybe two files defining namespace hooks.
   #   given the number of checks, then, it's prudent to check first if any such hook is defined,
   #   exiting early if not.
-  any_hook_xpath <- glue("(//FUNCTION | //OP-LAMBDA)/parent::expr/preceding-sibling::expr/SYMBOL[{ns_calls}]")
+  any_hook_xpath <- glue("boolean((//FUNCTION | //OP-LAMBDA)/parent::expr/preceding-sibling::expr/SYMBOL[{ns_calls}])")
 
   # * for '=' assignment
   hook_xpath <- sprintf("string(./ancestor::*/expr/SYMBOL[%s])", ns_calls)
@@ -140,8 +140,7 @@ package_hooks_linter <- function() {
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
-    any_hook <- xml_find_first_(xml, any_hook_xpath)
-    if (is.na(any_hook)) {
+    if (!isTRUE(xml_find_lgl_(xml, any_hook_xpath))) {
       return(list())
     }
 
