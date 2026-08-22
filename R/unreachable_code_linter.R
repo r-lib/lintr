@@ -114,14 +114,14 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
     | ({expr_after_control})//expr[NEXT or BREAK]/{unreachable_expr_cond_sc}
   ")
 
-  xpath_terminal_node <- "
+  xpath_terminal_node <- "string(
     (preceding-sibling::exprlist//expr | preceding-sibling::expr)
       /*[
         self::expr/SYMBOL_FUNCTION_CALL[text() = 'return' or text() = 'stop']
         or self::NEXT
         or self::BREAK
       ]
-  "
+  )"
 
   xpath_if_while <- "
     (//IF | //WHILE)[following-sibling::expr[1]/NUM_CONST[text() = 'FALSE']]
@@ -160,7 +160,7 @@ unreachable_code_linter <- function(allow_comment_regex = getOption("covr.exclud
       re_matches_logical(xml_text(expr_after_terminal_node), allow_comment_regex)
 
     expr_after_terminal_node <- expr_after_terminal_node[!is_valid_comment]
-    terminal_node <- xml_text(xml_find_first_(expr_after_terminal_node, xpath_terminal_node))
+    terminal_node <- xml_find_chr_(expr_after_terminal_node, xpath_terminal_node)
     terminal_node <-
       ifelse(terminal_node %in% c("return", "stop"), paste0(terminal_node, "()"), paste0("`", terminal_node, "`"))
 

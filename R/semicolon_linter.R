@@ -83,15 +83,15 @@ semicolon_linter <- function(allow_compound = FALSE, allow_trailing = FALSE) {
     xpath <- "//OP-SEMICOLON"
     need_detection <- TRUE
   }
-  compound_xpath <- "self::*[@line1 = following-sibling::*[1]/@line1]"
+  compound_xpath <- "boolean(self::*[@line1 = following-sibling::*[1]/@line1])"
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
 
     bad_exprs <- xml_find_all_(xml, xpath)
     if (need_detection) {
-      is_trailing <- is.na(xml_find_first_(bad_exprs, compound_xpath))
-      msg <- ifelse(is_trailing, msg_trailing, msg_compound)
+      is_compound <- xml_find_lgl_(bad_exprs, compound_xpath)
+      msg <- ifelse(is_compound, msg_compound, msg_trailing)
     }
 
     xml_nodes_to_lints(

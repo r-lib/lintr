@@ -51,7 +51,7 @@ yoda_test_linter <- function() {
     /parent::expr[not(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(pipes) }]])]
   ")
 
-  second_const_xpath <- glue("expr[position() = 3 and ({const_condition})]")
+  second_const_xpath <- glue("boolean(expr[position() = 3 and ({const_condition})])")
 
   Linter(linter_level = "expression", function(source_expression) {
     bad_expr <- xml_find_all_(
@@ -60,14 +60,14 @@ yoda_test_linter <- function() {
     )
 
     matched_call <- xp_call_name(bad_expr)
-    second_const <- xml_find_first_(bad_expr, second_const_xpath)
+    is_placeholder <- xml_find_lgl_(bad_expr, second_const_xpath)
     lint_message <- ifelse(
-      is.na(second_const),
+      is_placeholder,
+      sprintf("Avoid storing placeholder tests like %s(1, 1)", matched_call),
       paste(
         "Compare objects in tests in the order 'actual', 'expected', not the reverse.",
         sprintf("For example, do %1$s(foo(x), 2L) instead of %1$s(2L, foo(x)).", matched_call)
-      ),
-      sprintf("Avoid storing placeholder tests like %s(1, 1)", matched_call)
+      )
     )
 
     xml_nodes_to_lints(bad_expr, source_expression, lint_message, type = "warning")

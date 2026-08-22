@@ -106,8 +106,9 @@ matrix_apply_linter <- function() {
 
     margin <- xml_find_all_(bad_expr, margin_xpath)
 
-    narm_val <- xml_text(
-      xml_find_first_(bad_expr, "SYMBOL_SUB[text() = 'na.rm']/following-sibling::expr")
+    narm_val <- xml_find_chr_(
+      bad_expr,
+      "string(SYMBOL_SUB[text() = 'na.rm']/following-sibling::expr)"
     )
 
     recos <- Map(craft_colsums_rowsums_msg, variable, margin, fun, narm_val)
@@ -122,12 +123,12 @@ matrix_apply_linter <- function() {
 }
 
 craft_colsums_rowsums_msg <- function(variable, margin, fun, narm_val) {
-  if (is.na(xml_find_first_(margin, "OP-COLON"))) {
+  if (xml_find_lgl_(margin, "not(OP-COLON)")) {
     l1 <- xml_text(margin)
     l2 <- NULL
   } else {
-    l1 <- xml_text(xml_find_first_(margin, "expr[1]"))
-    l2 <- xml_text(xml_find_first_(margin, "expr[2]"))
+    l1 <- xml_find_chr_(margin, "string(expr[1])")
+    l2 <- xml_find_chr_(margin, "string(expr[2])")
   }
 
   # See #1764 for details about various cases. In short:
@@ -143,7 +144,7 @@ craft_colsums_rowsums_msg <- function(variable, margin, fun, narm_val) {
   l1 <- suppressWarnings(as.integer(re_substitutes(l1, "L$", "")))
   l2 <- suppressWarnings(as.integer(re_substitutes(l2, "L$", "")))
 
-  if (!is.na(narm_val)) {
+  if (nzchar(narm_val)) {
     narm <- glue(", na.rm = {narm_val}")
   } else {
     narm <- ""

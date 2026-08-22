@@ -305,7 +305,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
       paste_sep_slash_expr <- paste_sep_expr[paste_sep_value == "/"]
       optional_lints <- c(optional_lints, xml_nodes_to_lints(
         # in addition to paste(..., sep = "/") we ensure collapse= is not present
-        paste_sep_slash_expr[is.na(xml_find_first_(paste_sep_slash_expr, "./SYMBOL_SUB[text() = 'collapse']"))],
+        paste_sep_slash_expr[xml_find_lgl_(paste_sep_slash_expr, "not(SYMBOL_SUB[text() = 'collapse'])")],
         source_expression = source_expression,
         lint_message = paste(
           'Construct file paths with file.path(...) instead of paste(..., sep = "/").',
@@ -337,7 +337,7 @@ paste_linter <- function(allow_empty_sep = FALSE,
 check_is_not_file_path <- function(expr, allow_file_path) {
   arguments <- xml_find_all_(expr, "expr[position() > 1]")
 
-  is_string <- !is.na(xml_find_first_(arguments, "STR_CONST"))
+  is_string <- xml_find_lgl_(arguments, "boolean(STR_CONST)")
   string_values <- character(length(arguments))
   string_values[is_string] <- get_r_string(arguments[is_string])
   not_start_slash <- which(!startsWith(string_values, "/"))
