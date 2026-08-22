@@ -508,11 +508,10 @@ test_that("call-less '(' mentions avoiding implicit printing", {
 })
 
 test_that("allow_paren_print allows `(` for auto printing", {
-  lint_message <- rex::rex("Avoid implicit assignments in function calls.")
   linter <- implicit_assignment_linter(allow_paren_print = TRUE)
   expect_no_lint("(a <- foo())", linter)
 
-  # Doesn't effect other cases
+  # Doesn't affect other cases
   lint_message <- rex::rex("Avoid implicit assignments in function calls.")
   expect_lint("if (x <- 1L) TRUE", lint_message, linter)
   expect_lint("while (x <- 0L) FALSE", lint_message, linter)
@@ -522,5 +521,15 @@ test_that("allow_paren_print allows `(` for auto printing", {
   # default remains as is
   print_msg <- rex::rex("Call print() explicitly instead of relying on implicit printing behavior via '('.")
   expect_lint("(a <- foo())", print_msg, implicit_assignment_linter())
+
+  # vectorizes correctly
+  expect_lint(
+    trim_some("
+      (a <- 1L)
+      mean(b <- 2L)
+    "),
+    list(list(lint_message, line_number = 2L)),
+    linter
+  )
 })
 # fuzzer enable: assignment
