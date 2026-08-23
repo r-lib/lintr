@@ -38,12 +38,12 @@ is_numeric_linter <- function() {
   # TODO(#2470): Consider usages with class(), typeof(), or inherits().
 
   # count() required for lambdas like function(x) x
-  paren_xpath <- "
-    self::expr[OP-LEFT-PAREN and count(expr) = 1 and count(*[not(self::COMMENT)]) = 3]
+  is_paren_expr_xpath <- "
+    boolean(self::expr[OP-LEFT-PAREN and count(expr) = 1 and count(*[not(self::COMMENT)]) = 3])
   "
 
   unwrap_parens <- function(node) {
-    while (!is.na(xml_find_first_(node, paren_xpath))) {
+    while (xml_find_lgl_(node, is_paren_expr_xpath)) {
       node <- xml_find_first_(node, "expr")
     }
     node
@@ -59,7 +59,7 @@ is_numeric_linter <- function() {
       if (xml_find_num_(parent, "count(OR2)") > 0L) {
         return(FALSE)
       }
-      if (is.na(xml_find_first_(parent, paren_xpath))) {
+      if (!xml_find_lgl_(parent, is_paren_expr_xpath)) {
         return(TRUE)
       }
     }
@@ -67,14 +67,10 @@ is_numeric_linter <- function() {
   }
 
   extract_is_numeric_arg <- function(node) {
-    fn_node <-
-      xml_find_first_(node, "expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer']")
-    if (is.na(fn_node)) {
-      return(NULL)
-    }
-    fn <- xml_text(fn_node)
-    arg_node <- xml_find_first_(node, "expr[2]")
-    list(fn = fn, arg = xml2lang(arg_node))
+    list(
+      fn = xml_find_chr_(node, "string(expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer'])"),
+      arg = xml_find_chr_(node, "string(expr[2])")
+    )
   }
 
   has_cross_redundancy <- function(left_res, right_res) {
@@ -103,7 +99,7 @@ is_numeric_linter <- function() {
     }
 
     leaf_info <- extract_is_numeric_arg(node)
-    if (is.null(leaf_info)) {
+    if (leaf_info$fn == "") {
       return(list(lints = list(), num_args = list(), int_args = list()))
     }
 
