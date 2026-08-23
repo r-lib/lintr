@@ -147,19 +147,6 @@ is_numeric_linter <- function() {
 }
 
 any_symmetric_match <- function(left_res, right_res) {
-  for (a1 in left_res$num_args) {
-    for (a2 in right_res$int_args) {
-      if (identical(a1, a2)) {
-        return(TRUE)
-      }
-    }
-  }
-  for (a1 in left_res$int_args) {
-    for (a2 in right_res$num_args) {
-      if (identical(a1, a2)) {
-        return(TRUE)
-      }
-    }
-  }
-  FALSE
+  any(left_res$num_args %in% right_res$int_args) ||
+    any(left_res$int_args %in% right_res$num_args)
 }
