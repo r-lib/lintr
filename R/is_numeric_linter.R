@@ -44,7 +44,7 @@ is_numeric_linter <- function() {
       if (is.na(parent)) {
         return(TRUE)
       }
-      if (xml_find_num_(parent, "count(OR2)") > 0L) {
+      if (xml_find_lgl_(parent, "boolean(OR2)")) {
         return(FALSE)
       }
       if (!xml_find_lgl_(parent, is_paren_expr_xpath)) {
@@ -55,22 +55,21 @@ is_numeric_linter <- function() {
   }
 
   extract_is_numeric_arg <- function(node) {
-    list(
-      fn = xml_find_chr_(node, "string(expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer'])"),
-      arg = xml_find_chr_(node, "string(expr[2])")
-    )
+    fn <- xml_find_chr_(node, "string(expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.integer'])")
+    arg <- if (nzchar(fn)) xml_find_chr_(node, "string(expr[2])") else ""
+    list(fn = fn, arg = arg)
   }
 
   check_or_tree <- function(node) {
     node <- unwrap_parens(node)
 
-    if (xml_find_num_(node, "count(OR2)") > 0L) {
+    if (xml_find_lgl_(node, "boolean(OR2)")) {
       exprs <- xml_find_all_(node, "expr")
       left_res <- check_or_tree(exprs[[1L]])
       right_res <- check_or_tree(exprs[[2L]])
 
       lints <- c(left_res$lints, right_res$lints)
-      if (any_symmetric_match(left_res, right_res)) {
+      if (has_matching_numeric_args(left_res, right_res)) {
         lints <- c(lints, list(node))
       }
 
@@ -85,8 +84,8 @@ is_numeric_linter <- function() {
 
     list(
       lints = list(),
-      num_args = if (leaf_info$fn == "is.numeric") list(leaf_info$arg) else list(),
-      int_args = if (leaf_info$fn == "is.integer") list(leaf_info$arg) else list()
+      num_args = if (leaf_info$fn == "is.numeric" && nzchar(leaf_info$arg)) leaf_info$arg else character(),
+      int_args = if (leaf_info$fn == "is.integer" && nzchar(leaf_info$arg)) leaf_info$arg else character()
     )
   }
 
@@ -106,7 +105,8 @@ is_numeric_linter <- function() {
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    has_both_calls <- all(lengths(source_expression$xml_find_function_calls(c("is.numeric", "is.integer"))))
+    calls <- source_expression$xml_find_function_calls(c("is.numeric", "is.integer"), keep_names = TRUE)
+    has_both_calls <- all(c("is.numeric", "is.integer") %in% names(calls))
 
     or_lints <- list()
     if (has_both_calls) {
@@ -146,7 +146,7 @@ is_numeric_linter <- function() {
   })
 }
 
-any_symmetric_match <- function(left_res, right_res) {
+has_matching_numeric_args <- function(left_res, right_res) {
   any(left_res$num_args %in% right_res$int_args) ||
     any(left_res$int_args %in% right_res$num_args)
 }

@@ -10,6 +10,13 @@ test_that("is_numeric_linter skips allowed usages involving ||", {
   # closure boundaries
   expect_no_lint("(\\() is.numeric(x)) || is.integer(x)", linter)
   expect_no_lint("(function() is.numeric(x)) || is.integer(x)", linter)
+
+  # multi-term || chains with differing symbols or non-redundant types
+  expect_no_lint("is.numeric(x) || is.integer(y) || is.factor(z)", linter)
+  expect_no_lint("is.numeric(x) || is.factor(x) || is.character(x)", linter)
+
+  # && subexpressions inside || chains
+  expect_no_lint("(is.numeric(x) && foo(x)) || is.integer(x)", linter)
 })
 
 test_that("is_numeric_linter skips allowed usages involving %in%", {
@@ -71,11 +78,21 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
   expect_lint("is.factor(x) || is.numeric(x) || is.logical(x) || is.integer(x)", lint_msg, linter)
   expect_lint("is.factor(x) || (is.numeric(x) || is.integer(x))", lint_msg, linter)
   expect_lint("((is.factor(x) || is.numeric(x))) || is.integer(x)", lint_msg, linter)
+  expect_lint("foo() || is.numeric(x) || is.integer(x)", lint_msg, linter)
+  expect_lint("is.factor(x) || base::is.numeric(x) || is.integer(x = x)", lint_msg, linter)
   expect_lint(
     "is.numeric(x) || is.integer(x) || is.numeric(y) || is.integer(y)",
     list(
       list(lint_msg, column_number = 1L),
       list(lint_msg, column_number = 1L)
+    ),
+    linter
+  )
+  expect_lint(
+    "(is.numeric(x) || is.integer(x)) || (is.numeric(y) || is.integer(y))",
+    list(
+      list(lint_msg, column_number = 2L),
+      list(lint_msg, column_number = 38L)
     ),
     linter
   )
