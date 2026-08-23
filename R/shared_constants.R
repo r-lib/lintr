@@ -349,3 +349,21 @@ special_funs <- c(
 is_special_function <- function(x) {
   x %in% special_funs
 }
+
+#' XPath for identifying simple `(expr)` paren-wrapped expressions.
+#'
+#' These must sometimes be distinguished from other uses of `OP-LEFT-PAREN`,
+#'   namely `foo(expr)` function calls (`foo` is itself an `expr`) and
+#'   lambdas (where the first node is instead `FUNCTION` or `OP-LAMBDA`).
+#' @noRd
+is_paren_expr_xpath <- "
+  boolean(self::expr[OP-LEFT-PAREN and count(expr) = 1 and count(*[not(self::COMMENT)]) = 3])
+"
+
+#' Strip out nested `(((((...)))))` to get to the actual expression.
+unwrap_parens <- function(node) {
+  while (xml_find_lgl_(node, is_paren_expr_xpath)) {
+    node <- xml_find_first_(node, "expr")
+  }
+  node
+}

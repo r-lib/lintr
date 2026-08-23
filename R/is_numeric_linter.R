@@ -37,18 +37,6 @@ is_numeric_linter <- function() {
   # TODO(#2469): This should also cover is.double(x) || is.integer(x).
   # TODO(#2470): Consider usages with class(), typeof(), or inherits().
 
-  # count() required for lambdas like function(x) x
-  is_paren_expr_xpath <- "
-    boolean(self::expr[OP-LEFT-PAREN and count(expr) = 1 and count(*[not(self::COMMENT)]) = 3])
-  "
-
-  unwrap_parens <- function(node) {
-    while (xml_find_lgl_(node, is_paren_expr_xpath)) {
-      node <- xml_find_first_(node, "expr")
-    }
-    node
-  }
-
   is_or_root <- function(node) {
     parent <- node
     repeat {
