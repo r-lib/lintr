@@ -61,21 +61,16 @@ is_numeric_linter <- function() {
     )
   }
 
-  has_cross_redundancy <- function(left_res, right_res) {
-    matches_any(left_res$num_args, right_res$int_args) ||
-      matches_any(left_res$int_args, right_res$num_args)
-  }
-
   check_or_tree <- function(node) {
     node <- unwrap_parens(node)
 
-    # nolint next: implicit_assignment_linter. Allows us to reduce nesting.
-    if (xml_find_num_(node, "count(OR2)") > 0L && length(exprs <- xml_find_all_(node, "expr")) == 2L) {
+    if (xml_find_num_(node, "count(OR2)") > 0L) {
+      exprs <- xml_find_all_(node, "expr")
       left_res <- check_or_tree(exprs[[1L]])
       right_res <- check_or_tree(exprs[[2L]])
 
       lints <- c(left_res$lints, right_res$lints)
-      if (has_cross_redundancy(left_res, right_res)) {
+      if (any_symmetric_match(left_res, right_res)) {
         lints <- c(lints, list(node))
       }
 
@@ -87,9 +82,6 @@ is_numeric_linter <- function() {
     }
 
     leaf_info <- extract_is_numeric_arg(node)
-    if (leaf_info$fn == "") {
-      return(list(lints = list(), num_args = list(), int_args = list()))
-    }
 
     list(
       lints = list(),
@@ -154,9 +146,16 @@ is_numeric_linter <- function() {
   })
 }
 
-matches_any <- function(args1, args2) {
-  for (a1 in args1) {
-    for (a2 in args2) {
+any_symmetric_match <- function(left_res, right_res) {
+  for (a1 in left_res$num_args) {
+    for (a2 in right_res$int_args) {
+      if (identical(a1, a2)) {
+        return(TRUE)
+      }
+    }
+  }
+  for (a1 in left_res$int_args) {
+    for (a2 in right_res$num_args) {
       if (identical(a1, a2)) {
         return(TRUE)
       }
