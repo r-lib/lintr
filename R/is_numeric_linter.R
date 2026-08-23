@@ -51,7 +51,6 @@ is_numeric_linter <- function() {
         return(TRUE)
       }
     }
-    TRUE
   }
 
   extract_is_numeric_arg <- function(node) {
@@ -68,10 +67,10 @@ is_numeric_linter <- function() {
       left_res <- check_or_tree(exprs[[1L]])
       right_res <- check_or_tree(exprs[[2L]])
 
-      lints <- c(left_res$lints, right_res$lints)
-      if (has_matching_numeric_args(left_res, right_res)) {
-        lints <- c(lints, list(node))
-      }
+      lints <- c(
+        left_res$lints, right_res$lints,
+        lints_from_matching_args(node, left_res, right_res)
+      )
 
       return(list(
         lints = lints,
@@ -84,8 +83,8 @@ is_numeric_linter <- function() {
 
     list(
       lints = list(),
-      num_args = if (leaf_info$fn == "is.numeric" && nzchar(leaf_info$arg)) leaf_info$arg else character(),
-      int_args = if (leaf_info$fn == "is.integer" && nzchar(leaf_info$arg)) leaf_info$arg else character()
+      num_args = if (leaf_info$fn == "is.numeric") leaf_info$arg else character(),
+      int_args = if (leaf_info$fn == "is.integer") leaf_info$arg else character()
     )
   }
 
@@ -146,7 +145,12 @@ is_numeric_linter <- function() {
   })
 }
 
-has_matching_numeric_args <- function(left_res, right_res) {
-  any(left_res$num_args %in% right_res$int_args) ||
-    any(left_res$int_args %in% right_res$num_args)
+lints_from_matching_args <- function(node, left_res, right_res) {
+  if (any(left_res$num_args %in% right_res$int_args)) {
+    return(list(node))
+  }
+  if (any(left_res$int_args %in% right_res$num_args)) {
+    return(list(node))
+  }
+  NULL
 }
