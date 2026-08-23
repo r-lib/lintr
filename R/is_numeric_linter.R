@@ -37,6 +37,7 @@ is_numeric_linter <- function() {
   # TODO(#2469): This should also cover is.double(x) || is.integer(x).
   # TODO(#2470): Consider usages with class(), typeof(), or inherits().
 
+  # count() required for lambdas like function(x) x
   paren_xpath <- "
     self::expr[OP-LEFT-PAREN and count(expr) = 1 and count(*[not(self::COMMENT)]) = 3]
   "
@@ -74,17 +75,6 @@ is_numeric_linter <- function() {
     fn <- xml_text(fn_node)
     arg_node <- xml_find_first_(node, "expr[2]")
     list(fn = fn, arg = xml2lang(arg_node))
-  }
-
-  matches_any <- function(args1, args2) {
-    for (a1 in args1) {
-      for (a2 in args2) {
-        if (identical(a1, a2)) {
-          return(TRUE)
-        }
-      }
-    }
-    FALSE
   }
 
   has_cross_redundancy <- function(left_res, right_res) {
@@ -178,4 +168,15 @@ is_numeric_linter <- function() {
 
     c(or_lints, class_lints)
   })
+}
+
+matches_any <- function(args1, args2) {
+  for (a1 in args1) {
+    for (a2 in args2) {
+      if (identical(a1, a2)) {
+        return(TRUE)
+      }
+    }
+  }
+  FALSE
 }
