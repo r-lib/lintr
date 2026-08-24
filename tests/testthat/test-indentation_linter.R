@@ -539,6 +539,16 @@ test_that("indentation works with control flow statements", {
     linter
   )
 
+  expect_no_lint(
+    trim_some("
+      if (TRUE ||
+        FALSE) {
+        TRUE
+      }
+    "),
+    linter
+  )
+
   expect_lint(
     trim_some("
       while (1 > 2) {
