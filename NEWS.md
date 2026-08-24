@@ -4,7 +4,6 @@
 
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
-* Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
 
 ## New and improved features
 
