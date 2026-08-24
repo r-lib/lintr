@@ -136,6 +136,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     never = \(change) "block"
   )
 
+  xp_cond_same_line_paren <- glue("
+    ancestor::expr[
+      (parent::expr[IF or WHILE] and following-sibling::OP-RIGHT-PAREN)
+      and preceding-sibling::OP-LEFT-PAREN[not({xp_last_on_line})]
+    ]
+  ")
+
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
     xp_suppress <- glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
@@ -195,7 +202,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
           ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
         ]/@line1
       )]"),
-      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
+      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition} and not({xp_cond_same_line_paren})]"),
       glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
       glue("
         ({ global_nodes(keyword_tokens) })
@@ -374,7 +381,8 @@ build_indentation_style_tidy <- function() {
           /following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
       "),
       glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]"),
-      glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]")
+      glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]"),
+      glue("self::{paren_tokens_left}[parent::expr[IF or WHILE]]")
     ),
     collapse = "\n|  "
   ))
