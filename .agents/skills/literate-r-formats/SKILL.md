@@ -13,27 +13,35 @@ When modifying how `lintr` extracts R source code from literate programming and 
 
 ## 2. Chunk Bounds & `eval=FALSE` Filtering
 - **Two-phase chunk boundary detection:** `get_chunk_positions(pattern, lines)` determines chunk bounds by pairing opening pattern matches (`filter_chunk_start_positions()`) with closing pattern matches (`filter_chunk_end_positions()`), then retaining only blocks containing at least one line of inner code (`ends - starts > 1L`).
-- **Filter non-evaluated chunks:** Filter out unevaluated chunks by inspecting both chunk header options and inside-chunk YAML/pipe options (`#| eval: false`):
+- **Filter non-evaluated chunks:** Filter out unevaluated chunks by inspecting both chunk header options and inside-chunk YAML/pipe options (`#| eval: false`, `#| engine: python`):
   ```r
-  non_eval_chunk <- function(start, end, lines, pattern) {
+  is_eval_chunk <- function(start, end, lines, pattern) {
     header <- lines[start]
     params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
-    header_params <- xfun::csv_options(params_src)
+    header_params <- safe_csv_options(params_src)
 
     code <- lines[(start + 1L):(end - 1L)]
-    body_params <- xfun::divide_chunk("r", code)$options
+    body_params <- tryCatch(
+      suppressMessages(suppressWarnings(xfun::divide_chunk("r", code)))$options,
+      error = \(e) NULL
+    )
+
+    engine <- body_params$engine %||% header_params$engine
+    if (!is.null(engine) && tolower(as.character(engine[1L])) != "r") {
+      return(FALSE)
+    }
 
     eval_value <- body_params$eval %||% header_params$eval
     # nolint next: T_and_F_symbol_linter.
     if (identical(eval_value, quote(F))) {
-      return(TRUE)
+      return(FALSE)
     }
-    isFALSE(eval_value)
+    !isFALSE(eval_value)
   }
   ```
 
 ## 3. Engine Detection
-- **Detect non-R engines on opening lines:** `defines_knitr_engine()` inspects chunk start lines to drop chunks explicitly targeting non-R engines (`{python}`, `engine = "bash"`).
+- **Detect R engines on opening lines:** `is_r_chunk_header()` inspects chunk start lines to retain chunks targeting R engines (`{r}`, `{R}`, `engine = "R"`) while skipping non-R engines (`{python}`, `{extendr}`, `{ojs}`, `{mermaid}`, `{dot}`, `engine = "bash"`).
 
 ## 4. Multi-Format Testing Conventions
 - **Test across document families:** When modifying `R/extract.R`, verify extraction behavior across all major literate families (`.Rmd`, `.qmd`, and `.Rnw`) inside `tests/testthat/test-knitr_formats.R`.
