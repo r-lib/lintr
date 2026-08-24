@@ -570,7 +570,10 @@ test_that("indentation works with control flow statements", {
         }
       }
     "),
-    rex::rex("Indentation should be 4 spaces but is 6 spaces (or start argument on previous line)."),
+    list(
+      rex::rex("Indentation should be 4 spaces but is 6 spaces (or start argument on previous line)."),
+      line_number = 3L
+    ),
     linter
   )
 
@@ -583,7 +586,7 @@ test_that("indentation works with control flow statements", {
         }
       }
     "),
-    rex::rex("Indentation should be 4 spaces but is 3 spaces."),
+    list(rex::rex("Indentation should be 4 spaces but is 3 spaces."), line_number = 3L),
     linter
   )
 })
