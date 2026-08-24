@@ -156,12 +156,9 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     # suppress the indent if the matched ancestor is a suppressing token
     infix_condition <- glue("
       and not(ancestor::expr[{xp_or(c(xp_suppress, xp_restore))}][1][{xp_or(xp_suppress)}])
-      and not({xp_cond_same_line_paren})
     ")
   } else {
-    infix_condition <- glue("
-      and not({xp_cond_same_line_paren})
-    ")
+    infix_condition <- ""
   }
 
   xp_block_ends <- paste0(
@@ -205,7 +202,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
           ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
         ]/@line1
       )]"),
-      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
+      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition} and not({xp_cond_same_line_paren})]"),
       glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
       glue("
         ({ global_nodes(keyword_tokens) })
