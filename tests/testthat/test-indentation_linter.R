@@ -66,12 +66,24 @@ test_that("indentation linter flags unindented expressions", {
     indentation_linter(indent = 4L)
   )
 
-  # ugly code, but still correctly indented
-  expect_no_lint(
+  expect_lint(
     trim_some("
       list(
            1,
            2)
+    "),
+    list(
+      rex::rex("Indentation should be 2 spaces but is 5 spaces (or start argument on previous line)."),
+      line_number = 2L
+    ),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      list(
+        1,
+        2)
     "),
     linter
   )
@@ -294,9 +306,9 @@ test_that("function argument indentation works in always-hanging-style", { # nof
 
   expect_lint(
     trim_some("
-      function(
-          a = 1L,
-          b = 2L) {
+      function(a = 1L,
+        b = 2L
+      ) {
         a + b
       }
     "),
@@ -306,17 +318,40 @@ test_that("function argument indentation works in always-hanging-style", { # nof
 
   expect_no_lint(
     trim_some("
-      function(
-               a = 1L,
-               b = 2L) {
+      function(a = 1L,
+               b = 2L
+      ) {
         a + b
       }
     "),
     linter
   )
 
-  # Block is only allowed if there is no argument next to ")"
   expect_lint(
+    trim_some("
+      function(
+          a = 1L,
+          b = 2L) {
+        a + b
+      }
+    "),
+    rex::rex("Indentation should be 2 spaces but is 4 spaces."),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(
+               a = 1L,
+               b = 2L) {
+        a + b
+      }
+    "),
+    rex::rex("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)."),
+    linter
+  )
+
+  expect_no_lint(
     trim_some("
       function(
         a = 1L,
@@ -324,7 +359,6 @@ test_that("function argument indentation works in always-hanging-style", { # nof
         a + b
       }
     "),
-    "Hanging",
     linter
   )
 
@@ -616,7 +650,7 @@ test_that("indentation lint messages are dynamic", {
 
   expect_lint(
     trim_some("
-      fun(
+      fun(x,
         3) # should be 4
     "),
     rex::rex("Hanging indent should be 4 spaces but is 2 spaces."),
@@ -663,7 +697,7 @@ test_that("indentation within string constants is ignored", {
       '
     "),
     list(
-      list(rex::rex("Hanging indent should be 4 spaces but is 0 spaces."), line_number = 2L),
+      list(rex::rex("Indentation should be 2 spaces but is 0 spaces."), line_number = 2L),
       list(rex::rex("Indentation should be 0 spaces but is 2 spaces"), line_number = 11L)
     ),
     linter
@@ -1100,6 +1134,95 @@ test_that("for loop gets correct linting", {
        }
     "),
     lint_msg,
+    linter
+  )
+})
+
+test_that("closing parentheses on multi-line calls without first-line args work (#2144)", {
+  linter <- indentation_linter()
+
+  expect_no_lint(
+    trim_some('
+      test_that("unreachable_code_linter works in sub expressions", {
+        linter <- unreachable_code_linter()
+        msg <- rex::rex("Code and comments coming after a return() or stop()")
+
+        expect_lint(
+          lines,
+          list(
+            list(line_number = 4L, message = msg),
+            list(line_number = 7L, message = msg),
+            list(line_number = 10L, message = msg),
+            list(line_number = 15L, message = msg)
+          ),
+          linter)
+      })
+    '),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      foo(
+        a,
+        b)
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      foo(
+        a,
+        b,
+        c)
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      dt[
+        1:10,
+        x := 1]
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      x[[
+        'a',
+        exact = TRUE]]
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      if (TRUE) {
+        1 + 1}
+    "),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo(
+          a,
+          b)
+    "),
+    rex::rex("Indentation should be 2 spaces but is 4 spaces (or start argument on previous line)."),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo(
+            a,
+            b)
+    "),
+    rex::rex("Indentation should be 2 spaces but is 6 spaces."),
     linter
   )
 })
