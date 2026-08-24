@@ -46,6 +46,29 @@ safe_parse_to_xml <- function(parsed_content) {
   )
 }
 
+#' XPath for identifying simple `(expr)` paren-wrapped expressions.
+#'
+#' These must sometimes be distinguished from other uses of `OP-LEFT-PAREN`,
+#'   namely `foo(expr)` function calls (`foo` is itself an `expr`) and
+#'   lambdas (where the first node is instead `FUNCTION` or `OP-LAMBDA`).
+#' @noRd
+is_paren_expr_xpath <- "
+  boolean(self::expr[
+    *[not(self::COMMENT)][1][self::OP-LEFT-PAREN]
+    and count(expr) = 1
+    and count(*[not(self::COMMENT)]) = 3
+  ])
+"
+
+#' Strip out nested `(((((...)))))` to get to the actual expression.
+#' @noRd
+unwrap_parens <- function(node) {
+  while (xml_find_lgl_(node, is_paren_expr_xpath)) {
+    node <- xml_find_first_(node, "expr")
+  }
+  node
+}
+
 is_node <- function(xml) inherits(xml, "xml_node")
 is_nodeset <- function(xml) inherits(xml, "xml_nodeset")
 is_nodeset_like <- function(xml) {
