@@ -426,12 +426,16 @@ test_that("non-R code blocks are ignored (#1896)", {
   expect_lint(
     file = qmd_file,
     checks = list(regexes[["assign"]], line_number = 7L),
-    linter
+    linters = linter
   )
 
-  # .Rnw with engine="python" vs engine="R"
+  # .Rnw with default R engine and explicit engine="python" vs engine="R"
   expect_lint(
     trim_some('
+      <<chunk-0>>=
+      initial_bad = 0
+      @
+
       <<chunk-1, engine = "python">>=
       a = [1, 2]
       @
@@ -445,9 +449,32 @@ test_that("non-R code blocks are ignored (#1896)", {
       @
     '),
     list(
-      list(regexes[["assign"]], line_number = 6L),
-      list(regexes[["assign"]], line_number = 10L)
+      list(regexes[["assign"]], line_number = 2L),
+      list(regexes[["assign"]], line_number = 10L),
+      list(regexes[["assign"]], line_number = 14L)
     ),
+    linter
+  )
+
+  # Document containing only non-R code blocks extracts cleanly with 0 lints
+  expect_no_lint(
+    trim_some("
+      ```{python}
+      a = 1
+      b = 2
+      ```
+    "),
+    linters = linter
+  )
+
+  # Uppercase {R} fence
+  expect_lint(
+    trim_some("
+      ```{R}
+      bad_code = 1
+      ```
+    "),
+    list(regexes[["assign"]], line_number = 2L),
     linter
   )
 })

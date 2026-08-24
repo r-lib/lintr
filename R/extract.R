@@ -164,7 +164,8 @@ is_r_chunk_header <- function(start_lines, pattern = knitr::all_patterns$md) {
     USE.NAMES = FALSE
   )
   has_valid_engine <- nzchar(explicit_engines)
-  is_r[has_explicit_engine][has_valid_engine] <- tolower(explicit_engines[has_valid_engine]) == "r"
+  explicit_idx <- which(has_explicit_engine)[has_valid_engine]
+  is_r[explicit_idx] <- tolower(explicit_engines[has_valid_engine]) == "r"
   is_r
 }
 
