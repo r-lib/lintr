@@ -136,6 +136,13 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     never = \(change) "block"
   )
 
+  xp_cond_same_line_paren <- glue("
+    ancestor::expr[
+      (parent::expr[IF or WHILE] and following-sibling::OP-RIGHT-PAREN)
+      and preceding-sibling::OP-LEFT-PAREN[not({xp_last_on_line})]
+    ]
+  ")
+
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
     xp_suppress <- glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
@@ -149,9 +156,12 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     # suppress the indent if the matched ancestor is a suppressing token
     infix_condition <- glue("
       and not(ancestor::expr[{xp_or(c(xp_suppress, xp_restore))}][1][{xp_or(xp_suppress)}])
+      and not({xp_cond_same_line_paren})
     ")
   } else {
-    infix_condition <- ""
+    infix_condition <- glue("
+      and not({xp_cond_same_line_paren})
+    ")
   }
 
   xp_block_ends <- paste0(
@@ -374,7 +384,8 @@ build_indentation_style_tidy <- function() {
           /following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
       "),
       glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]"),
-      glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]")
+      glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]"),
+      glue("self::{paren_tokens_left}[parent::expr[IF or WHILE]]")
     ),
     collapse = "\n|  "
   ))
