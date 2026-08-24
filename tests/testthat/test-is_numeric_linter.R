@@ -58,7 +58,7 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
   expect_lint("is.numeric(a) || is.integer(x = a)", lint_msg, linter)
   expect_lint("base::is.numeric(x) || base::is.integer(x)", lint_msg, linter)
 
-  # line breaks don't matter
+  # line breaks and comments don't matter
   lines <- trim_some("
     if (
       is.integer(x)
@@ -66,6 +66,19 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
     ) TRUE
   ")
   expect_lint(lines, lint_msg, linter)
+  expect_lint(
+    trim_some("
+      is.numeric( # comment
+        foo(x)
+      ) || is.integer( # comment
+        foo( # comment
+          x # comment
+        ) # comment
+      )
+    "),
+    lint_msg,
+    linter
+  )
 
   # caught when nesting
   expect_lint("all(y > 5) && (is.integer(x) || is.numeric(x))", lint_msg, linter)

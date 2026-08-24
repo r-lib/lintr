@@ -111,6 +111,7 @@ is_numeric_linter <- function() {
     if (has_both_calls) {
       all_or <- xml_find_all_(xml, "//OR2/parent::expr")
       or_expr <- all_or[vapply(all_or, is_or_root, logical(1L))] |>
+        strip_comments_from_subtree() |>
         lapply(\(root) check_or_tree(root)$lints) |>
         unlist(recursive = FALSE)
       or_lints <- xml_nodes_to_lints(
