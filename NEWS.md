@@ -22,8 +22,8 @@
 
 ### Lint accuracy fixes: removing false positives
 
-* `indentation_linter()` handles multi-line conditional expressions (`if` and `while`) formatted with standard block indentation or formatted by `{styler}` without emitting false positives (#2007, @MichaelChirico).
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
+* `indentation_linter()` better aligns with {styler} and {air} in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
