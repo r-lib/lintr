@@ -222,24 +222,6 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     collapse = " | "
   )
 
-  xp_prev_content <- paste0(
-    "preceding-sibling::*[not(",
-    xp_or(paste0("self::", c("COMMENT", paren_tokens_right))),
-    ")][1]"
-  )
-  xp_bad_closing <- paste(
-    glue("
-      //{paren_tokens_left_no_brace}[
-        {xp_last_on_line}
-      ]
-        /following-sibling::*[{xp_or(paste0('self::', paren_tokens_right))}][1][
-          @line1 = {xp_prev_content}/@line2
-          and @line1 > preceding-sibling::*[{xp_or(paste0('self::', paren_tokens_left_no_brace))}][1]/@line1
-        ]
-    "),
-    collapse = " | "
-  )
-
   xp_multiline_string <- "//STR_CONST[@line1 < @line2]"
   build_line_metadata <- function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
@@ -304,37 +286,23 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     #     + if there is no token following ( on the same line, a block indent is required until )
     #  - binary operators where the second arguments starts on a new line
 
-    xml <- source_expression$full_xml_parsed_content
-    bad_closing_nodes <- xml_find_all_(xml, xp_bad_closing)
-    closing_lints <- if (length(bad_closing_nodes) > 0L) {
-      xml_nodes_to_lints(
-        bad_closing_nodes,
-        source_expression = source_expression,
-        lint_message = sprintf("Closing '%s' should be on a separate line.", xml_text(bad_closing_nodes)),
-        type = "style"
-      )
-    }
-
     lint_line_df <- build_line_metadata(source_expression)
 
     if (nrow(lint_line_df) == 0L) {
-      return(closing_lints)
+      return(list())
     }
 
     lint_metadata <- indent_lint_metadata(lint_line_df)
 
-    c(
-      closing_lints,
-      Map(
-        Lint,
-        filename = source_expression$filename,
-        line_number = lint_metadata$line_numbers,
-        column_number = lint_metadata$column_numbers,
-        type = "style",
-        message = lint_metadata$lint_messages,
-        line = lint_metadata$lines,
-        ranges = lint_metadata$ranges
-      )
+    Map(
+      Lint,
+      filename = source_expression$filename,
+      line_number = lint_metadata$line_numbers,
+      column_number = lint_metadata$column_numbers,
+      type = "style",
+      message = lint_metadata$lint_messages,
+      line = lint_metadata$lines,
+      ranges = lint_metadata$ranges
     )
   })
 }
