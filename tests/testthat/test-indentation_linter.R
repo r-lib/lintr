@@ -336,11 +336,11 @@ test_that("function argument indentation works in always-hanging-style", { # nof
         a + b
       }
     "),
-    rex::rex("Indentation should be 2 spaces but is 4 spaces."),
+    "Hanging",
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       function(
                a = 1L,
@@ -348,11 +348,11 @@ test_that("function argument indentation works in always-hanging-style", { # nof
         a + b
       }
     "),
-    rex::rex("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)."),
     linter
   )
 
-  expect_no_lint(
+  # Block is only allowed if there is no argument next to ")"
+  expect_lint(
     trim_some("
       function(
         a = 1L,
@@ -360,6 +360,7 @@ test_that("function argument indentation works in always-hanging-style", { # nof
         a + b
       }
     "),
+    "Hanging",
     linter
   )
 

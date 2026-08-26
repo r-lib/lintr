@@ -395,8 +395,14 @@ build_indentation_style_tidy <- function() {
 
 build_indentation_style_always <- function() {
   paren_tokens_left_no_brace <- c("OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET")
   xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
-  xp_is_hanging <- glue("not({xp_last_on_line})")
+  xp_right <- xp_or(paste0("self::", paren_tokens_right))
+
+  xp_is_hanging <- glue("
+    not({xp_last_on_line})
+    or following-sibling::*[{xp_right}][not(@line1 > preceding-sibling::*[1]/@line2)]
+  ")
 
   function(change) {
     if (xml_name_(change) %in% paren_tokens_left_no_brace && xml_find_lgl_(change, xp_is_hanging)) {
