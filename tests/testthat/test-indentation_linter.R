@@ -73,8 +73,27 @@ test_that("indentation linter flags unindented expressions", {
            2)
     "),
     list(
-      rex::rex("Indentation should be 2 spaces but is 5 spaces (or start argument on previous line)."),
-      line_number = 2L
+      list(
+        rex::rex("Indentation should be 2 spaces but is 5 spaces (or start argument on previous line)."),
+        line_number = 2L
+      ),
+      list(
+        rex::rex("Closing ')' should be on a separate line."),
+        line_number = 3L
+      )
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      list(
+        1,
+        2)
+    "),
+    list(
+      rex::rex("Closing ')' should be on a separate line."),
+      line_number = 3L
     ),
     linter
   )
@@ -83,7 +102,8 @@ test_that("indentation linter flags unindented expressions", {
     trim_some("
       list(
         1,
-        2)
+        2
+      )
     "),
     linter
   )
@@ -186,7 +206,10 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    rex::rex("Indentation should be 2 spaces but is 4 spaces."),
+    list(
+      list(rex::rex("Indentation should be 2 spaces but is 4 spaces."), line_number = 2L),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L)
+    ),
     linter
   )
 
@@ -198,7 +221,10 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    rex::rex("Indentation should be 2 spaces but is 6 spaces."),
+    list(
+      list(rex::rex("Indentation should be 2 spaces but is 6 spaces."), line_number = 2L),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L)
+    ),
     linter
   )
 
@@ -211,7 +237,13 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a + b
       }
     "),
-    rex::rex("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)"),
+    list(
+      list(
+        rex::rex("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)"),
+        line_number = 2L
+      ),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L)
+    ),
     linter
   )
 
@@ -271,7 +303,11 @@ test_that("function argument indentation works in tidyverse-style", { # nofuzz: 
         a()
       }
     "),
-    list(rex::rex("Indentation should be 4 spaces but is 8 spaces."), line_number = 3L),
+    list(
+      list(rex::rex("Indentation should be 4 spaces but is 8 spaces."), line_number = 3L),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 5L)
+    ),
     linter
   )
 
@@ -335,7 +371,10 @@ test_that("function argument indentation works in always-hanging-style", { # nof
         a + b
       }
     "),
-    rex::rex("Indentation should be 2 spaces but is 4 spaces."),
+    list(
+      list(rex::rex("Indentation should be 2 spaces but is 4 spaces."), line_number = 2L),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L)
+    ),
     linter
   )
 
@@ -347,11 +386,17 @@ test_that("function argument indentation works in always-hanging-style", { # nof
         a + b
       }
     "),
-    rex::rex("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)."),
+    list(
+      list(
+        rex::rex("Indentation should be 2 spaces but is 9 spaces (or start argument on previous line)."),
+        line_number = 2L
+      ),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L)
+    ),
     linter
   )
 
-  expect_no_lint(
+  expect_lint(
     trim_some("
       function(
         a = 1L,
@@ -359,6 +404,7 @@ test_that("function argument indentation works in always-hanging-style", { # nof
         a + b
       }
     "),
+    list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L),
     linter
   )
 
@@ -698,6 +744,7 @@ test_that("indentation within string constants is ignored", {
     "),
     list(
       list(rex::rex("Indentation should be 2 spaces but is 0 spaces."), line_number = 2L),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 4L),
       list(rex::rex("Indentation should be 0 spaces but is 2 spaces"), line_number = 11L)
     ),
     linter
@@ -1141,7 +1188,7 @@ test_that("for loop gets correct linting", {
 test_that("closing parentheses on multi-line calls without first-line args work (#2144)", {
   linter <- indentation_linter()
 
-  expect_no_lint(
+  expect_lint(
     trim_some('
       test_that("unreachable_code_linter works in sub expressions", {
         linter <- unreachable_code_linter()
@@ -1158,6 +1205,41 @@ test_that("closing parentheses on multi-line calls without first-line args work 
           linter)
       })
     '),
+    list(
+      rex::rex("Closing ')' should be on a separate line."),
+      line_number = 13L
+    ),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some('
+      test_that("unreachable_code_linter works in sub expressions", {
+        linter <- unreachable_code_linter()
+        msg <- rex::rex("Code and comments coming after a return() or stop()")
+
+        expect_lint(
+          lines,
+          list(
+            list(line_number = 4L, message = msg),
+            list(line_number = 7L, message = msg),
+            list(line_number = 10L, message = msg),
+            list(line_number = 15L, message = msg)
+          ),
+          linter
+        )
+      })
+    '),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo(
+        a,
+        b)
+    "),
+    list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L),
     linter
   )
 
@@ -1165,18 +1247,30 @@ test_that("closing parentheses on multi-line calls without first-line args work 
     trim_some("
       foo(
         a,
-        b)
+        b
+      )
     "),
     linter
   )
 
-  expect_no_lint(
+  expect_lint(
     trim_some("
       foo(
         a,
         b,
         c)
     "),
+    list(rex::rex("Closing ')' should be on a separate line."), line_number = 4L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      dt[
+        1:10,
+        x := 1]
+    "),
+    list(rex::rex("Closing ']' should be on a separate line."), line_number = 3L),
     linter
   )
 
@@ -1184,8 +1278,19 @@ test_that("closing parentheses on multi-line calls without first-line args work 
     trim_some("
       dt[
         1:10,
-        x := 1]
+        x := 1
+      ]
     "),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      x[[
+        'a',
+        exact = TRUE]]
+    "),
+    list(rex::rex("Closing ']' should be on a separate line."), line_number = 3L),
     linter
   )
 
@@ -1193,7 +1298,8 @@ test_that("closing parentheses on multi-line calls without first-line args work 
     trim_some("
       x[[
         'a',
-        exact = TRUE]]
+        exact = TRUE
+      ]]
     "),
     linter
   )
@@ -1212,7 +1318,13 @@ test_that("closing parentheses on multi-line calls without first-line args work 
           a,
           b)
     "),
-    rex::rex("Indentation should be 2 spaces but is 4 spaces (or start argument on previous line)."),
+    list(
+      list(
+        rex::rex("Indentation should be 2 spaces but is 4 spaces (or start argument on previous line)."),
+        line_number = 2L
+      ),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L)
+    ),
     linter
   )
 
@@ -1222,7 +1334,10 @@ test_that("closing parentheses on multi-line calls without first-line args work 
             a,
             b)
     "),
-    rex::rex("Indentation should be 2 spaces but is 6 spaces."),
+    list(
+      list(rex::rex("Indentation should be 2 spaces but is 6 spaces."), line_number = 2L),
+      list(rex::rex("Closing ')' should be on a separate line."), line_number = 3L)
+    ),
     linter
   )
 })
