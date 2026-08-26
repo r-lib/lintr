@@ -1144,26 +1144,6 @@ test_that("closing parentheses on multi-line calls without first-line args work 
   linter <- indentation_linter()
 
   expect_no_lint(
-    trim_some('
-      test_that("unreachable_code_linter works in sub expressions", {
-        linter <- unreachable_code_linter()
-        msg <- rex::rex("Code and comments coming after a return() or stop()")
-
-        expect_lint(
-          lines,
-          list(
-            list(line_number = 4L, message = msg),
-            list(line_number = 7L, message = msg),
-            list(line_number = 10L, message = msg),
-            list(line_number = 15L, message = msg)
-          ),
-          linter)
-      })
-    '),
-    linter
-  )
-
-  expect_no_lint(
     trim_some("
       foo(
         a,
@@ -1178,6 +1158,19 @@ test_that("closing parentheses on multi-line calls without first-line args work 
         a,
         b,
         c)
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      foo(
+        a,
+        list(
+          b = 1L,
+          c = 2L
+        ),
+        d)
     "),
     linter
   )
