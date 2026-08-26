@@ -79,6 +79,7 @@ test_that("indentation linter flags unindented expressions", {
     linter
   )
 
+  # the _indentation_ here is correct, though ')' will be corrected by styler/air
   expect_no_lint(
     trim_some("
       list(
