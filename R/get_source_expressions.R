@@ -682,18 +682,15 @@ top_level_expressions <- function(pc) {
   which(pc$parent <= 0L)
 }
 
-# `#line` directives are parser directives, not expressions; {lintr} has no reason to treat one as
-#   anything other than a comment, and leaving it labelled LINE_DIRECTIVE means the rare file that
-#   really uses the construct can produce subtly wrong lints.
-# Relabelling alone is not enough. R also declines to treat LINE_DIRECTIVE as comment-like when it
-#   assigns parents, with two consequences: the directive itself is left an orphan (parent 0), and a
-#   neighbouring COMMENT can be attached to the directive instead of skipping over it (parent
-#   -<directive id>). Either way a positionally nested node is reported with parent <= 0, so
-#   top_level_expressions() counts it while xmlparsedata::xml_parse_data() -- which nests purely by
-#   source position -- does not emit a matching /exprlist/* node, and zipping the two errors (#3106).
-#   Fixed in r-devel (PR#19137, https://bugs.r-project.org/show_bug.cgi?id=19137) by making
-#   finalizeData() treat LINE_DIRECTIVE as comment-like:
-#   https://github.com/r-devel/r-svn/commit/5a482292547659cf25163d96ff1ef15b22dc82e8
+# `#line` directives are parser directives, not expressions, so treat them as comments.
+# Relabelling alone is not enough: R does not treat LINE_DIRECTIVE as comment-like when assigning
+#   parents. A directive nested in a block is left an orphan (parent 0), and a comment whose next
+#   token is a directive is bound to that directive (parent -<directive id>) rather than skipping
+#   over it. Either way a positionally nested node is reported with parent <= 0, so
+#   top_level_expressions() counts it while xmlparsedata::xml_parse_data() -- which nests by source
+#   position -- emits no matching /exprlist/* node, and zipping the two errors (#3106). Fixed in
+#   r-devel by making finalizeData() treat LINE_DIRECTIVE as comment-like (PR#19137,
+#   https://bugs.r-project.org/show_bug.cgi?id=19137).
 # TODO(R>=4.7.0): remove the re-parenting below; the COMMENT relabelling is ours to keep.
 fix_line_directives <- function(pc) {
   is_directive <- pc$token == "LINE_DIRECTIVE"
@@ -702,7 +699,10 @@ fix_line_directives <- function(pc) {
   }
   pc$token[is_directive] <- "COMMENT"
 
-  # Only files using the directive reach here, so plain comments elsewhere keep R's parents.
+  # `<= 0`, not `== 0`: a comment immediately preceding a directive is bound to it with a negative
+  #   parent and needs re-parenting too (see "a comment neighbouring a #line directive" in
+  #   test-get_source_expressions.R). Comments bound to a real expression are never positionally
+  #   enclosed by one, so the loop below leaves them alone.
   orphans <- which(pc$token == "COMMENT" & pc$parent <= 0L)
   if (length(orphans) == 0L) {
     return(pc)
