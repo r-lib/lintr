@@ -86,7 +86,10 @@ library_call_linter <- function(allow_preamble = TRUE) {
   attach_call_cond <- xp_text_in_table(attach_calls)
   suppress_call_cond <- xp_text_in_table(c("suppressMessages", "suppressPackageStartupMessages"))
 
-  unsuppressed_call_cond <- glue("not( {xp_or(attach_call_cond, suppress_call_cond)} )")
+  unsuppressed_call_cond <- xp_and(
+    glue("not( {xp_or(attach_call_cond, suppress_call_cond)} )"),
+    glue("not(ancestor::expr[expr/SYMBOL_FUNCTION_CALL[{ attach_call_cond }]])")
+  )
   if (allow_preamble) {
     unsuppressed_call_cond <- xp_and(
       unsuppressed_call_cond,
