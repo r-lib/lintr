@@ -1,5 +1,9 @@
 # lintr (in development)
 
+## Deprecations & breaking changes
+
+* Arguments `exclude_operators=` and `allow_multiple_spaces=` to `infix_spaces_linter()` are deprecated in favor of the new `overrides=` and `default_style=` arguments (#3127, @adityaruplaha). Use `overrides = list(any = <operators>)` instead of `exclude_operators = <operators>`, and `default_style = "one"` instead of `allow_multiple_spaces = FALSE`. See below about the new arguments.
+
 ## Bug fixes
 
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
@@ -16,6 +20,7 @@
 
 ### Linter improvements
 
+* `infix_spaces_linter()` can enforce a different spacing style per operator with the new `overrides=` argument, including `"none"` to require no spaces at all, e.g. `overrides = list(none = c("EQ_SUB", "EQ_FORMALS"))` for `foo(x=1)` and `function(x=1)` as in the Bioconductor style guide (#3127, @adityaruplaha). The new `default_style=` argument sets the style for all other operators.
 * `class_equals_linter()` blocks checking class membership with `is.element(cls, class(obj))` or `is.element(class(obj), cls)`, matching existing behavior for `class(obj) %in% cls` (#2849, @MichaelChirico).
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with zero or one argument (#2980, @MichaelChirico).
 * `fixed_regex_linter()` encourages using the recent (R 4.6.0) `fixed = TRUE` arguments to `list.files()` and `dir()` (#3003, @MichaelChirico). To avoid depending on a recent R version, the rule for `list.files()` and `dir()` can be disabled by setting `check_file_listing = FALSE`.
