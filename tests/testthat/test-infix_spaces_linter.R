@@ -150,8 +150,8 @@ test_that("overrides = list(one = ...) and list(multiple = ...) work", { # nofuz
 test_that("overrides is validated", {
   expect_error(infix_spaces_linter(overrides = c(none = "+")), "must be a named list")
   expect_error(infix_spaces_linter(overrides = list("+")), "must be a named list")
-  expect_error(infix_spaces_linter(overrides = list(foo = "+")), 'must be among "multiple", "one", "none", and "any"')
-  expect_error(infix_spaces_linter(overrides = list(none = 1L)), "must be a character vector")
+  expect_error(infix_spaces_linter(overrides = list(foo = "+")), 'must be "multiple", "one", "none" or "any"')
+  expect_error(infix_spaces_linter(overrides = list(none = 1L)), "Unknown operator 1")
   expect_error(infix_spaces_linter(overrides = list(none = "^")), 'Unknown operator "\\^"')
   expect_error(infix_spaces_linter(overrides = list(none = "+", any = "+")), "given more than once")
   # "=" covers all three parse tags

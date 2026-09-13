@@ -127,8 +127,7 @@ infix_spaces_linter <- function(default_style = c("multiple", "one"),
     )
   ]"
 
-  # for each style, the comparison of the gap between the operator and its neighbor
-  #   (@start - @end, which is 1 for adjacent tokens) which constitutes a lint
+  # op compares the gap to a neighboring token (@start - @end == 1 means adjacent) to find a lint
   style_metadata <- list(
     multiple = list(op = "<", lint_message = "Put spaces around all infix operators."),
     one = list(op = "!=", lint_message = "Put exactly one space on each side of infix operators."),
@@ -136,7 +135,7 @@ infix_spaces_linter <- function(default_style = c("multiple", "one"),
   )
 
   xpaths <- lapply(names(style_metadata), function(style) {
-    infix_tokens <- infix_metadata$xml_tag_exact[which(operator_styles == style)]
+    infix_tokens <- names(operator_styles)[operator_styles == style]
     if (length(infix_tokens) == 0L) {
       return(NULL)
     }
@@ -169,54 +168,35 @@ infix_spaces_linter <- function(default_style = c("multiple", "one"),
   })
 }
 
-# map every low-precedence operator in infix_metadata to a spacing style,
-#   as a character vector aligned with the rows of infix_metadata (NA for
-#   high-precedence operators, which are never linted)
+# style for each low-precedence operator, named by xml_tag_exact
 resolve_infix_styles <- function(default_style, overrides) {
-  check_infix_overrides(overrides)
+  if (!is.null(overrides)) {
+    if (!is.list(overrides) || !all(nzchar(names2(overrides)))) {
+      cli_abort("{.arg overrides} must be a named list.")
+    }
+    invalid_styles <- setdiff(names(overrides), c("multiple", "one", "none", "any"))
+    if (length(invalid_styles) > 0L) {
+      cli_abort('Names of {.arg overrides} must be "multiple", "one", "none" or "any", not {.val {invalid_styles}}.')
+    }
+  }
 
-  styles <- ifelse(infix_metadata$low_precedence, default_style, NA_character_)
-  matched <- logical(nrow(infix_metadata))
+  low_precedence <- infix_metadata[infix_metadata$low_precedence, ]
+  styles <- rep(default_style, nrow(low_precedence))
+  names(styles) <- low_precedence$xml_tag_exact
+  matched <- logical(nrow(low_precedence))
   for (style in names(overrides)) {
     for (operator in overrides[[style]]) {
       # parse_tag, not xml_tag, since the former is easier for the user to discover with getParseData()
-      is_operator <- infix_metadata$low_precedence &
-        (infix_metadata$string_value == operator | infix_metadata$parse_tag == operator)
+      is_operator <- low_precedence$string_value == operator | low_precedence$parse_tag == operator
       if (!any(is_operator)) {
-        cli_abort(c(
-          "Unknown operator {.str {operator}} in {.code overrides${style}}.",
-          i = "See {.help infix_spaces_linter} for the operators that can be specified."
-        ))
+        cli_abort("Unknown operator {.val {operator}} in {.arg overrides}.")
       }
       if (any(matched & is_operator)) {
-        cli_abort("Operator {.str {operator}} is given more than once in {.arg overrides}.")
+        cli_abort("Operator {.val {operator}} is given more than once in {.arg overrides}.")
       }
       matched <- matched | is_operator
       styles[is_operator] <- style
     }
   }
   styles
-}
-
-check_infix_overrides <- function(overrides) {
-  if (is.null(overrides)) {
-    return(invisible())
-  }
-  if (!is.list(overrides) || is.null(names(overrides)) || !all(nzchar(names(overrides)))) {
-    cli_abort("{.arg overrides} must be a named list.")
-  }
-  valid_styles <- c("multiple", "one", "none", "any")
-  invalid_styles <- setdiff(names(overrides), valid_styles)
-  if (length(invalid_styles) > 0L) {
-    cli_abort(c(
-      "Names of {.arg overrides} must be among {.str {valid_styles}}.",
-      i = "Found {.str {invalid_styles}}."
-    ))
-  }
-  for (style in names(overrides)) {
-    if (!is.character(overrides[[style]])) {
-      cli_abort("{.code overrides${style}} must be a character vector.")
-    }
-  }
-  invisible()
 }
