@@ -136,7 +136,7 @@ infix_spaces_linter <- function(default_style = c("multiple", "one"),
   )
 
   xpaths <- lapply(names(style_metadata), function(style) {
-    infix_tokens <- infix_metadata$xml_tag_exact[operator_styles == style]
+    infix_tokens <- infix_metadata$xml_tag_exact[which(operator_styles == style)]
     if (length(infix_tokens) == 0L) {
       return(NULL)
     }
