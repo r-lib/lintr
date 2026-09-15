@@ -18,7 +18,7 @@ test_that("stable arithmetic replacements handle equivalent syntax", {
     c("log(p / (1 - p))", "stats::qlogis(p)"),
     c("log((p) / (1 - (p)))", "stats::qlogis(p)")
   )
-  for (case in cases) expect_lint(case[1L], rex::rex(case[2L]), linter)
+  for (case in cases) expect_lint(case[1L], rex::rex(case[2L]), linter, info = case[1L])
 })
 
 test_that("special logarithmic functions respect signs and argument matching", {
@@ -31,7 +31,7 @@ test_that("special logarithmic functions respect signs and argument matching", {
     c("log(base::abs(base::factorial(x)))", "lfactorial(x = x)"),
     c("log(abs(choose(n, k)))", "lchoose(n = n, k = k)")
   )
-  for (case in cases) expect_lint(case[1L], rex::rex(case[2L]), linter)
+  for (case in cases) expect_lint(case[1L], rex::rex(case[2L]), linter, info = case[1L])
   for (code in c("log(gamma(x))", "log(factorial(x))", "log(choose(n, k))")) {
     expect_no_lint(code, linter)
     expect_lint(code, "only where.*non-negative.*absolute value", numerical_stability_linter(include_heuristics = TRUE))
@@ -57,7 +57,7 @@ test_that("density and probability replacements preserve matched arguments", {
     c("qnorm(1 - p, 2, 3, FALSE, FALSE)", "stats::qnorm(p = p, mean = 2, sd = 3, lower.tail = TRUE, log.p = FALSE)"),
     c("qgamma(1 - p, shape = a, scale = s)", "stats::qgamma(p = p, shape = a, scale = s, lower.tail = FALSE)")
   )
-  for (case in cases) expect_lint(case[1L], rex::rex(case[2L]), linter)
+  for (case in cases) expect_lint(case[1L], rex::rex(case[2L]), linter, info = case[1L])
 })
 
 test_that("standard distribution signatures are covered without prefix guessing", {
