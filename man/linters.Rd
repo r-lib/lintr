@@ -19,7 +19,7 @@ The following tags exist:
 \itemize{
 \item{\link[=best_practices_linters]{best_practices} (66 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (13 linters)}
-\item{\link[=configurable_linters]{configurable} (44 linters)}
+\item{\link[=configurable_linters]{configurable} (45 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (26 linters)}
@@ -29,7 +29,7 @@ The following tags exist:
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (13 linters)}
 \item{\link[=readability_linters]{readability} (67 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
-\item{\link[=robustness_linters]{robustness} (19 linters)}
+\item{\link[=robustness_linters]{robustness} (20 linters)}
 \item{\link[=style_linters]{style} (40 linters)}
 \item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }
@@ -103,6 +103,7 @@ The following linters exist:
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{nrow_subset_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
+\item{\code{\link{numerical_stability_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{nzchar_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, executing, style)}

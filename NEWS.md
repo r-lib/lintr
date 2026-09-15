@@ -95,6 +95,10 @@
 
 # lintr (3.4.0)
 
+## New linters
+
+* `numerical_stability_linter()` recommends stable arithmetic, logarithmic special functions, and probability APIs. It supports `assume_real_numeric` and optional `include_heuristics` hints for domain-dependent replacements and log-sum-exp expressions.
+
 ## Deprecations & breaking changes
 
 * Six linters fully deprecated in the previous release are now removed: `consecutive_stopifnot_linter()`, `extraction_operator_linter()`, `no_tab_linter()`, `single_quotes_linter()`, `unnecessary_nested_if_linter()`, and `unneeded_concatenation_linter()`.

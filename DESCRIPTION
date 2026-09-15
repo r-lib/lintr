@@ -150,6 +150,7 @@ Collate:
     'shared_constants.R'
     'nrow_subset_linter.R'
     'numeric_leading_zero_linter.R'
+    'numerical_stability_linter.R'
     'nzchar_linter.R'
     'object_length_linter.R'
     'object_name_linter.R'
