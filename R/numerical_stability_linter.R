@@ -134,7 +134,7 @@ stability_match_call <- function(expr, name, package = "base") {
   invalid <- vapply(actual, identical, logical(1L), quote(expr = )) |
     vapply(actual, identical, logical(1L), quote(...))
   if (any(invalid)) return(NULL)
-  definition <- args(get(name, envir = asNamespace(package), inherits = FALSE))
+  definition <- get(name, envir = asNamespace(package), inherits = FALSE)
   matched <- tryCatch(match.call(definition, expr, expand.dots = FALSE, envir = baseenv()), error = function(e) NULL)
   if (is.null(matched)) return(NULL)
   arguments <- as.list(matched)[-1L]
