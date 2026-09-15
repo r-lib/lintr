@@ -58,7 +58,7 @@ test_that("density and probability replacements preserve matched arguments", {
     c("qgamma(1 - p, shape = a, scale = s)", "stats::qgamma(p = p, shape = a, scale = s, lower.tail = FALSE)")
   )
   for (case in cases) {
-    lint_count <- length(lint(case[1L], linters = linter))
+    lint_count <- length(lint(text = case[1L], linters = linter))
     expect_identical(lint_count, 1L, info = paste("input:", case[1L]))
     expect_lint(case[1L], rex::rex(case[2L]), linter)
   }
