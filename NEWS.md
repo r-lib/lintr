@@ -5,6 +5,7 @@
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
 * `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
+* `lint(text = ...)` preserves the `"terminal_newline"` attribute on `text` and accounts for it when caching, allowing callers linting in-memory file contents (such as `{languageserver}`) to report missing terminal newlines with `trailing_blank_lines_linter()` (REditorSupport/languageserver#772, @MichaelChirico).
 
 ## New and improved features
 

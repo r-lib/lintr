@@ -778,6 +778,7 @@ get_lines <- function(filename, text) {
   encoding <- NULL
   if (!is.null(text)) {
     lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+    attr(lines, "terminal_newline") <- attr(text, "terminal_newline", exact = TRUE)
   } else if (re_matches(filename, rex(newline))) {
     lines <- strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
