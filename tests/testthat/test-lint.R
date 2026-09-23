@@ -429,3 +429,29 @@ test_that("lint(filename, text=) detects knitr from extension", {
   lints <- lint("test.Rmd", text = rmd_content, linters = assignment_linter())
   expect_length(lints, 1L)
 })
+
+test_that("lint(text=) respects terminal_newline attribute and caches it separately", {
+  linter <- trailing_blank_lines_linter()
+  cache_path <- withr::local_tempdir()
+
+  text_no_newline <- structure("x <- 1", terminal_newline = FALSE)
+  text_with_newline <- structure("x <- 1", terminal_newline = TRUE)
+
+  lints_missing <- lint(
+    "R/terminal_newline.R",
+    text = text_no_newline,
+    linters = linter,
+    cache = cache_path
+  )
+  expect_length(lints_missing, 1L)
+  expect_identical(lints_missing[[1L]]$message, "Add a terminal newline.")
+
+  lints_present <- lint(
+    "R/terminal_newline.R",
+    text = text_with_newline,
+    linters = linter,
+    cache = cache_path
+  )
+  expect_length(lints_present, 0L)
+})
+
