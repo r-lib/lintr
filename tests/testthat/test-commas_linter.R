@@ -114,4 +114,103 @@ test_that("returns the correct linting (with 'allow_trailing' set)", {
     linter
   )
 })
+
+test_that("returns the correct linting (with 'allow_alignment_calls' set)", {
+  linter <- commas_linter()
+  msg_after <- rex::rex("Put a space after a comma.")
+  msg_before <- rex::rex("Remove spaces before a comma.")
+
+  expect_no_lint(
+    trim_some("
+      sample_data <- tibble::tribble(
+        ~religion  , ~fst_cat , ~snd_cat , ~trd_cat ,
+        'Agnostic' ,       27 ,       34 ,       60 ,
+        'Atheist'  ,       12 ,       27 ,       37
+      )
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      sample_data <- tribble(
+        ~a , ~b ,
+         1 ,  2
+      )
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      out <- fcase(
+        x == 1 , 'a' ,
+        x == 2 , 'b'
+      )
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      out <- data.table::fcase(
+        x == 1 , 'a' ,
+        x == 2 , 'b'
+      )
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      dt <- rowwiseDT(
+        id = 1:2,
+        x  , y  ,
+        'a', 10 ,
+        'b', 20
+      )
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      dt <- data.table::rowwiseDT(
+        id = 1:2,
+        x  , y  ,
+        'a', 10 ,
+        'b', 20
+      )
+    "),
+    linter
+  )
+
+  expect_lint("tribble(~a,~b)", msg_after, linter)
+
+  expect_lint(
+    trim_some("
+      tribble(
+        ~a, ~b,
+        foo(x , y), 1
+      )
+    "),
+    msg_before,
+    linter
+  )
+
+  expect_lint("tribble(~a, ~b, 1, 2)[1 , 2]", msg_before, linter)
+  expect_lint("tibble::tribble(~a, ~b, 1, 2)[1 , 2]", msg_before, linter)
+
+  strict_linter <- commas_linter(allow_alignment_calls = character())
+  expect_lint(
+    trim_some("
+      tribble(
+        ~a , ~b
+      )
+    "),
+    msg_before,
+    strict_linter
+  )
+
+  custom_linter <- commas_linter(allow_alignment_calls = "my_tribble")
+  expect_no_lint("my_tribble(1 , 2)", custom_linter)
+  expect_lint("tribble(~a , ~b)", msg_before, custom_linter)
+})
 # fuzzer enable: comment_injection

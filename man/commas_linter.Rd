@@ -4,11 +4,18 @@
 \alias{commas_linter}
 \title{Commas linter}
 \usage{
-commas_linter(allow_trailing = FALSE)
+commas_linter(
+  allow_trailing = FALSE,
+  allow_alignment_calls = c("tribble", "fcase", "rowwiseDT")
+)
 }
 \arguments{
 \item{allow_trailing}{If \code{TRUE}, the linter allows a comma to be followed
 directly by a closing bracket without a space.}
+
+\item{allow_alignment_calls}{Character vector of function names whose direct
+arguments are allowed to have leading spaces before commas for tabular alignment
+(e.g. \code{tribble()}, \code{fcase()}, \code{rowwiseDT()}).}
 }
 \description{
 Check that all commas are followed by spaces, but do not have spaces before them.
@@ -35,6 +42,13 @@ lint(
   linters = commas_linter()
 )
 
+code_lines <- "tibble::tribble(\n  ~x  , ~y,\n  'a' , 1\n)"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = commas_linter(allow_alignment_calls = character())
+)
+
 # okay
 lint(
   text = "switch(op, x = foo, y = bar)",
@@ -59,6 +73,13 @@ lint(
 lint(
   text = "x[1,]",
   linters = commas_linter(allow_trailing = TRUE)
+)
+
+code_lines <- "tibble::tribble(\n  ~x  , ~y,\n  'a' , 1\n)"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = commas_linter()
 )
 
 }

@@ -4,6 +4,9 @@
 #'
 #' @param allow_trailing If `TRUE`, the linter allows a comma to be followed
 #' directly by a closing bracket without a space.
+#' @param allow_alignment_calls Character vector of function names whose direct
+#'   arguments are allowed to have leading spaces before commas for tabular alignment
+#'   (e.g. `tribble()`, `fcase()`, `rowwiseDT()`).
 #'
 #' @examples
 #' # will produce lints
@@ -25,6 +28,13 @@
 #' lint(
 #'   text = "x[1,]",
 #'   linters = commas_linter()
+#' )
+#'
+#' code_lines <- "tibble::tribble(\n  ~x  , ~y,\n  'a' , 1\n)"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = commas_linter(allow_alignment_calls = character())
 #' )
 #'
 #' # okay
@@ -53,24 +63,40 @@
 #'   linters = commas_linter(allow_trailing = TRUE)
 #' )
 #'
+#' code_lines <- "tibble::tribble(\n  ~x  , ~y,\n  'a' , 1\n)"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = commas_linter()
+#' )
+#'
 #' @evalRd rd_tags("commas_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#commas>
 #' @export
-commas_linter <- function(allow_trailing = FALSE) {
+commas_linter <- function(allow_trailing = FALSE,
+                          allow_alignment_calls = c("tribble", "fcase", "rowwiseDT")) {
   # conditions are in carefully-chosen order for performance --
   #   an expression like c(a,b,c,....) with many elements can have
   #   a huge number of preceding-siblings and the performance of
   #   preceding-sibling::*[1][not(self::OP-COMMA)] is terrible.
   #   This approach exits early on most nodes ('and' condition)
   #   to avoid this. See #1340.
-  xpath_before <- "
+  # Support tabular alignment in calls like tribble, fcase, rowwiseDT (r-lib/lintr#3053).
+  allow_calls_cond <- if (length(allow_alignment_calls) > 0L) {
+    glue("and not(parent::expr[expr[1]/SYMBOL_FUNCTION_CALL[{xp_text_in_table(allow_alignment_calls)}]])")
+  } else {
+    ""
+  }
+
+  xpath_before <- glue("
   //OP-COMMA[
-    @col1 != preceding-sibling::*[1]/@col2 + 1 and
-    @line1 = preceding-sibling::*[1]/@line1 and
-    not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB])
-  ]"
+    @col1 != preceding-sibling::*[1]/@col2 + 1
+    and @line1 = preceding-sibling::*[1]/@line1
+    and not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB])
+    {allow_calls_cond}
+  ]")
   xpath_after <- paste0(
     "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1 ",
     if (allow_trailing) "and not(following-sibling::*[1][self::OP-RIGHT-BRACKET or self::RBB or self::OP-RIGHT-PAREN])",
