@@ -31,7 +31,7 @@ Imports:
     codetools,
     digest,
     glue,
-    knitr,
+    knitr (>= 1.50),
     rex,
     stats,
     utils,
