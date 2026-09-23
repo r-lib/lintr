@@ -31,11 +31,11 @@ Imports:
     codetools,
     digest,
     glue,
-    knitr,
+    knitr (>= 1.50),
     rex,
     stats,
     utils,
-    xfun,
+    xfun (>= 0.41),
     xml2 (>= 1.3.4),
     xmlparsedata (>= 1.0.5)
 Suggests:
