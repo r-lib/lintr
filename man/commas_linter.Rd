@@ -42,6 +42,13 @@ lint(
   linters = commas_linter()
 )
 
+code_lines <- "tibble::tribble(\n  ~x  , ~y,\n  'a' , 1\n)"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = commas_linter(allow_alignment_calls = character())
+)
+
 # okay
 lint(
   text = "switch(op, x = foo, y = bar)",
@@ -66,6 +73,13 @@ lint(
 lint(
   text = "x[1,]",
   linters = commas_linter(allow_trailing = TRUE)
+)
+
+code_lines <- "tibble::tribble(\n  ~x  , ~y,\n  'a' , 1\n)"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = commas_linter()
 )
 
 }

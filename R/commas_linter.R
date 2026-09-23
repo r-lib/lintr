@@ -30,6 +30,13 @@
 #'   linters = commas_linter()
 #' )
 #'
+#' code_lines <- "tibble::tribble(\n  ~x  , ~y,\n  'a' , 1\n)"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = commas_linter(allow_alignment_calls = character())
+#' )
+#'
 #' # okay
 #' lint(
 #'   text = "switch(op, x = foo, y = bar)",
@@ -56,6 +63,13 @@
 #'   linters = commas_linter(allow_trailing = TRUE)
 #' )
 #'
+#' code_lines <- "tibble::tribble(\n  ~x  , ~y,\n  'a' , 1\n)"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = commas_linter()
+#' )
+#'
 #' @evalRd rd_tags("commas_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
@@ -71,20 +85,17 @@ commas_linter <- function(allow_trailing = FALSE,
   #   to avoid this. See #1340.
   # Support tabular alignment in calls like tribble, fcase, rowwiseDT (r-lib/lintr#3053).
   allow_calls_cond <- if (length(allow_alignment_calls) > 0L) {
-    paste0(
-      " and not(parent::expr[",
-      "expr[1]/SYMBOL_FUNCTION_CALL[", xp_text_in_table(allow_alignment_calls), "]",
-      "])"
-    )
+    glue("and not(parent::expr[expr[1]/SYMBOL_FUNCTION_CALL[{xp_text_in_table(allow_alignment_calls)}]])")
   } else {
     ""
   }
 
   xpath_before <- glue("
   //OP-COMMA[
-    @col1 != preceding-sibling::*[1]/@col2 + 1 and
-    @line1 = preceding-sibling::*[1]/@line1 and
-    not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB]){allow_calls_cond}
+    @col1 != preceding-sibling::*[1]/@col2 + 1
+    and @line1 = preceding-sibling::*[1]/@line1
+    and not(preceding-sibling::*[1][self::OP-COMMA or self::EQ_SUB])
+    {allow_calls_cond}
   ]")
   xpath_after <- paste0(
     "//OP-COMMA[@line1 = following-sibling::*[1]/@line1 and @col1 = following-sibling::*[1]/@col1 - 1 ",
