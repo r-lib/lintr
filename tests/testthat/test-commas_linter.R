@@ -1,5 +1,4 @@
 # fuzzer disable: comment_injection
-
 test_that("returns the correct linting (with default parameters)", {
   linter <- commas_linter()
   msg_after <- rex::rex("Put a space after a comma.")
