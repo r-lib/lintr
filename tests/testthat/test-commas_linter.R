@@ -1,9 +1,9 @@
 # fuzzer disable: comment_injection
-msg_after <- "Put a space after a comma."
-msg_before <- "Remove spaces before a comma."
 
 test_that("returns the correct linting (with default parameters)", {
   linter <- commas_linter()
+  msg_after <- rex::rex("Put a space after a comma.")
+  msg_before <- rex::rex("Remove spaces before a comma.")
 
   expect_no_lint("blah", linter)
   expect_no_lint("fun(1, 1)", linter)
@@ -66,6 +66,8 @@ test_that("returns the correct linting (with default parameters)", {
 
 test_that("returns the correct linting (with 'allow_trailing' set)", {
   linter <- commas_linter(allow_trailing = TRUE)
+  msg_after <- rex::rex("Put a space after a comma.")
+  msg_before <- rex::rex("Remove spaces before a comma.")
 
   expect_no_lint("blah", linter)
   expect_no_lint("fun(1, 1)", linter)
@@ -116,6 +118,8 @@ test_that("returns the correct linting (with 'allow_trailing' set)", {
 
 test_that("returns the correct linting (with 'allow_alignment_calls' set)", {
   linter <- commas_linter()
+  msg_after <- rex::rex("Put a space after a comma.")
+  msg_before <- rex::rex("Remove spaces before a comma.")
 
   expect_no_lint(
     trim_some("
