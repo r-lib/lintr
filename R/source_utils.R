@@ -10,28 +10,36 @@
 #'
 #' @noRd
 build_xml_find_function_calls <- function(xml) {
-  function_call_cache <- xml_find_all_(xml, "//SYMBOL_FUNCTION_CALL/parent::*")
-  names(function_call_cache) <- get_r_string(function_call_cache, "SYMBOL_FUNCTION_CALL")
-
-  s4_slot_cache <- xml_find_all_(xml, "//SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]")
-  names(s4_slot_cache) <- get_r_string(s4_slot_cache, "SLOT")
+  force(xml)
+  cache_env <- new.env(parent = emptyenv())
+  cache_env$function_call_cache <- NULL
+  cache_env$s4_slot_cache <- NULL
 
   function(function_names, keep_names = FALSE, include_s4_slots = FALSE) {
+    if (is.null(cache_env$function_call_cache)) {
+      cache_env$function_call_cache <- xml_find_all_(xml, "//SYMBOL_FUNCTION_CALL/parent::*")
+      names(cache_env$function_call_cache) <- get_r_string(cache_env$function_call_cache, "SYMBOL_FUNCTION_CALL")
+    }
+    if (include_s4_slots && is.null(cache_env$s4_slot_cache)) {
+      cache_env$s4_slot_cache <- xml_find_all_(xml, "//SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]")
+      names(cache_env$s4_slot_cache) <- get_r_string(cache_env$s4_slot_cache, "SLOT")
+    }
+
     if (is.null(function_names)) {
       if (include_s4_slots) {
-        res <- combine_nodesets(function_call_cache, s4_slot_cache)
+        res <- combine_nodesets(cache_env$function_call_cache, cache_env$s4_slot_cache)
       } else {
-        res <- function_call_cache
+        res <- cache_env$function_call_cache
       }
     } else {
-      include_function_idx <- names(function_call_cache) %in% function_names
+      include_function_idx <- names(cache_env$function_call_cache) %in% function_names
       if (include_s4_slots) {
         res <- combine_nodesets(
-          function_call_cache[include_function_idx],
-          s4_slot_cache[names(s4_slot_cache) %in% function_names]
+          cache_env$function_call_cache[include_function_idx],
+          cache_env$s4_slot_cache[names(cache_env$s4_slot_cache) %in% function_names]
         )
       } else {
-        res <- function_call_cache[include_function_idx]
+        res <- cache_env$function_call_cache[include_function_idx]
       }
     }
     if (keep_names) res else unname(res)
