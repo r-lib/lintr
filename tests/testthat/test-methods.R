@@ -78,7 +78,7 @@ test_that("print.lint works", {
 
 test_that("print.lint works with empty lints", {
   withr::local_options(list(lintr.rstudio_source_markers = FALSE))
-  l <- lint(text = "1L\n")
+  l <- lint(text = "1L")
 
   expect_message(print(l), "No lints found", fixed = TRUE)
 })
