@@ -23,6 +23,7 @@
 ### Lint accuracy fixes: removing false positives
 
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
+* `library_call_linter()` no longer flags later `library()` calls when an earlier attach call uses a function in its arguments, e.g. `library(pkg, exclude = c("foo"))` (#3097, @fabiandistler).
 
 ### Lint accuracy fixes: removing false negatives
 
