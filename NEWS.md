@@ -22,6 +22,7 @@
 
 ### Lint accuracy fixes: removing false positives
 
+* `indentation_linter()` correctly requires block indentation for multi-line calls where arguments begin on subsequent lines, even when the call terminates with `)` on the same line as the last argument (#2144, @MichaelChirico).
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
 * `indentation_linter()` better aligns with {styler} and {air} in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007 and #2535, @MichaelChirico).
 
