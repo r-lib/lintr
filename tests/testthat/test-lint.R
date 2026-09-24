@@ -430,9 +430,11 @@ test_that("lint(filename, text=) detects knitr from extension", {
   expect_length(lints, 1L)
 })
 
-test_that("lint(text=) detects missing terminal newline and caches it separately", {
+test_that("lint(filename, text=) detects missing terminal newline and caches it separately", {
   linter <- trailing_blank_lines_linter()
   cache_path <- withr::local_tempdir()
+
+  expect_length(lint(text = "x <- 1", linters = linter), 0L)
 
   lints_missing <- lint(
     "R/terminal_newline.R",
