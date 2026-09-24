@@ -4,6 +4,7 @@
 
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
+* `lint(filename, text = ...)` now detects whether `text` ends with a terminal newline (e.g. `"x <- 1\n"` or `c("x <- 1", "")` vs. `"x <- 1"`) and accounts for it when caching, allowing `trailing_blank_lines_linter()` to report missing terminal newlines when linting in-memory file buffers such as in `{languageserver}` (REditorSupport/languageserver#772, @MichaelChirico).
 
 ## New and improved features
 

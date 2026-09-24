@@ -30,7 +30,14 @@ define_cache_path <- function(cache) {
 }
 
 define_cache_key <- function(filename, inline_data, lines) {
-  if (inline_data) list(content = get_content(lines), TRUE) else filename
+  if (inline_data) {
+    list(
+      content = get_content(lines),
+      terminal_newline = !isFALSE(attr(lines, "terminal_newline", exact = TRUE))
+    )
+  } else {
+    filename
+  }
 }
 
 
@@ -146,10 +153,10 @@ has_lint <- function(cache, expr, linter) {
 digest_content <- function(linters, obj) {
   content <- if (is.list(obj)) {
     # assume an expression (global expression if obj$parsed_content is lacking)
-    list(linters, obj$content, is.null(obj$parsed_content))
+    list(linters, obj$content, is.null(obj$parsed_content), obj$terminal_newline)
   } else {
     # assume a filename
-    list(linters, readLines(obj))
+    list(linters, read_lines(obj))
   }
   digest::digest(content, algo = "sha1")
 }

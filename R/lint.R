@@ -53,7 +53,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     on.exit(reset_settings(), add = TRUE)
   }
 
-  lines <- get_lines(filename, text)
+  lines <- get_lines(filename, text, needs_tempfile = needs_tempfile)
 
   if (needs_tempfile) {
     filename <- tempfile()
@@ -774,10 +774,14 @@ maybe_append_condition_lints <- function(lints, source_expression, lint_cache, f
   lints
 }
 
-get_lines <- function(filename, text) {
+get_lines <- function(filename, text, needs_tempfile = FALSE) {
   encoding <- NULL
   if (!is.null(text)) {
-    lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+    text <- paste(text, collapse = "\n")
+    lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
+    if (!needs_tempfile && nzchar(text)) {
+      attr(lines, "terminal_newline") <- endsWith(text, "\n")
+    }
   } else if (re_matches(filename, rex(newline))) {
     lines <- strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
