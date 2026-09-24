@@ -484,6 +484,71 @@ test_that("indentation works with control flow statements", {
     linter
   )
 
+  # Multiline conditional expressions (#2007)
+  expect_no_lint(
+    trim_some("
+      foo <- function(info) {
+        if (info$is_dispersion ||
+          info$is_zero_inflated ||
+          info$is_zeroinf) {
+          NULL
+        }
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      communicate_warning <- function(changed, transformers) {
+        if (any(changed, na.rm = TRUE) &&
+          !parse_tree_must_be_identical(transformers) &&
+          !getOption(\"styler.quiet\", FALSE)
+        ) {
+          cat(\"Please review the changes carefully!\", fill = TRUE)
+        }
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      foo <- function(info) {
+        while (info$is_dispersion ||
+          info$is_zero_inflated) {
+          NULL
+        }
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      foo <- function(info) {
+        if (
+          info$is_dispersion ||
+            info$is_zero_inflated ||
+            info$is_zeroinf
+        ) {
+          NULL
+        }
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      if (TRUE ||
+        FALSE) {
+        TRUE
+      }
+    "),
+    linter
+  )
+
   expect_lint(
     trim_some("
       while (1 > 2) {
@@ -503,6 +568,35 @@ test_that("indentation works with control flow statements", {
       }
     "),
     "Indentation",
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(info) {
+        if (info$is_dispersion ||
+            info$is_zero_inflated) {
+          NULL
+        }
+      }
+    "),
+    list(
+      rex::rex("Indentation should be 4 spaces but is 6 spaces (or start argument on previous line)."),
+      line_number = 3L
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(info) {
+        if (info$is_dispersion ||
+         info$is_zero_inflated) {
+          NULL
+        }
+      }
+    "),
+    list(rex::rex("Indentation should be 4 spaces but is 3 spaces."), line_number = 3L),
     linter
   )
 })
