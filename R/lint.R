@@ -777,8 +777,9 @@ maybe_append_condition_lints <- function(lints, source_expression, lint_cache, f
 get_lines <- function(filename, text) {
   encoding <- NULL
   if (!is.null(text)) {
-    lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
-    attr(lines, "terminal_newline") <- attr(text, "terminal_newline", exact = TRUE)
+    text <- paste(text, collapse = "\n")
+    lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
+    attr(lines, "terminal_newline") <- endsWith(text, "\n")
   } else if (re_matches(filename, rex(newline))) {
     lines <- strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
