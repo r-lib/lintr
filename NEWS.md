@@ -8,6 +8,7 @@
 ## New and improved features
 
 * `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, @atusy).
+* `get_source_expressions()` no longer errors with "subscript out of bounds" on code containing a `#line` directive; such directives are now treated as comments, matching the behavior of `getParseData()` in R >= 4.7.0 (#3106, @youdie006).
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
 
 ### New linters
