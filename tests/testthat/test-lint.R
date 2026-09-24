@@ -435,6 +435,8 @@ test_that("lint(filename, text=) detects missing terminal newline and caches it 
   cache_path <- withr::local_tempdir()
 
   expect_length(lint(text = "x <- 1", linters = linter), 0L)
+  expect_length(lint("R/empty.R", text = "", linters = linter), 0L)
+  expect_length(lint("R/empty.R", text = character(), linters = linter), 0L)
 
   lints_missing <- lint(
     "R/terminal_newline.R",
@@ -460,4 +462,11 @@ test_that("lint(filename, text=) detects missing terminal newline and caches it 
     cache = cache_path
   )
   expect_length(lints_present_string, 0L)
+
+  tmp <- withr::local_tempfile()
+  cat("x <- 1", file = tmp)
+  expect_length(lint(tmp, linters = linter, cache = cache_path), 1L)
+
+  cat("x <- 1\n", file = tmp)
+  expect_length(lint(tmp, linters = linter, cache = cache_path), 0L)
 })

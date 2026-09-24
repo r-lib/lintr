@@ -779,7 +779,7 @@ get_lines <- function(filename, text, needs_tempfile = FALSE) {
   if (!is.null(text)) {
     text <- paste(text, collapse = "\n")
     lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
-    if (!needs_tempfile) {
+    if (!needs_tempfile && nzchar(text)) {
       attr(lines, "terminal_newline") <- endsWith(text, "\n")
     }
   } else if (re_matches(filename, rex(newline))) {
