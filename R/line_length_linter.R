@@ -6,6 +6,9 @@
 #' @param ignore_string_bodies Logical, default `FALSE`. If `TRUE`, the contents
 #'   of string literals are ignored. The quotes themselves are included, so this
 #'   mainly affects wide multiline strings, e.g. SQL queries.
+#' @param allow_alignment_calls Character vector of function names whose
+#'   calls are allowed to exceed `length` for tabular alignment (e.g.
+#'   `tribble()`, `rowwiseDT()`).
 #'
 #' @examples
 #' # will produce lints
@@ -32,6 +35,13 @@
 #' lint(
 #'   text = lines,
 #'   linters = line_length_linter(length = 10L)
+#' )
+#'
+#' code_lines <- "tibble::tribble(\n  ~col_one, ~col_two,\n  'long_val_1', 'long_val_2'\n)"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = line_length_linter(length = 20L, allow_alignment_calls = character())
 #' )
 #'
 #' # okay
@@ -68,12 +78,21 @@
 #'   linters = line_length_linter(length = 10L, ignore_string_bodies = TRUE)
 #' )
 #'
+#' code_lines <- "tibble::tribble(\n  ~col_one, ~col_two,\n  'long_val_1', 'long_val_2'\n)"
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = line_length_linter(length = 20L)
+#' )
+#'
 #' @evalRd rd_tags("line_length_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - <https://style.tidyverse.org/syntax.html#long-lines>
 #' @export
-line_length_linter <- function(length = 80L, ignore_string_bodies = FALSE) {
+line_length_linter <- function(length = 80L,
+                               ignore_string_bodies = FALSE,
+                               allow_alignment_calls = c("tribble", "rowwiseDT")) {
   general_msg <- paste("Lines should not be more than", length, "characters.")
 
   Linter(linter_level = "file", function(source_expression) {
@@ -85,6 +104,15 @@ line_length_linter <- function(length = 80L, ignore_string_bodies = FALSE) {
       in_string_body_idx <-
         is_in_string_body(source_expression$full_parsed_content, length, long_lines)
       long_lines <- long_lines[!in_string_body_idx]
+    }
+
+    if (length(allow_alignment_calls) > 0L && length(long_lines) > 0L) {
+      in_align_call_idx <- is_in_alignment_call(
+        source_expression$full_parsed_content,
+        long_lines,
+        allow_alignment_calls
+      )
+      long_lines <- long_lines[!in_align_call_idx]
     }
 
     Map(
@@ -103,6 +131,22 @@ line_length_linter <- function(length = 80L, ignore_string_bodies = FALSE) {
       line_lengths[long_lines]
     )
   })
+}
+
+is_in_alignment_call <- function(parse_data, long_idx, allow_alignment_calls) {
+  call_idx <- parse_data$token == "SYMBOL_FUNCTION_CALL" &
+    parse_data$text %in% allow_alignment_calls
+  if (!any(call_idx)) {
+    return(rep(FALSE, length(long_idx)))
+  }
+  fn_expr_ids <- parse_data$parent[call_idx]
+  call_expr_ids <- parse_data$parent[match(fn_expr_ids, parse_data$id)]
+  call_data <- parse_data[match(call_expr_ids, parse_data$id), , drop = FALSE]
+  vapply(
+    long_idx,
+    function(line) any(call_data$line1 <= line & call_data$line2 >= line),
+    logical(1L)
+  )
 }
 
 is_in_string_body <- function(parse_data, max_length, long_idx) {

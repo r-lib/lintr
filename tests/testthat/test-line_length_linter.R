@@ -162,4 +162,42 @@ test_that("string bodies can be ignored", {
   expect_lint('"short" # 15!!!', lint_msg, linter)
   expect_lint('foo("a", long_)', lint_msg, linter)
 })
+
+test_that("allow_alignment_calls exempts tabular calls", {
+  linter <- line_length_linter(40L)
+
+  expect_no_lint(
+    trim_some('
+      df <- tibble::tribble(
+        ~col_one                  , ~col_two                  ,
+        "very_long_string_value1" , "very_long_string_value2"
+      )
+    '),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some('
+      dt <- rowwiseDT(
+        col_one =                 , col_two =                 ,
+        "very_long_string_value1" , "very_long_string_value2"
+      )
+    '),
+    linter
+  )
+
+  expect_lint(
+    trim_some('
+      df <- tibble::tribble(
+        ~col_one                  , ~col_two                  ,
+        "very_long_string_value1" , "very_long_string_value2"
+      )
+    '),
+    list(
+      list("57 characters", line_number = 2L),
+      list("55 characters", line_number = 3L)
+    ),
+    line_length_linter(40L, allow_alignment_calls = character())
+  )
+})
 # fuzzer enable: comment_injection
