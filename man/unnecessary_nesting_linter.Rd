@@ -96,8 +96,10 @@ lint(
 )
 
 # custom exit functions can be registered via branch_exit_calls
+code <- "if (x > 4) {\n  my_stop('too big')\n} else {\n  y <- x\n}"
+writeLines(code)
 lint(
-  text = "if (x > 4) {\n  my_stop('too big')\n} else {\n  y <- x\n}",
+  text = code,
   linters = unnecessary_nesting_linter(branch_exit_calls = "my_stop")
 )
 
