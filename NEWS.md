@@ -19,6 +19,7 @@
 * `class_equals_linter()` blocks checking class membership with `is.element(cls, class(obj))` or `is.element(class(obj), cls)`, matching existing behavior for `class(obj) %in% cls` (#2849, @MichaelChirico).
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with zero or one argument (#2980, @MichaelChirico).
 * `fixed_regex_linter()` encourages using the recent (R 4.6.0) `fixed = TRUE` arguments to `list.files()` and `dir()` (#3003, @MichaelChirico). To avoid depending on a recent R version, the rule for `list.files()` and `dir()` can be disabled by setting `check_file_listing = FALSE`.
+* `unnecessary_nesting_linter()` gains a `branch_exit_fallback_calls` argument to specify functions (such as `"warning"`) that prevent a lint on a sibling branch when the other branch terminates with an exit call (e.g. `if (A) { stop("x") } else { warning("y") }`), without treating those calls as exit clauses themselves (#2963, @randy3k).
 
 ### Lint accuracy fixes: removing false positives
 
