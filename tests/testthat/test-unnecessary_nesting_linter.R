@@ -106,7 +106,8 @@ test_that("parallels in further nesting are skipped", {
 
 test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
   linter <- unnecessary_nesting_linter()
-  linter_warning <- unnecessary_nesting_linter(branch_exit_calls = "warning")
+  linter_custom_exit <- unnecessary_nesting_linter(branch_exit_calls = "my_stop")
+  linter_warning <- unnecessary_nesting_linter(branch_exit_fallback_calls = "warning")
   lint_msg <- function(exit) rex::rex("Reduce the nesting of this if/else statement", anything, exit, "()")
 
   expect_lint(
@@ -163,10 +164,55 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
       if (A) {
         B
       } else {
+        my_stop()
+      }
+    "),
+    lint_msg("my_stop"),
+    linter_custom_exit
+  )
+
+  expect_no_lint(
+    trim_some("
+      if (A) {
+        stop('An error')
+      } else {
+        my_stop('Another error')
+      }
+    "),
+    linter_custom_exit
+  )
+
+  expect_lint(
+    trim_some("
+      if (A) {
+        stop('An error')
+      } else {
+        B
+      }
+    "),
+    lint_msg("stop"),
+    linter_warning
+  )
+
+  expect_no_lint(
+    trim_some("
+      if (A) {
+        warning()
+      } else {
+        B
+      }
+    "),
+    linter_warning
+  )
+
+  expect_no_lint(
+    trim_some("
+      if (A) {
+        B
+      } else {
         warning()
       }
     "),
-    lint_msg("warning"),
     linter_warning
   )
 
@@ -179,8 +225,32 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
   ")
   expect_lint(stop_warning_lines, lint_msg("stop"), linter)
 
-  # Optionally consider 'warning' as an exit call --> no lint
+  # Optionally consider 'warning' as an exit fallback call --> no lint
   expect_no_lint(stop_warning_lines, linter_warning)
+
+  warning_stop_lines <- trim_some("
+    if (A) {
+      warning('A warning')
+    } else {
+      stop('An error')
+    }
+  ")
+  expect_lint(warning_stop_lines, lint_msg("stop"), linter)
+  expect_no_lint(warning_stop_lines, linter_warning)
+
+  expect_no_lint(
+    trim_some("
+      if (A) {
+        my_stop('An error')
+      } else {
+        warning('A warning')
+      }
+    "),
+    unnecessary_nesting_linter(
+      branch_exit_calls = "my_stop",
+      branch_exit_fallback_calls = "warning"
+    )
+  )
 })
 
 test_that("unnecessary_nesting_linter skips one-line functions", {
