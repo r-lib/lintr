@@ -23,6 +23,7 @@
 ### Lint accuracy fixes: removing false positives
 
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
+* `unnecessary_nesting_linter()` no longer treats custom `branch_exit_calls` (such as `"warning"`) as branch-terminating exit clauses when the sibling branch is a normal expression like `if (A) { B } else { warning() }`; `branch_exit_calls` now only exempts parallel branches when another branch terminates with a default exit call (`stop()`, `return()`, `abort()`, `quit()`, or `q()`) (#3136, @randy3k).
 
 ### Lint accuracy fixes: removing false negatives
 

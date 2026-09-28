@@ -146,7 +146,7 @@ unnecessary_nesting_linter <- function(
   branch_exit_calls <- union(default_branch_exit_calls, branch_exit_calls)
 
   exit_call_expr <- glue("
-    expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(branch_exit_calls)}]]
+    expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(default_branch_exit_calls)}]]
   ")
   # block IF here for cases where a nested if/else is entirely within
   #   one of the branches.

@@ -158,7 +158,7 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
     linter
   )
 
-  expect_lint(
+  expect_no_lint(
     trim_some("
       if (A) {
         B
@@ -166,7 +166,6 @@ test_that("unnecessary_nesting_linter blocks if/else with one exit branch", {
         warning()
       }
     "),
-    lint_msg("warning"),
     linter_warning
   )
 
