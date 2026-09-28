@@ -12,7 +12,8 @@ unnecessary_nesting_linter(
     "expression", "bquote", "substitute", "with_parameters_test_that", "reactive",
     "observe", "observeEvent", "renderCachedPlot", "renderDataTable", "renderImage",
     "renderPlot", "renderPrint", "renderTable", "renderText", "renderUI"),
-  branch_exit_calls = character()
+  branch_exit_calls = character(),
+  branch_exit_fallback_calls = character()
 )
 ```
 
@@ -49,6 +50,16 @@ unnecessary_nesting_linter(
   Calls which always interrupt or quit the current call or R session,
   e.g. [`stop()`](https://rdrr.io/r/base/stop.html) and
   [`q()`](https://rdrr.io/r/base/quit.html), are always included.
+
+- branch_exit_fallback_calls:
+
+  Character vector of functions which prevent a lint on a branch when
+  the other branch terminates with an exit call (either a default exit
+  call or one in `branch_exit_calls`). Unlike `branch_exit_calls`, calls
+  in `branch_exit_fallback_calls` (such as
+  [`warning()`](https://rdrr.io/r/base/warning.html) or
+  [`message()`](https://rdrr.io/r/base/message.html)) do not trigger a
+  lint on their own when paired with a branch lacking an exit call.
 
 ## See also
 
@@ -157,6 +168,22 @@ lint(
 #> if (A) {
 #> ^~~~~~~~
 
+# custom exit functions can be registered via branch_exit_calls
+code <- "if (x > 4) {\n  my_stop('too big')\n} else {\n  y <- x\n}"
+writeLines(code)
+#> if (x > 4) {
+#>   my_stop('too big')
+#> } else {
+#>   y <- x
+#> }
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter(branch_exit_calls = "my_stop")
+)
+#> <text>:1:1: warning: [unnecessary_nesting_linter] Reduce the nesting of this if/else statement by unnesting the portion without an exit clause, i.e., my_stop().
+#> if (x > 4) {
+#> ^~~~~~~~~~~~
+
 # okay
 code <- "if (A) {\n  stop('A is bad because a.')\n} else {\n  stop('!A is bad too.')\n}"
 writeLines(code)
@@ -243,7 +270,7 @@ writeLines(code)
 #> }
 lint(
   text = code,
-  linters = unnecessary_nesting_linter(branch_exit_calls = c("stop", "warning"))
+  linters = unnecessary_nesting_linter(branch_exit_fallback_calls = "warning")
 )
 #> ℹ No lints found.
 ```
