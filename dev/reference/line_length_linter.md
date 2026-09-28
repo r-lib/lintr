@@ -6,7 +6,11 @@ Check that the line length of both comments and code is less than
 ## Usage
 
 ``` r
-line_length_linter(length = 80L, ignore_string_bodies = FALSE)
+line_length_linter(
+  length = 80L,
+  ignore_string_bodies = FALSE,
+  allow_alignment_calls = c("tribble", "rowwiseDT")
+)
 ```
 
 ## Arguments
@@ -20,6 +24,11 @@ line_length_linter(length = 80L, ignore_string_bodies = FALSE)
   Logical, default `FALSE`. If `TRUE`, the contents of string literals
   are ignored. The quotes themselves are included, so this mainly
   affects wide multiline strings, e.g. SQL queries.
+
+- allow_alignment_calls:
+
+  Character vector of function names whose calls are allowed to exceed
+  `length` for tabular alignment (e.g. `tribble()`, `rowwiseDT()`).
 
 ## See also
 
@@ -81,6 +90,23 @@ lint(
 #>   WHERE profit > 0
 #> ~~~~~~~~~~^~~~~~~~
 
+code_lines <- "tibble::tribble(\n  ~col_one, ~col_two,\n  'long_val_1', 'long_val_2'\n)"
+writeLines(code_lines)
+#> tibble::tribble(
+#>   ~col_one, ~col_two,
+#>   'long_val_1', 'long_val_2'
+#> )
+lint(
+  text = code_lines,
+  linters = line_length_linter(length = 20L, allow_alignment_calls = character())
+)
+#> <text>:2:21: style: [line_length_linter] Lines should not be more than 20 characters. This line is 21 characters.
+#>   ~col_one, ~col_two,
+#> ~~~~~~~~~~~~~~~~~~~~^
+#> <text>:3:21: style: [line_length_linter] Lines should not be more than 20 characters. This line is 28 characters.
+#>   'long_val_1', 'long_val_2'
+#> ~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+
 # okay
 lint(
   text = strrep("x", 21L),
@@ -127,6 +153,18 @@ writeLines(lines)
 lint(
   text = lines,
   linters = line_length_linter(length = 10L, ignore_string_bodies = TRUE)
+)
+#> ℹ No lints found.
+
+code_lines <- "tibble::tribble(\n  ~col_one, ~col_two,\n  'long_val_1', 'long_val_2'\n)"
+writeLines(code_lines)
+#> tibble::tribble(
+#>   ~col_one, ~col_two,
+#>   'long_val_1', 'long_val_2'
+#> )
+lint(
+  text = code_lines,
+  linters = line_length_linter(length = 20L)
 )
 #> ℹ No lints found.
 ```
