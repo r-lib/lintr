@@ -20,7 +20,9 @@
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with zero or one argument (#2980, @MichaelChirico).
 * `fixed_regex_linter()` encourages using the recent (R 4.6.0) `fixed = TRUE` arguments to `list.files()` and `dir()` (#3003, @MichaelChirico). To avoid depending on a recent R version, the rule for `list.files()` and `dir()` can be disabled by setting `check_file_listing = FALSE`.
 * `unnecessary_nesting_linter()` gains a `branch_exit_fallback_calls` argument to specify functions (such as `"warning"`) that prevent a lint on a sibling branch when the other branch terminates with an exit call (e.g. `if (A) { stop("x") } else { warning("y") }`), without treating those calls as exit clauses themselves (#2963, @randy3k).
-* `line_length_linter()` gains argument `allow_alignment_calls` (defaulting to `c("tribble", "rowwiseDT")`) to ignore line length inside tabular alignment calls for compatibility with the `air` formatter (#3133, @randy3k), and argument `allow_long_test_names` (defaulting to `TRUE`) to ignore line length on `testthat::test_that()` descriptions (#3134, @MichaelChirico).
+* For [`air`](https://github.com/posit-dev/air) formatter compatibility, `line_length_linter()`:
+   + Gains argument `allow_alignment_calls` (defaulting to `c("tribble", "rowwiseDT")`) to ignore line length inside tabular alignment calls (#3133, @randy3k).
+   + Gains argument `allow_long_test_names` (defaulting to `TRUE`) to ignore line length on `testthat::test_that()` descriptions (#3134, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
