@@ -134,11 +134,7 @@ line_length_linter <- function(length = 80L,
     }
 
     if (allow_long_test_names && length(long_lines) > 0L) {
-      in_test_name_idx <- is_in_long_test_name(
-        source_expression,
-        length,
-        long_lines
-      )
+      in_test_name_idx <- is_in_long_test_name(source_expression, length, long_lines)
       long_lines <- long_lines[!in_test_name_idx]
     }
 
