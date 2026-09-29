@@ -165,7 +165,7 @@ is_in_long_test_name <- function(source_expression, max_length, long_idx) {
     following-sibling::expr[1][
       STR_CONST
       and not(preceding-sibling::expr/SYMBOL_PACKAGE[text() != 'testthat'])
-      and (STR_CONST | following-sibling::OP-COMMA[1] | following-sibling::expr[1]/OP-LEFT-BRACE)/@col2 > {max_length}
+      and (following-sibling::OP-COMMA[1] | following-sibling::expr[1]/OP-LEFT-BRACE)/@col2 > {max_length}
     ]
   ")
   desc_nodes <- xml_find_all_(test_calls, desc_xpath)
