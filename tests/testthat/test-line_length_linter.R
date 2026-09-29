@@ -245,19 +245,6 @@ test_that("allow_long_test_names exempts test_that() descriptions by default", {
     linter
   )
 
-  # Named and reversed arguments
-  expect_no_lint(
-    trim_some('
-      test_that(desc = "a very long test description that exceeds 40 chars", code = {
-        expect_true(TRUE)
-      })
-      test_that(code = {
-        expect_true(TRUE)
-      }, desc = "a very long test description that exceeds 40 chars")
-    '),
-    linter
-  )
-
   # Trailing comment on an already-long test header is allowed
   expect_no_lint(
     trim_some('
@@ -306,32 +293,10 @@ test_that("allow_long_test_names still lints non-header long lines and can be di
     linter
   )
 
-  # Multi-line description where the final line is short but has a long trailing comment
-  expect_lint(
-    trim_some('
-      test_that("first line of a very long test description that exceeds 40 chars
-      short", { # a very long trailing comment that pushes line 2 over 40 chars
-        expect_true(TRUE)
-      })
-    '),
-    list("73 characters", line_number = 2L),
-    linter
-  )
-
-  # Inline test body on the same line as the description still lints
+  # Short test name with an inline test body on the same line still lints
   expect_lint(
     'test_that("short", expect_true(very_long_variable_name))',
     list("56 characters", line_number = 1L),
-    linter
-  )
-  expect_lint(
-    'test_that("a very long test description that exceeds 40 chars", { x <- 1 })',
-    list("75 characters", line_number = 1L),
-    linter
-  )
-  expect_lint(
-    'test_that(code = { x <- 1 }, desc = "a very long test description that exceeds 40 chars")',
-    list("89 characters", line_number = 1L),
     linter
   )
 

@@ -161,50 +161,19 @@ is_in_long_test_name <- function(source_expression, max_length, long_idx) {
   if (length(test_calls) == 0L) {
     return(rep(FALSE, length(long_idx)))
   }
-  desc_xpath <- "
-    following-sibling::expr[
+  desc_xpath <- glue("
+    following-sibling::expr[1][
       STR_CONST
-      and not(parent::expr/expr[1]/SYMBOL_PACKAGE[text() != 'testthat'])
-      and (
-        (
-          position() = 1
-          and not(preceding-sibling::SYMBOL_SUB[text() != 'desc'] or following-sibling::SYMBOL_SUB[text() = 'desc'])
-          and not(
-            following-sibling::expr[1]/*[not(self::OP-LEFT-BRACE or self::COMMENT)][1]/@line1 = STR_CONST/@line2
-          )
-        ) or (
-          position() = 2
-          and preceding-sibling::SYMBOL_SUB[
-            (following-sibling::OP-COMMA and text() = 'code')
-            or (preceding-sibling::OP-COMMA and text() = 'desc')
-          ]
-          and not(
-            preceding-sibling::expr[1]/*[not(self::OP-RIGHT-BRACE or self::COMMENT)][last()]/@line2 = STR_CONST/@line1
-          )
-        )
-      )
+      and not(preceding-sibling::expr/SYMBOL_PACKAGE[text() != 'testthat'])
+      and (STR_CONST | following-sibling::OP-COMMA[1] | following-sibling::expr[1]/OP-LEFT-BRACE)/@col2 > {max_length}
     ]
-  "
+  ")
   desc_nodes <- xml_find_all_(test_calls, desc_xpath)
   if (length(desc_nodes) == 0L) {
     return(rep(FALSE, length(long_idx)))
   }
-  end_col_xpath <- "
-    number(
-      (
-        STR_CONST
-        | following-sibling::*[
-          not(self::COMMENT or self::expr)
-          and @line2 = preceding-sibling::expr[1][STR_CONST]/@line2
-        ]
-        | following-sibling::expr[1]/OP-LEFT-BRACE[@line2 = parent::expr/preceding-sibling::expr[1]/@line2]
-      )[last()]/@col2
-    )
-  "
   line1 <- as.integer(xml_attr_(desc_nodes, "line1"))
   line2 <- as.integer(xml_attr_(desc_nodes, "line2"))
-  line2_end_col <- as.integer(xml_find_num_(desc_nodes, end_col_xpath))
-  line2[line2_end_col <= max_length] <- line2[line2_end_col <= max_length] - 1L
   vapply(
     long_idx,
     \(line) any(line1 <= line & line2 >= line),
