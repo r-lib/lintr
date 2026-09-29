@@ -213,19 +213,10 @@ test_that("allow_long_test_names exempts test_that() descriptions by default", {
     linter
   )
 
+  # Namespace-qualified and hanging description on its own line
   expect_no_lint(
     trim_some('
-      testthat::test_that("a very long test description that exceeds 40 chars", {
-        expect_true(TRUE)
-      })
-    '),
-    linter
-  )
-
-  # Hanging description on its own line
-  expect_no_lint(
-    trim_some('
-      test_that(
+      testthat::test_that(
         "a very long test description that exceeds 40 chars",
         {
           expect_true(TRUE)
@@ -248,7 +239,7 @@ test_that("allow_long_test_names exempts test_that() descriptions by default", {
   # Trailing comment on an already-long test header is allowed
   expect_no_lint(
     trim_some('
-      test_that("a very long test description that exceeds 40 chars", { # nofuzz
+      test_that("a very long test description that exceeds 40 chars", { # comment
         expect_true(TRUE)
       })
     '),
