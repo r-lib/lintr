@@ -9,7 +9,8 @@ Check that the line length of both comments and code is less than
 line_length_linter(
   length = 80L,
   ignore_string_bodies = FALSE,
-  allow_alignment_calls = c("tribble", "rowwiseDT")
+  allow_alignment_calls = c("tribble", "rowwiseDT"),
+  allow_long_test_names = TRUE
 )
 ```
 
@@ -29,6 +30,13 @@ line_length_linter(
 
   Character vector of function names whose calls are allowed to exceed
   `length` for tabular alignment (e.g. `tribble()`, `rowwiseDT()`).
+
+- allow_long_test_names:
+
+  Logical, default `TRUE`. If `TRUE`, string literal test descriptions
+  in
+  [`testthat::test_that()`](https://testthat.r-lib.org/reference/test_that.html)
+  calls are allowed to exceed `length`.
 
 ## See also
 
@@ -107,6 +115,19 @@ lint(
 #>   'long_val_1', 'long_val_2'
 #> ~~~~~~~~~~~~~~~~~~~~^~~~~~~~
 
+code_lines <- "test_that('a very long test description', {\n  expect_true(TRUE)\n})"
+writeLines(code_lines)
+#> test_that('a very long test description', {
+#>   expect_true(TRUE)
+#> })
+lint(
+  text = code_lines,
+  linters = line_length_linter(length = 20L, allow_long_test_names = FALSE)
+)
+#> <text>:1:21: style: [line_length_linter] Lines should not be more than 20 characters. This line is 43 characters.
+#> test_that('a very long test description', {
+#> ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+
 # okay
 lint(
   text = strrep("x", 21L),
@@ -162,6 +183,17 @@ writeLines(code_lines)
 #>   ~col_one, ~col_two,
 #>   'long_val_1', 'long_val_2'
 #> )
+lint(
+  text = code_lines,
+  linters = line_length_linter(length = 20L)
+)
+#> ℹ No lints found.
+
+code_lines <- "test_that('a very long test description', {\n  expect_true(TRUE)\n})"
+writeLines(code_lines)
+#> test_that('a very long test description', {
+#>   expect_true(TRUE)
+#> })
 lint(
   text = code_lines,
   linters = line_length_linter(length = 20L)
