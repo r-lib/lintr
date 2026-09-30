@@ -7,7 +7,8 @@
 line_length_linter(
   length = 80L,
   ignore_string_bodies = FALSE,
-  allow_alignment_calls = c("tribble", "rowwiseDT")
+  allow_alignment_calls = c("tribble", "rowwiseDT"),
+  allow_long_test_names = TRUE
 )
 }
 \arguments{
@@ -20,6 +21,10 @@ mainly affects wide multiline strings, e.g. SQL queries.}
 \item{allow_alignment_calls}{Character vector of function names whose
 calls are allowed to exceed \code{length} for tabular alignment (e.g.
 \code{tribble()}, \code{rowwiseDT()}).}
+
+\item{allow_long_test_names}{Logical, default \code{TRUE}. If \code{TRUE}, string
+literal test descriptions in \code{testthat::test_that()} calls are allowed
+to exceed \code{length}.}
 }
 \description{
 Check that the line length of both comments and code is less than \code{length}.
@@ -58,6 +63,13 @@ lint(
   linters = line_length_linter(length = 20L, allow_alignment_calls = character())
 )
 
+code_lines <- "test_that('a very long test description', {\n  expect_true(TRUE)\n})"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = line_length_linter(length = 20L, allow_long_test_names = FALSE)
+)
+
 # okay
 lint(
   text = strrep("x", 21L),
@@ -93,6 +105,13 @@ lint(
 )
 
 code_lines <- "tibble::tribble(\n  ~col_one, ~col_two,\n  'long_val_1', 'long_val_2'\n)"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = line_length_linter(length = 20L)
+)
+
+code_lines <- "test_that('a very long test description', {\n  expect_true(TRUE)\n})"
 writeLines(code_lines)
 lint(
   text = code_lines,
