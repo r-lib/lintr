@@ -23,14 +23,16 @@ safe_get_exports <- function(ns) {
   }
 
   # importFrom directives appear as list(ns, imported_funs)
-  if (length(ns) > 1L) {
+  # import(ns, except = excluded_funs) directives appear as list(ns, except = excluded_funs)
+  except <- if (is.list(ns)) ns[["except"]]
+  if (length(ns) > 1L && is.null(except)) {
     return(data.frame(pkg = ns[[1L]], fun = ns[[2L]]))
   }
 
   # relevant only if there are any exported objects
-  fun <- getNamespaceExports(ns)
+  fun <- setdiff(getNamespaceExports(ns[[1L]]), except)
   if (length(fun) > 0L) {
-    data.frame(pkg = ns, fun = fun)
+    data.frame(pkg = ns[[1L]], fun = fun)
   }
 }
 
