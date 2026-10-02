@@ -4,24 +4,37 @@
 \alias{infix_spaces_linter}
 \title{Infix spaces linter}
 \usage{
-infix_spaces_linter(exclude_operators = NULL, allow_multiple_spaces = TRUE)
+infix_spaces_linter(
+  default_style = c("multiple", "one"),
+  overrides = NULL,
+  exclude_operators = NULL,
+  allow_multiple_spaces = NULL
+)
 }
 \arguments{
-\item{exclude_operators}{Character vector of operators to exclude from consideration for linting.
-Default is to include the following "low-precedence" operators:
+\item{default_style}{Spacing style for operators not listed in \code{overrides}. \code{"multiple"} (the default)
+requires at least one space on each side, so that usage like \code{x  =  2} is allowed for code alignment;
+\code{"one"} requires exactly one space on each side.}
+
+\item{overrides}{Named list of character vectors assigning a spacing style to specific operators. Names are
+the style, one of \code{"multiple"}, \code{"one"}, \code{"none"} (no space on either side) or \code{"any"} (not linted), and
+values are the operators, e.g. \code{list(none = c("EQ_SUB", "EQ_FORMALS"), any = "\%\%")}. Each operator can
+appear only once.
+The linter considers the following "low-precedence" operators:
 \code{+}, \code{-}, \code{~}, \code{>}, \code{>=}, \code{<}, \code{<=}, \code{==}, \code{!=}, \code{&}, \code{&&}, \code{|}, \code{||}, \verb{<-}, \verb{:=}, \verb{<<-}, \verb{->}, \verb{->>},
-\code{=}, \code{/}, \code{*}, and any infix operator (exclude infixes by passing \code{"\%\%"}). Note that \code{"="} here includes
-three different operators, from the parser's point of view. To lint only some of these, pass the
+\code{=}, \code{/}, \code{*}, \verb{|>}, and any infix operator (refer to infixes by \code{"\%\%"}). Note that \code{"="} here includes
+three different operators, from the parser's point of view. To target only some of these, pass the
 corresponding parse tags (i.e., some of \code{"EQ_ASSIGN"}, \code{"EQ_SUB"}, and \code{"EQ_FORMALS"}; see
 \code{\link[utils:getParseData]{utils::getParseData()}}).}
 
-\item{allow_multiple_spaces}{Logical, default \code{TRUE}. If \code{FALSE}, usage like \code{x  =  2} will also be linted;
-excluded by default because such usage can sometimes be used for better code alignment, as is allowed
-by the style guide.}
+\item{exclude_operators}{(Deprecated) Use \code{overrides = list(any = ...)} instead.}
+
+\item{allow_multiple_spaces}{(Deprecated) Use \code{default_style = "one"} instead of \code{FALSE}.}
 }
 \description{
 Check that infix operators are surrounded by spaces. Enforces the corresponding Tidyverse style guide rule;
-see \url{https://style.tidyverse.org/syntax.html#infix-operators}.
+see \url{https://style.tidyverse.org/syntax.html#infix-operators}. Spacing can be customized per operator,
+e.g. to require no space around \code{=} in named arguments as in the Bioconductor style guide.
 }
 \examples{
 # will produce lints
@@ -33,6 +46,11 @@ lint(
 lint(
   text = "1:4 \%>\%sum()",
   linters = infix_spaces_linter()
+)
+
+lint(
+  text = "sum(1:10, na.rm = TRUE)",
+  linters = infix_spaces_linter(overrides = list(none = c("EQ_SUB", "EQ_FORMALS")))
 )
 
 # okay
@@ -53,17 +71,17 @@ abcdef <- 2L
 writeLines(code_lines)
 lint(
   text = code_lines,
-  linters = infix_spaces_linter(allow_multiple_spaces = TRUE)
+  linters = infix_spaces_linter(default_style = "multiple")
 )
 
 lint(
   text = "a||b",
-  linters = infix_spaces_linter(exclude_operators = "||")
+  linters = infix_spaces_linter(overrides = list(any = "||"))
 )
 
 lint(
   text = "sum(1:10, na.rm=TRUE)",
-  linters = infix_spaces_linter(exclude_operators = "EQ_SUB")
+  linters = infix_spaces_linter(overrides = list(none = c("EQ_SUB", "EQ_FORMALS")))
 )
 
 }
@@ -71,6 +89,7 @@ lint(
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
 \item \url{https://style.tidyverse.org/syntax.html#infix-operators}
+\item \url{https://contributions.bioconductor.org/r-code.html#use-of-space}
 }
 }
 \section{Tags}{
