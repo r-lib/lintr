@@ -1,4 +1,4 @@
-#' Lint a file, directory, or package
+\#' Lint a file, directory, or package
 #'
 #' * `lint()` lints a single file.
 #' * `lint_dir()` lints all files in a directory.
@@ -26,7 +26,7 @@
 #'   Pass `TRUE` explicitly to discover settings when using `text=` with `filename`.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #'   linting is being done ad hoc. When combined with `filename`, content comes from `text` (with a trailing `"\n"` or
-#'   trailing `""` element indicating a terminal newline) while `filename` provides file identity.
+#'   `""` element indicating a terminal newline) while `filename` provides file identity.
 #'
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
