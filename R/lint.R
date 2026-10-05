@@ -1,4 +1,4 @@
-\#' Lint a file, directory, or package
+#' Lint a file, directory, or package
 #'
 #' * `lint()` lints a single file.
 #' * `lint_dir()` lints all files in a directory.
