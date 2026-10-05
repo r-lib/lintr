@@ -4,6 +4,9 @@ description: "Thorough PR reviewer focusing on correctness, design, test cleanli
 tools:
   - view_file
   - code_search
+  - grep_search
+  - find_by_name
+  - list_dir
   - run_command
   - manage_task
   - search_web
