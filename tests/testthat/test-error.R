@@ -55,5 +55,11 @@ test_that("parse errors whose call is a symbol are reported as lints", {
   linter <- equals_na_linter()
   expect_lint("x |> f", msg_pipe_rhs, linter)
   expect_lint("data |> filter(id > 3) |> summary", msg_pipe_rhs, linter)
-  expect_lint("x |> f()\ny |> g", list(msg_pipe_rhs, line_number = 2L), linter)
+})
+
+test_that("parse errors whose call is a symbol report the right line", {
+  skip_unless_r(">= 4.3.0")
+
+  msg_pipe_rhs <- rex::rex("The pipe operator requires a function call as RHS")
+  expect_lint("x |> f()\ny |> g", list(msg_pipe_rhs, line_number = 2L), equals_na_linter())
 })
