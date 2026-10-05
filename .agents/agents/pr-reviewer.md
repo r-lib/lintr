@@ -1,6 +1,18 @@
 ---
 name: pr-reviewer
-description: "Thorough PR reviewer focusing on correctness, design, test cleanliness, and robustness. Note: This agent only reviews and does not edit code."
+description: "Thorough PR reviewer focusing on correctness, design, test cleanliness, and robustness. Invoke this subagent whenever the user asks to review a PR, branch, or code changes. Note: This agent only reviews and does not edit code."
+tools:
+  - view_file
+  - code_search
+  - grep_search
+  - find_by_name
+  - list_dir
+  - run_command
+  - manage_task
+  - search_web
+  - read_url_content
+  - skill_search
+  - send_message
 mainAgent: true
 subagent: true
 ---

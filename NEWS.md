@@ -5,10 +5,11 @@
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
 * `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
+* `lint(..., cache = TRUE)` now accounts for whether the input ends with a terminal newline, avoiding stale cache hits for `trailing_blank_lines_linter()` when a terminal newline is added or removed (REditorSupport/languageserver#772, @MichaelChirico).
 
 ## New and improved features
 
-* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, @atusy).
+* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content (including whether it ends with a terminal newline, e.g. `"x <- 1\n"` or `c("x <- 1", "")` vs. `"x <- 1"`), so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, REditorSupport/languageserver#772, @atusy and @MichaelChirico).
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
 
 ### New linters

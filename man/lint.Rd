@@ -57,8 +57,8 @@ directory.}
 Pass \code{TRUE} explicitly to discover settings when using \verb{text=} with \code{filename}.}
 
 \item{text}{Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-linting is being done ad hoc. When combined with \code{filename}, content comes from \code{text} while
-\code{filename} provides file identity.}
+linting is being done ad hoc. When combined with \code{filename}, content comes from \code{text} (with a trailing \code{"\\n"} or
+\code{""} element indicating a terminal newline) while \code{filename} provides file identity.}
 
 \item{path}{For the base directory of the project (for \code{lint_dir()}) or
 package (for \code{lint_package()}).}
