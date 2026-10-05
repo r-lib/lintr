@@ -86,7 +86,8 @@ lint_package(
 
   Optional argument for supplying a string or lines directly, e.g. if
   the file is already in memory or linting is being done ad hoc. When
-  combined with `filename`, content comes from `text` while `filename`
+  combined with `filename`, content comes from `text` (with a trailing
+  `"\n"` or `""` element indicating a terminal newline) while `filename`
   provides file identity.
 
 - path:
@@ -150,10 +151,10 @@ lint(text = "a = 123")
 f <- tempfile()
 writeLines("a=1", f)
 lint(f)
-#> /tmp/Rtmpjm5ES7/file1a477802761:1:2: style: [assignment_linter] Use <- for assignment, not =.
+#> /tmp/Rtmpl8I8UX/file19295f8fd31a:1:2: style: [assignment_linter] Use <- for assignment, not =.
 #> a=1
 #>  ^
-#> /tmp/Rtmpjm5ES7/file1a477802761:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
+#> /tmp/Rtmpl8I8UX/file19295f8fd31a:1:2: style: [infix_spaces_linter] Put spaces around all infix operators.
 #> a=1
 #>  ^
 unlink(f)
