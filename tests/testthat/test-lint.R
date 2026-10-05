@@ -455,6 +455,26 @@ test_that("lint(filename, text=) detects missing terminal newline and caches it 
   )
   expect_length(lints_present_lines, 0L)
 
+  # For .Rmd files, extract_r_source() strips attributes from expr$content, so changing the linter set
+  # (missing the file-level cache) exercises obj$terminal_newline in the global-expression cache key.
+  expect_length(
+    lint(
+      "R/terminal_newline.Rmd",
+      text = c("```{r}", "x <- 1", "```", ""),
+      linters = linter,
+      cache = cache_path
+    ),
+    0L
+  )
+  lints_expr_cache <- lint(
+    "R/terminal_newline.Rmd",
+    text = c("```{r}", "x <- 1", "```"),
+    linters = list(linter, assignment_linter()),
+    cache = cache_path
+  )
+  expect_length(lints_expr_cache, 1L)
+  expect_identical(lints_expr_cache[[1L]]$message, "Add a terminal newline.")
+
   lints_present_string <- lint(
     "R/terminal_newline.R",
     text = "x <- 1\n",
@@ -462,6 +482,24 @@ test_that("lint(filename, text=) detects missing terminal newline and caches it 
     cache = cache_path
   )
   expect_length(lints_present_string, 0L)
+
+  lints_multiline_missing <- lint(
+    "R/terminal_newline.R",
+    text = c("x <- 1", "y <- 2"),
+    linters = linter,
+    cache = cache_path
+  )
+  expect_length(lints_multiline_missing, 1L)
+  expect_identical(lints_multiline_missing[[1L]]$line_number, 2L)
+  expect_identical(lints_multiline_missing[[1L]]$message, "Add a terminal newline.")
+
+  lints_multiline_present <- lint(
+    "R/terminal_newline.R",
+    text = c("x <- 1", "y <- 2", ""),
+    linters = linter,
+    cache = cache_path
+  )
+  expect_length(lints_multiline_present, 0L)
 
   tmp <- withr::local_tempfile()
   cat("x <- 1", file = tmp)
