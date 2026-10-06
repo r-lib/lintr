@@ -486,7 +486,12 @@ test_that("indentation with bracket works", {
       ][
         , ok
       ]
+    "),
+    linter
+  )
 
+  expect_no_lint(
+    trim_some("
       bla[hanging,
           also_ok]
     "),
@@ -498,10 +503,20 @@ test_that("indentation with bracket works", {
       abc[[
         'elem'
       ]]
+    "),
+    linter
+  )
 
+  expect_no_lint(
+    trim_some("
       def[[a,
            b]]
+    "),
+    linter
+  )
 
+  expect_no_lint(
+    trim_some("
       ghi[[a,
         b
       ]]
