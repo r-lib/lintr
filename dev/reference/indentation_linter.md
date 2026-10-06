@@ -153,7 +153,7 @@ lint(
   text = code_lines,
   linters = indentation_linter(hanging_indent_style = "never")
 )
-#> <text>:2:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces (or start argument on previous line).
+#> <text>:2:4: style: [indentation_linter] Indentation should be 2 spaces but is 4 spaces.
 #>     additional_arg = 42)
 #>   ~^
 
