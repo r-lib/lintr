@@ -538,30 +538,6 @@ lint_rmd_error <- function(e, source_expression) {
   )
 }
 
-get_single_source_expression <- function(loc,
-                                         parsed_content,
-                                         source_expression,
-                                         filename,
-                                         top_level_map) {
-  line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
-  expr_lines <- source_expression$lines[line_nums]
-  names(expr_lines) <- line_nums
-  content <- get_content(source_expression$lines, parsed_content[loc, ])
-  id <- parsed_content$id[loc]
-  pc <- parsed_content[which(top_level_map == id), ]
-  list(
-    filename = filename,
-    line = parsed_content[loc, "line1"],
-    column = parsed_content[loc, "col1"],
-    lines = expr_lines,
-    parsed_content = pc,
-    xml_parsed_content = xml_missing(),
-    # Placeholder for xml_find_function_calls, if needed (e.g. on R <= 4.0.5 with input source "\\")
-    xml_find_function_calls = build_xml_find_function_calls(xml_missing()),
-    content = content
-  )
-}
-
 get_source_expression <- function(source_expression, error = identity) {
   parse_error <- FALSE
 

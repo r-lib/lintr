@@ -816,11 +816,3 @@ zap_temp_filename <- function(res, needs_tempfile) {
   }
   res
 }
-
-necessary_linters <- function(expr, expression_linter_names, file_linter_names) {
-  if (is_lint_level(expr, "expression")) {
-    expression_linter_names
-  } else {
-    file_linter_names
-  }
-}
