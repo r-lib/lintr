@@ -35,7 +35,7 @@ cyclocomp_linter <- function(complexity_limit = 15L) {
     complexity <- try_silently(
       cyclocomp::cyclocomp(parse(text = source_expression$content, keep.source = FALSE))
     )
-    if (inherits(complexity, "try-error") || complexity <= complexity_limit) {
+    if (inherits(complexity, "error") || complexity <= complexity_limit) {
       return(list())
     }
     col1 <- source_expression[["column"]][1L]

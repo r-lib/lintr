@@ -325,6 +325,20 @@ test_that("package detection works", {
   )
 })
 
+test_that("lints files of a package that is not installed", {
+  pkg_dir <- withr::local_tempdir()
+  writeLines(c("Package: lintrNotInstalledPkg", "Version: 0.0.1"), file.path(pkg_dir, "DESCRIPTION"))
+  dir.create(file.path(pkg_dir, "R"))
+  r_file <- file.path(pkg_dir, "R", "foo.R")
+  writeLines("foo <- function() undefined_global", r_file)
+
+  expect_lint(
+    file = r_file,
+    checks = list("no visible binding for global variable 'undefined_global'", line_number = 1L),
+    linters = object_usage_linter()
+  )
+})
+
 test_that("robust against errors", {
   expect_no_lint(
     'assign("x", unknown_function)',

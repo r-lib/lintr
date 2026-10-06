@@ -6,6 +6,7 @@
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
 * `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
 * `lint(..., cache = TRUE)` now accounts for whether the input ends with a terminal newline, avoiding stale cache hits for `trailing_blank_lines_linter()` when a terminal newline is added or removed (REditorSupport/languageserver#772, @MichaelChirico).
+* `lint()` reports a syntax error for R code whose parse error has a symbol as its call, such as `x |> f`, instead of failing with `object of type 'symbol' is not subsettable` (#3038, @taekop).
 
 ## New and improved features
 
