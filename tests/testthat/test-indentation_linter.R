@@ -548,34 +548,59 @@ test_that("indentation works with control flow statements", {
         )) {
         NULL
       }
+    "),
+    linter
+  )
 
+  expect_no_lint(
+    trim_some("
       if (foo(
         x
       ) ||
         b) {
         NULL
       }
+    "),
+    linter
+  )
 
+  expect_no_lint(
+    trim_some("
       if (foo(
         x +
           y
       )) {
         NULL
       }
+    "),
+    linter
+  )
 
+  expect_no_lint(
+    trim_some("
       if (a && {
         x +
           y
       }) {
         NULL
       }
+    "),
+    linter
+  )
 
+  expect_no_lint(
+    trim_some("
       if (a ||
         b &&
           c) {
         NULL
       }
+    "),
+    linter
+  )
 
+  expect_no_lint(
+    trim_some("
       if (a ||
         x |>
           foo()) {
@@ -879,8 +904,18 @@ test_that("hanging_indent_stlye works", {
     tidy_linter
   )
 
-  if_block <- "if (a ||\n  b) {\n  1\n}"
-  if_hanging <- "if (a ||\n    b) {\n  1\n}"
+  if_block <- trim_some("
+    if (a ||
+      b) {
+      1
+    }
+  ")
+  if_hanging <- trim_some("
+    if (a ||
+        b) {
+      1
+    }
+  ")
 
   expect_no_lint(if_block, tidy_linter)
   expect_lint(if_block, "Hanging indent", hanging_linter)
