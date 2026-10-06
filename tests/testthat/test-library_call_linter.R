@@ -36,11 +36,42 @@ test_that("library_call_linter skips allowed usages", {
     "),
     linter
   )
+
+  # function calls nested in library() arguments are not intervening calls, #3097
+  expect_no_lint(
+    trim_some("
+      library(dplyr)
+      library(tidyr, exclude = c('smiths', 'who'))
+      library(purrr, include.only = c('map', 'walk'))
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      library(
+        dplyr,
+        exclude = c('filter', 'lag')
+      )
+      library(tidyr)
+    "),
+    linter
+  )
 })
 
 test_that("library_call_linter warns on disallowed usages", {
   linter <- library_call_linter()
   lint_message <- rex::rex("Move all library calls to the top of the script.")
+
+  expect_lint(
+    trim_some("
+      library(dplyr, exclude = c('filter', 'lag'))
+      print('test')
+      library(tidyr)
+    "),
+    list(lint_message, line_number = 3L),
+    linter
+  )
 
   expect_lint(
     trim_some("
@@ -224,6 +255,14 @@ test_that("allow_preamble applies as intended", {
   ")
   expect_no_lint(lines, linter_preamble)
   expect_lint(lines, lint_msg, linter_no_preamble)
+
+  expect_no_lint(
+    trim_some("
+      library(dplyr, exclude = c('filter', 'lag'))
+      library(tidyr)
+    "),
+    linter_no_preamble
+  )
 })
 
 test_that("skips allowed usages of library()/character.only=TRUE", {
