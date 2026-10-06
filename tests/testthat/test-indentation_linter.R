@@ -501,8 +501,21 @@ test_that("indentation with bracket works", {
 
       def[[a,
            b]]
+
+      ghi[[a,
+        b
+      ]]
     "),
     linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      abc[[
+        'elem'
+      ]]
+    "),
+    indentation_linter(hanging_indent_style = "always")
   )
 })
 
@@ -1235,15 +1248,6 @@ test_that("closing parentheses on multi-line calls without first-line args work 
     trim_some("
       foo(
         a,
-        b)
-    "),
-    linter
-  )
-
-  expect_no_lint(
-    trim_some("
-      foo(
-        a,
         b,
         c)
     "),
@@ -1305,7 +1309,7 @@ test_that("closing parentheses on multi-line calls without first-line args work 
             a,
             b)
     "),
-    rex::rex("Indentation should be 2 spaces but is 6 spaces."),
+    "Indentation should be 2 spaces but is 6 spaces.",
     linter
   )
 })
