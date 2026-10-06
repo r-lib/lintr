@@ -503,9 +503,9 @@ test_that("indentation works with control flow statements", {
       communicate_warning <- function(changed, transformers) {
         if (any(changed, na.rm = TRUE) &&
           !parse_tree_must_be_identical(transformers) &&
-          !getOption(\"styler.quiet\", FALSE)
+          !getOption('styler.quiet', FALSE)
         ) {
-          cat(\"Please review the changes carefully!\", fill = TRUE)
+          cat('Please review the changes carefully!', fill = TRUE)
         }
       }
     "),
@@ -539,11 +539,47 @@ test_that("indentation works with control flow statements", {
     linter
   )
 
+  # Nested calls, blocks, and higher-precedence sub-expressions inside if/while conditions
   expect_no_lint(
     trim_some("
-      if (TRUE ||
-        FALSE) {
-        TRUE
+      if (a ||
+        foo(
+          x
+        )) {
+        NULL
+      }
+
+      if (foo(
+        x
+      ) ||
+        b) {
+        NULL
+      }
+
+      if (foo(
+        x +
+          y
+      )) {
+        NULL
+      }
+
+      if (a && {
+        x +
+          y
+      }) {
+        NULL
+      }
+
+      if (a ||
+        b &&
+          c) {
+        NULL
+      }
+
+      if (a ||
+        x |>
+          foo()) {
+        NULL
       }
     "),
     linter
@@ -581,7 +617,7 @@ test_that("indentation works with control flow statements", {
       }
     "),
     list(
-      rex::rex("Indentation should be 4 spaces but is 6 spaces (or start argument on previous line)."),
+      rex::rex("Indentation should be 4 spaces but is 6 spaces."),
       line_number = 3L
     ),
     linter
@@ -842,6 +878,17 @@ test_that("hanging_indent_stlye works", {
     list(rex::rex("Hanging indent should be 10 spaces but is 8 spaces."), line_number = 3L),
     tidy_linter
   )
+
+  if_block <- "if (a ||\n  b) {\n  1\n}"
+  if_hanging <- "if (a ||\n    b) {\n  1\n}"
+
+  expect_no_lint(if_block, tidy_linter)
+  expect_lint(if_block, "Hanging indent", hanging_linter)
+  expect_no_lint(if_block, non_hanging_linter)
+
+  expect_lint(if_hanging, "Indentation", tidy_linter)
+  expect_no_lint(if_hanging, hanging_linter)
+  expect_lint(if_hanging, "Indentation", non_hanging_linter)
 })
 
 test_that("previous token is respected when recommending to 'start argument on previous line'", {
@@ -858,12 +905,18 @@ test_that("previous token is respected when recommending to 'start argument on p
       ]
       first_step() +
                     second_step()
+      if (
+          cond
+      ) {
+        NULL
+      }
     "),
     list(
       list(rex::rex("should be 2 spaces but is 11 spaces."), line_number = 2L),
       list(rex::rex("should be 2 spaces but is 5 spaces (or start argument on previous line)."), line_number = 5L),
       list(rex::rex("should be 2 spaces but is 4 spaces (or start argument on previous line)."), line_number = 8L),
-      list(rex::rex("should be 2 spaces but is 14 spaces."), line_number = 11L)
+      list(rex::rex("should be 2 spaces but is 14 spaces."), line_number = 11L),
+      list(rex::rex("should be 2 spaces but is 4 spaces."), line_number = 13L)
     ),
     indentation_linter()
   )
