@@ -136,6 +136,16 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     never = \(change) "block"
   )
 
+  xp_has_nested_block <- xp_or(paste0("descendant::", paren_tokens_left, "[", xp_last_on_line, "]"))
+
+  xp_cond_same_line_paren <- glue("
+    parent::expr/@line1 = ancestor::expr[
+      parent::expr[IF or WHILE]
+      and following-sibling::OP-RIGHT-PAREN
+      and not({xp_has_nested_block})
+    ]/preceding-sibling::OP-LEFT-PAREN/@line1
+  ")
+
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
     xp_suppress <- glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
@@ -192,10 +202,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       glue("//{paren_tokens_left}[not(
         @line1 = following-sibling::expr[
           @line2 > @line1 and
-          ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
+          ({xp_has_nested_block})
         ]/@line1
       )]"),
-      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
+      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition} and not({xp_cond_same_line_paren})]"),
       glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
       glue("
         ({ global_nodes(keyword_tokens) })
@@ -225,6 +235,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
     change_ends <- xml_find_num_(indent_changes, xp_block_ends)
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
+    is_paren_block <- change_types == "block" & change_tags %in% paren_tokens_left_no_brace
+    is_paren_block[is_paren_block] <- xml_find_lgl_(
+      indent_changes[is_paren_block],
+      sprintf("not(parent::expr[IF or WHILE]) and %s", xp_last_on_line)
+    )
 
     check_idx <- which(change_begins <= change_ends)
 
@@ -254,8 +269,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         hanging_indent = col2s[ii]
       )
       line_metadata$is_hanging[to_indent] <- change_types[ii] == "hanging"
-      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% paren_tokens_left_no_brace
-      line_metadata$hanging_cols[to_indent] <- if (is_paren_block) col2s[ii] else 0L
+      line_metadata$hanging_cols[to_indent] <- if (is_paren_block[ii]) col2s[ii] else 0L
     }
 
     # Only lint non-empty lines if the indentation level doesn't match.
@@ -374,7 +388,12 @@ build_indentation_style_tidy <- function() {
           /following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
       "),
       glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]"),
-      glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]")
+      glue("
+        self::OP-LEFT-PAREN[
+          parent::expr[IF or WHILE]
+          or (parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line})
+        ]
+      ")
     ),
     collapse = "\n|  "
   ))

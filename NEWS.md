@@ -31,6 +31,7 @@
 
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
 * `library_call_linter()` no longer flags later `library()` calls when an earlier attach call uses a function in its arguments, e.g. `library(pkg, exclude = c("foo"))` (#3097, @fabiandistler).
+* `indentation_linter()` better aligns with {styler} and `air` in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007 and #2535, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
