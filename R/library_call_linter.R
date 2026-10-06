@@ -84,9 +84,12 @@
 library_call_linter <- function(allow_preamble = TRUE) {
   attach_calls <- c("library", "require")
   attach_call_cond <- xp_text_in_table(attach_calls)
+  attach_expr_cond <- glue("expr[expr/SYMBOL_FUNCTION_CALL[{attach_call_cond}]]")
   suppress_call_cond <- xp_text_in_table(c("suppressMessages", "suppressPackageStartupMessages"))
 
-  unsuppressed_call_cond <- glue("not( {xp_or(attach_call_cond, suppress_call_cond)} )")
+  unsuppressed_call_cond <- glue(
+    "not( {xp_or(attach_call_cond, suppress_call_cond, paste0('ancestor::', attach_expr_cond))} )"
+  )
   if (allow_preamble) {
     unsuppressed_call_cond <- xp_and(
       unsuppressed_call_cond,
@@ -129,8 +132,6 @@ library_call_linter <- function(allow_preamble = TRUE) {
     ]
   ")
   call_symbol_path <- glue("./expr[{call_symbol_cond}]")
-
-  attach_expr_cond <- glue("expr[expr/SYMBOL_FUNCTION_CALL[{attach_call_cond}]]")
 
   # Use `calls` in the first condition, not in the second, to prevent, e.g.,
   #   the first call matching calls[1] but the second matching calls[2].
