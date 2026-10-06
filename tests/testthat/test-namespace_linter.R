@@ -146,3 +146,28 @@ test_that("namespace_linter works with backticked symbols", { # nofuzz
     linters = namespace_linter()
   )
 })
+
+test_that("namespace_linter respects except= in import() directives", { # nofuzz
+  pkg_dir <- withr::local_tempdir("testpkg_except")
+  dir.create(file.path(pkg_dir, "R"))
+  writeLines(
+    c("Package: testpkg_except", "Version: 1.0.0", "Title: Test", "Description: Test."),
+    file.path(pkg_dir, "DESCRIPTION")
+  )
+  writeLines("import(stats, except = sd)", file.path(pkg_dir, "NAMESPACE"))
+
+  test_file <- file.path(pkg_dir, "R", "test.R")
+  writeLines(
+    c(
+      "stats::median(1:10)",
+      "stats::sd(1:10) # excluded from the import"
+    ),
+    test_file
+  )
+
+  expect_lint(
+    file = test_file,
+    checks = list(rex::rex("Don't use `::` to access median, which is already imported from stats."), line_number = 1L),
+    linters = namespace_linter()
+  )
+})

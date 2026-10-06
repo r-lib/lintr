@@ -25,8 +25,8 @@
 #'   [default_settings()] are used. `TRUE` by default when linting files, as opposed to `text=`.
 #'   Pass `TRUE` explicitly to discover settings when using `text=` with `filename`.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-#'   linting is being done ad hoc. When combined with `filename`, content comes from `text` while
-#'   `filename` provides file identity.
+#'   linting is being done ad hoc. When combined with `filename`, content comes from `text` (with a trailing `"\n"` or
+#'   `""` element indicating a terminal newline) while `filename` provides file identity.
 #'
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
@@ -53,7 +53,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     on.exit(reset_settings(), add = TRUE)
   }
 
-  lines <- get_lines(filename, text)
+  lines <- get_lines(filename, text, needs_tempfile = needs_tempfile)
 
   if (needs_tempfile) {
     filename <- tempfile()
@@ -76,7 +76,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   cache_path <- define_cache_path(cache)
 
   lint_cache <- load_cache(filename, cache_path)
-  lint_obj <- define_cache_key(filename, inline_data, lines)
+  lint_obj <- define_cache_key(lines)
   lints <- retrieve_file(lint_cache, lint_obj, linters)
   if (!is.null(lints)) {
     return(exclude(lints, lines = lines, linter_names = names(linters), ...))
@@ -774,10 +774,14 @@ maybe_append_condition_lints <- function(lints, source_expression, lint_cache, f
   lints
 }
 
-get_lines <- function(filename, text) {
+get_lines <- function(filename, text, needs_tempfile = FALSE) {
   encoding <- NULL
   if (!is.null(text)) {
-    lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+    text <- paste(text, collapse = "\n")
+    lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
+    if (!needs_tempfile && nzchar(text)) {
+      attr(lines, "terminal_newline") <- endsWith(text, "\n")
+    }
   } else if (re_matches(filename, rex(newline))) {
     lines <- strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {

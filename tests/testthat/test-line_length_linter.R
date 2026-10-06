@@ -162,4 +162,164 @@ test_that("string bodies can be ignored", {
   expect_lint('"short" # 15!!!', lint_msg, linter)
   expect_lint('foo("a", long_)', lint_msg, linter)
 })
+
+test_that("allow_alignment_calls exempts tabular calls", {
+  linter <- line_length_linter(40L)
+
+  expect_no_lint(
+    trim_some('
+      df <- tibble::tribble(
+        ~col_one                  , ~col_two                  ,
+        "very_long_string_value1" , "very_long_string_value2"
+      )
+    '),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some('
+      dt <- rowwiseDT(
+        col_one =                 , col_two =                 ,
+        "very_long_string_value1" , "very_long_string_value2"
+      )
+    '),
+    linter
+  )
+
+  expect_lint(
+    trim_some('
+      df <- tibble::tribble(
+        ~col_one                  , ~col_two                  ,
+        "very_long_string_value1" , "very_long_string_value2"
+      )
+    '),
+    list(
+      list("57 characters", line_number = 2L),
+      list("55 characters", line_number = 3L)
+    ),
+    line_length_linter(40L, allow_alignment_calls = character())
+  )
+})
+
+test_that("allow_long_test_names exempts test_that() descriptions by default", {
+  linter <- line_length_linter(40L)
+
+  expect_no_lint(
+    trim_some('
+      test_that("a very long test description that exceeds 40 chars", {
+        expect_true(TRUE)
+      })
+    '),
+    linter
+  )
+
+  # Namespace-qualified and hanging description on its own line
+  expect_no_lint(
+    trim_some('
+      testthat::test_that(
+        "a very long test description that exceeds 40 chars",
+        {
+          expect_true(TRUE)
+        }
+      )
+    '),
+    linter
+  )
+
+  # Boundary case where the string ends within the limit, but `, {` pushes the header over
+  expect_no_lint(
+    trim_some('
+      test_that("exact_28_char_test_name_1234", {
+        expect_true(TRUE)
+      })
+    '),
+    linter
+  )
+
+  # Trailing comment on an already-long test header is allowed
+  expect_no_lint(
+    trim_some('
+      test_that("a very long test description that exceeds 40 chars", { # comment
+        expect_true(TRUE)
+      })
+    '),
+    linter
+  )
+
+  # Multi-line string literal description
+  expect_no_lint(
+    trim_some('
+      test_that("first line of a very long test description that exceeds 40 chars
+      middle line of a very long test description that also exceeds 40 chars
+      final line of a very long test description that exceeds 40 chars", {
+        expect_true(TRUE)
+      })
+    '),
+    linter
+  )
+})
+
+test_that("allow_long_test_names still lints non-header long lines and can be disabled", {
+  linter <- line_length_linter(40L)
+
+  # Long lines inside the test body still lint
+  expect_lint(
+    trim_some('
+      test_that("a very long test description that exceeds 40 chars", {
+        expect_identical(very_long_variable_one, very_long_variable_two)
+      })
+    '),
+    list("66 characters", line_number = 2L),
+    linter
+  )
+
+  # Short test header with a long trailing comment still lints
+  expect_lint(
+    trim_some('
+      test_that("short", { # a very long trailing comment that exceeds 40 chars
+        expect_true(TRUE)
+      })
+    '),
+    list("73 characters", line_number = 1L),
+    linter
+  )
+
+  # Short test name with an inline test body on the same line still lints
+  expect_lint(
+    'test_that("short", expect_true(very_long_variable_name))',
+    list("56 characters", line_number = 1L),
+    linter
+  )
+
+  # Non-string-literal descriptions and other namespaces still lint
+  expect_lint(
+    trim_some('
+      test_that(paste("a very long test description", "that exceeds 40 chars"), {
+        expect_true(TRUE)
+      })
+    '),
+    list("75 characters", line_number = 1L),
+    linter
+  )
+  expect_lint(
+    trim_some('
+      other::test_that("a very long test description that exceeds 40 chars", {
+        expect_true(TRUE)
+      })
+    '),
+    list("72 characters", line_number = 1L),
+    linter
+  )
+
+  # Disabling allow_long_test_names lints long test descriptions
+  expect_lint(
+    trim_some('
+      test_that("a very long test description that exceeds 40 chars", {
+        expect_true(TRUE)
+      })
+    '),
+    list("65 characters", line_number = 1L),
+    line_length_linter(40L, allow_long_test_names = FALSE)
+  )
+})
 # fuzzer enable: comment_injection

@@ -135,7 +135,7 @@ get_content <- function(lines, info, needs_braces = FALSE) {
 try_silently <- function(expr) {
   suppressWarnings(
     suppressMessages(
-      try(expr, silent = TRUE)
+      tryCatch(expr, error = identity)
     )
   )
 }

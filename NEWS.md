@@ -4,10 +4,13 @@
 
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
+* `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
+* `lint(..., cache = TRUE)` now accounts for whether the input ends with a terminal newline, avoiding stale cache hits for `trailing_blank_lines_linter()` when a terminal newline is added or removed (REditorSupport/languageserver#772, @MichaelChirico).
+* `lint()` reports a syntax error for R code whose parse error has a symbol as its call, such as `x |> f`, instead of failing with `object of type 'symbol' is not subsettable` (#3038, @taekop).
 
 ## New and improved features
 
-* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, @atusy).
+* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content (including whether it ends with a terminal newline, e.g. `"x <- 1\n"` or `c("x <- 1", "")` vs. `"x <- 1"`), so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, REditorSupport/languageserver#772, @atusy and @MichaelChirico).
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
 
 ### New linters
@@ -19,6 +22,10 @@
 * `class_equals_linter()` blocks checking class membership with `is.element(cls, class(obj))` or `is.element(class(obj), cls)`, matching existing behavior for `class(obj) %in% cls` (#2849, @MichaelChirico).
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with zero or one argument (#2980, @MichaelChirico).
 * `fixed_regex_linter()` encourages using the recent (R 4.6.0) `fixed = TRUE` arguments to `list.files()` and `dir()` (#3003, @MichaelChirico). To avoid depending on a recent R version, the rule for `list.files()` and `dir()` can be disabled by setting `check_file_listing = FALSE`.
+* `unnecessary_nesting_linter()` gains a `branch_exit_fallback_calls` argument to specify functions (such as `"warning"`) that prevent a lint on a sibling branch when the other branch terminates with an exit call (e.g. `if (A) { stop("x") } else { warning("y") }`), without treating those calls as exit clauses themselves (#2963, @randy3k).
+* For [`air`](https://github.com/posit-dev/air) formatter compatibility, `line_length_linter()`:
+   + Gains argument `allow_alignment_calls` (defaulting to `c("tribble", "rowwiseDT")`) to ignore line length inside tabular alignment calls (#3133, @randy3k).
+   + Gains argument `allow_long_test_names` (defaulting to `TRUE`) to ignore line length on `testthat::test_that()` descriptions (#3134, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 

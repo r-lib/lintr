@@ -85,6 +85,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
 
     declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
+    if (inherits(declared_globals, "error")) declared_globals <- character()
 
     xml <- source_expression$full_xml_parsed_content
 
@@ -115,7 +116,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       ))
 
       # nocov start
-      if (inherits(fun, "try-error")) {
+      if (inherits(fun, "error")) {
         cli_abort_internal("Invalid code reached in object_usage_linter: {code}\nPlease report.")
       }
       # nocov end
@@ -177,7 +178,7 @@ make_check_env <- function(pkg_name, xml, library_lint_hook) {
   if (!is.null(pkg_name)) {
     parent_env <- try_silently(getNamespace(pkg_name))
   }
-  if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
+  if (is.null(pkg_name) || inherits(parent_env, "error")) {
     parent_env <- globalenv()
   }
   env <- new.env(parent = parent_env)

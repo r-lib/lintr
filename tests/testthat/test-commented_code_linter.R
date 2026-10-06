@@ -12,6 +12,7 @@ test_that("commented_code_linter skips allowed usages", {
   expect_no_lint("1+1 # gives 2", linter)
   expect_no_lint("# Non-existent:", linter)
   expect_no_lint("# 1-a", linter) # "-" removed from code operators
+  expect_no_lint("# x |> f", linter) # parse error whose call is a symbol
   expect_no_lint('1+1  # for example cat("123")', linter)
 
   # regression test for #451
