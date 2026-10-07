@@ -12,6 +12,7 @@
 * `lint()` reports a syntax error for R code whose parse error has a symbol as its call, such as `x |> f`, instead of failing with `object of type 'symbol' is not subsettable` (#3038, @taekop).
 * `object_usage_linter()` reports the location of the offending call rather than the start of the pipeline or outer expression for call-level warnings like `unused argument` (#1936, @MichaelChirico).
 * `object_name_linter()`, `object_length_linter()`, and `namespace_linter()` no longer fail when `lint("", text = ...)` is called with an empty `filename` (#3032, @MichaelChirico).
+* `get_source_expressions()` and linters inspecting string constants (such as `nonportable_path_linter()` and `absolute_path_linter()`) no longer fail with `unexpected '['` on multiline strings of 1000 or more characters when the column difference between the last and first line equals 27 (#2848, @MichaelChirico).
 
 ## New and improved features
 
