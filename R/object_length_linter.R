@@ -42,24 +42,24 @@ object_length_linter <- function(length = 30L) {
     assignments <- xml_find_all_(xml, object_name_xpath)
 
     # Retrieve assigned name
-    nms <- strip_names(
+    nms <- strip_quotes(
       xml_text(assignments)
     )
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change
     pkg <- find_package(source_expression$filename)
     ns_imports <- namespace_imports(pkg)
-    generics <- strip_names(c(
+    generics <- c(
       declared_s3_generics(xml),
       imported_s3_generics(ns_imports)$fun,
       exported_s3_generics(pkg)$fun,
       .base_s3_generics
-    ))
+    )
     generics <- unique(generics[nzchar(generics)])
 
     # Remove generic function names from generic implementations
     # This only lints S3 implementations if the class names are too long, still lints generics if they are too long.
-    nms_stripped <- re_substitutes(nms, rex(start, or(generics), "."), "")
+    nms_stripped <- strip_names(re_substitutes(nms, rex(start, or(generics), "."), ""))
 
     too_long <- nchar(nms_stripped) > length
 

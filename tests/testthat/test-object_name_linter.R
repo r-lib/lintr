@@ -88,9 +88,25 @@ test_that("linter ignores some objects", {
   expect_no_lint(".First <- function(...) TRUE", object_name_linter("snake_case")) # namespace hooks
   expect_no_lint("`%++%` <- `+`", object_name_linter("symbols")) # all-symbol operator
   expect_no_lint("`%<-%` <- `+`", object_name_linter("symbols")) # all-symbol operator #495
-  # S3 group generic, #1841
+  # S3 group generic, #1841, #2851
   expect_no_lint(
     "`==.snake_case` <- function(a, b) unclass(a) == unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`%/%.snake_case` <- function(a, b) unclass(a) %/% unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`%*%.snake_case` <- function(a, b) unclass(a) %*% unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`%%.CamelCase` <- function(a, b) unclass(a) %% unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`names<-.snake_case` <- function(x, value) x",
     object_name_linter("snake_case")
   )
 })
@@ -372,7 +388,7 @@ test_that("literals in assign() and setGeneric() are checked", {
   )
 })
 
-test_that("generics assigned with '=' or <<- are registered", {
+test_that("generics assigned with '=' or <<- or backticks are registered", {
   linter <- object_name_linter()
 
   expect_no_lint(
@@ -383,8 +399,16 @@ test_that("generics assigned with '=' or <<- are registered", {
       g <<- function(x) {
         UseMethod('f')
       }
+      `%my_op%` <- function(x, y) {
+        UseMethod('%my_op%')
+      }
+      `my_setter<-` <- function(x, value) {
+        UseMethod('my_setter<-')
+      }
       f.default <- function(x) {}
       g.default <- function(x) {}
+      `%my_op%.my_class` <- function(x, y) {}
+      `my_setter<-.my_class` <- function(x, value) {}
     "),
     linter
   )

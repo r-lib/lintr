@@ -13,13 +13,17 @@ test_that("returns the correct linting", {
   )
 })
 
-# Regression tests for #871
+# Regression tests for #871 and #2851
 test_that("lints S3 generics correctly", {
   linter <- object_length_linter()
   lint_msg <- rex::rex("Variable and function names should not be longer than 30 characters.")
 
   expect_no_lint("print.very_very_long_class_name <- 1", linter)
   expect_lint("print.very_very_very_very_long_class_name <- 1", lint_msg, linter)
+  expect_no_lint("`%/%.very_very_long_class_name` <- 1", linter)
+  expect_lint("`%/%.very_very_very_very_long_class_name` <- 1", lint_msg, linter)
+  expect_no_lint("`names<-.very_very_long_class_name` <- 1", linter)
+  expect_lint("`names<-.very_very_very_very_long_class_name` <- 1", lint_msg, linter)
 
   expect_lint(
     trim_some("
@@ -32,6 +36,27 @@ test_that("lints S3 generics correctly", {
     }
 
     very_very_very_long_generic_name.very_very_very_very_long_class_name <- function(x, ...) {
+      2L
+    }
+  "),
+    list(
+      list(line_number = 1L),
+      list(line_number = 9L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+    `%very_very_very_long_generic_name%` <- function(x, y) {
+      UseMethod(\"%very_very_very_long_generic_name%\")
+    }
+
+    `%very_very_very_long_generic_name%.short_class` <- function(x, y) {
+      42L
+    }
+
+    `%very_very_very_long_generic_name%.very_very_very_very_long_class_name` <- function(x, y) {
       2L
     }
   "),
