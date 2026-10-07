@@ -71,7 +71,7 @@ imported_s3_generics <- function(ns_imports) {
       seq_len(nrow(ns_imports)),
       function(i) {
         fun_obj <- get(ns_imports$fun[i], envir = asNamespace(ns_imports$pkg[i]))
-        is.function(fun_obj) && is_s3_generic(fun_obj)
+        is_s3_generic(fun_obj)
       },
       logical(1L)
     )
@@ -101,8 +101,11 @@ exported_s3_generics <- function(path = find_package(".")) {
 }
 
 is_s3_generic <- function(fun) {
+  if (!is.function(fun)) {
+    return(FALSE)
+  }
   # Inspired by `utils::isS3stdGeneric`, though it will detect functions that
-  # have `useMethod()` in places other than the first expression.
+  # have `UseMethod()` in places other than the first expression.
   bdexpr <- body(fun)
   while (is.call(bdexpr) && bdexpr[[1L]] == "{") bdexpr <- bdexpr[[length(bdexpr)]]
   ret <- is.call(bdexpr) && identical(bdexpr[[1L]], as.name("UseMethod"))
