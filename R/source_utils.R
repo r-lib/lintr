@@ -10,12 +10,9 @@
 #'
 #' @noRd
 build_xml_find_function_calls <- function(xml) {
-  force(xml)
-  delayedAssign("function_call_cache", {
-    res <- xml_find_all_(xml, "//SYMBOL_FUNCTION_CALL/parent::*")
-    names(res) <- get_r_string(res, "SYMBOL_FUNCTION_CALL")
-    res
-  })
+  function_call_cache <- xml_find_all_(xml, "//SYMBOL_FUNCTION_CALL/parent::*")
+  names(function_call_cache) <- get_r_string(function_call_cache, "SYMBOL_FUNCTION_CALL")
+
   delayedAssign("s4_slot_cache", {
     res <- xml_find_all_(xml, "//SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]")
     names(res) <- get_r_string(res, "SLOT")

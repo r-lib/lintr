@@ -9,19 +9,27 @@ with_namespace_cache <- function(cache_key, expr) {
   res
 }
 
-# Parse namespace files and return imports exports, methods
-namespace_imports <- function(path = find_package(".")) {
+with_parsed_namespace <- function(path, key_prefix, expr_fn) {
   if (length(path) == 0L) {
     return(empty_namespace_data())
   }
   mtime <- as.numeric(file.mtime(file.path(path, "NAMESPACE")))
-  cache_key <- paste("imports", path, mtime, sep = "@")
+  cache_key <- paste(key_prefix, path, mtime, sep = "@")
   with_namespace_cache(cache_key, {
-    namespace_data <- tryCatch(
-      parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
-      error = \(e) NULL
+    namespace_data <- with_namespace_cache(
+      paste("namespace_data", path, mtime, sep = "@"),
+      tryCatch(
+        parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
+        error = \(e) NULL
+      )
     )
+    expr_fn(namespace_data)
+  })
+}
 
+# Parse namespace files and return imports exports, methods
+namespace_imports <- function(path = find_package(".")) {
+  with_parsed_namespace(path, "imports", function(namespace_data) {
     if (length(namespace_data$imports) == 0L) {
       empty_namespace_data()
     } else {
@@ -81,17 +89,7 @@ imported_s3_generics <- function(ns_imports) {
 }
 
 exported_s3_generics <- function(path = find_package(".")) {
-  if (length(path) == 0L) {
-    return(empty_namespace_data())
-  }
-  mtime <- as.numeric(file.mtime(file.path(path, "NAMESPACE")))
-  cache_key <- paste("exports", path, mtime, sep = "@")
-  with_namespace_cache(cache_key, {
-    namespace_data <- tryCatch(
-      parseNamespaceFile(basename(path), package.lib = file.path(path, "..")),
-      error = \(e) NULL
-    )
-
+  with_parsed_namespace(path, "exports", function(namespace_data) {
     if (NROW(namespace_data$S3methods) == 0L) {
       empty_namespace_data()
     } else {
