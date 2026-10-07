@@ -26,19 +26,19 @@ test_that("lints S3 generics correctly", {
   expect_lint("`names<-.very_very_very_very_long_class_name` <- 1", lint_msg, linter)
 
   expect_lint(
-    trim_some("
-    very_very_very_long_generic_name <- function(x, ...) {
-      UseMethod(\"very_very_very_long_generic_name\")
-    }
+    trim_some('
+      very_very_very_long_generic_name <- function(x, ...) {
+        UseMethod("very_very_very_long_generic_name")
+      }
 
-    very_very_very_long_generic_name.short_class <- function(x, ...) {
-      42L
-    }
+      very_very_very_long_generic_name.short_class <- function(x, ...) {
+        42L
+      }
 
-    very_very_very_long_generic_name.very_very_very_very_long_class_name <- function(x, ...) {
-      2L
-    }
-  "),
+      very_very_very_long_generic_name.very_very_very_very_long_class_name <- function(x, ...) {
+        2L
+      }
+    '),
     list(
       list(line_number = 1L),
       list(line_number = 9L)
