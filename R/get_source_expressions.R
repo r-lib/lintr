@@ -690,7 +690,7 @@ top_level_expressions <- function(pc) {
 # TODO(R>=4.3.0): drop the octal escape regex check (keep startsWith("[") for >=1000-char strings).
 fix_octal_escapes <- function(pc, lines) {
   is_str_const <- which(pc$token == "STR_CONST")
-  if (!length(is_str_const)) {
+  if (length(is_str_const) == 0L) {
     return(pc)
   }
   str_text <- pc$text[is_str_const]
