@@ -96,39 +96,16 @@ get_source_expressions <- function(filename, lines = NULL) {
     return(list(expressions = list(), error = e, warning = w, lines = source_expression$lines))
   }
 
-  top_level_map <- generate_top_level_map(parsed_content)
+  top_level_locs <- split(seq_len(NROW(parsed_content)), generate_top_level_map(parsed_content))
   xml_parsed_content <- safe_parse_to_xml(parsed_content)
 
-  if (is.null(parsed_content) || nrow(parsed_content) == 0L) {
-    tl_locs <- integer(0L)
-    split_indices <- list()
-  } else {
-    tl_locs <- top_level_expressions(parsed_content)
-    tl_ids <- parsed_content$id[tl_locs]
-    split_indices <- split(seq_len(nrow(parsed_content)), factor(top_level_map, levels = tl_ids))
-  }
-
   expressions <- lapply(
-    X = seq_along(tl_locs),
-    FUN = function(i) {
-      loc <- tl_locs[i]
-      line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
-      expr_lines <- source_expression$lines[line_nums]
-      names(expr_lines) <- line_nums
-      content <- get_content(source_expression$lines, parsed_content[loc, ])
-      pc <- parsed_content[split_indices[[i]], , drop = FALSE]
-      list(
-        filename = filename,
-        line = parsed_content[loc, "line1"],
-        column = parsed_content[loc, "col1"],
-        lines = expr_lines,
-        parsed_content = pc,
-        xml_parsed_content = xml_missing(),
-        # Placeholder for xml_find_function_calls, if needed (e.g. on R <= 4.0.5 with input source "\\")
-        xml_find_function_calls = build_xml_find_function_calls(xml_missing()),
-        content = content
-      )
-    }
+    X = top_level_expressions(parsed_content),
+    FUN = get_single_source_expression,
+    parsed_content,
+    source_expression,
+    filename,
+    top_level_locs
   )
 
   expressions <- maybe_append_expression_xml(expressions, xml_parsed_content)
@@ -535,6 +512,30 @@ lint_rmd_error <- function(e, source_expression) {
     type = "error",
     message = message_info$message,
     line = source_expression$lines[line_number]
+  )
+}
+
+get_single_source_expression <- function(loc,
+                                         parsed_content,
+                                         source_expression,
+                                         filename,
+                                         top_level_locs) {
+  line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
+  expr_lines <- source_expression$lines[line_nums]
+  names(expr_lines) <- line_nums
+  content <- get_content(source_expression$lines, parsed_content[loc, ])
+  id <- as.character(parsed_content$id[loc])
+  pc <- parsed_content[top_level_locs[[id]], ]
+  list(
+    filename = filename,
+    line = parsed_content$line1[loc],
+    column = parsed_content$col1[loc],
+    lines = expr_lines,
+    parsed_content = pc,
+    xml_parsed_content = xml_missing(),
+    # Placeholder for xml_find_function_calls, if needed (e.g. on R <= 4.0.5 with input source "\\")
+    xml_find_function_calls = build_xml_find_function_calls(xml_missing()),
+    content = content
   )
 }
 

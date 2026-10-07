@@ -213,6 +213,23 @@ test_that("object_name_linter won't fail if an imported namespace is unavailable
   )
 })
 
+test_that("object_name_linter distinguishes different importFrom subsets from the same package", { # nofuzz
+  pkg1 <- withr::local_tempdir("pkg1")
+  dir.create(file.path(pkg1, "R"))
+  write.dcf(list(Package = "pkg1", Version = "1.0.0"), file.path(pkg1, "DESCRIPTION"))
+  writeLines("importFrom(stats, sd)", file.path(pkg1, "NAMESPACE"))
+  writeLines("simulate.my_class <- function(object, nsim = 1, seed = NULL, ...) NULL", file.path(pkg1, "R", "a.R"))
+
+  pkg2 <- withr::local_tempdir("pkg2")
+  dir.create(file.path(pkg2, "R"))
+  write.dcf(list(Package = "pkg2", Version = "1.0.0"), file.path(pkg2, "DESCRIPTION"))
+  writeLines("importFrom(stats, simulate)", file.path(pkg2, "NAMESPACE"))
+  writeLines("simulate.my_class <- function(object, nsim = 1, seed = NULL, ...) NULL", file.path(pkg2, "R", "a.R"))
+
+  expect_length(lint_package(pkg1, linters = object_name_linter(), parse_settings = FALSE), 1L)
+  expect_length(lint_package(pkg2, linters = object_name_linter(), parse_settings = FALSE), 0L)
+})
+
 test_that("object_name_linter supports custom regexes", {
   # disables default styles
   linter <- object_name_linter(
