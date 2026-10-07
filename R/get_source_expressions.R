@@ -575,7 +575,7 @@ get_source_expression <- function(source_expression, error = identity) {
   }
 
   source_expression$parsed_content <- parsed_content
-  fix_octal_escapes(fix_tab_indentations(source_expression), source_expression$lines)
+  fix_str_const(fix_tab_indentations(source_expression), source_expression$lines)
 }
 
 maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
@@ -686,7 +686,7 @@ top_level_expressions <- function(pc) {
 #   https://bugs.r-project.org/show_bug.cgi?id=18323
 # and truncated string literals (>= 1000 chars) in getParseData() (#2848):
 #   https://github.com/r-devel/r-svn/blob/9c6e0b9b9b8475704ead72c5077c8c875d51599e/src/main/gram.c#L5479-L5481
-fix_octal_escapes <- function(pc, lines) {
+fix_str_const <- function(pc, lines) {
   is_str_const <- which(pc$token == "STR_CONST")
   if (length(is_str_const) == 0L) {
     return(pc)
@@ -694,12 +694,12 @@ fix_octal_escapes <- function(pc, lines) {
   str_text <- pc$text[is_str_const]
   str_const_mismatch <- startsWith(str_text, "[")
   # TODO(R>=4.3.0): remove this branch
+  # nocov start
   if (getRversion() < "4.3.0") {
-    # nocov start
     str_const <- pc[is_str_const, ]
     str_const_mismatch <- str_const_mismatch | (str_const$col2 - str_const$col1 != nchar(str_text) - 1L)
-    # nocov end
   }
+  # nocov end
   if (!any(str_const_mismatch)) {
     return(pc)
   }
