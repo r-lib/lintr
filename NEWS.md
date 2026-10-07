@@ -7,7 +7,7 @@
 * `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
 * `lint(..., cache = TRUE)` now accounts for whether the input ends with a terminal newline, avoiding stale cache hits for `trailing_blank_lines_linter()` when a terminal newline is added or removed (REditorSupport/languageserver#772, @MichaelChirico).
 * `lint()` reports a syntax error for R code whose parse error has a symbol as its call, such as `x |> f`, instead of failing with `object of type 'symbol' is not subsettable` (#3038, @taekop).
-* `get_source_expressions()` and linters inspecting string constants (such as `nonportable_path_linter()` and `absolute_path_linter()`) no longer fail with `unexpected '['` on multiline strings of 1000 or more characters when the column difference between the last and first line equals 27 (#2848, @MichaelChirico).
+* `get_source_expressions()` and linters inspecting string constants (such as `nonportable_path_linter()` and `absolute_path_linter()`) no longer fail with `unexpected '['` on multiline strings of 1000 or more characters when the column difference between the last and first line equals exactly 27 (#2848, @MichaelChirico).
 
 ## New and improved features
 
