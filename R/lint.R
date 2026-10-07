@@ -104,15 +104,19 @@ lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
     return(list())
   }
 
-  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
-  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+  expr_linters <- linters[vapply(linters, is_linter_level, logical(1L), "expression")]
+  file_linters <- linters[vapply(linters, is_linter_level, logical(1L), "file")]
 
   lints <- list()
   for (expr in source_expressions$expressions) {
-    for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
+    curr_linters <- if (is_lint_level(expr, "expression")) expr_linters else file_linters
+    curr_names <- names(curr_linters)
+
+    for (j in seq_along(curr_linters)) {
+      linter <- curr_names[j]
       # use withCallingHandlers for friendlier failures on unexpected linter errors
-      lints[[length(lints) + 1L]] <- withCallingHandlers(
-        get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
+      res <- withCallingHandlers(
+        get_lints(expr, linter, curr_linters[[j]], lint_cache, source_expressions$lines),
         error = function(cond) {
           cli_abort(
             "Linter {.fn linter} failed in {.file {filename}}:",
@@ -120,6 +124,9 @@ lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
           )
         }
       )
+      if (length(res) > 0L) {
+        lints[[length(lints) + 1L]] <- res
+      }
     }
   }
 
@@ -799,12 +806,4 @@ zap_temp_filename <- function(res, needs_tempfile) {
     }
   }
   res
-}
-
-necessary_linters <- function(expr, expression_linter_names, file_linter_names) {
-  if (is_lint_level(expr, "expression")) {
-    expression_linter_names
-  } else {
-    file_linter_names
-  }
 }
