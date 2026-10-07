@@ -687,14 +687,20 @@ top_level_expressions <- function(pc) {
 #   https://bugs.r-project.org/show_bug.cgi?id=18323
 # and truncated string literals (>= 1000 chars) in getParseData() (#2848):
 #   https://github.com/r-devel/r-svn/blob/9c6e0b9b9b8475704ead72c5077c8c875d51599e/src/main/gram.c#L5479-L5481
-# TODO(R>=4.3.0): drop the octal escape regex check (keep startsWith("[") for >=1000-char strings).
 fix_octal_escapes <- function(pc, lines) {
   is_str_const <- which(pc$token == "STR_CONST")
   if (length(is_str_const) == 0L) {
     return(pc)
   }
   str_text <- pc$text[is_str_const]
-  str_const_mismatch <- startsWith(str_text, "[") | grepl("\\\\[0-7]", str_text, useBytes = TRUE)
+  str_const_mismatch <- startsWith(str_text, "[")
+  # TODO(R>=4.3.0): remove this branch
+  if (getRversion() < "4.3.0") {
+    # nocov start
+    str_const <- pc[is_str_const, ]
+    str_const_mismatch <- str_const_mismatch | (str_const$col2 - str_const$col1 != nchar(str_text) - 1L)
+    # nocov end
+  }
   if (!any(str_const_mismatch)) {
     return(pc)
   }
