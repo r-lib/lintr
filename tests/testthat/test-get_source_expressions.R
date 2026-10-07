@@ -210,6 +210,19 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
   })
 })
 
+test_that("strings >= 1000 chars give the right STR_CONST values (#2848)", {
+  with_content_to_parse(
+    sprintf('"%s"', strrep("x", 1000L)),
+    expect_identical(pc[[1L]][1L, "text"], content)
+  )
+
+  # col2 - col1 == 27 matches nchar("[1028 chars quoted with '\"']") - 1L (#2848)
+  with_content_to_parse(
+    paste0('"', strrep("x", 500L), "\n", strrep("x", 500L), "\n", strrep("x", 27L), '"'),
+    expect_identical(pc[[1L]][1L, "text"], content)
+  )
+})
+
 test_that("returned data structure is complete", {
   lines <- c("line_1", "line_2", "line_3")
   temp_file <- withr::local_tempfile(lines = lines)
