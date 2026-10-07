@@ -73,3 +73,8 @@ test_that("lints vectorize", {
     nonportable_path_linter(lax = FALSE)
   )
 })
+
+test_that("multiline strings >= 1000 chars don't error (#2848)", {
+  long_multi_line <- paste0('"', strrep("x", 1000L), "\n", strrep("x", 27L), '"')
+  expect_no_lint(long_multi_line, nonportable_path_linter())
+})

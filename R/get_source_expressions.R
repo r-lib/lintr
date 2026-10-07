@@ -685,16 +685,21 @@ top_level_expressions <- function(pc) {
 
 # workaround for bad parse data bug for octal escapes
 #   https://bugs.r-project.org/show_bug.cgi?id=18323
-# TODO(R>=4.3.0): remove this
+# and truncated string literals (>= 1000 chars) in getParseData() (#2848):
+#   https://github.com/r-devel/r-svn/blob/9c6e0b9b9b8475704ead72c5077c8c875d51599e/src/main/gram.c#L5479-L5481
+# TODO(R>=4.3.0): drop the octal escape regex check (keep startsWith("[") for >=1000-char strings).
 fix_octal_escapes <- function(pc, lines) {
-  # subset first to prevent using nchar() on MBCS input
-  is_str_const <- pc$token == "STR_CONST"
-  str_const <- pc[is_str_const, ]
-  str_const_mismatch <- str_const$col2 - str_const$col1 != nchar(str_const$text) - 1L
+  is_str_const <- which(pc$token == "STR_CONST")
+  if (!length(is_str_const)) {
+    return(pc)
+  }
+  str_text <- pc$text[is_str_const]
+  str_const_mismatch <- startsWith(str_text, "[") | grepl("\\\\[0-7]", str_text, useBytes = TRUE)
   if (!any(str_const_mismatch)) {
     return(pc)
   }
-  str_const <- str_const[str_const_mismatch, ]
+  is_mismatch <- is_str_const[str_const_mismatch]
+  str_const <- pc[is_mismatch, ]
   out <- character(nrow(str_const))
   single_line <- str_const$line1 == str_const$line2
   out[single_line] <- substr(
@@ -714,6 +719,6 @@ fix_octal_escapes <- function(pc, lines) {
       collapse = "\n"
     )
   }
-  pc$text[is_str_const][str_const_mismatch] <- out
+  pc$text[is_mismatch] <- out
   pc
 }
