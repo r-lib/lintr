@@ -1,11 +1,11 @@
 .namespace_cache <- new.env(parent = emptyenv())
 
 with_namespace_cache <- function(cache_key, expr) {
-  if (exists(cache_key, envir = .namespace_cache, inherits = FALSE)) {
-    return(get(cache_key, envir = .namespace_cache, inherits = FALSE))
+  res <- get0(cache_key, envir = .namespace_cache, inherits = FALSE)
+  if (is.null(res)) {
+    res <- expr
+    assign(cache_key, res, envir = .namespace_cache)
   }
-  res <- expr
-  assign(cache_key, res, envir = .namespace_cache)
   res
 }
 
