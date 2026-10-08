@@ -102,6 +102,24 @@ test_that("it handles reStructuredText", {
     linters = default_linters,
     parse_settings = FALSE
   )
+
+  # Prefixed code lines in .Rrst
+  expect_lint(
+    trim_some("
+      .. {r}
+      .. b <- function(x) {
+      ..   d = 1
+      .. }
+      ..
+      .. ..
+    "),
+    list(
+      list(regexes[["local_var"]], line_number = 3L),
+      list(regexes[["assign"]], line_number = 3L),
+      list(regexes[["trailing"]], line_number = 5L)
+    ),
+    default_linters
+  )
 })
 
 test_that("it handles HTML", {
@@ -122,16 +140,40 @@ test_that("it handles tex", {
   expect_lint(
     file = test_path("knitr_formats", "test.Rtex"),
     checks = list(
-      list(regexes[["indent"]], line_number = 11L),
       list(regexes[["assign"]], line_number = 11L),
-      list(regexes[["indent"]], line_number = 22L),
       list(regexes[["local_var"]], line_number = 23L),
       list(regexes[["assign"]], line_number = 23L),
-      list(regexes[["trailing"]], line_number = 25L),
-      list(regexes[["trailws"]], line_number = 25L)
+      list(regexes[["trailing"]], line_number = 25L)
     ),
     linters = default_linters,
     parse_settings = FALSE
+  )
+
+  # Genuine indentation and trailing whitespace lints in .Rtex (#1043)
+  expect_lint(
+    paste(
+      "\\documentclass{article}",
+      "%% begin.rcode",
+      "% b <- function(x) {",
+      "%    x + 1",
+      "% }",
+      "%   ",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "% #| eval: false",
+      "% bad = 1",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "% <<other_chunk>>",
+      "%% end.rcode",
+      sep = "\n"
+    ),
+    list(
+      list(regexes[["indent"]], line_number = 4L),
+      list(regexes[["trailing"]], line_number = 6L),
+      list(regexes[["trailws"]], line_number = 6L)
+    ),
+    default_linters
   )
 })
 
@@ -146,6 +188,24 @@ test_that("it handles asciidoc", {
     ),
     linters = default_linters,
     parse_settings = FALSE
+  )
+
+  # Prefixed code lines in .Rtxt
+  expect_lint(
+    trim_some("
+      //begin.rcode
+      // b <- function(x) {
+      //   d = 1
+      // }
+      //
+      //end.rcode
+    "),
+    list(
+      list(regexes[["local_var"]], line_number = 3L),
+      list(regexes[["assign"]], line_number = 3L),
+      list(regexes[["trailing"]], line_number = 5L)
+    ),
+    default_linters
   )
 })
 
