@@ -466,6 +466,43 @@ test_that("indentation with operators works", {
     linter
   )
 
+  # #2813: method chaining with 0-argument and multi-line calls
+  expect_no_lint(
+    trim_some("
+      x$
+        add()$
+        add()$
+        sum
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      x$
+        add(
+          10,
+          20
+        )$
+        add(
+          30
+        )$
+        sum
+    "),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      x$
+          add()$
+          add()$
+          sum
+    "),
+    list(rex::rex("Indentation should be 2 spaces but is 4 spaces."), line_number = 2L),
+    linter
+  )
+
   expect_lint(
     trim_some("
       first_step() +
