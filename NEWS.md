@@ -34,6 +34,7 @@
 * `indentation_linter()`:
    + Better aligns with {styler} and `air` in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007 and #2535, @MichaelChirico).
    + Correctly requires block indentation for multi-line calls where arguments begin on subsequent lines, even when the call terminates with `)` on the same line as the last argument (#2144, @MichaelChirico).
+* `commented_code_linter()` properly ignores all roxygen comments (`#'`), including those ending with a single quote like `#' foo <- '` (#1908, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
