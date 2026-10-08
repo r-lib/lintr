@@ -119,7 +119,7 @@ get_source_expressions(tmp)
 #> $expressions
 #> $expressions[[1]]
 #> $expressions[[1]]$filename
-#> [1] "/tmp/RtmpS6nhVK/file19fcacfc0f6"
+#> [1] "/tmp/RtmpvWqQt3/file19b0786b89b8"
 #> 
 #> $expressions[[1]]$line
 #> [1] 1
@@ -171,8 +171,8 @@ get_source_expressions(tmp)
 #>         res
 #>     else unname(res)
 #> }
-#> <bytecode: 0x55e8fd09afe0>
-#> <environment: 0x55e90089adc8>
+#> <bytecode: 0x558265331218>
+#> <environment: 0x558268a35820>
 #> 
 #> $expressions[[1]]$content
 #> [1] "x <- 1"
@@ -180,7 +180,7 @@ get_source_expressions(tmp)
 #> 
 #> $expressions[[2]]
 #> $expressions[[2]]$filename
-#> [1] "/tmp/RtmpS6nhVK/file19fcacfc0f6"
+#> [1] "/tmp/RtmpvWqQt3/file19b0786b89b8"
 #> 
 #> $expressions[[2]]$line
 #> [1] 2
@@ -236,8 +236,8 @@ get_source_expressions(tmp)
 #>         res
 #>     else unname(res)
 #> }
-#> <bytecode: 0x55e8fd09afe0>
-#> <environment: 0x55e900899960>
+#> <bytecode: 0x558265331218>
+#> <environment: 0x558268a22798>
 #> 
 #> $expressions[[2]]$content
 #> [1] "y <- x + 1"
@@ -245,7 +245,7 @@ get_source_expressions(tmp)
 #> 
 #> $expressions[[3]]
 #> $expressions[[3]]$filename
-#> [1] "/tmp/RtmpS6nhVK/file19fcacfc0f6"
+#> [1] "/tmp/RtmpvWqQt3/file19b0786b89b8"
 #> 
 #> $expressions[[3]]$file_lines
 #>            1            2 
@@ -310,8 +310,8 @@ get_source_expressions(tmp)
 #>         res
 #>     else unname(res)
 #> }
-#> <bytecode: 0x55e8fd09afe0>
-#> <environment: 0x55e90088cc40>
+#> <bytecode: 0x558265331218>
+#> <environment: 0x558268a1dce0>
 #> 
 #> $expressions[[3]]$terminal_newline
 #> [1] TRUE
