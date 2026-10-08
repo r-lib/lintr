@@ -58,15 +58,18 @@ get_knitr_pattern <- function(filename, lines) {
 }
 
 get_chunk_positions <- function(pattern, lines) {
+  all_starts <- grep(pattern$chunk.begin, lines, perl = TRUE)
   starts <- filter_chunk_start_positions(
-    starts = grep(pattern$chunk.begin, lines, perl = TRUE),
+    starts = all_starts,
     lines = lines,
     pattern = pattern
   )
-  ends <- filter_chunk_end_positions(
-    starts = starts,
-    ends = grep(pattern$chunk.end, lines, perl = TRUE)
-  )
+  ends <- grep(pattern$chunk.end, lines, perl = TRUE)
+  # In Sweave (.Rnw), a code chunk can also be ended by starting the next code chunk (#2619).
+  if (identical(pattern, knitr::all_patterns$rnw)) {
+    ends <- c(ends, all_starts)
+  }
+  ends <- filter_chunk_end_positions(starts = starts, ends = ends)
   # only keep those blocks that contain at least one line of code
   nonempty_keep <- which(ends - starts > 1L)
 
@@ -108,12 +111,9 @@ filter_chunk_end_positions <- function(starts, ends) {
   # This returns the first end-position that succeeds each start-position
   # starts (1, 3, 5, 7,        11)  --> (1, 3, 5, 7, 11)
   # ends   (2, 4, 6, 8, 9, 10, 12)  --> (2, 4, 6, 8, 12) # return this
-  length_difference <- length(ends) - length(starts)
-  if (length_difference == 0L && all(ends > starts)) {
-    return(ends)
-  }
-
-  positions <- sort(c(starts = starts, ends = ends))
+  # Place 'ends' before 'starts' so that in .Rnw, where a chunk start also ends
+  #   a preceding chunk at the same line number, 'ends' sorts before 'starts'.
+  positions <- sort(c(ends = ends, starts = starts))
   code_start_indexes <- grep("starts", names(positions), fixed = TRUE)
 
   code_ends <- positions[pmin(1L + code_start_indexes, length(positions))]

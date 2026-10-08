@@ -59,6 +59,34 @@ test_that("it handles Sweave", {
     linters = default_linters,
     parse_settings = FALSE
   )
+
+  # Adjacent code chunks without intervening '@' and multiple '@' doc chunks (#2619)
+  expect_lint(
+    trim_some("
+      <<chunk-1>>=
+      bad_code = 1
+      <<chunk-2>>=
+      another_bad = 2
+      <<empty-chunk>>=
+      <<eval=FALSE>>=
+      skipped_bad = 3
+      <<py-chunk, engine='python'>>=
+      a = [1, 2]
+      <<chunk-3>>=
+      final_bad = 4
+      @
+      @
+    "),
+    list(
+      list(regexes[["assign"]], line_number = 2L),
+      list(regexes[["assign"]], line_number = 4L),
+      list(regexes[["assign"]], line_number = 11L)
+    ),
+    assignment_linter()
+  )
+
+  sweave_test_rnw <- system.file("Sweave", "Sweave-test-1.Rnw", package = "utils")
+  expect_null(get_source_expressions(sweave_test_rnw)$error)
 })
 
 test_that("it handles reStructuredText", {
@@ -178,6 +206,15 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
     trim_some("
       ```{r chunk-1}
       code <- 42
+
+      ```{r chunk-2}
+      some_more_code <- 42
+      ```
+      ```
+    "),
+    trim_some("
+      ```{r chunk-1}
+      code <- 42
       ```
 
       # A heading
@@ -185,13 +222,21 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
 
       ```{r chunk-2}
       some_more_code <- 42
+    "),
+    trim_some("
+      <<chunk-1>>=
+      code <- 42
+      <<chunk-2>>=
+      some_more_code <- 42
     ")
   )
 
   expected <- list(
     NULL, # This test case would require parsing all chunk fences, not just r chunks.
     "maybe starting at line 1",
-    "maybe starting at line 8"
+    "maybe starting at line 1",
+    "maybe starting at line 8",
+    "maybe starting at line 3"
   )
 
   for (i in seq_along(contents)) {
