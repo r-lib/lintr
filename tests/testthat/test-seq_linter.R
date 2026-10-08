@@ -24,11 +24,20 @@ patrick::with_parameters_test_that(
     seq_linter()
   ),
   .cases = tibble::tribble(
-    ~target_code,          ~good_usage,          ~bad_usage,
-    "seq(length(x))",      "seq_along(...)",     "seq(length(...))",
-    "seq(nrow(x))",        "seq_len(nrow(...))", "seq(nrow(...))",
-    "rev(seq(length(x)))", "seq_along(...)",     "seq(length(...))",
-    "rev(seq(nrow(x)))",   "seq_len(nrow(...))", "seq(nrow(...))"
+    ~target_code,             ~good_usage,              ~bad_usage,
+    "seq(length(x))",         "seq_along(...)",         "seq(length(...))",
+    "seq(nrow(x))",           "seq_len(nrow(...))",     "seq(nrow(...))",
+    "seq(ncol(x))",           "seq_len(ncol(...))",     "seq(ncol(...))",
+    "seq(NROW(x))",           "seq_len(NROW(...))",     "seq(NROW(...))",
+    "seq(NCOL(x))",           "seq_len(NCOL(...))",     "seq(NCOL(...))",
+    "seq(dim(x)[1L])",        "seq_len(dim(...)[1L])",  "seq(dim(...)[1L])",
+    "seq(dim(x)[[1]])",       "seq_len(dim(...)[[1]])", "seq(dim(...)[[1]])",
+    "mutate(x, .id = seq(n()))",        "seq_len(n())",        "seq(n())",
+    "mutate(x, .id = seq(dplyr::n()))", "seq_len(dplyr::n())", "seq(dplyr::n())",
+    "x[, .id := seq(.N)]",    "seq_len(.N)",            "seq(.N)",
+    "rev(seq(length(x)))",    "seq_along(...)",         "seq(length(...))",
+    "rev(seq(nrow(x)))",      "seq_len(nrow(...))",     "seq(nrow(...))",
+    "rev(seq(dim(x)[1]))",    "seq_len(dim(...)[1])",   "seq(dim(...)[1])"
   )
 )
 
