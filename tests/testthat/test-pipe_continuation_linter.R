@@ -162,12 +162,26 @@ test_that("pipe-continuation linter handles native pipe", {
     list(lint_msg_native, line_number = 4L, column_number = 15L),
     linter
   )
+
   expect_lint(
     trim_some(R"(
       1:4 |>
         sapply(\(x) x |> runif() |> mean()) |> as.character()
     )"),
     list(lint_msg_native, line_number = 2L, column_number = 39L),
+    linter
+  )
+
+  expect_lint(
+    trim_some(R"(
+      1:4 |>
+        sapply(\(x) x |>
+          runif() |> mean()) |> as.character()
+    )"),
+    list(
+      list(lint_msg_native, line_number = 3L, column_number = 13L),
+      list(lint_msg_native, line_number = 3L, column_number = 24L)
+    ),
     linter
   )
 })
