@@ -54,14 +54,13 @@ pipe_continuation_linter <- function() {
   #   e.g. inside a function definition), the outer expression can span multiple lines
   #   without throwing a lint.
   pipe_node <- glue("SPECIAL[{ xp_text_in_table(magrittr_pipes) }]")
-  preceding_pipe <- glue("preceding-sibling::expr[1]/descendant::*[self::{pipe_node} or self::PIPE]")
+  preceding_pipe <- glue("preceding-sibling::expr[1]/*[self::{pipe_node} or self::PIPE]")
   xpath <- glue("
   (//PIPE | //{pipe_node})[
     parent::expr[@line1 < @line2]
     and {preceding_pipe}
     and (
-      preceding-sibling::expr[1]/descendant-or-self::expr/@line2
-      = following-sibling::expr[1]/descendant-or-self::expr/@line1
+      preceding-sibling::expr[1]/@line2 = following-sibling::expr[1]/@line1
       or @line1 = {preceding_pipe}/@line1
     )
   ]

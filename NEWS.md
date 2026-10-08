@@ -34,6 +34,7 @@
 * `indentation_linter()`:
    + Better aligns with {styler} and `air` in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007 and #2535, @MichaelChirico).
    + Correctly requires block indentation for multi-line calls where arguments begin on subsequent lines, even when the call terminates with `)` on the same line as the last argument (#2144, @MichaelChirico).
+* `pipe_continuation_linter()` no longer flags outer pipes on the same line as a nested single-line pipeline, e.g. `x |>\n  sapply(\(xi) xi |> f() |> g()) |>\n  h()` (#2631, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
