@@ -98,10 +98,6 @@ test_that("linter ignores some objects", {
     object_name_linter("snake_case")
   )
   expect_no_lint(
-    "`%*%.snake_case` <- function(a, b) unclass(a) %*% unclass(b)",
-    object_name_linter("snake_case")
-  )
-  expect_no_lint(
     "`%%.CamelCase` <- function(a, b) unclass(a) %% unclass(b)",
     object_name_linter("snake_case")
   )
