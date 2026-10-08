@@ -143,9 +143,22 @@ test_that("pipe-continuation linter handles native pipe", {
   expect_no_lint(
     trim_some("
       1:4 %>%
-        {
-          (.) %>% sum()
-        } %>%
+        { (.) %>% sum() } %>%
+        as.character()
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some(R"(
+      sapply(1:4, \(x) x |> runif()) |>
+        as.character()
+    )"),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      df1 |>
+        inner_join(df2 |> select(a) |> filter(b)) |>
         as.character()
     "),
     linter
@@ -153,13 +166,11 @@ test_that("pipe-continuation linter handles native pipe", {
   expect_lint(
     trim_some(R"(
       1:4 |>
-        sapply(\(x) {
-          x |>
-            runif() |> mean()
-        }) |>
+        sapply(\(x) x |>
+          runif() |> mean()) |>
         as.character()
     )"),
-    list(lint_msg_native, line_number = 4L, column_number = 15L),
+    list(lint_msg_native, line_number = 3L, column_number = 13L),
     linter
   )
 
