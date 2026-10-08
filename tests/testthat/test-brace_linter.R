@@ -16,6 +16,9 @@ test_that("brace_linter lints braces correctly", {
   expect_lint("a <- function() { 1 }", list(open_curly_msg, closed_curly_msg), linter)
   # allowed by allow_single_line
   expect_no_lint("a <- function() { 1 }", brace_linter(allow_single_line = TRUE))
+  expect_lint("a <- function()\n{ 1 }", open_curly_msg, brace_linter(allow_single_line = TRUE))
+  expect_lint("a <- function() { 1\n}", open_curly_msg, brace_linter(allow_single_line = TRUE))
+  expect_lint("a <- function()\n{\n  1\n}", open_curly_msg, brace_linter(allow_single_line = TRUE))
 
   expect_lint(
     trim_some("
@@ -462,6 +465,8 @@ test_that("empty brace expressions are always allowed inline", {
   expect_lint("while (FALSE)\n{ }", lint_msg, linter)
   expect_no_lint("while (FALSE) {}", linter_allow)
   expect_no_lint("while (FALSE) { }", linter_allow)
+  expect_lint("while (FALSE)\n{}", lint_msg, linter_allow)
+  expect_lint("while (FALSE)\n{ }", lint_msg, linter_allow)
 })
 
 test_that("formula syntax is linted properly", {
