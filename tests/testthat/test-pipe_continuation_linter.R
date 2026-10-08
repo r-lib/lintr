@@ -130,6 +130,71 @@ test_that("pipe-continuation linter handles native pipe", {
     ),
     linter
   )
+
+  # nested pipelines inside multi-step outer pipelines (#2631)
+  expect_no_lint(
+    trim_some(R"(
+      1:4 |>
+        sapply(\(x) x |> runif() |> mean()) |>
+        as.character()
+    )"),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      1:4 %>%
+        { (.) %>% sum() } %>%
+        as.character()
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some(R"(
+      sapply(1:4, \(x) x |> runif()) |>
+        as.character()
+    )"),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      df1 |>
+        inner_join(df2 |> select(a) |> filter(b)) |>
+        as.character()
+    "),
+    linter
+  )
+  expect_lint(
+    trim_some(R"(
+      1:4 |>
+        sapply(\(x) x |>
+          runif() |> mean()) |>
+        as.character()
+    )"),
+    list(lint_msg_native, line_number = 3L, column_number = 13L),
+    linter
+  )
+
+  expect_lint(
+    trim_some(R"(
+      1:4 |>
+        sapply(\(x) x |> runif() |> mean()) |> as.character()
+    )"),
+    list(lint_msg_native, line_number = 2L, column_number = 39L),
+    linter
+  )
+
+  expect_lint(
+    trim_some(R"(
+      1:4 |>
+        sapply(\(x) x |>
+          runif() |> mean()) |> as.character()
+    )"),
+    list(
+      list(lint_msg_native, line_number = 3L, column_number = 13L),
+      list(lint_msg_native, line_number = 3L, column_number = 24L)
+    ),
+    linter
+  )
 })
 
 local({
