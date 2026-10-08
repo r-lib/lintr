@@ -38,7 +38,9 @@
 ### Lint accuracy fixes: removing false negatives
 
 * `vector_logic_linter()` again finds `&&`/`||` usage in filtering expressions in function bodies like `\() filter(x, A && B)` (#3082, @MichaelChirico).
-* `seq_linter()` now flags `seq(1, n)` and `seq(from = 1, to = n)` calls, as well as `seq(dim(x)[1])` and `seq(.N)`, recommending `seq_len()` or `seq_along()` (#1474 and #2661, @MichaelChirico).
+* `seq_linter()` now flags the following to be replaced with `seq_len()` or `seq_along()`:
+   + `seq(1, n)` and `seq(from = 1, to = n)` (#2661, @MichaelChirico).
+   + `seq(dim(x)[1])` and `seq(.N)` (#1474, @MichaelChirico).
 * `string_boundary_linter()` also recommends `startsWith()` for `substr(s, 0, n)` and `substring(s, 0, n)` (#3029, @fly1d).
 * `is_numeric_linter()` flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
 
