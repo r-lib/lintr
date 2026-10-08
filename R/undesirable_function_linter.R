@@ -106,21 +106,43 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     "not(parent::expr[OP-DOLLAR or OP-AT])"
   )
 
+  setter_cond <- "
+    parent::expr/parent::expr[
+      following-sibling::LEFT_ASSIGN[text() != ':=']
+      or following-sibling::EQ_ASSIGN
+      or preceding-sibling::RIGHT_ASSIGN
+    ]
+  "
+
+  is_setter <- endsWith(names(fun), "<-")
+  getter_names <- c(names(fun)[!is_setter], sprintf("`%s`", names(fun)[is_setter]))
+  setter_names <- sub("<-$", "", names(fun)[is_setter])
+
   if (symbol_is_undesirable) {
-    symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(names(fun))}) and {xp_condition}]")
+    symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(getter_names)}) and {xp_condition}]")
   }
-  xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition}]")
+  getter_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_and(xp_condition, sprintf('not(%s)', setter_cond))}]")
+  setter_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_and(xp_condition, setter_cond)}]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    xml_calls <- source_expression$xml_find_function_calls(names(fun))
+    xml_calls <- source_expression$xml_find_function_calls(getter_names)
 
-    matched_nodes <- xml_find_all_(xml_calls, xpath)
-    if (symbol_is_undesirable) {
-      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all_(xml, symbol_xpath))
+    matched_nodes <- xml_find_all_(xml_calls, getter_xpath)
+    fun_names <- gsub("^`|`$", "", get_r_string(matched_nodes))
+
+    if (any(is_setter)) {
+      xml_setter_calls <- source_expression$xml_find_function_calls(setter_names)
+      setter_nodes <- xml_find_all_(xml_setter_calls, setter_xpath)
+      matched_nodes <- combine_nodesets(matched_nodes, setter_nodes)
+      fun_names <- c(fun_names, sprintf("%s<-", get_r_string(setter_nodes)))
     }
 
-    fun_names <- get_r_string(matched_nodes)
+    if (symbol_is_undesirable) {
+      symbol_nodes <- xml_find_all_(xml, symbol_xpath)
+      matched_nodes <- combine_nodesets(matched_nodes, symbol_nodes)
+      fun_names <- c(fun_names, gsub("^`|`$", "", get_r_string(symbol_nodes)))
+    }
 
     msgs <- vapply(
       stats::setNames(nm = unique(fun_names)),
