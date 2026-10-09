@@ -719,7 +719,7 @@ fix_octal_escapes <- function(pc, lines) {
 
 #' Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
 #' @noRd
-is_unreliable_expression = function(e) {
+is_unreliable_expression <- function(e) {
   if (!is_lint(e)) {
     return(FALSE)
   }
