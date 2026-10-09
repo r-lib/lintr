@@ -176,7 +176,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
               or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN]
             ]
             /parent::expr
-            /following-sibling::expr[1]
+            /following-sibling::OP-RIGHT-PAREN
             /@line2
         "),
         glue("
