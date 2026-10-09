@@ -22,16 +22,15 @@ extract_r_source <- function(filename, lines, error = identity) {
       if (indent > 0L) {
         chunk_code <- substr(chunk_code, indent + 1L, nchar(chunk_code))
       }
-      chunk_code <- strip_chunk_prefix(chunk_code, pattern$chunk.code)
-      # drop <<chunk>> references, too (tex's ref.chunk `^%+\s*<<(.+)>>\s*$` assumes '%' wasn't stripped)
-      ref_chunk <- sub(R"(^\^%\+)", R"(^\\s*%*)", pattern$ref.chunk)
-      is.na(chunk_code) <- grep(ref_chunk, chunk_code)
-      output_env$output[line_seq] <- chunk_code
+      output_env$output[line_seq] <- strip_chunk_prefix(chunk_code, pattern$chunk.code)
     },
     chunks[["starts"]],
     chunks[["ends"]],
     chunks[["indents"]]
   )
+  # drop <<chunk>> references, too (tex's ref.chunk `^%+\s*<<(.+)>>\s*$` assumes '%' wasn't stripped)
+  ref_chunk <- sub(R"(^\^%\+)", R"(^\\s*)", pattern$ref.chunk)
+  is.na(output_env$output) <- grep(ref_chunk, output_env$output)
   # only put this attribute if it's needed to reduce noise to the user
   #   in the vast majority of cases where this is not needed
   if (!is.null(pattern$chunk.code) || any(chunks[["indents"]] > 0L)) {

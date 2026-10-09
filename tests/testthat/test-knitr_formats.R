@@ -177,6 +177,9 @@ test_that("it handles tex", {
       "% bad = 1",
       "%% end.rcode",
       "%% begin.rcode",
+      "%",
+      "%% end.rcode",
+      "%% begin.rcode",
       "% b <- function(x) {",
       "%    x + 1",
       "% }",
@@ -189,9 +192,9 @@ test_that("it handles tex", {
       list(regexes[["assign"]], line_number = 14L, column_number = 17L, ranges = list(c(17L, 17L))),
       list(regexes[["assign"]], line_number = 18L, column_number = 15L, ranges = list(c(15L, 15L))),
       list(regexes[["assign"]], line_number = 19L, column_number = 16L, ranges = list(c(16L, 16L))),
-      list(regexes[["indent"]], line_number = 27L, column_number = 5L, ranges = list(c(5L, 5L))),
-      list(regexes[["trailing"]], line_number = 29L, column_number = 3L),
-      list(regexes[["trailws"]], line_number = 29L, column_number = 3L, ranges = list(c(3L, 4L)))
+      list(regexes[["indent"]], line_number = 30L, column_number = 5L, ranges = list(c(5L, 5L))),
+      list(regexes[["trailing"]], line_number = 32L, column_number = 3L),
+      list(regexes[["trailws"]], line_number = 32L, column_number = 3L, ranges = list(c(3L, 4L)))
     ),
     default_linters
   )
