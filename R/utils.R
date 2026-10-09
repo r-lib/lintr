@@ -307,6 +307,7 @@ r_string_from_parse_text <- function(s) {
 is_linter <- function(x) inherits(x, "linter")
 is_lint <- function(x) inherits(x, "lint")
 
+# nolint next: is_error_linter.
 is_error <- function(x) inherits(x, "error")
 
 is_tainted <- function(lines) {
