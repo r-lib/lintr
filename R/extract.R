@@ -64,12 +64,14 @@ get_chunk_positions <- function(pattern, lines) {
     lines = lines,
     pattern = pattern
   )
-  ends <- grep(pattern$chunk.end, lines, perl = TRUE)
-  # In Sweave (.Rnw), a code chunk can also be ended by starting the next code chunk (#2619).
-  if (identical(pattern, knitr::all_patterns$rnw)) {
-    ends <- c(ends, all_starts)
-  }
-  ends <- filter_chunk_end_positions(starts = starts, ends = ends)
+  ends <- filter_chunk_end_positions(
+    starts = starts,
+    ends = c(
+      grep(pattern$chunk.end, lines, perl = TRUE),
+      # In Sweave (.Rnw), a code chunk can also be ended by starting the next code chunk (#2619).
+      if (identical(pattern, knitr::all_patterns$rnw)) all_starts[-1L]
+    )
+  )
   # only keep those blocks that contain at least one line of code
   nonempty_keep <- which(ends - starts > 1L)
 
@@ -103,16 +105,15 @@ filter_chunk_start_positions <- function(starts, lines, pattern) {
 }
 
 filter_chunk_end_positions <- function(starts, ends) {
-  # In a valid file, possibly with plain-code-blocks,
-  # - there should be at least as many ends as starts
   # In Rmarkdown and Quarto, unevaluated blocks may open & close with the same ``` pattern
-  # that defines the end-pattern for an evaluated block
+  # that defines the end-pattern for an evaluated block; in .Rnw, standalone '@' lines or
+  # non-R chunk starts may also appear in 'ends'.
 
   # This returns the first end-position that succeeds each start-position
   # starts (1, 3, 5, 7,        11)  --> (1, 3, 5, 7, 11)
   # ends   (2, 4, 6, 8, 9, 10, 12)  --> (2, 4, 6, 8, 12) # return this
   # Place 'ends' before 'starts' so that in .Rnw, where a chunk start also ends
-  #   a preceding chunk at the same line number, 'ends' sorts before 'starts'.
+  #   a preceding chunk at the same line number, stable sort() keeps 'ends' before 'starts'.
   positions <- sort(c(ends = ends, starts = starts))
   code_start_indexes <- grep("starts", names(positions), fixed = TRUE)
 
@@ -120,11 +121,10 @@ filter_chunk_end_positions <- function(starts, ends) {
 
   bad_end_indexes <- grep("starts", names(code_ends), fixed = TRUE)
   if (length(bad_end_indexes) > 0L) {
-    bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
     # This error message is formatted like a parse error; don't use {cli}
     stop(sprintf( # nolint: undesirable_function_call_linter.
       "<rmd>:%1$d:1: Missing chunk end for chunk (maybe starting at line %1$d).\n",
-      bad_start_positions[1L]
+      starts[bad_end_indexes[1L]]
     ), call. = FALSE)
   }
 
