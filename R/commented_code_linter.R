@@ -116,5 +116,5 @@ parsable <- function(x) {
     return(FALSE)
   }
   res <- try_silently(parse(text = x))
-  !inherits(res, "error")
+  !is_error(res)
 }
