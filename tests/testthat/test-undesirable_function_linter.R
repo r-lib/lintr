@@ -150,6 +150,6 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
       list(rex::rex('Avoid undesirable function "time<-". As an alternative, no setter.'), column_number = 1L),
       list(rex::rex('Avoid undesirable function "time". As an alternative, no getter.'), column_number = 12L)
     ),
-    undesirable_function_linter(c(time = "no getter", "time<-" = "no setter"))
+    undesirable_function_linter(c(time = "no getter", `time<-` = "no setter"))
   )
 })
