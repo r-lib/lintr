@@ -11,6 +11,8 @@
 #'   A generic message that the named function is undesirable is used if no
 #'     specific description is provided.
 #'   Input can also be a list of character strings for convenience.
+#'   Setter functions (like `foo(x) <- y`) are distinguished from plain calls (`foo(x)`),
+#'   and must be specified with `"<-"` (e.g. `"foo<-"`).
 #'
 #'   Defaults to [default_undesirable_functions]. To make small customizations to this list,
 #'   use [modify_defaults()].
@@ -41,7 +43,6 @@
 #'   text = 'dir <- "path/to/a/directory"',
 #'   linters = undesirable_function_linter(fun = c("dir" = NA))
 #' )
-#'
 #'
 #' lint(
 #'   text = 'dir <- "path/to/a/directory"',
@@ -88,6 +89,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     names(fun)[implicit_idx] <- fun[implicit_idx]
     is.na(fun) <- implicit_idx
   }
+  names(fun) <- gsub("^`|`$", "", names(fun))
   fun_names <- names(fun)
   if (anyNA(fun_names)) {
     missing_idx <- which(is.na(fun_names)) # nolint: object_usage_linter. False positive.
@@ -106,7 +108,10 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     "not(parent::expr[OP-DOLLAR or OP-AT])"
   )
 
-  # NB: Unique among assignment operators, `foo() :=` does not parse to a setter `foo<-`!!
+  # NB:
+  #   1. Unique among assignment operators, `foo() :=` does not parse to a setter `foo<-`!!
+  #   2. Nested replacement targets like `foo(bar(x)) <- 1` or `bar(x)[1] <- 1` invoke both `bar`
+  #      and `bar<-` in R, but we only treat the outer call as a setter here for simplicity.
   setter_cond <- "
     parent::expr/parent::expr[
       following-sibling::LEFT_ASSIGN[text() != ':=']
@@ -115,38 +120,41 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     ]
   "
 
+  quote_non_syntactic <- function(x) {
+    needs_backticks <- make.names(x) != x
+    x[needs_backticks] <- sprintf("`%s`", x[needs_backticks])
+    x
+  }
+
   is_setter <- endsWith(fun_names, "<-")
-  call_names <- c(fun_names[!is_setter], sprintf("`%s`", fun_names[is_setter]))
-  setter_names <- sub("<-$", "", fun_names[is_setter])
+  call_names <- quote_non_syntactic(fun_names)
+  setter_names <- quote_non_syntactic(sub("<-$", "", fun_names[is_setter]))
 
   if (symbol_is_undesirable) {
     symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(call_names)}) and {xp_condition}]")
   }
-  call_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_and(xp_condition, sprintf('not(%s)', setter_cond))}]")
-  setter_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_and(xp_condition, setter_cond)}]")
+  call_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition} and not({setter_cond})]")
+  setter_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition} and {setter_cond}]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     xml_calls <- source_expression$xml_find_function_calls(call_names)
 
     matched_nodes <- xml_find_all_(xml_calls, call_xpath)
-    fun_names <- gsub("^`|`$", "", get_r_string(matched_nodes))
+    if (symbol_is_undesirable) {
+      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all_(xml, symbol_xpath))
+    }
+    matched_fun <- gsub("^`|`$", "", get_r_string(matched_nodes))
 
     if (length(setter_names) > 0L) {
       xml_setter_calls <- source_expression$xml_find_function_calls(setter_names)
       setter_nodes <- xml_find_all_(xml_setter_calls, setter_xpath)
       matched_nodes <- combine_nodesets(matched_nodes, setter_nodes)
-      fun_names <- c(fun_names, sprintf("%s<-", get_r_string(setter_nodes)))
-    }
-
-    if (symbol_is_undesirable) {
-      symbol_nodes <- xml_find_all_(xml, symbol_xpath)
-      matched_nodes <- combine_nodesets(matched_nodes, symbol_nodes)
-      fun_names <- c(fun_names, gsub("^`|`$", "", get_r_string(symbol_nodes)))
+      matched_fun <- c(matched_fun, sprintf("%s<-", gsub("^`|`$", "", get_r_string(setter_nodes))))
     }
 
     msgs <- vapply(
-      stats::setNames(nm = unique(fun_names)),
+      stats::setNames(nm = unique(matched_fun)),
       function(fun_name) {
         msg <- sprintf('Avoid undesirable function "%s".', fun_name)
         alternative <- fun[[fun_name]]
@@ -161,7 +169,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     xml_nodes_to_lints(
       matched_nodes,
       source_expression = source_expression,
-      lint_message = unname(msgs[fun_names])
+      lint_message = unname(msgs[matched_fun])
     )
   })
 }

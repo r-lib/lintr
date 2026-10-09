@@ -21,6 +21,8 @@ why a given function is undesirable
 A generic message that the named function is undesirable is used if no
 specific description is provided.
 Input can also be a list of character strings for convenience.
+Setter functions (like \code{foo(x) <- y}) are distinguished from plain calls (\code{foo(x)}),
+and must be specified with \code{"<-"} (e.g. \code{"foo<-"}).
 }
 }
 
@@ -57,7 +59,6 @@ lint(
   text = 'dir <- "path/to/a/directory"',
   linters = undesirable_function_linter(fun = c("dir" = NA))
 )
-
 
 lint(
   text = 'dir <- "path/to/a/directory"',

@@ -97,6 +97,7 @@ test_that("Default recommendations can be specified multiple ways", {
 test_that("setter calls are distinguished from getter calls (#1912)", {
   getter_linter <- undesirable_function_linter(c(time = NA))
   setter_linter <- undesirable_function_linter(c(`time<-` = "use zoo::time<-()"))
+  both_linter <- undesirable_function_linter(c(time = NA, `time<-` = "use zoo::time<-()"))
   msg_getter <- rex::rex('Avoid undesirable function "time".', end)
   msg_setter <- rex::rex('Avoid undesirable function "time<-". As an alternative, use zoo::time<-().')
 
@@ -121,6 +122,11 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
   expect_no_lint("stats::time(x) <- 1", getter_linter)
   expect_lint("stats::time(x) <- 1", list(msg_setter, column_number = 8L), setter_linter)
 
+  expect_no_lint("a <- time(x) <- 1", getter_linter)
+  expect_lint("a <- time(x) <- 1", list(msg_setter, column_number = 6L), setter_linter)
+  expect_no_lint("1 -> a -> time(x)", getter_linter)
+  expect_lint("1 -> a -> time(x)", list(msg_setter, column_number = 11L), setter_linter)
+
   expect_no_lint("time(names(x)) <- 1", getter_linter)
   expect_lint("time(names(x)) <- 1", list(msg_setter, column_number = 1L), setter_linter)
   expect_lint("names(time(x)) <- 'a'", list(msg_getter, column_number = 7L), getter_linter)
@@ -136,6 +142,7 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
   expect_no_lint("x <- time(y)", setter_linter)
 
   expect_lint("`time<-`(x, 1)", list(msg_setter, column_number = 1L), setter_linter)
+  expect_lint("stats::`time<-`(x, 1)", list(msg_setter, column_number = 8L), setter_linter)
   expect_lint("lapply(x, `time<-`, 1)", list(msg_setter, column_number = 11L), setter_linter)
   expect_no_lint(
     "lapply(x, `time<-`, 1)",
@@ -147,9 +154,34 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
   expect_lint(
     "time(x) <- time(y)",
     list(
-      list(rex::rex('Avoid undesirable function "time<-". As an alternative, no setter.'), column_number = 1L),
-      list(rex::rex('Avoid undesirable function "time". As an alternative, no getter.'), column_number = 12L)
+      list(msg_setter, column_number = 1L),
+      list(msg_getter, column_number = 12L)
     ),
-    undesirable_function_linter(c(time = "no getter", `time<-` = "no setter"))
+    both_linter
+  )
+  expect_lint(
+    "time(y) + (time(x) <- 1)",
+    list(
+      list(msg_getter, column_number = 1L),
+      list(msg_setter, column_number = 12L)
+    ),
+    both_linter
+  )
+
+  # Non-syntactic and explicitly backticked names
+  expect_lint(
+    "`time<-`(x, 1)",
+    rex::rex('Avoid undesirable function "time<-".', end),
+    undesirable_function_linter("`time<-`")
+  )
+  expect_lint(
+    "`%in%`(x, y)",
+    rex::rex('Avoid undesirable function "%in%".', end),
+    undesirable_function_linter("%in%")
+  )
+  expect_lint(
+    "`foo bar`(x) <- 1",
+    rex::rex('Avoid undesirable function "foo bar<-".', end),
+    undesirable_function_linter("foo bar<-")
   )
 })
