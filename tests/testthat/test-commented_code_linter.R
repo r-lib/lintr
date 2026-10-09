@@ -9,6 +9,7 @@ test_that("commented_code_linter skips allowed usages", {
   expect_no_lint("TRUE", linter)
   expect_no_lint("#' @examples", linter)
   expect_no_lint("#' foo(1) # list(1)", linter) # comment in roxygen block ignored
+  expect_no_lint("#' foo <- '\n#' bar'", linter) # #1908: trailing "'" doesn't pair with "#'"
   expect_no_lint("1+1 # gives 2", linter)
   expect_no_lint("# Non-existent:", linter)
   expect_no_lint("# 1-a", linter) # "-" removed from code operators
