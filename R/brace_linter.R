@@ -58,11 +58,7 @@ brace_linter <- function(allow_single_line = FALSE,
                          function_bodies = c("multi_line", "always", "not_inline", "never")) {
   function_bodies <- match.arg(function_bodies)
 
-  xp_cond_open <- xp_and(c(
-    # matching } is on same line
-    if (isTRUE(allow_single_line)) {
-      "(@line1 != following-sibling::OP-LEFT-BRACE/@line1)"
-    },
+  xp_cond_open <- xp_and(
     # double curly
     "not(
       (@line1 = parent::expr/preceding-sibling::OP-LEFT-BRACE/@line1)
@@ -79,14 +75,21 @@ brace_linter <- function(allow_single_line = FALSE,
         or (self::SPECIAL and ({xp_text_in_table(magrittr_pipes)}) )
       ]/@line2
     )")
-  ))
+  )
+
+  xp_open_same_line <- if (isTRUE(allow_single_line)) {
+    "@line1 = following-sibling::*[1][not(self::COMMENT)]/@line1
+      and @line1 != following-sibling::OP-RIGHT-BRACE/@line1"
+  } else {
+    "@line1 = following-sibling::*[1][not(self::COMMENT or self::OP-RIGHT-BRACE)]/@line1"
+  }
 
   # TODO(#1103): if c_style_braces is TRUE, invert the preceding-sibling condition
   xp_open_curly <- glue("//OP-LEFT-BRACE[
     { xp_cond_open }
     and (
       not(@line1 = parent::expr/preceding-sibling::*/@line2)
-      or @line1 = following-sibling::*[1][not(self::COMMENT or self::OP-RIGHT-BRACE)]/@line1
+      or ({ xp_open_same_line })
     )
   ]")
 

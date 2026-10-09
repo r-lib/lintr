@@ -46,6 +46,7 @@
    + `seq(dim(x)[1])` and `seq(.N)` (#1474, @MichaelChirico).
 * `string_boundary_linter()` also recommends `startsWith()` for `substr(s, 0, n)` and `substring(s, 0, n)` (#3029, @fly1d).
 * `is_numeric_linter()` flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
+* `brace_linter(allow_single_line = TRUE)` still flags opening curly braces placed on their own line (e.g. `while (FALSE)\n{}`) or not followed by a newline when the closing brace is on a different line (#1684, @MichaelChirico).
 
 ## Notes
 
