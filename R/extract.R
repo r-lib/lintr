@@ -19,15 +19,24 @@ extract_r_source <- function(filename, lines, error = identity) {
     function(start, end, indent) {
       line_seq <- seq(start + 1L, end - 1L)
       chunk_code <- lines[line_seq]
-      output_env$output[line_seq] <- if (indent > 0L) substr(chunk_code, indent + 1L, nchar(chunk_code)) else chunk_code
+      if (indent > 0L) {
+        chunk_code <- substr(chunk_code, indent + 1L, nchar(chunk_code))
+      }
+      output_env$output[line_seq] <- strip_chunk_prefix(chunk_code, pattern$chunk.code)
     },
     chunks[["starts"]],
     chunks[["ends"]],
     chunks[["indents"]]
   )
-  # drop <<chunk>> references, too
-  is.na(output_env$output) <- grep(pattern$ref.chunk, output_env$output)
-  replace_prefix(output_env$output, pattern$chunk.code)
+  # drop <<chunk>> references, too (tex's ref.chunk `^%+\s*<<(.+)>>\s*$` assumes '%' wasn't stripped)
+  ref_chunk <- sub(R"(^\^%\+)", R"(^\\s*)", pattern$ref.chunk)
+  is.na(output_env$output) <- grep(ref_chunk, output_env$output)
+  # only put this attribute if it's needed to reduce noise to the user
+  #   in the vast majority of cases where this is not needed
+  if (!is.null(pattern$chunk.code) || any(chunks[["indents"]] > 0L)) {
+    attr(output_env$output, "has_prefix") <- TRUE
+  }
+  output_env$output
 }
 
 get_knitr_pattern <- function(filename, lines) {
@@ -176,7 +185,7 @@ is_eval_chunk <- function(start, end, lines, pattern) {
   params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
   header_params <- safe_csv_options(params_src)
 
-  code <- lines[(start + 1L):(end - 1L)]
+  code <- strip_chunk_prefix(lines[(start + 1L):(end - 1L)], pattern$chunk.code)
   body_params <- tryCatch(
     suppressMessages(suppressWarnings(xfun::divide_chunk("r", code)))$options,
     error = \(e) NULL
@@ -195,16 +204,19 @@ is_eval_chunk <- function(start, end, lines, pattern) {
   !isFALSE(eval_value)
 }
 
-replace_prefix <- function(lines, prefix_pattern) {
+# cf. knitr:::strip_block
+strip_chunk_prefix <- function(chunk_code, prefix_pattern) {
   if (is.null(prefix_pattern)) {
-    return(lines)
+    return(chunk_code)
   }
-
-  m <- gregexpr(prefix_pattern, lines)
-  non_na <- !is.na(m)
-
-  prefix_lengths <- lapply(regmatches(lines[non_na], m[non_na]), nchar)
-  regmatches(lines[non_na], m[non_na]) <- lapply(prefix_lengths, strrep, x = " ")
-
-  lines
+  chunk_code <- sub(prefix_pattern, "", chunk_code)
+  non_blank <- grep("\\S", chunk_code)
+  if (length(non_blank) == 0L) {
+    return(chunk_code)
+  }
+  spaces <- min(attr(regexpr("^ *", chunk_code[non_blank]), "match.length"))
+  if (spaces == 0L) {
+    return(chunk_code)
+  }
+  substr(chunk_code, spaces + 1L, nchar(chunk_code))
 }

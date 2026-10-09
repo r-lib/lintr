@@ -367,7 +367,9 @@ test_that("Syntax errors in Rmd or qmd don't choke lintr", {
     "}",
     "```"
   ))
-  expect_silent(get_source_expressions(tmp))
+  expect_silent(
+    expect_null(attr(get_source_expressions(tmp)$lines, "has_prefix"))
+  )
 })
 
 test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
@@ -394,11 +396,23 @@ test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
   ))
 
   parsed_lines <- get_source_expressions(tmp)$lines
+  expect_true(attr(parsed_lines, "has_prefix"))
   expect_identical(parsed_lines[4L], '"properly indented"', ignore_attr = "names")
   expect_identical(parsed_lines[10L], '  "improperly indented"', ignore_attr = "names")
   expect_identical(parsed_lines[16L], '"leftmost code"', ignore_attr = "names")
   expect_identical(parsed_lines[17L], ' "further right"', ignore_attr = "names")
   expect_identical(parsed_lines[18L], '  "aligned with code gate"', ignore_attr = "names")
+
+  indent_msg <- "Indentation should be 0 spaces but is"
+  expect_lint(
+    file = tmp,
+    checks = list(
+      list(paste(indent_msg, "2 spaces."), line_number = 10L, column_number = 2L, ranges = list(c(1L, 2L))),
+      list(paste(indent_msg, "1 spaces."), line_number = 17L, column_number = 2L, ranges = list(c(2L, 2L))),
+      list(paste(indent_msg, "2 spaces."), line_number = 18L, column_number = 3L, ranges = list(c(2L, 3L)))
+    ),
+    linters = indentation_linter()
+  )
 })
 
 test_that("Reference chunks in Sweave/Rmd are ignored", {
@@ -406,6 +420,34 @@ test_that("Reference chunks in Sweave/Rmd are ignored", {
   # ensure such a chunk continues to exist upstream
   expect_true(any(grepl("^\\s*<<[^>]*>>\\s*$", readLines(example_rnw))))
   expect_silent(lint(example_rnw))
+})
+
+test_that("Rtex chunk prefixes don't cause spurious whitespace lints (#1043)", {
+  tmp <- withr::local_tempfile(
+    fileext = ".Rtex",
+    lines = c(
+      "%% begin.rcode",
+      "% a <- 1",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "%   b <- function(x) {",
+      "%     x + 1",
+      "%   }",
+      "%",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "unprefixed <- 2",
+      "%% end.rcode"
+    )
+  )
+  parsed_lines <- get_source_expressions(tmp)$lines
+  expect_identical(parsed_lines[2L], "a <- 1", ignore_attr = "names")
+  expect_identical(
+    parsed_lines[5L:8L],
+    c("b <- function(x) {", "  x + 1", "}", ""),
+    ignore_attr = "names"
+  )
+  expect_identical(parsed_lines[11L], "unprefixed <- 2", ignore_attr = "names")
 })
 
 # NB: this is just a cursory test for linters not to
