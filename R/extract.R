@@ -23,8 +23,8 @@ extract_r_source <- function(filename, lines, error = identity) {
         chunk_code <- substr(chunk_code, indent + 1L, nchar(chunk_code))
       }
       chunk_code <- strip_chunk_prefix(chunk_code, pattern$chunk.code)
-      # drop <<chunk>> references, too (tex's ref.chunk "^%+\\s*<<(.+)>>\\s*$" assumes '%' wasn't stripped)
-      ref_chunk <- sub("^\\^%\\+", "^\\\\s*%*", pattern$ref.chunk)
+      # drop <<chunk>> references, too (tex's ref.chunk `^%+\s*<<(.+)>>\s*$` assumes '%' wasn't stripped)
+      ref_chunk <- sub(R"(^\^%\+)", R"(^\\s*%*)", pattern$ref.chunk)
       is.na(chunk_code) <- grep(ref_chunk, chunk_code)
       output_env$output[line_seq] <- chunk_code
     },
