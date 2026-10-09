@@ -111,7 +111,8 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
     list(message = msg_getter, line_number = 1L, column_number = 12L),
     getter_linter
   )
-  expect_lint("time(x) := 1", list(message = msg_getter, column_number = 1L), getter_linter)
+  expect_lint("DT[, time(x) := 1]", list(message = msg_getter, column_number = 6L), getter_linter)
+  expect_lint("mutate(df, !!time(x) := 1)", list(message = msg_getter, column_number = 14L), getter_linter)
   expect_lint("names(time(x)) <- 'a'", list(message = msg_getter, column_number = 7L), getter_linter)
 
   setter_linter <- undesirable_function_linter(c("time<-" = "use zoo::time<-()"))
@@ -119,7 +120,8 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
 
   expect_no_lint("time(x)", setter_linter)
   expect_no_lint("x <- time(y)", setter_linter)
-  expect_no_lint("time(x) := 1", setter_linter)
+  expect_no_lint("DT[, time(x) := 1]", setter_linter)
+  expect_no_lint("mutate(df, !!time(x) := 1)", setter_linter)
 
   expect_lint("time(x) <- 1", list(message = msg_setter, column_number = 1L), setter_linter)
   expect_lint("time(x) <<- 1", list(message = msg_setter, column_number = 1L), setter_linter)
