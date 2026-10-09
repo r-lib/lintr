@@ -409,13 +409,31 @@ test_that("Reference chunks in Sweave/Rmd are ignored", {
 })
 
 test_that("Rtex chunk prefixes don't cause spurious whitespace lints (#1043)", {
-  parsed_lines <- get_source_expressions(test_path("knitr_formats", "test.Rtex"))$lines
-  expect_identical(parsed_lines[11L], "a = 1", ignore_attr = "names")
+  tmp <- withr::local_tempfile(
+    fileext = ".Rtex",
+    lines = c(
+      "%% begin.rcode",
+      "% a <- 1",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "%   b <- function(x) {",
+      "%     x + 1",
+      "%   }",
+      "%",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "unprefixed <- 2",
+      "%% end.rcode"
+    )
+  )
+  parsed_lines <- get_source_expressions(tmp)$lines
+  expect_identical(parsed_lines[2L], "a <- 1", ignore_attr = "names")
   expect_identical(
-    parsed_lines[22L:25L],
-    c("b <- function(x) {", "  d = 1", "}", ""),
+    parsed_lines[5L:8L],
+    c("b <- function(x) {", "  x + 1", "}", ""),
     ignore_attr = "names"
   )
+  expect_identical(parsed_lines[11L], "unprefixed <- 2", ignore_attr = "names")
 })
 
 # NB: this is just a cursory test for linters not to

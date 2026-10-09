@@ -114,9 +114,9 @@ test_that("it handles reStructuredText", {
       .. ..
     "),
     list(
-      list(regexes[["local_var"]], line_number = 3L),
-      list(regexes[["assign"]], line_number = 3L),
-      list(regexes[["trailing"]], line_number = 5L)
+      list(regexes[["local_var"]], line_number = 3L, column_number = 3L),
+      list(regexes[["assign"]], line_number = 3L, column_number = 5L),
+      list(regexes[["trailing"]], line_number = 5L, column_number = 1L)
     ),
     default_linters
   )
@@ -140,38 +140,47 @@ test_that("it handles tex", {
   expect_lint(
     file = test_path("knitr_formats", "test.Rtex"),
     checks = list(
-      list(regexes[["assign"]], line_number = 11L),
-      list(regexes[["local_var"]], line_number = 23L),
-      list(regexes[["assign"]], line_number = 23L),
-      list(regexes[["trailing"]], line_number = 25L)
+      list(regexes[["assign"]], line_number = 11L, column_number = 3L),
+      list(regexes[["local_var"]], line_number = 23L, column_number = 3L),
+      list(regexes[["assign"]], line_number = 23L, column_number = 5L),
+      list(regexes[["trailing"]], line_number = 25L, column_number = 1L)
     ),
     linters = default_linters,
     parse_settings = FALSE
   )
 
-  # Genuine indentation and trailing whitespace lints in .Rtex (#1043)
+  # Genuine whitespace lints, #| eval: false, and <<ref>> chunks in .Rtex (#1043)
   expect_lint(
-    paste(
-      "\\documentclass{article}",
+    c(
       "%% begin.rcode",
-      "% b <- function(x) {",
-      "%    x + 1",
-      "% }",
-      "%   ",
+      "unprefixed = 1",
+      "%% end.rcode",
+      "  %% begin.rcode",
+      "  % <<indented_ref_chunk>>",
+      "  % z <- 1",
+      "  %% end.rcode",
+      "%% begin.rcode",
+      "% <<other_chunk>>",
+      "%   y <- 1",
+      "% ",
       "%% end.rcode",
       "%% begin.rcode",
       "% #| eval: false",
       "% bad = 1",
       "%% end.rcode",
       "%% begin.rcode",
-      "% <<other_chunk>>",
-      "%% end.rcode",
-      sep = "\n"
+      "% b <- function(x) {",
+      "%    x + 1",
+      "% }",
+      "%   ",
+      "%% end.rcode"
     ),
     list(
-      list(regexes[["indent"]], line_number = 4L),
-      list(regexes[["trailing"]], line_number = 6L),
-      list(regexes[["trailws"]], line_number = 6L)
+      list(regexes[["assign"]], line_number = 2L, column_number = 12L),
+      list(regexes[["indent"]], line_number = 10L, column_number = 2L),
+      list(regexes[["indent"]], line_number = 19L, column_number = 3L),
+      list(regexes[["trailing"]], line_number = 21L, column_number = 1L),
+      list(regexes[["trailws"]], line_number = 21L, column_number = 1L)
     ),
     default_linters
   )
@@ -201,9 +210,9 @@ test_that("it handles asciidoc", {
       //end.rcode
     "),
     list(
-      list(regexes[["local_var"]], line_number = 3L),
-      list(regexes[["assign"]], line_number = 3L),
-      list(regexes[["trailing"]], line_number = 5L)
+      list(regexes[["local_var"]], line_number = 3L, column_number = 3L),
+      list(regexes[["assign"]], line_number = 3L, column_number = 5L),
+      list(regexes[["trailing"]], line_number = 5L, column_number = 1L)
     ),
     default_linters
   )
