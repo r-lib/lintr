@@ -106,6 +106,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     "not(parent::expr[OP-DOLLAR or OP-AT])"
   )
 
+  # NB: Unique among assignment operators, `foo() :=` does not parse to a setter `foo<-`!!
   setter_cond <- "
     parent::expr/parent::expr[
       following-sibling::LEFT_ASSIGN[text() != ':=']
