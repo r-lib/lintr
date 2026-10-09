@@ -99,10 +99,9 @@ get_source_expressions <- function(filename, lines = NULL) {
   #   multiple exact matches like '1e-3L; 1e-3L'.
   # See https://bugs.r-project.org/show_bug.cgi?id=18863.
   w <- lint_parse_warnings(source_expression$warning, parsed_content, source_expression)
-
   e <- source_expression$error
-  if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
-    # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
+
+  if (is_unreliable_expression(e)) {
     return(list(expressions = list(), error = e, warning = w, lines = source_expression$lines))
   }
 
@@ -716,4 +715,16 @@ fix_octal_escapes <- function(pc, lines) {
   }
   pc$text[is_str_const][str_const_mismatch] <- out
   pc
+}
+
+#' Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
+#' @noRd
+is_unreliable_expression = function(e) {
+  if (!is_lint(e)) {
+    return(FALSE)
+  }
+  if (is.na(e$line) || !nzchar(e$line)) {
+    return(TRUE)
+  }
+  e$message == "unexpected end of input"
 }
