@@ -32,7 +32,7 @@ extract_r_source <- function(filename, lines, error = identity) {
     chunks[["ends"]],
     chunks[["indents"]]
   )
-  attr(output_env$output, "has_prefix") <- any(chunks[["indents"]] > 0L, !is.null(pattern$chunk.code))
+  attr(output_env$output, "has_prefix") <- !is.null(pattern$chunk.code) || any(chunks[["indents"]] > 0L)
   output_env$output
 }
 
