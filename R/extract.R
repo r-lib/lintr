@@ -208,11 +208,12 @@ strip_chunk_prefix <- function(chunk_code, prefix_pattern) {
   }
   chunk_code <- sub(prefix_pattern, "", chunk_code)
   non_blank <- grep("\\S", chunk_code)
-  if (length(non_blank) > 0L) {
-    spaces <- min(attr(regexpr("^ *", chunk_code[non_blank]), "match.length"))
-    if (spaces > 0L) {
-      chunk_code <- substr(chunk_code, spaces + 1L, nchar(chunk_code))
-    }
+  if (length(non_blank) == 0L) {
+    return(chunk_code)
   }
-  chunk_code
+  spaces <- min(attr(regexpr("^ *", chunk_code[non_blank]), "match.length"))
+  if (spaces == 0L) {
+    return(chunk_code)
+  }
+  substr(chunk_code, spaces + 1L, nchar(chunk_code))
 }
