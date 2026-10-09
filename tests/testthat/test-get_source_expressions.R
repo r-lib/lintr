@@ -367,8 +367,9 @@ test_that("Syntax errors in Rmd or qmd don't choke lintr", {
     "}",
     "```"
   ))
-  exprs <- expect_silent(get_source_expressions(tmp))
-  expect_null(attr(exprs$lines, "has_prefix"))
+  expect_silent(
+    expect_null(attr(get_source_expressions(tmp)$lines, "has_prefix"))
+  )
 })
 
 test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
