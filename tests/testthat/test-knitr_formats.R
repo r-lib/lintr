@@ -234,10 +234,10 @@ test_that("it does lint .Rmd, .qmd, or .Rnw file with malformed input", {
 
   expected <- list(
     NULL, # This test case would require parsing all chunk fences, not just r chunks.
-    list("maybe starting at line 1", line_number = 1L, column_number = 1L, type = "error"),
-    list("maybe starting at line 1", line_number = 1L, column_number = 1L, type = "error"),
-    list("maybe starting at line 8", line_number = 8L, column_number = 1L, type = "error"),
-    list("maybe starting at line 3", line_number = 3L, column_number = 1L, type = "error")
+    list("maybe starting at line 1", line_number = 1L, type = "error"),
+    list("maybe starting at line 1", line_number = 1L, type = "error"),
+    list("maybe starting at line 8", line_number = 8L, type = "error"),
+    list("maybe starting at line 3", line_number = 3L, type = "error")
   )
 
   for (i in seq_along(contents)) {
