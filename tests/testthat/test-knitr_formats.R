@@ -59,6 +59,35 @@ test_that("it handles Sweave", {
     linters = default_linters,
     parse_settings = FALSE
   )
+
+  # Adjacent code chunks without intervening '@' and multiple '@' doc chunks (#2619)
+  expect_lint(
+    trim_some("
+      <<chunk-1>>=
+      bad_code = 1
+      <<chunk-2>>=
+      another_bad = 2
+      <<py-chunk, engine='python'>>=
+      a = [1, 2]
+      <<empty-chunk>>=
+      <<eval=FALSE>>=
+      skipped_bad = 3
+      @ % comment on doc chunk
+      @
+      <<chunk-3>>=
+      final_bad = 4
+      @
+    "),
+    list(
+      list(regexes[["assign"]], line_number = 2L, column_number = 10L),
+      list(regexes[["assign"]], line_number = 4L, column_number = 13L),
+      list(regexes[["assign"]], line_number = 13L, column_number = 11L)
+    ),
+    assignment_linter()
+  )
+
+  sweave_test_rnw <- system.file("Sweave", "Sweave-test-1.Rnw", package = "utils")
+  expect_no_lint(file = sweave_test_rnw, linters = assignment_linter())
 })
 
 test_that("it handles reStructuredText", {
@@ -137,7 +166,7 @@ test_that("it does _not_ error with inline \\Sexpr", {
   )
 })
 
-test_that("it does lint .Rmd or .qmd file with malformed input", {
+test_that("it does lint .Rmd, .qmd, or .Rnw file with malformed input", {
   expect_lint(
     file = test_path("knitr_malformed", "incomplete_r_block.Rmd"),
     checks = "Missing chunk end",
@@ -178,6 +207,15 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
     trim_some("
       ```{r chunk-1}
       code <- 42
+
+      ```{r chunk-2}
+      some_more_code <- 42
+      ```
+      ```
+    "),
+    trim_some("
+      ```{r chunk-1}
+      code <- 42
       ```
 
       # A heading
@@ -185,13 +223,21 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
 
       ```{r chunk-2}
       some_more_code <- 42
+    "),
+    trim_some("
+      <<chunk-1>>=
+      code <- 42
+      <<chunk-2>>=
+      some_more_code <- 42
     ")
   )
 
   expected <- list(
     NULL, # This test case would require parsing all chunk fences, not just r chunks.
-    "maybe starting at line 1",
-    "maybe starting at line 8"
+    list("maybe starting at line 1", line_number = 1L, type = "error"),
+    list("maybe starting at line 1", line_number = 1L, type = "error"),
+    list("maybe starting at line 8", line_number = 8L, type = "error"),
+    list("maybe starting at line 3", line_number = 3L, type = "error")
   )
 
   for (i in seq_along(contents)) {
