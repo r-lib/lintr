@@ -10,13 +10,7 @@ extract_r_source <- function(filename, lines, error = identity) {
   output_env$output <- rep.int(NA_character_, length(lines))
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
-  if (is_error(chunks) || is_lint(chunks)) {
-    assign("e", chunks, envir = parent.frame())
-    # error, so return empty code
-    return(output_env$output)
-  }
-
-  # no chunks found, so just return the lines
+  # no chunks found (or chunk error), so just return empty code
   if (length(chunks[["starts"]]) == 0L || length(chunks[["ends"]]) == 0L) {
     return(output_env$output)
   }

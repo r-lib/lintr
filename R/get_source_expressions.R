@@ -74,25 +74,34 @@ get_source_expressions <- function(filename, lines = NULL) {
   # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   terminal_newline <- !isFALSE(attr(source_expression$lines, "terminal_newline", exact = TRUE))
 
-  e <- w <- NULL
   source_expression$lines <- extract_r_source(
     filename = source_expression$filename,
     lines = source_expression$lines,
-    error = \(e) lint_rmd_error(e, source_expression)
+    error = function(e) {
+      source_expression$error <- lint_rmd_error(e, source_expression)
+      source_expression$error
+    }
   )
   names(source_expression$lines) <- seq_along(source_expression$lines)
   source_expression$content <- get_content(source_expression$lines)
-  parsed_content <- get_source_expression(source_expression, error = \(e) lint_parse_error(e, source_expression))
+  parsed_content <- get_source_expression(
+    source_expression,
+    error = function(e) {
+      # Let parse errors take precedence over encoding problems
+      source_expression$error <- source_expression$error %||% lint_parse_error(e, source_expression)
+      source_expression$error
+    }
+  )
 
   # Currently no way to distinguish the source of the warning
   #   from the message itself, so we just grep the source for the
   #   exact string generating the warning; de-dupe in case of
   #   multiple exact matches like '1e-3L; 1e-3L'.
   # See https://bugs.r-project.org/show_bug.cgi?id=18863.
-  w <- lint_parse_warnings(w, parsed_content, source_expression)
+  w <- lint_parse_warnings(source_expression$warning, parsed_content, source_expression)
+  e <- source_expression$error
 
-  if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
-    # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
+  if (is_unreliable_expression(e)) {
     return(list(expressions = list(), error = e, warning = w, lines = source_expression$lines))
   }
 
@@ -539,11 +548,8 @@ get_single_source_expression <- function(loc,
 }
 
 get_source_expression <- function(source_expression, error = identity) {
-  parse_error <- FALSE
-
-  env <- parent.frame() # nolint: object_usage_linter. Used below.
   # https://adv-r.hadley.nz/conditions.html
-  parsed_content <- withCallingHandlers(
+  withCallingHandlers(
     tryCatch(
       parse(
         text = source_expression$content,
@@ -553,15 +559,10 @@ get_source_expression <- function(source_expression, error = identity) {
       error = error
     ),
     warning = function(w) {
-      env$w <- c(env$w, conditionMessage(w))
+      source_expression$warning <- c(source_expression$warning, conditionMessage(w))
       invokeRestart("muffleWarning")
     }
   )
-
-  if (is_error(parsed_content) || is_lint(parsed_content)) {
-    assign("e", parsed_content, envir = parent.frame())
-    parse_error <- TRUE
-  }
 
   # Triggers an error if the lines contain invalid characters.
   parsed_content <- tryCatch(
@@ -570,8 +571,6 @@ get_source_expression <- function(source_expression, error = identity) {
   )
 
   if (is_error(parsed_content) || is_lint(parsed_content)) {
-    # Let parse errors take precedence over encoding problems
-    if (!parse_error) assign("e", parsed_content, envir = parent.frame())
     return() # parsed_content is unreliable if encoding is invalid
   }
 
@@ -716,4 +715,16 @@ fix_octal_escapes <- function(pc, lines) {
   }
   pc$text[is_str_const][str_const_mismatch] <- out
   pc
+}
+
+#' Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
+#' @noRd
+is_unreliable_expression <- function(e) {
+  if (!is_lint(e)) {
+    return(FALSE)
+  }
+  if (is.na(e$line) || !nzchar(e$line)) {
+    return(TRUE)
+  }
+  e$message == "unexpected end of input"
 }
