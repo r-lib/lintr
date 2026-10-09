@@ -367,7 +367,8 @@ test_that("Syntax errors in Rmd or qmd don't choke lintr", {
     "}",
     "```"
   ))
-  expect_silent(get_source_expressions(tmp))
+  exprs <- expect_silent(get_source_expressions(tmp))
+  expect_null(attr(exprs$lines, "has_prefix"))
 })
 
 test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
@@ -394,18 +395,20 @@ test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
   ))
 
   parsed_lines <- get_source_expressions(tmp)$lines
+  expect_true(attr(parsed_lines, "has_prefix"))
   expect_identical(parsed_lines[4L], '"properly indented"', ignore_attr = "names")
   expect_identical(parsed_lines[10L], '  "improperly indented"', ignore_attr = "names")
   expect_identical(parsed_lines[16L], '"leftmost code"', ignore_attr = "names")
   expect_identical(parsed_lines[17L], ' "further right"', ignore_attr = "names")
   expect_identical(parsed_lines[18L], '  "aligned with code gate"', ignore_attr = "names")
 
+  indent_msg <- "Indentation should be 0 spaces but is"
   expect_lint(
     file = tmp,
     checks = list(
-      list("Indentation should be 0 spaces but is 2 spaces.", line_number = 10L, column_number = 2L),
-      list("Indentation should be 0 spaces but is 1 spaces.", line_number = 17L, column_number = 2L),
-      list("Indentation should be 0 spaces but is 2 spaces.", line_number = 18L, column_number = 3L)
+      list(paste(indent_msg, "2 spaces."), line_number = 10L, column_number = 2L, ranges = list(c(1L, 2L))),
+      list(paste(indent_msg, "1 spaces."), line_number = 17L, column_number = 2L, ranges = list(c(2L, 2L))),
+      list(paste(indent_msg, "2 spaces."), line_number = 18L, column_number = 3L, ranges = list(c(2L, 3L)))
     ),
     linters = indentation_linter()
   )

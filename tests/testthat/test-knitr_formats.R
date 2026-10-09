@@ -149,7 +149,7 @@ test_that("it handles tex", {
     parse_settings = FALSE
   )
 
-  # Genuine whitespace lints, #| eval: false, and <<ref>> chunks in .Rtex (#1043)
+  # Genuine whitespace lints, #| eval: false, <<ref>> chunks, and varying prefixes in .Rtex (#1043)
   expect_lint(
     c(
       "%% begin.rcode",
@@ -165,6 +165,14 @@ test_that("it handles tex", {
       "% ",
       "%% end.rcode",
       "%% begin.rcode",
+      "%   wide_margin = 1",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "% x <- 1",
+      "%% double_pct = 2",
+      "  % leading_ws = 3",
+      "%% end.rcode",
+      "%% begin.rcode",
       "% #| eval: false",
       "% bad = 1",
       "%% end.rcode",
@@ -176,11 +184,14 @@ test_that("it handles tex", {
       "%% end.rcode"
     ),
     list(
-      list(regexes[["assign"]], line_number = 2L, column_number = 12L),
-      list(regexes[["indent"]], line_number = 10L, column_number = 4L),
-      list(regexes[["indent"]], line_number = 19L, column_number = 5L),
-      list(regexes[["trailing"]], line_number = 21L, column_number = 3L),
-      list(regexes[["trailws"]], line_number = 21L, column_number = 3L)
+      list(regexes[["assign"]], line_number = 2L, column_number = 12L, ranges = list(c(12L, 12L))),
+      list(regexes[["indent"]], line_number = 10L, column_number = 4L, ranges = list(c(3L, 4L))),
+      list(regexes[["assign"]], line_number = 14L, column_number = 17L, ranges = list(c(17L, 17L))),
+      list(regexes[["assign"]], line_number = 18L, column_number = 15L, ranges = list(c(15L, 15L))),
+      list(regexes[["assign"]], line_number = 19L, column_number = 16L, ranges = list(c(16L, 16L))),
+      list(regexes[["indent"]], line_number = 27L, column_number = 5L, ranges = list(c(5L, 5L))),
+      list(regexes[["trailing"]], line_number = 29L, column_number = 3L),
+      list(regexes[["trailws"]], line_number = 29L, column_number = 3L, ranges = list(c(3L, 4L)))
     ),
     default_linters
   )
