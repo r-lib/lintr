@@ -96,60 +96,60 @@ test_that("Default recommendations can be specified multiple ways", {
 
 test_that("setter calls are distinguished from getter calls (#1912)", {
   getter_linter <- undesirable_function_linter(c(time = NA))
+  setter_linter <- undesirable_function_linter(c(`time<-` = "use zoo::time<-()"))
   msg_getter <- rex::rex('Avoid undesirable function "time".', end)
-
-  expect_no_lint("time(x) <- 1", getter_linter)
-  expect_no_lint("time(x) <<- 1", getter_linter)
-  expect_no_lint("time(x) = 1", getter_linter)
-  expect_no_lint("1 -> time(x)", getter_linter)
-  expect_no_lint("1 ->> time(x)", getter_linter)
-  expect_no_lint("zoo::time(x) <- 1", getter_linter)
-  expect_no_lint("time(names(x)) <- 1", getter_linter)
-
-  expect_lint(
-    "time(x) <- time(y)",
-    list(message = msg_getter, line_number = 1L, column_number = 12L),
-    getter_linter
-  )
-  expect_lint("DT[, time(x) := 1]", list(message = msg_getter, column_number = 6L), getter_linter)
-  expect_lint("mutate(df, !!time(x) := 1)", list(message = msg_getter, column_number = 14L), getter_linter)
-  expect_lint("names(time(x)) <- 'a'", list(message = msg_getter, column_number = 7L), getter_linter)
-
-  setter_linter <- undesirable_function_linter(c("time<-" = "use zoo::time<-()"))
   msg_setter <- rex::rex('Avoid undesirable function "time<-". As an alternative, use zoo::time<-().')
 
+  expect_lint("time(x)", list(msg_getter, column_number = 1L), getter_linter)
   expect_no_lint("time(x)", setter_linter)
-  expect_no_lint("x <- time(y)", setter_linter)
+
+  expect_no_lint("time(x) <- 1", getter_linter)
+  expect_lint("time(x) <- 1", list(msg_setter, column_number = 1L), setter_linter)
+
+  expect_no_lint("time(x) <<- 1", getter_linter)
+  expect_lint("time(x) <<- 1", list(msg_setter, column_number = 1L), setter_linter)
+
+  expect_no_lint("time(x) = 1", getter_linter)
+  expect_lint("time(x) = 1", list(msg_setter, column_number = 1L), setter_linter)
+
+  expect_no_lint("1 -> time(x)", getter_linter)
+  expect_lint("1 -> time(x)", list(msg_setter, column_number = 6L), setter_linter)
+
+  expect_no_lint("1 ->> time(x)", getter_linter)
+  expect_lint("1 ->> time(x)", list(msg_setter, column_number = 7L), setter_linter)
+
+  expect_no_lint("stats::time(x) <- 1", getter_linter)
+  expect_lint("stats::time(x) <- 1", list(msg_setter, column_number = 8L), setter_linter)
+
+  expect_no_lint("time(names(x)) <- 1", getter_linter)
+  expect_lint("time(names(x)) <- 1", list(msg_setter, column_number = 1L), setter_linter)
+  expect_lint("names(time(x)) <- 'a'", list(msg_getter, column_number = 7L), getter_linter)
+  expect_no_lint("names(time(x)) <- 'a'", setter_linter)
+
+  expect_lint("DT[, time(x) := 1]", list(msg_getter, column_number = 6L), getter_linter)
   expect_no_lint("DT[, time(x) := 1]", setter_linter)
+
+  expect_lint("mutate(df, !!time(x) := 1)", list(msg_getter, column_number = 14L), getter_linter)
   expect_no_lint("mutate(df, !!time(x) := 1)", setter_linter)
 
-  expect_lint("time(x) <- 1", list(message = msg_setter, column_number = 1L), setter_linter)
-  expect_lint("time(x) <<- 1", list(message = msg_setter, column_number = 1L), setter_linter)
-  expect_lint("time(x) = 1", list(message = msg_setter, column_number = 1L), setter_linter)
-  expect_lint("1 -> time(x)", list(message = msg_setter, column_number = 6L), setter_linter)
-  expect_lint("1 ->> time(x)", list(message = msg_setter, column_number = 7L), setter_linter)
-  expect_lint("stats::time(x) <- 1", list(message = msg_setter, column_number = 8L), setter_linter)
-  expect_lint("time(x) <- time(y)", list(message = msg_setter, column_number = 1L), setter_linter)
-  expect_lint("`time<-`(x, 1)", list(message = msg_setter, column_number = 1L), setter_linter)
-  expect_lint("lapply(x, `time<-`, 1)", list(message = msg_setter, column_number = 11L), setter_linter)
+  expect_lint("x <- time(y)", list(msg_getter, column_number = 6L), getter_linter)
+  expect_no_lint("x <- time(y)", setter_linter)
+
+  expect_lint("`time<-`(x, 1)", list(msg_setter, column_number = 1L), setter_linter)
+  expect_lint("lapply(x, `time<-`, 1)", list(msg_setter, column_number = 11L), setter_linter)
   expect_no_lint(
     "lapply(x, `time<-`, 1)",
-    undesirable_function_linter(c("time<-" = NA), symbol_is_undesirable = FALSE)
+    undesirable_function_linter(c(`time<-` = NA), symbol_is_undesirable = FALSE)
   )
 
-  both_linter <- undesirable_function_linter(c(time = "no getter", "time<-" = "no setter"))
+  expect_lint("time(x) <- time(y)", list(msg_getter, column_number = 12L), getter_linter)
+  expect_lint("time(x) <- time(y)", list(msg_setter, column_number = 1L), setter_linter)
   expect_lint(
     "time(x) <- time(y)",
     list(
-      list(
-        message = rex::rex('Avoid undesirable function "time<-". As an alternative, no setter.'),
-        column_number = 1L
-      ),
-      list(
-        message = rex::rex('Avoid undesirable function "time". As an alternative, no getter.'),
-        column_number = 12L
-      )
+      list(rex::rex('Avoid undesirable function "time<-". As an alternative, no setter.'), column_number = 1L),
+      list(rex::rex('Avoid undesirable function "time". As an alternative, no getter.'), column_number = 12L)
     ),
-    both_linter
+    undesirable_function_linter(c(time = "no getter", "time<-" = "no setter"))
   )
 })
