@@ -83,14 +83,14 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     cli_abort("{.arg fun} must be a non-empty character vector.")
   }
 
-  nm <- names2(fun)
-  implicit_idx <- !nzchar(nm)
+  implicit_idx <- !nzchar(names2(fun))
   if (any(implicit_idx)) {
     names(fun)[implicit_idx] <- fun[implicit_idx]
     is.na(fun) <- implicit_idx
   }
-  if (anyNA(names(fun))) {
-    missing_idx <- which(is.na(names(fun))) # nolint: object_usage_linter. False positive.
+  fun_names <- names(fun)
+  if (anyNA(fun_names)) {
+    missing_idx <- which(is.na(fun_names)) # nolint: object_usage_linter. False positive.
     cli_abort(paste(
       "Unnamed elements of {.arg fun} must not be missing,",
       "but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}."
@@ -115,9 +115,9 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     ]
   "
 
-  is_setter <- endsWith(names(fun), "<-")
-  call_names <- c(names(fun)[!is_setter], sprintf("`%s`", names(fun)[is_setter]))
-  setter_names <- sub("<-$", "", names(fun)[is_setter])
+  is_setter <- endsWith(fun_names, "<-")
+  call_names <- c(fun_names[!is_setter], sprintf("`%s`", fun_names[is_setter]))
+  setter_names <- sub("<-$", "", fun_names[is_setter])
 
   if (symbol_is_undesirable) {
     symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(call_names)}) and {xp_condition}]")
@@ -132,7 +132,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     matched_nodes <- xml_find_all_(xml_calls, call_xpath)
     fun_names <- gsub("^`|`$", "", get_r_string(matched_nodes))
 
-    if (any(is_setter)) {
+    if (length(setter_names) > 0L) {
       xml_setter_calls <- source_expression$xml_find_function_calls(setter_names)
       setter_nodes <- xml_find_all_(xml_setter_calls, setter_xpath)
       matched_nodes <- combine_nodesets(matched_nodes, setter_nodes)
