@@ -399,6 +399,16 @@ test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
   expect_identical(parsed_lines[16L], '"leftmost code"', ignore_attr = "names")
   expect_identical(parsed_lines[17L], ' "further right"', ignore_attr = "names")
   expect_identical(parsed_lines[18L], '  "aligned with code gate"', ignore_attr = "names")
+
+  expect_lint(
+    file = tmp,
+    checks = list(
+      list("Indentation should be 0 spaces but is 2 spaces.", line_number = 10L, column_number = 2L),
+      list("Indentation should be 0 spaces but is 1 spaces.", line_number = 17L, column_number = 2L),
+      list("Indentation should be 0 spaces but is 2 spaces.", line_number = 18L, column_number = 3L)
+    ),
+    linters = indentation_linter()
+  )
 })
 
 test_that("Reference chunks in Sweave/Rmd are ignored", {

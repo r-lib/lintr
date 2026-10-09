@@ -114,9 +114,9 @@ test_that("it handles reStructuredText", {
       .. ..
     "),
     list(
-      list(regexes[["local_var"]], line_number = 3L, column_number = 3L),
-      list(regexes[["assign"]], line_number = 3L, column_number = 5L),
-      list(regexes[["trailing"]], line_number = 5L, column_number = 1L)
+      list(regexes[["local_var"]], line_number = 3L, column_number = 6L),
+      list(regexes[["assign"]], line_number = 3L, column_number = 8L),
+      list(regexes[["trailing"]], line_number = 5L, column_number = 3L)
     ),
     default_linters
   )
@@ -140,10 +140,10 @@ test_that("it handles tex", {
   expect_lint(
     file = test_path("knitr_formats", "test.Rtex"),
     checks = list(
-      list(regexes[["assign"]], line_number = 11L, column_number = 3L),
-      list(regexes[["local_var"]], line_number = 23L, column_number = 3L),
-      list(regexes[["assign"]], line_number = 23L, column_number = 5L),
-      list(regexes[["trailing"]], line_number = 25L, column_number = 1L)
+      list(regexes[["assign"]], line_number = 11L, column_number = 5L),
+      list(regexes[["local_var"]], line_number = 23L, column_number = 5L),
+      list(regexes[["assign"]], line_number = 23L, column_number = 7L),
+      list(regexes[["trailing"]], line_number = 25L, column_number = 2L)
     ),
     linters = default_linters,
     parse_settings = FALSE
@@ -177,10 +177,10 @@ test_that("it handles tex", {
     ),
     list(
       list(regexes[["assign"]], line_number = 2L, column_number = 12L),
-      list(regexes[["indent"]], line_number = 10L, column_number = 2L),
-      list(regexes[["indent"]], line_number = 19L, column_number = 3L),
-      list(regexes[["trailing"]], line_number = 21L, column_number = 1L),
-      list(regexes[["trailws"]], line_number = 21L, column_number = 1L)
+      list(regexes[["indent"]], line_number = 10L, column_number = 4L),
+      list(regexes[["indent"]], line_number = 19L, column_number = 5L),
+      list(regexes[["trailing"]], line_number = 21L, column_number = 3L),
+      list(regexes[["trailws"]], line_number = 21L, column_number = 3L)
     ),
     default_linters
   )
@@ -210,9 +210,9 @@ test_that("it handles asciidoc", {
       //end.rcode
     "),
     list(
-      list(regexes[["local_var"]], line_number = 3L, column_number = 3L),
-      list(regexes[["assign"]], line_number = 3L, column_number = 5L),
-      list(regexes[["trailing"]], line_number = 5L, column_number = 1L)
+      list(regexes[["local_var"]], line_number = 3L, column_number = 6L),
+      list(regexes[["assign"]], line_number = 3L, column_number = 8L),
+      list(regexes[["trailing"]], line_number = 5L, column_number = 3L)
     ),
     default_linters
   )

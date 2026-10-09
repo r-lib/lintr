@@ -87,6 +87,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lints <- lints |>
     maybe_append_condition_lints(source_expressions, lint_cache, filename) |>
     flatten_lints() |>
+    restore_column_numbers(lines, source_expressions$lines) |>
     reorder_lints()
   class(lints) <- c("lints", "list")
 
@@ -371,6 +372,28 @@ validate_linter_object <- function(linter, name) {
     i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
     x = "Instead, it is {.obj_type_friendly {linter}}."
   ))
+}
+
+restore_column_numbers <- function(lints, raw_lines, extracted_lines) {
+  if (length(lints) == 0L || !isTRUE(attr(extracted_lines, "has_prefix", exact = TRUE))) {
+    return(lints)
+  }
+  lapply(lints, function(lint) {
+    l <- lint$line_number
+    extracted_line <- extracted_lines[[l]]
+    if (!is.na(extracted_line)) {
+      raw_line <- raw_lines[[l]]
+      col_offset <- nchar(raw_line) - nchar(extracted_line)
+      if (col_offset > 0L) {
+        lint$line <- raw_line
+        lint$column_number <- lint$column_number + col_offset
+        if (!is.null(lint$ranges)) {
+          lint$ranges <- lapply(lint$ranges, `+`, col_offset)
+        }
+      }
+    }
+    lint
+  })
 }
 
 reorder_lints <- function(lints) {
