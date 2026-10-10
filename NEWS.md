@@ -18,6 +18,7 @@
    + retains the correct `column_number` for lints found in indented .Rmd/.qmd chunks so that IDEs can land the cursor correctly (continuing #1949, @MichaelChirico).
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
 * `get_r_string()` (and by extension `xml_find_function_calls()` in `get_source_expressions()`) now unquotes backtick-quoted symbols and slots (`SYMBOL*` and `SLOT` nodes) in addition to string constants (`STR_CONST`; @MichaelChirico).
+* `xml_find_function_calls()` (in `get_source_expressions()`) now resolves replacement function calls (e.g. `foo(x) <- y` and `x@bar(y) <- z` are indexed as `"foo<-"` and `"bar<-"`, respectively; @MichaelChirico).
 
 ### New linters
 
