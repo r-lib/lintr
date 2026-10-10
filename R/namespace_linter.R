@@ -91,7 +91,7 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     ns_get <- xml_text(ns_nodes) == "::"
     symbol_nodes <- xml_find_all_(ns_nodes, "following-sibling::*[1]")
     symbols <- get_r_string(symbol_nodes)
-    is_setter <- xml_find_all_(ns_nodes, "parent::expr") %in% xml_find_all_(xml, setter_calls_xpath)
+    is_setter <- xp_is_setter_call(ns_nodes, depth = 1L)
     symbols[is_setter] <- paste0(symbols[is_setter], "<-")
 
     if (check_nonexports) {
