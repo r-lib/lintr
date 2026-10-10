@@ -51,9 +51,9 @@ Load the relevant domain skill from `.agents/skills/` before starting work:
   - Avoid `delayedAssign()` when the value is evaluated in normal multi-linter
     runs. When `delayedAssign()` is justified for a rarely accessed cache (such
     as `s4_slot_cache`), include an inline comment explaining why.
-  - Push type/precondition guards (`if (!is.function(fun)) return(FALSE)`) inside
-    helper functions rather than repeating them at call sites.
-  - When a base/stats function is used multiple times across the package (e.g.,
+  - Push type/precondition guards (`if (!is.function(fun)) {\n  return(FALSE)\n}`)
+    inside helper functions rather than repeating them at call sites.
+  - When an upstream function is used several times across the package (e.g.,
     `stats::setNames`), import it via `@importFrom` in `R/lintr-package.R` and
     run `roxygen2::roxygenize()` rather than repeating `pkg::fun`.
 - **Self-linting & dogfooding (`.lintr.R`)**:
@@ -62,16 +62,11 @@ Load the relevant domain skill from `.agents/skills/` before starting work:
     violations in the same change.
   - Never write contorted code or `assign(..., envir = parent.frame())` just to
     bypass `cyclocomp_linter()` or `object_usage_linter()`. Extract a named
-    helper function or store state on the `source_expression` environment.
-  - When defining a canonical helper that legitimately calls a function banned by
-    `.lintr.R` (e.g., `is_error <- function(x) inherits(x, "error")` or checking
-    `quote(F)`), place `# nolint next: <linter>.` directly above the line.
+    helper function or store state on an existing environment.
 - **VCS branch / bookmark & commit naming**:
-  - Choose short, descriptive branch/bookmark names that convey the feature or
-    fix (e.g., `any-duplicated-highlight-range`, `unreachable-switch`,
+  - Choose short, descriptive bookmark names that convey the feature or fix
+    (e.g., `any-duplicated-highlight-range`, `unreachable-switch`,
     `indent-method-chain`), never generic `fix-issue-NNNN`.
-  - In commit stacks/chains, give every commit a specific summary of what that
-    commit changes; never reuse a single generic message across a stack.
 
 ---
 
@@ -114,10 +109,10 @@ ad-hoc string or XML manipulation:
 - **Group multiple changes to the same function**:
   When more than one bullet applies to the same linter or function (e.g.,
   `get_source_expressions():`, `lint():`, `indentation_linter():`,
-  `seq_linter():`), group them under a single parent bullet `* \`func_name()\`:`
-  with indented `+` sub-bullets.
+  `seq_linter():`), group them under a single parent bullet
+  ``* `func_name()`:`` with indented `+` sub-bullets.
 - **Attribution**:
-  Include both the issue number `#XXXX` (if applicable) and PR number `#YYYY`
+  Include the issue number `#XXXX` or PR number `#YYYY` (if no issue yet exists)
   alongside the author's public GitHub handle (e.g., `@MichaelChirico`,
   `@AshesITR`): `(#1234, #5678, @username)`.
 - **Formatting names**:
@@ -126,7 +121,7 @@ ad-hoc string or XML manipulation:
 - **Migration guidance**:
   When changing default behavior or linter scope, include a concise sentence
   showing users how to opt in/out or migrate (e.g.,
-  ``Use `undesirable_function_linter(c(foo = NA, \`foo<-\` = NA))` to lint both``).
+  ```Use ``undesirable_function_linter(c(foo = NA, `foo<-` = NA))`` to lint both```).
 
 ---
 
