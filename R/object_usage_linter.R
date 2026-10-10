@@ -306,7 +306,7 @@ get_imported_symbols <- function(xml, library_lint_hook) {
 
   # nolint next: undesirable_function_name_linter.
   unlist(Map(pkg = imported_pkgs, expr = xml_parent(import_exprs), function(pkg, expr) {
-    tryCatch(
+    pkg_exports <- tryCatch(
       getNamespaceExports(pkg),
       error = function(e) {
         lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is necessary here.
@@ -316,10 +316,28 @@ get_imported_symbols <- function(xml, library_lint_hook) {
           toString(shQuote(lib_paths)), " (", conditionMessage(e), "). This may lead to false positives."
         )
         library_lint_hook(expr, lint_msg)
-        character()
+        NULL
       }
     )
+    if (is.null(pkg_exports)) {
+      return(character())
+    }
+    seen <- pkg
+    queue <- get_pkg_depends(pkg)
+    while (length(queue) > 0L) {
+      dep <- queue[1L]
+      seen <- c(seen, dep)
+      pkg_exports <- c(pkg_exports, tryCatch(getNamespaceExports(dep), error = \(e) character()))
+      queue <- unique(c(queue[-1L], setdiff(get_pkg_depends(dep), seen)))
+    }
+    pkg_exports
   }))
+}
+
+get_pkg_depends <- function(pkg) {
+  depends <- utils::packageDescription(pkg, fields = "Depends")
+  deps <- strsplit(gsub("\\s+", "", depends), ",", fixed = TRUE)[[1L]]
+  setdiff(sub("\\(.*", "", deps), c("R", "base", "", NA_character_))
 }
 
 known_used_symbols <- function(fun_assignment, interpret_extensions) {
