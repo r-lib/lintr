@@ -314,6 +314,16 @@ test_that("xml_find_function_calls works as intended", {
     exprs$expressions[[5L]]$xml_find_function_calls(NULL, keep_names = TRUE, include_s4_slots = TRUE),
     c("foo", "foo", "bar", "baz")
   )
+
+  # backticked calls (syntactic and non-syntactic) are unquoted in cache names
+  backtick_file <- withr::local_tempfile(lines = c("`foo`(1)", "`+`(1, 2)", "`%in%`(x, y)"))
+  backtick_expr <- get_source_expressions(backtick_file)$expressions[[4L]]
+  expect_named(
+    backtick_expr$xml_find_function_calls(NULL, keep_names = TRUE),
+    c("foo", "+", "%in%")
+  )
+  expect_length(backtick_expr$xml_find_function_calls("+"), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("%in%"), 1L)
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {

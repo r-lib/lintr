@@ -99,8 +99,6 @@ object_overwrite_linter <- function(
 
     assigned_exprs <- xml_find_all_(xml, xpath_assignments)
     assigned_symbols <- get_r_string(assigned_exprs, "SYMBOL|STR_CONST")
-    is_quoted <- startsWith(assigned_symbols, "`")
-    assigned_symbols[is_quoted] <- substr(assigned_symbols[is_quoted], 2L, nchar(assigned_symbols[is_quoted]) - 1L)
     is_bad <- assigned_symbols %in% pkg_exports$name
     source_pkg <- pkg_exports$package[match(assigned_symbols[is_bad], pkg_exports$name)]
     lint_message <- sprintf(
