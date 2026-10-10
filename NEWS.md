@@ -61,6 +61,7 @@
 * `brace_linter(allow_single_line = TRUE)` still flags opening curly braces placed on their own line (e.g. `while (FALSE)\n{}`) or not followed by a newline when the closing brace is on a different line (#1684, @MichaelChirico).
 * `duplicate_argument_linter()` detects duplicate arguments when a non-syntactic name is passed as both a string and a backticked symbol, e.g. ``fun('a b' = 1, `a b` = 2)`` (#3156, @MichaelChirico).
 * `backport_linter()` detects backtick-quoted calls and symbols (e.g. `` `%||%`(x, y) ``, ``Reduce(`%||%`, x)``) and replacement function calls (e.g. `.rowNamesDF(x) <- value`; #3160, @MichaelChirico).
+* `implicit_assignment_linter(allow_scoped = TRUE)` detects out-of-scope uses of variables assigned via `->` or unparenthesized `<-` following higher-precedence operators like `&&` and `||` (e.g. `if (a <- 1 && b <- 2) ...`; #2918, @MichaelChirico).
 
 ## Notes
 
