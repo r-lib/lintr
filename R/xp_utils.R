@@ -102,6 +102,27 @@ xp_call_name <- function(expr, depth = 1L, condition = NULL) {
   xml_find_chr_(expr, xpath)
 }
 
+# Call assigned to via `<-`, `<<-`, `=`, or `->`, e.g. `foo(x) <- y` -> `foo<-`.
+# NB:
+#   1. Unique among assignment operators, `foo() :=` does not parse to a setter `foo<-`!!
+#   2. Nested replacement targets like `foo(bar(x)) <- 1` or `bar(x)[1] <- 1` invoke both `bar`
+#      and `bar<-` in R, but we only treat the outer call as a setter here for simplicity.
+xp_is_setter_call <- function(expr, depth = 0L) {
+  callee_expr <- if (depth == 0L) "self::expr" else paste(rep("parent::expr", depth), collapse = "/")
+  xpath <- sprintf(
+    "boolean(
+      %s[following-sibling::OP-LEFT-PAREN]
+        /parent::expr[
+          following-sibling::LEFT_ASSIGN[text() != ':=']
+          or following-sibling::EQ_ASSIGN
+          or preceding-sibling::RIGHT_ASSIGN
+        ]
+    )",
+    callee_expr
+  )
+  xml_find_lgl_(expr, xpath)
+}
+
 xp_find_location <- function(xml, xpath) {
   if (identical(xpath, "number(./@col1)")) {
     as.integer(xml_attr_(xml, "col1"))

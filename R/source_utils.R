@@ -1,13 +1,3 @@
-# Call assigned to via `<-`, `<<-`, `=`, or `->`, e.g. `foo(x) <- y` -> `foo<-`.
-# NB:
-#   1. Unique among assignment operators, `foo() :=` does not parse to a setter `foo<-`!!
-#   2. Nested replacement targets like `foo(bar(x)) <- 1` or `bar(x)[1] <- 1` invoke both `bar`
-#      and `bar<-` in R, but we only treat the outer call as a setter here for simplicity.
-setter_calls_xpath <- "
-  (//LEFT_ASSIGN[text() != ':='] | //EQ_ASSIGN)/preceding-sibling::expr/expr[1][following-sibling::OP-LEFT-PAREN]
-  | //RIGHT_ASSIGN/following-sibling::expr/expr[1][following-sibling::OP-LEFT-PAREN]
-"
-
 #' Build the `xml_find_function_calls()` helper for a source expression
 #'
 #' @param xml The XML parse tree as an XML object (`xml_parsed_content` or `full_xml_parsed_content`)
@@ -20,12 +10,10 @@ setter_calls_xpath <- "
 #'
 #' @noRd
 build_xml_find_function_calls <- function(xml) {
-  delayedAssign("setter_calls", xml_find_all_(xml, setter_calls_xpath))
-
   name_call_cache <- function(cache, node_type) {
     if (length(cache) == 0L) return(cache)
     call_names <- get_r_string(cache, node_type)
-    is_setter <- cache %in% setter_calls
+    is_setter <- xp_is_setter_call(cache)
     call_names[is_setter] <- paste0(call_names[is_setter], "<-")
     names(cache) <- call_names
     cache
