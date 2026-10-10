@@ -598,6 +598,30 @@ test_that("package imports are detected if present in file", {
   )
 })
 
+test_that("transitive Depends of attached packages are detected (#2695)", {
+  skip_if_not_installed("mgcv")
+  skip_if_not_installed("nlme")
+  skip_if(any(c("package:mgcv", "package:nlme") %in% search()))
+
+  expect_lint(
+    "foo <- function(x) lme(x)",
+    rex::rex("no visible global function definition for 'lme'"),
+    object_usage_linter()
+  )
+
+  # mgcv Depends on nlme, which exports lme()
+  expect_no_lint(
+    trim_some("
+      library(mgcv)
+
+      foo <- function(x) {
+        lme(x)
+      }
+    "),
+    object_usage_linter()
+  )
+})
+
 test_that("fallback works", {
   expect_lint(
     trim_some("
