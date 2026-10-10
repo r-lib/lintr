@@ -69,7 +69,7 @@ test_that("backport_linter detects backwards-incompatibility", {
     backport_linter("3.0.0", except = c("numToBits", "R_user_dir"))
   )
 
-  # binary operators (%||%, etc.)
+  # binary operators (%||%, etc.), backticked calls/symbols, and setters (.rowNamesDF<-)
   expect_lint(
     "a %||% b",
     rex::rex(
@@ -77,6 +77,26 @@ test_that("backport_linter detects backwards-incompatibility", {
       "for requested dependency (R >= 4.3.0)."
     ),
     backport_linter("4.3.0")
+  )
+  expect_lint(
+    "`%||%`(a, b)",
+    rex::rex("%||% (R 4.4.0) is not always available for requested dependency (R >= 4.3.0)."),
+    backport_linter("4.3.0")
+  )
+  expect_lint(
+    "Reduce(`%||%`, x)",
+    rex::rex("%||% (R 4.4.0) is not always available for requested dependency (R >= 4.3.0)."),
+    backport_linter("4.3.0")
+  )
+  expect_lint(
+    "`trimws`(x)",
+    rex::rex("trimws (R 3.2.0) is not always available for requested dependency (R >= 3.0.0)."),
+    backport_linter("3.0.0")
+  )
+  expect_lint(
+    ".rowNamesDF(x) <- v",
+    rex::rex(".rowNamesDF<- (R 3.5.0) is not always available for requested dependency (R >= 3.0.0)."),
+    backport_linter("3.0.0")
   )
 
   # functions not mentioned in NEWS or introduced in patch releases

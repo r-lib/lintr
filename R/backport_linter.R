@@ -56,20 +56,27 @@ backport_linter <- function(r_version = getRversion(), except = character()) {
   backport_blacklist <- backports[r_version < R_system_version(names(backports))]
   backport_blacklist <- lapply(backport_blacklist, setdiff, except)
   backport_index <- rep(names(backport_blacklist), times = lengths(backport_blacklist))
-  names(backport_index) <- unlist(backport_blacklist)
+  backport_names <- unlist(backport_blacklist)
+  names(backport_index) <- backport_names
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    used_symbols <- xml_find_all_(xml, "//SYMBOL | //SPECIAL")
-    used_symbols <- used_symbols[xml_text(used_symbols) %in% names(backport_index)]
+    used_symbols <- xml_find_all_(xml, "//SYMBOL")
+    symbol_names <- get_r_string(used_symbols)
+    keep_symbols <- symbol_names %in% backport_names
 
-    used_calls <- source_expression$xml_find_function_calls(names(backport_index))
+    used_specials <- xml_find_all_(xml, "//SPECIAL")
+    special_names <- xml_text(used_specials)
+    keep_specials <- special_names %in% backport_names
+
+    used_calls <- source_expression$xml_find_function_calls(backport_names, keep_names = TRUE)
     all_names_nodes <- combine_nodesets(
       xml_find_all_(used_calls, "SYMBOL_FUNCTION_CALL"),
-      used_symbols
+      used_symbols[keep_symbols],
+      used_specials[keep_specials]
     )
-    all_names <- xml_text(all_names_nodes)
+    all_names <- c(names(used_calls), symbol_names[keep_symbols], special_names[keep_specials])
 
     bad_versions <- unname(backport_index[all_names])
 
