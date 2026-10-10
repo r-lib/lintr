@@ -33,6 +33,14 @@ test_that("namespace_linter can work with backticked symbols", {
   expect_lint("rlang::`%>%`", "'%>%' is not exported from {rlang}.", linter)
   expect_lint("rlang::'%>%'()", "'%>%' is not exported from {rlang}.", linter)
   expect_lint('rlang::"%>%"()', "'%>%' is not exported from {rlang}.", linter)
+
+  # Setter calls check `foo<-` rather than `foo`
+  expect_no_lint("base::.rowNamesDF(df) <- c('x', 'y')", linter)
+  expect_no_lint("base::`.rowNamesDF`(df) <- c('x', 'y')", linter)
+  expect_no_lint('base::".rowNamesDF"(df) <- c("x", "y")', linter)
+  expect_lint("base::.rowNamesDF(df)", "'.rowNamesDF' is not exported from {base}.", linter)
+  expect_lint("base::mean(df) <- 1", "'mean<-' is not exported from {base}.", linter)
+  expect_lint("1 -> base::mean(df)", "'mean<-' is not exported from {base}.", linter)
 })
 
 test_that("namespace_linter blocks disallowed usages", {
