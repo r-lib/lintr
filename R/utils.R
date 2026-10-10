@@ -248,13 +248,13 @@ re_matches_locations <- function(x, regex, ...) {
   data.frame(start = match_start, end = match_end)
 }
 
-#' Extract text from `STR_CONST` or `SYMBOL*` nodes
+#' Extract text from `STR_CONST`, `SYMBOL*`, or `SLOT` nodes
 #'
-#' Convert `STR_CONST` or `SYMBOL*` `text()` values into R strings. This is useful to account for arbitrary
+#' Convert `STR_CONST`, `SYMBOL*`, or `SLOT` `text()` values into R strings. This is useful to account for arbitrary
 #'  character literals, e.g. `R"------[hello]------"`, which is parsed in R as `"hello"`, as well as
-#'  backtick-quoted non-syntactic symbols like `` `%in%` `` or `` `foo<-` ``.
+#'  backtick-quoted non-syntactic symbols or slots like `` `%in%` ``, `` `foo<-` ``, or ``x@`a b` ``.
 #'  It is quite cumbersome to write XPaths allowing for strings like this, so whenever your
-#'  linter logic requires testing a `STR_CONST` or `SYMBOL*` node's value, use this function.
+#'  linter logic requires testing a `STR_CONST`, `SYMBOL*`, or `SLOT` node's value, use this function.
 #' NB: this is also properly vectorized on `s`, and accepts a variety of inputs. Empty inputs
 #'  will become `NA` outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
 #'
