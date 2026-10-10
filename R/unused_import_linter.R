@@ -63,7 +63,6 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     ])
   ]"
 
-  xp_used_functions <- "SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]"
   xp_used_symbols <- "//SYMBOL[not(
     parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
   )]"
@@ -81,7 +80,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     imported_pkgs <- get_r_string(import_exprs, xpath = "expr[STR_CONST | SYMBOL]")
 
     used_symbols <- unique(c(
-      names(all_calls)[!is.na(xml_find_first_(all_calls, xp_used_functions))],
+      names(all_calls)[xml_find_lgl_(all_calls, "not(NS_GET)")],
       get_r_string(xml_find_all_(xml, xp_used_symbols)),
       xml_text(xml_find_all_(xml, "//SPECIAL")),
       extract_glued_symbols(xml, interpret_glue = interpret_glue)
