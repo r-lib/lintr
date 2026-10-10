@@ -1,13 +1,16 @@
-# Extract text from `STR_CONST` nodes
+# Extract text from `STR_CONST`, `SYMBOL*`, or `SLOT` nodes
 
-Convert `STR_CONST` [`text()`](https://rdrr.io/r/graphics/text.html)
-values into R strings. This is useful to account for arbitrary character
-literals, e.g. `R"------[hello]------"`, which is parsed in R as
-`"hello"`. It is quite cumbersome to write XPaths allowing for strings
-like this, so whenever your linter logic requires testing a `STR_CONST`
-node's value, use this function. NB: this is also properly vectorized on
-`s`, and accepts a variety of inputs. Empty inputs will become `NA`
-outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
+Convert `STR_CONST`, `SYMBOL*`, or `SLOT`
+[`text()`](https://rdrr.io/r/graphics/text.html) values into R strings.
+This is useful to account for arbitrary character literals, e.g.
+`R"------[hello]------"`, which is parsed in R as `"hello"`, as well as
+backtick-quoted non-syntactic symbols or slots like `` `%in%` ``,
+`` `foo<-` ``, or `` x@`a b`  ``. It is quite cumbersome to write XPaths
+allowing for strings like this, so whenever your linter logic requires
+testing a `STR_CONST`, `SYMBOL*`, or `SLOT` node's value, use this
+function. NB: this is also properly vectorized on `s`, and accepts a
+variety of inputs. Empty inputs will become `NA` outputs, which helps
+ensure that `length(get_r_string(s)) == length(s)`.
 
 ## Usage
 

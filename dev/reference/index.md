@@ -560,7 +560,7 @@
 - [`get_r_string()`](https://lintr.r-lib.org/dev/reference/get_r_string.md)
   :
 
-  Extract text from `STR_CONST` nodes
+  Extract text from `STR_CONST`, `SYMBOL*`, or `SLOT` nodes
 
 - [`use_lintr()`](https://lintr.r-lib.org/dev/reference/use_lintr.md) :
   Use lintr in your project
