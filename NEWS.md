@@ -17,8 +17,8 @@
    + gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content (including whether it ends with a terminal newline, e.g. `"x <- 1\n"` or `c("x <- 1", "")` vs. `"x <- 1"`), so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, REditorSupport/languageserver#772, @atusy and @MichaelChirico).
    + retains the correct `column_number` for lints found in indented .Rmd/.qmd chunks so that IDEs can land the cursor correctly (continuing #1949, @MichaelChirico).
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
-* `get_r_string()` (and by extension `xml_find_function_calls()` in `get_source_expressions()`) now unquotes backtick-quoted symbols and slots (`SYMBOL*` and `SLOT` nodes) in addition to string constants (`STR_CONST`; @MichaelChirico).
-* `xml_find_function_calls()` (in `get_source_expressions()`) now resolves replacement function calls (e.g. `foo(x) <- y` and `x@bar(y) <- z` are indexed as `"foo<-"` and `"bar<-"`, respectively; @MichaelChirico).
+* `get_r_string()` (and by extension `xml_find_function_calls()` in `get_source_expressions()`) now unquotes backtick-quoted symbols and slots (`SYMBOL*` and `SLOT` nodes) in addition to string constants (`STR_CONST`; #3156, @MichaelChirico).
+* `xml_find_function_calls()` (in `get_source_expressions()`) now resolves replacement function calls (e.g. `foo(x) <- y` and `x@bar(y) <- z` are indexed as `"foo<-"` and `"bar<-"`, respectively; #3157, @MichaelChirico).
 
 ### New linters
 
