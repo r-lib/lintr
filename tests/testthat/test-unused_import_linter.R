@@ -6,7 +6,7 @@ test_that("unused_import_linter lints as expected", {
   expect_no_lint("library(tidyverse)\ntibble(a = 1)", linter)
   # SYMBOL usage is detected
   expect_no_lint("library(dplyr)\ndo.call(tibble, args = list(a = 1))", linter)
-  # SPECIAL usage is detected
+  # SPECIAL, prefix call, and backticked SYMBOL usage are detected
   expect_no_lint( # nofuzz: pipe
     trim_some("
       library(magrittr)
@@ -14,6 +14,10 @@ test_that("unused_import_linter lints as expected", {
     "),
     linter
   )
+  expect_no_lint("library(magrittr)\n`%>%`(1:3, mean())", linter)
+  expect_no_lint("library(magrittr)\nReduce(`%>%`, list(1:3, mean))", linter)
+  # setter call usage is resolved as `foo<-`
+  expect_no_lint("library(methods)\nbody(f) <- quote(1)", linter)
   # dataset is detected
   expect_no_lint("library(dplyr)\nstarwars", linter)
   expect_no_lint("library(datasets)\nstate.center", linter)

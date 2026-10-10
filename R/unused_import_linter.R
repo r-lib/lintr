@@ -64,31 +64,26 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
   ]"
 
   xp_used_functions <- "SYMBOL_FUNCTION_CALL[not(preceding-sibling::NS_GET)]"
-  xp_used_symbols <- paste(
-    "//SYMBOL[not(
-      parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
-    )]",
-    "//SPECIAL",
-    sep = " | "
-  )
+  xp_used_symbols <- "//SYMBOL[not(
+    parent::expr/preceding-sibling::expr[last()]/SYMBOL_FUNCTION_CALL[text() = 'library' or text() = 'require']
+  )]"
 
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     library_calls <- source_expression$xml_find_function_calls(c("library", "require"))
-    all_calls <- source_expression$xml_find_function_calls(NULL)
+    all_calls <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
 
     import_exprs <- xml_find_all_(library_calls, import_xpath)
 
     if (length(import_exprs) == 0L) {
       return(list())
     }
-    imported_pkgs <- xml_find_chr_(import_exprs, "string(expr[STR_CONST|SYMBOL])")
-    # as.character(parse(...)) returns one entry per expression
-    imported_pkgs <- as.character(parse(text = imported_pkgs, keep.source = FALSE))
+    imported_pkgs <- get_r_string(import_exprs, xpath = "expr[STR_CONST | SYMBOL]")
 
     used_symbols <- unique(c(
-      xml_text(xml_find_all_(all_calls, xp_used_functions)),
-      xml_text(xml_find_all_(xml, xp_used_symbols)),
+      names(all_calls)[!is.na(xml_find_first_(all_calls, xp_used_functions))],
+      get_r_string(xml_find_all_(xml, xp_used_symbols)),
+      xml_text(xml_find_all_(xml, "//SPECIAL")),
       extract_glued_symbols(xml, interpret_glue = interpret_glue)
     ))
 
@@ -122,7 +117,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
 
     import_exprs <- import_exprs[is_unused]
 
-    unused_packages <- get_r_string(import_exprs, xpath = "expr[STR_CONST | SYMBOL]")
+    unused_packages <- imported_pkgs[is_unused]
     lint_message <- ifelse(
       is_ns_used[is_unused][unused_packages],
       paste0(
