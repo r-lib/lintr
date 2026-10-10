@@ -122,16 +122,6 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
   expect_no_lint("stats::time(x) <- 1", getter_linter)
   expect_lint("stats::time(x) <- 1", list(msg_setter, column_number = 8L), setter_linter)
 
-  # `<-` has higher precedence than `=`, so `a <- time(x) = 1` parses as `(a <- time(x)) = 1`
-  expect_no_lint("a <- time(x) <- 1", getter_linter) # nofuzz: assignment
-  expect_lint("a <- time(x) <- 1", list(msg_setter, column_number = 6L), setter_linter) # nofuzz: assignment
-  expect_no_lint("a = time(x) <- 1", getter_linter) # nofuzz: assignment
-  expect_lint("a = time(x) <- 1", list(msg_setter, column_number = 5L), setter_linter) # nofuzz: assignment
-  expect_lint("a <- time(x) = 1", list(msg_getter, column_number = 6L), getter_linter) # nofuzz: assignment
-  expect_no_lint("a <- time(x) = 1", setter_linter) # nofuzz: assignment
-  expect_no_lint("1 -> a -> time(x)", getter_linter)
-  expect_lint("1 -> a -> time(x)", list(msg_setter, column_number = 11L), setter_linter)
-
   expect_no_lint("time(names(x)) <- 1", getter_linter)
   expect_lint("time(names(x)) <- 1", list(msg_setter, column_number = 1L), setter_linter)
   expect_lint("names(time(x)) <- 'a'", list(msg_getter, column_number = 7L), getter_linter)
@@ -189,4 +179,21 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
     rex::rex('Avoid undesirable function "foo bar<-".', end),
     undesirable_function_linter("foo bar<-")
   )
+})
+
+test_that("multiple assignments are handle according to R precedence rules", { # nofuzz: assignment
+  getter_linter <- undesirable_function_linter(c(time = NA))
+  setter_linter <- undesirable_function_linter(c(`time<-` = "use zoo::time<-()"))
+  msg_getter <- rex::rex('Avoid undesirable function "time".', end)
+  msg_setter <- rex::rex('Avoid undesirable function "time<-". As an alternative, use zoo::time<-().')
+
+  # `<-` has higher precedence than `=`, so `a <- time(x) = 1` parses as `(a <- time(x)) = 1`
+  expect_no_lint("a <- time(x) <- 1", getter_linter)
+  expect_lint("a <- time(x) <- 1", list(msg_setter, column_number = 6L), setter_linter)
+  expect_no_lint("a = time(x) <- 1", getter_linter)
+  expect_lint("a = time(x) <- 1", list(msg_setter, column_number = 5L), setter_linter)
+  expect_lint("a <- time(x) = 1", list(msg_getter, column_number = 6L), getter_linter)
+  expect_no_lint("a <- time(x) = 1", setter_linter)
+  expect_no_lint("1 -> a -> time(x)", getter_linter)
+  expect_lint("1 -> a -> time(x)", list(msg_setter, column_number = 11L), setter_linter)
 })
