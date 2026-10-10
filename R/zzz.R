@@ -119,6 +119,8 @@ all_undesirable_functions <- modify_defaults(
     "Use `class<-`, `names<-`, and `attr<-` to set attributes",
   substring =
     "use substr() with appropriate `stop=` value.",
+  `substring<-` =
+    "use `substr<-` with appropriate `stop=` value.",
   Sys.setenv =
     "use withr::with_envvar() for a temporary change instead of permanently modifying global environment variables",
   Sys.setlocale =
