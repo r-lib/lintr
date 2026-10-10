@@ -39,7 +39,7 @@
 * `object_name_linter()` and `object_length_linter()` properly recognize S3 methods for infix and replacement generics such as `` `%/%.my_class` `` and `` `names<-.my_class` `` (#2851, @MichaelChirico).
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
 * `library_call_linter()` no longer flags later `library()` calls when an earlier attach call uses a function in its arguments, e.g. `library(pkg, exclude = c("foo"))` (#3097, @fabiandistler).
-* `object_usage_linter()` no longer flags locally defined infix operators (e.g. `` `%my_op%` ``), replacement functions (e.g. `` `my_setter<-` ``), or backtick-quoted `.env$` references (e.g. `` .env$`a b` ``) as unused (@MichaelChirico).
+* `object_usage_linter()` no longer flags locally defined infix operators (e.g. `` `%my_op%` ``), replacement functions (e.g. `` `my_setter<-` ``), or backtick-quoted `.env$` references (e.g. `` .env$`a b` ``) as unused (#3156, @MichaelChirico).
 * `indentation_linter()`:
    + Better aligns with {styler} and `air` in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007 and #2535, @MichaelChirico).
    + Correctly requires block indentation for multi-line calls where arguments begin on subsequent lines, even when the call terminates with `)` on the same line as the last argument (#2144, @MichaelChirico).
@@ -57,8 +57,8 @@
 * `string_boundary_linter()` also recommends `startsWith()` for `substr(s, 0, n)` and `substring(s, 0, n)` (#3029, @fly1d).
 * `is_numeric_linter()` flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
 * `brace_linter(allow_single_line = TRUE)` still flags opening curly braces placed on their own line (e.g. `while (FALSE)\n{}`) or not followed by a newline when the closing brace is on a different line (#1684, @MichaelChirico).
-* `duplicate_argument_linter()` detects duplicate arguments when a non-syntactic name is passed as both a string and a backticked symbol, e.g. ``fun('a b' = 1, `a b` = 2)`` (@MichaelChirico).
-* `backport_linter()` detects backtick-quoted calls and symbols (e.g. `` `%||%`(x, y) ``, ``Reduce(`%||%`, x)``) and replacement function calls (e.g. `.rowNamesDF(x) <- value`; @MichaelChirico).
+* `duplicate_argument_linter()` detects duplicate arguments when a non-syntactic name is passed as both a string and a backticked symbol, e.g. ``fun('a b' = 1, `a b` = 2)`` (#3156, @MichaelChirico).
+* `backport_linter()` detects backtick-quoted calls and symbols (e.g. `` `%||%`(x, y) ``, ``Reduce(`%||%`, x)``) and replacement function calls (e.g. `.rowNamesDF(x) <- value`; #3160, @MichaelChirico).
 
 ## Notes
 
