@@ -88,9 +88,21 @@ test_that("linter ignores some objects", {
   expect_no_lint(".First <- function(...) TRUE", object_name_linter("snake_case")) # namespace hooks
   expect_no_lint("`%++%` <- `+`", object_name_linter("symbols")) # all-symbol operator
   expect_no_lint("`%<-%` <- `+`", object_name_linter("symbols")) # all-symbol operator #495
-  # S3 group generic, #1841
+  # S3 group generic, #1841, #2851
   expect_no_lint(
     "`==.snake_case` <- function(a, b) unclass(a) == unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`%/%.snake_case` <- function(a, b) unclass(a) %/% unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`%%.CamelCase` <- function(a, b) unclass(a) %% unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`names<-.snake_case` <- function(x, value) x",
     object_name_linter("snake_case")
   )
 })
@@ -196,6 +208,9 @@ test_that("assignment targets of compound lhs are correctly identified", {
   expect_lint("'badName' <- 42", lint_msg, linter)
   expect_no_lint("`good_name` <- 42", linter)
   expect_lint("`badName` <- 42", lint_msg, linter)
+  expect_no_lint('R"(good_name)" <- 42', linter)
+  expect_lint('R"(badName)" <- 42', lint_msg, linter)
+  expect_lint("`good_name'` <- 42", lint_msg, linter)
 
   # subsetting with quotation
   expect_no_lint("good_name$\"badName\" <- 42", linter)
@@ -372,7 +387,7 @@ test_that("literals in assign() and setGeneric() are checked", {
   )
 })
 
-test_that("generics assigned with '=' or <<- are registered", {
+test_that("generics assigned with '=' or <<- or backticks or quotes are registered", {
   linter <- object_name_linter()
 
   expect_no_lint(
@@ -383,8 +398,20 @@ test_that("generics assigned with '=' or <<- are registered", {
       g <<- function(x) {
         UseMethod('f')
       }
+      `%my_op%` <- function(x, y) {
+        UseMethod('%my_op%')
+      }
+      '%my_other_op%' <- function(x, y) {
+        UseMethod('%my_other_op%')
+      }
+      `my_setter<-` <- function(x, value) {
+        UseMethod('my_setter<-')
+      }
       f.default <- function(x) {}
       g.default <- function(x) {}
+      `%my_op%.my_class` <- function(x, y) {}
+      '%my_other_op%.my_class' <- function(x, y) {}
+      `my_setter<-.my_class` <- function(x, value) {}
     "),
     linter
   )
