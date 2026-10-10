@@ -208,6 +208,9 @@ test_that("assignment targets of compound lhs are correctly identified", {
   expect_lint("'badName' <- 42", lint_msg, linter)
   expect_no_lint("`good_name` <- 42", linter)
   expect_lint("`badName` <- 42", lint_msg, linter)
+  expect_no_lint('R"(good_name)" <- 42', linter)
+  expect_lint('R"(badName)" <- 42', lint_msg, linter)
+  expect_lint("`good_name'` <- 42", lint_msg, linter)
 
   # subsetting with quotation
   expect_no_lint("good_name$\"badName\" <- 42", linter)
@@ -384,7 +387,7 @@ test_that("literals in assign() and setGeneric() are checked", {
   )
 })
 
-test_that("generics assigned with '=' or <<- or backticks are registered", {
+test_that("generics assigned with '=' or <<- or backticks or quotes are registered", {
   linter <- object_name_linter()
 
   expect_no_lint(
@@ -398,12 +401,16 @@ test_that("generics assigned with '=' or <<- or backticks are registered", {
       `%my_op%` <- function(x, y) {
         UseMethod('%my_op%')
       }
+      '%my_other_op%' <- function(x, y) {
+        UseMethod('%my_other_op%')
+      }
       `my_setter<-` <- function(x, value) {
         UseMethod('my_setter<-')
       }
       f.default <- function(x) {}
       g.default <- function(x) {}
       `%my_op%.my_class` <- function(x, y) {}
+      '%my_other_op%.my_class' <- function(x, y) {}
       `my_setter<-.my_class` <- function(x, value) {}
     "),
     linter
