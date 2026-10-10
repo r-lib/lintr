@@ -315,22 +315,40 @@ test_that("xml_find_function_calls works as intended", {
     c("foo", "foo", "bar", "baz")
   )
 
-  # backticked calls and slots (syntactic and non-syntactic) are unquoted in cache names
-  backtick_file <- withr::local_tempfile(
-    lines = c("`foo`(1)", "`+`(1, 2)", "`%in%`(x, y)", "s4Obj@`baz`()", "s4Obj@`a b`()")
-  )
-  backtick_expr <- get_source_expressions(backtick_file)$expressions[[6L]]
+  # backticked calls/slots (syntactic and non-syntactic) and setter calls are resolved in cache names
+  backtick_file <- withr::local_tempfile(lines = c(
+    "`foo`(1)",
+    "`+`(1, 2)",
+    "`%in%`(x, y)",
+    "s4Obj@`baz`()",
+    "s4Obj@`a b`()",
+    "foo(x) <- 1",
+    "pkg::bar(x) <<- 2",
+    "baz(x) = 3",
+    "4 -> qux(x)",
+    "`foo bar`(x) <- 1",
+    "foo(bar(x)) <- 1",
+    "s4Obj@`a b`(x) <- 1",
+    "foo(x) := 1"
+  ))
+  backtick_expr <- get_source_expressions(backtick_file)$expressions[[14L]]
   expect_named(
     backtick_expr$xml_find_function_calls(NULL, keep_names = TRUE),
-    c("foo", "+", "%in%")
+    c("foo", "+", "%in%", "foo<-", "bar<-", "baz<-", "qux<-", "foo bar<-", "foo<-", "bar", "foo")
   )
   expect_named(
     backtick_expr$xml_find_function_calls(NULL, keep_names = TRUE, include_s4_slots = TRUE),
-    c("foo", "+", "%in%", "baz", "a b")
+    c("foo", "+", "%in%", "foo<-", "bar<-", "baz<-", "qux<-", "foo bar<-", "foo<-", "bar", "foo", "baz", "a b", "a b<-")
   )
   expect_length(backtick_expr$xml_find_function_calls("+"), 1L)
   expect_length(backtick_expr$xml_find_function_calls("%in%"), 1L)
   expect_length(backtick_expr$xml_find_function_calls("a b", include_s4_slots = TRUE), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("a b<-", include_s4_slots = TRUE), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("foo"), 2L)
+  expect_length(backtick_expr$xml_find_function_calls("foo<-"), 2L)
+  expect_length(backtick_expr$xml_find_function_calls("bar"), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("bar<-"), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("foo bar<-"), 1L)
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
