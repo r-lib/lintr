@@ -235,7 +235,16 @@ parse_check_usage <- function(expression,
                               skip_with = TRUE) {
   vals <- get_check_usage_results(expression, known_used_symbols, declared_globals, skip_with)
 
-  function_name <- rex(anything, ": ")
+  error_or_warning_prefix <- rex(
+    or("possible error", "warning"), " in ",
+    capture(name = "call_name", except_some_of("(")), "(", anything, "): "
+  )
+  function_name <- rex(
+    or(
+      rex(anything, ": ", error_or_warning_prefix),
+      rex(anything, ": ")
+    )
+  )
   line_info <- rex(
     " ", "(", capture(name = "path", non_spaces), ":",
     capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")"
@@ -258,6 +267,9 @@ parse_check_usage <- function(expression,
       or(line_info, end)
     )
   )
+
+  use_call_name <- nzchar(res$call_name)
+  res$name[use_call_name] <- gsub("^`|`$", "", res$call_name[use_call_name])
 
   res$line1 <- ifelse(
     nzchar(res$line1),

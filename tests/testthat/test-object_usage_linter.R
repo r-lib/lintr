@@ -942,3 +942,54 @@ test_that("interpret_glue is defunct", {
     rex::rex("interpret_glue", anything, "deprecated")
   )
 })
+
+test_that("call-level warnings get accurate location metadata (#1936)", {
+  linter <- object_usage_linter()
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        x |>
+          exp(xxx = 'days'
+        )
+      }
+    "),
+    list(
+      message = rex::rex('unused argument (xxx = "days")'),
+      line_number = 3L,
+      column_number = 5L
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        x |>
+          exp(xxx = 'days') |>
+          identity()
+      }
+    "),
+    list(
+      message = rex::rex('unused argument (xxx = "days")'),
+      line_number = 3L,
+      column_number = 5L
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        x |>
+          transform(y = as.POSIXct(exp(x, units = 'days')))
+      }
+    "),
+    list(
+      message = rex::rex('unused argument (units = "days")'),
+      line_number = 3L,
+      column_number = 30L
+    ),
+    linter
+  )
+})
