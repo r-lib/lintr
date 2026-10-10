@@ -108,49 +108,27 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     "not(parent::expr[OP-DOLLAR or OP-AT])"
   )
 
-  # NB:
-  #   1. Unique among assignment operators, `foo() :=` does not parse to a setter `foo<-`!!
-  #   2. Nested replacement targets like `foo(bar(x)) <- 1` or `bar(x)[1] <- 1` invoke both `bar`
-  #      and `bar<-` in R, but we only treat the outer call as a setter here for simplicity.
-  setter_cond <- "
-    parent::expr/parent::expr[
-      following-sibling::LEFT_ASSIGN[text() != ':=']
-      or following-sibling::EQ_ASSIGN
-      or preceding-sibling::RIGHT_ASSIGN
-    ]
-  "
-
-  quote_non_syntactic <- function(x) {
-    needs_backticks <- make.names(x) != x
-    x[needs_backticks] <- sprintf("`%s`", x[needs_backticks])
-    x
-  }
-
-  is_setter <- endsWith(fun_names, "<-")
-  call_names <- quote_non_syntactic(fun_names)
-  setter_names <- quote_non_syntactic(sub("<-$", "", fun_names[is_setter]))
-
   if (symbol_is_undesirable) {
-    symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(call_names)}) and {xp_condition}]")
+    needs_backticks <- make.names(fun_names) != fun_names
+    symbol_names <- fun_names
+    symbol_names[needs_backticks] <- sprintf("`%s`", symbol_names[needs_backticks])
+    symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(symbol_names)}) and {xp_condition}]")
   }
-  call_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition} and not({setter_cond})]")
-  setter_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition} and {setter_cond}]")
+  call_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition}]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    xml_calls <- source_expression$xml_find_function_calls(call_names)
+    xml_calls <- source_expression$xml_find_function_calls(fun_names, keep_names = TRUE)
 
-    matched_nodes <- xml_find_all_(xml_calls, call_xpath)
+    matched_call_nodes <- xml_find_first_(xml_calls, call_xpath)
+    matched_call_nodes <- matched_call_nodes[!is.na(matched_call_nodes)]
+    matched_nodes <- unname(matched_call_nodes)
+    matched_fun <- names(matched_call_nodes)
+
     if (symbol_is_undesirable) {
-      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all_(xml, symbol_xpath))
-    }
-    matched_fun <- gsub("^`|`$", "", get_r_string(matched_nodes))
-
-    if (length(setter_names) > 0L) {
-      xml_setter_calls <- source_expression$xml_find_function_calls(setter_names)
-      setter_nodes <- xml_find_all_(xml_setter_calls, setter_xpath)
-      matched_nodes <- combine_nodesets(matched_nodes, setter_nodes)
-      matched_fun <- c(matched_fun, sprintf("%s<-", gsub("^`|`$", "", get_r_string(setter_nodes))))
+      symbol_nodes <- xml_find_all_(xml, symbol_xpath)
+      matched_nodes <- combine_nodesets(matched_nodes, symbol_nodes)
+      matched_fun <- c(matched_fun, get_r_string(symbol_nodes))
     }
 
     msgs <- vapply(
