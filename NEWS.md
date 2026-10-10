@@ -40,7 +40,9 @@
 * `object_name_linter()` and `object_length_linter()` properly recognize S3 methods for infix and replacement generics such as `` `%/%.my_class` `` and `` `names<-.my_class` `` (#2851, @MichaelChirico).
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
 * `library_call_linter()` no longer flags later `library()` calls when an earlier attach call uses a function in its arguments, e.g. `library(pkg, exclude = c("foo"))` (#3097, @fabiandistler).
-* `object_usage_linter()` no longer flags locally defined infix operators (e.g. `` `%my_op%` ``), replacement functions (e.g. `` `my_setter<-` ``), or backtick-quoted `.env$` references (e.g. `` .env$`a b` ``) as unused (#3156, @MichaelChirico).
+* `object_usage_linter()`:
+   + No longer flags locally defined infix operators (e.g. `` `%my_op%` ``), replacement functions (e.g. `` `my_setter<-` ``), or backtick-quoted `.env$` references (e.g. `` .env$`a b` ``) as unused (#3156, @MichaelChirico).
+   + Recognizes symbols exported by packages in the `Depends` field of `library()`/`require()`-attached packages (#2695, @MichaelChirico).
 * `indentation_linter()`:
    + Better aligns with {styler} and `air` in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007 and #2535, @MichaelChirico).
    + Correctly requires block indentation for multi-line calls where arguments begin on subsequent lines, even when the call terminates with `)` on the same line as the last argument (#2144, @MichaelChirico).
