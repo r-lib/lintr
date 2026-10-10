@@ -452,6 +452,47 @@ test_that("allow_scoped skips scoped assignments", {
     "),
     linter
   )
+
+  # &&/|| precedence with unparenthesized <- and -> (#2918)
+  expect_no_lint(
+    trim_some("
+      if (a <- 1 && b <- 2) {
+        print(a)
+        print(b)
+      }
+    "),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (a <- 1 && b <- 2) {
+        print(b)
+      }
+      print(b)
+    "),
+    list(lint_message, line_number = 1L, column_number = 10L),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (a && b <- 2) {
+        print(b)
+      }
+      print(b)
+    "),
+    list(lint_message, line_number = 1L, column_number = 5L),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (1 -> a) {
+        print(a)
+      }
+      print(a)
+    "),
+    list(lint_message, line_number = 1L, column_number = 5L),
+    linter
+  )
 })
 
 test_that("interaction of allow_lazy and allow_scoped", {

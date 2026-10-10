@@ -98,7 +98,10 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
   xpath <- glue("
     ({assignments})
       /parent::expr[
-        preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]
+        ancestor-or-self::expr[
+          (LEFT_ASSIGN or RIGHT_ASSIGN)
+          and preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]
+        ]
         or parent::forcond
         or preceding-sibling::expr/{xpath_exceptions}
         or parent::expr/*[1][self::OP-LEFT-PAREN]
@@ -111,10 +114,14 @@ implicit_assignment_linter <- function(except = c("bquote", "expression", "expr"
   if (allow_scoped) {
     # force 2nd preceding to ensure we're in the loop condition, not the loop expression
     in_branch_cond <- "ancestor-or-self::expr[preceding-sibling::*[not(self::COMMENT)][2][self::IF or self::WHILE]]"
+    assigned_symbol <- "
+      (LEFT_ASSIGN/preceding-sibling::expr/descendant::SYMBOL)[last()]
+      | (RIGHT_ASSIGN/following-sibling::expr/descendant::SYMBOL)[1]
+    "
     xpath <- paste0(
       xpath,
       # _if_ we're in an IF/WHILE branch, lint if the assigned SYMBOL appears anywhere later on.
-      glue("[not({in_branch_cond}) or expr[1]/SYMBOL = {in_branch_cond}/parent::expr/following::SYMBOL]")
+      glue("[not({in_branch_cond}) or ({assigned_symbol}) = {in_branch_cond}/parent::expr/following::SYMBOL]")
     )
   }
 
