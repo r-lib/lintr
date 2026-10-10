@@ -316,13 +316,21 @@ test_that("xml_find_function_calls works as intended", {
   )
 
   # backticked calls/slots (syntactic and non-syntactic) and setter calls are resolved in cache names
-  backtick_file <- withr::local_tempfile(
-    lines = c(
-      "`foo`(1)", "`+`(1, 2)", "`%in%`(x, y)", "s4Obj@`baz`()", "s4Obj@`a b`()",
-      "foo(x) <- 1", "pkg::bar(x) <<- 2", "baz(x) = 3", "4 -> qux(x)",
-      "`foo bar`(x) <- 1", "foo(bar(x)) <- 1", "s4Obj@`a b`(x) <- 1", "foo(x) := 1"
-    )
-  )
+  backtick_file <- withr::local_tempfile(lines = c(
+    "`foo`(1)",
+    "`+`(1, 2)",
+    "`%in%`(x, y)",
+    "s4Obj@`baz`()",
+    "s4Obj@`a b`()",
+    "foo(x) <- 1",
+    "pkg::bar(x) <<- 2",
+    "baz(x) = 3",
+    "4 -> qux(x)",
+    "`foo bar`(x) <- 1",
+    "foo(bar(x)) <- 1",
+    "s4Obj@`a b`(x) <- 1",
+    "foo(x) := 1"
+  ))
   backtick_expr <- get_source_expressions(backtick_file)$expressions[[14L]]
   expect_named(
     backtick_expr$xml_find_function_calls(NULL, keep_names = TRUE),
