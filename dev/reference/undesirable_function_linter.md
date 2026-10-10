@@ -29,7 +29,9 @@ undesirable_function_linter(
     - Otherwise, entries should be missing (`NA`) A generic message that
       the named function is undesirable is used if no specific
       description is provided. Input can also be a list of character
-      strings for convenience.
+      strings for convenience. Setter functions (like `foo(x) <- y`) are
+      distinguished from plain calls (`foo(x)`), and must be specified
+      with `"<-"` (e.g. `"foo<-"`).
 
   Defaults to
   [default_undesirable_functions](https://lintr.r-lib.org/dev/reference/default_undesirable_functions.md).
@@ -97,7 +99,6 @@ lint(
 #> <text>:1:1: style: [undesirable_function_linter] Avoid undesirable function "dir".
 #> dir <- "path/to/a/directory"
 #> ^~~
-
 
 lint(
   text = 'dir <- "path/to/a/directory"',
