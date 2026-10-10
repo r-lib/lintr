@@ -113,8 +113,6 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
 
   infix_xpath <- paste(paste0("//", operator_nodes), collapse = " | ")
 
-  quoted_op <- paste0("`", names(op), "`")
-
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
@@ -123,9 +121,9 @@ undesirable_operator_linter <- function(op = default_undesirable_operators,
     all_expr <- infix_expr
     operator <- xml_text(infix_expr)
     if (call_is_undesirable) {
-      op_calls <- source_expression$xml_find_function_calls(quoted_op)
+      op_calls <- source_expression$xml_find_function_calls(names(op), keep_names = TRUE)
       all_expr <- combine_nodesets(all_expr, op_calls)
-      operator <- c(operator, gsub("^`|`$", "", xml_text(op_calls)))
+      operator <- c(operator, names(op_calls))
     }
 
     lint_message <- sprintf("Avoid undesirable operator `%s`.", operator)

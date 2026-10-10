@@ -891,6 +891,19 @@ test_that("globals in scripts are found regardless of assignment operator", {
     "),
     linter
   )
+
+  expect_no_lint(
+    trim_some("
+      `%my_op%` <- function(x, y) x + y
+      `my_setter<-` <- function(x, value) x
+
+      foo <- function(x) {
+        my_setter(x) <- 1
+        x %my_op% 2
+      }
+    "),
+    linter
+  )
 })
 
 test_that("dplyr's .env-specified objects are marked as 'used'", {
@@ -903,12 +916,14 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
       foo <- function(df) {
         source <- 1
         target <- 2
-        unused <- 3
+        `a b` <- 3
+        unused <- 4
 
         df %>%
           dplyr::mutate(
             from = rlang::.env$source,
-            to = rlang::.env[['target']]
+            to = rlang::.env[['target']],
+            ab = rlang::.env$`a b`
           )
       }
     "),

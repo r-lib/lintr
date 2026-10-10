@@ -17,6 +17,7 @@
    + gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content (including whether it ends with a terminal newline, e.g. `"x <- 1\n"` or `c("x <- 1", "")` vs. `"x <- 1"`), so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, REditorSupport/languageserver#772, @atusy and @MichaelChirico).
    + retains the correct `column_number` for lints found in indented .Rmd/.qmd chunks so that IDEs can land the cursor correctly (continuing #1949, @MichaelChirico).
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
+* `get_r_string()` (and by extension `xml_find_function_calls()` in `get_source_expressions()`) now unquotes backtick-quoted symbols and slots (`SYMBOL*` and `SLOT` nodes) in addition to string constants (`STR_CONST`; @MichaelChirico).
 
 ### New linters
 
@@ -36,6 +37,7 @@
 
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
 * `library_call_linter()` no longer flags later `library()` calls when an earlier attach call uses a function in its arguments, e.g. `library(pkg, exclude = c("foo"))` (#3097, @fabiandistler).
+* `object_usage_linter()` no longer flags locally defined infix operators (e.g. `` `%my_op%` ``), replacement functions (e.g. `` `my_setter<-` ``), or backtick-quoted `.env$` references (e.g. `` .env$`a b` ``) as unused (@MichaelChirico).
 * `indentation_linter()`:
    + Better aligns with {styler} and `air` in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007 and #2535, @MichaelChirico).
    + Correctly requires block indentation for multi-line calls where arguments begin on subsequent lines, even when the call terminates with `)` on the same line as the last argument (#2144, @MichaelChirico).
@@ -52,6 +54,7 @@
 * `string_boundary_linter()` also recommends `startsWith()` for `substr(s, 0, n)` and `substring(s, 0, n)` (#3029, @fly1d).
 * `is_numeric_linter()` flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
 * `brace_linter(allow_single_line = TRUE)` still flags opening curly braces placed on their own line (e.g. `while (FALSE)\n{}`) or not followed by a newline when the closing brace is on a different line (#1684, @MichaelChirico).
+* `duplicate_argument_linter()` detects duplicate arguments when a non-syntactic name is passed as both a string and a backticked symbol, e.g. ``fun('a b' = 1, `a b` = 2)`` (@MichaelChirico).
 
 ## Notes
 

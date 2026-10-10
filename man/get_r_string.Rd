@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_r_string}
 \alias{get_r_string}
-\title{Extract text from \code{STR_CONST} nodes}
+\title{Extract text from \code{STR_CONST}, \verb{SYMBOL*}, or \code{SLOT} nodes}
 \usage{
 get_r_string(s, xpath = NULL)
 }
@@ -14,10 +14,11 @@ and \code{xpath} is specified, it is extracted with \code{\link[xml2:xml_find_ch
 \item{xpath}{An XPath, passed on to \code{\link[xml2:xml_find_chr]{xml2::xml_find_chr()}} after wrapping with \code{string()}.}
 }
 \description{
-Convert \code{STR_CONST} \code{text()} values into R strings. This is useful to account for arbitrary
-character literals, e.g. \code{R"------[hello]------"}, which is parsed in R as \code{"hello"}.
+Convert \code{STR_CONST}, \verb{SYMBOL*}, or \code{SLOT} \code{text()} values into R strings. This is useful to account for arbitrary
+character literals, e.g. \code{R"------[hello]------"}, which is parsed in R as \code{"hello"}, as well as
+backtick-quoted non-syntactic symbols or slots like \code{`\%in\%`}, \code{`foo<-`}, or \code{x@`a b` }.
 It is quite cumbersome to write XPaths allowing for strings like this, so whenever your
-linter logic requires testing a \code{STR_CONST} node's value, use this function.
+linter logic requires testing a \code{STR_CONST}, \verb{SYMBOL*}, or \code{SLOT} node's value, use this function.
 NB: this is also properly vectorized on \code{s}, and accepts a variety of inputs. Empty inputs
 will become \code{NA} outputs, which helps ensure that \code{length(get_r_string(s)) == length(s)}.
 }

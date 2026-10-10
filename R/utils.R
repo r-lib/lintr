@@ -248,12 +248,13 @@ re_matches_locations <- function(x, regex, ...) {
   data.frame(start = match_start, end = match_end)
 }
 
-#' Extract text from `STR_CONST` nodes
+#' Extract text from `STR_CONST`, `SYMBOL*`, or `SLOT` nodes
 #'
-#' Convert `STR_CONST` `text()` values into R strings. This is useful to account for arbitrary
-#'  character literals, e.g. `R"------[hello]------"`, which is parsed in R as `"hello"`.
+#' Convert `STR_CONST`, `SYMBOL*`, or `SLOT` `text()` values into R strings. This is useful to account for arbitrary
+#'  character literals, e.g. `R"------[hello]------"`, which is parsed in R as `"hello"`, as well as
+#'  backtick-quoted non-syntactic symbols or slots like `` `%in%` ``, `` `foo<-` ``, or ``x@`a b` ``.
 #'  It is quite cumbersome to write XPaths allowing for strings like this, so whenever your
-#'  linter logic requires testing a `STR_CONST` node's value, use this function.
+#'  linter logic requires testing a `STR_CONST`, `SYMBOL*`, or `SLOT` node's value, use this function.
 #' NB: this is also properly vectorized on `s`, and accepts a variety of inputs. Empty inputs
 #'  will become `NA` outputs, which helps ensure that `length(get_r_string(s)) == length(s)`.
 #'
@@ -296,10 +297,17 @@ get_r_string <- function(s, xpath = NULL) {
 }
 
 # parse() skips "" elements --> offsets the length of the output,
-#   but NA in --> NA out
+#   but NA in --> NA out.
+# NB: as.character() on an expression vector deparses SYMSXP elements, which
+#   retains backticks on non-syntactic symbols; applying as.character() per
+#   element extracts the underlying symbol name without backticks.
 r_string_from_parse_text <- function(s) {
   is.na(s) <- !nzchar(s)
-  out <- as.character(parse(text = s, keep.source = FALSE))
+  out <- vapply(
+    parse(text = s, keep.source = FALSE),
+    \(x) if (is.call(x)) deparse1(x) else as.character(x),
+    character(1L)
+  )
   is.na(out) <- is.na(s)
   out
 }
