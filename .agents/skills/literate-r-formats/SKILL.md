@@ -1,19 +1,47 @@
 ---
 name: literate-r-formats
-description: Guidelines and architecture for handling literate R documents (.Rmd, .qmd, .Rnw, .Rhtml) and source extraction in the r-lib/lintr package. Use this skill when modifying R/extract.R or working with non-R source files.
+description: >-
+  Guidelines and architecture for handling literate R documents (`.Rmd`, `.qmd`,
+  `.Rnw`, `.Rhtml`, `.Rtex`, `.Rrst`, `.Rtxt`) and source extraction in the
+  r-lib/lintr package. Use when modifying `R/extract.R`,
+  `R/get_source_expressions.R`, or `tests/testthat/test-knitr_formats.R`. Don't
+  use for standard `.R` file linters that do not interact with chunk extraction.
 ---
 
 # Literate R Formats & Source Extraction in `r-lib/lintr`
 
-When modifying how `lintr` extracts R source code from literate programming and multi-language documents (RMarkdown `.Rmd`, Quarto `.qmd`, Sweave `.Rnw`, or HTML `.Rhtml`), adhere to the following architectural conventions and extraction principles located primarily in `R/extract.R`.
+When modifying how `lintr` extracts R source code from literate programming and
+multi-language documents (RMarkdown `.Rmd`, Quarto `.qmd`, Sweave `.Rnw`, HTML
+`.Rhtml`, LaTeX `.Rtex`, reST `.Rrst`, or AsciiDoc `.Rtxt`), adhere to the
+following architectural conventions in `R/extract.R`:
 
-## 1. Line Number Preservation via `NA_character_` Masking
-- **Never drop or collapse lines during extraction:** `extract_r_source()` extracts R code from literate documents by masking non-R lines (markdown text, YAML frontmatter, HTML tags, and skipped code chunks) with `NA_character_`.
-- **Preserve 1-to-1 line index mapping:** Keeping non-source lines as `NA_character_` ensures that line indices in the extracted character vector strictly match the 1-indexed line numbers of the original file (`source_expression$lines`). This guarantees that diagnostic line numbers (`line_number`) reported by linters map exactly to the user's source file.
+## 1. Line & Column Preservation via `NA_character_` & Prefix Masking
+
+- **Never drop or collapse lines during extraction**: `extract_r_source()`
+  extracts R code from literate documents by masking non-R lines (markdown text,
+  YAML frontmatter, HTML tags, and skipped code chunks) with `NA_character_`.
+- **Preserve 1-to-1 line index mapping**: Keeping non-source lines as
+  `NA_character_` ensures that line indices in the extracted character vector
+  strictly match the 1-indexed line numbers of the original file
+  (`source_expression$lines`). This guarantees that diagnostic `line_number`
+  values reported by linters map 1-to-1 to the user's source file.
+- **Prefix and indentation masking (`replace_prefix()`)**: For formats with
+  in-chunk line prefixes (`pattern$chunk.code`, such as `%` comment prefixes in
+  `.Rtex`) or indented code chunks (`chunks[["indents"]] > 0L`), replace prefix
+  characters or strip uniform chunk indentation carefully so column offsets and
+  `indentation_linter()` diagnostics remain accurate.
 
 ## 2. Chunk Bounds & `eval=FALSE` Filtering
-- **Two-phase chunk boundary detection:** `get_chunk_positions(pattern, lines)` determines chunk bounds by pairing opening pattern matches (`filter_chunk_start_positions()`) with closing pattern matches (`filter_chunk_end_positions()`), then retaining only blocks containing at least one line of inner code (`ends - starts > 1L`).
-- **Filter non-evaluated chunks:** Filter out unevaluated chunks by inspecting both chunk header options and inside-chunk YAML/pipe options (`#| eval: false`, `#| engine: python`):
+
+- **Two-phase chunk boundary detection**: `get_chunk_positions(pattern, lines)`
+  determines chunk bounds by pairing opening pattern matches
+  (`filter_chunk_start_positions()`) with closing pattern matches
+  (`filter_chunk_end_positions()`), handling back-to-back Sweave chunks (`<<>>=`
+  without an intervening `@`) and retaining blocks containing inner code
+  (`ends - starts > 1L`).
+- **Filter non-evaluated chunks**: Filter out unevaluated chunks by inspecting
+  both chunk header options and inside-chunk YAML/pipe options (`#| eval: false`,
+  `#| engine: python`):
   ```r
   is_eval_chunk <- function(start, end, lines, pattern) {
     header <- lines[start]
@@ -41,8 +69,20 @@ When modifying how `lintr` extracts R source code from literate programming and 
   ```
 
 ## 3. Engine Detection
-- **Detect R engines on opening lines:** `is_r_chunk_header()` inspects chunk start lines to retain chunks targeting R engines (`{r}`, `{R}`, `engine = "R"`) while skipping non-R engines (`{python}`, `{extendr}`, `{ojs}`, `{mermaid}`, `{dot}`, `engine = "bash"`).
 
-## 4. Multi-Format Testing Conventions
-- **Test across document families:** When modifying `R/extract.R`, verify extraction behavior across all major literate families (`.Rmd`, `.qmd`, and `.Rnw`) inside `tests/testthat/test-knitr_formats.R`.
-- **Test zero-chunk documents:** Always verify that documents containing zero chunks (such as plain markdown text or YAML header-only files) extract cleanly without throwing index out-of-bounds errors.
+- **Detect R engines on opening lines**: `is_r_chunk_header()` inspects chunk
+  start lines to retain chunks targeting R engines (`{r}`, `{R}`, `engine = "R"`)
+  while skipping non-R engines (`{python}`, `{extendr}`, `{ojs}`, `{mermaid}`,
+  `{dot}`, `engine = "bash"`).
+
+## 4. Multi-Format Testing Conventions (`tests/testthat/test-knitr_formats.R`)
+
+- **Test across document families**: When modifying `R/extract.R`, verify
+  extraction behavior across major literate families (`.Rmd`, `.qmd`, `.Rnw`,
+  `.Rtex`) inside `tests/testthat/test-knitr_formats.R`.
+- **Test zero-chunk documents**: Always verify that documents containing zero
+  chunks (such as plain markdown text or YAML header-only files) extract cleanly
+  without throwing index out-of-bounds errors.
+- **Coarse parse-error assertions**: When asserting document/chunk-level parse
+  errors on malformed literate files, assert `message` and `line_number` without
+  over-specifying a trivial `column_number = 1L`.
