@@ -63,7 +63,9 @@
    + `seq(1, n)` and `seq(from = 1, to = n)` (#2661, @MichaelChirico).
    + `seq(dim(x)[1])` and `seq(.N)` (#1474, @MichaelChirico).
 * `string_boundary_linter()` also recommends `startsWith()` for `substr(s, 0, n)` and `substring(s, 0, n)` (#3029, @fly1d).
-* `is_numeric_linter()` flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
+* `is_numeric_linter()`:
+   + flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
+   + also flags redundant `is.double(x) || is.integer(x)` and `is.numeric(x) || is.double(x)` checks (#2469, @MichaelChirico).
 * `brace_linter(allow_single_line = TRUE)` still flags opening curly braces placed on their own line (e.g. `while (FALSE)\n{}`) or not followed by a newline when the closing brace is on a different line (#1684, @MichaelChirico).
 * `duplicate_argument_linter()` detects duplicate arguments when a non-syntactic name is passed as both a string and a backticked symbol, e.g. ``fun('a b' = 1, `a b` = 2)`` (#3156, @MichaelChirico).
 * `backport_linter()` detects backtick-quoted calls and symbols (e.g. `` `%||%`(x, y) ``, ``Reduce(`%||%`, x)``) and replacement function calls (e.g. `.rowNamesDF(x) <- value`; #3160, @MichaelChirico).

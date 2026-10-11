@@ -109,6 +109,17 @@ test_that("is_numeric_linter blocks disallowed usages involving ||", {
     ),
     linter
   )
+
+  # is.double() equivalents (#2469)
+  dbl_int_msg <- rex::rex("Use `is.numeric(x)` instead of the equivalent `is.double(x) || is.integer(x)`.")
+  num_dbl_msg <- rex::rex("Use `is.numeric(x)` instead of the equivalent `is.numeric(x) || is.double(x)`.")
+  expect_no_lint("is.double(x) || is.integer(y)", linter)
+  expect_no_lint("is.numeric(x) || is.double(y)", linter)
+  expect_lint("is.double(x) || is.integer(x)", dbl_int_msg, linter)
+  expect_lint("is.integer(x) || is.double(x)", dbl_int_msg, linter)
+  expect_lint("is.numeric(x) || is.double(x)", num_dbl_msg, linter)
+  expect_lint("is.double(x) || is.numeric(x)", num_dbl_msg, linter)
+  expect_lint("is.factor(x) || is.double(x) || is.integer(x)", dbl_int_msg, linter)
 })
 
 test_that("is_numeric_linter blocks disallowed usages involving %in%", {
