@@ -111,17 +111,16 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # outline:
   #   1. match one of the identified mappers
   #   2. match an anonymous function that can be "symbol-ized"
-  #     a. it's a one-variable function [TODO(#2477): relax this]
+  #     a. it has at least one formal argument and no default values
   #     b. the function is a single call
-  #     c. that call's _first_ argument is just the function argument (a SYMBOL)
-  #       - and it has to be passed positionally (not as a keyword)
-  #     d. the function argument doesn't appear elsewhere in the call
+  #     c. that call's leading arguments are just the function arguments (SYMBOLs) in order
+  #       - and they have to be passed positionally (not as keywords)
+  #     d. the function arguments don't appear elsewhere in the call
   unary_op <- infix_metadata$xml_tag[infix_metadata$unary]
   default_fun_xpath <- glue("
-  following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
+  following-sibling::expr[(FUNCTION or OP-LAMBDA) and SYMBOL_FORMALS and not(EQ_FORMALS)]
     /expr[last()][
-      count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
-      and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
+      count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
       and not(
         ({ xp_or(unary_op) })
         or (
@@ -129,7 +128,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
           and expr[{ xp_or(unary_op) }]
         )
       )
-      and preceding-sibling::SYMBOL_FORMALS =
+      and preceding-sibling::SYMBOL_FORMALS[last()] =
         .//expr[
           position() = 2
           and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
@@ -172,6 +171,9 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   Linter(linter_level = "expression", function(source_expression) {
     default_calls <- source_expression$xml_find_function_calls(apply_funs)
     default_fun_expr <- xml_find_all_(default_calls, default_fun_xpath)
+    if (length(default_fun_expr) > 0L) {
+      default_fun_expr <- default_fun_expr[vapply(default_fun_expr, has_matching_formals, logical(1L))]
+    }
 
     # TODO(#2478): Give a specific recommendation in the message.
     default_call_fun <- xml_find_chr_(default_fun_expr, fun_xpath)
@@ -233,4 +235,30 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
 
     c(default_fun_lints, inner_comparison_lints, purrr_fun_lints)
   })
+}
+
+has_matching_formals <- function(fun_expr) {
+  formal_args <- get_r_string(xml_find_all_(fun_expr, "SYMBOL_FORMALS"))
+  n_formals <- length(formal_args)
+  all_body_syms <- get_r_string(xml_find_all_(fun_expr, "expr[last()]//SYMBOL"))
+  if (sum(all_body_syms %in% formal_args) != n_formals) {
+    return(FALSE)
+  }
+  if (n_formals == 1L) {
+    return(TRUE)
+  }
+  inner_call <- xml_find_first_(
+    fun_expr,
+    "expr[last()]/descendant-or-self::expr[expr[1]/SYMBOL_FUNCTION_CALL[text() != 'return']]"
+  )
+  arg_exprs <- xml_find_all_(inner_call, "expr[position() > 1]")
+  if (length(arg_exprs) < n_formals) {
+    return(FALSE)
+  }
+  first_k <- arg_exprs[seq_len(n_formals)]
+  if (any(xml_find_lgl_(first_k, "boolean(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])"))) {
+    return(FALSE)
+  }
+  arg_syms <- get_r_string(first_k, "SYMBOL")
+  !anyNA(arg_syms) && identical(arg_syms, formal_args)
 }

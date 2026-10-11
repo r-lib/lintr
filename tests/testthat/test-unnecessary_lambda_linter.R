@@ -145,6 +145,28 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
     rex::rex("Pass foo directly as a symbol to sapply()"),
     linter
   )
+
+  # multi-argument lambdas (#2477)
+  expect_lint(
+    "lapply(x, function(xi, y) foo(xi, y), y)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "lapply(x, \\(xi, ...) foo(xi, ...), y = 1)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "mapply(function(xi, yi) foo(xi, yi, na.rm = TRUE), x, y)",
+    rex::rex("Pass foo directly as a symbol to mapply()"),
+    linter
+  )
+  expect_no_lint("mapply(function(xi, yi) foo(yi, xi), x, y)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, bar = y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y, y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y = 1) foo(xi, y))", linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
