@@ -234,6 +234,13 @@ following testing conventions and production-readiness standards:
   11. **Multi-line expressions with comments**: `seq(1, # comment\n 10)`
   12. **Vectorization tests**: combining new and existing syntactic variants
       inside `test_that("lints vectorize", ...)`.
+- **Adversarial boundary tests for `ancestor::` / `descendant::` / `//` XPaths**:
+  Whenever a linter XPath uses multi-hop axes (`ancestor::`, `ancestor-or-self::`,
+  `descendant::`, `descendant-or-self::`, `.//`, `following::`), include
+  negative/positive tests proving the query does not unintentionally cross
+  syntactic boundaries (`{ ... }` brace blocks, `local({ ... })`, anonymous
+  functions `\(x) ...`, or excluded calls like `quote(...)`) and still works
+  when the target construct is wrapped in `(...)` or a function call.
 - **Verify non-targeted functions remain WAI when toggling options**: When
   testing an option that disables checking for specific targets (like passing
   `check_file_listing = FALSE` to skip `list.files()`/`dir()`), explicitly

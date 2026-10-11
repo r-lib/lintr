@@ -86,10 +86,15 @@ When reviewing changes, evaluate the following aspects:
      exact AST condition checks, transitionary upstream R feature gates
      annotated with `# TODO(R>=x.y.z)`, and crisp roxygen documentation
      containing matched lints/OK `@examples` pairs in structured sections.
-   - **XPath Composition & Readability (`xpath-style`)**: Ensure exact AST node
-     entry points, modular composition via `glue()`, factored common predicates
-     out of disjunctions (`STR_CONST and (...)`), and unnested single conditions
-     placed before multi-condition parenthesized blocks inside `or` queries.
+   - **XPath Composition, Boundary Safety & Performance (`xpath-style`)**:
+     Ensure exact AST node entry points, modular composition via `glue()`,
+     factored common predicates out of disjunctions (`STR_CONST and (...)`), and
+     unnested single conditions placed before multi-condition parenthesized
+     blocks inside `or` queries. Scrutinize any `ancestor::`,
+     `ancestor-or-self::`, `descendant::`, `descendant-or-self::`, `.//`, or
+     `following::` axes to ensure they do not unintentionally cross `{ ... }`
+     blocks, `\(x) ...` lambdas, or call/argument boundaries (or cause full-tree
+     ancestor walks without a `[1]` reverse-axis stop-condition).
    - **Literate Programming Robustness (`literate-r-formats`)**: Verify `NA`
      safety (`!is.na(...)`) over masked line extraction structures
      (`NA_character_` in `.Rmd`/`.qmd`).
