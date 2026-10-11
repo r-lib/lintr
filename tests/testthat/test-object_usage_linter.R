@@ -603,7 +603,7 @@ test_that("transitive Depends of attached packages are detected (#2695)", {
   skip_if_not_installed("nlme")
   skip_if(any(c("package:mgcv", "package:nlme") %in% search()))
   # Ensure upstream assumptions (mgcv Depends on nlme, which exports lme()) continue to hold
-  skip_if_not("nlme" %in% get_pkg_depends("mgcv"))
+  skip_if_not(grepl("nlme", utils::packageDescription("mgcv", fields = "Depends"), fixed = TRUE))
   skip_if_not("lme" %in% getNamespaceExports("nlme"))
 
   expect_lint(
