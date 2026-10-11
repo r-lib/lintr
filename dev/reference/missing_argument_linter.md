@@ -7,7 +7,7 @@ Check for missing arguments in function calls (e.g.
 
 ``` r
 missing_argument_linter(
-  except = c("alist", "quote", "switch"),
+  except = c("alist", "quote", "rowwiseDT", "switch"),
   allow_trailing = FALSE
 )
 ```
