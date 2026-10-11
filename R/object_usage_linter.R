@@ -339,8 +339,8 @@ get_imported_symbols <- function(xml, library_lint_hook) {
 
 get_pkg_depends <- function(pkg) {
   depends <- utils::packageDescription(pkg, fields = "Depends")
-  deps <- strsplit(gsub("\\s+", "", depends), ",", fixed = TRUE)[[1L]]
-  setdiff(sub("\\(.*", "", deps), c("R", "base", "", NA_character_))
+  db <- cbind(Package = pkg, Depends = depends)
+  setdiff(tools::package_dependencies(pkg, db = db, which = "Depends")[[1L]], "base")
 }
 
 known_used_symbols <- function(fun_assignment, interpret_extensions) {

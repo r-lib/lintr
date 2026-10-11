@@ -602,6 +602,9 @@ test_that("transitive Depends of attached packages are detected (#2695)", {
   skip_if_not_installed("mgcv")
   skip_if_not_installed("nlme")
   skip_if(any(c("package:mgcv", "package:nlme") %in% search()))
+  # Ensure upstream assumptions (mgcv Depends on nlme, which exports lme()) continue to hold
+  skip_if_not("nlme" %in% get_pkg_depends("mgcv"))
+  skip_if_not("lme" %in% getNamespaceExports("nlme"))
 
   expect_lint(
     "foo <- function(x) lme(x)",
@@ -609,7 +612,6 @@ test_that("transitive Depends of attached packages are detected (#2695)", {
     object_usage_linter()
   )
 
-  # mgcv Depends on nlme, which exports lme()
   expect_no_lint(
     trim_some("
       library(mgcv)
