@@ -184,10 +184,18 @@ make_check_env <- function(pkg_path, pkg_name, xml, library_lint_hook) {
   }
   env <- new.env(parent = parent_env)
 
+  ns_imports <- namespace_imports(pkg_path)
+  for (i in seq_len(nrow(ns_imports))) {
+    fun <- ns_imports$fun[i]
+    if (!exists(fun, envir = parent_env, inherits = FALSE)) {
+      val <- get0(fun, envir = asNamespace(ns_imports$pkg[i]), ifnotfound = \(...) invisible())
+      assign(fun, val, envir = env)
+    }
+  }
+
   symbols <- c(
     get_assignment_symbols(xml),
-    get_imported_symbols(xml, library_lint_hook),
-    namespace_imports(pkg_path)$fun
+    get_imported_symbols(xml, library_lint_hook)
   )
 
   # Just assign them an empty function
