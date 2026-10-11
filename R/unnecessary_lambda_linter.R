@@ -194,6 +194,12 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
 
       mapper <- xml_find_chr_(inner_comparison_expr, "string(parent::expr/parent::expr/expr/SYMBOL_FUNCTION_CALL)")
       fun_value <- ifelse(mapper == "sapply", "", ", FUN.VALUE = <intermediate>")
+      inner_fun <- xml_find_chr_(inner_comparison_expr, "string(expr/expr/SYMBOL_FUNCTION_CALL)")
+      comparator <- xml_find_chr_(inner_comparison_expr, "string(*[not(self::expr or self::COMMENT)])")
+      to_compare <- xml_find_chr_(
+        strip_comments_from_subtree(inner_comparison_expr),
+        "string(expr[not(expr/SYMBOL_FUNCTION_CALL)])"
+      )
 
       inner_comparison_lints <- xml_nodes_to_lints(
         inner_comparison_expr,
@@ -201,9 +207,9 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
         lint_message = sprintf(
           paste(
             "Compare to a constant after calling %1$s() to get the full benefits of vectorization.",
-            "Prefer %1$s(x, foo%2$s) == 2 over %1$s(x, function(xi) foo(xi) == 2, logical(1L))."
+            "Prefer %1$s(x, %3$s%2$s) %4$s %5$s over %1$s(x, function(xi) %3$s(xi) %4$s %5$s, logical(1L))."
           ),
-          mapper, fun_value
+          mapper, fun_value, inner_fun, comparator, to_compare
         ),
         type = "warning"
       )

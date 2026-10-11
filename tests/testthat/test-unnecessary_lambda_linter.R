@@ -172,11 +172,22 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
 test_that("unnecessary_lambda_linter blocks other comparators as well", {
   linter <- unnecessary_lambda_linter()
   linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
-  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get")
 
-  expect_lint("sapply(x, function(xi) foo(xi) >= 2)", lint_msg, linter)
-  expect_lint("sapply(x, function(xi) foo(xi) != 'a')", lint_msg, linter)
-  expect_lint("sapply(x, function(xi) foo(xi) < 1 + 2i)", lint_msg, linter)
+  expect_lint(
+    "sapply(x, function(xi) foo(xi) >= 2)",
+    rex::rex("Compare to a constant after calling sapply() to get", anything, "Prefer sapply(x, foo) >= 2"),
+    linter
+  )
+  expect_lint(
+    "sapply(x, function(xi) foo(xi) != 'a')",
+    rex::rex("Compare to a constant after calling sapply() to get", anything, "Prefer sapply(x, foo) != 'a'"),
+    linter
+  )
+  expect_lint(
+    "sapply(x, function(xi) foo(xi) < 1 + 2i)",
+    rex::rex("Compare to a constant after calling sapply() to get", anything, "Prefer sapply(x, foo) < 1+2i"),
+    linter
+  )
 
   expect_no_lint("sapply(x, function(xi) foo(xi) >= 2)", linter_allow)
   expect_no_lint("sapply(x, function(xi) foo(xi) != 'a')", linter_allow)
@@ -346,8 +357,8 @@ test_that("lints vectorize", {
       vapply(y, function(yi) bar(yi) == 1, logical(1L))
     }"),
     list(
-      list(rex::rex("sapply(x, foo)"), line_number = 2L),
-      list(rex::rex("vapply(x, foo, FUN.VALUE = <intermediate>)"), line_number = 3L)
+      list(rex::rex("sapply(x, foo) == 2"), line_number = 2L),
+      list(rex::rex("vapply(x, bar, FUN.VALUE = <intermediate>) == 1"), line_number = 3L)
     ),
     linter
   )
