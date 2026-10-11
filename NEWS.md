@@ -66,6 +66,7 @@
 * `is_numeric_linter()`:
    + flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
    + also flags redundant `is.double(x) || is.integer(x)` and `is.numeric(x) || is.double(x)` checks (#2469, @MichaelChirico).
+   + also flags `typeof(x) %in% c("integer", "double")` and `inherits(x, c("integer", "numeric"))` (#2470, @MichaelChirico).
 * `brace_linter(allow_single_line = TRUE)` still flags opening curly braces placed on their own line (e.g. `while (FALSE)\n{}`) or not followed by a newline when the closing brace is on a different line (#1684, @MichaelChirico).
 * `duplicate_argument_linter()` detects duplicate arguments when a non-syntactic name is passed as both a string and a backticked symbol, e.g. ``fun('a b' = 1, `a b` = 2)`` (#3156, @MichaelChirico).
 * `backport_linter()` detects backtick-quoted calls and symbols (e.g. `` `%||%`(x, y) ``, ``Reduce(`%||%`, x)``) and replacement function calls (e.g. `.rowNamesDF(x) <- value`; #3160, @MichaelChirico).
