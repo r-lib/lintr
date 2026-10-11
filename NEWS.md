@@ -49,6 +49,7 @@
 * `undesirable_function_linter()` distinguishes setter calls like `foo(x) <- y` (which invoke `foo<-`) from getter calls `foo(x)` (#1912, @MichaelChirico). Use `undesirable_function_linter(c(foo = NA, `foo<-` = NA))` to lint both.
 * `unused_import_linter()` detects exported operators and functions referenced as backtick-quoted symbols or calls (e.g. ``Reduce(`%>%`, ...)`` or `` `%>%`(x, f) ``) as well as replacement functions (e.g. `body(f) <- value`; #3162, @MichaelChirico).
 * `namespace_linter()` resolves replacement function calls like `pkg::foo(x) <- y` as ``pkg::`foo<-` `` rather than `pkg::foo` (#3161, @MichaelChirico).
+* `missing_argument_linter()` exempts `data.table::rowwiseDT()` by default, where `col =` is used to declare column headers (#2934, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
