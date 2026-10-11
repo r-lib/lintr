@@ -1,8 +1,13 @@
 #' Require usage of `lengths()` where possible
 #'
 #' [base::lengths()] is a function that was added to base R in version 3.2.0 to
-#'   get the length of each element of a list. It is equivalent to
-#'   `sapply(x, length)`, but faster and more readable.
+#'   get the length of each element of a list. It is almost always equivalent
+#'   to `sapply(x, length)`, but faster and more readable.
+#'
+#' One known case where this does not strictly apply is to an array of lists,
+#'   e.g. `array(list(1, 1, 1, 1:2), dim = c(2L, 2L))`, where `lengths()`
+#'   will retain the shape of its input where `sapply()` will not. Whether
+#'   that's a good thing may be context-dependent.
 #'
 #' @examples
 #' # will produce lints
