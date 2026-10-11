@@ -340,7 +340,10 @@ get_imported_symbols <- function(xml, library_lint_hook) {
 get_pkg_depends <- function(pkg) {
   depends <- utils::packageDescription(pkg, fields = "Depends")
   db <- cbind(Package = pkg, Depends = depends)
-  setdiff(tools::package_dependencies(pkg, db = db, which = "Depends")[[1L]], "base")
+  pkg |>
+    tools::package_dependencies(db = db, which = "Depends") |>
+    unlist() |>
+    setdiff("base")
 }
 
 known_used_symbols <- function(fun_assignment, interpret_extensions) {
