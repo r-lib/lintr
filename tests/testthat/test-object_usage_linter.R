@@ -325,16 +325,37 @@ test_that("package detection works", {
   )
 })
 
-test_that("lints files of a package that is not installed", {
+test_that("lints files of a package that is not installed, respecting NAMESPACE (#2957)", { # nofuzz
   pkg_dir <- withr::local_tempdir()
   writeLines(c("Package: lintrNotInstalledPkg", "Version: 0.0.1"), file.path(pkg_dir, "DESCRIPTION"))
+  writeLines(
+    c(
+      "importFrom(xml2, read_xml)",
+      "importFrom(tools, file_path_sans_ext, Adobe_glyphs)"
+    ),
+    file.path(pkg_dir, "NAMESPACE")
+  )
   dir.create(file.path(pkg_dir, "R"))
   r_file <- file.path(pkg_dir, "R", "foo.R")
-  writeLines("foo <- function() undefined_global", r_file)
+  writeLines(
+    c(
+      "foo <- function(x) {",
+      "  doc <- read_xml(x)",
+      "  ext <- file_path_sans_ext(Adobe_glyphs$unicode, bogus_arg = 1)",
+      "  Adobe_glyphs(ext)",
+      "  undefined_global(doc)",
+      "}"
+    ),
+    r_file
+  )
 
   expect_lint(
     file = r_file,
-    checks = list("no visible binding for global variable 'undefined_global'", line_number = 1L),
+    checks = list(
+      list(rex::rex("unused argument (bogus_arg = 1)"), line_number = 3L),
+      list("no visible global function definition for 'Adobe_glyphs'", line_number = 4L),
+      list("no visible global function definition for 'undefined_global'", line_number = 5L)
+    ),
     linters = object_usage_linter()
   )
 })

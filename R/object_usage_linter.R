@@ -82,7 +82,8 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   ")
 
   Linter(linter_level = "file", function(source_expression) {
-    pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
+    pkg_path <- find_package(dirname(source_expression$filename))
+    pkg_name <- pkg_name(pkg_path)
 
     declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
     if (is_error(declared_globals)) declared_globals <- character()
@@ -99,7 +100,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     }
 
     # run the following at run-time, not "compile" time to allow package structure to change
-    env <- make_check_env(pkg_name, xml, library_lint_hook)
+    env <- make_check_env(pkg_path, pkg_name, xml, library_lint_hook)
 
     fun_assignments <- xml_find_all_(xml, xpath_function_assignment)
 
@@ -174,7 +175,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   })
 }
 
-make_check_env <- function(pkg_name, xml, library_lint_hook) {
+make_check_env <- function(pkg_path, pkg_name, xml, library_lint_hook) {
   if (!is.null(pkg_name)) {
     parent_env <- try_silently(getNamespace(pkg_name))
   }
@@ -182,6 +183,15 @@ make_check_env <- function(pkg_name, xml, library_lint_hook) {
     parent_env <- globalenv()
   }
   env <- new.env(parent = parent_env)
+
+  ns_imports <- namespace_imports(pkg_path)
+  for (i in seq_len(nrow(ns_imports))) {
+    fun <- ns_imports$fun[i]
+    if (!exists(fun, envir = parent_env, inherits = FALSE)) {
+      val <- get0(fun, envir = asNamespace(ns_imports$pkg[i]), ifnotfound = \(...) invisible())
+      assign(fun, val, envir = env)
+    }
+  }
 
   symbols <- c(
     get_assignment_symbols(xml),
