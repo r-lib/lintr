@@ -22,6 +22,8 @@
 #'  5. Block usage of `paste()` or `paste0()` to collapse the output of [base::deparse()], e.g.
 #'     `paste(deparse(x), collapse = " ")`. [base::deparse1()] is a more readable equivalent,
 #'     i.e. `deparse1(x)`.
+#'  6. Block usage of `paste()` supplying both `sep=` and `collapse=` with a single input vector,
+#'     e.g. `paste(x, sep = ".", collapse = ",")`, where `sep=` has no effect.
 #'
 #' @evalRd rd_tags("paste_linter")
 #' @param allow_empty_sep Logical, default `FALSE`. If `TRUE`, usage of
@@ -201,6 +203,15 @@ paste_linter <- function(allow_empty_sep = FALSE,
     and not(expr/SYMBOL[text() = '...'])
   ]")
 
+  paste_collapse_sep_xpath <- glue("
+  parent::expr[
+    SYMBOL_SUB[text() = 'collapse']
+    and SYMBOL_SUB[text() = 'sep']
+    and count(expr) =
+      4 - count(preceding-sibling::*[self::PIPE or self::SPECIAL[{ xp_text_in_table(magrittr_pipes) }]])
+    and not(expr/SYMBOL[text() = '...'])
+  ]")
+
   # Skip collapse = NULL (does not collapse, so not deparse1()) and deparse() supplied
   #   as the collapse separator rather than as the collapsed vector.
   deparse1_xpath <- "
@@ -293,6 +304,14 @@ paste_linter <- function(allow_empty_sep = FALSE,
       type = "warning"
     )
 
+    paste_collapse_sep_expr <- xml_find_all_(paste_calls, paste_collapse_sep_xpath)
+    paste_collapse_sep_lints <- xml_nodes_to_lints(
+      paste_collapse_sep_expr,
+      source_expression = source_expression,
+      lint_message = "sep= has no effect in paste() when collapsing a single input with collapse=.",
+      type = "warning"
+    )
+
     deparse1_expr <- xml_find_all_(both_calls, deparse1_xpath)
     deparse1_lints <- xml_nodes_to_lints(
       deparse1_expr,
@@ -330,7 +349,14 @@ paste_linter <- function(allow_empty_sep = FALSE,
       ))
     }
 
-    c(optional_lints, paste0_sep_lints, paste_strrep_lints, paste0_collapse_lints, deparse1_lints)
+    c(
+      optional_lints,
+      paste0_sep_lints,
+      paste_strrep_lints,
+      paste0_collapse_lints,
+      paste_collapse_sep_lints,
+      deparse1_lints
+    )
   })
 }
 
