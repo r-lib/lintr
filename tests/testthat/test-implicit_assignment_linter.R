@@ -463,6 +463,56 @@ test_that("allow_scoped skips scoped assignments", {
     "),
     linter
   )
+  expect_no_lint("if (1 -> a) print(a)", linter)
+  expect_no_lint(
+    trim_some("
+      if (a && b <- 2) {
+        print(b)
+      }
+      print(a)
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      if (1 -> a && b) {
+        print(a)
+      }
+      print(b)
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      if (a <- local({
+        b <- 1L
+        b + 1L
+      })) {
+        print(a)
+      }
+      print(b)
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      if (a <- is.call(quote(b <- 1L))) {
+        print(a)
+      }
+      print(b)
+    "),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (a <- 1 && b <- 2) {
+        print(a)
+      }
+      print(a)
+    "),
+    list(lint_message, line_number = 1L, column_number = 5L),
+    linter
+  )
   expect_lint(
     trim_some("
       if (a <- 1 && b <- 2) {
@@ -471,6 +521,21 @@ test_that("allow_scoped skips scoped assignments", {
       print(b)
     "),
     list(lint_message, line_number = 1L, column_number = 10L),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (a <- 1 && b <- 2) {
+        print(a)
+        print(b)
+      }
+      print(a)
+      print(b)
+    "),
+    list(
+      list(lint_message, line_number = 1L, column_number = 5L),
+      list(lint_message, line_number = 1L, column_number = 10L)
+    ),
     linter
   )
   expect_lint(
@@ -485,12 +550,52 @@ test_that("allow_scoped skips scoped assignments", {
   )
   expect_lint(
     trim_some("
+      while (a || b <- 2) {
+        print(b)
+      }
+      print(b)
+    "),
+    list(lint_message, line_number = 1L, column_number = 8L),
+    linter
+  )
+  expect_lint(
+    trim_some("
       if (1 -> a) {
         print(a)
       }
       print(a)
     "),
     list(lint_message, line_number = 1L, column_number = 5L),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (1 -> a && 2 -> b) {
+        print(a)
+      }
+      print(a)
+    "),
+    list(lint_message, line_number = 1L, column_number = 5L),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (any(a <- 1 && b <- 2)) {
+        print(b)
+      }
+      print(b)
+    "),
+    list(lint_message, line_number = 1L, column_number = 14L),
+    linter
+  )
+  expect_lint(
+    trim_some("
+      if (a && (b <- 1 && c <- 2)) {
+        print(c)
+      }
+      print(c)
+    "),
+    list(lint_message, line_number = 1L, column_number = 16L),
     linter
   )
 })
