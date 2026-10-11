@@ -163,6 +163,28 @@ test_that("sort_linter blocks simple disallowed usages for is.sorted cases", {
     sorted_msg,
     linter
   )
+
+  # na.last in rev(sort()) (#3068)
+  expect_lint(
+    "rev(sort(x, na.last = TRUE))",
+    rex::rex("Use sort(x, decreasing = TRUE, na.last = FALSE) instead of rev(sort(x, na.last = TRUE))."),
+    linter
+  )
+  expect_lint(
+    "rev(sort(x, na.last = FALSE))",
+    rex::rex("Use sort(x, decreasing = TRUE, na.last = TRUE) instead of rev(sort(x, na.last = FALSE))."),
+    linter
+  )
+  expect_lint(
+    "rev(sort(x, na.last = NA))",
+    rex::rex("Use sort(x, decreasing = TRUE, na.last = NA) instead of rev(sort(x, na.last = NA))."),
+    linter
+  )
+  expect_lint(
+    "rev(sort(x, na.last = y))",
+    rev_sort_msg,
+    linter
+  )
 })
 
 test_that("lints vectorize", {

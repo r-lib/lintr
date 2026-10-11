@@ -182,11 +182,23 @@ sort_linter <- function() {
     )
 
     rev_sort_calls <- xml_find_all_(sort_calls, "expr[1][expr[1]/SYMBOL_FUNCTION_CALL[text() = 'rev']]")
+    na_last <- xml_find_chr_(
+      rev_sort_calls,
+      "string(expr[2]/SYMBOL_SUB[text() = 'na.last']/following-sibling::expr[1]/NUM_CONST)"
+    )
+    rev_sort_msg <- ifelse(
+      na_last %in% c("TRUE", "FALSE", "NA"),
+      sprintf(
+        "Use sort(x, decreasing = TRUE, na.last = %s) instead of rev(sort(x, na.last = %s)).",
+        c("TRUE" = "FALSE", "FALSE" = "TRUE", "NA" = "NA")[na_last],
+        na_last
+      ),
+      "Use sort(x, decreasing = TRUE) instead of rev(sort(x)). If present, `na.last` value needs to be flipped"
+    )
     rev_sort_lints <- xml_nodes_to_lints(
       rev_sort_calls,
       source_expression = source_expression,
-      lint_message =
-        "Use sort(x, decreasing = TRUE) instead of rev(sort(x)). If present, `na.last` value needs to be flipped",
+      lint_message = rev_sort_msg,
       type = "warning"
     )
 
