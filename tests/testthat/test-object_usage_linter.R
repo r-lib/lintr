@@ -325,7 +325,7 @@ test_that("package detection works", {
   )
 })
 
-test_that("lints files of a package that is not installed, respecting NAMESPACE (#2957)", {
+test_that("lints files of a package that is not installed, respecting NAMESPACE (#2957)", { # nofuzz
   pkg_dir <- withr::local_tempdir()
   writeLines(c("Package: lintrNotInstalledPkg", "Version: 0.0.1"), file.path(pkg_dir, "DESCRIPTION"))
   writeLines(
