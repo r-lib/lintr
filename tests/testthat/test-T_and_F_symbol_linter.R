@@ -9,6 +9,11 @@ test_that("T_and_F_symbol_linter skips allowed usages", {
   expect_no_lint("y ~ foo(T, F)", linter)
   expect_no_lint("T[1]", linter)
   expect_no_lint("T[[1]]", linter)
+
+  # plotmath symbols inside quote(), bquote(), expression() (#3159)
+  expect_no_lint('quote(italic(F) == "2.35")', linter)
+  expect_no_lint("plot(1, main = expression(italic(T)))", linter)
+  expect_no_lint("bquote(bold(F) == .(val))", linter)
 })
 
 test_that("T_and_F_symbol_linter blocks disallowed usages", {
@@ -37,6 +42,8 @@ test_that("T_and_F_symbol_linter blocks disallowed usages", {
   expect_lint("x[T]", msg_true, linter)
   expect_lint("x[, cols, drop = T]", msg_true, linter)
   expect_lint("y ~ foo(x, arg = T)", msg_true, linter)
+  expect_lint("quote(T)", msg_true, linter)
+  expect_lint("expression(sum(x, na.rm = T))", msg_true, linter)
   expect_lint(
     trim_some("
       y ~ foo(x, arg = #comment
