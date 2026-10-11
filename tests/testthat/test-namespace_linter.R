@@ -33,8 +33,9 @@ test_that("namespace_linter can work with backticked symbols", {
   expect_lint("rlang::`%>%`", "'%>%' is not exported from {rlang}.", linter)
   expect_lint("rlang::'%>%'()", "'%>%' is not exported from {rlang}.", linter)
   expect_lint('rlang::"%>%"()', "'%>%' is not exported from {rlang}.", linter)
+})
 
-  # Setter calls check `foo<-` rather than `foo`
+test_that("Setter calls are checked correctly", { # nofuzz: comment_injection
   expect_no_lint("base::.rowNamesDF(df) <- c('x', 'y')", linter)
   expect_no_lint("base::`.rowNamesDF`(df) <- c('x', 'y')", linter)
   expect_no_lint('base::".rowNamesDF"(df) <- c("x", "y")', linter)
