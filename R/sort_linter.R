@@ -190,7 +190,7 @@ sort_linter <- function() {
       na_last %in% c("TRUE", "FALSE", "NA"),
       sprintf(
         "Use sort(x, decreasing = TRUE, na.last = %s) instead of rev(sort(x, na.last = %s)).",
-        c("TRUE" = "FALSE", "FALSE" = "TRUE", "NA" = "NA")[na_last],
+        c(`TRUE` = "FALSE", `FALSE` = "TRUE", `NA` = "NA")[na_last],
         na_last
       ),
       "Use sort(x, decreasing = TRUE) instead of rev(sort(x)). If present, `na.last` value needs to be flipped"
