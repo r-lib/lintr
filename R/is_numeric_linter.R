@@ -48,6 +48,10 @@
 #' @export
 # nolint next: cyclocomp_linter. Helpers in factory inflate complexity (gaborcsardi/cyclocomp#30).
 is_numeric_linter <- function() {
+  is_unordered_pair <- function(str1, str2, type1, type2) {
+    (str1 == type1 & str2 == type2) | (str1 == type2 & str2 == type1)
+  }
+
   is_or_root <- function(node) {
     parent <- node
     repeat {
@@ -216,8 +220,4 @@ is_numeric_linter <- function() {
 
     c(or_lints, in_lints, inherits_lints)
   })
-}
-
-is_unordered_pair <- function(str1, str2, type1, type2) {
-  (str1 == type1 & str2 == type2) | (str1 == type2 & str2 == type1)
 }
