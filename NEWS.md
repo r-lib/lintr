@@ -72,6 +72,7 @@
 ## Notes
 
 * `string_boundary_linter()` provides fixed-string replacements in its lint message, recommends `str_starts()`/`str_ends()` with `fixed()` for `{stringr}` calls, and clarifies the reasons for inefficiency (#1333, @MichaelChirico).
+* `sort_linter()` provides a specific replacement for `na.last` in its lint message when `rev(sort(x, na.last = ...))` is called with a literal `TRUE`, `FALSE`, or `NA` (#3068, @MichaelChirico).
 * Several internal performance optimizations speed up `get_source_expressions()`, `lint()`, and multi-file runs like `lint_dir()` and `lint_package()` by ~15-25%, including caching package `NAMESPACE` imports and S3 generic lookups across files (#1366, #3111, @MichaelChirico, h/t @dshkol for the `@r-pkg-optimizer` SKILL).
 
 # lintr (3.4.0)
