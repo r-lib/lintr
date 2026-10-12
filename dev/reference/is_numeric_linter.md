@@ -2,7 +2,11 @@
 
 [`is.numeric()`](https://rdrr.io/r/base/numeric.html) returns `TRUE`
 when `typeof(x)` is `double` or `integer` – testing
-`is.numeric(x) || is.integer(x)` is thus redundant.
+`is.numeric(x) || is.integer(x)`, `is.numeric(x) || is.double(x)`,
+`is.double(x) || is.integer(x)`,
+`class(x) %in% c("numeric", "integer")`,
+`typeof(x) %in% c("double", "integer")`, or
+`inherits(x, c("numeric", "integer"))` is thus redundant.
 
 ## Usage
 
@@ -48,6 +52,22 @@ lint(
 #> <text>:1:1: warning: [is_numeric_linter] Use is.numeric(x) instead of class(x) %in% c("integer", "numeric"). Use is.double(x) to test for objects stored as 64-bit floating point.
 #> class(z) %in% c("numeric", "integer")
 #> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+lint(
+  text = 'typeof(z) %in% c("double", "integer")',
+  linters = is_numeric_linter()
+)
+#> <text>:1:1: warning: [is_numeric_linter] Use is.numeric(x) instead of typeof(x) %in% c("integer", "double"). Use is.double(x) to test for objects stored as 64-bit floating point.
+#> typeof(z) %in% c("double", "integer")
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+lint(
+  text = 'inherits(z, c("numeric", "integer"))',
+  linters = is_numeric_linter()
+)
+#> <text>:1:1: warning: [is_numeric_linter] Use is.numeric(x) instead of inherits(x, c("integer", "numeric")). Use is.double(x) to test for objects stored as 64-bit floating point.
+#> inherits(z, c("numeric", "integer"))
+#> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # okay
 lint(
