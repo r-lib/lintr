@@ -11,7 +11,7 @@
 * `lint(..., cache = TRUE)` now accounts for whether the input ends with a terminal newline, avoiding stale cache hits for `trailing_blank_lines_linter()` when a terminal newline is added or removed (REditorSupport/languageserver#772, @MichaelChirico).
 * `lint()` reports a syntax error for R code whose parse error has a symbol as its call, such as `x |> f`, instead of failing with `object of type 'symbol' is not subsettable` (#3038, @taekop).
 * `object_usage_linter()` reports the location of the offending call rather than the start of the pipeline or outer expression for call-level warnings like `unused argument` (#1936, @MichaelChirico).
-* `find_package()` returns `NULL` when given an empty path `""`, avoiding errors in `object_name_linter()` and `object_length_linter()` when `lint("", text = ...)` is called (#3032, @MichaelChirico).
+* `object_name_linter()`, `object_length_linter()`, and `namespace_linter()` no longer fail when `lint("", text = ...)` is called with an empty `filename` (#3032, @MichaelChirico).
 
 ## New and improved features
 
