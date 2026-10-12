@@ -34,6 +34,7 @@
 * For [`air`](https://github.com/posit-dev/air) formatter compatibility, `line_length_linter()`:
    + Gains argument `allow_alignment_calls` (defaulting to `c("tribble", "rowwiseDT")`) to ignore line length inside tabular alignment calls (#3133, @randy3k).
    + Gains argument `allow_long_test_names` (defaulting to `TRUE`) to ignore line length on `testthat::test_that()` descriptions (#3134, @MichaelChirico).
+* `paste_linter()` flags `paste(x, sep = ..., collapse = ...)` with a single input where `sep=` has no effect (#3077, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 

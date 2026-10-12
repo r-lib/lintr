@@ -367,3 +367,17 @@ test_that("deparse1 recommendation vectorizes and coexists with the paste0(colla
     linter
   )
 })
+
+test_that("paste(x, sep=..., collapse=...) with a single input is caught (#3077)", {
+  linter <- paste_linter()
+  lint_msg <- rex::rex("sep= has no effect in paste() when collapsing a single input with collapse=.")
+
+  expect_no_lint("paste(x, y, sep = '.', collapse = ',')", linter)
+  expect_no_lint("paste(..., sep = '.', collapse = ',')", linter)
+  expect_no_lint("x |> paste(y, sep = '.', collapse = ',')", linter)
+
+  expect_lint("paste(x, sep = '.', collapse = ',')", lint_msg, linter)
+  expect_lint("paste(deparse(x), collapse = ' ', sep = '.')", lint_msg, linter)
+  expect_lint("x |> paste(sep = '.', collapse = ',')", lint_msg, linter)
+  expect_lint("x %>% paste(sep = '.', collapse = ',')", lint_msg, linter)
+})

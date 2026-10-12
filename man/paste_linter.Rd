@@ -46,6 +46,8 @@ but those aren't as easily translated from a \code{paste(collapse=)} call.
 \item Block usage of \code{paste()} or \code{paste0()} to collapse the output of \code{\link[base:deparse]{base::deparse()}}, e.g.
 \code{paste(deparse(x), collapse = " ")}. \code{\link[base:deparse1]{base::deparse1()}} is a more readable equivalent,
 i.e. \code{deparse1(x)}.
+\item Block usage of \code{paste()} supplying both \verb{sep=} and \verb{collapse=} with a single input vector,
+e.g. \code{paste(x, sep = ".", collapse = ",")}, where \verb{sep=} has no effect.
 }
 }
 \examples{
