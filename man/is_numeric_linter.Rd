@@ -8,7 +8,8 @@ is_numeric_linter()
 }
 \description{
 \code{\link[=is.numeric]{is.numeric()}} returns \code{TRUE} when \code{typeof(x)} is \code{double} or \code{integer} --
-testing \code{is.numeric(x) || is.integer(x)} is thus redundant.
+testing \code{is.numeric(x) || is.integer(x)}, \code{is.numeric(x) || is.double(x)}, or
+\code{is.double(x) || is.integer(x)} is thus redundant.
 }
 \details{
 NB: This linter plays well with \code{\link[=class_equals_linter]{class_equals_linter()}}, which can help
