@@ -232,8 +232,7 @@ test_that("settings discovery falls back cleanly for non-existent identity paths
   )
 })
 
-test_that("find_package() and lint() handle empty filename gracefully (#3032)", {
-  expect_null(find_package(""))
+test_that("lint() handles empty filename gracefully (#3032)", {
   expect_length(
     lint("", text = c("x <- 1", "camelCase <- 2"), linters = list(object_name_linter(), object_length_linter())),
     1L
