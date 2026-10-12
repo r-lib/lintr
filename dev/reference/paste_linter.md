@@ -45,6 +45,11 @@ for which can be de-activated optionally):
     [`base::deparse1()`](https://rdrr.io/r/base/deparse.html) is a more
     readable equivalent, i.e. `deparse1(x)`.
 
+6.  Block usage of [`paste()`](https://rdrr.io/r/base/paste.html)
+    supplying both `sep=` and `collapse=` with a single input vector,
+    e.g. `paste(x, sep = ".", collapse = ",")`, where `sep=` has no
+    effect.
+
 ## Usage
 
 ``` r

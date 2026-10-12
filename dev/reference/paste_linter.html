@@ -17,6 +17,8 @@ but those aren't as easily translated from a paste(collapse=) call.
 Block usage of paste() or paste0() to collapse the output of base::deparse(), e.g.
 paste(deparse(x), collapse = &quot; &quot;). base::deparse1() is a more readable equivalent,
 i.e. deparse1(x).
+Block usage of paste() supplying both sep= and collapse= with a single input vector,
+e.g. paste(x, sep = &quot;.&quot;, collapse = &quot;,&quot;), where sep= has no effect.
 
 "><meta property="og:description" content="The following issues are linted by default by this linter
 (see arguments for which can be de-activated optionally):
@@ -36,6 +38,8 @@ but those aren't as easily translated from a paste(collapse=) call.
 Block usage of paste() or paste0() to collapse the output of base::deparse(), e.g.
 paste(deparse(x), collapse = &quot; &quot;). base::deparse1() is a more readable equivalent,
 i.e. deparse1(x).
+Block usage of paste() supplying both sep= and collapse= with a single input vector,
+e.g. paste(x, sep = &quot;.&quot;, collapse = &quot;,&quot;), where sep= has no effect.
 
 "><meta property="og:image" content="https://lintr.r-lib.org/logo.png"><meta name="robots" content="noindex"><script defer data-domain="lintr.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -107,6 +111,8 @@ but those aren't as easily translated from a <code>paste(collapse=)</code> call.
 <li><p>Block usage of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> or <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code> to collapse the output of <code><a href="https://rdrr.io/r/base/deparse.html" class="external-link">base::deparse()</a></code>, e.g.
 <code>paste(deparse(x), collapse = " ")</code>. <code><a href="https://rdrr.io/r/base/deparse.html" class="external-link">base::deparse1()</a></code> is a more readable equivalent,
 i.e. <code>deparse1(x)</code>.</p></li>
+<li><p>Block usage of <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> supplying both <code>sep=</code> and <code>collapse=</code> with a single input vector,
+e.g. <code>paste(x, sep = ".", collapse = ",")</code>, where <code>sep=</code> has no effect.</p></li>
 </ol></div>
 
     <div class="section level2">
