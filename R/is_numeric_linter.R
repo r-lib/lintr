@@ -34,8 +34,78 @@
 #' @evalRd rd_tags("is_numeric_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
+# nolint next: cyclocomp_linter. Helpers in factory inflate complexity (gaborcsardi/cyclocomp#30).
 is_numeric_linter <- function() {
   # TODO(#2470): Consider usages with class(), typeof(), or inherits().
+
+  is_or_root <- function(node) {
+    parent <- node
+    repeat {
+      parent <- xml_find_first_(parent, "parent::expr")
+      if (is.na(parent)) {
+        return(TRUE)
+      }
+      if (xml_find_lgl_(parent, "boolean(OR2)")) {
+        return(FALSE)
+      }
+      if (!xml_find_lgl_(parent, is_paren_expr_xpath)) {
+        return(TRUE)
+      }
+    }
+  }
+
+  extract_is_numeric_arg <- function(node) {
+    fn <- xml_find_chr_(
+      node,
+      "string(expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.double' or text() = 'is.integer'])"
+    )
+    arg <- if (nzchar(fn)) xml_find_chr_(node, "string(expr[2])") else ""
+    list(fn = fn, arg = arg)
+  }
+
+  lints_from_matching_args <- function(node, left_res, right_res) {
+    if (any(left_res$num_args %in% right_res$int_args) || any(left_res$int_args %in% right_res$num_args)) {
+      return(list("is.numeric(x) || is.integer(x)" = node))
+    }
+    if (any(left_res$dbl_args %in% right_res$int_args) || any(left_res$int_args %in% right_res$dbl_args)) {
+      return(list("is.double(x) || is.integer(x)" = node))
+    }
+    if (any(left_res$num_args %in% right_res$dbl_args) || any(left_res$dbl_args %in% right_res$num_args)) {
+      return(list("is.numeric(x) || is.double(x)" = node))
+    }
+    NULL
+  }
+
+  check_or_tree <- function(node) {
+    node <- unwrap_parens(node)
+
+    if (xml_find_lgl_(node, "boolean(OR2)")) {
+      exprs <- xml_find_all_(node, "expr")
+      left_res <- check_or_tree(exprs[[1L]])
+      right_res <- check_or_tree(exprs[[2L]])
+
+      lints <- c(
+        left_res$lints, right_res$lints,
+        lints_from_matching_args(node, left_res, right_res)
+      )
+
+      return(list(
+        lints = lints,
+        num_args = c(left_res$num_args, right_res$num_args),
+        dbl_args = c(left_res$dbl_args, right_res$dbl_args),
+        int_args = c(left_res$int_args, right_res$int_args)
+      ))
+    }
+
+    leaf_info <- extract_is_numeric_arg(node)
+
+    list(
+      lints = list(),
+      num_args = leaf_info$arg[leaf_info$fn == "is.numeric"],
+      dbl_args = leaf_info$arg[leaf_info$fn == "is.double"],
+      int_args = leaf_info$arg[leaf_info$fn == "is.integer"]
+    )
+  }
 
   # testing class(x) %in% c("numeric", "integer")
   class_xpath <- "
@@ -99,73 +169,4 @@ is_numeric_linter <- function() {
 
     c(or_lints, class_lints)
   })
-}
-
-is_or_root <- function(node) {
-  parent <- node
-  repeat {
-    parent <- xml_find_first_(parent, "parent::expr")
-    if (is.na(parent)) {
-      return(TRUE)
-    }
-    if (xml_find_lgl_(parent, "boolean(OR2)")) {
-      return(FALSE)
-    }
-    if (!xml_find_lgl_(parent, is_paren_expr_xpath)) {
-      return(TRUE)
-    }
-  }
-}
-
-extract_is_numeric_arg <- function(node) {
-  fn <- xml_find_chr_(
-    node,
-    "string(expr[1]/SYMBOL_FUNCTION_CALL[text() = 'is.numeric' or text() = 'is.double' or text() = 'is.integer'])"
-  )
-  arg <- if (nzchar(fn)) xml_find_chr_(node, "string(expr[2])") else ""
-  list(fn = fn, arg = arg)
-}
-
-check_or_tree <- function(node) {
-  node <- unwrap_parens(node)
-
-  if (xml_find_lgl_(node, "boolean(OR2)")) {
-    exprs <- xml_find_all_(node, "expr")
-    left_res <- check_or_tree(exprs[[1L]])
-    right_res <- check_or_tree(exprs[[2L]])
-
-    lints <- c(
-      left_res$lints, right_res$lints,
-      lints_from_matching_args(node, left_res, right_res)
-    )
-
-    return(list(
-      lints = lints,
-      num_args = c(left_res$num_args, right_res$num_args),
-      dbl_args = c(left_res$dbl_args, right_res$dbl_args),
-      int_args = c(left_res$int_args, right_res$int_args)
-    ))
-  }
-
-  leaf_info <- extract_is_numeric_arg(node)
-
-  list(
-    lints = list(),
-    num_args = leaf_info$arg[leaf_info$fn == "is.numeric"],
-    dbl_args = leaf_info$arg[leaf_info$fn == "is.double"],
-    int_args = leaf_info$arg[leaf_info$fn == "is.integer"]
-  )
-}
-
-lints_from_matching_args <- function(node, left_res, right_res) {
-  if (any(left_res$num_args %in% right_res$int_args) || any(left_res$int_args %in% right_res$num_args)) {
-    return(list("is.numeric(x) || is.integer(x)" = node))
-  }
-  if (any(left_res$dbl_args %in% right_res$int_args) || any(left_res$int_args %in% right_res$dbl_args)) {
-    return(list("is.double(x) || is.integer(x)" = node))
-  }
-  if (any(left_res$num_args %in% right_res$dbl_args) || any(left_res$dbl_args %in% right_res$num_args)) {
-    return(list("is.numeric(x) || is.double(x)" = node))
-  }
-  NULL
 }
