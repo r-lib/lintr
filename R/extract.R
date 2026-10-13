@@ -10,13 +10,7 @@ extract_r_source <- function(filename, lines, error = identity) {
   output_env$output <- rep.int(NA_character_, length(lines))
 
   chunks <- tryCatch(get_chunk_positions(pattern = pattern, lines = lines), error = error)
-  if (is_error(chunks) || is_lint(chunks)) {
-    assign("e", chunks, envir = parent.frame())
-    # error, so return empty code
-    return(output_env$output)
-  }
-
-  # no chunks found, so just return the lines
+  # no chunks found (or chunk error), so just return empty code
   if (length(chunks[["starts"]]) == 0L || length(chunks[["ends"]]) == 0L) {
     return(output_env$output)
   }
@@ -25,15 +19,24 @@ extract_r_source <- function(filename, lines, error = identity) {
     function(start, end, indent) {
       line_seq <- seq(start + 1L, end - 1L)
       chunk_code <- lines[line_seq]
-      output_env$output[line_seq] <- if (indent > 0L) substr(chunk_code, indent + 1L, nchar(chunk_code)) else chunk_code
+      if (indent > 0L) {
+        chunk_code <- substr(chunk_code, indent + 1L, nchar(chunk_code))
+      }
+      output_env$output[line_seq] <- strip_chunk_prefix(chunk_code, pattern$chunk.code)
     },
     chunks[["starts"]],
     chunks[["ends"]],
     chunks[["indents"]]
   )
-  # drop <<chunk>> references, too
-  is.na(output_env$output) <- grep(pattern$ref.chunk, output_env$output)
-  replace_prefix(output_env$output, pattern$chunk.code)
+  # drop <<chunk>> references, too (tex's ref.chunk `^%+\s*<<(.+)>>\s*$` assumes '%' wasn't stripped)
+  ref_chunk <- sub(R"(^\^%\+)", R"(^\\s*)", pattern$ref.chunk)
+  is.na(output_env$output) <- grep(ref_chunk, output_env$output)
+  # only put this attribute if it's needed to reduce noise to the user
+  #   in the vast majority of cases where this is not needed
+  if (!is.null(pattern$chunk.code) || any(chunks[["indents"]] > 0L)) {
+    attr(output_env$output, "has_prefix") <- TRUE
+  }
+  output_env$output
 }
 
 get_knitr_pattern <- function(filename, lines) {
@@ -64,14 +67,19 @@ get_knitr_pattern <- function(filename, lines) {
 }
 
 get_chunk_positions <- function(pattern, lines) {
+  all_starts <- grep(pattern$chunk.begin, lines, perl = TRUE)
   starts <- filter_chunk_start_positions(
-    starts = grep(pattern$chunk.begin, lines, perl = TRUE),
+    starts = all_starts,
     lines = lines,
     pattern = pattern
   )
   ends <- filter_chunk_end_positions(
     starts = starts,
-    ends = grep(pattern$chunk.end, lines, perl = TRUE)
+    ends = c(
+      grep(pattern$chunk.end, lines, perl = TRUE),
+      # In Sweave (.Rnw), a code chunk can also be ended by starting the next code chunk (#2619).
+      if (identical(pattern, knitr::all_patterns$rnw)) all_starts[-1L]
+    )
   )
   # only keep those blocks that contain at least one line of code
   nonempty_keep <- which(ends - starts > 1L)
@@ -106,31 +114,26 @@ filter_chunk_start_positions <- function(starts, lines, pattern) {
 }
 
 filter_chunk_end_positions <- function(starts, ends) {
-  # In a valid file, possibly with plain-code-blocks,
-  # - there should be at least as many ends as starts
   # In Rmarkdown and Quarto, unevaluated blocks may open & close with the same ``` pattern
-  # that defines the end-pattern for an evaluated block
+  # that defines the end-pattern for an evaluated block; in .Rnw, standalone '@' lines or
+  # non-R chunk starts may also appear in 'ends'.
 
   # This returns the first end-position that succeeds each start-position
   # starts (1, 3, 5, 7,        11)  --> (1, 3, 5, 7, 11)
   # ends   (2, 4, 6, 8, 9, 10, 12)  --> (2, 4, 6, 8, 12) # return this
-  length_difference <- length(ends) - length(starts)
-  if (length_difference == 0L && all(ends > starts)) {
-    return(ends)
-  }
-
-  positions <- sort(c(starts = starts, ends = ends))
+  # Place 'ends' before 'starts' so that in .Rnw, where a chunk start also ends
+  #   a preceding chunk at the same line number, stable sort() keeps 'ends' before 'starts'.
+  positions <- sort(c(ends = ends, starts = starts))
   code_start_indexes <- grep("starts", names(positions), fixed = TRUE)
 
   code_ends <- positions[pmin(1L + code_start_indexes, length(positions))]
 
   bad_end_indexes <- grep("starts", names(code_ends), fixed = TRUE)
   if (length(bad_end_indexes) > 0L) {
-    bad_start_positions <- positions[code_start_indexes[bad_end_indexes]]
     # This error message is formatted like a parse error; don't use {cli}
     stop(sprintf( # nolint: undesirable_function_call_linter.
       "<rmd>:%1$d:1: Missing chunk end for chunk (maybe starting at line %1$d).\n",
-      bad_start_positions[1L]
+      starts[bad_end_indexes[1L]]
     ), call. = FALSE)
   }
 
@@ -182,7 +185,7 @@ is_eval_chunk <- function(start, end, lines, pattern) {
   params_src <- trimws(gsub(pattern$chunk.begin, "\\1", header))
   header_params <- safe_csv_options(params_src)
 
-  code <- lines[(start + 1L):(end - 1L)]
+  code <- strip_chunk_prefix(lines[(start + 1L):(end - 1L)], pattern$chunk.code)
   body_params <- tryCatch(
     suppressMessages(suppressWarnings(xfun::divide_chunk("r", code)))$options,
     error = \(e) NULL
@@ -201,16 +204,19 @@ is_eval_chunk <- function(start, end, lines, pattern) {
   !isFALSE(eval_value)
 }
 
-replace_prefix <- function(lines, prefix_pattern) {
+# cf. knitr:::strip_block
+strip_chunk_prefix <- function(chunk_code, prefix_pattern) {
   if (is.null(prefix_pattern)) {
-    return(lines)
+    return(chunk_code)
   }
-
-  m <- gregexpr(prefix_pattern, lines)
-  non_na <- !is.na(m)
-
-  prefix_lengths <- lapply(regmatches(lines[non_na], m[non_na]), nchar)
-  regmatches(lines[non_na], m[non_na]) <- lapply(prefix_lengths, strrep, x = " ")
-
-  lines
+  chunk_code <- sub(prefix_pattern, "", chunk_code)
+  non_blank <- grep("\\S", chunk_code)
+  if (length(non_blank) == 0L) {
+    return(chunk_code)
+  }
+  spaces <- min(attr(regexpr("^ *", chunk_code[non_blank]), "match.length"))
+  if (spaces == 0L) {
+    return(chunk_code)
+  }
+  substr(chunk_code, spaces + 1L, nchar(chunk_code))
 }

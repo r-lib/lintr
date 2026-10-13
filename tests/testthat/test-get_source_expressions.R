@@ -210,6 +210,34 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
   })
 })
 
+test_that("tokens >= 1000 chars give the right text values (#2848)", {
+  with_content_to_parse(
+    sprintf('"%s"', strrep("x", 1000L)),
+    expect_identical(pc[[1L]][1L, "text"], content)
+  )
+
+  # col2 - col1 == 27 matches nchar("[1028 chars quoted with '\"']") - 1L (#2848)
+  with_content_to_parse(
+    paste0('"', strrep("x", 500L), "\n", strrep("x", 500L), "\n", strrep("x", 27L), '"'),
+    expect_identical(pc[[1L]][1L, "text"], content)
+  )
+
+  # backticked SYMBOL* and SLOT tokens >= 1000 chars (PR#19204 / r90660)
+  with_content_to_parse(
+    sprintf(
+      "`%1$s` <- `%1$s`::`%1$s`(`%1$s` = '%1$s', . = function(`%1$s`) 0, .. = .@`%1$s`)",
+      strrep("a", 1200L)
+    ),
+    {
+      long_idx <- nchar(pc[[1L]]$text) > 1000L
+      expect_identical(
+        pc[[1L]]$token[long_idx],
+        c("SYMBOL", "SYMBOL_PACKAGE", "SYMBOL_FUNCTION_CALL", "SYMBOL_SUB", "STR_CONST", "SYMBOL_FORMALS", "SLOT")
+      )
+    }
+  )
+})
+
 test_that("returned data structure is complete", {
   lines <- c("line_1", "line_2", "line_3")
   temp_file <- withr::local_tempfile(lines = lines)
@@ -314,6 +342,41 @@ test_that("xml_find_function_calls works as intended", {
     exprs$expressions[[5L]]$xml_find_function_calls(NULL, keep_names = TRUE, include_s4_slots = TRUE),
     c("foo", "foo", "bar", "baz")
   )
+
+  # backticked calls/slots (syntactic and non-syntactic) and setter calls are resolved in cache names
+  backtick_file <- withr::local_tempfile(lines = c(
+    "`foo`(1)",
+    "`+`(1, 2)",
+    "`%in%`(x, y)",
+    "s4Obj@`baz`()",
+    "s4Obj@`a b`()",
+    "foo(x) <- 1",
+    "pkg::bar(x) <<- 2",
+    "baz(x) = 3",
+    "4 -> qux(x)",
+    "`foo bar`(x) <- 1",
+    "foo(bar(x)) <- 1",
+    "s4Obj@`a b`(x) <- 1",
+    "foo(x) := 1"
+  ))
+  backtick_expr <- get_source_expressions(backtick_file)$expressions[[14L]]
+  expect_named(
+    backtick_expr$xml_find_function_calls(NULL, keep_names = TRUE),
+    c("foo", "+", "%in%", "foo<-", "bar<-", "baz<-", "qux<-", "foo bar<-", "foo<-", "bar", "foo")
+  )
+  expect_named(
+    backtick_expr$xml_find_function_calls(NULL, keep_names = TRUE, include_s4_slots = TRUE),
+    c("foo", "+", "%in%", "foo<-", "bar<-", "baz<-", "qux<-", "foo bar<-", "foo<-", "bar", "foo", "baz", "a b", "a b<-")
+  )
+  expect_length(backtick_expr$xml_find_function_calls("+"), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("%in%"), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("a b", include_s4_slots = TRUE), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("a b<-", include_s4_slots = TRUE), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("foo"), 2L)
+  expect_length(backtick_expr$xml_find_function_calls("foo<-"), 2L)
+  expect_length(backtick_expr$xml_find_function_calls("bar"), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("bar<-"), 1L)
+  expect_length(backtick_expr$xml_find_function_calls("foo bar<-"), 1L)
 })
 
 test_that("#1262: xml_parsed_content gets returned as missing even if there's no parsed_content", {
@@ -367,7 +430,9 @@ test_that("Syntax errors in Rmd or qmd don't choke lintr", {
     "}",
     "```"
   ))
-  expect_silent(get_source_expressions(tmp))
+  expect_silent(
+    expect_null(attr(get_source_expressions(tmp)$lines, "has_prefix"))
+  )
 })
 
 test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
@@ -394,11 +459,23 @@ test_that("Indented Rmd chunks don't cause spurious whitespace lints", {
   ))
 
   parsed_lines <- get_source_expressions(tmp)$lines
+  expect_true(attr(parsed_lines, "has_prefix"))
   expect_identical(parsed_lines[4L], '"properly indented"', ignore_attr = "names")
   expect_identical(parsed_lines[10L], '  "improperly indented"', ignore_attr = "names")
   expect_identical(parsed_lines[16L], '"leftmost code"', ignore_attr = "names")
   expect_identical(parsed_lines[17L], ' "further right"', ignore_attr = "names")
   expect_identical(parsed_lines[18L], '  "aligned with code gate"', ignore_attr = "names")
+
+  indent_msg <- "Indentation should be 0 spaces but is"
+  expect_lint(
+    file = tmp,
+    checks = list(
+      list(paste(indent_msg, "2 spaces."), line_number = 10L, column_number = 2L, ranges = list(c(1L, 2L))),
+      list(paste(indent_msg, "1 spaces."), line_number = 17L, column_number = 2L, ranges = list(c(2L, 2L))),
+      list(paste(indent_msg, "2 spaces."), line_number = 18L, column_number = 3L, ranges = list(c(2L, 3L)))
+    ),
+    linters = indentation_linter()
+  )
 })
 
 test_that("Reference chunks in Sweave/Rmd are ignored", {
@@ -406,6 +483,34 @@ test_that("Reference chunks in Sweave/Rmd are ignored", {
   # ensure such a chunk continues to exist upstream
   expect_true(any(grepl("^\\s*<<[^>]*>>\\s*$", readLines(example_rnw))))
   expect_silent(lint(example_rnw))
+})
+
+test_that("Rtex chunk prefixes don't cause spurious whitespace lints (#1043)", {
+  tmp <- withr::local_tempfile(
+    fileext = ".Rtex",
+    lines = c(
+      "%% begin.rcode",
+      "% a <- 1",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "%   b <- function(x) {",
+      "%     x + 1",
+      "%   }",
+      "%",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "unprefixed <- 2",
+      "%% end.rcode"
+    )
+  )
+  parsed_lines <- get_source_expressions(tmp)$lines
+  expect_identical(parsed_lines[2L], "a <- 1", ignore_attr = "names")
+  expect_identical(
+    parsed_lines[5L:8L],
+    c("b <- function(x) {", "  x + 1", "}", ""),
+    ignore_attr = "names"
+  )
+  expect_identical(parsed_lines[11L], "unprefixed <- 2", ignore_attr = "names")
 })
 
 # NB: this is just a cursory test for linters not to

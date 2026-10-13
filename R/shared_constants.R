@@ -259,10 +259,10 @@ object_name_xpath <- local({
   "))
 })
 
-# Remove quotes or other things from names
+# Remove operator markers (%...%, ...<-) from already-unquoted names
 strip_names <- function(x) {
-  x <- re_substitutes(x, rex(start, some_of(quote, "`", "%")), "")
-  x <- re_substitutes(x, rex(some_of(quote, "`", "<", "-", "%"), end), "")
+  x <- re_substitutes(x, rex(start, some_of("%")), "")
+  x <- re_substitutes(x, rex(some_of("<", "-", "%"), end), "")
   x
 }
 

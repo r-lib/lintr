@@ -5,7 +5,7 @@
 \title{Missing argument linter}
 \usage{
 missing_argument_linter(
-  except = c("alist", "quote", "switch"),
+  except = c("alist", "quote", "rowwiseDT", "switch"),
   allow_trailing = FALSE
 )
 }

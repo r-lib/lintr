@@ -10,7 +10,8 @@ unnecessary_nesting_linter(
     "expression", "bquote", "substitute", "with_parameters_test_that", "reactive",
     "observe", "observeEvent", "renderCachedPlot", "renderDataTable", "renderImage",
     "renderPlot", "renderPrint", "renderTable", "renderText", "renderUI"),
-  branch_exit_calls = character()
+  branch_exit_calls = character(),
+  branch_exit_fallback_calls = character()
 )
 }
 \arguments{
@@ -33,6 +34,13 @@ as "exiting" a branch for the purpose of recommending removing nesting in a bran
 \emph{lacking} an exit call when the other branch terminates with one. Calls which
 always interrupt or quit the current call or R session,
 e.g. \code{\link[=stop]{stop()}} and \code{\link[=q]{q()}}, are always included.}
+
+\item{branch_exit_fallback_calls}{Character vector of functions which prevent
+a lint on a branch when the other branch terminates with an exit call
+(either a default exit call or one in \code{branch_exit_calls}). Unlike
+\code{branch_exit_calls}, calls in \code{branch_exit_fallback_calls} (such as
+\code{\link[=warning]{warning()}} or \code{\link[=message]{message()}}) do not trigger a lint on their own when paired
+with a branch lacking an exit call.}
 }
 \description{
 Excessive nesting harms readability. Use helper functions or early returns
@@ -87,6 +95,14 @@ lint(
   linters = unnecessary_nesting_linter()
 )
 
+# custom exit functions can be registered via branch_exit_calls
+code <- "if (x > 4) {\n  my_stop('too big')\n} else {\n  y <- x\n}"
+writeLines(code)
+lint(
+  text = code,
+  linters = unnecessary_nesting_linter(branch_exit_calls = "my_stop")
+)
+
 # okay
 code <- "if (A) {\n  stop('A is bad because a.')\n} else {\n  stop('!A is bad too.')\n}"
 writeLines(code)
@@ -139,7 +155,7 @@ code <- paste(
 writeLines(code)
 lint(
   text = code,
-  linters = unnecessary_nesting_linter(branch_exit_calls = c("stop", "warning"))
+  linters = unnecessary_nesting_linter(branch_exit_fallback_calls = "warning")
 )
 
 }

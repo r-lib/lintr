@@ -82,9 +82,11 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   ")
 
   Linter(linter_level = "file", function(source_expression) {
-    pkg_name <- pkg_name(find_package(dirname(source_expression$filename)))
+    pkg_path <- find_package(dirname(source_expression$filename))
+    pkg_name <- pkg_name(pkg_path)
 
     declared_globals <- try_silently(globalVariables(package = pkg_name %||% globalenv()))
+    if (is_error(declared_globals)) declared_globals <- character()
 
     xml <- source_expression$full_xml_parsed_content
 
@@ -98,7 +100,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
     }
 
     # run the following at run-time, not "compile" time to allow package structure to change
-    env <- make_check_env(pkg_name, xml, library_lint_hook)
+    env <- make_check_env(pkg_path, pkg_name, xml, library_lint_hook)
 
     fun_assignments <- xml_find_all_(xml, xpath_function_assignment)
 
@@ -115,7 +117,7 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
       ))
 
       # nocov start
-      if (inherits(fun, "try-error")) {
+      if (is_error(fun)) {
         cli_abort_internal("Invalid code reached in object_usage_linter: {code}\nPlease report.")
       }
       # nocov end
@@ -173,14 +175,23 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
   })
 }
 
-make_check_env <- function(pkg_name, xml, library_lint_hook) {
+make_check_env <- function(pkg_path, pkg_name, xml, library_lint_hook) {
   if (!is.null(pkg_name)) {
     parent_env <- try_silently(getNamespace(pkg_name))
   }
-  if (is.null(pkg_name) || inherits(parent_env, "try-error")) {
+  if (is.null(pkg_name) || is_error(parent_env)) {
     parent_env <- globalenv()
   }
   env <- new.env(parent = parent_env)
+
+  ns_imports <- namespace_imports(pkg_path)
+  for (i in seq_len(nrow(ns_imports))) {
+    fun <- ns_imports$fun[i]
+    if (!exists(fun, envir = parent_env, inherits = FALSE)) {
+      val <- get0(fun, envir = asNamespace(ns_imports$pkg[i]), ifnotfound = \(...) invisible())
+      assign(fun, val, envir = env)
+    }
+  }
 
   symbols <- c(
     get_assignment_symbols(xml),
@@ -234,7 +245,19 @@ parse_check_usage <- function(expression,
                               skip_with = TRUE) {
   vals <- get_check_usage_results(expression, known_used_symbols, declared_globals, skip_with)
 
-  function_name <- rex(anything, ": ")
+  error_or_warning_prefix <- rex(
+    or("possible error", "warning"), " in ",
+    capture(name = "call_name", except_some_of("(")), "(", anything, "): "
+  )
+  # Use or() rather than maybe(error_or_warning_prefix): because `anything` is greedy and
+  # `error_or_warning_prefix` also ends in ": ", `rex(anything, ": ", maybe(error_or_warning_prefix))`
+  # would greedily swallow `error_or_warning_prefix` into `anything` and leave `call_name` empty.
+  function_name <- rex(
+    or(
+      rex(anything, ": ", error_or_warning_prefix),
+      rex(anything, ": ")
+    )
+  )
   line_info <- rex(
     " ", "(", capture(name = "path", non_spaces), ":",
     capture(name = "line1", digits), maybe("-", capture(name = "line2", digits)), ")"
@@ -257,6 +280,9 @@ parse_check_usage <- function(expression,
       or(line_info, end)
     )
   )
+
+  use_call_name <- nzchar(res$call_name)
+  res$name[use_call_name] <- gsub("^`|`$", "", res$call_name[use_call_name])
 
   res$line1 <- ifelse(
     nzchar(res$line1),
@@ -293,7 +319,7 @@ get_imported_symbols <- function(xml, library_lint_hook) {
 
   # nolint next: undesirable_function_name_linter.
   unlist(Map(pkg = imported_pkgs, expr = xml_parent(import_exprs), function(pkg, expr) {
-    tryCatch(
+    pkg_exports <- tryCatch(
       getNamespaceExports(pkg),
       error = function(e) {
         lib_paths <- .libPaths() # nolint: undesirable_function_name. .libPaths() is necessary here.
@@ -303,10 +329,31 @@ get_imported_symbols <- function(xml, library_lint_hook) {
           toString(shQuote(lib_paths)), " (", conditionMessage(e), "). This may lead to false positives."
         )
         library_lint_hook(expr, lint_msg)
-        character()
+        NULL
       }
     )
+    if (is.null(pkg_exports)) {
+      return(character())
+    }
+    seen <- pkg
+    queue <- get_pkg_depends(pkg)
+    while (length(queue) > 0L) {
+      dep <- queue[1L]
+      seen <- c(seen, dep)
+      pkg_exports <- c(pkg_exports, tryCatch(getNamespaceExports(dep), error = \(e) character()))
+      queue <- unique(c(queue[-1L], setdiff(get_pkg_depends(dep), seen)))
+    }
+    pkg_exports
   }))
+}
+
+get_pkg_depends <- function(pkg) {
+  depends <- utils::packageDescription(pkg, fields = "Depends")
+  db <- cbind(Package = pkg, Depends = depends)
+  pkg |>
+    tools::package_dependencies(db = db, which = "Depends") |>
+    unlist() |>
+    setdiff("base")
 }
 
 known_used_symbols <- function(fun_assignment, interpret_extensions) {

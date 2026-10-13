@@ -145,6 +145,45 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
     rex::rex("Pass foo directly as a symbol to sapply()"),
     linter
   )
+
+  # multi-argument lambdas (#2477)
+  expect_lint(
+    "lapply(x, function(xi, y) foo(xi, y), y)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "lapply(x, \\(xi, y) foo(xi, y = y), y = 1)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "lapply(x, \\(xi, ...) foo(xi, ...), y = 1)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "mapply(function(xi, yi) foo(xi, yi, na.rm = TRUE), x, y)",
+    rex::rex("Pass foo directly as a symbol to mapply()"),
+    linter
+  )
+  # swapped positional arguments
+  expect_no_lint("mapply(function(xi, yi) foo(yi, xi), x, y)", linter)
+  # passed 'y' is discarded, which may or may not be necessary
+  expect_no_lint("mapply(function(xi, yi) foo(xi), x, y)", linter)
+  expect_no_lint("outer(x, y, function(xi, yi) foo(xi))", linter)
+  expect_no_lint("purrr::map2(x, y, function(xi, yi) foo(xi))", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y))", linter)
+  # foo(xi, y=y) guarantees foo has a formal 'y', but here it's passed positionally,
+  #   so this lambda _could_ be a redirect e.g. if foo's second parameter is 'b'
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y), y = 1)", linter)
+  # y= might not be second argument so lambda required to pass it as keyword
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y = y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y, z) foo(xi, y + z), y, z)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, bar = y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, bar = y), y = 1)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y, y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y = 1) foo(xi, y))", linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
@@ -172,11 +211,22 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
 test_that("unnecessary_lambda_linter blocks other comparators as well", {
   linter <- unnecessary_lambda_linter()
   linter_allow <- unnecessary_lambda_linter(allow_comparison = TRUE)
-  lint_msg <- rex::rex("Compare to a constant after calling sapply() to get")
 
-  expect_lint("sapply(x, function(xi) foo(xi) >= 2)", lint_msg, linter)
-  expect_lint("sapply(x, function(xi) foo(xi) != 'a')", lint_msg, linter)
-  expect_lint("sapply(x, function(xi) foo(xi) < 1 + 2i)", lint_msg, linter)
+  expect_lint(
+    "sapply(x, function(xi) foo(xi) >= 2)",
+    rex::rex("Compare to a constant after calling sapply() to get", anything, "Prefer sapply(x, foo) >= 2"),
+    linter
+  )
+  expect_lint(
+    "sapply(x, function(xi) foo(xi) != 'a')",
+    rex::rex("Compare to a constant after calling sapply() to get", anything, "Prefer sapply(x, foo) != 'a'"),
+    linter
+  )
+  expect_lint(
+    "sapply(x, function(xi) foo(xi) < 1 + 2i)",
+    rex::rex("Compare to a constant after calling sapply() to get", anything, "Prefer sapply(x, foo) < 1+2i"),
+    linter
+  )
 
   expect_no_lint("sapply(x, function(xi) foo(xi) >= 2)", linter_allow)
   expect_no_lint("sapply(x, function(xi) foo(xi) != 'a')", linter_allow)
@@ -346,8 +396,8 @@ test_that("lints vectorize", {
       vapply(y, function(yi) bar(yi) == 1, logical(1L))
     }"),
     list(
-      list(rex::rex("sapply(x, foo)"), line_number = 2L),
-      list(rex::rex("vapply(x, foo, FUN.VALUE = <intermediate>)"), line_number = 3L)
+      list(rex::rex("sapply(x, foo) == 2"), line_number = 2L),
+      list(rex::rex("vapply(x, bar, FUN.VALUE = <intermediate>) == 1"), line_number = 3L)
     ),
     linter
   )

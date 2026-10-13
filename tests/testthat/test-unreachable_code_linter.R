@@ -340,7 +340,7 @@ test_that("unreachable_code_linter finds unreachable comments", {
   )
 })
 
-test_that("unreachable_code_linter finds expressions in the same line", { # nofuzz: comment_injection
+test_that("unreachable_code_linter finds expressions in the same line", {
   msg <- rex::rex("Remove code and comments coming after return()")
   linter <- unreachable_code_linter()
 

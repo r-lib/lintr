@@ -68,7 +68,7 @@ test_that("returns the correct linting", {
     linter
   )
 
-  expect_lint( # nofuzz: comment_injection
+  expect_lint(
     trim_some("
       fun <- function() {
         a2 <- 1
@@ -325,6 +325,41 @@ test_that("package detection works", {
   )
 })
 
+test_that("lints files of a package that is not installed, respecting NAMESPACE (#2957)", { # nofuzz
+  pkg_dir <- withr::local_tempdir()
+  writeLines(c("Package: lintrNotInstalledPkg", "Version: 0.0.1"), file.path(pkg_dir, "DESCRIPTION"))
+  writeLines(
+    c(
+      "importFrom(xml2, read_xml)",
+      "importFrom(tools, file_path_sans_ext, Adobe_glyphs)"
+    ),
+    file.path(pkg_dir, "NAMESPACE")
+  )
+  dir.create(file.path(pkg_dir, "R"))
+  r_file <- file.path(pkg_dir, "R", "foo.R")
+  writeLines(
+    c(
+      "foo <- function(x) {",
+      "  doc <- read_xml(x)",
+      "  ext <- file_path_sans_ext(Adobe_glyphs$unicode, bogus_arg = 1)",
+      "  Adobe_glyphs(ext)",
+      "  undefined_global(doc)",
+      "}"
+    ),
+    r_file
+  )
+
+  expect_lint(
+    file = r_file,
+    checks = list(
+      list(rex::rex("unused argument (bogus_arg = 1)"), line_number = 3L),
+      list("no visible global function definition for 'Adobe_glyphs'", line_number = 4L),
+      list("no visible global function definition for 'undefined_global'", line_number = 5L)
+    ),
+    linters = object_usage_linter()
+  )
+})
+
 test_that("robust against errors", {
   expect_no_lint(
     'assign("x", unknown_function)',
@@ -578,6 +613,37 @@ test_that("package imports are detected if present in file", {
       dog <- function(url) {
         a <- read_xml(url)
         a
+      }
+    "),
+    object_usage_linter()
+  )
+})
+
+test_that("transitive Depends of attached packages are detected (#2695)", {
+  skip_if_not_installed("mgcv")
+  skip_if_not_installed("nlme")
+  skip_if(
+    any(c("package:mgcv", "package:nlme") %in% search()),
+    "Test should be run in a clean session without mgcv or nlme attached"
+  )
+  skip_if_not(
+    grepl("nlme", utils::packageDescription("mgcv", fields = "Depends"), fixed = TRUE) &&
+      "lme" %in% getNamespaceExports("nlme"),
+    "Test assumes {mgcv} Depends on {nlme}, which exports 'lme()'"
+  )
+
+  expect_lint(
+    "foo <- function(x) lme(x)",
+    rex::rex("no visible global function definition for 'lme'"),
+    object_usage_linter()
+  )
+
+  expect_no_lint(
+    trim_some("
+      library(mgcv)
+
+      foo <- function(x) {
+        lme(x)
       }
     "),
     object_usage_linter()
@@ -877,6 +943,19 @@ test_that("globals in scripts are found regardless of assignment operator", {
     "),
     linter
   )
+
+  expect_no_lint(
+    trim_some("
+      `%my_op%` <- function(x, y) x + y
+      `my_setter<-` <- function(x, value) x
+
+      foo <- function(x) {
+        my_setter(x) <- 1
+        x %my_op% 2
+      }
+    "),
+    linter
+  )
 })
 
 test_that("dplyr's .env-specified objects are marked as 'used'", {
@@ -889,12 +968,14 @@ test_that("dplyr's .env-specified objects are marked as 'used'", {
       foo <- function(df) {
         source <- 1
         target <- 2
-        unused <- 3
+        `a b` <- 3
+        unused <- 4
 
         df %>%
           dplyr::mutate(
             from = rlang::.env$source,
-            to = rlang::.env[['target']]
+            to = rlang::.env[['target']],
+            ab = rlang::.env$`a b`
           )
       }
     "),
@@ -911,5 +992,55 @@ test_that("interpret_glue is defunct", {
   expect_error(
     object_usage_linter(interpret_glue = TRUE),
     rex::rex("interpret_glue", anything, "deprecated")
+  )
+})
+
+test_that("call-level warnings get accurate location metadata (#1936)", {
+  linter <- object_usage_linter()
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        x |>
+          exp(xxx = 'days')
+      }
+    "),
+    list(
+      message = rex::rex('unused argument (xxx = "days")'),
+      line_number = 3L,
+      column_number = 5L
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        x |>
+          exp(xxx = 'days') |>
+          identity()
+      }
+    "),
+    list(
+      message = rex::rex('unused argument (xxx = "days")'),
+      line_number = 3L,
+      column_number = 5L
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        x |>
+          transform(y = as.POSIXct(exp(x, units = 'days')))
+      }
+    "),
+    list(
+      message = rex::rex('unused argument (units = "days")'),
+      line_number = 3L,
+      column_number = 30L
+    ),
+    linter
   )
 })

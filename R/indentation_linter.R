@@ -136,6 +136,16 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     never = \(change) "block"
   )
 
+  xp_has_nested_block <- xp_or(paste0("descendant::", paren_tokens_left, "[", xp_last_on_line, "]"))
+
+  xp_cond_same_line_paren <- glue("
+    parent::expr/@line1 = ancestor::expr[
+      parent::expr[IF or WHILE]
+      and following-sibling::OP-RIGHT-PAREN
+      and not({xp_has_nested_block})
+    ]/preceding-sibling::OP-LEFT-PAREN/@line1
+  ")
+
   if (isTRUE(assignment_as_infix)) {
     suppressing_tokens <- c("LEFT_ASSIGN", "EQ_ASSIGN", "EQ_SUB", "EQ_FORMALS")
     xp_suppress <- glue("preceding-sibling::{suppressing_tokens}[{xp_last_on_line}]")
@@ -166,7 +176,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
               or self::SLOT[parent::expr/following-sibling::OP-LEFT-PAREN]
             ]
             /parent::expr
-            /following-sibling::expr[1]
+            /following-sibling::OP-RIGHT-PAREN
             /@line2
         "),
         glue("
@@ -192,10 +202,10 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
       glue("//{paren_tokens_left}[not(
         @line1 = following-sibling::expr[
           @line2 > @line1 and
-          ({xp_or(paste0('descendant::', paren_tokens_left, '[', xp_last_on_line, ']'))})
+          ({xp_has_nested_block})
         ]/@line1
       )]"),
-      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition}]"),
+      glue("({ global_nodes(infix_tokens) })[{xp_last_on_line}{infix_condition} and not({xp_cond_same_line_paren})]"),
       glue("({ global_nodes(no_paren_keywords) })[{xp_last_on_line}]"),
       glue("
         ({ global_nodes(keyword_tokens) })
@@ -225,6 +235,11 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
     change_begins <- as.integer(xml_attr_(indent_changes, "line1")) + 1L
     change_ends <- xml_find_num_(indent_changes, xp_block_ends)
     col2s <- as.integer(xml_attr_(indent_changes, "col2"))
+    is_paren_block <- change_types == "block" & change_tags %in% paren_tokens_left_no_brace
+    is_paren_block[is_paren_block] <- xml_find_lgl_(
+      indent_changes[is_paren_block],
+      sprintf("not(parent::expr[IF or WHILE]) and %s", xp_last_on_line)
+    )
 
     check_idx <- which(change_begins <= change_ends)
 
@@ -254,8 +269,7 @@ indentation_linter <- function(indent = 2L, hanging_indent_style = c("tidy", "al
         hanging_indent = col2s[ii]
       )
       line_metadata$is_hanging[to_indent] <- change_types[ii] == "hanging"
-      is_paren_block <- change_types[ii] == "block" && change_tags[ii] %in% paren_tokens_left_no_brace
-      line_metadata$hanging_cols[to_indent] <- if (is_paren_block) col2s[ii] else 0L
+      line_metadata$hanging_cols[to_indent] <- if (is_paren_block[ii]) col2s[ii] else 0L
     }
 
     # Only lint non-empty lines if the indentation level doesn't match.
@@ -352,9 +366,10 @@ indent_lint_metadata <- function(line_metadata) {
 }
 
 build_indentation_style_tidy <- function() {
-  paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_left_no_brace <- c("OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  paren_tokens_left <- c("OP-LEFT-BRACE", paren_tokens_left_no_brace)
   paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
-  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
+  xp_arg_on_same_line <- "@line1 = following-sibling::*[not(self::COMMENT)][1]/@line1"
   xp_inner_expr <- "preceding-sibling::*[1][self::expr and expr[SYMBOL_FUNCTION_CALL]]/*[not(self::COMMENT)]"
 
   xp_suppress <- sprintf("boolean(%s)", paste(
@@ -367,22 +382,19 @@ build_indentation_style_tidy <- function() {
     collapse = " | "
   ))
 
-  xp_is_hanging <- sprintf("not(%s)", paste(
-    c(
-      glue("
-        self::{paren_tokens_left}
-          /following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
-      "),
-      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]"),
-      glue("self::{paren_tokens_left}[parent::expr[FUNCTION or OP-LAMBDA] and {xp_last_on_line}]")
-    ),
-    collapse = "\n|  "
-  ))
+  xp_is_hanging <- glue("
+    {xp_arg_on_same_line}
+    and not(parent::expr[IF or WHILE])
+    and following-sibling::*[self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACKET][1][
+      @line1 = preceding-sibling::*[1]/@line2
+    ]
+  ")
 
   function(change) {
-    if (xml_find_lgl_(change, xp_suppress)) {
+    tag <- xml_name_(change)
+    if (tag %in% paren_tokens_left && xml_find_lgl_(change, xp_suppress)) {
       "suppress"
-    } else if (xml_find_lgl_(change, xp_is_hanging)) {
+    } else if (tag %in% paren_tokens_left_no_brace && xml_find_lgl_(change, xp_is_hanging)) {
       "hanging"
     } else {
       "block"
@@ -391,23 +403,18 @@ build_indentation_style_tidy <- function() {
 }
 
 build_indentation_style_always <- function() {
-  paren_tokens_left <- c("OP-LEFT-BRACE", "OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
-  paren_tokens_right <- c("OP-RIGHT-BRACE", "OP-RIGHT-PAREN", "OP-RIGHT-BRACKET", "OP-RIGHT-BRACKET")
-  xp_last_on_line <- "@line1 != following-sibling::*[not(self::COMMENT)][1]/@line1"
+  paren_tokens_left_no_brace <- c("OP-LEFT-PAREN", "OP-LEFT-BRACKET", "LBB")
+  xp_arg_on_same_line <- "@line1 = following-sibling::*[not(self::COMMENT)][1]/@line1"
 
-  xp_is_hanging <- sprintf("not(%s)", paste(
-    c(
-      glue("
-        self::{paren_tokens_left}[{xp_last_on_line}]/
-          following-sibling::{paren_tokens_right}[@line1 > preceding-sibling::*[1]/@line2]
-      "),
-      glue("self::*[{xp_and(paste0('not(self::', paren_tokens_left, ')'))} and {xp_last_on_line}]")
-    ),
-    collapse = " | "
-  ))
+  xp_is_hanging <- glue("
+    {xp_arg_on_same_line}
+    or following-sibling::*[self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACKET][1][
+      @line1 = preceding-sibling::*[1]/@line2
+    ]
+  ")
 
   function(change) {
-    if (xml_find_lgl_(change, xp_is_hanging)) {
+    if (xml_name_(change) %in% paren_tokens_left_no_brace && xml_find_lgl_(change, xp_is_hanging)) {
       "hanging"
     } else {
       "block"

@@ -33,6 +33,14 @@ test_that("namespace_linter can work with backticked symbols", {
   expect_lint("rlang::`%>%`", "'%>%' is not exported from {rlang}.", linter)
   expect_lint("rlang::'%>%'()", "'%>%' is not exported from {rlang}.", linter)
   expect_lint('rlang::"%>%"()', "'%>%' is not exported from {rlang}.", linter)
+
+  # Setter calls check `foo<-` rather than `foo`
+  expect_no_lint("base::.rowNamesDF(df) <- c('x', 'y')", linter)
+  expect_no_lint("base::`.rowNamesDF`(df) <- c('x', 'y')", linter)
+  expect_no_lint('base::".rowNamesDF"(df) <- c("x", "y")', linter)
+  expect_lint("base::.rowNamesDF(df)", "'.rowNamesDF' is not exported from {base}.", linter)
+  expect_lint("base::mean(df) <- 1", "'mean<-' is not exported from {base}.", linter)
+  expect_lint("1 -> base::mean(df)", "'mean<-' is not exported from {base}.", linter)
 })
 
 test_that("namespace_linter blocks disallowed usages", {
@@ -143,6 +151,31 @@ test_that("namespace_linter works with backticked symbols", { # nofuzz
   expect_lint(
     file = test_file,
     checks = rex::rex("Don't use `::` to access %||%, which is already imported from rlang."),
+    linters = namespace_linter()
+  )
+})
+
+test_that("namespace_linter respects except= in import() directives", { # nofuzz
+  pkg_dir <- withr::local_tempdir("testpkg_except")
+  dir.create(file.path(pkg_dir, "R"))
+  writeLines(
+    c("Package: testpkg_except", "Version: 1.0.0", "Title: Test", "Description: Test."),
+    file.path(pkg_dir, "DESCRIPTION")
+  )
+  writeLines("import(stats, except = sd)", file.path(pkg_dir, "NAMESPACE"))
+
+  test_file <- file.path(pkg_dir, "R", "test.R")
+  writeLines(
+    c(
+      "stats::median(1:10)",
+      "stats::sd(1:10) # excluded from the import"
+    ),
+    test_file
+  )
+
+  expect_lint(
+    file = test_file,
+    checks = list(rex::rex("Don't use `::` to access median, which is already imported from stats."), line_number = 1L),
     linters = namespace_linter()
   )
 })

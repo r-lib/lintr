@@ -4,6 +4,13 @@ expect_no_lint_linter <- make_linter_from_xpath(
     /parent::expr[expr[3][NULL_CONST]]",
   "Use expect_no_lint() to test for the lack of lints"
 )
+is_error_linter <- make_linter_from_xpath(
+  "//SYMBOL_FUNCTION_CALL[text() = 'inherits']
+    /parent::expr
+    /following-sibling::expr
+    //STR_CONST[contains(text(), 'error')]",
+  "Use is_error to test for an error object"
+)
 linters <- all_linters(
   backport_linter("4.1.0", except = "%||%"),
   line_length_linter(120L),
@@ -50,6 +57,7 @@ linters <- all_linters(
   ),
   unnecessary_concatenation_linter(allow_single_expression = FALSE),
   expect_no_lint_linter(),
+  is_error_linter(),
   absolute_path_linter = NULL,
   library_call_linter = NULL,
   nonportable_path_linter = NULL,
@@ -59,7 +67,7 @@ linters <- all_linters(
   # exclude; we use customized version above
   undesirable_function_linter = NULL
 )
-rm(expect_no_lint_linter)
+rm(expect_no_lint_linter, is_error_linter)
 
 exclusions <- list(
   `inst/doc/creating_linters.R` = 1L,

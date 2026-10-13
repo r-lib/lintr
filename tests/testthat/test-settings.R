@@ -231,3 +231,15 @@ test_that("settings discovery falls back cleanly for non-existent identity paths
     0L
   )
 })
+
+test_that("lint() handles empty filename gracefully (#3032)", {
+  expect_length(
+    lint(
+      "",
+      text = c("x <- 1", "camelCase <- 2"),
+      parse_settings = TRUE,
+      linters = list(object_name_linter(), object_length_linter())
+    ),
+    1L
+  )
+})

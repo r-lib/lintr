@@ -116,9 +116,7 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
     assignments <- xml_find_all_(xml, object_name_xpath)
 
     # Retrieve assigned name
-    nms <- strip_names(
-      xml_text(assignments)
-    )
+    nms <- get_r_string(assignments)
 
     # run namespace_imports at run-time, not "compile" time to allow package structure to change
     pkg <- find_package(source_expression$filename)
@@ -146,10 +144,11 @@ object_name_linter <- function(styles = c("snake_case", "symbols"), regexes = ch
 }
 
 check_style <- function(nms, style, generics = character()) {
-  conforming <- re_matches_logical(nms, style)
+  nms_stripped <- strip_names(nms)
+  conforming <- re_matches_logical(nms_stripped, style)
 
   # mark empty or NA names as conforming
-  conforming <- is.na(nms) | !nzchar(nms) | conforming
+  conforming <- is.na(nms_stripped) | !nzchar(nms_stripped) | conforming
 
   if (!all(conforming)) {
     possible_s3 <- re_matches(
@@ -163,7 +162,7 @@ check_style <- function(nms, style, generics = character()) {
       conforming[!conforming][has_generic] <- TRUE
     }
     # exclude namespace hooks like .onLoad, .Last.lib, etc (#500) and ...
-    is_special <- is_special_function(nms[!conforming]) | nms[!conforming] == "..."
+    is_special <- is_special_function(nms_stripped[!conforming]) | nms_stripped[!conforming] == "..."
     conforming[!conforming][is_special] <- TRUE
   }
   conforming

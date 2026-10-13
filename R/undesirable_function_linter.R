@@ -11,6 +11,8 @@
 #'   A generic message that the named function is undesirable is used if no
 #'     specific description is provided.
 #'   Input can also be a list of character strings for convenience.
+#'   Setter functions (like `foo(x) <- y`) are distinguished from plain calls (`foo(x)`),
+#'   and must be specified with `"<-"` (e.g. `"foo<-"`).
 #'
 #'   Defaults to [default_undesirable_functions]. To make small customizations to this list,
 #'   use [modify_defaults()].
@@ -41,7 +43,6 @@
 #'   text = 'dir <- "path/to/a/directory"',
 #'   linters = undesirable_function_linter(fun = c("dir" = NA))
 #' )
-#'
 #'
 #' lint(
 #'   text = 'dir <- "path/to/a/directory"',
@@ -83,14 +84,15 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     cli_abort("{.arg fun} must be a non-empty character vector.")
   }
 
-  nm <- names2(fun)
-  implicit_idx <- !nzchar(nm)
+  implicit_idx <- !nzchar(names2(fun))
   if (any(implicit_idx)) {
     names(fun)[implicit_idx] <- fun[implicit_idx]
     is.na(fun) <- implicit_idx
   }
-  if (anyNA(names(fun))) {
-    missing_idx <- which(is.na(names(fun))) # nolint: object_usage_linter. False positive.
+  names(fun) <- gsub("^`|`$", "", names(fun))
+  fun_names <- names(fun)
+  if (anyNA(fun_names)) {
+    missing_idx <- which(is.na(fun_names)) # nolint: object_usage_linter. False positive.
     cli_abort(paste(
       "Unnamed elements of {.arg fun} must not be missing,",
       "but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}."
@@ -107,23 +109,30 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   )
 
   if (symbol_is_undesirable) {
-    symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(names(fun))}) and {xp_condition}]")
+    needs_backticks <- make.names(fun_names) != fun_names
+    symbol_names <- fun_names
+    symbol_names[needs_backticks] <- sprintf("`%s`", symbol_names[needs_backticks])
+    symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(symbol_names)}) and {xp_condition}]")
   }
-  xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition}]")
+  call_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition}]")
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    xml_calls <- source_expression$xml_find_function_calls(names(fun))
+    xml_calls <- source_expression$xml_find_function_calls(fun_names, keep_names = TRUE)
 
-    matched_nodes <- xml_find_all_(xml_calls, xpath)
+    matched_call_nodes <- xml_find_first_(xml_calls, call_xpath)
+    matched_call_nodes <- matched_call_nodes[!is.na(matched_call_nodes)]
+    matched_nodes <- unname(matched_call_nodes)
+    matched_fun <- names(matched_call_nodes)
+
     if (symbol_is_undesirable) {
-      matched_nodes <- combine_nodesets(matched_nodes, xml_find_all_(xml, symbol_xpath))
+      symbol_nodes <- xml_find_all_(xml, symbol_xpath)
+      matched_nodes <- combine_nodesets(matched_nodes, symbol_nodes)
+      matched_fun <- c(matched_fun, get_r_string(symbol_nodes))
     }
 
-    fun_names <- get_r_string(matched_nodes)
-
     msgs <- vapply(
-      stats::setNames(nm = unique(fun_names)),
+      stats::setNames(nm = unique(matched_fun)),
       function(fun_name) {
         msg <- sprintf('Avoid undesirable function "%s".', fun_name)
         alternative <- fun[[fun_name]]
@@ -138,7 +147,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     xml_nodes_to_lints(
       matched_nodes,
       source_expression = source_expression,
-      lint_message = unname(msgs[fun_names])
+      lint_message = unname(msgs[matched_fun])
     )
   })
 }

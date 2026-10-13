@@ -49,3 +49,23 @@ test_that("returns the correct linting", {
   expect_lint('fun(""=42)', msg_zero_length_var)
   expect_lint('fun(a=1,""=42)', msg_zero_length_var)
 })
+
+test_that("parse errors whose call is a symbol are reported as lints", {
+  msg_pipe_rhs <- rex::rex("The pipe operator requires a function call as RHS")
+  linter <- equals_na_linter()
+  expect_lint("x |> f", msg_pipe_rhs, linter)
+  expect_lint("data |> filter(id > 3) |> summary", msg_pipe_rhs, linter)
+})
+
+test_that("parse errors whose call is a symbol report the right line", {
+  skip_unless_r(">= 4.3.0")
+
+  expect_lint(
+    trim_some("
+      x |> f()
+      y |> g
+    "),
+    list("The pipe operator requires a function call as RHS", line_number = 2L),
+    equals_na_linter()
+  )
+})

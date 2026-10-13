@@ -59,6 +59,35 @@ test_that("it handles Sweave", {
     linters = default_linters,
     parse_settings = FALSE
   )
+
+  # Adjacent code chunks without intervening '@' and multiple '@' doc chunks (#2619)
+  expect_lint(
+    trim_some("
+      <<chunk-1>>=
+      bad_code = 1
+      <<chunk-2>>=
+      another_bad = 2
+      <<py-chunk, engine='python'>>=
+      a = [1, 2]
+      <<empty-chunk>>=
+      <<eval=FALSE>>=
+      skipped_bad = 3
+      @ % comment on doc chunk
+      @
+      <<chunk-3>>=
+      final_bad = 4
+      @
+    "),
+    list(
+      list(regexes[["assign"]], line_number = 2L, column_number = 10L),
+      list(regexes[["assign"]], line_number = 4L, column_number = 13L),
+      list(regexes[["assign"]], line_number = 13L, column_number = 11L)
+    ),
+    assignment_linter()
+  )
+
+  sweave_test_rnw <- system.file("Sweave", "Sweave-test-1.Rnw", package = "utils")
+  expect_no_lint(file = sweave_test_rnw, linters = assignment_linter())
 })
 
 test_that("it handles reStructuredText", {
@@ -72,6 +101,24 @@ test_that("it handles reStructuredText", {
     ),
     linters = default_linters,
     parse_settings = FALSE
+  )
+
+  # Prefixed code lines in .Rrst
+  expect_lint(
+    trim_some("
+      .. {r}
+      .. b <- function(x) {
+      ..   d = 1
+      .. }
+      ..
+      .. ..
+    "),
+    list(
+      list(regexes[["local_var"]], line_number = 3L, column_number = 6L),
+      list(regexes[["assign"]], line_number = 3L, column_number = 8L),
+      list(regexes[["trailing"]], line_number = 5L, column_number = 3L)
+    ),
+    default_linters
   )
 })
 
@@ -93,16 +140,63 @@ test_that("it handles tex", {
   expect_lint(
     file = test_path("knitr_formats", "test.Rtex"),
     checks = list(
-      list(regexes[["indent"]], line_number = 11L),
-      list(regexes[["assign"]], line_number = 11L),
-      list(regexes[["indent"]], line_number = 22L),
-      list(regexes[["local_var"]], line_number = 23L),
-      list(regexes[["assign"]], line_number = 23L),
-      list(regexes[["trailing"]], line_number = 25L),
-      list(regexes[["trailws"]], line_number = 25L)
+      list(regexes[["assign"]], line_number = 11L, column_number = 5L),
+      list(regexes[["local_var"]], line_number = 23L, column_number = 5L),
+      list(regexes[["assign"]], line_number = 23L, column_number = 7L),
+      list(regexes[["trailing"]], line_number = 25L, column_number = 2L)
     ),
     linters = default_linters,
     parse_settings = FALSE
+  )
+
+  # Genuine whitespace lints, #| eval: false, <<ref>> chunks, and varying prefixes in .Rtex (#1043)
+  expect_lint(
+    c(
+      "%% begin.rcode",
+      "unprefixed = 1",
+      "%% end.rcode",
+      "  %% begin.rcode",
+      "  % <<indented_ref_chunk>>",
+      "  % z <- 1",
+      "  %% end.rcode",
+      "%% begin.rcode",
+      "% <<other_chunk>>",
+      "%   y <- 1",
+      "% ",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "%   wide_margin = 1",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "% x <- 1",
+      "%% double_pct = 2",
+      "  % leading_ws = 3",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "% #| eval: false",
+      "% bad = 1",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "%",
+      "%% end.rcode",
+      "%% begin.rcode",
+      "% b <- function(x) {",
+      "%    x + 1",
+      "% }",
+      "%   ",
+      "%% end.rcode"
+    ),
+    list(
+      list(regexes[["assign"]], line_number = 2L, column_number = 12L, ranges = list(c(12L, 12L))),
+      list(regexes[["indent"]], line_number = 10L, column_number = 4L, ranges = list(c(3L, 4L))),
+      list(regexes[["assign"]], line_number = 14L, column_number = 17L, ranges = list(c(17L, 17L))),
+      list(regexes[["assign"]], line_number = 18L, column_number = 15L, ranges = list(c(15L, 15L))),
+      list(regexes[["assign"]], line_number = 19L, column_number = 16L, ranges = list(c(16L, 16L))),
+      list(regexes[["indent"]], line_number = 30L, column_number = 5L, ranges = list(c(5L, 5L))),
+      list(regexes[["trailing"]], line_number = 32L, column_number = 3L),
+      list(regexes[["trailws"]], line_number = 32L, column_number = 3L, ranges = list(c(3L, 4L)))
+    ),
+    default_linters
   )
 })
 
@@ -117,6 +211,24 @@ test_that("it handles asciidoc", {
     ),
     linters = default_linters,
     parse_settings = FALSE
+  )
+
+  # Prefixed code lines in .Rtxt
+  expect_lint(
+    trim_some("
+      //begin.rcode
+      // b <- function(x) {
+      //   d = 1
+      // }
+      //
+      //end.rcode
+    "),
+    list(
+      list(regexes[["local_var"]], line_number = 3L, column_number = 6L),
+      list(regexes[["assign"]], line_number = 3L, column_number = 8L),
+      list(regexes[["trailing"]], line_number = 5L, column_number = 3L)
+    ),
+    default_linters
   )
 })
 
@@ -137,7 +249,7 @@ test_that("it does _not_ error with inline \\Sexpr", {
   )
 })
 
-test_that("it does lint .Rmd or .qmd file with malformed input", {
+test_that("it does lint .Rmd, .qmd, or .Rnw file with malformed input", {
   expect_lint(
     file = test_path("knitr_malformed", "incomplete_r_block.Rmd"),
     checks = "Missing chunk end",
@@ -178,6 +290,15 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
     trim_some("
       ```{r chunk-1}
       code <- 42
+
+      ```{r chunk-2}
+      some_more_code <- 42
+      ```
+      ```
+    "),
+    trim_some("
+      ```{r chunk-1}
+      code <- 42
       ```
 
       # A heading
@@ -185,13 +306,21 @@ test_that("it does lint .Rmd or .qmd file with malformed input", {
 
       ```{r chunk-2}
       some_more_code <- 42
+    "),
+    trim_some("
+      <<chunk-1>>=
+      code <- 42
+      <<chunk-2>>=
+      some_more_code <- 42
     ")
   )
 
   expected <- list(
     NULL, # This test case would require parsing all chunk fences, not just r chunks.
-    "maybe starting at line 1",
-    "maybe starting at line 8"
+    list("maybe starting at line 1", line_number = 1L, type = "error"),
+    list("maybe starting at line 1", line_number = 1L, type = "error"),
+    list("maybe starting at line 8", line_number = 8L, type = "error"),
+    list("maybe starting at line 3", line_number = 3L, type = "error")
   )
 
   for (i in seq_along(contents)) {

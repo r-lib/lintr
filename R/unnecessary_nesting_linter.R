@@ -20,6 +20,12 @@
 #'   _lacking_ an exit call when the other branch terminates with one. Calls which
 #'   always interrupt or quit the current call or R session,
 #'   e.g. [stop()] and [q()], are always included.
+#' @param branch_exit_fallback_calls Character vector of functions which prevent
+#'   a lint on a branch when the other branch terminates with an exit call
+#'   (either a default exit call or one in `branch_exit_calls`). Unlike
+#'   `branch_exit_calls`, calls in `branch_exit_fallback_calls` (such as
+#'   [warning()] or [message()]) do not trigger a lint on their own when paired
+#'   with a branch lacking an exit call.
 #' @examples
 #' # will produce lints
 #' code <- "if (A) {\n  stop('A is bad!')\n} else {\n  do_good()\n}"
@@ -67,6 +73,14 @@
 #' lint(
 #'   text = code,
 #'   linters = unnecessary_nesting_linter()
+#' )
+#'
+#' # custom exit functions can be registered via branch_exit_calls
+#' code <- "if (x > 4) {\n  my_stop('too big')\n} else {\n  y <- x\n}"
+#' writeLines(code)
+#' lint(
+#'   text = code,
+#'   linters = unnecessary_nesting_linter(branch_exit_calls = "my_stop")
 #' )
 #'
 #' # okay
@@ -121,7 +135,7 @@
 #' writeLines(code)
 #' lint(
 #'   text = code,
-#'   linters = unnecessary_nesting_linter(branch_exit_calls = c("stop", "warning"))
+#'   linters = unnecessary_nesting_linter(branch_exit_fallback_calls = "warning")
 #' )
 #'
 #' @evalRd rd_tags("unnecessary_nesting_linter")
@@ -140,7 +154,8 @@ unnecessary_nesting_linter <- function(
     "renderCachedPlot", "renderDataTable", "renderImage", "renderPlot",
     "renderPrint", "renderTable", "renderText", "renderUI"
   ),
-  branch_exit_calls = character()
+  branch_exit_calls = character(),
+  branch_exit_fallback_calls = character()
 ) {
   default_branch_exit_calls <- c("stop", "return", "abort", "quit", "q")
   branch_exit_calls <- union(default_branch_exit_calls, branch_exit_calls)
@@ -148,6 +163,7 @@ unnecessary_nesting_linter <- function(
   exit_call_expr <- glue("
     expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(branch_exit_calls)}]]
   ")
+  branch_exit_or_fallback_calls <- union(branch_exit_calls, branch_exit_fallback_calls)
   # block IF here for cases where a nested if/else is entirely within
   #   one of the branches.
   no_exit_call_expr <- glue("
@@ -156,7 +172,7 @@ unnecessary_nesting_linter <- function(
     and expr[
       position() = last()
       and not(IF)
-      and not(expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(branch_exit_calls)}]])
+      and not(expr[SYMBOL_FUNCTION_CALL[{xp_text_in_table(branch_exit_or_fallback_calls)}]])
     ]
   ]")
   # condition for ELSE should be redundant, but include for robustness

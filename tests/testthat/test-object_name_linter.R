@@ -88,9 +88,21 @@ test_that("linter ignores some objects", {
   expect_no_lint(".First <- function(...) TRUE", object_name_linter("snake_case")) # namespace hooks
   expect_no_lint("`%++%` <- `+`", object_name_linter("symbols")) # all-symbol operator
   expect_no_lint("`%<-%` <- `+`", object_name_linter("symbols")) # all-symbol operator #495
-  # S3 group generic, #1841
+  # S3 group generic, #1841, #2851
   expect_no_lint(
     "`==.snake_case` <- function(a, b) unclass(a) == unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`%/%.snake_case` <- function(a, b) unclass(a) %/% unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`%%.CamelCase` <- function(a, b) unclass(a) %% unclass(b)",
+    object_name_linter("snake_case")
+  )
+  expect_no_lint(
+    "`names<-.snake_case` <- function(x, value) x",
     object_name_linter("snake_case")
   )
 })
@@ -196,6 +208,9 @@ test_that("assignment targets of compound lhs are correctly identified", {
   expect_lint("'badName' <- 42", lint_msg, linter)
   expect_no_lint("`good_name` <- 42", linter)
   expect_lint("`badName` <- 42", lint_msg, linter)
+  expect_no_lint('R"(good_name)" <- 42', linter)
+  expect_lint('R"(badName)" <- 42', lint_msg, linter)
+  expect_lint("`good_name'` <- 42", lint_msg, linter)
 
   # subsetting with quotation
   expect_no_lint("good_name$\"badName\" <- 42", linter)
@@ -211,6 +226,23 @@ test_that("object_name_linter won't fail if an imported namespace is unavailable
     lint_package(test_path("dummy_packages", "missing_dep"), linters = object_name_linter(), parse_settings = FALSE),
     3L
   )
+})
+
+test_that("object_name_linter distinguishes different importFrom subsets from the same package", { # nofuzz
+  pkg1 <- withr::local_tempdir("pkg1")
+  dir.create(file.path(pkg1, "R"))
+  write.dcf(list(Package = "pkg1", Version = "1.0.0"), file.path(pkg1, "DESCRIPTION"))
+  writeLines("importFrom(stats, sd)", file.path(pkg1, "NAMESPACE"))
+  writeLines("simulate.my_class <- function(object, nsim = 1, seed = NULL, ...) NULL", file.path(pkg1, "R", "a.R"))
+
+  pkg2 <- withr::local_tempdir("pkg2")
+  dir.create(file.path(pkg2, "R"))
+  write.dcf(list(Package = "pkg2", Version = "1.0.0"), file.path(pkg2, "DESCRIPTION"))
+  writeLines("importFrom(stats, simulate)", file.path(pkg2, "NAMESPACE"))
+  writeLines("simulate.my_class <- function(object, nsim = 1, seed = NULL, ...) NULL", file.path(pkg2, "R", "a.R"))
+
+  expect_length(lint_package(pkg1, linters = object_name_linter(), parse_settings = FALSE), 1L)
+  expect_length(lint_package(pkg2, linters = object_name_linter(), parse_settings = FALSE), 0L)
 })
 
 test_that("object_name_linter supports custom regexes", {
@@ -355,7 +387,7 @@ test_that("literals in assign() and setGeneric() are checked", {
   )
 })
 
-test_that("generics assigned with '=' or <<- are registered", {
+test_that("generics assigned with '=' or <<- or backticks or quotes are registered", {
   linter <- object_name_linter()
 
   expect_no_lint(
@@ -366,8 +398,20 @@ test_that("generics assigned with '=' or <<- are registered", {
       g <<- function(x) {
         UseMethod('f')
       }
+      `%my_op%` <- function(x, y) {
+        UseMethod('%my_op%')
+      }
+      '%my_other_op%' <- function(x, y) {
+        UseMethod('%my_other_op%')
+      }
+      `my_setter<-` <- function(x, value) {
+        UseMethod('my_setter<-')
+      }
       f.default <- function(x) {}
       g.default <- function(x) {}
+      `%my_op%.my_class` <- function(x, y) {}
+      '%my_other_op%.my_class' <- function(x, y) {}
+      `my_setter<-.my_class` <- function(x, value) {}
     "),
     linter
   )

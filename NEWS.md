@@ -6,13 +6,26 @@
 
 ## Bug fixes
 
+* `get_source_expressions()`:
+   + `get_source_expressions()` supports adjacent Sweave (`.Rnw`) code chunks (`<<...>>=`) without an intervening `@` documentation chunk (#2619, @MichaelChirico).
+   + avoids spurious whitespace lints like `indentation_linter()` in chunks with leading prefixes/whitespace (such as `%` in `.Rtex`, `..` in `.Rrst`, and `//` in `.Rtxt`; #1043, @MichaelChirico).
+   + no longer truncates backticked symbols/slots of 1000 or more characters or multiline strings of 1000 or more characters when the column difference between the last and first line equals 27, avoiding `unexpected '['` errors in linters inspecting string or symbol text (#2848, @MichaelChirico).
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
+* `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
+* `lint(..., cache = TRUE)` now accounts for whether the input ends with a terminal newline, avoiding stale cache hits for `trailing_blank_lines_linter()` when a terminal newline is added or removed (REditorSupport/languageserver#772, @MichaelChirico).
+* `lint()` reports a syntax error for R code whose parse error has a symbol as its call, such as `x |> f`, instead of failing with `object of type 'symbol' is not subsettable` (#3038, @taekop).
+* `object_usage_linter()` reports the location of the offending call rather than the start of the pipeline or outer expression for call-level warnings like `unused argument` (#1936, @MichaelChirico).
+* `object_name_linter()`, `object_length_linter()`, and `namespace_linter()` no longer fail when `lint("", text = ...)` is called with an empty `filename` (#3032, @MichaelChirico).
 
 ## New and improved features
 
-* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, @atusy).
+* `lint()`:
+   + gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content (including whether it ends with a terminal newline, e.g. `"x <- 1\n"` or `c("x <- 1", "")` vs. `"x <- 1"`), so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, REditorSupport/languageserver#772, @atusy and @MichaelChirico).
+   + retains the correct `column_number` for lints found in indented .Rmd/.qmd chunks so that IDEs can land the cursor correctly (continuing #1949, @MichaelChirico).
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
+* `get_r_string()` (and by extension `xml_find_function_calls()` in `get_source_expressions()`) now unquotes backtick-quoted symbols and slots (`SYMBOL*` and `SLOT` nodes) in addition to string constants (`STR_CONST`; #3156, @MichaelChirico).
+* `xml_find_function_calls()` (in `get_source_expressions()`) now resolves replacement function calls (e.g. `foo(x) <- y` and `x@bar(y) <- z` are indexed as `"foo<-"` and `"bar<-"`, respectively; #3157, @MichaelChirico).
 
 ### New linters
 
@@ -24,21 +37,56 @@
 * `class_equals_linter()` blocks checking class membership with `is.element(cls, class(obj))` or `is.element(class(obj), cls)`, matching existing behavior for `class(obj) %in% cls` (#2849, @MichaelChirico).
 * `sprintf_linter()` lints `sprintf()` and `gettextf()` calls with zero or one argument (#2980, @MichaelChirico).
 * `fixed_regex_linter()` encourages using the recent (R 4.6.0) `fixed = TRUE` arguments to `list.files()` and `dir()` (#3003, @MichaelChirico). To avoid depending on a recent R version, the rule for `list.files()` and `dir()` can be disabled by setting `check_file_listing = FALSE`.
+* `unnecessary_nesting_linter()` gains a `branch_exit_fallback_calls` argument to specify functions (such as `"warning"`) that prevent a lint on a sibling branch when the other branch terminates with an exit call (e.g. `if (A) { stop("x") } else { warning("y") }`), without treating those calls as exit clauses themselves (#2963, @randy3k).
+* For [`air`](https://github.com/posit-dev/air) formatter compatibility, `line_length_linter()`:
+   + Gains argument `allow_alignment_calls` (defaulting to `c("tribble", "rowwiseDT")`) to ignore line length inside tabular alignment calls (#3133, @randy3k).
+   + Gains argument `allow_long_test_names` (defaulting to `TRUE`) to ignore line length on `testthat::test_that()` descriptions (#3134, @MichaelChirico).
+* `paste_linter()` flags `paste(x, sep = ..., collapse = ...)` with a single input where `sep=` has no effect (#3077, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false positives
 
+* `object_name_linter()` and `object_length_linter()` properly recognize S3 methods for infix and replacement generics such as `` `%/%.my_class` `` and `` `names<-.my_class` `` (#2851, @MichaelChirico).
 * `unreachable_code_linter()` no longer flags cases like `switch(x, a = stop("invalid value"))` where `stop()` is in a nested call (#3084, @MichaelChirico).
+* `library_call_linter()` no longer flags later `library()` calls when an earlier attach call uses a function in its arguments, e.g. `library(pkg, exclude = c("foo"))` (#3097, @fabiandistler).
+* `object_usage_linter()`:
+   + No longer flags locally defined infix operators (e.g. `` `%my_op%` ``), replacement functions (e.g. `` `my_setter<-` ``), or backtick-quoted `.env$` references (e.g. `` .env$`a b` ``) as unused (#3156, @MichaelChirico).
+   + Recognizes symbols exported by packages in the `Depends` field of `library()`/`require()`-attached packages (#2695, @MichaelChirico).
+   + Respects `NAMESPACE` imports (such as `import()` and `importFrom()`) even when the package being linted is not installed (#2957, @MichaelChirico).
+* `indentation_linter()`:
+   + Better aligns with {styler} and `air` in its handling of multi-line conditional expressions (`if` and `while`) formatted with standard block indentation (#2007 and #2535, @MichaelChirico).
+   + Correctly requires block indentation for multi-line calls where arguments begin on subsequent lines, even when the call terminates with `)` on the same line as the last argument (#2144, @MichaelChirico).
+   + Correctly handles `$` and `@` method chains with zero-argument or multi-argument calls (#2813, @MichaelChirico).
+* `pipe_continuation_linter()` no longer flags outer pipes on the same line as a nested single-line pipeline, e.g. `x |>\n  sapply(\(xi) xi |> f() |> g()) |>\n  h()` (#2631, @MichaelChirico). Use the `nested_pipe_linter()` if linting such nested pipes is still preferable to you.
+* `commented_code_linter()` properly ignores all roxygen comments (`#'`), including those ending with a single quote like `#' foo <- '` (#1908, @MichaelChirico).
+* `undesirable_function_linter()` distinguishes setter calls like `foo(x) <- y` (which invoke `foo<-`) from getter calls `foo(x)` (#1912, @MichaelChirico). Use `undesirable_function_linter(c(foo = NA, `foo<-` = NA))` to lint both.
+* `unused_import_linter()` detects exported operators and functions referenced as backtick-quoted symbols or calls (e.g. ``Reduce(`%>%`, ...)`` or `` `%>%`(x, f) ``) as well as replacement functions (e.g. `body(f) <- value`; #3162, @MichaelChirico).
+* `namespace_linter()` resolves replacement function calls like `pkg::foo(x) <- y` as ``pkg::`foo<-` `` rather than `pkg::foo` (#3161, @MichaelChirico).
+* `missing_argument_linter()` exempts `data.table::rowwiseDT()` by default, where `col =` is used to declare column headers (#2934, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
 * `vector_logic_linter()` again finds `&&`/`||` usage in filtering expressions in function bodies like `\() filter(x, A && B)` (#3082, @MichaelChirico).
-* `seq_linter()` now flags `seq(1, n)` and `seq(from = 1, to = n)` calls, recommending `seq_len()` or `seq_along()` (#2661, @MichaelChirico).
+* `seq_linter()` now flags the following to be replaced with `seq_len()` or `seq_along()`:
+   + `seq(1, n)` and `seq(from = 1, to = n)` (#2661, @MichaelChirico).
+   + `seq(dim(x)[1])` and `seq(.N)` (#1474, @MichaelChirico).
 * `string_boundary_linter()` also recommends `startsWith()` for `substr(s, 0, n)` and `substring(s, 0, n)` (#3029, @fly1d).
-* `is_numeric_linter()` flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
+* `is_numeric_linter()`:
+   + flags redundant `is.numeric(x) || is.integer(x)` checks even when other conditions are part of the `||` chain (#1636, @MichaelChirico).
+   + also flags redundant `is.double(x) || is.integer(x)` and `is.numeric(x) || is.double(x)` checks (#2469, @MichaelChirico).
+   + also flags `typeof(x) %in% c("integer", "double")` and `inherits(x, c("integer", "numeric"))` (#2470, @MichaelChirico).
+* `brace_linter(allow_single_line = TRUE)` still flags opening curly braces placed on their own line (e.g. `while (FALSE)\n{}`) or not followed by a newline when the closing brace is on a different line (#1684, @MichaelChirico).
+* `duplicate_argument_linter()` detects duplicate arguments when a non-syntactic name is passed as both a string and a backticked symbol, e.g. ``fun('a b' = 1, `a b` = 2)`` (#3156, @MichaelChirico).
+* `backport_linter()` detects backtick-quoted calls and symbols (e.g. `` `%||%`(x, y) ``, ``Reduce(`%||%`, x)``) and replacement function calls (e.g. `.rowNamesDF(x) <- value`; #3160, @MichaelChirico).
+* `implicit_assignment_linter(allow_scoped = TRUE)` detects out-of-scope uses of variables assigned via `->` or unparenthesized `<-` following higher-precedence operators like `&&` and `||` (e.g. `if (a <- 1 && b <- 2) ...`; #2918, @MichaelChirico).
+* `unnecessary_lambda_linter()` also flags multi-argument anonymous functions whose formal arguments are forwarded in order to a single inner call, e.g. `lapply(x, \(xi, y) foo(xi, y), y)` or `lapply(x, \(xi, y) foo(xi, y = y), y = 1)` (#2477, @MichaelChirico).
+* `lengths_linter()` also flags `lapply(x, length)` and `purrr::map(x, length)` (#1570, @MichaelChirico).
 
 ## Notes
 
 * `string_boundary_linter()` provides fixed-string replacements in its lint message, recommends `str_starts()`/`str_ends()` with `fixed()` for `{stringr}` calls, and clarifies the reasons for inefficiency (#1333, @MichaelChirico).
+* `sort_linter()` provides a specific replacement for `na.last` in its lint message when `rev(sort(x, na.last = ...))` is called with a literal `TRUE`, `FALSE`, or `NA` (#3068, @MichaelChirico).
+* `unnecessary_lambda_linter()` includes the inner function name, comparator, and constant in its lint message when suggesting a vectorized comparison (#2323, @MichaelChirico).
+* Several internal performance optimizations speed up `get_source_expressions()`, `lint()`, and multi-file runs like `lint_dir()` and `lint_package()` by ~15-25%, including caching package `NAMESPACE` imports and S3 generic lookups across files (#1366, #3111, @MichaelChirico, h/t @dshkol for the `@r-pkg-optimizer` SKILL).
 
 # lintr (3.4.0)
 

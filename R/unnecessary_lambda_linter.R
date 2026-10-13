@@ -111,17 +111,23 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # outline:
   #   1. match one of the identified mappers
   #   2. match an anonymous function that can be "symbol-ized"
-  #     a. it's a one-variable function [TODO(#2477): relax this]
+  #     a. it has at least one formal argument and no default values
   #     b. the function is a single call
-  #     c. that call's _first_ argument is just the function argument (a SYMBOL)
-  #       - and it has to be passed positionally (not as a keyword)
-  #     d. the function argument doesn't appear elsewhere in the call
+  #     c. that call's leading arguments are just the function arguments (SYMBOLs) in order
+  #       - the first argument must be passed positionally; subsequent arguments must match
+  #         how they are passed in the outer call (positional or by matching keyword)
+  #     d. the function arguments don't appear elsewhere in the call
   unary_op <- infix_metadata$xml_tag[infix_metadata$unary]
   default_fun_xpath <- glue("
-  following-sibling::expr[(FUNCTION or OP-LAMBDA) and count(SYMBOL_FORMALS) = 1]
+  following-sibling::expr[
+    (FUNCTION or OP-LAMBDA)
+    and SYMBOL_FORMALS
+    and not(EQ_FORMALS)
+    and count(../expr) - 2 + count(../preceding-sibling::*[self::PIPE or self::SPECIAL]) >=
+      count(SYMBOL_FORMALS[text() != '...'])
+  ]
     /expr[last()][
-      count(.//SYMBOL[self::* = preceding::SYMBOL_FORMALS[1]]) = 1
-      and count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
+      count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
       and not(
         ({ xp_or(unary_op) })
         or (
@@ -129,7 +135,7 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
           and expr[{ xp_or(unary_op) }]
         )
       )
-      and preceding-sibling::SYMBOL_FORMALS =
+      and preceding-sibling::SYMBOL_FORMALS[last()] =
         .//expr[
           position() = 2
           and preceding-sibling::expr/SYMBOL_FUNCTION_CALL
@@ -169,9 +175,37 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   # path to the symbol of the simpler function that avoids a lambda
   symbol_xpath <- "string(expr[last()]//expr[SYMBOL_FUNCTION_CALL[text() != 'return']])"
 
+  has_matching_formals <- function(fun_expr) {
+    formal_args <- get_r_string(xml_find_all_(fun_expr, "SYMBOL_FORMALS"))
+    n_formals <- length(formal_args)
+    all_body_syms <- get_r_string(xml_find_all_(fun_expr, "expr[last()]//SYMBOL"))
+    if (sum(all_body_syms %in% formal_args) != n_formals) {
+      return(FALSE)
+    }
+    if (n_formals == 1L) {
+      return(TRUE)
+    }
+    inner_call <- xml_find_first_(
+      fun_expr,
+      "expr[last()]/descendant-or-self::expr[expr[1]/SYMBOL_FUNCTION_CALL[text() != 'return']]"
+    )
+    first_k <- head(xml_find_all_(inner_call, "expr[position() > 1]"), n_formals)
+    arg_syms <- get_r_string(first_k, "SYMBOL")
+    if (!identical(arg_syms, formal_args)) {
+      return(FALSE)
+    }
+    inner_kw <- get_r_string(
+      first_k,
+      "preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]/preceding-sibling::*[not(self::COMMENT)][1]"
+    )
+    outer_kw <- get_r_string(xml_find_all_(fun_expr, "parent::expr/SYMBOL_SUB"))
+    identical(inner_kw, outer_kw[match(formal_args, outer_kw)])
+  }
+
   Linter(linter_level = "expression", function(source_expression) {
     default_calls <- source_expression$xml_find_function_calls(apply_funs)
     default_fun_expr <- xml_find_all_(default_calls, default_fun_xpath)
+    default_fun_expr <- default_fun_expr[vapply(default_fun_expr, has_matching_formals, logical(1L))]
 
     # TODO(#2478): Give a specific recommendation in the message.
     default_call_fun <- xml_find_chr_(default_fun_expr, fun_xpath)
@@ -194,6 +228,12 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
 
       mapper <- xml_find_chr_(inner_comparison_expr, "string(parent::expr/parent::expr/expr/SYMBOL_FUNCTION_CALL)")
       fun_value <- ifelse(mapper == "sapply", "", ", FUN.VALUE = <intermediate>")
+      inner_fun <- xml_find_chr_(inner_comparison_expr, "string(expr/expr/SYMBOL_FUNCTION_CALL)")
+      comparator <- xml_find_chr_(inner_comparison_expr, "string(*[not(self::expr or self::COMMENT)])")
+      to_compare <- xml_find_chr_(
+        strip_comments_from_subtree(inner_comparison_expr),
+        "string(expr[not(expr/SYMBOL_FUNCTION_CALL)])"
+      )
 
       inner_comparison_lints <- xml_nodes_to_lints(
         inner_comparison_expr,
@@ -201,9 +241,9 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
         lint_message = sprintf(
           paste(
             "Compare to a constant after calling %1$s() to get the full benefits of vectorization.",
-            "Prefer %1$s(x, foo%2$s) == 2 over %1$s(x, function(xi) foo(xi) == 2, logical(1L))."
+            "Prefer %1$s(x, %3$s%2$s) %4$s %5$s over %1$s(x, function(xi) %3$s(xi) %4$s %5$s, logical(1L))."
           ),
-          mapper, fun_value
+          mapper, fun_value, inner_fun, comparator, to_compare
         ),
         type = "warning"
       )

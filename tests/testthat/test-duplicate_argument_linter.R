@@ -16,6 +16,7 @@ test_that("duplicate_argument_linter blocks disallowed usages", {
   expect_lint("fun(arg = 1, arg = 2)", lint_msg, linter)
   expect_lint("fun(arg = 1, 'arg' = 2)", lint_msg, linter)
   expect_lint("fun(arg = 1, `arg` = 2)", lint_msg, linter)
+  expect_lint("fun('a b' = 1, `a b` = 2)", lint_msg, linter)
   expect_lint("'fun'(arg = 1, arg = 2)", lint_msg, linter)
   expect_lint("(function(x, y) x + y)(x = 1, x = 2)", lint_msg, linter)
   expect_lint("dt[i = 1, i = 2]", lint_msg, linter)

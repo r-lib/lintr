@@ -25,8 +25,8 @@
 #'   [default_settings()] are used. `TRUE` by default when linting files, as opposed to `text=`.
 #'   Pass `TRUE` explicitly to discover settings when using `text=` with `filename`.
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
-#'   linting is being done ad hoc. When combined with `filename`, content comes from `text` while
-#'   `filename` provides file identity.
+#'   linting is being done ad hoc. When combined with `filename`, content comes from `text` (with a trailing `"\n"` or
+#'   `""` element indicating a terminal newline) while `filename` provides file identity.
 #'
 #' @return An object of class `c("lints", "list")`, each element of which is a `"list"` object.
 #'
@@ -53,7 +53,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
     on.exit(reset_settings(), add = TRUE)
   }
 
-  lines <- get_lines(filename, text)
+  lines <- get_lines(filename, text, needs_tempfile = needs_tempfile)
 
   if (needs_tempfile) {
     filename <- tempfile()
@@ -76,7 +76,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   cache_path <- define_cache_path(cache)
 
   lint_cache <- load_cache(filename, cache_path)
-  lint_obj <- define_cache_key(filename, inline_data, lines)
+  lint_obj <- define_cache_key(lines)
   lints <- retrieve_file(lint_cache, lint_obj, linters)
   if (!is.null(lints)) {
     return(exclude(lints, lines = lines, linter_names = names(linters), ...))
@@ -87,6 +87,7 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   lints <- lints |>
     maybe_append_condition_lints(source_expressions, lint_cache, filename) |>
     flatten_lints() |>
+    restore_column_numbers(lines, source_expressions$lines) |>
     reorder_lints()
   class(lints) <- c("lints", "list")
 
@@ -104,15 +105,19 @@ lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
     return(list())
   }
 
-  file_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "file")]
-  expression_linter_names <- names(linters)[vapply(linters, is_linter_level, logical(1L), "expression")]
+  expr_linters <- linters[vapply(linters, is_linter_level, logical(1L), "expression")]
+  file_linters <- linters[vapply(linters, is_linter_level, logical(1L), "file")]
 
   lints <- list()
   for (expr in source_expressions$expressions) {
-    for (linter in necessary_linters(expr, expression_linter_names, file_linter_names)) {
+    curr_linters <- if (is_lint_level(expr, "expression")) expr_linters else file_linters
+    curr_names <- names(curr_linters)
+
+    for (j in seq_along(curr_linters)) {
+      linter <- curr_names[j]
       # use withCallingHandlers for friendlier failures on unexpected linter errors
-      lints[[length(lints) + 1L]] <- withCallingHandlers(
-        get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines),
+      res <- withCallingHandlers(
+        get_lints(expr, linter, curr_linters[[j]], lint_cache, source_expressions$lines),
         error = function(cond) {
           cli_abort(
             "Linter {.fn linter} failed in {.file {filename}}:",
@@ -120,6 +125,9 @@ lint_impl_ <- function(linters, lint_cache, filename, source_expressions) {
           )
         }
       )
+      if (length(res) > 0L) {
+        lints[[length(lints) + 1L]] <- res
+      }
     }
   }
 
@@ -364,6 +372,28 @@ validate_linter_object <- function(linter, name) {
     i = "Expected {.fn {name}} to be a function of class {.cls linter}.",
     x = "Instead, it is {.obj_type_friendly {linter}}."
   ))
+}
+
+restore_column_numbers <- function(lints, raw_lines, extracted_lines) {
+  if (length(lints) == 0L || !isTRUE(attr(extracted_lines, "has_prefix", exact = TRUE))) {
+    return(lints)
+  }
+  lapply(lints, function(lint) {
+    l <- lint$line_number
+    extracted_line <- extracted_lines[[l]]
+    if (!is.na(extracted_line)) {
+      raw_line <- raw_lines[[l]]
+      col_offset <- nchar(raw_line) - nchar(extracted_line)
+      if (col_offset > 0L) {
+        lint$line <- raw_line
+        lint$column_number <- lint$column_number + col_offset
+        if (!is.null(lint$ranges)) {
+          lint$ranges <- lapply(lint$ranges, `+`, col_offset)
+        }
+      }
+    }
+    lint
+  })
 }
 
 reorder_lints <- function(lints) {
@@ -774,10 +804,14 @@ maybe_append_condition_lints <- function(lints, source_expression, lint_cache, f
   lints
 }
 
-get_lines <- function(filename, text) {
+get_lines <- function(filename, text, needs_tempfile = FALSE) {
   encoding <- NULL
   if (!is.null(text)) {
-    lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1L]]
+    text <- paste(text, collapse = "\n")
+    lines <- strsplit(text, "\n", fixed = TRUE)[[1L]]
+    if (!needs_tempfile && nzchar(text)) {
+      attr(lines, "terminal_newline") <- endsWith(text, "\n")
+    }
   } else if (re_matches(filename, rex(newline))) {
     lines <- strsplit(gsub("\n$", "", filename), "\n", fixed = TRUE)[[1L]]
   } else {
@@ -795,12 +829,4 @@ zap_temp_filename <- function(res, needs_tempfile) {
     }
   }
   res
-}
-
-necessary_linters <- function(expr, expression_linter_names, file_linter_names) {
-  if (is_lint_level(expr, "expression")) {
-    expression_linter_names
-  } else {
-    file_linter_names
-  }
 }

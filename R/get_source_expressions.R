@@ -74,29 +74,38 @@ get_source_expressions <- function(filename, lines = NULL) {
   # Only regard explicit attribute terminal_newline=FALSE as FALSE and all other cases (e.g. NULL or TRUE) as TRUE.
   terminal_newline <- !isFALSE(attr(source_expression$lines, "terminal_newline", exact = TRUE))
 
-  e <- w <- NULL
   source_expression$lines <- extract_r_source(
     filename = source_expression$filename,
     lines = source_expression$lines,
-    error = \(e) lint_rmd_error(e, source_expression)
+    error = function(e) {
+      source_expression$error <- lint_rmd_error(e, source_expression)
+      source_expression$error
+    }
   )
   names(source_expression$lines) <- seq_along(source_expression$lines)
   source_expression$content <- get_content(source_expression$lines)
-  parsed_content <- get_source_expression(source_expression, error = \(e) lint_parse_error(e, source_expression))
+  parsed_content <- get_source_expression(
+    source_expression,
+    error = function(e) {
+      # Let parse errors take precedence over encoding problems
+      source_expression$error <- source_expression$error %||% lint_parse_error(e, source_expression)
+      source_expression$error
+    }
+  )
 
   # Currently no way to distinguish the source of the warning
   #   from the message itself, so we just grep the source for the
   #   exact string generating the warning; de-dupe in case of
   #   multiple exact matches like '1e-3L; 1e-3L'.
   # See https://bugs.r-project.org/show_bug.cgi?id=18863.
-  w <- lint_parse_warnings(w, parsed_content, source_expression)
+  w <- lint_parse_warnings(source_expression$warning, parsed_content, source_expression)
+  e <- source_expression$error
 
-  if (is_lint(e) && (is.na(e$line) || !nzchar(e$line) || e$message == "unexpected end of input")) {
-    # Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
+  if (is_unreliable_expression(e)) {
     return(list(expressions = list(), error = e, warning = w, lines = source_expression$lines))
   }
 
-  top_level_map <- generate_top_level_map(parsed_content)
+  top_level_locs <- split(seq_len(NROW(parsed_content)), generate_top_level_map(parsed_content))
   xml_parsed_content <- safe_parse_to_xml(parsed_content)
 
   expressions <- lapply(
@@ -105,7 +114,7 @@ get_source_expressions <- function(filename, lines = NULL) {
     parsed_content,
     source_expression,
     filename,
-    top_level_map
+    top_level_locs
   )
 
   expressions <- maybe_append_expression_xml(expressions, xml_parsed_content)
@@ -519,32 +528,28 @@ get_single_source_expression <- function(loc,
                                          parsed_content,
                                          source_expression,
                                          filename,
-                                         top_level_map) {
+                                         top_level_locs) {
   line_nums <- parsed_content$line1[loc]:parsed_content$line2[loc]
   expr_lines <- source_expression$lines[line_nums]
   names(expr_lines) <- line_nums
   content <- get_content(source_expression$lines, parsed_content[loc, ])
-  id <- parsed_content$id[loc]
-  pc <- parsed_content[which(top_level_map == id), ]
+  id <- as.character(parsed_content$id[loc])
+  pc <- parsed_content[top_level_locs[[id]], ]
   list(
     filename = filename,
-    line = parsed_content[loc, "line1"],
-    column = parsed_content[loc, "col1"],
+    line = parsed_content$line1[loc],
+    column = parsed_content$col1[loc],
     lines = expr_lines,
     parsed_content = pc,
     xml_parsed_content = xml_missing(),
-    # Placeholder for xml_find_function_calls, if needed (e.g. on R <= 4.0.5 with input source "\\")
-    xml_find_function_calls = build_xml_find_function_calls(xml_missing()),
+    xml_find_function_calls = NULL,
     content = content
   )
 }
 
 get_source_expression <- function(source_expression, error = identity) {
-  parse_error <- FALSE
-
-  env <- parent.frame() # nolint: object_usage_linter. Used below.
   # https://adv-r.hadley.nz/conditions.html
-  parsed_content <- withCallingHandlers(
+  withCallingHandlers(
     tryCatch(
       parse(
         text = source_expression$content,
@@ -554,15 +559,10 @@ get_source_expression <- function(source_expression, error = identity) {
       error = error
     ),
     warning = function(w) {
-      env$w <- c(env$w, conditionMessage(w))
+      source_expression$warning <- c(source_expression$warning, conditionMessage(w))
       invokeRestart("muffleWarning")
     }
   )
-
-  if (is_error(parsed_content) || is_lint(parsed_content)) {
-    assign("e", parsed_content, envir = parent.frame())
-    parse_error <- TRUE
-  }
 
   # Triggers an error if the lines contain invalid characters.
   parsed_content <- tryCatch(
@@ -571,13 +571,11 @@ get_source_expression <- function(source_expression, error = identity) {
   )
 
   if (is_error(parsed_content) || is_lint(parsed_content)) {
-    # Let parse errors take precedence over encoding problems
-    if (!parse_error) assign("e", parsed_content, envir = parent.frame())
     return() # parsed_content is unreliable if encoding is invalid
   }
 
   source_expression$parsed_content <- parsed_content
-  fix_octal_escapes(fix_tab_indentations(source_expression), source_expression$lines)
+  fix_token_text(fix_tab_indentations(source_expression), source_expression$lines)
 }
 
 maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
@@ -686,35 +684,65 @@ top_level_expressions <- function(pc) {
 
 # workaround for bad parse data bug for octal escapes
 #   https://bugs.r-project.org/show_bug.cgi?id=18323
-# TODO(R>=4.3.0): remove this
-fix_octal_escapes <- function(pc, lines) {
-  # subset first to prevent using nchar() on MBCS input
-  is_str_const <- pc$token == "STR_CONST"
-  str_const <- pc[is_str_const, ]
-  str_const_mismatch <- str_const$col2 - str_const$col1 != nchar(str_const$text) - 1L
-  if (!any(str_const_mismatch)) {
+# and truncated string/symbol/slot literals (>= 1000 chars) in getParseData() (#2848):
+#   https://bugs.r-project.org/show_bug.cgi?id=19204
+# TODO(R>=4.7.0): remove this; getParseData() handles truncated tokens since r90660.
+fix_token_text <- function(pc, lines) {
+  truncatable_idx <- which(
+    pc$token %in% c(
+      "STR_CONST",
+      "SYMBOL", "SYMBOL_FUNCTION_CALL", "SYMBOL_SUB", "SYMBOL_FORMALS", "SYMBOL_PACKAGE",
+      "SLOT"
+    )
+  )
+  if (length(truncatable_idx) == 0L) {
     return(pc)
   }
-  str_const <- str_const[str_const_mismatch, ]
-  out <- character(nrow(str_const))
-  single_line <- str_const$line1 == str_const$line2
+  token_text <- pc$text[truncatable_idx]
+  text_mismatch <- startsWith(token_text, "[")
+  # TODO(R>=4.3.0): remove this branch
+  # nocov start
+  if (getRversion() < "4.3.0") {
+    truncatable <- pc[truncatable_idx, ]
+    text_mismatch <- text_mismatch | (truncatable$col2 - truncatable$col1 != nchar(token_text) - 1L)
+  }
+  # nocov end
+  if (!any(text_mismatch)) {
+    return(pc)
+  }
+  is_mismatch <- truncatable_idx[text_mismatch]
+  mismatch <- pc[is_mismatch, ]
+  out <- character(nrow(mismatch))
+  single_line <- mismatch$line1 == mismatch$line2
   out[single_line] <- substr(
-    lines[str_const$line1[single_line]],
-    str_const$col1[single_line],
-    str_const$col2[single_line]
+    lines[mismatch$line1[single_line]],
+    mismatch$col1[single_line],
+    mismatch$col2[single_line]
   )
   for (ii in which(!single_line)) {
     out[ii] <- paste(
       c(
-        substring(lines[str_const$line1[ii]], str_const$col1[ii]),
-        if (str_const$line1[ii] < str_const$line2[ii] - 1L) {
-          lines[(str_const$line1[ii] + 1L):(str_const$line2[ii] - 1L)]
+        substring(lines[mismatch$line1[ii]], mismatch$col1[ii]),
+        if (mismatch$line1[ii] < mismatch$line2[ii] - 1L) {
+          lines[(mismatch$line1[ii] + 1L):(mismatch$line2[ii] - 1L)]
         },
-        substr(lines[str_const$line2[ii]], 1L, str_const$col2[ii])
+        substr(lines[mismatch$line2[ii]], 1L, mismatch$col2[ii])
       ),
       collapse = "\n"
     )
   }
-  pc$text[is_str_const][str_const_mismatch] <- out
+  pc$text[is_mismatch] <- out
   pc
+}
+
+#' Don't create expression list if it's unreliable (invalid encoding or unhandled parse error)
+#' @noRd
+is_unreliable_expression <- function(e) {
+  if (!is_lint(e)) {
+    return(FALSE)
+  }
+  if (is.na(e$line) || !nzchar(e$line)) {
+    return(TRUE)
+  }
+  e$message == "unexpected end of input"
 }
