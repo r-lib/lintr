@@ -163,16 +163,37 @@ test_that("setter calls are distinguished from getter calls (#1912)", {
     both_linter
   )
 
-  # Non-syntactic and explicitly backticked names
+  # Non-syntactic, backticked, and quoted names (#1911)
   expect_lint(
     "`time<-`(x, 1)",
     rex::rex('Avoid undesirable function "time<-".', end),
     undesirable_function_linter("`time<-`")
   )
   expect_lint(
+    '"time<-"(x, 1)',
+    rex::rex('Avoid undesirable function "time<-".', end),
+    undesirable_function_linter("`time`<-")
+  )
+  expect_lint(
     "`%in%`(x, y)",
     rex::rex('Avoid undesirable function "%in%".', end),
     undesirable_function_linter("%in%")
+  )
+  expect_lint(
+    trim_some('
+      "%%"(x, y)
+      `%%`(x, y)
+    '),
+    list(
+      list(rex::rex('Avoid undesirable function "%%".', end), line_number = 1L, column_number = 1L),
+      list(rex::rex('Avoid undesirable function "%%".', end), line_number = 2L, column_number = 1L)
+    ),
+    undesirable_function_linter(c('"%%"' = NA))
+  )
+  expect_lint(
+    '"%%"(x, y)',
+    list(rex::rex('Avoid undesirable function "%%".', end), line_number = 1L, column_number = 1L),
+    undesirable_function_linter(c("'%%'" = NA))
   )
   expect_lint(
     "`foo bar`(x) <- 1",
