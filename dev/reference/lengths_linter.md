@@ -2,14 +2,22 @@
 
 [`base::lengths()`](https://rdrr.io/r/base/lengths.html) is a function
 that was added to base R in version 3.2.0 to get the length of each
-element of a list. It is equivalent to `sapply(x, length)`, but faster
-and more readable.
+element of a list. It is almost always equivalent to
+`sapply(x, length)`, but faster and more readable.
 
 ## Usage
 
 ``` r
 lengths_linter()
 ```
+
+## Details
+
+Be advised of one known case where this does not strictly apply: arrays
+of lists, e.g. `array(list(1, 1, 1, 1:2), dim = c(2L, 2L))`, where
+[`lengths()`](https://rdrr.io/r/base/lengths.html) will retain the shape
+of its input where [`sapply()`](https://rdrr.io/r/base/lapply.html) will
+not.
 
 ## See also
 
