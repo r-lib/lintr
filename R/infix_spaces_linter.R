@@ -140,8 +140,8 @@ infix_spaces_linter <- function(default_style = c("min_one", "one"),
 
   # op compares the gap to a neighboring token (@start - @end == 1 means adjacent) to find a lint
   style_metadata <- list(
-    min_one = list(op = "<", lint_message = "Put spaces around all infix operators."),
-    one = list(op = "!=", lint_message = "Put exactly one space on each side of infix operators."),
+    min_one = list(op = "<", lint_message = "Put spaces around `%s`."),
+    one = list(op = "!=", lint_message = "Put exactly one space on each side of `%s`."),
     none = list(op = ">=", lint_message = "Put no spaces around `%s`.")
   )
 
@@ -164,10 +164,7 @@ infix_spaces_linter <- function(default_style = c("min_one", "one"),
 
     lints <- lapply(names(xpaths), function(style) {
       bad_expr <- xml_find_all_(xml, xpaths[[style]])
-      lint_message <- style_metadata[[style]]$lint_message
-      if (style == "none") {
-        lint_message <- sprintf(lint_message, xml_text(bad_expr))
-      }
+      lint_message <- sprintf(style_metadata[[style]]$lint_message, xml_text(bad_expr))
       xml_nodes_to_lints(
         bad_expr,
         source_expression = source_expression,

@@ -252,7 +252,7 @@ test_that("gitlab_output() writes expected report", {
   expect_identical(
     jsonlite::read_json(tmpfile),
     list(list(
-      description = "Put spaces around all infix operators.",
+      description = "Put spaces around `<-`.",
       check_name = "infix_spaces_linter",
       fingerprint = "eb7cc117e8616bd8170fe6aa29e8b0ae849ac6c7",
       location = list(path = "<text>", lines = list(begin = 1L)),
@@ -265,13 +265,13 @@ test_that("gitlab_output() writes expected report", {
   expect_identical(
     jsonlite::read_json(tmpfile),
     list(list(
-      description = "Put spaces around all infix operators.",
+      description = "Put spaces around `<-`.",
       check_name = "infix_spaces_linter",
       fingerprint = "eb7cc117e8616bd8170fe6aa29e8b0ae849ac6c7",
       location = list(path = "<text>", lines = list(begin = 1L)),
       severity = "info"
     ), list(
-      description = "Put spaces around all infix operators.",
+      description = "Put spaces around `<-`.",
       check_name = "infix_spaces_linter",
       fingerprint = "c20bd2090d08e3a5c12d670f5763ad43d233fe05",
       location = list(path = "<text>", lines = list(begin = 2L)),
