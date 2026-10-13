@@ -213,4 +213,4 @@ Collate:
     'yoda_test_linter.R'
     'zzz.R'
 Language: en-US
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1
