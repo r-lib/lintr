@@ -13,6 +13,8 @@
 #'   Input can also be a list of character strings for convenience.
 #'   Setter functions (like `foo(x) <- y`) are distinguished from plain calls (`foo(x)`),
 #'   and must be specified with `"<-"` (e.g. `"foo<-"`).
+#'   Function names may be namespace-qualified (e.g. `"pkg::foo"` or `"pkg:::foo"`)
+#'   to lint only calls qualified with that namespace.
 #'
 #'   Defaults to [default_undesirable_functions]. To make small customizations to this list,
 #'   use [modify_defaults()].
@@ -89,7 +91,6 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     names(fun)[implicit_idx] <- fun[implicit_idx]
     is.na(fun) <- implicit_idx
   }
-  names(fun) <- gsub("^`|`$", "", names(fun))
   fun_names <- names(fun)
   if (anyNA(fun_names)) {
     missing_idx <- which(is.na(fun_names)) # nolint: object_usage_linter. False positive.
@@ -98,6 +99,13 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       "but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}."
     ))
   }
+  has_ns_prefix <- grepl("^[[:alnum:].]+:::?", fun_names)
+  ns_prefix <- ifelse(has_ns_prefix, sub("^([[:alnum:].]+:::?).*$", "\\1", fun_names), "")
+  base_fun_names <- gsub("^`|`$", "", sub("^[[:alnum:].]+:::?", "", fun_names))
+  fun_names <- paste0(ns_prefix, base_fun_names)
+  names(fun) <- fun_names
+  unique_base_funs <- unique(base_fun_names)
+  has_ns <- any(has_ns_prefix)
 
   xp_condition <- xp_and(
     paste0(
@@ -109,16 +117,17 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   )
 
   if (symbol_is_undesirable) {
-    needs_backticks <- make.names(fun_names) != fun_names
-    symbol_names <- fun_names
+    needs_backticks <- make.names(unique_base_funs) != unique_base_funs
+    symbol_names <- unique_base_funs
     symbol_names[needs_backticks] <- sprintf("`%s`", symbol_names[needs_backticks])
     symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(symbol_names)}) and {xp_condition}]")
   }
   call_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition}]")
+  ns_prefix_xpath <- "concat(preceding-sibling::SYMBOL_PACKAGE, preceding-sibling::*[self::NS_GET or self::NS_GET_INT])"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    xml_calls <- source_expression$xml_find_function_calls(fun_names, keep_names = TRUE)
+    xml_calls <- source_expression$xml_find_function_calls(unique_base_funs, keep_names = TRUE)
 
     matched_call_nodes <- xml_find_first_(xml_calls, call_xpath)
     matched_call_nodes <- matched_call_nodes[!is.na(matched_call_nodes)]
@@ -129,6 +138,16 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       symbol_nodes <- xml_find_all_(xml, symbol_xpath)
       matched_nodes <- combine_nodesets(matched_nodes, symbol_nodes)
       matched_fun <- c(matched_fun, get_r_string(symbol_nodes))
+    }
+
+    if (has_ns) {
+      call_ns <- xml_find_chr_(matched_nodes, ns_prefix_xpath)
+      qualified_fun <- paste0(call_ns, matched_fun)
+      is_qualified_match <- qualified_fun %in% fun_names
+      matched_fun[is_qualified_match] <- qualified_fun[is_qualified_match]
+      keep <- matched_fun %in% fun_names
+      matched_nodes <- matched_nodes[keep]
+      matched_fun <- matched_fun[keep]
     }
 
     msgs <- vapply(

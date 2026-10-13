@@ -197,3 +197,48 @@ test_that("multiple assignments are handle according to R precedence rules", { #
   expect_no_lint("1 -> a -> time(x)", getter_linter)
   expect_lint("1 -> a -> time(x)", list(msg_setter, column_number = 11L), setter_linter)
 })
+
+test_that("namespace-qualified functions are matched selectively (#1770)", {
+  linter <- undesirable_function_linter(c(
+    "bar::run_model" = "use foo::run_model()",
+    "bar:::internal_helper" = NA,
+    "bar::`%in%`" = NA,
+    "bar::`time<-`" = NA
+  ))
+  msg_bar <- rex::rex('Avoid undesirable function "bar::run_model". As an alternative, use foo::run_model().')
+  msg_int <- rex::rex('Avoid undesirable function "bar:::internal_helper".', end)
+  msg_in <- rex::rex('Avoid undesirable function "bar::%in%".', end)
+  msg_set <- rex::rex('Avoid undesirable function "bar::time<-".', end)
+
+  expect_no_lint("run_model()", linter)
+  expect_no_lint("foo::run_model()", linter)
+  expect_no_lint("bar:::run_model()", linter)
+  expect_no_lint("lapply(x, run_model)", linter)
+  expect_no_lint("lapply(x, foo::run_model)", linter)
+  expect_no_lint("internal_helper()", linter)
+  expect_no_lint("bar::internal_helper()", linter)
+  expect_no_lint("`%in%`(x, y)", linter)
+  expect_no_lint("foo::`%in%`(x, y)", linter)
+  expect_no_lint("time(x) <- 1", linter)
+  expect_no_lint("foo::time(x) <- 1", linter)
+
+  expect_lint("bar::run_model()", list(msg_bar, line_number = 1L, column_number = 6L), linter)
+  expect_lint("lapply(x, bar::run_model)", list(msg_bar, line_number = 1L, column_number = 16L), linter)
+  expect_no_lint(
+    "lapply(x, bar::run_model)",
+    undesirable_function_linter(c("bar::run_model" = NA), symbol_is_undesirable = FALSE)
+  )
+  expect_lint("bar:::internal_helper()", list(msg_int, line_number = 1L, column_number = 7L), linter)
+  expect_lint("bar::`%in%`(x, y)", list(msg_in, line_number = 1L, column_number = 6L), linter)
+  expect_lint("bar::time(x) <- 1", list(msg_set, line_number = 1L, column_number = 6L), linter)
+
+  # Specific namespace message overrides generic unqualified message when both are supplied
+  combined_linter <- undesirable_function_linter(c(
+    run_model = "use model()",
+    "bar::run_model" = "use foo::run_model()"
+  ))
+  msg_generic <- rex::rex('Avoid undesirable function "run_model". As an alternative, use model().')
+  expect_lint("run_model()", list(msg_generic, column_number = 1L), combined_linter)
+  expect_lint("foo::run_model()", list(msg_generic, column_number = 6L), combined_linter)
+  expect_lint("bar::run_model()", list(msg_bar, column_number = 6L), combined_linter)
+})
