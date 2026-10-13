@@ -5,6 +5,7 @@
 * `get_source_expressions()`:
    + `get_source_expressions()` supports adjacent Sweave (`.Rnw`) code chunks (`<<...>>=`) without an intervening `@` documentation chunk (#2619, @MichaelChirico).
    + avoids spurious whitespace lints like `indentation_linter()` in chunks with leading prefixes/whitespace (such as `%` in `.Rtex`, `..` in `.Rrst`, and `//` in `.Rtxt`; #1043, @MichaelChirico).
+   + no longer truncates backticked symbols/slots of 1000 or more characters or multiline strings of 1000 or more characters when the column difference between the last and first line equals 27, avoiding `unexpected '['` errors in linters inspecting string or symbol text (#2848, @MichaelChirico).
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
 * `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
@@ -12,7 +13,6 @@
 * `lint()` reports a syntax error for R code whose parse error has a symbol as its call, such as `x |> f`, instead of failing with `object of type 'symbol' is not subsettable` (#3038, @taekop).
 * `object_usage_linter()` reports the location of the offending call rather than the start of the pipeline or outer expression for call-level warnings like `unused argument` (#1936, @MichaelChirico).
 * `object_name_linter()`, `object_length_linter()`, and `namespace_linter()` no longer fail when `lint("", text = ...)` is called with an empty `filename` (#3032, @MichaelChirico).
-* `get_source_expressions()` and linters inspecting string constants (such as `nonportable_path_linter()` and `absolute_path_linter()`) no longer fail with `unexpected '['` on multiline strings of 1000 or more characters when the column difference between the last and first line equals exactly 27 (#2848, @MichaelChirico).
 
 ## New and improved features
 
