@@ -3,6 +3,17 @@ min_one_msg <- function(op) rex::rex("Put spaces around `", op, "`.")
 one_msg <- function(op) rex::rex("Put exactly one space on each side of `", op, "`.")
 none_msg <- function(op) rex::rex("Put no spaces around `", op, "`.")
 
+# exclude_operators= is deprecated in favor of overrides = list(any = ...)
+linter_excluding <- function(exclude_operators) {
+  expect_warning(
+    {
+      linter <- infix_spaces_linter(exclude_operators = exclude_operators)
+    },
+    "exclude_operators.*deprecated"
+  )
+  linter
+}
+
 test_that("returns the correct linting", {
   ops <- c(
     "+",
@@ -70,6 +81,28 @@ test_that("The three `=` are all linted", {
   expect_lint("foo <- function(x=1) {}", min_one_msg("="), linter)
   # EQ_SUB in the parse data
   expect_lint("foo(x=1)", min_one_msg("="), linter)
+})
+
+test_that("exclude_operators works", {
+  expect_no_lint("a+b", linter_excluding("+"))
+  expect_no_lint(
+    trim_some("
+      a+b
+      a-b
+    "),
+    linter_excluding(c("+", "-"))
+  )
+
+  # operators match on text, not hidden node
+  expect_lint("a<<-1", min_one_msg("<<-"), linter_excluding("<-"))
+  expect_no_lint("a<<-1", linter_excluding("<<-"))
+  expect_lint("a:=1", min_one_msg(":="), linter_excluding("<-"))
+  expect_no_lint("a:=1", linter_excluding(":="))
+  expect_lint("a->>1", min_one_msg("->>"), linter_excluding("->"))
+  expect_no_lint("a->>1", linter_excluding("->>"))
+  expect_no_lint("a%any%1", linter_excluding("%%"))
+  expect_no_lint("function(a=1) { }", linter_excluding("="))
+  expect_no_lint("foo(a=1)", linter_excluding("="))
 })
 
 test_that("overrides = list(any = ...) works", {
@@ -154,19 +187,6 @@ test_that("overrides is validated", {
   expect_error(infix_spaces_linter(overrides = list(none = "=", any = "EQ_SUB")), "given more than once")
 })
 
-test_that("deprecated arguments still work with a warning", {
-  expect_warning(infix_spaces_linter(exclude_operators = "+"), "exclude_operators.*deprecated")
-  linter <- suppressWarnings(infix_spaces_linter(exclude_operators = "+"))
-  expect_no_lint("a+b", linter)
-  expect_lint("a-b", min_one_msg("-"), linter)
-
-  expect_warning(infix_spaces_linter(allow_multiple_spaces = FALSE), "allow_multiple_spaces.*deprecated")
-  linter <- suppressWarnings(infix_spaces_linter(allow_multiple_spaces = FALSE))
-  expect_lint("x  <-  1", one_msg("<-"), linter)
-  linter <- suppressWarnings(infix_spaces_linter(allow_multiple_spaces = TRUE))
-  expect_no_lint("x  <-  1", linter)
-})
-
 # more tests specifically for assignment
 test_that("assignment cases return the correct linting", {
   linter <- infix_spaces_linter()
@@ -192,6 +212,27 @@ test_that("assignment cases return the correct linting", {
   expect_lint("blah  <-1", min_one_msg("<-"), linter)
   expect_lint("blah=  1", min_one_msg("="), linter)
   expect_lint("blah  =1", min_one_msg("="), linter)
+})
+
+test_that("infix_spaces_linter can allow >1 spaces optionally", {
+  expect_warning(
+    {
+      linter <- infix_spaces_linter(allow_multiple_spaces = FALSE)
+    },
+    "allow_multiple_spaces.*deprecated"
+  )
+
+  expect_lint("x  ~  1", one_msg("~"), linter)
+  expect_lint("x  - 1", one_msg("-"), linter)
+  expect_lint("x /  1", one_msg("/"), linter)
+
+  expect_warning(
+    {
+      linter <- infix_spaces_linter(allow_multiple_spaces = TRUE)
+    },
+    "allow_multiple_spaces.*deprecated"
+  )
+  expect_no_lint("x  ~  1", linter)
 })
 
 test_that("infix_spaces_linter can require exactly one space", {
@@ -258,6 +299,28 @@ test_that("mixed unary & binary operators aren't mis-lint", {
     ),
     infix_spaces_linter()
   )
+})
+
+test_that("parse tags are accepted by exclude_operators", { # nofuzz: assignment
+  expect_no_lint("sum(x, na.rm=TRUE)", linter_excluding("EQ_SUB"))
+  expect_no_lint("function(x, na.rm=TRUE) { }", linter_excluding("EQ_FORMALS"))
+  expect_no_lint("x=1", linter_excluding("EQ_ASSIGN"))
+
+  # uses parse_tag
+  expect_no_lint("1+1", linter_excluding("'+'"))
+
+  # mixing
+  text <- "x=function(a=foo(bar=1)) { }"
+  col_assign <- list(column_number = 2L)
+  col_formals <- list(column_number = 13L)
+  col_sub <- list(column_number = 21L)
+  expect_no_lint(text, linter_excluding(c("EQ_SUB", "EQ_FORMALS", "EQ_ASSIGN")))
+  expect_lint(text, col_assign, linter_excluding(c("EQ_SUB", "EQ_FORMALS")))
+  expect_lint(text, col_formals, linter_excluding(c("EQ_SUB", "EQ_ASSIGN")))
+  expect_lint(text, col_sub, linter_excluding(c("EQ_FORMALS", "EQ_ASSIGN")))
+  expect_lint(text, list(col_assign, col_formals), linter_excluding("EQ_SUB"))
+  expect_lint(text, list(col_assign, col_sub), linter_excluding("EQ_FORMALS"))
+  expect_lint(text, list(col_formals, col_sub), linter_excluding("EQ_ASSIGN"))
 })
 
 test_that("parse tags are accepted by overrides", { # nofuzz: assignment
