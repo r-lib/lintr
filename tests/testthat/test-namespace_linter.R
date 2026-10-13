@@ -193,3 +193,38 @@ test_that("namespace_linter includes problematic package names in error message 
     rex::rex("Failed to retrieve namespaces for", anything, "brokenpkg1", anything, "brokenpkg2")
   )
 })
+
+test_that("namespace_linter is OS-independent for base R packages (#3075)", {
+  linter <- namespace_linter()
+
+  # Windows-only exports
+  expect_no_lint("base::shell('ls')", linter)
+  expect_no_lint("base::shell.exec('file.txt')", linter)
+  expect_no_lint("base::Sys.junction('from', 'to')", linter)
+  expect_no_lint("grDevices::win.metafile()", linter)
+  expect_no_lint("grDevices::windows()", linter)
+  expect_no_lint("utils::winProgressBar()", linter)
+  expect_no_lint("utils::readClipboard()", linter)
+  expect_no_lint("utils::shortPathName('path')", linter)
+
+  # Unix-only exports
+  expect_no_lint("grDevices::X11.options()", linter)
+  expect_no_lint("grDevices::quartz()", linter)
+  expect_no_lint("parallel::mcparallel(1 + 1)", linter)
+  expect_no_lint("parallel::mccollect()", linter)
+  expect_no_lint("utils::nsl('localhost')", linter)
+
+  # Windows-only internal base symbols
+  expect_no_lint("base:::.fixupGFortranStdout()", linter)
+
+  # Accessing OS-specific exports with `:::` is still linted consistently across OSes
+  expect_lint(
+    "grDevices:::win.metafile()",
+    list(
+      rex::rex("Don't use `:::` to access win.metafile, which is exported from grDevices."),
+      line_number = 1L,
+      column_number = 13L
+    ),
+    linter
+  )
+})

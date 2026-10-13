@@ -140,11 +140,39 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   })
 }
 
+# Platform-specific base R exports that only exist on Windows or Unix (#3075)
+os_specific_exports <- list(
+  base = c("Sys.junction", "shell", "shell.exec"),
+  grDevices = c(
+    "bringToTop", "msgWindow", "win.graph", "win.metafile", "win.print",
+    "windows", "windows.options", "windowsFont", "windowsFonts",
+    "X11.options", "X11Font", "X11Fonts",
+    "quartz", "quartz.options", "quartz.save", "quartzFont", "quartzFonts"
+  ),
+  parallel = c("mccollect", "mcparallel", "mc.reset.stream", "mcaffinity"),
+  utils = c(
+    "nsl",
+    "DLL.version", "Filters", "choose.dir", "choose.files",
+    "getClipboardFormats", "getIdentification", "getWindowsHandle", "getWindowsHandles",
+    "getWindowTitle", "loadRconsole", "readClipboard", "readRegistry",
+    "setStatusBar", "setWindowTitle", "shortPathName", "win.version",
+    "winDialog", "winDialogString", "winMenuAdd", "winMenuAddItem",
+    "winMenuDel", "winMenuDelItem", "winMenuNames", "winMenuItems",
+    "writeClipboard", "winProgressBar", "getWinProgressBar", "setWinProgressBar",
+    "setInternet2", "zip.unpack", "arrangeWindows"
+  )
+)
+
+os_specific_nonexports <- list(
+  base = c(".fixupGFortranStdout", ".fixupGFortranStderr")
+)
+
 namespace_symbols <- function(ns, exported = TRUE) {
+  pkg <- getNamespaceName(ns)
   if (exported) {
-    c(getNamespaceExports(ns), names(.getNamespaceInfo(ns, "lazydata")))
+    c(getNamespaceExports(ns), names(.getNamespaceInfo(ns, "lazydata")), os_specific_exports[[pkg]])
   } else {
-    ls(ns, all.names = TRUE)
+    c(ls(ns, all.names = TRUE), os_specific_exports[[pkg]], os_specific_nonexports[[pkg]])
   }
 }
 is_in_pkg <- function(symbols, namespaces, exported = TRUE) {

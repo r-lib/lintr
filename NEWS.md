@@ -56,7 +56,9 @@
 * `commented_code_linter()` properly ignores all roxygen comments (`#'`), including those ending with a single quote like `#' foo <- '` (#1908, @MichaelChirico).
 * `undesirable_function_linter()` distinguishes setter calls like `foo(x) <- y` (which invoke `foo<-`) from getter calls `foo(x)` (#1912, @MichaelChirico). Use `undesirable_function_linter(c(foo = NA, `foo<-` = NA))` to lint both.
 * `unused_import_linter()` detects exported operators and functions referenced as backtick-quoted symbols or calls (e.g. ``Reduce(`%>%`, ...)`` or `` `%>%`(x, f) ``) as well as replacement functions (e.g. `body(f) <- value`; #3162, @MichaelChirico).
-* `namespace_linter()` resolves replacement function calls like `pkg::foo(x) <- y` as ``pkg::`foo<-` `` rather than `pkg::foo` (#3161, @MichaelChirico).
+* `namespace_linter()`:
+   + resolves replacement function calls like `pkg::foo(x) <- y` as ``pkg::`foo<-` `` rather than `pkg::foo` (#3161, @MichaelChirico).
+   + recognizes OS-specific exports from base R packages (such as `grDevices::win.metafile()`, `base::shell()`, `utils::winProgressBar()`, and `parallel::mcparallel()`) regardless of the host OS (#3075, @MichaelChirico).
 * `missing_argument_linter()` exempts `data.table::rowwiseDT()` by default, where `col =` is used to declare column headers (#2934, @MichaelChirico).
 * `implicit_assignment_linter()` exempts `substitute()` by default, alongside `quote()`, `bquote()`, and `expression()` (#2266, @MichaelChirico).
 * `return_linter(return_style = "explicit")` no longer flags terminal `repeat {}` loops that exit via `return()` (or another `return_functions` call) without `break` (#3044, @MichaelChirico).
