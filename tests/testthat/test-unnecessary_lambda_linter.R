@@ -167,7 +167,9 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
     rex::rex("Pass foo directly as a symbol to mapply()"),
     linter
   )
+  # swapped positional arguments
   expect_no_lint("mapply(function(xi, yi) foo(yi, xi), x, y)", linter)
+  # passed 'y' is discarded, which may or may not be necessary
   expect_no_lint("mapply(function(xi, yi) foo(xi), x, y)", linter)
   expect_no_lint("outer(x, y, function(xi, yi) foo(xi))", linter)
   expect_no_lint("purrr::map2(x, y, function(xi, yi) foo(xi))", linter)
@@ -175,6 +177,7 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
   # foo(xi, y=y) guarantees foo has a formal 'y', but here it's passed positionally,
   #   so this lambda _could_ be a redirect e.g. if foo's second parameter is 'b'
   expect_no_lint("lapply(x, function(xi, y) foo(xi, y), y = 1)", linter)
+  # y= might not be second argument so lambda required to pass it as keyword
   expect_no_lint("lapply(x, function(xi, y) foo(xi, y = y), y)", linter)
   expect_no_lint("lapply(x, function(xi, y, z) foo(xi, y + z), y, z)", linter)
   expect_no_lint("lapply(x, function(xi, y) foo(xi, bar = y), y)", linter)
