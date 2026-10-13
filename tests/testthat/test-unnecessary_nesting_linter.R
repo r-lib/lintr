@@ -450,6 +450,70 @@ test_that("rlang's double-brace operator is skipped", {
   )
 })
 
+test_that("braces required for operator precedence around control flow or lambdas are skipped (#2852)", {
+  linter <- unnecessary_nesting_linter()
+  lint_msg <- rex::rex("Reduce the nesting of this statement by removing the braces {}.")
+
+  expect_no_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          if (x) geom_point()
+        } +
+        geom_smooth()
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          if (x) {
+            geom_point()
+          } else {
+            geom_line()
+          }
+        } +
+        geom_smooth()
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      {
+        if (x) geom_point()
+      } +
+        geom_smooth()
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      x |>
+        {
+          \\(y) y + 1
+        }()
+    "),
+    linter
+  )
+
+  # simple calls inside operator chains still lint when braces are unnecessary
+  expect_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          geom_point()
+        } +
+        geom_smooth()
+    "),
+    list(lint_msg, line_number = 2L, column_number = 3L),
+    linter
+  )
+})
+
 test_that("unnecessary_nesting_linter blocks one-expression braced expressions", {
   expect_lint(
     trim_some("

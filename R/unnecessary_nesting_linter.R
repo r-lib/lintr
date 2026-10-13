@@ -216,6 +216,8 @@ unnecessary_nesting_linter <- function(
   #          * suppressWarnings({ expr })
   #          * DataTable[, { expr }]
   #          * DataTable[, col := { expr }] <- requires carve-out for `:=`
+  #   - control flow or function definitions inside operator expressions or call heads,
+  #     where braces are required for operator precedence (e.g. `p + { if (x) geom_point() } + geom_smooth()`, #2852)
   # 'count(*) - ...' used to be just 'count(expr)', but that misses '=' assigments (exprlist).
   unnecessary_brace_xpath <- glue("
   //OP-LEFT-BRACE
@@ -238,6 +240,13 @@ unnecessary_nesting_linter <- function(
       and not(
         OP-LEFT-BRACE/@end - 1 = preceding-sibling::*[1][self::OP-LEFT-PAREN or self::OP-LEFT-BRACKET]/@end
         or OP-RIGHT-BRACE/@end + 1 = following-sibling::*[1][self::OP-RIGHT-PAREN or self::OP-RIGHT-BRACKET]/@end
+      )
+      and not(
+        parent::expr
+        and not(preceding-sibling::*[
+          self::OP-LEFT-PAREN or self::OP-LEFT-BRACKET or self::LBB or self::LEFT_ASSIGN or self::EQ_ASSIGN
+        ])
+        and expr[IF or FOR or WHILE or REPEAT or FUNCTION or OP-LAMBDA or OP-TILDE]
       )
       and not({assignment_cond})
     ]
