@@ -114,7 +114,8 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
   #     a. it has at least one formal argument and no default values
   #     b. the function is a single call
   #     c. that call's leading arguments are just the function arguments (SYMBOLs) in order
-  #       - and they have to be passed positionally (not as keywords)
+  #       - the first argument must be passed positionally; subsequent arguments must match
+  #         how they are passed in the outer call (positional or by matching keyword)
   #     d. the function arguments don't appear elsewhere in the call
   unary_op <- infix_metadata$xml_tag[infix_metadata$unary]
   default_fun_xpath <- glue("
@@ -124,7 +125,6 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     and not(EQ_FORMALS)
     and count(../expr) - 2 + count(../preceding-sibling::*[self::PIPE or self::SPECIAL]) >=
       count(SYMBOL_FORMALS[text() != '...'])
-    and not(../SYMBOL_SUB = SYMBOL_FORMALS[position() > 1])
   ]
     /expr[last()][
       count(.//SYMBOL_FUNCTION_CALL[text() != 'return']) = 1
@@ -190,11 +190,13 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
       "expr[last()]/descendant-or-self::expr[expr[1]/SYMBOL_FUNCTION_CALL[text() != 'return']]"
     )
     first_k <- head(xml_find_all_(inner_call, "expr[position() > 1]"), n_formals)
-    arg_syms <- get_r_string(
+    arg_syms <- get_r_string(first_k, "SYMBOL")
+    inner_kw <- get_r_string(
       first_k,
-      "self::*[not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])]/SYMBOL"
+      "preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]/preceding-sibling::*[not(self::COMMENT)][1]"
     )
-    identical(arg_syms, formal_args)
+    outer_kw <- get_r_string(xml_find_all_(fun_expr, "parent::expr/SYMBOL_SUB"))
+    identical(list(arg_syms, inner_kw), list(formal_args, outer_kw[match(formal_args, outer_kw)]))
   }
 
   Linter(linter_level = "expression", function(source_expression) {

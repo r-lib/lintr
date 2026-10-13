@@ -153,6 +153,11 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
     linter
   )
   expect_lint(
+    "lapply(x, \\(xi, y) foo(xi, y = y), y = 1)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
     "lapply(x, \\(xi, ...) foo(xi, ...), y = 1)",
     rex::rex("Pass foo directly as a symbol to lapply()"),
     linter
@@ -163,11 +168,15 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
     linter
   )
   expect_no_lint("mapply(function(xi, yi) foo(yi, xi), x, y)", linter)
-  expect_no_lint("lapply(x, function(xi, y) foo(xi), y)", linter)
+  expect_no_lint("mapply(function(xi, yi) foo(xi), x, y)", linter)
+  expect_no_lint("outer(x, y, function(xi, yi) foo(xi))", linter)
+  expect_no_lint("purrr::map2(x, y, function(xi, yi) foo(xi))", linter)
   expect_no_lint("lapply(x, function(xi, y) foo(xi, y))", linter)
   expect_no_lint("lapply(x, function(xi, y) foo(xi, y), y = 1)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y = y), y)", linter)
   expect_no_lint("lapply(x, function(xi, y, z) foo(xi, y + z), y, z)", linter)
   expect_no_lint("lapply(x, function(xi, y) foo(xi, bar = y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, bar = y), y = 1)", linter)
   expect_no_lint("lapply(x, function(xi, y) foo(xi, y, y), y)", linter)
   expect_no_lint("lapply(x, function(xi, y = 1) foo(xi, y))", linter)
 })
