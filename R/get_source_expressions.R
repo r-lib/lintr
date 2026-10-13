@@ -686,6 +686,7 @@ top_level_expressions <- function(pc) {
 #   https://bugs.r-project.org/show_bug.cgi?id=18323
 # and truncated string literals (>= 1000 chars) in getParseData() (#2848):
 #   https://github.com/r-devel/r-svn/blob/9c6e0b9b9b8475704ead72c5077c8c875d51599e/src/main/gram.c#L5479-L5481
+# TODO(R>=4.7.0): remove this; getParseData() handles truncated strings since r90660.
 fix_str_const <- function(pc, lines) {
   is_str_const <- which(pc$token == "STR_CONST")
   if (length(is_str_const) == 0L) {
