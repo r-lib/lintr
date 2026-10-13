@@ -60,7 +60,7 @@ lint(
   text = "sapply(x, function(xi) sum(xi) > 0)",
   linters = unnecessary_lambda_linter()
 )
-#> <text>:1:24: warning: [unnecessary_lambda_linter] Compare to a constant after calling sapply() to get the full benefits of vectorization. Prefer sapply(x, foo) == 2 over sapply(x, function(xi) foo(xi) == 2, logical(1L)).
+#> <text>:1:24: warning: [unnecessary_lambda_linter] Compare to a constant after calling sapply() to get the full benefits of vectorization. Prefer sapply(x, sum) > 0 over sapply(x, function(xi) sum(xi) > 0, logical(1L)).
 #> sapply(x, function(xi) sum(xi) > 0)
 #>                        ^~~~~~~~~~~
 
