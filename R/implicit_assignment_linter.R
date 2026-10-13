@@ -72,10 +72,12 @@
 #' - <https://style.tidyverse.org/syntax.html#assignment>
 #'
 #' @export
-implicit_assignment_linter <- function(except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
-                                       allow_lazy = FALSE,
-                                       allow_scoped = FALSE,
-                                       allow_paren_print = FALSE) {
+implicit_assignment_linter <- function(
+  except = c("bquote", "expression", "expr", "quo", "quos", "quote", "substitute"),
+  allow_lazy = FALSE,
+  allow_scoped = FALSE,
+  allow_paren_print = FALSE
+) {
   if (!is.null(except) && !is.character(except)) {
     cli_abort("{.arg except} must be a character vector or NULL, not {.obj_type_friendly {except}}.")
   }

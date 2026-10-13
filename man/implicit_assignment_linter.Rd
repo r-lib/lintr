@@ -5,7 +5,7 @@
 \title{Avoid implicit assignment in function calls}
 \usage{
 implicit_assignment_linter(
-  except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+  except = c("bquote", "expression", "expr", "quo", "quos", "quote", "substitute"),
   allow_lazy = FALSE,
   allow_scoped = FALSE,
   allow_paren_print = FALSE
