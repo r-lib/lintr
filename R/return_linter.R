@@ -137,6 +137,16 @@ return_linter <- function(
       lint_xpath = glue("self::*[not(
         (self::expr | following-sibling::SPECIAL[text() = '%>%']/following-sibling::expr/expr[1])
           /SYMBOL_FUNCTION_CALL[{ xp_text_in_table(return_functions) }]
+        or (
+          self::REPEAT
+          and following-sibling::expr[1]//SYMBOL_FUNCTION_CALL[
+            ({ xp_text_in_table(return_functions) })
+            and ancestor::expr[FUNCTION or OP-LAMBDA or REPEAT][1][REPEAT]
+          ]
+          and not(following-sibling::expr[1]//BREAK[
+            ancestor::expr[WHILE or FOR or FUNCTION or OP-LAMBDA or REPEAT][1][REPEAT]
+          ])
+        )
       )]"),
       lint_message = "All functions must have an explicit return()."
     )
