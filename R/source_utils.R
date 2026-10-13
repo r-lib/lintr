@@ -1,3 +1,7 @@
+unquote_names <- function(x) {
+  gsub('^([`"\'])(.*)\\1(<-)?$', "\\2\\3", x, perl = TRUE)
+}
+
 #' Build the `xml_find_function_calls()` helper for a source expression
 #'
 #' @param xml The XML parse tree as an XML object (`xml_parsed_content` or `full_xml_parsed_content`)
@@ -19,16 +23,24 @@ build_xml_find_function_calls <- function(xml) {
     cache
   }
 
+  function_call_xpath <- "
+    //SYMBOL_FUNCTION_CALL/parent::*
+    | //STR_CONST[not(preceding-sibling::OP-AT)]/parent::expr[following-sibling::OP-LEFT-PAREN]
+  "
   function_call_cache <- name_call_cache(
-    xml_find_all_(xml, "//SYMBOL_FUNCTION_CALL/parent::*"),
-    "SYMBOL_FUNCTION_CALL"
+    xml_find_all_(xml, function_call_xpath),
+    "SYMBOL_FUNCTION_CALL | STR_CONST"
   )
 
   # not used much, so assign it lazily to delay the xml_find_all_ computation
+  s4_slot_xpath <- "
+    //SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]
+    | //OP-AT/following-sibling::STR_CONST/parent::expr[following-sibling::OP-LEFT-PAREN]
+  "
   delayedAssign("s4_slot_cache", {
     name_call_cache(
-      xml_find_all_(xml, "//SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]"),
-      "SLOT"
+      xml_find_all_(xml, s4_slot_xpath),
+      "SLOT | STR_CONST"
     )
   })
 
@@ -40,6 +52,7 @@ build_xml_find_function_calls <- function(xml) {
         res <- function_call_cache
       }
     } else {
+      function_names <- unquote_names(function_names)
       include_function_idx <- names(function_call_cache) %in% function_names
       if (include_s4_slots) {
         res <- combine_nodesets(
