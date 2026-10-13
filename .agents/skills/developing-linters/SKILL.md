@@ -50,6 +50,25 @@ architectural, design, and production-readiness guidelines:
   `get_seq_lint_message()` or `indent_lint_metadata()`) are highly valued, even
   if invoked only once inside a linter callback.** The readability improvement
   and clear domain encapsulation far outweigh their single-use nature.
+- **Scope single-linter helpers inside the linter factory**:
+  Define helpers used only by a single linter inside that linter's factory
+  (`foo_linter <- function() { ... }`) rather than at top-level package scope so
+  they do not clutter the package namespace (reserve top-level helpers for
+  utilities shared across multiple linters/files or large standalone phases like
+  `make_check_env()`). See [`.agents/AGENTS.md`](../../AGENTS.md) for handling
+  `cyclocomp_linter()` when factory-scoped helpers inflate complexity
+  (`gaborcsardi/cyclocomp#30`).
+- **Rename helpers and local variables when scope broadens**:
+  When extending an existing helper beyond its original narrow case (e.g.,
+  broadening `fix_octal_escapes()` to handle all truncated `STR_CONST` and
+  `SYMBOL` tokens as `fix_token_text()`), rename both the helper and its local
+  variables (`is_octal_str` -> `needs_reparse`) so names accurately reflect
+  current semantics.
+- **Sequential early-return `identical()` guards over compound `list()` comparisons**:
+  When comparing multiple components in a predicate helper, use sequential
+  early-return guards (`if (!identical(a1, a2)) return(FALSE)` followed by
+  `identical(b1, b2)`) rather than allocating temporary lists via
+  `identical(list(a1, b1), list(a2, b2))`.
 - **Minimalist return types for linter helpers**: Helper functions that format
   linter messages (e.g., `get_seq_lint_message(seq_expr)`) should return a
   crisp, simple character vector of messages (`character()`), rather than

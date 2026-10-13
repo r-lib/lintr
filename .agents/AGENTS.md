@@ -63,6 +63,14 @@ Load the relevant domain skill from `.agents/skills/` before starting work:
   - Never write contorted code or `assign(..., envir = parent.frame())` just to
     bypass `cyclocomp_linter()` or `object_usage_linter()`. Extract a named
     helper function or store state on an existing environment.
+  - Keep helpers used only by a single linter inside that linter's factory
+    (`foo_linter <- function() { ... }`) rather than exporting them to the
+    package namespace; never move a single-linter helper to the top-level
+    package namespace just to evade `cyclocomp_linter()`. When local helpers
+    inside a factory inflate cyclomatic complexity due to
+    `gaborcsardi/cyclocomp#30` and complexity cannot be cleanly reduced
+    otherwise, annotate the linter with:
+    `# nolint next: cyclocomp_linter. Helpers in factory inflate complexity (gaborcsardi/cyclocomp#30).`
 - **VCS branch / bookmark & commit naming**:
   - Choose short, descriptive bookmark names that convey the feature or fix
     (e.g., `any-duplicated-highlight-range`, `unreachable-switch`,
@@ -101,6 +109,11 @@ ad-hoc string or XML manipulation:
   enhancements, new parameters/messages, deprecations, breaking changes, or
   user-visible bug fixes. Internal range/span highlighting tweaks or test-only
   changes do **not** require a `NEWS.md` entry.
+- **Only reference exported functions**:
+  `NEWS.md` is user-facing: always frame entries around **exported** functions
+  (e.g., `lint()`, `object_name_linter()`, `get_source_expressions()`), never
+  unexported internal helpers (such as `find_package()` or `get_pkg_depends()`),
+  even when the code change lives inside an internal helper.
 - **Section hierarchy**:
   Nest entries under the standard level-2 (`##`) and level-3 (`###`) headings
   (e.g., `## New and improved features` -> `### New linters` or
