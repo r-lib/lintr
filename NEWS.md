@@ -5,6 +5,7 @@
 * `get_source_expressions()`:
    + `get_source_expressions()` supports adjacent Sweave (`.Rnw`) code chunks (`<<...>>=`) without an intervening `@` documentation chunk (#2619, @MichaelChirico).
    + avoids spurious whitespace lints like `indentation_linter()` in chunks with leading prefixes/whitespace (such as `%` in `.Rtex`, `..` in `.Rrst`, and `//` in `.Rtxt`; #1043, @MichaelChirico).
+   + no longer truncates backticked symbols/slots of 1000 or more characters or multiline strings of 1000 or more characters when the column difference between the last and first line equals 27, avoiding `unexpected '['` errors in linters inspecting string or symbol text (#2848, @MichaelChirico).
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
 * `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).

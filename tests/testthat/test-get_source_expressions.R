@@ -210,6 +210,34 @@ test_that("1- or 2-width octal expressions give the right STR_CONST values", {
   })
 })
 
+test_that("tokens >= 1000 chars give the right text values (#2848)", {
+  with_content_to_parse(
+    sprintf('"%s"', strrep("x", 1000L)),
+    expect_identical(pc[[1L]][1L, "text"], content)
+  )
+
+  # col2 - col1 == 27 matches nchar("[1028 chars quoted with '\"']") - 1L (#2848)
+  with_content_to_parse(
+    paste0('"', strrep("x", 500L), "\n", strrep("x", 500L), "\n", strrep("x", 27L), '"'),
+    expect_identical(pc[[1L]][1L, "text"], content)
+  )
+
+  # backticked SYMBOL* and SLOT tokens >= 1000 chars (PR#19204 / r90660)
+  with_content_to_parse(
+    sprintf(
+      "`%1$s` <- `%1$s`::`%1$s`(`%1$s` = '%1$s', . = function(`%1$s`) 0, .. = .@`%1$s`)",
+      strrep("a", 1200L)
+    ),
+    {
+      long_idx <- nchar(pc[[1L]]$text) > 1000L
+      expect_identical(
+        pc[[1L]]$token[long_idx],
+        c("SYMBOL", "SYMBOL_PACKAGE", "SYMBOL_FUNCTION_CALL", "SYMBOL_SUB", "STR_CONST", "SYMBOL_FORMALS", "SLOT")
+      )
+    }
+  )
+})
+
 test_that("returned data structure is complete", {
   lines <- c("line_1", "line_2", "line_3")
   temp_file <- withr::local_tempfile(lines = lines)

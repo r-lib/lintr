@@ -575,7 +575,7 @@ get_source_expression <- function(source_expression, error = identity) {
   }
 
   source_expression$parsed_content <- parsed_content
-  fix_octal_escapes(fix_tab_indentations(source_expression), source_expression$lines)
+  fix_token_text(fix_tab_indentations(source_expression), source_expression$lines)
 }
 
 maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
@@ -684,36 +684,54 @@ top_level_expressions <- function(pc) {
 
 # workaround for bad parse data bug for octal escapes
 #   https://bugs.r-project.org/show_bug.cgi?id=18323
-# TODO(R>=4.3.0): remove this
-fix_octal_escapes <- function(pc, lines) {
-  # subset first to prevent using nchar() on MBCS input
-  is_str_const <- pc$token == "STR_CONST"
-  str_const <- pc[is_str_const, ]
-  str_const_mismatch <- str_const$col2 - str_const$col1 != nchar(str_const$text) - 1L
-  if (!any(str_const_mismatch)) {
+# and truncated string/symbol/slot literals (>= 1000 chars) in getParseData() (#2848):
+#   https://bugs.r-project.org/show_bug.cgi?id=19204
+# TODO(R>=4.7.0): remove this; getParseData() handles truncated tokens since r90660.
+fix_token_text <- function(pc, lines) {
+  truncatable_idx <- which(
+    pc$token %in% c(
+      "STR_CONST",
+      "SYMBOL", "SYMBOL_FUNCTION_CALL", "SYMBOL_SUB", "SYMBOL_FORMALS", "SYMBOL_PACKAGE",
+      "SLOT"
+    )
+  )
+  if (length(truncatable_idx) == 0L) {
     return(pc)
   }
-  str_const <- str_const[str_const_mismatch, ]
-  out <- character(nrow(str_const))
-  single_line <- str_const$line1 == str_const$line2
+  token_text <- pc$text[truncatable_idx]
+  text_mismatch <- startsWith(token_text, "[")
+  # TODO(R>=4.3.0): remove this branch
+  # nocov start
+  if (getRversion() < "4.3.0") {
+    truncatable <- pc[truncatable_idx, ]
+    text_mismatch <- text_mismatch | (truncatable$col2 - truncatable$col1 != nchar(token_text) - 1L)
+  }
+  # nocov end
+  if (!any(text_mismatch)) {
+    return(pc)
+  }
+  is_mismatch <- truncatable_idx[text_mismatch]
+  mismatch <- pc[is_mismatch, ]
+  out <- character(nrow(mismatch))
+  single_line <- mismatch$line1 == mismatch$line2
   out[single_line] <- substr(
-    lines[str_const$line1[single_line]],
-    str_const$col1[single_line],
-    str_const$col2[single_line]
+    lines[mismatch$line1[single_line]],
+    mismatch$col1[single_line],
+    mismatch$col2[single_line]
   )
   for (ii in which(!single_line)) {
     out[ii] <- paste(
       c(
-        substring(lines[str_const$line1[ii]], str_const$col1[ii]),
-        if (str_const$line1[ii] < str_const$line2[ii] - 1L) {
-          lines[(str_const$line1[ii] + 1L):(str_const$line2[ii] - 1L)]
+        substring(lines[mismatch$line1[ii]], mismatch$col1[ii]),
+        if (mismatch$line1[ii] < mismatch$line2[ii] - 1L) {
+          lines[(mismatch$line1[ii] + 1L):(mismatch$line2[ii] - 1L)]
         },
-        substr(lines[str_const$line2[ii]], 1L, str_const$col2[ii])
+        substr(lines[mismatch$line2[ii]], 1L, mismatch$col2[ii])
       ),
       collapse = "\n"
     )
   }
-  pc$text[is_str_const][str_const_mismatch] <- out
+  pc$text[is_mismatch] <- out
   pc
 }
 
