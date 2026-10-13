@@ -73,6 +73,7 @@
 * `backport_linter()` detects backtick-quoted calls and symbols (e.g. `` `%||%`(x, y) ``, ``Reduce(`%||%`, x)``) and replacement function calls (e.g. `.rowNamesDF(x) <- value`; #3160, @MichaelChirico).
 * `implicit_assignment_linter(allow_scoped = TRUE)` detects out-of-scope uses of variables assigned via `->` or unparenthesized `<-` following higher-precedence operators like `&&` and `||` (e.g. `if (a <- 1 && b <- 2) ...`; #2918, @MichaelChirico).
 * `unnecessary_lambda_linter()` also flags multi-argument anonymous functions whose formal arguments are forwarded in order to a single inner call, e.g. `lapply(x, \(xi, y) foo(xi, y), y)` or `lapply(x, \(xi, y) foo(xi, y = y), y = 1)` (#2477, @MichaelChirico).
+* `lengths_linter()` also flags `lapply(x, length)` and `purrr::map(x, length)` (#1570, @MichaelChirico).
 
 ## Notes
 
