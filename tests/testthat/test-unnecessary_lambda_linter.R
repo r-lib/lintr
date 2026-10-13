@@ -172,6 +172,8 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
   expect_no_lint("outer(x, y, function(xi, yi) foo(xi))", linter)
   expect_no_lint("purrr::map2(x, y, function(xi, yi) foo(xi))", linter)
   expect_no_lint("lapply(x, function(xi, y) foo(xi, y))", linter)
+  # foo(xi, y=y) guarantees foo has a formal 'y', but here it's passed positionally,
+  #   so this lambda _could_ be a redirect e.g. if foo's second parameter is 'b'
   expect_no_lint("lapply(x, function(xi, y) foo(xi, y), y = 1)", linter)
   expect_no_lint("lapply(x, function(xi, y) foo(xi, y = y), y)", linter)
   expect_no_lint("lapply(x, function(xi, y, z) foo(xi, y + z), y, z)", linter)
