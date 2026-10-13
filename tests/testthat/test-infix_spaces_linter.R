@@ -5,7 +5,7 @@ none_msg <- function(op) rex::rex("Put no spaces around `", op, "`.")
 
 # exclude_operators= is deprecated in favor of overrides = list(any = ...)
 linter_excluding <- function(exclude_operators) {
-  expect_warning(
+  testthat::expect_warning(
     {
       linter <- infix_spaces_linter(exclude_operators = exclude_operators)
     },
@@ -14,7 +14,7 @@ linter_excluding <- function(exclude_operators) {
   linter
 }
 
-test_that("returns the correct linting", {
+test_that("returns the correct linting", { # nofuzz: assignment
   ops <- c(
     "+",
     "-",
@@ -72,7 +72,7 @@ test_that("returns the correct linting", {
   expect_lint("fun(a=1)", min_one_msg("="), linter)
 })
 
-test_that("The three `=` are all linted", {
+test_that("The three `=` are all linted", { # nofuzz: assignment
   linter <- infix_spaces_linter()
 
   # EQ_ASSIGN in the parse data
@@ -188,7 +188,7 @@ test_that("overrides is validated", {
 })
 
 # more tests specifically for assignment
-test_that("assignment cases return the correct linting", {
+test_that("assignment cases return the correct linting", { # nofuzz: assignment
   linter <- infix_spaces_linter()
 
   expect_no_lint("fun(blah =  1)", linter)
@@ -283,7 +283,7 @@ test_that("Rules around missing arguments are respected", {
   expect_lint("alist(missing_arg =)", min_one_msg("="), linter)
 })
 
-test_that("native pipe is supported", {
+test_that("native pipe is supported", { # nofuzz: pipe
   linter <- infix_spaces_linter()
 
   expect_no_lint("a |> foo()", linter)

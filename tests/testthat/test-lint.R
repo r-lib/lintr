@@ -235,7 +235,7 @@ test_that("typo in argument name gives helpful error", {
 })
 
 
-test_that("gitlab_output() writes expected report", {
+test_that("gitlab_output() writes expected report", { # nofuzz: assignment
   skip_if_not_installed("jsonlite")
 
   tmpfile <- withr::local_tempfile()
