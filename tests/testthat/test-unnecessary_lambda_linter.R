@@ -145,6 +145,45 @@ test_that("unnecessary_lambda_linter blocks simple disallowed usage", {
     rex::rex("Pass foo directly as a symbol to sapply()"),
     linter
   )
+
+  # multi-argument lambdas (#2477)
+  expect_lint(
+    "lapply(x, function(xi, y) foo(xi, y), y)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "lapply(x, \\(xi, y) foo(xi, y = y), y = 1)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "lapply(x, \\(xi, ...) foo(xi, ...), y = 1)",
+    rex::rex("Pass foo directly as a symbol to lapply()"),
+    linter
+  )
+  expect_lint(
+    "mapply(function(xi, yi) foo(xi, yi, na.rm = TRUE), x, y)",
+    rex::rex("Pass foo directly as a symbol to mapply()"),
+    linter
+  )
+  # swapped positional arguments
+  expect_no_lint("mapply(function(xi, yi) foo(yi, xi), x, y)", linter)
+  # passed 'y' is discarded, which may or may not be necessary
+  expect_no_lint("mapply(function(xi, yi) foo(xi), x, y)", linter)
+  expect_no_lint("outer(x, y, function(xi, yi) foo(xi))", linter)
+  expect_no_lint("purrr::map2(x, y, function(xi, yi) foo(xi))", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y))", linter)
+  # foo(xi, y=y) guarantees foo has a formal 'y', but here it's passed positionally,
+  #   so this lambda _could_ be a redirect e.g. if foo's second parameter is 'b'
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y), y = 1)", linter)
+  # y= might not be second argument so lambda required to pass it as keyword
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y = y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y, z) foo(xi, y + z), y, z)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, bar = y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, bar = y), y = 1)", linter)
+  expect_no_lint("lapply(x, function(xi, y) foo(xi, y, y), y)", linter)
+  expect_no_lint("lapply(x, function(xi, y = 1) foo(xi, y))", linter)
 })
 
 test_that("unnecessary_lambda_linter blocks simple disallowed usages", {
