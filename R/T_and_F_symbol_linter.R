@@ -32,14 +32,20 @@
 #' - <https://style.tidyverse.org/syntax.html#logical-vectors>
 #' @export
 T_and_F_symbol_linter <- function() { # nolint: object_name.
-  symbol_xpath <- "//SYMBOL[
+  quote_funs <- c("quote", "bquote", "expression")
+  symbol_xpath <- glue("//SYMBOL[
     (text() = 'T' or text() = 'F')
     and not(parent::expr[OP-DOLLAR or OP-AT or following-sibling::OP-LEFT-BRACKET or following-sibling::LBB])
     and (
-      not(ancestor::expr[OP-TILDE])
+      not(
+        ancestor::expr[OP-TILDE]
+        or parent::expr
+          /parent::expr[expr[1]/SYMBOL_FUNCTION_CALL]
+          /ancestor::expr[expr[1]/SYMBOL_FUNCTION_CALL[{ xp_text_in_table(quote_funs) }]]
+      )
       or parent::expr/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]
     )
-  ]"
+  ]")
   assignment_xpath <-
     "parent::expr[following-sibling::LEFT_ASSIGN or preceding-sibling::RIGHT_ASSIGN or following-sibling::EQ_ASSIGN]"
 
