@@ -179,3 +179,17 @@ test_that("namespace_linter respects except= in import() directives", { # nofuzz
     linters = namespace_linter()
   )
 })
+
+test_that("namespace_linter includes problematic package names in error message (#1855)", { # nofuzz
+  lib_dir <- withr::local_tempdir("broken_lib")
+  dir.create(file.path(lib_dir, "brokenpkg1", "Meta"), recursive = TRUE)
+  file.create(file.path(lib_dir, "brokenpkg1", "Meta", "package.rds"))
+  dir.create(file.path(lib_dir, "brokenpkg2", "Meta"), recursive = TRUE)
+  file.create(file.path(lib_dir, "brokenpkg2", "Meta", "package.rds"))
+  withr::local_libpaths(lib_dir, action = "prefix")
+
+  expect_error(
+    lint(text = "brokenpkg1::foo(); brokenpkg2:::bar()", linters = namespace_linter()),
+    rex::rex("Failed to retrieve namespaces for", anything, "brokenpkg1", anything, "brokenpkg2")
+  )
+})
