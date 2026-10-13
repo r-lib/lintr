@@ -12,10 +12,9 @@ get the length of each element of a list. It is almost always equivalent
 to \code{sapply(x, length)}, but faster and more readable.
 }
 \details{
-One known case where this does not strictly apply is to an array of lists,
+Be advised of one known case where this does not strictly apply: arrays of lists,
 e.g. \code{array(list(1, 1, 1, 1:2), dim = c(2L, 2L))}, where \code{lengths()}
-will retain the shape of its input where \code{sapply()} will not. Whether
-that's a good thing may be context-dependent.
+will retain the shape of its input where \code{sapply()} will not.
 }
 \examples{
 # will produce lints
