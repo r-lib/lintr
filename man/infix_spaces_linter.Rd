@@ -5,19 +5,19 @@
 \title{Infix spaces linter}
 \usage{
 infix_spaces_linter(
-  default_style = c("multiple", "one"),
+  default_style = c("min_one", "one"),
   overrides = NULL,
   exclude_operators = NULL,
   allow_multiple_spaces = NULL
 )
 }
 \arguments{
-\item{default_style}{Spacing style for operators not listed in \code{overrides}. \code{"multiple"} (the default)
+\item{default_style}{Spacing style for operators not listed in \code{overrides}. \code{"min_one"} (the default)
 requires at least one space on each side, so that usage like \code{x  =  2} is allowed for code alignment;
 \code{"one"} requires exactly one space on each side.}
 
 \item{overrides}{Named list of character vectors assigning a spacing style to specific operators. Names are
-the style, one of \code{"multiple"}, \code{"one"}, \code{"none"} (no space on either side) or \code{"any"} (not linted), and
+the style, one of \code{"min_one"}, \code{"one"}, \code{"none"} (no space on either side) or \code{"any"} (not linted), and
 values are the operators, e.g. \code{list(none = c("EQ_SUB", "EQ_FORMALS"), any = "\%\%")}. Each operator can
 appear only once.
 The linter considers the following "low-precedence" operators:
@@ -48,6 +48,21 @@ lint(
   linters = infix_spaces_linter()
 )
 
+code_lines <- "
+ab     <- 1L
+abcdef <- 2L
+"
+writeLines(code_lines)
+lint(
+  text = code_lines,
+  linters = infix_spaces_linter(default_style = "one")
+)
+
+lint(
+  text = "a||b",
+  linters = infix_spaces_linter()
+)
+
 lint(
   text = "sum(1:10, na.rm = TRUE)",
   linters = infix_spaces_linter(overrides = list(none = c("EQ_SUB", "EQ_FORMALS")))
@@ -64,14 +79,9 @@ lint(
   linters = infix_spaces_linter()
 )
 
-code_lines <- "
-ab     <- 1L
-abcdef <- 2L
-"
-writeLines(code_lines)
 lint(
   text = code_lines,
-  linters = infix_spaces_linter(default_style = "multiple")
+  linters = infix_spaces_linter(default_style = "min_one")
 )
 
 lint(

@@ -4,11 +4,11 @@
 #'   see <https://style.tidyverse.org/syntax.html#infix-operators>. Spacing can be customized per operator,
 #'   e.g. to require no space around `=` in named arguments as in the Bioconductor style guide.
 #'
-#' @param default_style Spacing style for operators not listed in `overrides`. `"multiple"` (the default)
+#' @param default_style Spacing style for operators not listed in `overrides`. `"min_one"` (the default)
 #'   requires at least one space on each side, so that usage like `x  =  2` is allowed for code alignment;
 #'   `"one"` requires exactly one space on each side.
 #' @param overrides Named list of character vectors assigning a spacing style to specific operators. Names are
-#'   the style, one of `"multiple"`, `"one"`, `"none"` (no space on either side) or `"any"` (not linted), and
+#'   the style, one of `"min_one"`, `"one"`, `"none"` (no space on either side) or `"any"` (not linted), and
 #'   values are the operators, e.g. `list(none = c("EQ_SUB", "EQ_FORMALS"), any = "%%")`. Each operator can
 #'   appear only once.
 #'   The linter considers the following "low-precedence" operators:
@@ -32,6 +32,21 @@
 #'   linters = infix_spaces_linter()
 #' )
 #'
+#' code_lines <- "
+#' ab     <- 1L
+#' abcdef <- 2L
+#' "
+#' writeLines(code_lines)
+#' lint(
+#'   text = code_lines,
+#'   linters = infix_spaces_linter(default_style = "one")
+#' )
+#'
+#' lint(
+#'   text = "a||b",
+#'   linters = infix_spaces_linter()
+#' )
+#'
 #' lint(
 #'   text = "sum(1:10, na.rm = TRUE)",
 #'   linters = infix_spaces_linter(overrides = list(none = c("EQ_SUB", "EQ_FORMALS")))
@@ -48,14 +63,9 @@
 #'   linters = infix_spaces_linter()
 #' )
 #'
-#' code_lines <- "
-#' ab     <- 1L
-#' abcdef <- 2L
-#' "
-#' writeLines(code_lines)
 #' lint(
 #'   text = code_lines,
-#'   linters = infix_spaces_linter(default_style = "multiple")
+#'   linters = infix_spaces_linter(default_style = "min_one")
 #' )
 #'
 #' lint(
@@ -74,11 +84,12 @@
 #' - <https://style.tidyverse.org/syntax.html#infix-operators>
 #' - <https://contributions.bioconductor.org/r-code.html#use-of-space>
 #' @export
-infix_spaces_linter <- function(default_style = c("multiple", "one"),
+infix_spaces_linter <- function(default_style = c("min_one", "one"),
                                 overrides = NULL,
                                 exclude_operators = NULL,
                                 allow_multiple_spaces = NULL) {
   default_style <- match.arg(default_style)
+  validate_infix_overrides(overrides)
 
   if (!is.null(allow_multiple_spaces)) {
     lintr_deprecated(
@@ -87,7 +98,7 @@ infix_spaces_linter <- function(default_style = c("multiple", "one"),
       version = "3.5.0",
       type = "Argument"
     )
-    default_style <- if (allow_multiple_spaces) "multiple" else "one"
+    default_style <- if (allow_multiple_spaces) "min_one" else "one"
   }
   if (!is.null(exclude_operators)) {
     lintr_deprecated(
@@ -129,7 +140,7 @@ infix_spaces_linter <- function(default_style = c("multiple", "one"),
 
   # op compares the gap to a neighboring token (@start - @end == 1 means adjacent) to find a lint
   style_metadata <- list(
-    multiple = list(op = "<", lint_message = "Put spaces around all infix operators."),
+    min_one = list(op = "<", lint_message = "Put spaces around all infix operators."),
     one = list(op = "!=", lint_message = "Put exactly one space on each side of infix operators."),
     none = list(op = ">=", lint_message = "Put no spaces around `%s`.")
   )
@@ -146,7 +157,7 @@ infix_spaces_linter <- function(default_style = c("multiple", "one"),
     )
   })
   names(xpaths) <- names(style_metadata)
-  xpaths <- Filter(Negate(is.null), xpaths)
+  xpaths <- xpaths[lengths(xpaths) > 0L]
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
@@ -170,16 +181,6 @@ infix_spaces_linter <- function(default_style = c("multiple", "one"),
 
 # style for each low-precedence operator, named by xml_tag_exact
 resolve_infix_styles <- function(default_style, overrides) {
-  if (!is.null(overrides)) {
-    if (!is.list(overrides) || !all(nzchar(names2(overrides)))) {
-      cli_abort("{.arg overrides} must be a named list.")
-    }
-    invalid_styles <- setdiff(names(overrides), c("multiple", "one", "none", "any"))
-    if (length(invalid_styles) > 0L) {
-      cli_abort('Names of {.arg overrides} must be "multiple", "one", "none" or "any", not {.val {invalid_styles}}.')
-    }
-  }
-
   low_precedence <- infix_metadata[infix_metadata$low_precedence, ]
   styles <- rep(default_style, nrow(low_precedence))
   names(styles) <- low_precedence$xml_tag_exact
@@ -199,4 +200,17 @@ resolve_infix_styles <- function(default_style, overrides) {
     }
   }
   styles
+}
+
+validate_infix_overrides <- function(overrides) {
+  if (is.null(overrides)) {
+    return(invisible())
+  }
+  if (!is.list(overrides) || !all(nzchar(names2(overrides)))) {
+    cli_abort("{.arg overrides} must be a named list.")
+  }
+  invalid_styles <- setdiff(names(overrides), c("min_one", "one", "none", "any"))
+  if (length(invalid_styles) > 0L) {
+    cli_abort('Names of {.arg overrides} must be "min_one", "one", "none" or "any", not {.val {invalid_styles}}.')
+  }
 }

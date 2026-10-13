@@ -132,25 +132,25 @@ test_that("overrides = list(none = ...) works", { # nofuzz: assignment
   expect_lint("function(a = 1) foo(b = 2)", list(lint_msg, lint_msg), linter)
 })
 
-test_that("overrides = list(one = ...) and list(multiple = ...) work", { # nofuzz: assignment
+test_that("overrides = list(one = ...) and list(min_one = ...) work", { # nofuzz: assignment
   one_msg <- rex::rex("Put exactly one space on each side of infix operators.")
-  multiple_msg <- rex::rex("Put spaces around all infix operators.")
+  min_one_msg <- rex::rex("Put spaces around all infix operators.")
 
   linter <- infix_spaces_linter(overrides = list(one = "<-"))
   expect_no_lint("x <- 1", linter)
   expect_lint("x  <-  1", one_msg, linter)
   expect_no_lint("x  ==  1", linter)
 
-  linter <- infix_spaces_linter(default_style = "one", overrides = list(multiple = "<-"))
+  linter <- infix_spaces_linter(default_style = "one", overrides = list(min_one = "<-"))
   expect_no_lint("x  <-  1", linter)
   expect_lint("x  ==  1", one_msg, linter)
-  expect_lint("x<-1", multiple_msg, linter)
+  expect_lint("x<-1", min_one_msg, linter)
 })
 
 test_that("overrides is validated", {
   expect_error(infix_spaces_linter(overrides = c(none = "+")), "must be a named list")
   expect_error(infix_spaces_linter(overrides = list("+")), "must be a named list")
-  expect_error(infix_spaces_linter(overrides = list(foo = "+")), 'must be "multiple", "one", "none" or "any"')
+  expect_error(infix_spaces_linter(overrides = list(foo = "+")), 'must be "min_one", "one", "none" or "any"')
   expect_error(infix_spaces_linter(overrides = list(none = 1L)), "Unknown operator 1")
   expect_error(infix_spaces_linter(overrides = list(none = "^")), 'Unknown operator "\\^"')
   expect_error(infix_spaces_linter(overrides = list(none = "+", any = "+")), "given more than once")
