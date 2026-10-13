@@ -191,12 +191,15 @@ unnecessary_lambda_linter <- function(allow_comparison = FALSE) {
     )
     first_k <- head(xml_find_all_(inner_call, "expr[position() > 1]"), n_formals)
     arg_syms <- get_r_string(first_k, "SYMBOL")
+    if (!identical(arg_syms, formal_args)) {
+      return(FALSE)
+    }
     inner_kw <- get_r_string(
       first_k,
       "preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB]/preceding-sibling::*[not(self::COMMENT)][1]"
     )
     outer_kw <- get_r_string(xml_find_all_(fun_expr, "parent::expr/SYMBOL_SUB"))
-    identical(list(arg_syms, inner_kw), list(formal_args, outer_kw[match(formal_args, outer_kw)]))
+    identical(inner_kw, outer_kw[match(formal_args, outer_kw)])
   }
 
   Linter(linter_level = "expression", function(source_expression) {
