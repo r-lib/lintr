@@ -4,11 +4,11 @@
 #'   see <https://style.tidyverse.org/syntax.html#infix-operators>. Spacing can be customized per operator,
 #'   e.g. to require no space around `=` in named arguments as in the Bioconductor style guide.
 #'
-#' @param default_style Spacing style for operators not listed in `overrides`. `"min_one"` (the default)
+#' @param default_style Spacing style for operators not listed in `overrides`. `"one_or_more"` (the default)
 #'   requires at least one space on each side, so that usage like `x  =  2` is allowed for code alignment;
 #'   `"one"` requires exactly one space on each side.
 #' @param overrides Named list of character vectors assigning a spacing style to specific operators. Names are
-#'   the style, one of `"min_one"`, `"one"`, `"none"` (no space on either side) or `"any"` (not linted), and
+#'   the style, one of `"one_or_more"`, `"one"`, `"none"` (no space on either side) or `"any"` (not linted), and
 #'   values are the operators, e.g. `list(none = c("EQ_SUB", "EQ_FORMALS"), any = "%%")`. Each operator can
 #'   appear only once.
 #'   The linter considers the following "low-precedence" operators:
@@ -65,7 +65,7 @@
 #'
 #' lint(
 #'   text = code_lines,
-#'   linters = infix_spaces_linter(default_style = "min_one")
+#'   linters = infix_spaces_linter(default_style = "one_or_more")
 #' )
 #'
 #' lint(
@@ -84,7 +84,7 @@
 #' - <https://style.tidyverse.org/syntax.html#infix-operators>
 #' - <https://contributions.bioconductor.org/r-code.html#use-of-space>
 #' @export
-infix_spaces_linter <- function(default_style = c("min_one", "one"),
+infix_spaces_linter <- function(default_style = c("one_or_more", "one"),
                                 overrides = NULL,
                                 exclude_operators = NULL,
                                 allow_multiple_spaces = NULL) {
@@ -98,7 +98,7 @@ infix_spaces_linter <- function(default_style = c("min_one", "one"),
       version = "3.5.0",
       type = "Argument"
     )
-    default_style <- if (allow_multiple_spaces) "min_one" else "one"
+    default_style <- if (allow_multiple_spaces) "one_or_more" else "one"
   }
   if (!is.null(exclude_operators)) {
     lintr_deprecated(
@@ -140,7 +140,7 @@ infix_spaces_linter <- function(default_style = c("min_one", "one"),
 
   # op compares the gap to a neighboring token (@start - @end == 1 means adjacent) to find a lint
   style_metadata <- list(
-    min_one = list(op = "<", lint_message = "Put spaces around `%s`."),
+    one_or_more = list(op = "<", lint_message = "Put spaces around `%s`."),
     one = list(op = "!=", lint_message = "Put exactly one space on each side of `%s`."),
     none = list(op = ">=", lint_message = "Put no spaces around `%s`.")
   )
@@ -206,8 +206,8 @@ validate_infix_overrides <- function(overrides) {
   if (!is.list(overrides) || !all(nzchar(names2(overrides)))) {
     cli_abort("{.arg overrides} must be a named list.")
   }
-  invalid_styles <- setdiff(names(overrides), c("min_one", "one", "none", "any"))
+  invalid_styles <- setdiff(names(overrides), c("one_or_more", "one", "none", "any"))
   if (length(invalid_styles) > 0L) {
-    cli_abort('Names of {.arg overrides} must be "min_one", "one", "none" or "any", not {.val {invalid_styles}}.')
+    cli_abort('Names of {.arg overrides} must be "one_or_more", "one", "none" or "any", not {.val {invalid_styles}}.')
   }
 }

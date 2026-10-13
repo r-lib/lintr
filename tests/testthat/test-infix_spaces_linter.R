@@ -1,5 +1,5 @@
 # fuzzer disable: comment_injection
-min_one_msg <- function(op) rex::rex("Put spaces around `", op, "`.")
+one_or_more_msg <- function(op) rex::rex("Put spaces around `", op, "`.")
 one_msg <- function(op) rex::rex("Put exactly one space on each side of `", op, "`.")
 none_msg <- function(op) rex::rex("Put no spaces around `", op, "`.")
 
@@ -53,14 +53,14 @@ test_that("returns the correct linting", { # nofuzz: assignment
     expect_no_lint(paste0("1 ", op, "\n2"), linter)
     expect_no_lint(paste0("1 ", op, "\n 2"), linter)
 
-    expect_lint(paste0("1", op, "2"), min_one_msg(op), linter)
+    expect_lint(paste0("1", op, "2"), one_or_more_msg(op), linter)
 
     # unary plus and minus can have no space before them
     if (!op %in% ops[1L:2L]) {
-      expect_lint(paste0("1 ", op, "2"), min_one_msg(op), linter)
+      expect_lint(paste0("1 ", op, "2"), one_or_more_msg(op), linter)
     }
 
-    expect_lint(paste0("1", op, " 2"), min_one_msg(op), linter)
+    expect_lint(paste0("1", op, " 2"), one_or_more_msg(op), linter)
   }
 
   expect_no_lint("b <- 2E+4", linter)
@@ -69,18 +69,18 @@ test_that("returns the correct linting", { # nofuzz: assignment
   expect_no_lint("a[-1 + 1]", linter)
   expect_no_lint("a[1 + -1]", linter)
 
-  expect_lint("fun(a=1)", min_one_msg("="), linter)
+  expect_lint("fun(a=1)", one_or_more_msg("="), linter)
 })
 
 test_that("The three `=` are all linted", { # nofuzz: assignment
   linter <- infix_spaces_linter()
 
   # EQ_ASSIGN in the parse data
-  expect_lint("a=1", min_one_msg("="), linter)
+  expect_lint("a=1", one_or_more_msg("="), linter)
   # EQ_FORMALS in the parse data
-  expect_lint("foo <- function(x=1) {}", min_one_msg("="), linter)
+  expect_lint("foo <- function(x=1) {}", one_or_more_msg("="), linter)
   # EQ_SUB in the parse data
-  expect_lint("foo(x=1)", min_one_msg("="), linter)
+  expect_lint("foo(x=1)", one_or_more_msg("="), linter)
 })
 
 test_that("exclude_operators works", {
@@ -94,11 +94,11 @@ test_that("exclude_operators works", {
   )
 
   # operators match on text, not hidden node
-  expect_lint("a<<-1", min_one_msg("<<-"), linter_excluding("<-"))
+  expect_lint("a<<-1", one_or_more_msg("<<-"), linter_excluding("<-"))
   expect_no_lint("a<<-1", linter_excluding("<<-"))
-  expect_lint("a:=1", min_one_msg(":="), linter_excluding("<-"))
+  expect_lint("a:=1", one_or_more_msg(":="), linter_excluding("<-"))
   expect_no_lint("a:=1", linter_excluding(":="))
-  expect_lint("a->>1", min_one_msg("->>"), linter_excluding("->"))
+  expect_lint("a->>1", one_or_more_msg("->>"), linter_excluding("->"))
   expect_no_lint("a->>1", linter_excluding("->>"))
   expect_no_lint("a%any%1", linter_excluding("%%"))
   expect_no_lint("function(a=1) { }", linter_excluding("="))
@@ -116,11 +116,11 @@ test_that("overrides = list(any = ...) works", {
   )
 
   # operators match on text, not hidden node
-  expect_lint("a<<-1", min_one_msg("<<-"), infix_spaces_linter(overrides = list(any = "<-")))
+  expect_lint("a<<-1", one_or_more_msg("<<-"), infix_spaces_linter(overrides = list(any = "<-")))
   expect_no_lint("a<<-1", infix_spaces_linter(overrides = list(any = "<<-")))
-  expect_lint("a:=1", min_one_msg(":="), infix_spaces_linter(overrides = list(any = "<-")))
+  expect_lint("a:=1", one_or_more_msg(":="), infix_spaces_linter(overrides = list(any = "<-")))
   expect_no_lint("a:=1", infix_spaces_linter(overrides = list(any = ":=")))
-  expect_lint("a->>1", min_one_msg("->>"), infix_spaces_linter(overrides = list(any = "->")))
+  expect_lint("a->>1", one_or_more_msg("->>"), infix_spaces_linter(overrides = list(any = "->")))
   expect_no_lint("a->>1", infix_spaces_linter(overrides = list(any = "->>")))
   expect_no_lint("a%any%1", infix_spaces_linter(overrides = list(any = "%%")))
   expect_no_lint("function(a=1) { }", infix_spaces_linter(overrides = list(any = "=")))
@@ -139,10 +139,10 @@ test_that("overrides = list(none = ...) works", { # nofuzz: assignment
 
   # other operators keep the default style
   expect_no_lint("x <- foo(a=1)", linter)
-  expect_lint("x<-foo(a=1)", min_one_msg("<-"), linter)
-  expect_lint("x<-foo(a = 1)", list(min_one_msg("<-"), none_msg("=")), linter)
-  expect_lint("x=1", min_one_msg("="), linter)
-  expect_lint("function(x=1) NULL", min_one_msg("="), linter)
+  expect_lint("x<-foo(a=1)", one_or_more_msg("<-"), linter)
+  expect_lint("x<-foo(a = 1)", list(one_or_more_msg("<-"), none_msg("=")), linter)
+  expect_lint("x=1", one_or_more_msg("="), linter)
+  expect_lint("function(x=1) NULL", one_or_more_msg("="), linter)
 
   # newlines are not spaces
   expect_no_lint(
@@ -163,23 +163,23 @@ test_that("overrides = list(none = ...) works", { # nofuzz: assignment
   expect_lint("function(a = 1) foo(b = 2)", list(none_msg("="), none_msg("=")), linter)
 })
 
-test_that("overrides = list(one = ...) and list(min_one = ...) work", { # nofuzz: assignment
+test_that("overrides = list(one = ...) and list(one_or_more = ...) work", { # nofuzz: assignment
 
   linter <- infix_spaces_linter(overrides = list(one = "<-"))
   expect_no_lint("x <- 1", linter)
   expect_lint("x  <-  1", one_msg("<-"), linter)
   expect_no_lint("x  ==  1", linter)
 
-  linter <- infix_spaces_linter(default_style = "one", overrides = list(min_one = "<-"))
+  linter <- infix_spaces_linter(default_style = "one", overrides = list(one_or_more = "<-"))
   expect_no_lint("x  <-  1", linter)
   expect_lint("x  ==  1", one_msg("=="), linter)
-  expect_lint("x<-1", min_one_msg("<-"), linter)
+  expect_lint("x<-1", one_or_more_msg("<-"), linter)
 })
 
 test_that("overrides is validated", {
   expect_error(infix_spaces_linter(overrides = c(none = "+")), "must be a named list")
   expect_error(infix_spaces_linter(overrides = list("+")), "must be a named list")
-  expect_error(infix_spaces_linter(overrides = list(foo = "+")), 'must be "min_one", "one", "none" or "any"')
+  expect_error(infix_spaces_linter(overrides = list(foo = "+")), 'must be "one_or_more", "one", "none" or "any"')
   expect_error(infix_spaces_linter(overrides = list(none = 1L)), "Unknown operator 1")
   expect_error(infix_spaces_linter(overrides = list(none = "^")), 'Unknown operator "\\^"')
   expect_error(infix_spaces_linter(overrides = list(none = "+", any = "+")), "given more than once")
@@ -208,10 +208,10 @@ test_that("assignment cases return the correct linting", { # nofuzz: assignment
   )
   expect_no_lint("my = bad = variable = name <- 2.0", linter)
 
-  expect_lint("blah<-  1", min_one_msg("<-"), linter)
-  expect_lint("blah  <-1", min_one_msg("<-"), linter)
-  expect_lint("blah=  1", min_one_msg("="), linter)
-  expect_lint("blah  =1", min_one_msg("="), linter)
+  expect_lint("blah<-  1", one_or_more_msg("<-"), linter)
+  expect_lint("blah  <-1", one_or_more_msg("<-"), linter)
+  expect_lint("blah=  1", one_or_more_msg("="), linter)
+  expect_lint("blah  =1", one_or_more_msg("="), linter)
 })
 
 test_that("infix_spaces_linter can allow >1 spaces optionally", {
@@ -268,7 +268,7 @@ test_that("multi-line, multi-expression case is caught", {
         y+
         z
     "),
-    min_one_msg("+"),
+    one_or_more_msg("+"),
     infix_spaces_linter()
   )
 })
@@ -279,22 +279,22 @@ test_that("Rules around missing arguments are respected", {
   expect_no_lint("switch(a = , b = 2)", linter)
   expect_no_lint("alist(missing_arg = )", linter)
 
-  expect_lint("switch(a =, b = 2)", min_one_msg("="), linter)
-  expect_lint("alist(missing_arg =)", min_one_msg("="), linter)
+  expect_lint("switch(a =, b = 2)", one_or_more_msg("="), linter)
+  expect_lint("alist(missing_arg =)", one_or_more_msg("="), linter)
 })
 
 test_that("native pipe is supported", { # nofuzz: pipe
   linter <- infix_spaces_linter()
 
   expect_no_lint("a |> foo()", linter)
-  expect_lint("a|>foo()", min_one_msg("|>"), linter)
+  expect_lint("a|>foo()", one_or_more_msg("|>"), linter)
 })
 
 test_that("mixed unary & binary operators aren't mis-lint", {
   expect_lint(
     "-1-1",
     list(
-      message = min_one_msg("-"),
+      message = one_or_more_msg("-"),
       column_number = 3L
     ),
     infix_spaces_linter()
@@ -354,14 +354,14 @@ test_that("lints vectorize", { # nofuzz: assignment
       d+e+f+g/3
     }"),
     list(
-      list(min_one_msg("<-"), line_number = 2L),
-      list(min_one_msg("/"), line_number = 3L),
-      list(min_one_msg("<-"), line_number = 4L, column_number = 4L),
-      list(min_one_msg("<-"), line_number = 4L, column_number = 7L),
-      list(min_one_msg("+"), line_number = 5L, column_number = 4L),
-      list(min_one_msg("+"), line_number = 5L, column_number = 6L),
-      list(min_one_msg("+"), line_number = 5L, column_number = 8L),
-      list(min_one_msg("/"), line_number = 5L, column_number = 10L)
+      list(one_or_more_msg("<-"), line_number = 2L),
+      list(one_or_more_msg("/"), line_number = 3L),
+      list(one_or_more_msg("<-"), line_number = 4L, column_number = 4L),
+      list(one_or_more_msg("<-"), line_number = 4L, column_number = 7L),
+      list(one_or_more_msg("+"), line_number = 5L, column_number = 4L),
+      list(one_or_more_msg("+"), line_number = 5L, column_number = 6L),
+      list(one_or_more_msg("+"), line_number = 5L, column_number = 8L),
+      list(one_or_more_msg("/"), line_number = 5L, column_number = 10L)
     ),
     infix_spaces_linter()
   )
