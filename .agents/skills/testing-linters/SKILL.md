@@ -62,6 +62,11 @@ following testing conventions and production-readiness standards:
     fuzzer (such as chained assignment `a <- time(x) = 1` under
     `# nofuzz: assignment`) must be annotated with `# nofuzz` or
     `# nofuzz: <fuzzer>`.
+  - Because `.dev/maybe_fuzz_content.R` copies `file = ...` into a standalone
+    `tempdir()` during fuzzing, **any** test where `expect_lint(file = ...)` or
+    `expect_no_lint(file = ...)` relies on discovering parent-directory files
+    (`DESCRIPTION`, `NAMESPACE`, `.lintr`) must be marked `# nofuzz` — including
+    when modifying an existing older `test_that()` block.
   - Group assertions requiring `# nofuzz` into their own dedicated
     `test_that("...", { # nofuzz ... })` block rather than scattering `# nofuzz`
     comments across standard test blocks:
@@ -117,10 +122,14 @@ following testing conventions and production-readiness standards:
   metacharacters require escaping (`()`, `[]`, `.`, `$`, etc.) or composition.
   Do use `rex::rex()` when escaping regex specials (especially repeated `\\`)
   would otherwise add visual noise.
-- **Avoid repetitive assertion comments**: Group related sequential assertions
-  under a single high-level summary comment (e.g.,
-  `# position= inferred positionally`) instead of repeating comments above every
-  `expect_lint()` or `expect_no_lint()` call.
+- **Avoid repetitive assertion comments, but explain subtle `expect_no_lint()` cases**:
+  Group related sequential assertions under a single high-level summary comment
+  (e.g., `# position= inferred positionally`) instead of repeating comments
+  above every `expect_lint()` or `expect_no_lint()` call. Do, however, add a
+  brief comment on non-obvious `expect_no_lint()` cases explaining *why* no lint
+  should fire (e.g., `# Keyword argument prevents direct symbol pass-through`),
+  and normalize incidental formatting quirks copied from user reprexes unless
+  that formatting is specifically under test.
 - **Positional message parameter in `expect_lint()` check lists**: In
   `expect_lint()` check lists, pass the message regex or string positionally as
   the first element of the check list rather than naming `message =`:
@@ -186,8 +195,18 @@ following testing conventions and production-readiness standards:
 - **Test unexported helpers exclusively through public entry points**: Always
   route argument validations and error assertions across public functions
   (`lint()`, `lint_dir()`, `lint_package()`) to prevent unit tests from coupling
-  directly to internal private mechanics. Do not mention internal implementation
+  directly to internal private mechanics. Never call unexported `{lintr}`
+  functions directly in tests — **including inside `skip_if_not()` or
+  `skip_if()` guards** (use base/utils functions like
+  `utils::packageDescription("mgcv", fields = "Depends")` or
+  `getNamespaceExports()` instead). Do not mention internal implementation
   details when describing/commenting tests.
+- **Pass `parse_settings = TRUE` when testing settings/package discovery via `expect_lint()`**:
+  `expect_lint()` and `expect_no_lint()` default to `parse_settings = FALSE`.
+  When testing behavior that flows through `read_settings()` or `find_package()`
+  via `expect_lint()` / `expect_no_lint()`, explicitly pass
+  `parse_settings = TRUE` (or call `lint()` directly, which defaults to
+  `parse_settings = TRUE`).
 - **Use authentic parsed structures over mock lists**: Never generate simplified
   artificial mock lists (`list(full_parsed_content = 1L)`) to satisfy internal
   type verification. Always generate real `source_expression` objects using
@@ -234,6 +253,13 @@ following testing conventions and production-readiness standards:
   11. **Multi-line expressions with comments**: `seq(1, # comment\n 10)`
   12. **Vectorization tests**: combining new and existing syntactic variants
       inside `test_that("lints vectorize", ...)`.
+- **Adversarial boundary tests for `ancestor::` / `descendant::` / `//` XPaths**:
+  Whenever a linter XPath uses multi-hop axes (`ancestor::`, `ancestor-or-self::`,
+  `descendant::`, `descendant-or-self::`, `.//`, `following::`), include
+  negative/positive tests proving the query does not unintentionally cross
+  syntactic boundaries (`{ ... }` brace blocks, `local({ ... })`, anonymous
+  functions `\(x) ...`, or excluded calls like `quote(...)`) and still works
+  when the target construct is wrapped in `(...)` or a function call.
 - **Verify non-targeted functions remain WAI when toggling options**: When
   testing an option that disables checking for specific targets (like passing
   `check_file_listing = FALSE` to skip `list.files()`/`dir()`), explicitly

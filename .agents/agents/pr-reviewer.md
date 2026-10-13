@@ -74,22 +74,31 @@ When reviewing changes, evaluate the following aspects:
    - Are there any unresolved downstream rebase conflicts or stray files?
 5. **NEWS Entry**: Is a `NEWS.md` entry required? If so, verify it follows all
    formatting rules in [`.agents/AGENTS.md`](../AGENTS.md) (proper section
-   heading under `# lintr (in development)`, `+` sub-bullet grouping when
-   multiple items touch the same function, both issue and PR numbers, `{pkg}` vs
+   heading under `# lintr (in development)`, referencing only **exported**
+   functions rather than internal helpers, `+` sub-bullet grouping when multiple
+   items touch the same function, issue/PR attribution, `{pkg}` vs
    `` `cli-tool` ``, and migration guidance).
 6. **Implementation Quality & Skill Compliance**: Read [`.agents/AGENTS.md`](../AGENTS.md)
    and the relevant skills in `.agents/skills/` and strictly enforce their
    requirements:
    - **Linter Development Standards (`developing-linters`)**: Verify minimalist
-     signatures, cohesive data engineering (`data.frame` with `with()` over
-     parallel loose vectors), idiomatic vectorization (`Map()`, `vapply()`),
-     exact AST condition checks, transitionary upstream R feature gates
-     annotated with `# TODO(R>=x.y.z)`, and crisp roxygen documentation
-     containing matched lints/OK `@examples` pairs in structured sections.
-   - **XPath Composition & Readability (`xpath-style`)**: Ensure exact AST node
-     entry points, modular composition via `glue()`, factored common predicates
-     out of disjunctions (`STR_CONST and (...)`), and unnested single conditions
-     placed before multi-condition parenthesized blocks inside `or` queries.
+     signatures, single-linter helpers scoped inside the linter factory rather
+     than top-level package namespace (using `# nolint next: cyclocomp_linter.`
+     referencing `gaborcsardi/cyclocomp#30` when needed), cohesive data
+     engineering (`data.frame` with `with()` over parallel loose vectors),
+     idiomatic vectorization (`Map()`, `vapply()`), exact AST condition checks,
+     transitionary upstream R feature gates annotated with `# TODO(R>=x.y.z)`,
+     and crisp roxygen documentation containing matched lints/OK `@examples`
+     pairs in structured sections.
+   - **XPath Composition, Boundary Safety & Performance (`xpath-style`)**:
+     Ensure exact AST node entry points, modular composition via `glue()`,
+     factored common predicates out of disjunctions (`STR_CONST and (...)`), and
+     unnested single conditions placed before multi-condition parenthesized
+     blocks inside `or` queries. Scrutinize any `ancestor::`,
+     `ancestor-or-self::`, `descendant::`, `descendant-or-self::`, `.//`, or
+     `following::` axes to ensure they do not unintentionally cross `{ ... }`
+     blocks, `\(x) ...` lambdas, or call/argument boundaries (or cause full-tree
+     ancestor walks without a `[1]` reverse-axis stop-condition).
    - **Literate Programming Robustness (`literate-r-formats`)**: Verify `NA`
      safety (`!is.na(...)`) over masked line extraction structures
      (`NA_character_` in `.Rmd`/`.qmd`).

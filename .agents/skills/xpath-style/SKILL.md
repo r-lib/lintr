@@ -244,7 +244,67 @@ performance guidelines:
     change the aggregate string value, guard against or exclude embedded
     comments before checking structural equality.
 
-## 5. Self-Documentation & Explicit Exclusion Comments
+## 5. Boundary-Safe Traversal (`ancestor::`, `descendant::`, `//`, `following::`)
+
+Unbounded multi-hop axes (`ancestor::`, `ancestor-or-self::`, `descendant::`,
+`descendant-or-self::`, `.//`, `following::`, `preceding::`) silently cross
+syntactic and scope boundaries in R's parse tree (`{ ... }` brace blocks,
+`function(...)` / `\()` bodies, function call arguments `foo(...)`,
+parenthesized sub-expressions, and quoted calls like `quote(...)`). They also
+scan the entire ancestor chain or subtree in `libxml2`, often causing 2x–3x
+runtime slowdowns when evaluated inside predicates on frequent nodes.
+
+- **Prefer direct child/parent steps (`*`, `expr`, `parent::expr`) by default**:
+  Before writing `ancestor::`, `descendant::`, or `.//`, always ask: *"Should
+  this match if a `{ ... }` block, `\(x) ...` lambda, or `foo(...)` call sits
+  between the two nodes?"* If not, use direct `parent::expr` / child `expr`
+  steps or explicitly bound the axis.
+  - *Pipe continuation example (`#3147`)*: To check whether the LHS of a pipe is
+    itself a pipe, check direct children
+    `preceding-sibling::expr[1]/*[self::PIPE or ...]`, **never**
+    `preceding-sibling::expr[1]/descendant::*[self::PIPE or ...]` (which crosses
+    into nested lambdas `\(x) a |> b` or call arguments `foo(a |> b)`).
+  - *Setter call example (`#3157`)*: To find the function called on the LHS of
+    `foo(x) <- 1`, use `preceding-sibling::expr/expr[1][following-sibling::OP-LEFT-PAREN]`,
+    **never** `descendant::SYMBOL_FUNCTION_CALL` (which falsely matches inner
+    argument calls in `foo(bar(x)) <- 1`).
+  - *Line-span attributes (`@line1`, `@line2`)*: Read `@line1` / `@line2`
+    directly on the `<expr>` node (`preceding-sibling::expr[1]/@line2`) rather
+    than `descendant-or-self::expr/@line2` (which returns a nodeset of
+    attributes across all nested sub-expressions, turning `=` into an
+    existential `any()` match).
+- **`ancestor::expr[P]` only tests the target ancestor, NOT the intermediate path**:
+  In XPath 1.0, `ancestor-or-self::expr[P]` succeeds if *any* enclosing `<expr>`
+  all the way up to the top-level function definition satisfies `P`, even when
+  separated from the context node by `{ ... }`, `local({ ... })`, or excluded
+  calls (`quote(...)`). Furthermore, evaluating `ancestor-or-self::expr[P]` on
+  every assignment or call in a file walks up the full function body AST on
+  every candidate node.
+- **Bound upward chain traversals with a reverse-axis `[1]` stop-condition**:
+  When walking up a contiguous chain of specific expressions (such as chained
+  assignments `a <- 1 && b <- 2` or `a <- b <- 1`, `#2918`), stop at the
+  outermost `<expr>` of that contiguous chain using `[1]`:
+  ```xpath
+  ancestor-or-self::expr[
+    not(preceding-sibling::LEFT_ASSIGN[text() != ':='] or following-sibling::RIGHT_ASSIGN)
+  ][1][
+    <condition on the root of the chain>
+  ]
+  ```
+  Because `ancestor-or-self::` is a **reverse axis**, `[1]` selects the *first*
+  (innermost) ancestor where the chain ends (`self::expr` in $O(1)$ for all
+  non-chained expressions) and checks `<condition>` only on that node—never
+  walking up enclosing function bodies and never crossing `{ ... }` or call
+  boundaries.
+- **Guard `following::` / `preceding::` / `//` against self-containment**:
+  When checking for "intervening" expressions between two statements (e.g.,
+  calls between two `library()` calls, `#3128`), remember that `following::` and
+  `//` also visit nodes *inside* the arguments of the first call itself (such as
+  `c()` in `library(pkg, exclude = c(...))`). Exclude descendants of the
+  outer call (`not(ancestor::expr[...])`) or use sibling axes
+  (`following-sibling::`, `preceding-sibling::`).
+
+## 6. Self-Documentation & Explicit Exclusion Comments
 
 - **Annotate structural distinctions**: Provide brief, explicit comments above
   multi-line modular XPath definitions clarifying structural design decisions or
