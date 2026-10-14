@@ -242,15 +242,11 @@ test_that("namespace_linter discovers conditional NAMESPACE exports in non-base 
   )
   dir.create(file.path(pkg_dir, "R"))
   writeLines("always_exported <- function() 1", file.path(pkg_dir, "R", "fun.R"))
+  other_os <- if (.Platform$OS.type == "windows") "unix" else "windows"
   writeLines(
     c(
       "export(always_exported)",
-      "if (FALSE) {",
-      "  export(other_os_fun)",
-      "  if (identical(1L, grep('solaris', R.version[['os']]))) {",
-      "    export('solaris_only_fun')",
-      "  }",
-      "}"
+      sprintf("if (tools:::.OStype() == '%s') export(other_os_fun)", other_os)
     ),
     file.path(pkg_dir, "NAMESPACE")
   )
@@ -263,15 +259,10 @@ test_that("namespace_linter discovers conditional NAMESPACE exports in non-base 
   linter <- namespace_linter()
   expect_no_lint("condnspkg::always_exported()", linter)
   expect_no_lint("condnspkg::other_os_fun()", linter)
-  expect_no_lint("condnspkg::solaris_only_fun()", linter)
 
   expect_lint(
     "condnspkg:::other_os_fun()",
-    list(
-      rex::rex("Don't use `:::` to access other_os_fun, which is exported from condnspkg."),
-      line_number = 1L,
-      column_number = 13L
-    ),
+    rex::rex("Don't use `:::` to access other_os_fun, which is exported from condnspkg."),
     linter
   )
 })

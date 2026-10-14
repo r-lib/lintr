@@ -16,6 +16,12 @@ Check for missing packages and symbols in namespace calls.
 Note that using \code{check_exports=TRUE} or \code{check_nonexports=TRUE} will load packages used in user code so it could
 potentially change the global state.
 }
+\details{
+To check OS-specific exports across platforms, \code{namespace_linter()} re-parses package \code{NAMESPACE} files with
+environment variable \code{R_OSTYPE} set to the opposite OS (\code{"unix"} or \code{"windows"}). Packages with OS-specific exports
+should gate them with \verb{if (tools:::.OStype() == "windows")} or \verb{if (tools:::.OStype() == "unix")} in \code{NAMESPACE}
+(following base R's own packages) for \code{namespace_linter()} to recognize them on all platforms.
+}
 \examples{
 # will produce lints
 lint(

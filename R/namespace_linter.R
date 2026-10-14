@@ -4,6 +4,12 @@
 #' Note that using `check_exports=TRUE` or `check_nonexports=TRUE` will load packages used in user code so it could
 #' potentially change the global state.
 #'
+#' @details
+#' To check OS-specific exports across platforms, `namespace_linter()` re-parses package `NAMESPACE` files with
+#' environment variable `R_OSTYPE` set to the opposite OS (`"unix"` or `"windows"`). Packages with OS-specific exports
+#' should gate them with `if (tools:::.OStype() == "windows")` or `if (tools:::.OStype() == "unix")` in `NAMESPACE`
+#' (following base R's own packages) for `namespace_linter()` to recognize them on all platforms.
+#'
 #' @param check_exports Check if `symbol` is exported from `namespace` in `namespace::symbol` calls.
 #' @param check_nonexports Check if `symbol` exists in `namespace` in `namespace:::symbol` calls.
 #'
@@ -141,39 +147,20 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 }
 
 # Discover OS-specific exports in base R and package NAMESPACE files (#3075)
-extract_ns_exports <- function(e) {
-  if (!is.call(e)) {
-    return(character())
-  }
-  op <- as.character(e[[1L]])
-  if (op %in% c("export", "exportMethods", "exportClasses", "exportClass")) {
-    return(vapply(e[-1L], as.character, character(1L)))
-  }
-  if (op %in% c("if", "{")) {
-    return(unlist(lapply(e[-1L], extract_ns_exports), use.names = FALSE))
-  }
-  character()
-}
-
 conditional_namespace_exports <- function(ns) {
   pkg <- getNamespaceName(ns)
   with_namespace_cache(paste0("cond_ns_exports@", pkg), {
     if (pkg == "base") {
-      tools_ns <- asNamespace("tools")
-      compat_syms <- union(
-        names(get0(".unix_only_proto_objects", envir = tools_ns, inherits = FALSE)),
-        names(get0(".windows_only_proto_objects", envir = tools_ns, inherits = FALSE))
-      )
+      compat_syms <- names(getNamespace("tools")$compatibilityEnv())
       gr_syms <- conditional_namespace_exports(asNamespace("grDevices"))
       ut_syms <- conditional_namespace_exports(asNamespace("utils"))
       setdiff(compat_syms, c(gr_syms, ut_syms))
     } else {
-      ns_path <- file.path(getNamespaceInfo(ns, "path"), "NAMESPACE")
-      if (!file.exists(ns_path) || !any(grepl("\\bif\\b", readLines(ns_path, warn = FALSE)))) {
-        return(character())
-      }
-      exprs <- parse(ns_path, keep.source = FALSE, srcfile = NULL)
-      unique(unlist(lapply(exprs, extract_ns_exports), use.names = FALSE))
+      ns_path <- getNamespaceInfo(ns, "path")
+      # nolint next: undesirable_function_name. Avoiding {withr} dep in pkg.
+      Sys.setenv(R_OSTYPE = if (.Platform$OS.type == "windows") "unix" else "windows")
+      on.exit(Sys.unsetenv("R_OSTYPE"))
+      parseNamespaceFile(basename(ns_path), dirname(ns_path), mustExist = FALSE)$exports
     }
   })
 }
