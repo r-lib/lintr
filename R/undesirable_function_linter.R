@@ -75,6 +75,7 @@
 #' @evalRd rd_tags("undesirable_function_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
+# nolint next: cyclocomp_linter. False positive due to factory complexity.
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   if (is.list(fun)) fun <- unlist(fun)
