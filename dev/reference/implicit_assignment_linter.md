@@ -8,7 +8,7 @@ should be avoided, except for functions that capture side-effects (e.g.
 
 ``` r
 implicit_assignment_linter(
-  except = c("bquote", "expression", "expr", "quo", "quos", "quote"),
+  except = c("bquote", "expression", "expr", "quo", "quos", "quote", "substitute"),
   allow_lazy = FALSE,
   allow_scoped = FALSE,
   allow_paren_print = FALSE
