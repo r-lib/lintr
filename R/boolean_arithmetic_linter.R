@@ -159,7 +159,7 @@ boolean_arithmetic_linter <- function() {
     xml_nodes_to_lints(
       combine_nodesets(any_expr, all_expr),
       source_expression = source_expression,
-      lint_message = c(rep(any_msg, length(any_expr)), rep(all_msg, length(all_expr))),
+      lint_message = rep(c(any_msg, all_msg), c(length(any_expr), length(all_expr))),
       type = "warning"
     )
   })
