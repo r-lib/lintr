@@ -76,7 +76,9 @@ A generic message that the named function is undesirable is used if no
 specific description is provided.
 Input can also be a list of character strings for convenience.
 Setter functions (like <code>foo(x) &lt;- y</code>) are distinguished from plain calls (<code>foo(x)</code>),
-and must be specified with <code>"&lt;-"</code> (e.g. <code>"foo&lt;-"</code>).</p></li>
+and must be specified with <code>"&lt;-"</code> (e.g. <code>"foo&lt;-"</code>).
+Function names may be namespace-qualified (e.g. <code>"pkg::foo"</code> or <code>"pkg:::foo"</code>)
+to lint only calls qualified with that namespace.</p></li>
 </ul></li>
 </ul><p>Defaults to <a href="default_undesirable_functions.html">default_undesirable_functions</a>. To make small customizations to this list,
 use <code><a href="modify_defaults.html">modify_defaults()</a></code>.</p></dd>

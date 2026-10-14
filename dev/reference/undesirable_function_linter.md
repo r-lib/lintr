@@ -31,7 +31,9 @@ undesirable_function_linter(
       description is provided. Input can also be a list of character
       strings for convenience. Setter functions (like `foo(x) <- y`) are
       distinguished from plain calls (`foo(x)`), and must be specified
-      with `"<-"` (e.g. `"foo<-"`).
+      with `"<-"` (e.g. `"foo<-"`). Function names may be
+      namespace-qualified (e.g. `"pkg::foo"` or `"pkg:::foo"`) to lint
+      only calls qualified with that namespace.
 
   Defaults to
   [default_undesirable_functions](https://lintr.r-lib.org/dev/reference/default_undesirable_functions.md).
