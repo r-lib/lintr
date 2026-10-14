@@ -151,9 +151,13 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       matched_fun <- c(matched_fun, get_r_string(symbol_nodes))
     }
 
+    if (length(matched_nodes) == 0L) {
+      return(list())
+    }
+
     if (any_ns) {
       call_pkg <- xml_find_chr_(matched_nodes, "string(preceding-sibling::SYMBOL_PACKAGE)")
-      qualified_fun <- paste(call_pkg, matched_fun, sep = "::", recycle0 = TRUE)
+      qualified_fun <- paste(call_pkg, matched_fun, sep = "::")
       matched_fun <- ifelse(qualified_fun %in% names(msgs), qualified_fun, matched_fun)
       keep <- matched_fun %in% names(msgs)
       matched_nodes <- matched_nodes[keep]
