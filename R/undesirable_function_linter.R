@@ -101,9 +101,10 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   }
   fun_parts <- vapply(
     strsplit(fun_names, ":::?"),
-    \(x) c(if (length(x) == 1L) "", gsub("^`|`$", "", x)),
+    \(x) c(if (length(x) == 1L) "", x),
     character(2L)
   )
+  fun_parts[2L, ] <- gsub("^`|`$", "", fun_parts[2L, ])
   has_ns <- any(nzchar(fun_parts[1L, ]))
   unique_base_funs <- unique(fun_parts[2L, ])
 
