@@ -215,9 +215,10 @@ test_that("namespace_linter is OS-independent for base R packages (#3075)", {
   expect_no_lint("parallel::mccollect()", linter)
   expect_no_lint("utils::nsl('localhost')", linter)
 
-  # OS-specific unexported symbols
-  expect_no_lint("utils:::unpackPkgZip()", linter)
-  expect_no_lint("parallel:::mcfork()", linter)
+  # OS-specific unexported symbols from NAMESPACE S3method / tools:::compatibilityEnv()
+  expect_no_lint("utils:::close.winProgressBar()", linter)
+  expect_no_lint("utils:::askYesNoWinDialog()", linter)
+  expect_no_lint("grDevices:::print.SavedPlots()", linter)
 
   # Accessing OS-specific exports with `:::` is still linted consistently across OSes
   expect_lint(
@@ -233,6 +234,58 @@ test_that("namespace_linter is OS-independent for base R packages (#3075)", {
     "grDevices:::win.metafile()",
     list(
       rex::rex("Don't use `:::` to access win.metafile, which is exported from grDevices."),
+      line_number = 1L,
+      column_number = 13L
+    ),
+    linter
+  )
+})
+
+test_that("namespace_linter discovers conditional NAMESPACE exports in non-base packages (#3075)", { # nofuzz
+  pkg_dir <- withr::local_tempdir("condns")
+  writeLines(
+    c(
+      "Package: condnspkg",
+      "Version: 0.1.0",
+      "Title: Test Conditional Namespace",
+      "Description: Test.",
+      "License: MIT"
+    ),
+    file.path(pkg_dir, "DESCRIPTION")
+  )
+  dir.create(file.path(pkg_dir, "R"))
+  writeLines("always_exported <- function() 1", file.path(pkg_dir, "R", "fun.R"))
+  writeLines(
+    c(
+      "export(always_exported)",
+      "if (FALSE) {",
+      "  export(other_os_fun)",
+      "  if (identical(1L, grep('solaris', R.version[['os']]))) {",
+      "    export('solaris_only_fun')",
+      "  }",
+      "  S3method(print, other_os_cls)",
+      "  S3method(format, other_os_cls, custom_format_other_os)",
+      "}"
+    ),
+    file.path(pkg_dir, "NAMESPACE")
+  )
+
+  lib_dir <- withr::local_tempdir("condns_lib")
+  utils::install.packages(pkg_dir, lib = lib_dir, repos = NULL, type = "source", quiet = TRUE)
+  withr::local_libpaths(lib_dir, action = "prefix")
+  withr::defer(unloadNamespace("condnspkg"))
+
+  linter <- namespace_linter()
+  expect_no_lint("condnspkg::always_exported()", linter)
+  expect_no_lint("condnspkg::other_os_fun()", linter)
+  expect_no_lint("condnspkg::solaris_only_fun()", linter)
+  expect_no_lint("condnspkg:::print.other_os_cls()", linter)
+  expect_no_lint("condnspkg:::custom_format_other_os()", linter)
+
+  expect_lint(
+    "condnspkg:::other_os_fun()",
+    list(
+      rex::rex("Don't use `:::` to access other_os_fun, which is exported from condnspkg."),
       line_number = 1L,
       column_number = 13L
     ),
