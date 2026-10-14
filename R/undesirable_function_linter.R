@@ -13,6 +13,8 @@
 #'   Input can also be a list of character strings for convenience.
 #'   Setter functions (like `foo(x) <- y`) are distinguished from plain calls (`foo(x)`),
 #'   and must be specified with `"<-"` (e.g. `"foo<-"`).
+#'   Function names may be namespace-qualified (e.g. `"pkg::foo"` or `"pkg:::foo"`)
+#'   to lint only calls qualified with that namespace.
 #'
 #'   Defaults to [default_undesirable_functions]. To make small customizations to this list,
 #'   use [modify_defaults()].
@@ -73,6 +75,7 @@
 #' @evalRd rd_tags("undesirable_function_linter")
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
+# nolint next: cyclocomp_linter. False positive due to factory complexity.
 undesirable_function_linter <- function(fun = default_undesirable_functions,
                                         symbol_is_undesirable = TRUE) {
   if (is.list(fun)) fun <- unlist(fun)
@@ -89,7 +92,6 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     names(fun)[implicit_idx] <- fun[implicit_idx]
     is.na(fun) <- implicit_idx
   }
-  names(fun) <- gsub("^`|`$", "", names(fun))
   fun_names <- names(fun)
   if (anyNA(fun_names)) {
     missing_idx <- which(is.na(fun_names)) # nolint: object_usage_linter. False positive.
@@ -98,6 +100,25 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       "but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}."
     ))
   }
+  fun_parts <- vapply(
+    strsplit(fun_names, ":::?"),
+    \(x) c(if (length(x) == 1L) "", x),
+    character(2L)
+  )
+  fun_parts[2L, ] <- gsub("^`|`$", "", fun_parts[2L, ])
+  has_ns <- nzchar(fun_parts[1L, ])
+  any_ns <- any(has_ns)
+  unique_base_funs <- unique(fun_parts[2L, ])
+
+  msgs <- paste0(
+    sprintf(
+      'Avoid undesirable function "%s"%s.',
+      fun_parts[2L, ],
+      ifelse(has_ns, sprintf(" from package {%s}", fun_parts[1L, ]), "")
+    ),
+    ifelse(is.na(fun), "", sprintf(" As an alternative, %s.", unname(fun)))
+  )
+  names(msgs) <- sprintf("%s%s%s", fun_parts[1L, ], ifelse(has_ns, "::", ""), fun_parts[2L, ])
 
   xp_condition <- xp_and(
     paste0(
@@ -109,8 +130,8 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   )
 
   if (symbol_is_undesirable) {
-    needs_backticks <- make.names(fun_names) != fun_names
-    symbol_names <- fun_names
+    needs_backticks <- make.names(unique_base_funs) != unique_base_funs
+    symbol_names <- unique_base_funs
     symbol_names[needs_backticks] <- sprintf("`%s`", symbol_names[needs_backticks])
     symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(symbol_names)}) and {xp_condition}]")
   }
@@ -118,7 +139,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
-    xml_calls <- source_expression$xml_find_function_calls(fun_names, keep_names = TRUE)
+    xml_calls <- source_expression$xml_find_function_calls(unique_base_funs, keep_names = TRUE)
 
     matched_call_nodes <- xml_find_first_(xml_calls, call_xpath)
     matched_call_nodes <- matched_call_nodes[!is.na(matched_call_nodes)]
@@ -131,18 +152,18 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       matched_fun <- c(matched_fun, get_r_string(symbol_nodes))
     }
 
-    msgs <- vapply(
-      stats::setNames(nm = unique(matched_fun)),
-      function(fun_name) {
-        msg <- sprintf('Avoid undesirable function "%s".', fun_name)
-        alternative <- fun[[fun_name]]
-        if (!is.na(alternative)) {
-          msg <- paste(msg, sprintf("As an alternative, %s.", alternative))
-        }
-        msg
-      },
-      character(1L)
-    )
+    if (length(matched_nodes) == 0L) {
+      return(list())
+    }
+
+    if (any_ns) {
+      call_pkg <- xml_find_chr_(matched_nodes, "string(preceding-sibling::SYMBOL_PACKAGE)")
+      qualified_fun <- paste(call_pkg, matched_fun, sep = "::")
+      matched_fun <- ifelse(qualified_fun %in% names(msgs), qualified_fun, matched_fun)
+      keep <- matched_fun %in% names(msgs)
+      matched_nodes <- matched_nodes[keep]
+      matched_fun <- matched_fun[keep]
+    }
 
     xml_nodes_to_lints(
       matched_nodes,
