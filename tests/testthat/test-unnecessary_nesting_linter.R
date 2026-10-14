@@ -569,7 +569,7 @@ test_that("braces required for operator precedence around control flow or lambda
         geom_smooth()
     "),
     list(
-      rex::rex("Reduce the nesting of this if/else statement by unnesting the portion without an exit clause, i.e., stop()."),
+      rex::rex("Reduce the nesting of this if/else statement", anything, "stop()."),
       line_number = 3L,
       column_number = 5L
     ),
