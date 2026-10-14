@@ -23,24 +23,16 @@ build_xml_find_function_calls <- function(xml) {
     cache
   }
 
-  function_call_xpath <- "
-    //SYMBOL_FUNCTION_CALL/parent::*
-    | //STR_CONST[not(preceding-sibling::OP-AT)]/parent::expr[following-sibling::OP-LEFT-PAREN]
-  "
   function_call_cache <- name_call_cache(
-    xml_find_all_(xml, function_call_xpath),
-    "SYMBOL_FUNCTION_CALL | STR_CONST"
+    xml_find_all_(xml, "//SYMBOL_FUNCTION_CALL/parent::*"),
+    "SYMBOL_FUNCTION_CALL"
   )
 
   # not used much, so assign it lazily to delay the xml_find_all_ computation
-  s4_slot_xpath <- "
-    //SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]
-    | //OP-AT/following-sibling::STR_CONST/parent::expr[following-sibling::OP-LEFT-PAREN]
-  "
   delayedAssign("s4_slot_cache", {
     name_call_cache(
-      xml_find_all_(xml, s4_slot_xpath),
-      "SLOT | STR_CONST"
+      xml_find_all_(xml, "//SLOT/parent::expr[following-sibling::OP-LEFT-PAREN]"),
+      "SLOT"
     )
   })
 
