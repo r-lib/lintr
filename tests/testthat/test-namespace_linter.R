@@ -215,11 +215,6 @@ test_that("namespace_linter is OS-independent for base R packages (#3075)", {
   expect_no_lint("parallel::mccollect()", linter)
   expect_no_lint("utils::nsl('localhost')", linter)
 
-  # OS-specific unexported symbols from NAMESPACE S3method / tools:::compatibilityEnv()
-  expect_no_lint("utils:::close.winProgressBar()", linter)
-  expect_no_lint("utils:::askYesNoWinDialog()", linter)
-  expect_no_lint("grDevices:::print.SavedPlots()", linter)
-
   # Accessing OS-specific exports with `:::` is still linted consistently across OSes
   expect_lint(
     "base:::.fixupGFortranStdout()",
@@ -263,8 +258,6 @@ test_that("namespace_linter discovers conditional NAMESPACE exports in non-base 
       "  if (identical(1L, grep('solaris', R.version[['os']]))) {",
       "    export('solaris_only_fun')",
       "  }",
-      "  S3method(print, other_os_cls)",
-      "  S3method(format, other_os_cls, custom_format_other_os)",
       "}"
     ),
     file.path(pkg_dir, "NAMESPACE")
@@ -279,8 +272,6 @@ test_that("namespace_linter discovers conditional NAMESPACE exports in non-base 
   expect_no_lint("condnspkg::always_exported()", linter)
   expect_no_lint("condnspkg::other_os_fun()", linter)
   expect_no_lint("condnspkg::solaris_only_fun()", linter)
-  expect_no_lint("condnspkg:::print.other_os_cls()", linter)
-  expect_no_lint("condnspkg:::custom_format_other_os()", linter)
 
   expect_lint(
     "condnspkg:::other_os_fun()",

@@ -140,66 +140,42 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   })
 }
 
-# Discover OS-specific symbols in base R and package NAMESPACE files (#3075)
-tools_compat_symbols <- function() {
-  with_namespace_cache("tools_compat_symbols", {
-    tools_ns <- asNamespace("tools")
-    union(
-      names(get0(".unix_only_proto_objects", envir = tools_ns, inherits = FALSE)),
-      names(get0(".windows_only_proto_objects", envir = tools_ns, inherits = FALSE))
-    )
-  })
-}
-
-unwrap_ns_if <- function(e) {
+# Discover OS-specific exports in base R and package NAMESPACE files (#3075)
+extract_ns_exports <- function(e) {
   if (!is.call(e)) {
-    return(e)
+    return(character())
   }
-  if (identical(e[[1L]], quote(`if`))) {
-    b1 <- unwrap_ns_if(e[[3L]])
-    return(if (length(e) == 4L) call("{", b1, unwrap_ns_if(e[[4L]])) else b1)
+  op <- as.character(e[[1L]])
+  if (op %in% c("export", "exportMethods", "exportClasses", "exportClass")) {
+    return(vapply(e[-1L], as.character, character(1L)))
   }
-  as.call(lapply(e, unwrap_ns_if))
+  if (op %in% c("if", "{")) {
+    return(unlist(lapply(e[-1L], extract_ns_exports), use.names = FALSE))
+  }
+  character()
 }
 
-parse_all_ns_branches <- function(ns_path) {
-  if (!file.exists(ns_path) || !any(grepl("\\bif\\b", readLines(ns_path, warn = FALSE)))) {
-    return(list(exports = character(), nonexports = character()))
-  }
-  exprs <- lapply(parse(ns_path, keep.source = FALSE, srcfile = NULL), unwrap_ns_if)
-  tmp_dir <- tempfile()
-  on.exit(unlink(tmp_dir, recursive = TRUE))
-  pkg_dir <- file.path(tmp_dir, "pkg")
-  dir.create(pkg_dir, recursive = TRUE)
-  writeLines(vapply(exprs, deparse1, character(1L), collapse = "\n"), file.path(pkg_dir, "NAMESPACE"))
-  ns_data <- parseNamespaceFile("pkg", tmp_dir)
-  s3 <- ns_data$S3methods
-  s3 <- s3[is.na(s3[, 4L]), , drop = FALSE]
-  s3_names <- ifelse(is.na(s3[, 3L]), paste0(s3[, 1L], ".", s3[, 2L]), s3[, 3L])
-  list(
-    exports = unique(c(ns_data$exports, ns_data$exportMethods, ns_data$exportClasses)),
-    nonexports = unique(s3_names)
-  )
-}
-
-conditional_namespace_symbols <- function(ns, exported = TRUE) {
+conditional_namespace_exports <- function(ns) {
   pkg <- getNamespaceName(ns)
-  syms <- with_namespace_cache(paste0("cond_ns_syms@", pkg), {
+  with_namespace_cache(paste0("cond_ns_exports@", pkg), {
     if (pkg == "base") {
-      gr_syms <- conditional_namespace_symbols(asNamespace("grDevices"), exported = FALSE)
-      ut_syms <- conditional_namespace_symbols(asNamespace("utils"), exported = FALSE)
-      list(exports = setdiff(tools_compat_symbols(), c(gr_syms, ut_syms)), nonexports = character())
+      tools_ns <- asNamespace("tools")
+      compat_syms <- union(
+        names(get0(".unix_only_proto_objects", envir = tools_ns, inherits = FALSE)),
+        names(get0(".windows_only_proto_objects", envir = tools_ns, inherits = FALSE))
+      )
+      gr_syms <- conditional_namespace_exports(asNamespace("grDevices"))
+      ut_syms <- conditional_namespace_exports(asNamespace("utils"))
+      setdiff(compat_syms, c(gr_syms, ut_syms))
     } else {
       ns_path <- file.path(getNamespaceInfo(ns, "path"), "NAMESPACE")
-      res <- parse_all_ns_branches(ns_path)
-      if (pkg == "utils") {
-        ut_refs <- c(ls(ns, all.names = TRUE), all.names(body(ns$.onLoad)), all.names(body(ns$install.packages)))
-        res$nonexports <- unique(c(res$nonexports, intersect(tools_compat_symbols(), setdiff(ut_refs, res$exports))))
+      if (!file.exists(ns_path) || !any(grepl("\\bif\\b", readLines(ns_path, warn = FALSE)))) {
+        return(character())
       }
-      res
+      exprs <- parse(ns_path, keep.source = FALSE, srcfile = NULL)
+      unique(unlist(lapply(exprs, extract_ns_exports), use.names = FALSE))
     }
   })
-  if (exported) syms$exports else c(syms$exports, syms$nonexports)
 }
 
 namespace_symbols <- function(ns, exported = TRUE) {
@@ -217,7 +193,7 @@ is_in_pkg <- function(symbols, namespaces, exported = TRUE) {
       sym <- symbols[[ii]]
       ns <- namespaces[[ii]]
       sym %in% namespace_symbols(ns, exported = exported) ||
-        sym %in% conditional_namespace_symbols(ns, exported = exported)
+        sym %in% conditional_namespace_exports(ns)
     },
     logical(1L)
   )
