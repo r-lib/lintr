@@ -343,5 +343,5 @@ check_dots <- function(dot_names, ref_calls, ref_help = as.character(sys.call(-1
 }
 
 cli_abort_internal <- function(..., .envir = parent.frame()) {
-  cli_abort(..., .internal = TRUE, .envir = .envir) # nocov
+  cli_abort(..., .internal = TRUE, .envir = .envir)
 }
