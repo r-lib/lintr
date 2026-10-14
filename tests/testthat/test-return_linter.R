@@ -109,59 +109,6 @@ test_that("Lint control statements (without return) on end of function", {
     linter
   )
 
-  # Terminal repeat{} containing an explicit return() (and no break) is allowed (#3044)
-  expect_no_lint(
-    trim_some("
-      function(x) {
-        repeat {
-          x <- update(x)
-          if (done(x)) return(x)
-        }
-      }
-    "),
-    linter
-  )
-  expect_no_lint(
-    trim_some("
-      function(x) {
-        repeat {
-          for (i in 1:10) {
-            if (skip(i)) break
-          }
-          if (done(x)) stop('failed')
-        }
-      }
-    "),
-    linter
-  )
-  # repeat{} with break can exit loop and return implicitly, so still lints
-  expect_lint(
-    trim_some("
-      function(x) {
-        repeat {
-          x <- update(x)
-          if (done(x)) break
-        }
-      }
-    "),
-    list(lint_msg, line_number = 2L, column_number = 3L),
-    linter
-  )
-  # return() inside a nested function inside repeat{} does not count for the outer function
-  expect_lint(
-    trim_some("
-      function(x) {
-        repeat {
-          lapply(x, function(y) {
-            return(y)
-          })
-        }
-      }
-    "),
-    list(lint_msg, line_number = 2L, column_number = 3L),
-    linter
-  )
-
   expect_lint(
     trim_some("
       function() {
@@ -883,6 +830,7 @@ test_that("return_linter works for final while/repeat loops as well", {
     linter
   )
 
+  # Terminal repeat{} containing an explicit return() (and no break) is allowed (#3044)
   expect_no_lint(
     trim_some("
       foo <- function(x) {
@@ -894,6 +842,108 @@ test_that("return_linter works for final while/repeat loops as well", {
         }
       }
     "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      function(x) {
+        repeat
+          a <- return(x)
+      }
+    "),
+    linter
+  )
+
+  # break inside a nested loop or nested function does not exit the outer repeat
+  expect_no_lint(
+    trim_some("
+      function(x) {
+        repeat {
+          for (i in 1:10) {
+            if (skip(i)) break
+          }
+          if (done(x)) stop('failed')
+        }
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      function(x) {
+        repeat {
+          repeat {
+            x <- step(x)
+            if (inner_done(x)) break
+          }
+          if (outer_done(x)) return(x)
+        }
+      }
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      function(x) {
+        repeat {
+          f <- function(y) {
+            repeat {
+              if (y) break
+            }
+            return(y)
+          }
+          if (done(x)) return(x)
+        }
+      }
+    "),
+    linter
+  )
+
+  # repeat{} with break can exit loop and return implicitly, so still lints
+  expect_lint(
+    trim_some("
+      function(x) {
+        repeat {
+          x <- update(x)
+          if (done(x)) break
+        }
+      }
+    "),
+    list(lint_msg, line_number = 2L, column_number = 3L),
+    linter
+  )
+
+  # return() inside a nested function inside repeat{} does not count for the outer function
+  expect_lint(
+    trim_some("
+      function(x) {
+        repeat {
+          lapply(x, function(y) {
+            return(y)
+          })
+        }
+      }
+    "),
+    list(lint_msg, line_number = 2L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(x) {
+        repeat {
+          y <- lapply(x, function(z) {
+            repeat {
+              return(z)
+            }
+          })
+        }
+      }
+    "),
+    list(lint_msg, line_number = 2L, column_number = 3L),
     linter
   )
 })
