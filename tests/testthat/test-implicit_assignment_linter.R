@@ -202,6 +202,12 @@ test_that("implicit_assignment_linter makes exceptions for functions that captur
     linter
   )
 
+  # base quotation functions (#2266)
+  expect_no_lint("quote(a <- 1L)", linter)
+  expect_no_lint("bquote(a <- 1L)", linter)
+  expect_no_lint("expression(a <- 1L)", linter)
+  expect_no_lint("substitute(a <- 1L)", linter)
+
   # rlang
   expect_no_lint("expr(a <- 1L)", linter)
   expect_no_lint("quo(a <- 1L)", linter)
