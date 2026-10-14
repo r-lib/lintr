@@ -99,7 +99,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       "but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}."
     ))
   }
-  has_ns_prefix <- grepl("^[[:alnum:].]+:::?", fun_names)
+  has_ns_prefix <- grepl("^[[:alnum:].]+::", fun_names)
   ns_prefix <- ifelse(has_ns_prefix, sub("^([[:alnum:].]+:::?).*$", "\\1", fun_names), "")
   base_fun_names <- gsub("^`|`$", "", sub("^[[:alnum:].]+:::?", "", fun_names))
   fun_names <- paste0(ns_prefix, base_fun_names)
