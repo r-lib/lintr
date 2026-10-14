@@ -105,22 +105,19 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     character(2L)
   )
   fun_parts[2L, ] <- gsub("^`|`$", "", fun_parts[2L, ])
-  has_ns <- any(nzchar(fun_parts[1L, ]))
+  has_ns <- nzchar(fun_parts[1L, ])
+  any_ns <- any(has_ns)
   unique_base_funs <- unique(fun_parts[2L, ])
 
   msgs <- paste0(
     sprintf(
       'Avoid undesirable function "%s"%s.',
       fun_parts[2L, ],
-      ifelse(nzchar(fun_parts[1L, ]), sprintf(" from package {%s}", fun_parts[1L, ]), "")
+      ifelse(has_ns, sprintf(" from package {%s}", fun_parts[1L, ]), "")
     ),
     ifelse(is.na(fun), "", sprintf(" As an alternative, %s.", unname(fun)))
   )
-  names(msgs) <- ifelse(
-    nzchar(fun_parts[1L, ]),
-    paste(fun_parts[1L, ], fun_parts[2L, ], sep = "::"),
-    fun_parts[2L, ]
-  )
+  names(msgs) <- sprintf("%s%s%s", fun_parts[1L, ], ifelse(has_ns, "::", ""), fun_parts[2L, ])
 
   xp_condition <- xp_and(
     paste0(
@@ -154,7 +151,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       matched_fun <- c(matched_fun, get_r_string(symbol_nodes))
     }
 
-    if (has_ns) {
+    if (any_ns) {
       call_pkg <- xml_find_chr_(matched_nodes, "string(preceding-sibling::SYMBOL_PACKAGE)")
       qualified_fun <- paste(call_pkg, matched_fun, sep = "::", recycle0 = TRUE)
       matched_fun <- ifelse(qualified_fun %in% names(msgs), qualified_fun, matched_fun)
