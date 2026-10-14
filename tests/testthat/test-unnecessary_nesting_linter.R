@@ -450,6 +450,173 @@ test_that("rlang's double-brace operator is skipped", {
   )
 })
 
+test_that("braces required for operator precedence around control flow or lambdas are skipped (#2852)", {
+  linter <- unnecessary_nesting_linter()
+  lint_msg <- rex::rex("Reduce the nesting of this statement by removing the braces {}.")
+
+  expect_no_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          if (x) geom_point()
+        } +
+        geom_smooth()
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          if (x) {
+            geom_point()
+          } else {
+            geom_line()
+          }
+        } +
+        geom_smooth()
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some("
+      {
+        if (x) geom_point()
+      } +
+        geom_smooth()
+    "),
+    linter
+  )
+
+  expect_no_lint(
+    trim_some(R"(
+      x |>
+        {
+          \(y) y + 1
+        }()
+    )"),
+    linter
+  )
+
+  # simple calls inside operator chains, call arguments, or assignment RHS still lint
+  expect_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          geom_point()
+        } +
+        geom_smooth()
+    "),
+    list(lint_msg, line_number = 2L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo(
+        {
+          if (x) geom_point()
+        }
+      )
+    "),
+    list(lint_msg, line_number = 2L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      p <- {
+        if (x) geom_point()
+      }
+    "),
+    list(lint_msg, line_number = 1L, column_number = 6L),
+    linter
+  )
+
+  # unnecessary nesting *inside* a braced control-flow block in an operator chain still lints
+  expect_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          if (x) {
+            geom_point()
+          } else {
+            if (y) {
+              geom_line()
+            }
+          }
+        } +
+        geom_smooth()
+    "),
+    list(
+      rex::rex("Simplify this condition by using 'else if' instead of 'else { if."),
+      line_number = 6L,
+      column_number = 7L
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          if (x) {
+            if (y) {
+              geom_point()
+            }
+          }
+        } +
+        geom_smooth()
+    "),
+    list(
+      rex::rex("Combine this `if` statement with the one found at line 3, column 5 to reduce nesting."),
+      line_number = 4L,
+      column_number = 7L
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          if (x) {
+            stop('bad x')
+          } else {
+            geom_point()
+          }
+        } +
+        geom_smooth()
+    "),
+    list(
+      rex::rex("Reduce the nesting of this if/else statement", anything, "stop()."),
+      line_number = 3L,
+      column_number = 5L
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      ggplot(mtcars, aes(wt, mpg)) +
+        {
+          if (x) {
+            foo(
+              {
+                geom_point()
+              }
+            )
+          }
+        } +
+        geom_smooth()
+    "),
+    list(lint_msg, line_number = 5L, column_number = 9L),
+    linter
+  )
+})
+
 test_that("unnecessary_nesting_linter blocks one-expression braced expressions", {
   expect_lint(
     trim_some("
