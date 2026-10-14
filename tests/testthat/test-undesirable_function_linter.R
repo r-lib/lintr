@@ -212,23 +212,23 @@ test_that("namespace-qualified functions are matched selectively (#1770)", {
 
   expect_no_lint("run_model()", linter)
   expect_no_lint("foo::run_model()", linter)
-  expect_no_lint("bar:::run_model()", linter)
   expect_no_lint("lapply(x, run_model)", linter)
   expect_no_lint("lapply(x, foo::run_model)", linter)
   expect_no_lint("internal_helper()", linter)
-  expect_no_lint("bar::internal_helper()", linter)
   expect_no_lint("`%in%`(x, y)", linter)
   expect_no_lint("foo::`%in%`(x, y)", linter)
   expect_no_lint("time(x) <- 1", linter)
   expect_no_lint("foo::time(x) <- 1", linter)
 
   expect_lint("bar::run_model()", list(msg_bar, line_number = 1L, column_number = 6L), linter)
+  expect_lint("bar:::run_model()", list(msg_bar, line_number = 1L, column_number = 7L), linter)
   expect_lint("lapply(x, bar::run_model)", list(msg_bar, line_number = 1L, column_number = 16L), linter)
   expect_no_lint(
     "lapply(x, bar::run_model)",
     undesirable_function_linter(c("bar::run_model" = NA), symbol_is_undesirable = FALSE)
   )
   expect_lint("bar:::internal_helper()", list(msg_int, line_number = 1L, column_number = 7L), linter)
+  expect_lint("bar::internal_helper()", list(msg_int, line_number = 1L, column_number = 6L), linter)
   expect_lint("bar::`%in%`(x, y)", list(msg_in, line_number = 1L, column_number = 6L), linter)
   expect_lint("bar::time(x) <- 1", list(msg_set, line_number = 1L, column_number = 6L), linter)
 

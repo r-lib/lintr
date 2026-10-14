@@ -104,6 +104,7 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
   base_fun_names <- gsub("^`|`$", "", sub("^[[:alnum:].]+:::?", "", fun_names))
   fun_names <- paste0(ns_prefix, base_fun_names)
   names(fun) <- fun_names
+  lookup_names <- paste0(sub(":::$", "::", ns_prefix), base_fun_names)
   unique_base_funs <- unique(base_fun_names)
   has_ns <- any(has_ns_prefix)
 
@@ -123,7 +124,6 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     symbol_xpath <- glue("//SYMBOL[({xp_text_in_table(symbol_names)}) and {xp_condition}]")
   }
   call_xpath <- glue("SYMBOL_FUNCTION_CALL[{xp_condition}]")
-  ns_prefix_xpath <- "concat(preceding-sibling::SYMBOL_PACKAGE, preceding-sibling::*[self::NS_GET or self::NS_GET_INT])"
 
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
@@ -141,13 +141,14 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
     }
 
     if (has_ns) {
-      call_ns <- xml_find_chr_(matched_nodes, ns_prefix_xpath)
-      qualified_fun <- paste0(call_ns, matched_fun)
-      is_qualified_match <- qualified_fun %in% fun_names
-      matched_fun[is_qualified_match] <- qualified_fun[is_qualified_match]
-      keep <- matched_fun %in% fun_names
+      call_pkg <- xml_find_chr_(matched_nodes, "string(preceding-sibling::SYMBOL_PACKAGE)")
+      qualified_fun <- paste0(call_pkg, "::", matched_fun, recycle0 = TRUE)
+      idx <- match(qualified_fun, lookup_names)
+      unqualified_idx <- is.na(idx)
+      idx[unqualified_idx] <- match(matched_fun[unqualified_idx], lookup_names)
+      keep <- !is.na(idx)
       matched_nodes <- matched_nodes[keep]
-      matched_fun <- matched_fun[keep]
+      matched_fun <- fun_names[idx[keep]]
     }
 
     msgs <- vapply(
