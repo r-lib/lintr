@@ -80,7 +80,7 @@
 * `implicit_assignment_linter(allow_scoped = TRUE)` detects out-of-scope uses of variables assigned via `->` or unparenthesized `<-` following higher-precedence operators like `&&` and `||` (e.g. `if (a <- 1 && b <- 2) ...`; #2918, @MichaelChirico).
 * `unnecessary_lambda_linter()` also flags multi-argument anonymous functions whose formal arguments are forwarded in order to a single inner call, e.g. `lapply(x, \(xi, y) foo(xi, y), y)` or `lapply(x, \(xi, y) foo(xi, y = y), y = 1)` (#2477, @MichaelChirico).
 * `lengths_linter()` also flags `lapply(x, length)` and `purrr::map(x, length)` (#1570, @MichaelChirico).
-* `undesirable_function_linter()` matches quoted and non-syntactic function names (e.g. `undesirable_function_linter(c('"%%"' = NA))`) as well as string-literal function calls like `"%%"(x, y)` (#1911, @MichaelChirico).
+* `undesirable_function_linter()` matches quoted and non-syntactic function names (e.g. `undesirable_function_linter(c('"%%"' = NA))`; #1911, @MichaelChirico).
 
 ## Notes
 
