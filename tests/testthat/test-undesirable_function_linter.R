@@ -205,10 +205,12 @@ test_that("namespace-qualified functions are matched selectively (#1770)", {
     "bar::`%in%`" = NA,
     "bar::`time<-`" = NA
   ))
-  msg_bar <- rex::rex('Avoid undesirable function "bar::run_model". As an alternative, use foo::run_model().')
-  msg_int <- rex::rex('Avoid undesirable function "bar:::internal_helper".', end)
-  msg_in <- rex::rex('Avoid undesirable function "bar::%in%".', end)
-  msg_set <- rex::rex('Avoid undesirable function "bar::time<-".', end)
+  msg_bar <- rex::rex(
+    'Avoid undesirable function "run_model" from package {bar}. As an alternative, use foo::run_model().'
+  )
+  msg_int <- rex::rex('Avoid undesirable function "internal_helper" from package {bar}.', end)
+  msg_in <- rex::rex('Avoid undesirable function "%in%" from package {bar}.', end)
+  msg_set <- rex::rex('Avoid undesirable function "time<-" from package {bar}.', end)
 
   expect_no_lint("run_model()", linter)
   expect_no_lint("foo::run_model()", linter)

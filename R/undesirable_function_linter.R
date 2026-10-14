@@ -99,14 +99,27 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
       "but {.val {missing_idx}} {qty(length(missing_idx))} {?is/are}."
     ))
   }
-  has_ns_prefix <- grepl("^[[:alnum:].]+::", fun_names)
-  ns_prefix <- ifelse(has_ns_prefix, sub("^([[:alnum:].]+:::?).*$", "\\1", fun_names), "")
-  base_fun_names <- gsub("^`|`$", "", sub("^[[:alnum:].]+:::?", "", fun_names))
-  fun_names <- paste0(ns_prefix, base_fun_names)
-  names(fun) <- fun_names
-  lookup_names <- paste0(sub(":::$", "::", ns_prefix), base_fun_names)
-  unique_base_funs <- unique(base_fun_names)
-  has_ns <- any(has_ns_prefix)
+  fun_parts <- vapply(
+    strsplit(fun_names, ":::?"),
+    \(x) c(if (length(x) == 1L) "", gsub("^`|`$", "", x)),
+    character(2L)
+  )
+  has_ns <- any(nzchar(fun_parts[1L, ]))
+  unique_base_funs <- unique(fun_parts[2L, ])
+
+  msgs <- paste0(
+    sprintf(
+      'Avoid undesirable function "%s"%s.',
+      fun_parts[2L, ],
+      ifelse(nzchar(fun_parts[1L, ]), sprintf(" from package {%s}", fun_parts[1L, ]), "")
+    ),
+    ifelse(is.na(fun), "", sprintf(" As an alternative, %s.", unname(fun)))
+  )
+  names(msgs) <- ifelse(
+    nzchar(fun_parts[1L, ]),
+    paste(fun_parts[1L, ], fun_parts[2L, ], sep = "::"),
+    fun_parts[2L, ]
+  )
 
   xp_condition <- xp_and(
     paste0(
@@ -142,27 +155,12 @@ undesirable_function_linter <- function(fun = default_undesirable_functions,
 
     if (has_ns) {
       call_pkg <- xml_find_chr_(matched_nodes, "string(preceding-sibling::SYMBOL_PACKAGE)")
-      qualified_fun <- paste0(call_pkg, "::", matched_fun, recycle0 = TRUE)
-      idx <- match(qualified_fun, lookup_names)
-      unqualified_idx <- is.na(idx)
-      idx[unqualified_idx] <- match(matched_fun[unqualified_idx], lookup_names)
-      keep <- !is.na(idx)
+      qualified_fun <- paste(call_pkg, matched_fun, sep = "::", recycle0 = TRUE)
+      matched_fun <- ifelse(qualified_fun %in% names(msgs), qualified_fun, matched_fun)
+      keep <- matched_fun %in% names(msgs)
       matched_nodes <- matched_nodes[keep]
-      matched_fun <- fun_names[idx[keep]]
+      matched_fun <- matched_fun[keep]
     }
-
-    msgs <- vapply(
-      stats::setNames(nm = unique(matched_fun)),
-      function(fun_name) {
-        msg <- sprintf('Avoid undesirable function "%s".', fun_name)
-        alternative <- fun[[fun_name]]
-        if (!is.na(alternative)) {
-          msg <- paste(msg, sprintf("As an alternative, %s.", alternative))
-        }
-        msg
-      },
-      character(1L)
-    )
 
     xml_nodes_to_lints(
       matched_nodes,
