@@ -200,8 +200,8 @@ test_that("multiple assignments are handle according to R precedence rules", { #
 
 test_that("namespace-qualified functions are matched selectively (#1770)", {
   linter <- undesirable_function_linter(c(
-    "bar::run_model" = "use foo::run_model()",
-    "bar:::internal_helper" = NA,
+    `bar::run_model` = "use foo::run_model()",
+    `bar:::internal_helper` = NA,
     "bar::`%in%`" = NA,
     "bar::`time<-`" = NA
   ))
@@ -235,7 +235,7 @@ test_that("namespace-qualified functions are matched selectively (#1770)", {
   # Specific namespace message overrides generic unqualified message when both are supplied
   combined_linter <- undesirable_function_linter(c(
     run_model = "use model()",
-    "bar::run_model" = "use foo::run_model()"
+    `bar::run_model` = "use foo::run_model()"
   ))
   msg_generic <- rex::rex('Avoid undesirable function "run_model". As an alternative, use model().')
   expect_lint("run_model()", list(msg_generic, column_number = 1L), combined_linter)
