@@ -902,13 +902,30 @@ test_that("return_linter works for final while/repeat loops as well", {
     linter
   )
 
-  # repeat{} with break can exit loop and return implicitly, so still lints
+  # repeat{} with break can exit loop and return implicitly, so still lints even with return()
   expect_lint(
     trim_some("
       function(x) {
         repeat {
           x <- update(x)
-          if (done(x)) break
+          if (failed(x)) break
+          if (done(x)) return(x)
+        }
+      }
+    "),
+    list(lint_msg, line_number = 2L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      function(x) {
+        repeat {
+          for (i in 1:10) {
+            if (skip(i)) break
+          }
+          if (failed(x)) break
+          if (done(x)) return(x)
         }
       }
     "),
