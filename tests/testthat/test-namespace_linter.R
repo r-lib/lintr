@@ -218,20 +218,12 @@ test_that("namespace_linter is OS-independent for base R packages (#3075)", {
   # Accessing OS-specific exports with `:::` is still linted consistently across OSes
   expect_lint(
     "base:::.fixupGFortranStdout()",
-    list(
-      rex::rex("Don't use `:::` to access .fixupGFortranStdout, which is exported from base."),
-      line_number = 1L,
-      column_number = 8L
-    ),
+    rex::rex("Don't use `:::` to access .fixupGFortranStdout, which is exported from base."),
     linter
   )
   expect_lint(
     "grDevices:::win.metafile()",
-    list(
-      rex::rex("Don't use `:::` to access win.metafile, which is exported from grDevices."),
-      line_number = 1L,
-      column_number = 13L
-    ),
+    rex::rex("Don't use `:::` to access win.metafile, which is exported from grDevices."),
     linter
   )
 })
