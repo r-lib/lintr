@@ -491,16 +491,16 @@ test_that("braces required for operator precedence around control flow or lambda
   )
 
   expect_no_lint(
-    trim_some("
+    trim_some(R"(
       x |>
         {
-          \\(y) y + 1
+          \(y) y + 1
         }()
-    "),
+    )"),
     linter
   )
 
-  # simple calls inside operator chains still lint when braces are unnecessary
+  # simple calls inside operator chains, call arguments, or assignment RHS still lint
   expect_lint(
     trim_some("
       ggplot(mtcars, aes(wt, mpg)) +
@@ -510,6 +510,28 @@ test_that("braces required for operator precedence around control flow or lambda
         geom_smooth()
     "),
     list(lint_msg, line_number = 2L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo(
+        {
+          if (x) geom_point()
+        }
+      )
+    "),
+    list(lint_msg, line_number = 2L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      p <- {
+        if (x) geom_point()
+      }
+    "),
+    list(lint_msg, line_number = 1L, column_number = 6L),
     linter
   )
 

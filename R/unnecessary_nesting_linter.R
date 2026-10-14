@@ -244,7 +244,7 @@ unnecessary_nesting_linter <- function(
       and not(
         parent::expr
         and not(preceding-sibling::*[
-          self::OP-LEFT-PAREN or self::OP-LEFT-BRACKET or self::LBB or self::LEFT_ASSIGN or self::EQ_ASSIGN
+          self::OP-LEFT-PAREN or self::OP-LEFT-BRACKET or self::LBB or self::LEFT_ASSIGN
         ])
         and expr[IF or FOR or WHILE or REPEAT or FUNCTION or OP-LAMBDA or OP-TILDE]
       )
