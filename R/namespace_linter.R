@@ -142,7 +142,9 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 
 # Platform-specific base R exports that only exist on Windows or Unix (#3075)
 os_specific_exports <- list(
-  base = c("Sys.junction", "shell", "shell.exec"),
+  # Note: base has no NAMESPACE, so getNamespaceExports("base") returns all objects in baseenv(),
+  # including dot-prefixed symbols like .fixupGFortranStdout and .fixupGFortranStderr.
+  base = c("Sys.junction", "shell", "shell.exec", ".fixupGFortranStdout", ".fixupGFortranStderr"),
   grDevices = c(
     "bringToTop", "msgWindow", "win.graph", "win.metafile", "win.print",
     "windows", "windows.options", "windowsFont", "windowsFonts",
@@ -164,7 +166,24 @@ os_specific_exports <- list(
 )
 
 os_specific_nonexports <- list(
-  base = c(".fixupGFortranStdout", ".fixupGFortranStderr")
+  grDevices = c(
+    "chooseSymbolFont", ".WindowsEnv", "aa.win", "print.SavedPlots",
+    "[.SavedPlots", "checkWindowsFont", "setWindowsFonts",
+    ".Quartzenv", "checkQuartzFont", "setQuartzFonts",
+    ".X11env", "X11FontError", "checkX11Font", "setX11Fonts", "optionSymbolFont"
+  ),
+  parallel = c(
+    "newForkNode", "clean_pids", "mcfork", "readChildren", "readChild",
+    "selectChildren", "rmChild", "mckill", "sendMaster", "processID",
+    "sendChildStdin", "mcexit", "children", "childrenDescriptors",
+    "masterDescriptor", "isChild", "closeStdout", "closeStderr",
+    "closeFD", "closeAll", "mcinteractive", "prepareCleanup", "cleanup"
+  ),
+  tcltk = ".onUnload",
+  utils = c(
+    "unpackPkgZip", ".install.winbinary", "menuInstallPkgs", "menuInstallLocal",
+    "menuShowCRAN", "close.winProgressBar", "askYesNoWinDialog"
+  )
 )
 
 namespace_symbols <- function(ns, exported = TRUE) {

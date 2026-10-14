@@ -201,6 +201,7 @@ test_that("namespace_linter is OS-independent for base R packages (#3075)", {
   expect_no_lint("base::shell('ls')", linter)
   expect_no_lint("base::shell.exec('file.txt')", linter)
   expect_no_lint("base::Sys.junction('from', 'to')", linter)
+  expect_no_lint("base::.fixupGFortranStdout()", linter)
   expect_no_lint("grDevices::win.metafile()", linter)
   expect_no_lint("grDevices::windows()", linter)
   expect_no_lint("utils::winProgressBar()", linter)
@@ -214,10 +215,20 @@ test_that("namespace_linter is OS-independent for base R packages (#3075)", {
   expect_no_lint("parallel::mccollect()", linter)
   expect_no_lint("utils::nsl('localhost')", linter)
 
-  # Windows-only internal base symbols
-  expect_no_lint("base:::.fixupGFortranStdout()", linter)
+  # OS-specific unexported symbols
+  expect_no_lint("utils:::unpackPkgZip()", linter)
+  expect_no_lint("parallel:::mcfork()", linter)
 
   # Accessing OS-specific exports with `:::` is still linted consistently across OSes
+  expect_lint(
+    "base:::.fixupGFortranStdout()",
+    list(
+      rex::rex("Don't use `:::` to access .fixupGFortranStdout, which is exported from base."),
+      line_number = 1L,
+      column_number = 8L
+    ),
+    linter
+  )
   expect_lint(
     "grDevices:::win.metafile()",
     list(
