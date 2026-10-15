@@ -136,7 +136,6 @@ boolean_arithmetic_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))
     sum_calls <- source_expression$xml_find_function_calls("sum")
-
     length_any_expr <- xml_find_all_(length_calls, length_any_xpath)
     sum_any_expr <- xml_find_all_(sum_calls, sum_any_xpath)
 
@@ -149,25 +148,58 @@ boolean_arithmetic_linter <- function() {
       strip_comments_from_subtree() |>
       xml_find_all_(sum_all_xpath)
 
-    # TODO(#2464): customize this?
-    any_msg <- paste(
-      "Use any() to express logical aggregations.",
-      "For example, replace length(which(x == y)) == 0 with !any(x == y)."
+    expr <- combine_nodesets(length_any_expr, sum_any_expr, length_all_expr, sum_all_expr)
+    if (length(expr) == 0L) {
+      return(list())
+    }
+
+    is_any <- rep(
+      c(TRUE, FALSE),
+      c(
+        length(length_any_expr) + length(sum_any_expr),
+        length(length_all_expr) + length(sum_all_expr)
+      )
     )
-    all_msg <- paste(
-      "Use all() to express logical aggregations.",
-      "For example, replace length(which(x == y)) == length(x) with all(x == y)."
+    outer_fn <- xml_find_chr_(expr, "string(expr[1]/SYMBOL_FUNCTION_CALL)")
+    inner_fn <- xml_find_chr_(expr, "string(expr[2]/expr[1]/SYMBOL_FUNCTION_CALL)")
+    call_key <- paste0(outer_fn, "_", ifelse(inner_fn %in% c("which", "grep", "grepl"), inner_fn, "other"))
+    call_map <- c(
+      length_which = "length(which(x == y))",
+      length_grep = "length(grep(pattern, x))",
+      sum_grepl = "sum(grepl(pattern, x))",
+      sum_other = "sum(x == y)"
     )
+    inner_map <- c(
+      length_which = "x == y",
+      length_grep = "grepl(pattern, x)",
+      sum_grepl = "grepl(pattern, x)",
+      sum_other = "x == y"
+    )
+    call_str <- unname(call_map[call_key])
+    inner_str <- unname(inner_map[call_key])
+
+    op <- xml_find_chr_(expr, "string(parent::expr/*[not(self::expr or self::COMMENT)])")
+    is_lhs <- xml_find_lgl_(expr, "boolean(following-sibling::expr)")
+    other_str <- ifelse(is_any, xml_find_chr_(expr, "string(parent::expr/expr/NUM_CONST)"), "length(x)")
+    old_expr <- ifelse(
+      is_lhs,
+      sprintf("%s %s %s", call_str, op, other_str),
+      sprintf("%s %s %s", other_str, op, call_str)
+    )
+    is_negated <- ifelse(
+      is_any,
+      op %in% c("==", "<=", "<"),
+      (is_lhs & op %in% c("!=", "<")) | (!is_lhs & op %in% c("!=", ">"))
+    )
+    target_fn <- ifelse(is_any, "any", "all")
+    new_expr <- sprintf("%s%s(%s)", ifelse(is_negated, "!", ""), target_fn, inner_str)
 
     xml_nodes_to_lints(
-      combine_nodesets(length_any_expr, sum_any_expr, length_all_expr, sum_all_expr),
+      expr,
       source_expression = source_expression,
-      lint_message = rep(
-        c(any_msg, all_msg),
-        c(
-          length(length_any_expr) + length(sum_any_expr),
-          length(length_all_expr) + length(sum_all_expr)
-        )
+      lint_message = sprintf(
+        "Use %s() to express logical aggregations. For example, replace %s with %s.",
+        target_fn, old_expr, new_expr
       ),
       type = "warning"
     )
