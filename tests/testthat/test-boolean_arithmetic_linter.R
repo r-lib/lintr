@@ -26,62 +26,41 @@ test_that("boolean_arithmetic_linter requires use of any() or !any() over length
 
   expect_lint(
     "length(which(x == y)) == 0",
-    rex::rex(
-      "Use any() to express logical aggregations. ",
-      "For example, replace length(which(x == y)) == 0 with !any(x == y)."
-    ),
+    rex::rex("replace length(which(x == y)) == 0 with !any(x == y)"),
     linter
   )
   # anything passed to which() can be assumed to be logical
   expect_lint(
     "length(which(is_treatment)) == 0L",
-    rex::rex(
-      "Use any() to express logical aggregations. ",
-      "For example, replace length(which(x == y)) == 0L with !any(x == y)."
-    ),
+    rex::rex("replace length(which(x == y)) == 0L with !any(x == y)"),
     linter
   )
   # regex version
   expect_lint(
     "length(grep(pattern, x)) == 0",
-    rex::rex(
-      "Use any() to express logical aggregations. ",
-      "For example, replace length(grep(pattern, x)) == 0 with !any(grepl(pattern, x))."
-    ),
+    rex::rex("replace length(grep(pattern, x)) == 0 with !any(grepl(pattern, x))"),
     linter
   )
 
   # non-== comparisons
   expect_lint(
     "length(which(x == y)) > 0L",
-    rex::rex(
-      "Use any() to express logical aggregations. ",
-      "For example, replace length(which(x == y)) > 0L with any(x == y)."
-    ),
+    rex::rex("replace length(which(x == y)) > 0L with any(x == y)"),
     linter
   )
   expect_lint(
     "length(which(is_treatment)) < 1",
-    rex::rex(
-      "Use any() to express logical aggregations. ",
-      "For example, replace length(which(x == y)) < 1 with !any(x == y)."
-    ),
+    rex::rex("replace length(which(x == y)) < 1 with !any(x == y)"),
     linter
   )
   expect_lint(
     "length(grep(pattern, x)) >= 1L",
-    rex::rex(
-      "Use any() to express logical aggregations. ",
-      "For example, replace length(grep(pattern, x)) >= 1L with any(grepl(pattern, x))."
-    ),
+    rex::rex("replace length(grep(pattern, x)) >= 1L with any(grepl(pattern, x))"),
     linter
   )
   expect_lint(
     "0L == sum(x == y)",
-    rex::rex(
-      "Use any() to express logical aggregations. ",
-      "For example, replace 0L == sum(x == y) with !any(x == y)."
-    ),
+    rex::rex("replace 0L == sum(x == y) with !any(x == y)"),
     linter
   )
 })
@@ -91,23 +70,13 @@ test_that("boolean_arithmetic_linter requires use of all() or !all() for length(
 
   expect_lint(
     "sum(x == y) == length(x)",
-    list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace sum(x == y) == length(x) with all(x == y)."
-      ),
-      line_number = 1L,
-      column_number = 1L
-    ),
+    list(rex::rex("replace sum(x == y) == length(x) with all(x == y)"), line_number = 1L, column_number = 1L),
     linter
   )
   expect_lint(
     "sum(grepl(p, x)) != length(x)",
     list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace sum(grepl(pattern, x)) != length(x) with !all(grepl(pattern, x))."
-      ),
+      rex::rex("replace sum(grepl(pattern, x)) != length(x) with !all(grepl(pattern, x))"),
       line_number = 1L,
       column_number = 1L
     ),
@@ -115,72 +84,34 @@ test_that("boolean_arithmetic_linter requires use of all() or !all() for length(
   )
   expect_lint(
     "sum(x == 0 & y == 1) < length(y)",
-    list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace sum(x == y) < length(x) with !all(x == y)."
-      ),
-      line_number = 1L,
-      column_number = 1L
-    ),
+    list(rex::rex("replace sum(x == y) < length(x) with !all(x == y)"), line_number = 1L, column_number = 1L),
     linter
   )
   expect_lint(
     "sum(is.na(x)) >= length(x)",
-    list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace sum(x == y) >= length(x) with all(x == y)."
-      ),
-      line_number = 1L,
-      column_number = 1L
-    ),
+    list(rex::rex("replace sum(x == y) >= length(x) with all(x == y)"), line_number = 1L, column_number = 1L),
     linter
   )
   expect_lint(
     "length(x) == sum(x == y)",
-    list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace length(x) == sum(x == y) with all(x == y)."
-      ),
-      line_number = 1L,
-      column_number = 14L
-    ),
+    list(rex::rex("replace length(x) == sum(x == y) with all(x == y)"), line_number = 1L, column_number = 14L),
     linter
   )
   expect_lint(
     "length(x) > sum(x == y)",
-    list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace length(x) > sum(x == y) with !all(x == y)."
-      ),
-      line_number = 1L,
-      column_number = 13L
-    ),
+    list(rex::rex("replace length(x) > sum(x == y) with !all(x == y)"), line_number = 1L, column_number = 13L),
     linter
   )
   expect_lint(
     "length(x) <= sum(x == y)",
-    list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace length(x) <= sum(x == y) with all(x == y)."
-      ),
-      line_number = 1L,
-      column_number = 14L
-    ),
+    list(rex::rex("replace length(x) <= sum(x == y) with all(x == y)"), line_number = 1L, column_number = 14L),
     linter
   )
 
   expect_lint(
     "length(which(x == y)) == length(x)",
     list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace length(which(x == y)) == length(x) with all(x == y)."
-      ),
+      rex::rex("replace length(which(x == y)) == length(x) with all(x == y)"),
       line_number = 1L,
       column_number = 1L
     ),
@@ -189,10 +120,7 @@ test_that("boolean_arithmetic_linter requires use of all() or !all() for length(
   expect_lint(
     "length(which(is_treatment)) == length(is_treatment)",
     list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace length(which(x == y)) == length(x) with all(x == y)."
-      ),
+      rex::rex("replace length(which(x == y)) == length(x) with all(x == y)"),
       line_number = 1L,
       column_number = 1L
     ),
@@ -201,10 +129,7 @@ test_that("boolean_arithmetic_linter requires use of all() or !all() for length(
   expect_lint(
     "length(grep(pattern, x)) == length(x)",
     list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace length(grep(pattern, x)) == length(x) with all(grepl(pattern, x))."
-      ),
+      rex::rex("replace length(grep(pattern, x)) == length(x) with all(grepl(pattern, x))"),
       line_number = 1L,
       column_number = 1L
     ),
@@ -213,10 +138,7 @@ test_that("boolean_arithmetic_linter requires use of all() or !all() for length(
   expect_lint(
     "length(grep(pattern, x)) < length(x)",
     list(
-      rex::rex(
-        "Use all() to express logical aggregations. ",
-        "For example, replace length(grep(pattern, x)) < length(x) with !all(grepl(pattern, x))."
-      ),
+      rex::rex("replace length(grep(pattern, x)) < length(x) with !all(grepl(pattern, x))"),
       line_number = 1L,
       column_number = 1L
     ),
