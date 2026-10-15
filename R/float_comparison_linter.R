@@ -46,7 +46,7 @@ float_comparison_linter <- function(lint_implicit_integer = TRUE) {
     "
   }
 
-  non_integer_const <- glue::glue("
+  non_integer_const <- glue("
     NUM_CONST[
       not(starts-with(text(), 'NA'))
       and not(text() = 'TRUE')
@@ -70,14 +70,14 @@ float_comparison_linter <- function(lint_implicit_integer = TRUE) {
     )
   "
 
-  non_integer_division <- glue::glue("
+  non_integer_division <- glue("
     (OP-SLASH or OP-DIV)
     and count(expr) = 2
     and expr[1][{numeric_literal}]
     and expr[2][{numeric_literal}]
   ")
 
-  base_non_integer_expr <- glue::glue("
+  base_non_integer_expr <- glue("
     {non_integer_const}
     or (
       OP-MINUS
@@ -94,19 +94,19 @@ float_comparison_linter <- function(lint_implicit_integer = TRUE) {
     )
   ")
 
-  non_integer_c_call <- glue::glue("
+  non_integer_c_call <- glue("
     expr[1][SYMBOL_FUNCTION_CALL[text() = 'c']]
     and expr[{base_non_integer_expr}]
   ")
 
-  non_integer_expr <- glue::glue("
+  non_integer_expr <- glue("
     {base_non_integer_expr}
     or (
       {non_integer_c_call}
     )
   ")
 
-  xpath <- glue::glue("
+  xpath <- glue("
   (//EQ | //SPECIAL[text() = '%in%'])[
     parent::expr[
       expr[{non_integer_expr}]
@@ -123,7 +123,7 @@ float_comparison_linter <- function(lint_implicit_integer = TRUE) {
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
 
-    bad_expr <- xml_find_all(xml, xpath)
+    bad_expr <- xml_find_all_(xml, xpath)
 
     xml_nodes_to_lints(
       bad_expr,
