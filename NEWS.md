@@ -166,6 +166,9 @@
 * `unnecessary_nesting_linter()` treats `=` assignment the same as `<-` for several pieces of logic (#2245 and #2829, @MichaelChirico).
 * `vector_logic_linter()` ignores scalar operators (`&&`/`||`) inside anonymous functions within `filter()`/`subset()` (#2935, @emmanuel-ferdman).
 * `unnecessary_lambda_linter()` skips lambdas with an outer unary operator like `sapply(x, \(xi) !all(xi))` (#2742, @MichaelChirico).
+## New linters
+
+* `decimal_fraction_linter()` now suggests integer-arithmetic replacements for decimal `as.integer()` conversions to avoid floating-point rounding (@MEO265).
 
 ## Notes
 
