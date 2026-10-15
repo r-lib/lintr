@@ -43,9 +43,11 @@
 boolean_arithmetic_linter <- function() {
   comparator_nodes <- infix_metadata$xml_tag[infix_metadata$comparator]
   logical_nodes <- c(comparator_nodes, "AND", "OR", "OP-EXCLAMATION")
+
   zero_expr <- "(EQ or NE or GT or LE) and expr/NUM_CONST[text() = '0' or text() = '0L']"
   one_expr <- "(LT or GE) and expr/NUM_CONST[text() = '1' or text() = '1L']"
   any_parent_cond <- glue("parent::expr[({zero_expr}) or ({one_expr})]")
+  length_cond <- "expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']"
 
   known_logical_calls <- c(
     "grepl", "str_detect", "nzchar", "startsWith", "endsWith",
@@ -56,20 +58,21 @@ boolean_arithmetic_linter <- function() {
   first_arg_logical_calls <- setdiff(known_logical_calls, "grepl")
   second_arg_logical_calls <- c("grepl", "xor")
 
+  logical_special_node <- "SPECIAL[text() = '%in%' or text() = '%chin%']"
+
   # 'x' in the paired length(x) call, e.g. in sum(x == y) == length(x)
-  paired_length_arg <- "
+  paired_length_arg <- glue("
     (
       following-sibling::expr[1][parent::expr[EQ or NE or LT or GE]]
       | preceding-sibling::expr[1][parent::expr[EQ or NE or GT or LE]]
-    )[
-      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
-    ]/expr[2]
-  "
+    )
+    [{length_cond}]/expr[2]
+  ")
 
   # Step from a logical operation/call to its vector argument, e.g. x == y -> x
   logical_operand_xpath <- glue("expr[
     parent::expr[{xp_or(logical_nodes)} or *[1][self::OP-LEFT-PAREN]]
-    or following-sibling::SPECIAL[text() = '%in%' or text() = '%chin%']
+    or following-sibling::{logical_special_node}
     or preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL[{xp_text_in_table(first_arg_logical_calls)}]
     or preceding-sibling::expr[2]/SYMBOL_FUNCTION_CALL[{xp_text_in_table(second_arg_logical_calls)}]
   ]")
@@ -93,10 +96,10 @@ boolean_arithmetic_linter <- function() {
   ")
   length_comparison_xpath <- glue("
   parent::expr
-    /parent::expr[expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']]
+    /parent::expr[{length_cond}]
     /parent::expr[
       ({xp_or(comparator_nodes)})
-      and count(expr[expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']]) = 2
+      and count(expr[{length_cond}]) = 2
     ]
   ")
   length_all_xpath <- glue("
@@ -113,7 +116,7 @@ boolean_arithmetic_linter <- function() {
   sum_inner_cond <- glue("
     expr/SYMBOL_FUNCTION_CALL[{xp_text_in_table(known_logical_calls)}]
     or {xp_or(logical_nodes)}
-    or SPECIAL[text() = '%in%' or text() = '%chin%']
+    or {logical_special_node}
   ")
   sum_any_xpath <- glue("
   parent::expr[
@@ -127,7 +130,7 @@ boolean_arithmetic_linter <- function() {
   ]
     /parent::expr[
       ({xp_or(comparator_nodes)})
-      and expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
+      and expr/{length_cond}
     ]
   ")
   sum_all_xpath <- glue("
