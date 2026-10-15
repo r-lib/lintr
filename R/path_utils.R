@@ -137,6 +137,9 @@ path_linter_factory <- function(path_function, message, linter, name = linter_au
       function(id) {
         token <- with_id(source_expression, id)
         path <- get_r_string(token$text)
+        if (!validEnc(path)) {
+          path <- iconv(path, to = "UTF-8", sub = "_")
+        }
         if (path_function(path)) {
           path_start <- token[["col1"]] + 1L
           path_end <- token[["col2"]] - 1L

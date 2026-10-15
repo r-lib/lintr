@@ -84,3 +84,14 @@ test_that("absolute_path_linter() handles unmarked UTF-8 text input", {
     expect_length(lint(text = text_native, linters = absolute_path_linter()), 0L)
   )
 })
+
+test_that("non-UTF-8 strings do not warn (#2836)", {
+  expect_no_warning(expect_no_lint(R"('M\xfcller')", absolute_path_linter()))
+  expect_no_warning(
+    expect_lint(
+      R"('/M\xfcller/file.txt')",
+      rex::rex("Do not use absolute paths."),
+      absolute_path_linter()
+    )
+  )
+})
