@@ -246,7 +246,7 @@ test_that("namespace_linter discovers conditional NAMESPACE exports in non-base 
   writeLines(
     c(
       "export(always_exported)",
-      sprintf("if (tools:::.OStype() == '%s') export(other_os_fun)", other_os)
+      sprintf("if (.Platform$OS.type == '%s') export(other_os_fun)", other_os)
     ),
     file.path(pkg_dir, "NAMESPACE")
   )

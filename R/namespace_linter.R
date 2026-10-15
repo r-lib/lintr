@@ -5,10 +5,8 @@
 #' potentially change the global state.
 #'
 #' @details
-#' To check OS-specific exports across platforms, `namespace_linter()` re-parses package `NAMESPACE` files with
-#' environment variable `R_OSTYPE` set to the opposite OS (`"unix"` or `"windows"`). Packages with OS-specific exports
-#' should gate them with `if (tools:::.OStype() == "windows")` or `if (tools:::.OStype() == "unix")` in `NAMESPACE`
-#' (following base R's own packages) for `namespace_linter()` to recognize them on all platforms.
+#' For cross-platform checks, `namespace_linter()` recognizes OS-specific `export()` directives in package `NAMESPACE`
+#' files when gated by `if (.Platform$OS.type == ...)` or `if (tools:::.OStype() == ...)`.
 #'
 #' @param check_exports Check if `symbol` is exported from `namespace` in `namespace::symbol` calls.
 #' @param check_nonexports Check if `symbol` exists in `namespace` in `namespace:::symbol` calls.
@@ -147,6 +145,19 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
 }
 
 # Discover OS-specific exports in base R and package NAMESPACE files (#3075)
+os_type_ns_exports_xpath <- "
+  //IF/parent::expr[
+    expr[1][
+      .//SYMBOL_FUNCTION_CALL[text() = '.OStype']/preceding-sibling::SYMBOL_PACKAGE[text() = 'tools']
+      or .//SYMBOL[text() = 'OS.type']/preceding-sibling::expr[SYMBOL[text() = '.Platform']]
+    ]
+  ]
+  /expr[position() > 1]
+  //SYMBOL_FUNCTION_CALL[text() = 'export']
+  /parent::expr
+  /following-sibling::expr
+"
+
 conditional_namespace_exports <- function(ns) {
   pkg <- getNamespaceName(ns)
   with_namespace_cache(paste0("cond_ns_exports@", pkg), {
@@ -156,11 +167,9 @@ conditional_namespace_exports <- function(ns) {
       ut_syms <- conditional_namespace_exports(asNamespace("utils"))
       setdiff(compat_syms, c(gr_syms, ut_syms))
     } else {
-      ns_path <- getNamespaceInfo(ns, "path")
-      # nolint next: undesirable_function_name. Avoiding {withr} dep in pkg.
-      Sys.setenv(R_OSTYPE = if (.Platform$OS.type == "windows") "unix" else "windows")
-      on.exit(Sys.unsetenv("R_OSTYPE"))
-      parseNamespaceFile(basename(ns_path), dirname(ns_path), mustExist = FALSE)$exports
+      ns_path <- file.path(getNamespaceInfo(ns, "path"), "NAMESPACE")
+      xml <- safe_parse_to_xml(getParseData(parse(ns_path, keep.source = TRUE)))
+      get_r_string(xml_find_all_(xml, os_type_ns_exports_xpath))
     }
   })
 }
