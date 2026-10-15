@@ -146,7 +146,7 @@ test_that("comments, parentheses, nesting, and positions are handled", {
   expect_lint("f <- function(x) log(1 + x)", "log1p", linter)
   expect_lint("log(1 + log(1 + y))", list("log1p", "log1p"), linter)
   expect_lint("exp(log(1 + y)) - 1", list("expm1", "log1p"), linter)
-  expect_lint("x |> log()", NULL, linter)
+  expect_no_lint("x |> log()", linter)
   expect_lint("x |> (function(y) log(1 + y))()", "log1p", linter)
 })
 

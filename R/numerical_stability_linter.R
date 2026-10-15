@@ -72,7 +72,7 @@ numerical_stability_linter <- function(assume_real_numeric = TRUE, include_heuri
   ")
 
   Linter(linter_level = "expression", function(source_expression) {
-    candidates <- xml_find_all(source_expression$xml_parsed_content, xpath)
+    candidates <- xml_find_all_(source_expression$xml_parsed_content, xpath)
     covered_paths <- character()
     lints <- list()
     for (node in candidates) {
@@ -94,9 +94,9 @@ numerical_stability_linter <- function(assume_real_numeric = TRUE, include_heuri
 }
 
 stability_component_paths <- function(node) {
-  vapply(xml_find_all(node, "expr"), function(component) {
+  vapply(xml_find_all_(node, "expr"), function(component) {
     repeat {
-      inner <- xml_find_first(component, "self::expr[*[1][self::OP-LEFT-PAREN]]/expr")
+      inner <- xml_find_first_(component, "self::expr[*[1][self::OP-LEFT-PAREN]]/expr")
       if (is.na(inner)) break
       component <- inner
     }
@@ -135,6 +135,9 @@ stability_match_call <- function(expr, name, package = "base") {
     vapply(actual, identical, logical(1L), quote(...))
   if (any(invalid)) return(NULL)
   definition <- get(name, envir = asNamespace(package), inherits = FALSE)
+  if (is.primitive(definition)) {
+    definition <- args(definition)
+  }
   matched <- tryCatch(match.call(definition, expr, expand.dots = FALSE, envir = baseenv()), error = function(e) NULL)
   if (is.null(matched)) return(NULL)
   arguments <- as.list(matched)[-1L]
@@ -182,7 +185,7 @@ stability_has_complex <- function(expr) {
   any(vapply(parts, stability_has_complex, logical(1L)))
 }
 
-stability_text <- function(expr) paste(deparse(expr, width.cutoff = 500L), collapse = " ")
+stability_text <- function(expr) deparse1(expr, width.cutoff = 500L)
 
 stability_suggest <- function(expr) paste0("Use ", stability_text(expr), " for better numerical stability.")
 

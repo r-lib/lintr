@@ -28,6 +28,7 @@
 ### New linters
 
 * `expect_shape_linter()` recommends usage of `testthat::expect_shape(x, ...)` over `expect_equal(nrow(x), n)`, `expect_equal(ncol(x), n)`, and `expect_equal(dim(x), d)` (#2893, @MichaelChirico).
+* `numerical_stability_linter()` recommends stable arithmetic, logarithmic special functions, and probability APIs. It supports `assume_real_numeric` and optional `include_heuristics` hints for domain-dependent replacements and log-sum-exp expressions (#11, @MEO265).
 
 ### Linter improvements
 
@@ -94,10 +95,6 @@
 * Several internal performance optimizations speed up `get_source_expressions()`, `lint()`, and multi-file runs like `lint_dir()` and `lint_package()` by ~15-25%, including caching package `NAMESPACE` imports and S3 generic lookups across files (#1366, #3111, @MichaelChirico, h/t @dshkol for the `@r-pkg-optimizer` SKILL).
 
 # lintr (3.4.0)
-
-## New linters
-
-* `numerical_stability_linter()` recommends stable arithmetic, logarithmic special functions, and probability APIs. It supports `assume_real_numeric` and optional `include_heuristics` hints for domain-dependent replacements and log-sum-exp expressions.
 
 ## Deprecations & breaking changes
 
