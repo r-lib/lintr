@@ -16,6 +16,10 @@ Check for missing packages and symbols in namespace calls.
 Note that using \code{check_exports=TRUE} or \code{check_nonexports=TRUE} will load packages used in user code so it could
 potentially change the global state.
 }
+\details{
+For cross-platform checks, \code{namespace_linter()} recognizes OS-specific \code{export()} directives in package \code{NAMESPACE}
+files when gated by \verb{if (.Platform$OS.type == ...)} or \verb{if (tools:::.OStype() == ...)}.
+}
 \examples{
 # will produce lints
 lint(

@@ -193,3 +193,80 @@ test_that("namespace_linter includes problematic package names in error message 
     rex::rex("Failed to retrieve namespaces for", anything, "brokenpkg1", anything, "brokenpkg2")
   )
 })
+
+test_that("namespace_linter is OS-independent for base R packages (#3075)", {
+  linter <- namespace_linter()
+
+  # Windows-only exports
+  expect_no_lint("base::shell('ls')", linter)
+  expect_no_lint("base::shell.exec('file.txt')", linter)
+  expect_no_lint("base::Sys.junction('from', 'to')", linter)
+  expect_no_lint("base::.fixupGFortranStdout()", linter)
+  expect_no_lint("grDevices::win.metafile()", linter)
+  expect_no_lint("grDevices::windows()", linter)
+  expect_no_lint("utils::winProgressBar()", linter)
+  expect_no_lint("utils::readClipboard()", linter)
+  expect_no_lint("utils::shortPathName('path')", linter)
+
+  # Unix-only exports
+  expect_no_lint("grDevices::X11.options()", linter)
+  expect_no_lint("grDevices::quartz()", linter)
+  expect_no_lint("parallel::mcparallel(1 + 1)", linter)
+  expect_no_lint("parallel::mccollect()", linter)
+  expect_no_lint("utils::nsl('localhost')", linter)
+
+  # Accessing OS-specific exports with `:::` is still linted consistently across OSes
+  expect_lint(
+    "base:::.fixupGFortranStdout()",
+    rex::rex("Don't use `:::` to access .fixupGFortranStdout, which is exported from base."),
+    linter
+  )
+  expect_lint(
+    "grDevices:::win.metafile()",
+    rex::rex("Don't use `:::` to access win.metafile, which is exported from grDevices."),
+    linter
+  )
+})
+
+test_that("namespace_linter discovers conditional NAMESPACE exports in non-base packages (#3075)", {
+  pkg_dir <- withr::local_tempdir("condns")
+  writeLines(
+    c(
+      "Package: condnspkg",
+      "Version: 0.1.0",
+      "Title: Test Conditional Namespace",
+      "Description: Test.",
+      "License: MIT"
+    ),
+    file.path(pkg_dir, "DESCRIPTION")
+  )
+  dir.create(file.path(pkg_dir, "R"))
+  writeLines("always_exported <- function() 1", file.path(pkg_dir, "R", "fun.R"))
+  other_os <- if (.Platform$OS.type == "windows") "unix" else "windows"
+  writeLines(
+    c(
+      "export(always_exported)",
+      sprintf("if (.Platform$OS.type == '%s') export(other_os_fun)", other_os)
+    ),
+    file.path(pkg_dir, "NAMESPACE")
+  )
+
+  lib_dir <- withr::local_tempdir("condns_lib")
+  tryCatch(
+    utils::install.packages(pkg_dir, lib = lib_dir, repos = NULL, type = "source", quiet = TRUE),
+    error = \(e) skip(conditionMessage(e)),
+    warning = \(w) skip(conditionMessage(w))
+  )
+  withr::local_libpaths(lib_dir, action = "prefix")
+  withr::defer(unloadNamespace("condnspkg"))
+
+  linter <- namespace_linter()
+  expect_no_lint("condnspkg::always_exported()", linter)
+  expect_no_lint("condnspkg::other_os_fun()", linter)
+
+  expect_lint(
+    "condnspkg:::other_os_fun()",
+    rex::rex("Don't use `:::` to access other_os_fun, which is exported from condnspkg."),
+    linter
+  )
+})

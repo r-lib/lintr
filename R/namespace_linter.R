@@ -4,6 +4,10 @@
 #' Note that using `check_exports=TRUE` or `check_nonexports=TRUE` will load packages used in user code so it could
 #' potentially change the global state.
 #'
+#' @details
+#' For cross-platform checks, `namespace_linter()` recognizes OS-specific `export()` directives in package `NAMESPACE`
+#' files when gated by `if (.Platform$OS.type == ...)` or `if (tools:::.OStype() == ...)`.
+#'
 #' @param check_exports Check if `symbol` is exported from `namespace` in `namespace::symbol` calls.
 #' @param check_nonexports Check if `symbol` exists in `namespace` in `namespace:::symbol` calls.
 #'
@@ -140,6 +144,36 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
   })
 }
 
+# Discover OS-specific exports in base R and package NAMESPACE files (#3075)
+os_type_ns_exports_xpath <- "
+  //IF/parent::expr[
+    expr[1][
+      .//SYMBOL_FUNCTION_CALL[text() = '.OStype']/preceding-sibling::SYMBOL_PACKAGE[text() = 'tools']
+      or .//SYMBOL[text() = 'OS.type']/preceding-sibling::expr[SYMBOL[text() = '.Platform']]
+    ]
+  ]
+  /expr[position() > 1]
+  //SYMBOL_FUNCTION_CALL[text() = 'export']
+  /parent::expr
+  /following-sibling::expr
+"
+
+conditional_namespace_exports <- function(ns) {
+  pkg <- getNamespaceName(ns)
+  with_namespace_cache(paste0("cond_ns_exports@", pkg), {
+    if (pkg == "base") {
+      compat_syms <- names(getNamespace("tools")$compatibilityEnv())
+      gr_syms <- conditional_namespace_exports(asNamespace("grDevices"))
+      ut_syms <- conditional_namespace_exports(asNamespace("utils"))
+      setdiff(compat_syms, c(gr_syms, ut_syms))
+    } else {
+      ns_path <- file.path(getNamespaceInfo(ns, "path"), "NAMESPACE")
+      xml <- safe_parse_to_xml(getParseData(parse(ns_path, keep.source = TRUE)))
+      get_r_string(xml_find_all_(xml, os_type_ns_exports_xpath))
+    }
+  })
+}
+
 namespace_symbols <- function(ns, exported = TRUE) {
   if (exported) {
     c(getNamespaceExports(ns), names(.getNamespaceInfo(ns, "lazydata")))
@@ -147,10 +181,16 @@ namespace_symbols <- function(ns, exported = TRUE) {
     ls(ns, all.names = TRUE)
   }
 }
+
 is_in_pkg <- function(symbols, namespaces, exported = TRUE) {
   vapply(
     seq_along(symbols),
-    \(ii) symbols[[ii]] %in% namespace_symbols(namespaces[[ii]], exported = exported),
+    function(ii) {
+      sym <- symbols[[ii]]
+      ns <- namespaces[[ii]]
+      sym %in% namespace_symbols(ns, exported = exported) ||
+        sym %in% conditional_namespace_exports(ns)
+    },
     logical(1L)
   )
 }
