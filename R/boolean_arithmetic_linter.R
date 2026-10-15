@@ -45,24 +45,35 @@ boolean_arithmetic_linter <- function() {
   one_expr <- "(LT or GE) and expr/NUM_CONST[text() = '1' or text() = '1L']"
   any_parent_cond <- glue("parent::expr[({zero_expr}) or ({one_expr})]")
 
+  known_logical_calls <- c(
+    "grepl", "str_detect", "nzchar", "startsWith", "endsWith",
+    "xor", "is.element", "duplicated",
+    "is.na", "is.nan", "is.finite", "is.infinite",
+    NULL
+  )
+  first_arg_logical_calls <- setdiff(known_logical_calls, "grepl")
+
   other_length_arg <- "
     (
       following-sibling::expr[1][parent::expr[EQ or NE or LT or GE]]
       | preceding-sibling::expr[1][parent::expr[EQ or NE or GT or LE]]
     )[expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']]/expr[2]
   "
+  operand_step <- glue("
+    expr[
+      parent::expr[EQ or NE or GT or LT or GE or LE or AND or OR or OP-EXCLAMATION or *[1][self::OP-LEFT-PAREN]]
+      or following-sibling::SPECIAL[text() = '%in%' or text() = '%chin%']
+      or preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL[{xp_text_in_table(first_arg_logical_calls)}]
+      or preceding-sibling::expr[2]/SYMBOL_FUNCTION_CALL[text() = 'grepl' or text() = 'xor']
+    ]
+  ")
   candidate_vec <- function(base) {
     glue("
       (
-        {base}[not(expr[1]/SYMBOL_FUNCTION_CALL)]
-        | {base}/expr[
-          not(self::expr[1][SYMBOL_FUNCTION_CALL])
-          and not(preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL[text() = 'grepl' or text() = 'grep'])
-        ]
-        | {base}/expr/expr[
-          not(self::expr[1][SYMBOL_FUNCTION_CALL])
-          and not(preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL[text() = 'grepl' or text() = 'grep'])
-        ]
+        {base}
+        | {base}/{operand_step}
+        | {base}/{operand_step}/{operand_step}
+        | {base}/{operand_step}/{operand_step}/{operand_step}
       )
     ")
   }
@@ -75,39 +86,32 @@ boolean_arithmetic_linter <- function() {
     ]
   ")
   length_all_xpath <- glue("
-  parent::expr
-    /parent::expr[
-      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
-      and (
-        (expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'grep'] and expr[2]/expr[3] = {other_length_arg})
-        or (
-          expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'which']
-          and {candidate_vec('expr[2]/expr[2]')} = {other_length_arg}
-        )
+  expr[
+    expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
+    and (
+      (expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'grep'] and expr[2]/expr[3] = {other_length_arg})
+      or (
+        expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'which']
+        and {candidate_vec('expr[2]/expr[2]')} = {other_length_arg}
       )
-    ]
+    )
+  ]
   ")
-  known_logical_calls <- c(
-    "grepl", "str_detect", "nzchar", "startsWith", "endsWith",
-    "xor", "is.element", "duplicated",
-    "is.na", "is.nan", "is.finite", "is.infinite",
-    NULL
-  )
   sum_inner_cond <- glue("
-    expr[
-      expr/SYMBOL_FUNCTION_CALL[{xp_text_in_table(known_logical_calls)}]
-      or (EQ or NE or GT or LT or GE or LE or AND or OR or OP-EXCLAMATION)
-      or SPECIAL[text() = '%in%' or text() = '%chin%']
-    ]
+    expr/SYMBOL_FUNCTION_CALL[{xp_text_in_table(known_logical_calls)}]
+    or (EQ or NE or GT or LT or GE or LE or AND or OR or OP-EXCLAMATION)
+    or SPECIAL[text() = '%in%' or text() = '%chin%']
   ")
   sum_any_xpath <- glue("
   parent::expr[
-    {sum_inner_cond}
+    expr[{sum_inner_cond}]
     and {any_parent_cond}
   ]")
   sum_all_xpath <- glue("
-  parent::expr[
-    {sum_inner_cond}
+  expr[
+    expr[1]/SYMBOL_FUNCTION_CALL[text() = 'sum']
+    and (count(expr) = 2 or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm']))
+    and expr[2][{sum_inner_cond}]
     and {candidate_vec('expr[2]')} = {other_length_arg}
   ]")
 
@@ -118,9 +122,15 @@ boolean_arithmetic_linter <- function() {
       xml_find_all_(length_calls, length_any_xpath),
       xml_find_all_(sum_calls, sum_any_xpath)
     )
+    length_comp <- strip_comments_from_subtree(
+      xml_find_all_(length_calls, "parent::expr/parent::expr/parent::expr")
+    )
+    sum_comp <- strip_comments_from_subtree(
+      xml_find_all_(sum_calls, "parent::expr/parent::expr")
+    )
     all_expr <- combine_nodesets(
-      xml_find_all_(length_calls, length_all_xpath),
-      xml_find_all_(sum_calls, sum_all_xpath)
+      xml_find_all_(length_comp, length_all_xpath),
+      xml_find_all_(sum_comp, sum_all_xpath)
     )
 
     # TODO(#2464): customize this?
