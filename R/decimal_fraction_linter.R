@@ -48,7 +48,7 @@ decimal_fraction_linter <- function(lint_exact_binary = FALSE) {
     # arithmetic replacements.
     # bad_expr narrows to as.integer(<binary>) so we can safely rewrite and
     # pinpoint the literal; more complex expressions are left alone.
-    bad_expr <- xml_find_all(
+    bad_expr <- xml_find_all_(
       xml_calls,
       "parent::expr[
         expr[2][
@@ -71,7 +71,7 @@ decimal_fraction_linter <- function(lint_exact_binary = FALSE) {
     }
 
     bad_expr <- strip_comments_from_subtree(bad_expr)
-    bad_expr <- xml_find_all(
+    bad_expr <- xml_find_all_(
       bad_expr,
       "self::expr[expr[2][count(expr) = 2]]"
     )
@@ -80,24 +80,24 @@ decimal_fraction_linter <- function(lint_exact_binary = FALSE) {
     }
 
     # arg_expr is the argument expression to as.integer(<arg>).
-    arg_expr <- xml_find_all(bad_expr, "expr[2]")
-    expr_children <- xml_find_all(arg_expr, "./expr")
+    arg_expr <- xml_find_all_(bad_expr, "expr[2]")
+    expr_children <- xml_find_all_(arg_expr, "./expr")
     is_numeric_child <- vapply(expr_children, function(expr) {
-      !is.na(xml_find_first(expr, ".//NUM_CONST"))
+      !is.na(xml_find_first_(expr, ".//NUM_CONST"))
     }, logical(1L))
-    num_expr <- xml_find_all(expr_children[is_numeric_child], ".//NUM_CONST")
+    num_expr <- xml_find_all_(expr_children[is_numeric_child], ".//NUM_CONST")
     # num_text is the literal string of the decimal constant we parse into a fraction.
     num_text <- xml_text(num_expr)
     other_expr <- expr_children[!is_numeric_child]
     # other_factor is the non-numeric operand (e.g., x or x + y) kept in the replacement.
     other_factor <- xml_text(other_expr)
     operator <- vapply(arg_expr, function(expr) {
-      xml_name(xml_find_first(expr, "./OP-STAR | ./OP-SLASH"))
+      xml_name_(xml_find_first_(expr, "./OP-STAR | ./OP-SLASH"))
     }, character(1L))
     # Unary minus is its own node in the XML AST, so we need to inspect ancestors
     # to preserve sign in the replacement suggestion.
     is_negative <- vapply(num_expr, function(expr) {
-      !is.na(xml_find_first(expr, "ancestor::expr[OP-MINUS and count(expr) = 1]"))
+      !is.na(xml_find_first_(expr, "ancestor::expr[OP-MINUS and count(expr) = 1]"))
     }, logical(1L))
 
     filtered <- filter_decimal_fraction_inputs(
