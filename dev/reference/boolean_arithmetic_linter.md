@@ -1,7 +1,8 @@
 # Require usage of boolean operators over equivalent arithmetic
 
 `length(which(x == y)) == 0` is the same as `!any(x == y)`, but the
-latter is more readable and more efficient.
+latter is more readable and more efficient. Similarly,
+`sum(x == y) == length(x)` is the same as `all(x == y)`.
 
 ## Usage
 
@@ -28,7 +29,7 @@ lint(
   text = "length(which(x == y)) == 0L",
   linters = boolean_arithmetic_linter()
 )
-#> <text>:1:1: warning: [boolean_arithmetic_linter] Use any() to express logical aggregations. For example, replace length(which(x == y)) == 0 with !any(x == y).
+#> <text>:1:1: warning: [boolean_arithmetic_linter] Use any() to express logical aggregations. For example, replace length(which(x == y)) == 0L with !any(x == y).
 #> length(which(x == y)) == 0L
 #> ^~~~~~~~~~~~~~~~~~~~~
 
@@ -36,9 +37,17 @@ lint(
   text = "sum(grepl(pattern, x)) == 0",
   linters = boolean_arithmetic_linter()
 )
-#> <text>:1:1: warning: [boolean_arithmetic_linter] Use any() to express logical aggregations. For example, replace length(which(x == y)) == 0 with !any(x == y).
+#> <text>:1:1: warning: [boolean_arithmetic_linter] Use any() to express logical aggregations. For example, replace sum(grepl(pattern, x)) == 0 with !any(grepl(pattern, x)).
 #> sum(grepl(pattern, x)) == 0
 #> ^~~~~~~~~~~~~~~~~~~~~~
+
+lint(
+  text = "sum(x == y) == length(x)",
+  linters = boolean_arithmetic_linter()
+)
+#> <text>:1:1: warning: [boolean_arithmetic_linter] Use all() to express logical aggregations. For example, replace sum(x == y) == length(x) with all(x == y).
+#> sum(x == y) == length(x)
+#> ^~~~~~~~~~~
 
 # okay
 lint(
@@ -49,6 +58,12 @@ lint(
 
 lint(
   text = "!any(grepl(pattern, x))",
+  linters = boolean_arithmetic_linter()
+)
+#> ℹ No lints found.
+
+lint(
+  text = "all(x == y)",
   linters = boolean_arithmetic_linter()
 )
 #> ℹ No lints found.
