@@ -61,13 +61,7 @@ boolean_arithmetic_linter <- function() {
   logical_special_node <- "SPECIAL[text() = '%in%' or text() = '%chin%']"
 
   # 'x' in the paired length(x) call, e.g. in sum(x == y) == length(x)
-  paired_length_arg <- glue("
-    (
-      following-sibling::expr[1][parent::expr[EQ or NE or LT or GE]]
-      | preceding-sibling::expr[1][parent::expr[EQ or NE or GT or LE]]
-    )
-    [{length_cond}]/expr[2]
-  ")
+  paired_length_arg <- glue("parent::expr/expr[{length_cond}]/expr[2]")
 
   # Step from a logical operation/call to its vector argument, e.g. x == y -> x
   logical_operand_xpath <- glue("expr[
