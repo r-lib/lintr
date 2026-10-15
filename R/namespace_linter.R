@@ -82,11 +82,10 @@ namespace_linter <- function(check_exports = TRUE, check_nonexports = TRUE) {
     namespaces <- lapply(packages, \(package) tryCatch(getNamespace(package), packageNotFoundError = identity))
     failed_namespace <- vapply(namespaces, inherits, "packageNotFoundError", FUN.VALUE = logical(1L))
 
-    # nocov start
     if (any(failed_namespace)) {
-      cli_abort_internal("Failed to retrieve namespaces for one or more of the packages used with `::` or `:::`. ")
+      failed_pkgs <- unique(packages[failed_namespace]) # nolint: object_usage_linter. Used in cli message.
+      cli_abort_internal("Failed to retrieve namespaces for {.pkg {failed_pkgs}} used with {.code ::} or {.code :::}.")
     }
-    # nocov end
 
     ns_get <- xml_text(ns_nodes) == "::"
     symbol_nodes <- xml_find_all_(ns_nodes, "following-sibling::*[1]")
