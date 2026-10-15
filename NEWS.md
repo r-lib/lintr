@@ -67,6 +67,7 @@
 * `implicit_assignment_linter()` exempts `substitute()` by default, alongside `quote()`, `bquote()`, and `expression()` (#2266, @MichaelChirico).
 * `return_linter(return_style = "explicit")` no longer flags terminal `repeat {}` loops that exit via `return()` (or another `return_functions` call) without `break` (#3044, @MichaelChirico).
 * `unnecessary_nesting_linter()` no longer recommends removing braces around `if` statements or other control-flow/function expressions inside operator chains such as `ggplot(...) + { if (x) geom_point() } + geom_smooth()`, where braces are required for operator precedence (#2852, @MichaelChirico).
+* `inner_combine_linter()` compares all additional arguments across inner calls rather than a fixed list of known argument names, avoiding false positives when downstream S3 method arguments or positional arguments differ (e.g. `c(as.Date(x, zoo = 1), as.Date(y, zoo = 2))` or `c(log(x, 4), log(y, 5))`; #2468, #2486, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
