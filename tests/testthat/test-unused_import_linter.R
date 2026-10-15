@@ -125,3 +125,40 @@ test_that("glue usages are seen", {
   expect_no_lint(lines, unused_import_linter())
   expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
 })
+
+test_that("package under test is ignored (#1978)", {
+  linter <- unused_import_linter()
+
+  expect_no_lint(
+    trim_some("
+      library(testthat)
+      library(dplyr)
+
+      test_check('dplyr')
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      library(testthat)
+      library(dplyr)
+
+      test_package('dplyr')
+    "),
+    linter
+  )
+})
+
+test_that("package in DESCRIPTION is ignored (#1978)", { # nofuzz
+  pkg_dir <- withr::local_tempdir("testpkg")
+  write.dcf(
+    list(Package = "dplyr", Version = "1.0.0"),
+    file.path(pkg_dir, "DESCRIPTION")
+  )
+  test_dir <- file.path(pkg_dir, "tests")
+  dir.create(test_dir)
+  test_file <- file.path(test_dir, "testthat.R")
+  writeLines("library(dplyr)", test_file)
+
+  expect_no_lint(file = test_file, linters = unused_import_linter())
+})

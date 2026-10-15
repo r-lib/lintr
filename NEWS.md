@@ -59,7 +59,9 @@
 * `pipe_continuation_linter()` no longer flags outer pipes on the same line as a nested single-line pipeline, e.g. `x |>\n  sapply(\(xi) xi |> f() |> g()) |>\n  h()` (#2631, @MichaelChirico). Use the `nested_pipe_linter()` if linting such nested pipes is still preferable to you.
 * `commented_code_linter()` properly ignores all roxygen comments (`#'`), including those ending with a single quote like `#' foo <- '` (#1908, @MichaelChirico).
 * `undesirable_function_linter()` distinguishes setter calls like `foo(x) <- y` (which invoke `foo<-`) from getter calls `foo(x)` (#1912, @MichaelChirico). Use `undesirable_function_linter(c(foo = NA, `foo<-` = NA))` to lint both.
-* `unused_import_linter()` detects exported operators and functions referenced as backtick-quoted symbols or calls (e.g. ``Reduce(`%>%`, ...)`` or `` `%>%`(x, f) ``) as well as replacement functions (e.g. `body(f) <- value`; #3162, @MichaelChirico).
+* `unused_import_linter()`:
+   + detects exported operators and functions referenced as backtick-quoted symbols or calls (e.g. ``Reduce(`%>%`, ...)`` or `` `%>%`(x, f) ``) as well as replacement functions (e.g. `body(f) <- value`; #3162, @MichaelChirico).
+   + no longer flags attaching the package being tested itself (e.g. `library(pkg)` in `tests/testthat.R`; #1978, @MichaelChirico).
 * `namespace_linter()`:
    + resolves replacement function calls like `pkg::foo(x) <- y` as ``pkg::`foo<-` `` rather than `pkg::foo` (#3161, @MichaelChirico).
    + recognizes OS-specific symbols in base R packages (such as `grDevices::win.metafile()`, `base::shell()`, `utils::winProgressBar()`, and `parallel::mcparallel()`) as well as `NAMESPACE` exports conditionally gated by `.Platform$OS.type` or `tools:::.OStype()` across packages regardless of the host OS (#3075, @MichaelChirico).
