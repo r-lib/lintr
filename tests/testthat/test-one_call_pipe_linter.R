@@ -22,8 +22,15 @@ test_that("one_call_pipe_linter blocks simple disallowed usages", {
   # new lines don't matter
   expect_lint("x %>%\n  foo()", lint_msg, linter)
 
-  # nested case
-  expect_lint("x %>% inner_join(y %>% filter(is_treatment))", lint_msg, linter)
+  # nested case (#2488)
+  expect_lint(
+    "x %>% inner_join(y %>% filter(is_treatment))",
+    list(
+      list(lint_msg, line_number = 1L, column_number = 1L),
+      list(lint_msg, line_number = 1L, column_number = 18L)
+    ),
+    linter
+  )
 })
 # fuzzer enable: pipe
 

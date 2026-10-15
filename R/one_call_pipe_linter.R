@@ -61,7 +61,10 @@ one_call_pipe_linter <- function() {
   ]
     /parent::expr[
       not(parent::expr/*[self::SPECIAL[{ pipes_cond }] or self::PIPE])
-      and count(.//SYMBOL_FUNCTION_CALL) <= 1
+      and not(expr[1]//SYMBOL_FUNCTION_CALL)
+      and not(expr[2]/expr[position() > 1][
+        .//SYMBOL_FUNCTION_CALL and (.//SYMBOL[text() = '.'] or .//PLACEHOLDER)
+      ])
     ]
   ")
 
