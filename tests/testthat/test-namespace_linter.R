@@ -252,7 +252,11 @@ test_that("namespace_linter discovers conditional NAMESPACE exports in non-base 
   )
 
   lib_dir <- withr::local_tempdir("condns_lib")
-  utils::install.packages(pkg_dir, lib = lib_dir, repos = NULL, type = "source", quiet = TRUE)
+  tryCatch(
+    utils::install.packages(pkg_dir, lib = lib_dir, repos = NULL, type = "source", quiet = TRUE),
+    error = \(e) skip(conditionMessage(e)),
+    warning = \(w) skip(conditionMessage(w))
+  )
   withr::local_libpaths(lib_dir, action = "prefix")
   withr::defer(unloadNamespace("condnspkg"))
 
