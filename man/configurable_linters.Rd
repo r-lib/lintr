@@ -37,6 +37,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{namespace_linter}}}
 \item{\code{\link{nested_pipe_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
+\item{\code{\link{numerical_stability_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_overwrite_linter}}}

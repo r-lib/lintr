@@ -105,6 +105,7 @@ The following linters exist:
 \item{\code{\link{nonportable_path_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{nrow_subset_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{numeric_leading_zero_linter}} (tags: consistency, readability, style)}
+\item{\code{\link{numerical_stability_linter}} (tags: best_practices, configurable, robustness)}
 \item{\code{\link{nzchar_linter}} (tags: best_practices, consistency, efficiency)}
 \item{\code{\link{object_length_linter}} (tags: configurable, default, executing, readability, style)}
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, executing, style)}
