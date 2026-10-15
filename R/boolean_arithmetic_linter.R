@@ -179,7 +179,7 @@ boolean_arithmetic_linter <- function() {
     inner_str <- unname(inner_map[call_key])
 
     op <- xml_find_chr_(expr, "string(parent::expr/*[not(self::expr or self::COMMENT)])")
-    is_lhs <- !is.na(xml_find_first_(expr, "following-sibling::expr"))
+    is_lhs <- xml_find_lgl_(expr, "boolean(following-sibling::expr)")
     other_str <- ifelse(is_any, xml_find_chr_(expr, "string(parent::expr/expr/NUM_CONST)"), "length(x)")
     old_expr <- ifelse(
       is_lhs,
