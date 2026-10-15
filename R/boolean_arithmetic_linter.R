@@ -57,25 +57,25 @@ boolean_arithmetic_linter <- function() {
     (
       following-sibling::expr[1][parent::expr[EQ or NE or LT or GE]]
       | preceding-sibling::expr[1][parent::expr[EQ or NE or GT or LE]]
-    )[expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']]/expr[2]
+    )[
+      expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
+    ]/expr[2]
   "
-  operand_step <- glue("
-    expr[
-      parent::expr[EQ or NE or GT or LT or GE or LE or AND or OR or OP-EXCLAMATION or *[1][self::OP-LEFT-PAREN]]
-      or following-sibling::SPECIAL[text() = '%in%' or text() = '%chin%']
-      or preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL[{xp_text_in_table(first_arg_logical_calls)}]
-      or preceding-sibling::expr[2]/SYMBOL_FUNCTION_CALL[text() = 'grepl' or text() = 'xor']
-    ]
-  ")
+
+  operand_step <- glue("expr[
+    parent::expr[EQ or NE or GT or LT or GE or LE or AND or OR or OP-EXCLAMATION or *[1][self::OP-LEFT-PAREN]]
+    or following-sibling::SPECIAL[text() = '%in%' or text() = '%chin%']
+    or preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL[{xp_text_in_table(first_arg_logical_calls)}]
+    or preceding-sibling::expr[2]/SYMBOL_FUNCTION_CALL[text() = 'grepl' or text() = 'xor']
+  ]")
+
   candidate_vec <- function(base) {
-    glue("
-      (
-        {base}
-        | {base}/{operand_step}
-        | {base}/{operand_step}/{operand_step}
-        | {base}/{operand_step}/{operand_step}/{operand_step}
-      )
-    ")
+    glue("(
+      {base}
+      | {base}/{operand_step}
+      | {base}/{operand_step}/{operand_step}
+      | {base}/{operand_step}/{operand_step}/{operand_step}
+    )")
   }
 
   length_any_xpath <- glue("
@@ -114,7 +114,7 @@ boolean_arithmetic_linter <- function() {
   ]")
   sum_comparison_xpath <- glue("
   parent::expr[
-    (count(expr) = 2 or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm']))
+    count(expr) = 2 + count(SYMBOL_SUB[text() = 'na.rm'])
     and expr[2][{sum_inner_cond}]
   ]
     /parent::expr[
