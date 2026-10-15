@@ -10,8 +10,8 @@ test_that("use_lintr works as expected", {
     file.path(normalize_path(tmp), ".lintr")
   )
 
-  # can't generate if a .lintr already exists
-  expect_error(use_lintr(path = tmp), "Found an existing configuration")
+  # informs if a .lintr already exists (#3057)
+  expect_message(use_lintr(path = tmp), "Found an existing configuration")
 
   # check that `read_settings()` works with the generated file
   # this can be checked by checking lintr runs successfully
@@ -102,5 +102,19 @@ test_that("use_lintr creates .Rbuildignore if none exists inside a package struc
 
   expect_message(use_lintr(path = tmp), "Added ^\\.lintr$ to `.Rbuildignore`", fixed = TRUE)
   expect_true(file.exists(ignore_path))
+  expect_identical(readLines(ignore_path), "^\\.lintr$")
+})
+
+test_that("use_lintr updates .Rbuildignore even when config already exists (#3057)", { # nofuzz
+  tmp <- withr::local_tempdir("testpkg")
+  write.dcf(list(Package = "testpkg", Version = "1.0.0"), file.path(tmp, "DESCRIPTION"))
+  config_file <- file.path(tmp, ".lintr")
+  writeLines('encoding: "ISO-8859-1"', config_file)
+  ignore_path <- file.path(tmp, ".Rbuildignore")
+
+  use_lintr(path = tmp) |>
+    expect_message("Found an existing configuration file") |>
+    expect_message("Added ^\\.lintr$ to `.Rbuildignore`", fixed = TRUE)
+  expect_identical(readLines(config_file), 'encoding: "ISO-8859-1"')
   expect_identical(readLines(ignore_path), "^\\.lintr$")
 })

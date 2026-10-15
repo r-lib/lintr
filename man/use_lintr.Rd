@@ -7,8 +7,8 @@
 use_lintr(path = ".", type = c("tidyverse", "full"))
 }
 \arguments{
-\item{path}{Path to project root, where a \code{.lintr} file should be created.
-If the \code{.lintr} file already exists, an error will be thrown.}
+\item{path}{Path to project root, where a \code{.lintr} file should be created
+if one does not already exist.}
 
 \item{type}{What kind of configuration to create?
 \itemize{
