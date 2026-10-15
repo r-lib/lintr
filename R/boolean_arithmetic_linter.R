@@ -85,15 +85,20 @@ boolean_arithmetic_linter <- function() {
       and {any_parent_cond}
     ]
   ")
+  length_comp_xpath <- "
+  parent::expr
+    /parent::expr[expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']]
+    /parent::expr[
+      (EQ or NE or GT or LT or GE or LE)
+      and count(expr[expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']]) = 2
+    ]
+  "
   length_all_xpath <- glue("
   expr[
-    expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
-    and (
-      (expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'grep'] and expr[2]/expr[3] = {other_length_arg})
-      or (
-        expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'which']
-        and {candidate_vec('expr[2]/expr[2]')} = {other_length_arg}
-      )
+    (expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'grep'] and expr[2]/expr[3] = {other_length_arg})
+    or (
+      expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'which']
+      and {candidate_vec('expr[2]/expr[2]')} = {other_length_arg}
     )
   ]
   ")
@@ -107,11 +112,19 @@ boolean_arithmetic_linter <- function() {
     expr[{sum_inner_cond}]
     and {any_parent_cond}
   ]")
+  sum_comp_xpath <- glue("
+  parent::expr[
+    (count(expr) = 2 or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm']))
+    and expr[2][{sum_inner_cond}]
+  ]
+    /parent::expr[
+      (EQ or NE or GT or LT or GE or LE)
+      and expr/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']
+    ]
+  ")
   sum_all_xpath <- glue("
   expr[
     expr[1]/SYMBOL_FUNCTION_CALL[text() = 'sum']
-    and (count(expr) = 2 or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm']))
-    and expr[2][{sum_inner_cond}]
     and {candidate_vec('expr[2]')} = {other_length_arg}
   ]")
 
@@ -123,10 +136,10 @@ boolean_arithmetic_linter <- function() {
       xml_find_all_(sum_calls, sum_any_xpath)
     )
     length_comp <- strip_comments_from_subtree(
-      xml_find_all_(length_calls, "parent::expr/parent::expr/parent::expr")
+      xml_find_all_(length_calls, length_comp_xpath)
     )
     sum_comp <- strip_comments_from_subtree(
-      xml_find_all_(sum_calls, "parent::expr/parent::expr")
+      xml_find_all_(sum_calls, sum_comp_xpath)
     )
     all_expr <- combine_nodesets(
       xml_find_all_(length_comp, length_all_xpath),
