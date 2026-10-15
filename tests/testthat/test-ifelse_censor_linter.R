@@ -83,6 +83,28 @@ test_that("ifelse_censor_linter blocks simple disallowed usages", {
     rex::rex("pmin(x, y) is preferable to ifelse(x > y, y, x)"),
     linter
   )
+
+  # parenthesized operands or branches still match (#2484)
+  expect_lint(
+    "ifelse(x < (k - 1), x, k - 1)",
+    rex::rex("pmin(x, y) is preferable to ifelse(x < y, x, y)"),
+    linter
+  )
+  expect_lint(
+    "ifelse((k - 1) < x, k - 1, x)",
+    rex::rex("pmin(x, y) is preferable to ifelse(x < y, x, y)"),
+    linter
+  )
+  expect_lint(
+    "ifelse(x < k - 1, x, (k - 1))",
+    rex::rex("pmin(x, y) is preferable to ifelse(x < y, x, y)"),
+    linter
+  )
+  expect_lint(
+    "ifelse(x < k - 1, (k - 1), x)",
+    rex::rex("pmax(x, y) is preferable to ifelse(x < y, y, x)"),
+    linter
+  )
 })
 
 test_that("lints vectorize", {
