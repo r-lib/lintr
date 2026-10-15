@@ -109,6 +109,7 @@ Collate:
     'expect_type_linter.R'
     'extract.R'
     'fixed_regex_linter.R'
+    'float_comparison_linter.R'
     'for_loop_index_linter.R'
     'function_argument_linter.R'
     'function_left_parentheses_linter.R'

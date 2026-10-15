@@ -37,6 +37,7 @@ The following linters are tagged with 'best_practices':
 \item{\code{\link{expect_true_false_linter}}}
 \item{\code{\link{expect_type_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
+\item{\code{\link{float_comparison_linter}}}
 \item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{function_argument_linter}}}
 \item{\code{\link{function_return_linter}}}
