@@ -85,7 +85,7 @@ boolean_arithmetic_linter <- function() {
       and {any_parent_cond}
     ]
   ")
-  length_comp_xpath <- "
+  length_comparison_xpath <- "
   parent::expr
     /parent::expr[expr[1]/SYMBOL_FUNCTION_CALL[text() = 'length']]
     /parent::expr[
@@ -112,7 +112,7 @@ boolean_arithmetic_linter <- function() {
     expr[{sum_inner_cond}]
     and {any_parent_cond}
   ]")
-  sum_comp_xpath <- glue("
+  sum_comparison_xpath <- glue("
   parent::expr[
     (count(expr) = 2 or (count(expr) = 3 and SYMBOL_SUB[text() = 'na.rm']))
     and expr[2][{sum_inner_cond}]
@@ -131,21 +131,19 @@ boolean_arithmetic_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     length_calls <- source_expression$xml_find_function_calls(c("which", "grep"))
     sum_calls <- source_expression$xml_find_function_calls("sum")
-    any_expr <- combine_nodesets(
-      xml_find_all_(length_calls, length_any_xpath),
-      xml_find_all_(sum_calls, sum_any_xpath)
-    )
-    length_comp <- strip_comments_from_subtree(
-      xml_find_all_(length_calls, length_comp_xpath)
-    )
-    sum_comp <- strip_comments_from_subtree(
-      xml_find_all_(sum_calls, sum_comp_xpath)
-    )
-    all_expr <- combine_nodesets(
-      xml_find_all_(length_comp, length_all_xpath),
-      xml_find_all_(sum_comp, sum_all_xpath)
-    )
 
+    length_any_expr <- xml_find_all_(length_calls, length_any_xpath)
+    sum_any_expr <- xml_find_all_(sum_calls, sum_any_xpath)
+
+    length_all_expr <- length_calls |>
+      xml_find_all_(length_comparison_xpath) |>
+      strip_comments_from_subtree() |>
+      xml_find_all_(length_all_xpath)
+    sum_all_expr <- sum_calls |>
+      xml_find_all_(sum_comparison_xpath) |>
+      strip_comments_from_subtree() |>
+      xml_find_all_(sum_all_xpath)
+    
     # TODO(#2464): customize this?
     any_msg <- paste(
       "Use any() to express logical aggregations.",
@@ -157,9 +155,15 @@ boolean_arithmetic_linter <- function() {
     )
 
     xml_nodes_to_lints(
-      combine_nodesets(any_expr, all_expr),
+      combine_nodesets(length_any_expr, sum_any_expr, length_all_expr, sum_all_expr),
       source_expression = source_expression,
-      lint_message = rep(c(any_msg, all_msg), c(length(any_expr), length(all_expr))),
+      lint_message = rep(
+        c(any_msg, all_msg),
+        c(
+          length(length_any_expr) + length(sum_any_expr),
+          length(length_all_expr) + length(sum_all_expr)
+        )
+      ),
       type = "warning"
     )
   })
