@@ -138,7 +138,11 @@ stability_match_call <- function(expr, name, package = "base") {
   if (is.primitive(definition)) {
     definition <- args(definition)
   }
-  matched <- tryCatch(match.call(definition, expr, expand.dots = FALSE, envir = baseenv()), error = function(e) NULL)
+  # Partially named arguments are supported even when their warnings are fatal.
+  matched <- tryCatch(
+    suppressWarnings(match.call(definition, expr, expand.dots = FALSE, envir = baseenv())),
+    error = function(e) NULL
+  )
   if (is.null(matched)) return(NULL)
   arguments <- as.list(matched)[-1L]
   required <- names(which(vapply(formals(definition), identical, logical(1L), quote(expr = ))))

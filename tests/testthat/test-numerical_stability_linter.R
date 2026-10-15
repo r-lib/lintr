@@ -60,6 +60,15 @@ test_that("density and probability replacements preserve matched arguments", {
   for (case in cases) expect_lint(case[1L], rex::rex(case[2L]), linter)
 })
 
+test_that("partial argument names work when partial matching warnings are errors", {
+  withr::local_options(warn = 2L, warnPartialMatchArgs = TRUE)
+  expect_lint(
+    "1 - stats::pnorm(q = x, lower = FALSE)",
+    rex::rex("stats::pnorm(q = x, lower.tail = TRUE)"),
+    numerical_stability_linter()
+  )
+})
+
 test_that("standard distribution signatures are covered without prefix guessing", {
   linter <- numerical_stability_linter()
   distributions <- c(
