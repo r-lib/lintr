@@ -131,22 +131,22 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         skip_with = skip_with
       )
 
-      res$name <- re_substitutes(res$name, rex("<-"), "")
-
       lintable_symbols <- xml_find_all_(fun_assignment, xpath_culprit_symbol)
 
       lintable_symbol_names <- gsub("^`|`$", "", xml_text(lintable_symbols))
+      is_setter <- xp_is_setter_call(lintable_symbols, depth = 1L)
+      lintable_symbol_names[is_setter] <- paste0(lintable_symbol_names[is_setter], "<-")
       lintable_symbol_lines <- as.integer(xml_attr_(lintable_symbols, "line1"))
 
       matched_symbol <- vapply(
         seq_len(nrow(res)),
         function(i) {
-          match(
-            TRUE,
-            lintable_symbol_names == res$name[i] &
-              lintable_symbol_lines >= res$line1[i] &
-              lintable_symbol_lines <= res$line2[i]
-          )
+          in_lines <- lintable_symbol_lines >= res$line1[i] & lintable_symbol_lines <= res$line2[i]
+          idx <- match(TRUE, in_lines & lintable_symbol_names == res$name[i])
+          if (is.na(idx) && endsWith(res$name[i], "<-")) {
+            idx <- match(TRUE, in_lines & lintable_symbol_names == sub("<-$", "", res$name[i]))
+          }
+          idx
         },
         integer(1L)
       )
