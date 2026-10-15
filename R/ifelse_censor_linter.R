@@ -35,12 +35,21 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 ifelse_censor_linter <- function() {
+  unwrap_parens <- function(xp) {
+    sprintf("(%1$s | %1$s[*[1][self::OP-LEFT-PAREN]]/expr)", xp)
+  }
+  expr1 <- unwrap_parens("expr[1]")
+  expr2 <- unwrap_parens("expr[2]")
+  branch <- unwrap_parens("following-sibling::expr")
+  first_branch <- unwrap_parens("following-sibling::expr[1]")
+
   xpath <- glue("
   self::*[expr[
     (LT or GT or LE or GE)
-    and expr[1] = following-sibling::expr
-    and expr[2] = following-sibling::expr
+    and {expr1} = {branch}
+    and {expr2} = {branch}
   ]]")
+  match_first_xpath <- glue("boolean(expr[2][{expr1} = {first_branch}])")
 
   Linter(linter_level = "expression", function(source_expression) {
     # nolint next: undesirable_function_name_linter.
@@ -49,8 +58,8 @@ ifelse_censor_linter <- function() {
     bad_expr <- xml_find_all_(ifelse_calls, xpath)
 
     matched_call <- xp_call_name(bad_expr)
-    operator <- xml_find_chr_(bad_expr, "string(expr[2]/*[not(self::COMMENT)][2])")
-    match_first <- xml_find_lgl_(bad_expr, "boolean(expr[2][expr[1] = following-sibling::expr[1]])")
+    operator <- xml_find_chr_(bad_expr, "string(expr[2]/*[2])")
+    match_first <- xml_find_lgl_(bad_expr, match_first_xpath)
     optimizer <- ifelse((operator %in% c("<", "<=")) == match_first, "pmin", "pmax")
     first_var <- rep_len("x", length(match_first))
     second_var <- rep_len("y", length(match_first))
