@@ -17,9 +17,9 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (67 linters)}
+\item{\link[=best_practices_linters]{best_practices} (69 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (13 linters)}
-\item{\link[=configurable_linters]{configurable} (45 linters)}
+\item{\link[=configurable_linters]{configurable} (47 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (8 linters)}
 \item{\link[=default_linters]{default} (26 linters)}
@@ -29,7 +29,7 @@ The following tags exist:
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (13 linters)}
 \item{\link[=readability_linters]{readability} (67 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
-\item{\link[=robustness_linters]{robustness} (20 linters)}
+\item{\link[=robustness_linters]{robustness} (21 linters)}
 \item{\link[=style_linters]{style} (40 linters)}
 \item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }

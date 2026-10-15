@@ -18,6 +18,7 @@ conjunct_test_linter,package_development best_practices readability configurable
 consecutive_assertion_linter,style readability consistency
 consecutive_mutate_linter,consistency readability configurable efficiency
 cyclocomp_linter,style readability best_practices configurable
+decimal_fraction_linter,robustness efficiency best_practices configurable
 download_file_linter,common_mistakes best_practices robustness
 duplicate_argument_linter,correctness common_mistakes configurable
 empty_assignment_linter,readability best_practices
@@ -34,6 +35,7 @@ expect_shape_linter,package_development best_practices readability pkg_testthat
 expect_true_false_linter,package_development best_practices readability pkg_testthat
 expect_type_linter,package_development best_practices pkg_testthat
 fixed_regex_linter,best_practices readability efficiency configurable regex
+float_comparison_linter,correctness best_practices configurable
 for_loop_index_linter,best_practices readability robustness
 function_argument_linter,style consistency best_practices
 function_left_parentheses_linter,style readability default
@@ -48,7 +50,6 @@ infix_spaces_linter,style readability default configurable
 inner_combine_linter,efficiency consistency readability
 is_numeric_linter,readability best_practices consistency
 keyword_quote_linter,readability consistency style
-decimal_fraction_linter,robustness efficiency best_practices configurable
 length_levels_linter,readability best_practices consistency
 length_test_linter,common_mistakes efficiency
 lengths_linter,efficiency readability best_practices
@@ -63,7 +64,6 @@ missing_package_linter,robustness common_mistakes
 namespace_linter,correctness robustness configurable executing
 nested_ifelse_linter,efficiency readability
 nested_pipe_linter,readability consistency configurable
-float_comparison_linter,correctness best_practices configurable
 nonportable_path_linter,robustness best_practices configurable
 nrow_subset_linter,efficiency consistency best_practices
 numeric_leading_zero_linter,style consistency readability
