@@ -22,6 +22,7 @@
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
 * `get_r_string()` (and by extension `xml_find_function_calls()` in `get_source_expressions()`) now unquotes backtick-quoted symbols and slots (`SYMBOL*` and `SLOT` nodes) in addition to string constants (`STR_CONST`; #3156, @MichaelChirico).
 * `xml_find_function_calls()` (in `get_source_expressions()`) now resolves replacement function calls (e.g. `foo(x) <- y` and `x@bar(y) <- z` are indexed as `"foo<-"` and `"bar<-"`, respectively; #3157, @MichaelChirico).
+* `use_lintr()` informs rather than errors when a configuration file already exists, continuing to update `.Rbuildignore` (#3057, @MichaelChirico).
 
 ### New linters
 

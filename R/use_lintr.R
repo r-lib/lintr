@@ -2,8 +2,8 @@
 #'
 #' Create a minimal lintr config file as a starting point for customization
 #'
-#' @param path Path to project root, where a `.lintr` file should be created.
-#' If the `.lintr` file already exists, an error will be thrown.
+#' @param path Path to project root, where a `.lintr` file should be created
+#'   if one does not already exist.
 #' @param type What kind of configuration to create?
 #'
 #'  * `tidyverse` creates a minimal lintr config, based on the default linters ([linters_with_defaults()]).
@@ -25,23 +25,26 @@
 #'   lintr::lint_dir()
 #' }
 use_lintr <- function(path = ".", type = c("tidyverse", "full")) {
-  config_file <- normalize_path(file.path(path, lintr_option("linter_file")), mustWork = FALSE)
-  if (file.exists(config_file)) {
-    cli_abort("Found an existing configuration file at {.file {config_file}}.")
-  }
   type <- match.arg(type)
-  the_config <- switch(type,
-    tidyverse = list(
-      linters = 'linters_with_defaults() # see vignette("lintr")',
-      encoding = '"UTF-8"'
-    ),
-    full = list(
-      linters = 'all_linters(packages = "lintr") # see vignette("lintr")',
-      encoding = '"UTF-8"',
-      exclusions = 'list("renv", "packrat") # see ?lintr::exclude'
+  config_file <- normalize_path(file.path(path, lintr_option("linter_file")), mustWork = FALSE)
+  existing_config <- first_exists(c(paste0(config_file, ".R"), config_file))
+  if (!is.null(existing_config)) {
+    config_file <- existing_config
+    cli_inform("Found an existing configuration file at {.file {config_file}}.")
+  } else {
+    the_config <- switch(type,
+      tidyverse = list(
+        linters = 'linters_with_defaults() # see vignette("lintr")',
+        encoding = '"UTF-8"'
+      ),
+      full = list(
+        linters = 'all_linters(packages = "lintr") # see vignette("lintr")',
+        encoding = '"UTF-8"',
+        exclusions = 'list("renv", "packrat") # see ?lintr::exclude'
+      )
     )
-  )
-  write.dcf(the_config, config_file, width = Inf)
+    write.dcf(the_config, config_file, width = Inf)
+  }
 
   pkg_path <- find_package(path)
 
