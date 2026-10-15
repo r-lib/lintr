@@ -84,6 +84,7 @@
 * `unnecessary_lambda_linter()` also flags multi-argument anonymous functions whose formal arguments are forwarded in order to a single inner call, e.g. `lapply(x, \(xi, y) foo(xi, y), y)` or `lapply(x, \(xi, y) foo(xi, y = y), y = 1)` (#2477, @MichaelChirico).
 * `lengths_linter()` also flags `lapply(x, length)` and `purrr::map(x, length)` (#1570, @MichaelChirico).
 * `boolean_arithmetic_linter()` also flags `all()`-alike expressions comparing `sum(...)`, `length(which(...))`, or `length(grep(...))` to `length(x)`, e.g. `sum(x == y) == length(x)` (#1581, @MichaelChirico).
+* `one_call_pipe_linter()` also flags pipes where arguments contain calls not acting on the piped object, including outer pipes in nested single-call pipes such as `x %>% inner_join(y %>% filter(z))` (#2488, @MichaelChirico).
 
 ## Notes
 

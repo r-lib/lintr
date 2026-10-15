@@ -50,7 +50,8 @@ one_call_pipe_linter <- function() {
   # OP-LEFT-BRACKET/LBB: accept DT[...] %>% .[...] as a two-call pipe,
   #   (but not DT %>% .[...])
   # parent::expr/SPECIAL: make sure we are at the top of a pipeline
-  # count(): any call anywhere else in the AST within the pipe expression
+  # expr[1] / expr[2]: no calls in the first step, at most one call in the RHS head,
+  #   and no nested calls on '.' in RHS arguments (#2488)
   xpath <- glue("
   (//SPECIAL[{pipes_cond}] | //PIPE)[
     not(preceding-sibling::expr[1]/*[self::SPECIAL[{pipes_cond}] or self::PIPE])
@@ -60,8 +61,16 @@ one_call_pipe_linter <- function() {
     )
   ]
     /parent::expr[
-      not(parent::expr/*[self::SPECIAL[{ pipes_cond }] or self::PIPE])
-      and count(.//SYMBOL_FUNCTION_CALL) <= 1
+      not(parent::expr/*[self::SPECIAL[{pipes_cond}] or self::PIPE])
+      and not(expr[1]//SYMBOL_FUNCTION_CALL)
+      and count(expr[2]/expr[1]//SYMBOL_FUNCTION_CALL) <= 1
+      and not(
+        expr[2]/expr[position() > 1 and not(SPECIAL[{pipes_cond}] or PIPE)]
+          //SYMBOL_FUNCTION_CALL
+          /parent::expr
+          /following-sibling::expr
+          //SYMBOL[text() = '.']
+      )
     ]
   ")
 

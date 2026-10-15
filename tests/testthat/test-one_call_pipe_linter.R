@@ -7,6 +7,9 @@ test_that("one_call_pipe_linter skips allowed usages", {
   expect_no_lint("foo(x) %>% bar()", linter)
   # both calls in second step --> OK
   expect_no_lint("x %>% foo(bar(.))", linter)
+  expect_no_lint("x %>% { foo(bar(.)) }", linter)
+  expect_no_lint("x %>% { foo(.) + bar(.) }", linter)
+  expect_no_lint(R"(x |> (\(y) foo(bar(y)))())", linter)
 
   # assignment pipe is exempted
   expect_no_lint("x %<>% as.character()", linter)
@@ -22,8 +25,46 @@ test_that("one_call_pipe_linter blocks simple disallowed usages", {
   # new lines don't matter
   expect_lint("x %>%\n  foo()", lint_msg, linter)
 
-  # nested case
-  expect_lint("x %>% inner_join(y %>% filter(is_treatment))", lint_msg, linter)
+  # nested cases (#2488)
+  expect_lint("x %>% inner_join(filter(y, is_treatment))", lint_msg, linter)
+  expect_lint("x %>% filter(. > 0 & y == max(z))", lint_msg, linter)
+  expect_lint(
+    "x %>% inner_join(y %>% filter(is_treatment))",
+    list(
+      list(lint_msg, line_number = 1L, column_number = 1L),
+      list(lint_msg, line_number = 1L, column_number = 18L)
+    ),
+    linter
+  )
+  expect_lint(
+    "x %>% inner_join(y %>% filter(., is_treatment))",
+    list(
+      list(lint_msg, line_number = 1L, column_number = 1L),
+      list(lint_msg, line_number = 1L, column_number = 18L)
+    ),
+    linter
+  )
+  expect_lint(
+    "x %>% inner_join(y %>% .[is_treatment, sum(z)])",
+    list(
+      list(lint_msg, line_number = 1L, column_number = 1L),
+      list(lint_msg, line_number = 1L, column_number = 18L)
+    ),
+    linter
+  )
+  expect_lint(
+    "x %>% inner_join(y %>% mutate(z = foo(.)))",
+    list(lint_msg, line_number = 1L, column_number = 1L),
+    linter
+  )
+  expect_lint(
+    "x |> inner_join(y |> filter(by = _))",
+    list(
+      list(rex::rex("Avoid pipe |>"), line_number = 1L, column_number = 1L),
+      list(rex::rex("Avoid pipe |>"), line_number = 1L, column_number = 17L)
+    ),
+    linter
+  )
 })
 # fuzzer enable: pipe
 
