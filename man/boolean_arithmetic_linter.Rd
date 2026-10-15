@@ -8,7 +8,8 @@ boolean_arithmetic_linter()
 }
 \description{
 \code{length(which(x == y)) == 0} is the same as \code{!any(x == y)}, but the latter
-is more readable and more efficient.
+is more readable and more efficient. Similarly, \code{sum(x == y) == length(x)}
+is the same as \code{all(x == y)}.
 }
 \examples{
 # will produce lints
@@ -22,6 +23,11 @@ lint(
   linters = boolean_arithmetic_linter()
 )
 
+lint(
+  text = "sum(x == y) == length(x)",
+  linters = boolean_arithmetic_linter()
+)
+
 # okay
 lint(
   text = "!any(x == y)",
@@ -30,6 +36,11 @@ lint(
 
 lint(
   text = "!any(grepl(pattern, x))",
+  linters = boolean_arithmetic_linter()
+)
+
+lint(
+  text = "all(x == y)",
   linters = boolean_arithmetic_linter()
 )
 
