@@ -46,14 +46,6 @@
 unused_import_linter <- function(allow_ns_usage = FALSE,
                                  except_packages = c("bit64", "data.table", "tidyverse"),
                                  interpret_glue = TRUE) {
-  # Get dataset names lazy-loaded by imported packages
-  get_datasets <- function(pkg) {
-    results <- utils::data(package = pkg)$results
-    items <- results[, "Item"]
-    # e.g. 'state.abb (state)' in 'datasets'
-    gsub("\\s*\\([^)]*\\)$", "", items)
-  }
-
   import_xpath <- "
   parent::expr[
     expr[2][STR_CONST]
@@ -94,10 +86,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
           return(TRUE)
         }
 
-        package_exports <- getNamespaceExports(pkg) # functions
-        dataset_exports <- get_datasets(pkg) # datasets
-
-        any(package_exports %in% used_symbols) || any(dataset_exports %in% used_symbols)
+        any(namespace_symbols(asNamespace(pkg)) %in% used_symbols)
       },
       logical(1L)
     )
