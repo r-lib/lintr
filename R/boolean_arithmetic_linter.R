@@ -53,7 +53,8 @@ boolean_arithmetic_linter <- function() {
   )
   first_arg_logical_calls <- setdiff(known_logical_calls, "grepl")
 
-  other_length_arg <- "
+  # 'x' in the paired length(x) call, e.g. in sum(x == y) == length(x)
+  paired_length_arg <- "
     (
       following-sibling::expr[1][parent::expr[EQ or NE or LT or GE]]
       | preceding-sibling::expr[1][parent::expr[EQ or NE or GT or LE]]
@@ -62,19 +63,21 @@ boolean_arithmetic_linter <- function() {
     ]/expr[2]
   "
 
-  operand_step <- glue("expr[
+  # Step from a logical operation/call to its vector argument, e.g. x == y -> x
+  logical_operand_xpath <- glue("expr[
     parent::expr[EQ or NE or GT or LT or GE or LE or AND or OR or OP-EXCLAMATION or *[1][self::OP-LEFT-PAREN]]
     or following-sibling::SPECIAL[text() = '%in%' or text() = '%chin%']
     or preceding-sibling::expr[1]/SYMBOL_FUNCTION_CALL[{xp_text_in_table(first_arg_logical_calls)}]
     or preceding-sibling::expr[2]/SYMBOL_FUNCTION_CALL[text() = 'grepl' or text() = 'xor']
   ]")
 
-  candidate_vec <- function(base) {
+  # Unwrap up to 3 nested logical ops to reach the underlying vector(s) 'x'
+  logical_operands <- function(base) {
     glue("(
       {base}
-      | {base}/{operand_step}
-      | {base}/{operand_step}/{operand_step}
-      | {base}/{operand_step}/{operand_step}/{operand_step}
+      | {base}/{logical_operand_xpath}
+      | {base}/{logical_operand_xpath}/{logical_operand_xpath}
+      | {base}/{logical_operand_xpath}/{logical_operand_xpath}/{logical_operand_xpath}
     )")
   }
 
@@ -95,10 +98,10 @@ boolean_arithmetic_linter <- function() {
   "
   length_all_xpath <- glue("
   expr[
-    (expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'grep'] and expr[2]/expr[3] = {other_length_arg})
+    (expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'grep'] and expr[2]/expr[3] = {paired_length_arg})
     or (
       expr[2]/expr[1]/SYMBOL_FUNCTION_CALL[text() = 'which']
-      and {candidate_vec('expr[2]/expr[2]')} = {other_length_arg}
+      and {logical_operands('expr[2]/expr[2]')} = {paired_length_arg}
     )
   ]
   ")
@@ -125,7 +128,7 @@ boolean_arithmetic_linter <- function() {
   sum_all_xpath <- glue("
   expr[
     expr[1]/SYMBOL_FUNCTION_CALL[text() = 'sum']
-    and {candidate_vec('expr[2]')} = {other_length_arg}
+    and {logical_operands('expr[2]')} = {paired_length_arg}
   ]")
 
   Linter(linter_level = "expression", function(source_expression) {
@@ -143,7 +146,7 @@ boolean_arithmetic_linter <- function() {
       xml_find_all_(sum_comparison_xpath) |>
       strip_comments_from_subtree() |>
       xml_find_all_(sum_all_xpath)
-    
+
     # TODO(#2464): customize this?
     any_msg <- paste(
       "Use any() to express logical aggregations.",
