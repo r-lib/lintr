@@ -102,12 +102,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
       logical(1L)
     )
 
-    # TODO(#2480): Only call //SYMBOL_PACKAGE once.
-    is_ns_used <- vapply(
-      imported_pkgs,
-      \(pkg) xml_find_lgl_(xml, paste0("boolean(//SYMBOL_PACKAGE[text() = '", pkg, "'])")),
-      logical(1L)
-    )
+    is_ns_used <- imported_pkgs %in% get_r_string(xml_find_all_(xml, "//SYMBOL_PACKAGE"))
 
     is_unused <- !is_used
     if (allow_ns_usage) {
@@ -118,7 +113,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
 
     unused_packages <- imported_pkgs[is_unused]
     lint_message <- ifelse(
-      is_ns_used[is_unused][unused_packages],
+      is_ns_used[is_unused],
       paste0(
         "Don't attach package '", unused_packages, "', which is only used by namespace. ",
         "Check that it is installed using loadNamespace() instead."
