@@ -12,8 +12,8 @@ use_lintr(path = ".", type = c("tidyverse", "full"))
 
 - path:
 
-  Path to project root, where a `.lintr` file should be created. If the
-  `.lintr` file already exists, an error will be thrown.
+  Path to project root, where a `.lintr` file should be created if one
+  does not already exist.
 
 - type:
 
