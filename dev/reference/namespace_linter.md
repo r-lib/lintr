@@ -21,6 +21,12 @@ namespace_linter(check_exports = TRUE, check_nonexports = TRUE)
 
   Check if `symbol` exists in `namespace` in `namespace:::symbol` calls.
 
+## Details
+
+For cross-platform checks, `namespace_linter()` recognizes OS-specific
+`export()` directives in package `NAMESPACE` files when gated by
+`if (.Platform$OS.type == ...)` or `if (tools:::.OStype() == ...)`.
+
 ## See also
 
 [linters](https://lintr.r-lib.org/dev/reference/linters.md) for a

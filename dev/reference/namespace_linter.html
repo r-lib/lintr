@@ -79,6 +79,11 @@ potentially change the global state.</p>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>For cross-platform checks, <code>namespace_linter()</code> recognizes OS-specific <code>export()</code> directives in package <code>NAMESPACE</code>
+files when gated by <code>if (.Platform$OS.type == ...)</code> or <code>if (tools:::.OStype() == ...)</code>.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="linters.html">linters</a> for a complete list of linters available in lintr.</p></div>
     </div>
