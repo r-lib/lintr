@@ -78,3 +78,14 @@ test_that("multiline strings >= 1000 chars don't error (#2848)", {
   long_multi_line <- paste0('"', strrep("x", 1000L), "\n", strrep("x", 27L), '"')
   expect_no_lint(long_multi_line, nonportable_path_linter())
 })
+
+test_that("non-UTF-8 strings do not warn (#2836)", {
+  expect_no_warning(expect_no_lint(R"('M\xfcller')", nonportable_path_linter()))
+  expect_no_warning(
+    expect_lint(
+      R"('/M\xfcller/file.txt')",
+      rex::rex("Use file.path() to construct portable file paths."),
+      nonportable_path_linter()
+    )
+  )
+})
