@@ -228,7 +228,7 @@ test_that("namespace_linter is OS-independent for base R packages (#3075)", {
   )
 })
 
-test_that("namespace_linter discovers conditional NAMESPACE exports in non-base packages (#3075)", { # nofuzz
+test_that("namespace_linter discovers conditional NAMESPACE exports in non-base packages (#3075)", {
   pkg_dir <- withr::local_tempdir("condns")
   writeLines(
     c(
