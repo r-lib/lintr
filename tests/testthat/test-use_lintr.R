@@ -109,17 +109,12 @@ test_that("use_lintr updates .Rbuildignore even when config already exists (#305
   tmp <- withr::local_tempdir("testpkg")
   write.dcf(list(Package = "testpkg", Version = "1.0.0"), file.path(tmp, "DESCRIPTION"))
   config_file <- file.path(tmp, ".lintr")
-  writeLines("encoding: \"ISO-8859-1\"", config_file)
+  writeLines('encoding: "ISO-8859-1"', config_file)
   ignore_path <- file.path(tmp, ".Rbuildignore")
 
-  expect_message(
-    expect_message(
-      use_lintr(path = tmp),
-      "Found an existing configuration file"
-    ),
-    "Added ^\\.lintr$ to `.Rbuildignore`",
-    fixed = TRUE
-  )
-  expect_identical(readLines(config_file), "encoding: \"ISO-8859-1\"")
+  use_lintr(path = tmp) |>
+    expect_message("Found an existing configuration file") |>
+    expect_message("Added ^\\.lintr$ to `.Rbuildignore`", fixed = TRUE)
+  expect_identical(readLines(config_file), 'encoding: "ISO-8859-1"')
   expect_identical(readLines(ignore_path), "^\\.lintr$")
 })
