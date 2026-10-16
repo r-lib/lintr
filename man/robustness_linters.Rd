@@ -19,6 +19,7 @@ The following linters are tagged with 'robustness':
 \item{\code{\link{download_file_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{for_loop_index_linter}}}
+\item{\code{\link{implicit_coercion_linter}}}
 \item{\code{\link{missing_package_linter}}}
 \item{\code{\link{namespace_linter}}}
 \item{\code{\link{nonportable_path_linter}}}

@@ -168,7 +168,7 @@ lint_parse_error <- function(e, source_expression) {
 #'   multiple exact matches like '1e-3L; 1e-3L'
 #' @noRd
 lint_parse_warnings <- function(w, parsed_content, source_expression) {
-  if (!length(w)) {
+  if (length(w) == 0L) {
     return(w)
   }
   flatten_lints(lapply(unique(w), lint_parse_warning, parsed_content, source_expression))

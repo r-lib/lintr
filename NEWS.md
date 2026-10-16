@@ -31,6 +31,7 @@
 
 * `expect_no_condition_linter()` recommends usage of `testthat::expect_no_error()`, `testthat::expect_no_warning()`, `testthat::expect_no_message()`, and `testthat::expect_no_condition()` over `expect_error(..., NA)` and similar (#1874, @MichaelChirico).
 * `expect_shape_linter()` recommends usage of `testthat::expect_shape(x, ...)` over `expect_equal(nrow(x), n)`, `expect_equal(ncol(x), n)`, and `expect_equal(dim(x), d)` (#2893, @MichaelChirico).
+* `implicit_coercion_linter()` (enabled by default in `default_linters`) blocks implicit coercion to logical in `if ()` and `while ()` conditions, such as `if (length(x))`, `if (!nchar(s))`, `if (1L)`, or `if (x %% 2)` (#1760, #3058, @MichaelChirico).
 
 ### Linter improvements
 
