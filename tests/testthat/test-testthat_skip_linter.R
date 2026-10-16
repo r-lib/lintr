@@ -205,12 +205,12 @@ test_that("testthat_skip_linter recommends dedicated skip_*() helpers", {
   )
 
   # Dedicated skip_on_os() helper
-  expect_lint(
+  expect_lint( # nofuzz: dollar_at
     "skip_if(.Platform$OS.type == 'windows')",
     rex::rex("Use skip_on_os() instead of checking the operating system in skip_if()."),
     linter
   )
-  expect_lint(
+  expect_lint( # nofuzz: dollar_at
     "skip_if_not(.Platform$OS.type != 'windows')",
     rex::rex("Use skip_on_os() instead of checking the operating system in skip_if_not()."),
     linter
@@ -225,7 +225,7 @@ test_that("testthat_skip_linter recommends dedicated skip_*() helpers", {
     rex::rex("Use skip_on_os() instead of checking the operating system in skip_if()."),
     linter
   )
-  expect_lint(
+  expect_lint( # nofuzz: dollar_at
     "if (.Platform$OS.type == 'windows') skip('not on windows')",
     rex::rex("Use skip_on_os() instead of checking the operating system in if (...) skip()."),
     linter
