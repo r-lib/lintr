@@ -68,7 +68,12 @@ inner_combine_linter <- function() {
   has_matching_args <- function(c_expr) {
     inner_calls <- xml_find_all_(c_expr, "expr[position() > 1]")
     first_args <- extract_extra_args(inner_calls[[1L]])
-    all(vapply(inner_calls[-1L], \(call) identical(extract_extra_args(call), first_args), logical(1L)))
+    for (call in inner_calls[-1L]) {
+      if (!identical(extract_extra_args(call), first_args)) {
+        return(FALSE)
+      }
+    }
+    TRUE
   }
 
   Linter(linter_level = "expression", function(source_expression) {
