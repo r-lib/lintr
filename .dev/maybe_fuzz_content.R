@@ -50,7 +50,12 @@ function_lambda_fuzzer <- simple_swap_fuzzer(
 )
 
 pipe_fuzzer <- simple_swap_fuzzer(
-  \(pd) (pd$token == "SPECIAL" & pd$text == "%>%") | pd$token == "PIPE",
+  function(pd) {
+    dot_expr_id <- pd$parent[pd$token == "SYMBOL" & pd$text == "."]
+    rhs_call_id <- pd$parent[pd$id %in% dot_expr_id]
+    pipe_with_dot_id <- c(rhs_call_id, pd$parent[pd$id %in% rhs_call_id])
+    (pd$token == "SPECIAL" & pd$text == "%>%" & !pd$parent %in% pipe_with_dot_id) | pd$token == "PIPE"
+  },
   replacements = c("%>%", "|>")
 )
 
