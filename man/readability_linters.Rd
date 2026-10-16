@@ -25,6 +25,7 @@ The following linters are tagged with 'readability':
 \item{\code{\link{empty_assignment_linter}}}
 \item{\code{\link{expect_length_linter}}}
 \item{\code{\link{expect_named_linter}}}
+\item{\code{\link{expect_no_condition_linter}}}
 \item{\code{\link{expect_not_linter}}}
 \item{\code{\link{expect_shape_linter}}}
 \item{\code{\link{expect_true_false_linter}}}
