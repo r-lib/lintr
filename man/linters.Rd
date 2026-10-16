@@ -17,7 +17,7 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (69 linters)}
+\item{\link[=best_practices_linters]{best_practices} (70 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (13 linters)}
 \item{\link[=configurable_linters]{configurable} (45 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
@@ -25,9 +25,9 @@ The following tags exist:
 \item{\link[=default_linters]{default} (27 linters)}
 \item{\link[=efficiency_linters]{efficiency} (31 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
-\item{\link[=package_development_linters]{package_development} (16 linters)}
-\item{\link[=pkg_testthat_linters]{pkg_testthat} (14 linters)}
-\item{\link[=readability_linters]{readability} (69 linters)}
+\item{\link[=package_development_linters]{package_development} (17 linters)}
+\item{\link[=pkg_testthat_linters]{pkg_testthat} (15 linters)}
+\item{\link[=readability_linters]{readability} (70 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
 \item{\link[=robustness_linters]{robustness} (21 linters)}
 \item{\link[=style_linters]{style} (41 linters)}
@@ -143,6 +143,7 @@ The following linters exist:
 \item{\code{\link{system_file_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{T_and_F_symbol_linter}} (tags: best_practices, consistency, default, readability, robustness, style)}
 \item{\code{\link{terminal_close_linter}} (tags: best_practices, robustness)}
+\item{\code{\link{testthat_skip_linter}} (tags: best_practices, package_development, pkg_testthat, readability)}
 \item{\code{\link{todo_comment_linter}} (tags: configurable, style)}
 \item{\code{\link{trailing_blank_lines_linter}} (tags: default, style)}
 \item{\code{\link{trailing_whitespace_linter}} (tags: configurable, default, style)}
