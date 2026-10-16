@@ -1,7 +1,7 @@
 #' Avoid implicit coercion to logical in `if ()` and `while ()` conditions
 #'
 #' Relying on implicit numeric-to-logical coercion in conditional expressions
-#'   such as `if (length(x))` or `if (!nchar(s))` is harder to read and error-prone
+#'   such as `if (length(x))` or `if (!nchar(s))` can be harder to read and error-prone
 #'   (for instance, negative numbers like `-1L` from [regexpr()] coerce to `TRUE`,
 #'   and `0`-length outputs cause runtime errors). Prefer explicit logical
 #'   comparisons (`length(x) > 0L`, `length(x) == 0L`) or dedicated predicate
@@ -63,6 +63,7 @@
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
 #' - [nzchar_linter()]
+#' - <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 implicit_coercion_linter <- function(coercers = "anyDuplicated") {
   if (!is.null(coercers) && !is.character(coercers)) {

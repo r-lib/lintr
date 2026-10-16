@@ -18,7 +18,7 @@ combined with the built-in set of numeric-returning base functions
 }
 \description{
 Relying on implicit numeric-to-logical coercion in conditional expressions
-such as \verb{if (length(x))} or \verb{if (!nchar(s))} is harder to read and error-prone
+such as \verb{if (length(x))} or \verb{if (!nchar(s))} can be harder to read and error-prone
 (for instance, negative numbers like \code{-1L} from \code{\link[=regexpr]{regexpr()}} coerce to \code{TRUE},
 and \code{0}-length outputs cause runtime errors). Prefer explicit logical
 comparisons (\code{length(x) > 0L}, \code{length(x) == 0L}) or dedicated predicate
@@ -72,6 +72,7 @@ lint(
 \itemize{
 \item \link{linters} for a complete list of linters available in lintr.
 \item \code{\link[=nzchar_linter]{nzchar_linter()}}
+\item \url{https://style.tidyverse.org/syntax.html#if-statements}
 }
 }
 \section{Tags}{
