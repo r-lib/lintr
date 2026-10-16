@@ -2,8 +2,9 @@
 #'
 #' [testthat::expect_no_error()], [testthat::expect_no_warning()],
 #'   [testthat::expect_no_message()], and [testthat::expect_no_condition()]
-#'   exist specifically for testing the absence of errors, warnings, messages,
-#'   or conditions. [testthat::expect_error()], [testthat::expect_warning()],
+#'   exist since testthat 3.2.2 (December 2024) specifically for testing the
+#'   absence of errors, warnings, messages, or conditions.
+#'   [testthat::expect_error()], [testthat::expect_warning()],
 #'   [testthat::expect_message()], and [testthat::expect_condition()] with
 #'   `regexp = NA` can also be used for such tests, but it is better to use the
 #'   tailored functions instead.
@@ -55,7 +56,7 @@
 #' @seealso [linters] for a complete list of linters available in lintr.
 #' @export
 expect_no_condition_linter <- function() {
-  na_cond <- "NUM_CONST[text() = 'NA' or text() = 'NA_character_']"
+  na_cond <- "NUM_CONST[text() = 'NA']"
   not_kwarg_cond <- "not(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])"
   has_object_cond <- glue("
     parent::expr[
@@ -63,7 +64,7 @@ expect_no_condition_linter <- function() {
       or preceding-sibling::PIPE
       or (
         preceding-sibling::SPECIAL[{xp_text_in_table(magrittr_pipes)}]
-        and not(expr[2][SYMBOL[text() = '.']])
+        and not(expr[2]/SYMBOL[text() = '.'])
       )
     ]
   ")
@@ -82,7 +83,11 @@ expect_no_condition_linter <- function() {
         )
       )
     ]
+    /parent::expr
   ")
+
+  na_is_kwarg_xpath <-
+    "boolean(expr[NUM_CONST[text() = 'NA']]/preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])"
 
   expect_condition_funs <- c(
     "expect_error",
@@ -94,15 +99,13 @@ expect_no_condition_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls(expect_condition_funs)
     na_expr <- xml_find_all_(xml_calls, na_xpath)
-    bad_expr <- xml_find_first_(na_expr, "parent::expr")
 
-    matched_function <- xp_call_name(bad_expr)
+    matched_function <- xp_call_name(na_expr)
     replacement <- sub("^expect_", "expect_no_", matched_function)
-    na_text <- xml_find_chr_(na_expr, "string(NUM_CONST)")
-    is_named <- xml_find_lgl_(na_expr, "boolean(preceding-sibling::*[not(self::COMMENT)][1][self::EQ_SUB])")
-    matched_arg <- ifelse(is_named, paste("regexp =", na_text), na_text)
+    is_named <- xml_find_lgl_(na_expr, na_is_kwarg_xpath)
+    matched_arg <- ifelse(is_named, "regexp = NA", "NA")
     lint_message <- sprintf("%s(x) is better than %s(x, %s).", replacement, matched_function, matched_arg)
 
-    xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, type = "warning")
+    xml_nodes_to_lints(na_expr, source_expression, lint_message = lint_message, type = "warning")
   })
 }

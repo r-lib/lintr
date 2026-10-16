@@ -69,16 +69,6 @@ test_that("expect_no_condition_linter handles named arguments, NA_character_, na
     linter
   )
   expect_lint(
-    "expect_warning(foo(), NA_character_)",
-    rex::rex("expect_no_warning(x) is better than expect_warning(x, NA_character_)."),
-    linter
-  )
-  expect_lint(
-    "expect_message(foo(), regexp = NA_character_)",
-    rex::rex("expect_no_message(x) is better than expect_message(x, regexp = NA_character_)."),
-    linter
-  )
-  expect_lint(
     "expect_error(object = foo(), NA)",
     rex::rex("expect_no_error(x) is better than expect_error(x, NA)."),
     linter
@@ -120,8 +110,6 @@ test_that("lints vectorize", {
     trim_some("{
       expect_error(foo(), NA)
       expect_warning(bar(), regexp = NA)
-      expect_message(baz(), NA_character_)
-      expect_condition(qux(), regexp = NA_character_)
     }"),
     list(
       list(
@@ -132,16 +120,6 @@ test_that("lints vectorize", {
       list(
         rex::rex("expect_no_warning(x) is better than expect_warning(x, regexp = NA)."),
         line_number = 3L,
-        column_number = 3L
-      ),
-      list(
-        rex::rex("expect_no_message(x) is better than expect_message(x, NA_character_)."),
-        line_number = 4L,
-        column_number = 3L
-      ),
-      list(
-        rex::rex("expect_no_condition(x) is better than expect_condition(x, regexp = NA_character_)."),
-        line_number = 5L,
         column_number = 3L
       )
     ),

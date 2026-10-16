@@ -9,8 +9,9 @@ expect_no_condition_linter()
 \description{
 \code{\link[testthat:expect_no_error]{testthat::expect_no_error()}}, \code{\link[testthat:expect_no_warning]{testthat::expect_no_warning()}},
 \code{\link[testthat:expect_no_message]{testthat::expect_no_message()}}, and \code{\link[testthat:expect_no_condition]{testthat::expect_no_condition()}}
-exist specifically for testing the absence of errors, warnings, messages,
-or conditions. \code{\link[testthat:expect_error]{testthat::expect_error()}}, \code{\link[testthat:expect_warning]{testthat::expect_warning()}},
+exist since testthat 3.2.2 (December 2024) specifically for testing the
+absence of errors, warnings, messages, or conditions.
+\code{\link[testthat:expect_error]{testthat::expect_error()}}, \code{\link[testthat:expect_warning]{testthat::expect_warning()}},
 \code{\link[testthat:expect_message]{testthat::expect_message()}}, and \code{\link[testthat:expect_condition]{testthat::expect_condition()}} with
 \code{regexp = NA} can also be used for such tests, but it is better to use the
 tailored functions instead.
