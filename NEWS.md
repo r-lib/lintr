@@ -29,6 +29,7 @@
 
 ### New linters
 
+* `expect_no_condition_linter()` recommends usage of `testthat::expect_no_error()`, `testthat::expect_no_warning()`, `testthat::expect_no_message()`, and `testthat::expect_no_condition()` over `expect_error(..., NA)` and similar (#1874, @MichaelChirico).
 * `expect_shape_linter()` recommends usage of `testthat::expect_shape(x, ...)` over `expect_equal(nrow(x), n)`, `expect_equal(ncol(x), n)`, and `expect_equal(dim(x), d)` (#2893, @MichaelChirico).
 
 ### Linter improvements
