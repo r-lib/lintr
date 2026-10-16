@@ -129,15 +129,17 @@ test_that("returns the correct linting", {
   )
 })
 
-test_that("replace_functions_stripped", {
+test_that("replacement functions are matched accurately", {
+  linter <- object_usage_linter()
+
   expect_lint(
     trim_some("
       fun <- function(x) {
         `__lintr_obj`(x) = 1
       }
     "),
-    rex::rex("no visible global function definition for ", anything),
-    object_usage_linter()
+    list("no visible global function definition for '__lintr_obj<-'", line_number = 2L, column_number = 3L),
+    linter
   )
 
   expect_lint(
@@ -146,8 +148,112 @@ test_that("replace_functions_stripped", {
         `__lintr_obj`(x) <- 1
       }
     "),
-    rex::rex("no visible global function definition for ", anything),
-    object_usage_linter()
+    list("no visible global function definition for '__lintr_obj<-'", line_number = 2L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        not_exists(x) <- 2
+        not_exists(x)
+      }
+    "),
+    list(
+      list("no visible global function definition for 'not_exists<-'", line_number = 2L, column_number = 3L),
+      list("no visible global function definition for 'not_exists'", line_number = 3L, column_number = 3L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      not_exists <- function(x) x
+      foo <- function(x) {
+        not_exists(x) <- 2
+        not_exists(x)
+      }
+    "),
+    list("no visible global function definition for 'not_exists<-'", line_number = 3L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      `not_exists<-` <- function(x, value) x
+      foo <- function(x) {
+        not_exists(x) <- 2
+        not_exists(x)
+      }
+    "),
+    list("no visible global function definition for 'not_exists'", line_number = 4L, column_number = 3L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x, y) {
+        not_exists(x) <- not_exists(y)
+      }
+    "),
+    list(
+      list("no visible global function definition for 'not_exists<-'", line_number = 2L, column_number = 3L),
+      list("no visible global function definition for 'not_exists'", line_number = 2L, column_number = 20L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      `not_exists<-` <- function(x, value) x
+      foo <- function(x, y) {
+        not_exists(x) <- not_exists(y)
+      }
+    "),
+    list("no visible global function definition for 'not_exists'", line_number = 3L, column_number = 20L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      not_exists <- function(x) x
+      foo <- function(x, y) {
+        not_exists(y) + (not_exists(x) <- 2)
+      }
+    "),
+    list("no visible global function definition for 'not_exists<-'", line_number = 3L, column_number = 20L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        y <- `not_exists<-`(x, 2)
+        lapply(
+          y,
+          `not_exists_2<-`,
+          2
+        )
+      }
+    "),
+    list(
+      list("no visible global function definition for 'not_exists<-'", line_number = 2L, column_number = 8L),
+      list("no visible binding for global variable 'not_exists_2<-'", line_number = 5L, column_number = 5L)
+    ),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      foo <- function(x) {
+        not_exists(x)[1] <- 2
+      }
+    "),
+    list(
+      list("no visible global function definition for 'not_exists'", line_number = 2L, column_number = 3L),
+      list("no visible global function definition for 'not_exists<-'", line_number = 2L, column_number = 3L)
+    ),
+    linter
   )
 })
 
@@ -652,13 +758,13 @@ test_that("transitive Depends of attached packages are detected (#2695)", {
 
 test_that("fallback works", {
   expect_lint(
-    trim_some("
+    trim_some('
       f <- function() {
-        `non_existing_assign<-`(1, 2)
+        "non_existing_fun"(1, 2)
       }
-    "),
+    '),
     list(
-      message = rex::rex("no visible global function definition for ", anything, "non_existing_assign<-"),
+      "no visible global function definition for 'non_existing_fun'",
       line_number = 2L,
       column_number = 3L
     ),
