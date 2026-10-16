@@ -17,10 +17,10 @@ test_that("expect_no_condition_linter skips allowed usages", {
 
   # NA as the first argument (object), not regexp
   expect_no_lint("expect_error(NA)", linter)
-  expect_no_lint("expect_error(NA_character_)", linter)
   expect_no_lint("expect_error(NA, 'msg')", linter)
 
-  # Non-NA_character_ typed NAs are not valid regexp values
+  # Typed NAs are not valid regexp values, _including_, "famously", NA_character_
+  expect_no_lint("expect_error(foo(), NA_character_)", linter)
   expect_no_lint("expect_error(foo(), NA_integer_)", linter)
   expect_no_lint("expect_error(foo(), NA_real_)", linter)
 
@@ -55,7 +55,7 @@ test_that("expect_no_condition_linter blocks simple disallowed usages", {
   )
 })
 
-test_that("expect_no_condition_linter handles named arguments, NA_character_, namespaces, and pipes", {
+test_that("expect_no_condition_linter handles named arguments, namespaces, and pipes", {
   linter <- expect_no_condition_linter()
 
   expect_lint(
