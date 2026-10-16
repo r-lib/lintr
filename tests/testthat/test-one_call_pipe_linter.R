@@ -57,6 +57,8 @@ test_that("one_call_pipe_linter blocks simple disallowed usages", {
     list(lint_msg, line_number = 1L, column_number = 1L),
     linter
   )
+
+  skip_unless_r(">= 4.2.0")
   expect_lint(
     "x |> inner_join(y |> filter(by = _))",
     list(
