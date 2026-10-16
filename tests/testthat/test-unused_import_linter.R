@@ -21,6 +21,21 @@ test_that("unused_import_linter lints as expected", {
   # dataset is detected
   expect_no_lint("library(dplyr)\nstarwars", linter)
   expect_no_lint("library(datasets)\nstate.center", linter)
+  # OS-specific exports are detected across platforms
+  expect_no_lint(
+    trim_some("
+      library(utils)
+      winProgressBar()
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      library(parallel)
+      mcparallel(1 + 1)
+    "),
+    linter
+  )
 
   # Missing packages are ignored
   expect_no_lint("library(not.a.package)\ntibble(a = 1)", linter)
@@ -36,11 +51,38 @@ test_that("unused_import_linter lints as expected", {
   expect_lint("library('dplyr', character.only = TRUE)\n1 + 1", lint_msg, linter)
   # ignore namespaced usages by default, but provide custom lint message
   expect_lint("library(dplyr)\ndplyr::tibble(a = 1)", msg_ns, linter)
+  expect_lint(
+    trim_some("
+      library(dplyr)
+      `dplyr`::tibble(a = 1)
+    "),
+    list(msg_ns, line_number = 1L, column_number = 1L),
+    linter
+  )
   expect_no_lint("library(dplyr)\ndplyr::tibble(a = 1)", unused_import_linter(allow_ns_usage = TRUE))
+  expect_no_lint(
+    trim_some("
+      library(dplyr)
+      `dplyr`::tibble(a = 1)
+    "),
+    unused_import_linter(allow_ns_usage = TRUE)
+  )
 
   # ignore packages in except_packages
   expect_no_lint("library(data.table)\n1 + 1", linter)
   expect_no_lint("library(dplyr)\n1 + 1", unused_import_linter(except_packages = "dplyr"))
+})
+
+test_that("non-LazyData datasets do not count as attached symbols (#2080)", {
+  skip_if_not_installed("Matrix")
+  expect_lint(
+    trim_some("
+      library(Matrix)
+      CAex
+    "),
+    list(rex::rex("Package 'Matrix' is attached but never used."), line_number = 1L, column_number = 1L),
+    unused_import_linter()
+  )
 })
 
 test_that("unused_import_linter handles message vectorization", {
@@ -82,4 +124,27 @@ test_that("glue usages are seen", {
   ")
   expect_no_lint(lines, unused_import_linter())
   expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
+})
+
+test_that("package under test is ignored (#1978)", {
+  linter <- unused_import_linter()
+
+  expect_no_lint(
+    trim_some("
+      library(testthat)
+      library(dplyr)
+
+      test_check('dplyr')
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      library(testthat)
+      library(dplyr)
+
+      test_package('dplyr')
+    "),
+    linter
+  )
 })

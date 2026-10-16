@@ -25,14 +25,11 @@ local({
     "mdy_hms", "mdy_hm", "mdy_h", "ydm_hms", "ydm_hm", "ydm_h",
     NULL
   )
+  linter <- inner_combine_linter()
+  lint_msg <- rex::rex("Combine inputs to vectorized functions first")
   patrick::with_parameters_test_that(
     "inner_combine_linter blocks simple vectorized calls:",
-    expect_lint(
-      sprintf("c(%1$s(x), %1$s(y))", vector_fun),
-      rex::rex("Combine inputs to vectorized functions first"),
-      inner_combine_linter()
-    ),
-    .test_name = vector_funs,
+    expect_lint(sprintf("c(%1$s(x), %1$s(y))", vector_fun), lint_msg, linter),
     vector_fun = vector_funs
   )
 })
@@ -44,8 +41,14 @@ patrick::with_parameters_test_that(
     rex::rex("Combine inputs to vectorized functions first"),
     inner_combine_linter()
   ),
-  .test_name = c("format", "origin", "tz", "tryFormats", "non-literal", "quoted arg name"),
-  arg = c("format = '%F'", "origin = '1900-01-01'", "tz = 'Asia/Jakarta'", "tryFormats = '%F'", "tz = tz", "'tz' = tz")
+  .test_name = c(
+    "format", "origin", "tz", "tryFormats", "non-literal", "quoted arg name",
+    "custom method arg", "known+custom method arg"
+  ),
+  arg = c(
+    "format = '%F'", "origin = '1900-01-01'", "tz = 'Asia/Jakarta'", "tryFormats = '%F'", "tz = tz", "'tz' = tz",
+    "zoo = zzz", "format = '%F', zoo = zzz"
+  )
 )
 
 patrick::with_parameters_test_that(
@@ -55,15 +58,28 @@ patrick::with_parameters_test_that(
     rex::rex("Combine inputs to vectorized functions first"),
     inner_combine_linter()
   ),
-  .test_name = c("format", "origin", "tz", "non-literal"),
-  arg = c("format = '%F'", "origin = '1900-01-01'", "tz = 'UTC'", "tz = tz")
+  .test_name = c("format", "origin", "tz", "non-literal", "custom method arg"),
+  arg = c("format = '%F'", "origin = '1900-01-01'", "tz = 'UTC'", "tz = tz", "zoo = zzz")
 )
 
 test_that("inner_combine_linter is order-agnostic for matching arguments", {
+  linter <- inner_combine_linter()
+  lint_msg <- rex::rex("Combine inputs to vectorized functions first")
+
+  expect_lint("c(as.Date(x, format = f, tz = t), as.Date(y, tz = t, format = f))", lint_msg, linter)
+  expect_lint("c(as.Date(x, format = '%Y'), as.Date(format = '%Y', y))", lint_msg, linter)
+  expect_lint("c(as.Date(format = '%Y', x), as.Date(format = '%Y', y))", lint_msg, linter)
+  expect_lint("c(log(base = 2, x), log(base = 2, y))", lint_msg, linter)
+  expect_lint("c(log(x, 4), log(y, 4))", lint_msg, linter)
   expect_lint(
-    "c(as.Date(x, format = f, tz = t), as.Date(y, tz = t, format = f))",
-    rex::rex("Combine inputs to vectorized functions first"),
-    inner_combine_linter()
+    trim_some("
+      c(
+        as.Date(x, format = '%F'), # comment
+        as.Date(y, format = '%F')
+      )
+    "),
+    lint_msg,
+    linter
   )
 })
 
@@ -84,15 +100,20 @@ patrick::with_parameters_test_that(
     "mismatched arg (Date)",          "c(as.Date(x, format = '%y'), as.Date(y, format = '%m'))",
     "present/absent arg (Date)",      "c(as.Date(x, format = '%y'), as.Date(y))",
     "absent/present arg (Date)",      "c(as.Date(x), as.Date(y, format = '%y'))",
+    "present/present/absent (Date)",  "c(as.Date(x, format = '%y'), as.Date(y, format = '%y'), as.Date(z))",
+    "mismatched leading arg (Date)",  "c(as.Date(format = '%Y', x), as.Date(format = '%m', x))",
+    "missing primary arg (Date)",     "c(as.Date(tryFormats = '%Y'), as.Date(y))",
+    "mismatched leading arg (log)",   "c(log(base = 2, x), log(base = 10, x))",
     "matched value, not arg (Date)",  "c(as.Date(x, format = '%y'), as.Date(y, tz = '%y'))",
     "mismatched arg (POSIXct)",       "c(as.POSIXct(x, format = '%y'), as.POSIXct(y, format = '%m'))",
     "present/absent arg (POSIXct)",   "c(as.POSIXct(x, format = '%y'), as.POSIXct(y))",
     "mismatched arg (log)",           "c(log(x, base = 4), log(y, base = 5))",
-    "present/absent arg (log)",       "c(log(x, base = 4), log(y))"
-    # TODO(#2486): Reactivate these.
-    # "unknown Date method argument",    "c(as.Date(x, zoo = zzz), as.Date(y, zoo = zzz))",
-    # "known+unknown Date argument", "c(as.Date(x, format = '%y', zoo = zzz), as.Date(y, format = '%y', zoo = zzz))",
-    # "unknown POSIXct method argument", "c(as.POSIXct(x, zoo = zzz), as.POSIXct(y, zoo = zzz))",
+    "mismatched positional arg (log)", "c(log(x, 4), log(y, 5))",
+    "present/absent arg (log)",       "c(log(x, base = 4), log(y))",
+    "unknown Date method argument",   "c(as.Date(x, zoo = zzz), as.Date(y, zoo = yyy))",
+    "present/absent custom Date arg", "c(as.Date(x, zoo = zzz), as.Date(y))",
+    "known+unknown Date argument",    "c(as.Date(x, format = '%y', zoo = zzz), as.Date(y, format = '%y', zoo = yyy))",
+    "unknown POSIXct method argument", "c(as.POSIXct(x, zoo = zzz), as.POSIXct(y, zoo = yyy))"
   )
 )
 

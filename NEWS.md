@@ -11,7 +11,9 @@
 * `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
 * `lint(..., cache = TRUE)` now accounts for whether the input ends with a terminal newline, avoiding stale cache hits for `trailing_blank_lines_linter()` when a terminal newline is added or removed (REditorSupport/languageserver#772, @MichaelChirico).
 * `lint()` reports a syntax error for R code whose parse error has a symbol as its call, such as `x |> f`, instead of failing with `object of type 'symbol' is not subsettable` (#3038, @taekop).
-* `object_usage_linter()` reports the location of the offending call rather than the start of the pipeline or outer expression for call-level warnings like `unused argument` (#1936, @MichaelChirico).
+* `object_usage_linter()`:
+   + reports the location of the offending call rather than the start of the pipeline or outer expression for call-level warnings like `unused argument` (#1936, @MichaelChirico).
+   + reports the correct location for replacement function calls and backticked `` `foo<-` `` symbols rather than matching a getter or falling back to the outer expression (#2451, @MichaelChirico).
 * `object_name_linter()`, `object_length_linter()`, and `namespace_linter()` no longer fail when `lint("", text = ...)` is called with an empty `filename` (#3032, @MichaelChirico).
 * `absolute_path_linter()` and `nonportable_path_linter()` no longer emit `regexpr()` warnings when encountering string literals with non-UTF-8 byte escapes such as `'M\xfcller'` (#2836, @MichaelChirico).
 
@@ -60,7 +62,9 @@
 * `pipe_continuation_linter()` no longer flags outer pipes on the same line as a nested single-line pipeline, e.g. `x |>\n  sapply(\(xi) xi |> f() |> g()) |>\n  h()` (#2631, @MichaelChirico). Use the `nested_pipe_linter()` if linting such nested pipes is still preferable to you.
 * `commented_code_linter()` properly ignores all roxygen comments (`#'`), including those ending with a single quote like `#' foo <- '` (#1908, @MichaelChirico).
 * `undesirable_function_linter()` distinguishes setter calls like `foo(x) <- y` (which invoke `foo<-`) from getter calls `foo(x)` (#1912, @MichaelChirico). Use `undesirable_function_linter(c(foo = NA, `foo<-` = NA))` to lint both.
-* `unused_import_linter()` detects exported operators and functions referenced as backtick-quoted symbols or calls (e.g. ``Reduce(`%>%`, ...)`` or `` `%>%`(x, f) ``) as well as replacement functions (e.g. `body(f) <- value`; #3162, @MichaelChirico).
+* `unused_import_linter()`:
+   + detects exported operators and functions referenced as backtick-quoted symbols or calls (e.g. ``Reduce(`%>%`, ...)`` or `` `%>%`(x, f) ``) as well as replacement functions (e.g. `body(f) <- value`; #3162, @MichaelChirico).
+   + no longer flags `library(PKG)` in {testthat} stubs where `test_check("PKG")` is found (#1978, @MichaelChirico).
 * `namespace_linter()`:
    + resolves replacement function calls like `pkg::foo(x) <- y` as ``pkg::`foo<-` `` rather than `pkg::foo` (#3161, @MichaelChirico).
    + recognizes OS-specific symbols in base R packages (such as `grDevices::win.metafile()`, `base::shell()`, `utils::winProgressBar()`, and `parallel::mcparallel()`) as well as `NAMESPACE` exports conditionally gated by `.Platform$OS.type` or `tools:::.OStype()` across packages regardless of the host OS (#3075, @MichaelChirico).
@@ -68,6 +72,7 @@
 * `implicit_assignment_linter()` exempts `substitute()` by default, alongside `quote()`, `bquote()`, and `expression()` (#2266, @MichaelChirico).
 * `return_linter(return_style = "explicit")` no longer flags terminal `repeat {}` loops that exit via `return()` (or another `return_functions` call) without `break` (#3044, @MichaelChirico).
 * `unnecessary_nesting_linter()` no longer recommends removing braces around `if` statements or other control-flow/function expressions inside operator chains such as `ggplot(...) + { if (x) geom_point() } + geom_smooth()`, where braces are required for operator precedence (#2852, @MichaelChirico).
+* `inner_combine_linter()` compares all additional arguments across inner calls rather than a fixed list of known argument names, avoiding false positives when downstream S3 method arguments or positional arguments differ (e.g. `c(as.Date(x, zoo = 1), as.Date(y, zoo = 2))` or `c(log(x, 4), log(y, 5))`; #2468, #2486, @MichaelChirico).
 
 ### Lint accuracy fixes: removing false negatives
 
@@ -87,6 +92,8 @@
 * `unnecessary_lambda_linter()` also flags multi-argument anonymous functions whose formal arguments are forwarded in order to a single inner call, e.g. `lapply(x, \(xi, y) foo(xi, y), y)` or `lapply(x, \(xi, y) foo(xi, y = y), y = 1)` (#2477, @MichaelChirico).
 * `lengths_linter()` also flags `lapply(x, length)` and `purrr::map(x, length)` (#1570, @MichaelChirico).
 * `boolean_arithmetic_linter()` also flags `all()`-alike expressions comparing `sum(...)`, `length(which(...))`, or `length(grep(...))` to `length(x)`, e.g. `sum(x == y) == length(x)` (#1581, @MichaelChirico).
+* `one_call_pipe_linter()` also flags pipes where arguments contain calls not acting on the piped object, including outer pipes in nested single-call pipes such as `x %>% inner_join(y %>% filter(z))` (#2488, @MichaelChirico).
+* `ifelse_censor_linter()` matches expressions wrapped in parentheses in the comparison or return branches, e.g. `ifelse(x < (k - 1), x, k - 1)` (#2484, @MichaelChirico).
 
 ## Notes
 

@@ -46,14 +46,6 @@
 unused_import_linter <- function(allow_ns_usage = FALSE,
                                  except_packages = c("bit64", "data.table", "tidyverse"),
                                  interpret_glue = TRUE) {
-  # Get dataset names lazy-loaded by imported packages
-  get_datasets <- function(pkg) {
-    results <- utils::data(package = pkg)$results
-    items <- results[, "Item"]
-    # e.g. 'state.abb (state)' in 'datasets'
-    gsub("\\s*\\([^)]*\\)$", "", items)
-  }
-
   import_xpath <- "
   parent::expr[
     expr[2][STR_CONST]
@@ -70,7 +62,6 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     library_calls <- source_expression$xml_find_function_calls(c("library", "require"))
-    all_calls <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
 
     import_exprs <- xml_find_all_(library_calls, import_xpath)
 
@@ -78,6 +69,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
       return(list())
     }
     imported_pkgs <- get_r_string(import_exprs, xpath = "expr[STR_CONST | SYMBOL]")
+    all_calls <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
 
     used_symbols <- unique(c(
       names(all_calls)[xml_find_lgl_(all_calls, "not(NS_GET)")],
@@ -85,6 +77,9 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
       xml_text(xml_find_all_(xml, "//SPECIAL")),
       extract_glued_symbols(xml, interpret_glue = interpret_glue)
     ))
+
+    test_calls <- all_calls[names(all_calls) %in% c("test_check", "test_package")]
+    except_packages <- c(except_packages, get_r_string(test_calls, "following-sibling::expr[1]/STR_CONST"))
 
     is_used <- vapply(
       imported_pkgs,
@@ -94,20 +89,18 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
           return(TRUE)
         }
 
-        package_exports <- getNamespaceExports(pkg) # functions
-        dataset_exports <- get_datasets(pkg) # datasets
-
-        any(package_exports %in% used_symbols) || any(dataset_exports %in% used_symbols)
+        ns <- asNamespace(pkg)
+        any(namespace_symbols(ns) %in% used_symbols) ||
+          any(conditional_namespace_exports(ns) %in% used_symbols)
       },
       logical(1L)
     )
 
-    # TODO(#2480): Only call //SYMBOL_PACKAGE once.
-    is_ns_used <- vapply(
-      imported_pkgs,
-      \(pkg) xml_find_lgl_(xml, paste0("boolean(//SYMBOL_PACKAGE[text() = '", pkg, "'])")),
-      logical(1L)
-    )
+    if (all(is_used)) {
+      return(list())
+    }
+
+    is_ns_used <- imported_pkgs %in% get_r_string(xml_find_all_(xml, "//SYMBOL_PACKAGE"))
 
     is_unused <- !is_used
     if (allow_ns_usage) {
@@ -118,7 +111,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
 
     unused_packages <- imported_pkgs[is_unused]
     lint_message <- ifelse(
-      is_ns_used[is_unused][unused_packages],
+      is_ns_used[is_unused],
       paste0(
         "Don't attach package '", unused_packages, "', which is only used by namespace. ",
         "Check that it is installed using loadNamespace() instead."
