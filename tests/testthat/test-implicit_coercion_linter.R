@@ -160,7 +160,7 @@ test_that("implicit_coercion_linter blocks literals and arithmetic in conditions
     "Use explicit TRUE or FALSE instead of relying on implicit coercion of literals in conditional expressions."
   )
   arith_msg <- rex::rex(
-    "Use an explicit comparison (e.g., != 0) instead of relying on implicit coercion of arithmetic expressions in conditional expressions." # nolint: line_length_linter.
+    "Use explicit comparison instead of relying on implicit coercion of arithmetic expressions in conditional expressions." # nolint: line_length_linter.
   )
 
   expect_lint("if (1) TRUE", list(lit_msg, line_number = 1L, column_number = 5L), linter)
@@ -183,15 +183,18 @@ test_that("implicit_coercion_linter blocks literals and arithmetic in conditions
 })
 
 test_that("implicit_coercion_linter respects custom coercers argument", {
-  expect_no_lint("if (anyDuplicated(x)) 1", implicit_coercion_linter(coercers = NULL))
+  expect_no_lint(
+    "if (anyDuplicated(x)) 1",
+    implicit_coercion_linter(coercers = character())
+  )
   expect_lint(
     "if (my_count(x)) 1",
-    rex::rex("Use explicit comparison (e.g., my_count(...) != 0L)"),
+    "Use explicit comparison",
     implicit_coercion_linter(coercers = "my_count")
   )
   expect_error(
     implicit_coercion_linter(coercers = 123L),
-    "`coercers` must be a character vector or `NULL`",
+    "`coercers` must be a character vector",
     fixed = TRUE
   )
 })
@@ -205,8 +208,8 @@ test_that("lints vectorize", {
     list(
       list(rex::rex("length(...) > 0L"), line_number = 2L, column_number = 7L),
       list(rex::rex("Use !nzchar(x)"), line_number = 2L, column_number = 20L),
-      list(rex::rex("Use explicit TRUE or FALSE"), line_number = 3L, column_number = 10L),
-      list(rex::rex("Use an explicit comparison (e.g., != 0)"), line_number = 3L, column_number = 16L)
+      list("Use explicit TRUE or FALSE", line_number = 3L, column_number = 10L),
+      list("Use explicit comparison", line_number = 3L, column_number = 16L)
     ),
     implicit_coercion_linter()
   )

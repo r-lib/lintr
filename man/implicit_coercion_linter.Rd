@@ -9,20 +9,16 @@ implicit_coercion_linter(coercers = "anyDuplicated")
 \arguments{
 \item{coercers}{Character vector of additional function names returning
 numeric or integer values whose uncompared use in \verb{if ()} or \verb{while ()}
-conditions should be linted. Defaults to \code{"anyDuplicated"}, which is
-combined with the built-in set of numeric-returning base functions
-(\code{length()}, \code{lengths()}, \code{nrow()}, \code{ncol()}, \code{NROW()}, \code{NCOL()}, \code{dim()},
-\code{nchar()}, \code{sum()}, \code{prod()}, \code{bitwAnd()}, \code{bitwOr()}, \code{bitwXor()},
-\code{bitwNot()}, \code{bitwShiftL()}, \code{bitwShiftR()}, \code{match()}, \code{grep()},
-\code{regexpr()}, \code{gregexpr()}, and \code{diff()}).}
+conditions should be linted. Defaults to \code{"anyDuplicated"}, which does return
+integer, but whose naming \code{any} indicates its suitability for use in logical tests.}
 }
 \description{
 Relying on implicit numeric-to-logical coercion in conditional expressions
 such as \verb{if (length(x))} or \verb{if (!nchar(s))} can be harder to read and error-prone
 (for instance, negative numbers like \code{-1L} from \code{\link[=regexpr]{regexpr()}} coerce to \code{TRUE},
 and \code{0}-length outputs cause runtime errors). Prefer explicit logical
-comparisons (\code{length(x) > 0L}, \code{length(x) == 0L}) or dedicated predicate
-functions (\code{\link[=nzchar]{nzchar()}}, \code{\link[=grepl]{grepl()}}, \code{\link[=any]{any()}}, \code{x \%in\% table}).
+comparisons (\code{length(x) > 0L}, \code{length(x) == 0L}) or dedicated functions
+returning logical values directly (\code{\link[=nzchar]{nzchar()}}, \code{\link[=grepl]{grepl()}}, \code{\link[=any]{any()}}, \code{x \%in\% table}).
 }
 \examples{
 # will produce lints
@@ -46,6 +42,11 @@ lint(
   linters = implicit_coercion_linter()
 )
 
+lint(
+  text = "if (anyDuplicated(x)) TRUE",
+  linters = implicit_coercion_linter()
+)
+
 # okay
 lint(
   text = "if (length(x) > 0L) TRUE",
@@ -65,6 +66,11 @@ lint(
 lint(
   text = "if (x \%\% 2L != 0L) TRUE",
   linters = implicit_coercion_linter()
+)
+
+lint(
+  text = "if (anyDuplicated(x)) TRUE",
+  linters = implicit_coercion_linter(coercers = character())
 )
 
 }

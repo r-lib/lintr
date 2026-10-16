@@ -4,17 +4,13 @@
 #'   such as `if (length(x))` or `if (!nchar(s))` can be harder to read and error-prone
 #'   (for instance, negative numbers like `-1L` from [regexpr()] coerce to `TRUE`,
 #'   and `0`-length outputs cause runtime errors). Prefer explicit logical
-#'   comparisons (`length(x) > 0L`, `length(x) == 0L`) or dedicated predicate
-#'   functions ([nzchar()], [grepl()], [any()], `x %in% table`).
+#'   comparisons (`length(x) > 0L`, `length(x) == 0L`) or dedicated functions
+#'   returning logical values directly ([nzchar()], [grepl()], [any()], `x %in% table`).
 #'
 #' @param coercers Character vector of additional function names returning
 #'   numeric or integer values whose uncompared use in `if ()` or `while ()`
-#'   conditions should be linted. Defaults to `"anyDuplicated"`, which is
-#'   combined with the built-in set of numeric-returning base functions
-#'   (`length()`, `lengths()`, `nrow()`, `ncol()`, `NROW()`, `NCOL()`, `dim()`,
-#'   `nchar()`, `sum()`, `prod()`, `bitwAnd()`, `bitwOr()`, `bitwXor()`,
-#'   `bitwNot()`, `bitwShiftL()`, `bitwShiftR()`, `match()`, `grep()`,
-#'   `regexpr()`, `gregexpr()`, and `diff()`).
+#'   conditions should be linted. Defaults to `"anyDuplicated"`, which does return
+#'   integer, but whose naming `any` indicates its suitability for use in logical tests.
 #'
 #' @examples
 #' # will produce lints
@@ -35,6 +31,11 @@
 #'
 #' lint(
 #'   text = "if (x %% 2L) TRUE",
+#'   linters = implicit_coercion_linter()
+#' )
+#'
+#' lint(
+#'   text = "if (anyDuplicated(x)) TRUE",
 #'   linters = implicit_coercion_linter()
 #' )
 #'
@@ -59,6 +60,11 @@
 #'   linters = implicit_coercion_linter()
 #' )
 #'
+#' lint(
+#'   text = "if (anyDuplicated(x)) TRUE",
+#'   linters = implicit_coercion_linter(coercers = character())
+#' )
+#'
 #' @evalRd rd_tags("implicit_coercion_linter")
 #' @seealso
 #' - [linters] for a complete list of linters available in lintr.
@@ -66,8 +72,8 @@
 #' - <https://style.tidyverse.org/syntax.html#if-statements>
 #' @export
 implicit_coercion_linter <- function(coercers = "anyDuplicated") {
-  if (!is.null(coercers) && !is.character(coercers)) {
-    cli_abort("{.arg coercers} must be a character vector or {.code NULL}.")
+  if (!is.character(coercers)) {
+    cli_abort("{.arg coercers} must be a character vector.")
   }
 
   base_coercers <- c(
@@ -138,47 +144,50 @@ implicit_coercion_linter <- function(coercers = "anyDuplicated") {
     is_call <- !is_literal & !is_arith
 
     msg <- character(length(bad_expr))
-    msg[is_literal] <-
-      "Use explicit TRUE or FALSE instead of relying on implicit coercion of literals in conditional expressions."
-    msg[is_arith] <- paste(
-      "Use an explicit comparison (e.g., != 0) instead of relying on",
-      "implicit coercion of arithmetic expressions in conditional expressions."
-    )
+    arithmetic_fmt <- "Use explicit %s instead of relying on implicit coercion of %s in conditional expressions."
+    msg[is_literal] <- sprintf(arithmetic_fmt, "TRUE or FALSE", "literals")
+    msg[is_arith] <- sprintf(arithmetic_fmt, "comparison", "arithmetic expressions")
 
-    if (any(is_call)) {
-      call_nodes <- bad_expr[is_call]
-      is_negated <- xml_find_lgl_(call_nodes, "boolean(OP-EXCLAMATION)")
-      fn_name <- get_r_string(call_nodes, "descendant::SYMBOL_FUNCTION_CALL[1]")
-      bang <- ifelse(is_negated, "!", "")
-      comparator <- ifelse(fn_name %in% non_neg_funs, "> 0L", "!= 0L")
-      comparator[is_negated] <- "== 0L"
-
-      call_msg <- sprintf(
-        "Use explicit comparison (e.g., %s(...) %s) instead of relying on implicit coercion in conditional expressions.", # nolint: line_length_linter.
-        fn_name, comparator
-      )
-      is_nchar <- fn_name == "nchar"
-      call_msg[is_nchar] <- sprintf(
-        "Use %1$snzchar(x) instead of relying on implicit coercion of %1$snchar(x) in conditional expressions.",
-        bang[is_nchar]
-      )
-      is_grep <- fn_name == "grep"
-      call_msg[is_grep] <- sprintf(
-        "Use %1$sgrepl() instead of relying on implicit coercion of %1$sgrep() in conditional expressions.",
-        bang[is_grep]
-      )
-      msg[is_call] <- call_msg
+    if (!any(is_call)) {
+      return(msg)
     }
+
+    call_nodes <- bad_expr[is_call]
+    is_negated <- xml_find_lgl_(call_nodes, "boolean(OP-EXCLAMATION)")
+    fn_name <- get_r_string(call_nodes, "descendant::SYMBOL_FUNCTION_CALL[1]")
+    exclamation <- ifelse(is_negated, "!", "")
+    comparator <- ifelse(fn_name %in% non_neg_funs, "> 0L", "!= 0L")
+    comparator[is_negated] <- "== 0L"
+
+    call_msg <- sprintf(
+      # nolint next: line_length_linter.
+      "Use explicit comparison (e.g., %s(...) %s) instead of relying on implicit coercion in conditional expressions.",
+      fn_name, comparator
+    )
+    is_nchar <- fn_name == "nchar"
+    call_msg[is_nchar] <- sprintf(
+      "Use %1$snzchar(x) instead of relying on implicit coercion of %1$snchar(x) in conditional expressions.",
+      exclamation[is_nchar]
+    )
+    is_grep <- fn_name == "grep"
+    call_msg[is_grep] <- sprintf(
+      "Use %1$sgrepl() instead of relying on implicit coercion of %1$sgrep() in conditional expressions.",
+      exclamation[is_grep]
+    )
+    msg[is_call] <- call_msg
 
     msg
   }
 
-  # nolint next: cyclocomp_linter. Helpers in factory inflate complexity (gaborcsardi/cyclocomp#30).
   Linter(linter_level = "expression", function(source_expression) {
     xml <- source_expression$xml_parsed_content
     bad_expr <- xml_find_all_(xml, xpath)
-    lint_message <- get_lint_message(bad_expr)
 
-    xml_nodes_to_lints(bad_expr, source_expression, lint_message = lint_message, type = "warning")
+    xml_nodes_to_lints(
+      bad_expr,
+      source_expression,
+      lint_message = get_lint_message(bad_expr),
+      type = "warning"
+    )
   })
 }
