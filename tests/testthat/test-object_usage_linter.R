@@ -129,7 +129,7 @@ test_that("returns the correct linting", {
   )
 })
 
-test_that("replace_functions_stripped", {
+test_that("replacement functions are matched accurately", {
   linter <- object_usage_linter()
 
   expect_lint(
@@ -211,6 +211,17 @@ test_that("replace_functions_stripped", {
       }
     "),
     list("no visible global function definition for 'not_exists'", line_number = 3L, column_number = 20L),
+    linter
+  )
+
+  expect_lint(
+    trim_some("
+      not_exists <- function(x) x
+      foo <- function(x, y) {
+        not_exists(y) + (not_exists(x) <- 2)
+      }
+    "),
+    list("no visible global function definition for 'not_exists<-'", line_number = 3L, column_number = 20L),
     linter
   )
 
@@ -746,22 +757,6 @@ test_that("transitive Depends of attached packages are detected (#2695)", {
 })
 
 test_that("fallback works", {
-  linter <- object_usage_linter()
-
-  expect_lint(
-    trim_some("
-      f <- function() {
-        `non_existing_assign<-`(1, 2)
-      }
-    "),
-    list(
-      "no visible global function definition for 'non_existing_assign<-'",
-      line_number = 2L,
-      column_number = 3L
-    ),
-    linter
-  )
-
   expect_lint(
     trim_some('
       f <- function() {
@@ -773,7 +768,7 @@ test_that("fallback works", {
       line_number = 2L,
       column_number = 3L
     ),
-    linter
+    object_usage_linter()
   )
 })
 

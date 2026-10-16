@@ -130,6 +130,9 @@ object_usage_linter <- function(interpret_glue = NULL, interpret_extensions = c(
         end_line = as.integer(xml_attr_(fun_assignment, "line2")),
         skip_with = skip_with
       )
+      if (nrow(res) == 0L) {
+        return(outer_env$library_lints)
+      }
 
       lintable_symbols <- xml_find_all_(fun_assignment, xpath_culprit_symbol)
 
