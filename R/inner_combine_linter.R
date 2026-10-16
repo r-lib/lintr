@@ -47,29 +47,25 @@ inner_combine_linter <- function() {
   )
 
   c_expr_cond <- xp_and(
+    "following-sibling::expr",
     sprintf("expr[1][SYMBOL_FUNCTION_CALL[%s]]", xp_text_in_table(vectorized_funs)),
     "not(following-sibling::expr[not(expr[1][SYMBOL_FUNCTION_CALL])])",
     "not(expr[1]/SYMBOL_FUNCTION_CALL != following-sibling::expr/expr[1]/SYMBOL_FUNCTION_CALL)"
   )
-  xpath <- glue("
-  self::*[count(following-sibling::expr) > 1]
-    /following-sibling::expr[1][ {c_expr_cond} ]
-    /parent::expr
-  ")
+  xpath <- glue("following-sibling::expr[1][ {c_expr_cond} ]/parent::expr")
 
   extract_extra_args <- function(call_node) {
-    extra_args <- xml_find_all_(call_node, "expr[position() > 2]")
-    if (length(extra_args) == 0L) {
-      return(character())
-    }
-    arg_names <- get_r_string(extra_args, "preceding-sibling::*[1][self::EQ_SUB]/preceding-sibling::*[1]")
-    arg_values <- xml_text(extra_args)
+    call_args <- xml_find_all_(call_node, "expr[position() > 1]")
+    arg_names <- get_r_string(call_args, "preceding-sibling::*[1][self::EQ_SUB]/preceding-sibling::*[1]")
+    x_idx <- match("x", arg_names, nomatch = match(NA_character_, arg_names, nomatch = 0L))
+    keep <- seq_along(call_args) != x_idx
+    arg_names <- arg_names[keep]
+    arg_values <- xml_text(call_args[keep])
     ord <- order(arg_names)
     c(arg_names[ord], arg_values[ord])
   }
 
   has_matching_args <- function(c_expr) {
-    c_expr <- strip_comments_from_subtree(c_expr)
     inner_calls <- xml_find_all_(c_expr, "expr[position() > 1]")
     first_args <- extract_extra_args(inner_calls[[1L]])
     all(vapply(inner_calls[-1L], \(call) identical(extract_extra_args(call), first_args), logical(1L)))
@@ -78,7 +74,7 @@ inner_combine_linter <- function() {
   Linter(linter_level = "expression", function(source_expression) {
     xml_calls <- source_expression$xml_find_function_calls("c")
     bad_expr <- xml_find_all_(xml_calls, xpath)
-    bad_expr <- bad_expr[vapply(bad_expr, has_matching_args, logical(1L))]
+    bad_expr <- bad_expr[vapply(strip_comments_from_subtree(bad_expr), has_matching_args, logical(1L))]
 
     matched_call <- xp_call_name(bad_expr, depth = 2L)
     lint_message <- paste(

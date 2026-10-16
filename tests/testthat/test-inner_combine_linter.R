@@ -60,9 +60,41 @@ patrick::with_parameters_test_that(
 )
 
 test_that("inner_combine_linter is order-agnostic for matching arguments", {
+  lint_msg <- rex::rex("Combine inputs to vectorized functions first")
+
   expect_lint(
     "c(as.Date(x, format = f, tz = t), as.Date(y, tz = t, format = f))",
-    rex::rex("Combine inputs to vectorized functions first"),
+    lint_msg,
+    inner_combine_linter()
+  )
+  expect_lint(
+    "c(as.Date(x, format = '%Y'), as.Date(format = '%Y', y))",
+    lint_msg,
+    inner_combine_linter()
+  )
+  expect_lint(
+    "c(as.Date(format = '%Y', x), as.Date(format = '%Y', y))",
+    lint_msg,
+    inner_combine_linter()
+  )
+  expect_lint(
+    "c(log(base = 2, x), log(base = 2, y))",
+    lint_msg,
+    inner_combine_linter()
+  )
+  expect_lint(
+    "c(log(x, 4), log(y, 4))",
+    lint_msg,
+    inner_combine_linter()
+  )
+  expect_lint(
+    trim_some("
+      c(
+        as.Date(x, format = '%F'), # comment
+        as.Date(y, format = '%F')
+      )
+    "),
+    lint_msg,
     inner_combine_linter()
   )
 })
@@ -84,6 +116,10 @@ patrick::with_parameters_test_that(
     "mismatched arg (Date)",          "c(as.Date(x, format = '%y'), as.Date(y, format = '%m'))",
     "present/absent arg (Date)",      "c(as.Date(x, format = '%y'), as.Date(y))",
     "absent/present arg (Date)",      "c(as.Date(x), as.Date(y, format = '%y'))",
+    "present/present/absent (Date)",  "c(as.Date(x, format = '%y'), as.Date(y, format = '%y'), as.Date(z))",
+    "mismatched leading arg (Date)",  "c(as.Date(format = '%Y', x), as.Date(format = '%m', x))",
+    "missing primary arg (Date)",     "c(as.Date(tryFormats = '%Y'), as.Date(y))",
+    "mismatched leading arg (log)",   "c(log(base = 2, x), log(base = 10, x))",
     "matched value, not arg (Date)",  "c(as.Date(x, format = '%y'), as.Date(y, tz = '%y'))",
     "mismatched arg (POSIXct)",       "c(as.POSIXct(x, format = '%y'), as.POSIXct(y, format = '%m'))",
     "present/absent arg (POSIXct)",   "c(as.POSIXct(x, format = '%y'), as.POSIXct(y))",
