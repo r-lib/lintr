@@ -25,14 +25,11 @@ local({
     "mdy_hms", "mdy_hm", "mdy_h", "ydm_hms", "ydm_hm", "ydm_h",
     NULL
   )
+  linter <- inner_combine_linter()
+  lint_msg <- rex::rex("Combine inputs to vectorized functions first")
   patrick::with_parameters_test_that(
     "inner_combine_linter blocks simple vectorized calls:",
-    expect_lint(
-      sprintf("c(%1$s(x), %1$s(y))", vector_fun),
-      rex::rex("Combine inputs to vectorized functions first"),
-      inner_combine_linter()
-    ),
-    .test_name = vector_funs,
+    expect_lint(sprintf("c(%1$s(x), %1$s(y))", vector_fun), lint_msg, linter),
     vector_fun = vector_funs
   )
 })
@@ -60,33 +57,14 @@ patrick::with_parameters_test_that(
 )
 
 test_that("inner_combine_linter is order-agnostic for matching arguments", {
+  linter <- inner_combine_linter()
   lint_msg <- rex::rex("Combine inputs to vectorized functions first")
 
-  expect_lint(
-    "c(as.Date(x, format = f, tz = t), as.Date(y, tz = t, format = f))",
-    lint_msg,
-    inner_combine_linter()
-  )
-  expect_lint(
-    "c(as.Date(x, format = '%Y'), as.Date(format = '%Y', y))",
-    lint_msg,
-    inner_combine_linter()
-  )
-  expect_lint(
-    "c(as.Date(format = '%Y', x), as.Date(format = '%Y', y))",
-    lint_msg,
-    inner_combine_linter()
-  )
-  expect_lint(
-    "c(log(base = 2, x), log(base = 2, y))",
-    lint_msg,
-    inner_combine_linter()
-  )
-  expect_lint(
-    "c(log(x, 4), log(y, 4))",
-    lint_msg,
-    inner_combine_linter()
-  )
+  expect_lint("c(as.Date(x, format = f, tz = t), as.Date(y, tz = t, format = f))", lint_msg, linter)
+  expect_lint("c(as.Date(x, format = '%Y'), as.Date(format = '%Y', y))", lint_msg, linter)
+  expect_lint("c(as.Date(format = '%Y', x), as.Date(format = '%Y', y))", lint_msg, linter)
+  expect_lint("c(log(base = 2, x), log(base = 2, y))", lint_msg, linter)
+  expect_lint("c(log(x, 4), log(y, 4))", lint_msg, linter)
   expect_lint(
     trim_some("
       c(
@@ -95,7 +73,7 @@ test_that("inner_combine_linter is order-agnostic for matching arguments", {
       )
     "),
     lint_msg,
-    inner_combine_linter()
+    linter
   )
 })
 
