@@ -72,7 +72,6 @@ rm(expect_no_lint_linter, is_error_linter)
 exclusions <- list(
   `inst/doc/creating_linters.R` = 1L,
   "inst/example/bad.R",
-  `tests/testthat.R` = list(unused_import_linter = Inf),
   `tests/testthat/*` = list(undesirable_function_name_linter = Inf),
   "tests/testthat/default_linter_testcode.R",
   "tests/testthat/dummy_*",

@@ -125,3 +125,26 @@ test_that("glue usages are seen", {
   expect_no_lint(lines, unused_import_linter())
   expect_lint(lines, lint_msg, unused_import_linter(interpret_glue = FALSE))
 })
+
+test_that("package under test is ignored (#1978)", {
+  linter <- unused_import_linter()
+
+  expect_no_lint(
+    trim_some("
+      library(testthat)
+      library(dplyr)
+
+      test_check('dplyr')
+    "),
+    linter
+  )
+  expect_no_lint(
+    trim_some("
+      library(testthat)
+      library(dplyr)
+
+      test_package('dplyr')
+    "),
+    linter
+  )
+})
