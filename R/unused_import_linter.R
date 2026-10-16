@@ -62,7 +62,6 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
   Linter(linter_level = "file", function(source_expression) {
     xml <- source_expression$full_xml_parsed_content
     library_calls <- source_expression$xml_find_function_calls(c("library", "require"))
-    all_calls <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
 
     import_exprs <- xml_find_all_(library_calls, import_xpath)
 
@@ -70,6 +69,7 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
       return(list())
     }
     imported_pkgs <- get_r_string(import_exprs, xpath = "expr[STR_CONST | SYMBOL]")
+    all_calls <- source_expression$xml_find_function_calls(NULL, keep_names = TRUE)
 
     used_symbols <- unique(c(
       names(all_calls)[xml_find_lgl_(all_calls, "not(NS_GET)")],
@@ -86,10 +86,16 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
           return(TRUE)
         }
 
-        any(namespace_symbols(asNamespace(pkg)) %in% used_symbols)
+        ns <- asNamespace(pkg)
+        any(namespace_symbols(ns) %in% used_symbols) ||
+          any(conditional_namespace_exports(ns) %in% used_symbols)
       },
       logical(1L)
     )
+
+    if (all(is_used)) {
+      return(list())
+    }
 
     is_ns_used <- imported_pkgs %in% get_r_string(xml_find_all_(xml, "//SYMBOL_PACKAGE"))
 
