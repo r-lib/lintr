@@ -81,7 +81,6 @@ unused_import_linter <- function(allow_ns_usage = FALSE,
     test_calls <- all_calls[names(all_calls) %in% c("test_check", "test_package")]
     except_packages <- c(
       except_packages,
-      pkg_name(find_package(dirname(source_expression$filename))),
       get_r_string(xml_find_all_(test_calls, "following-sibling::expr[1][STR_CONST]"))
     )
 
