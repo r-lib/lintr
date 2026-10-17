@@ -16,12 +16,14 @@ The following linters are tagged with 'robustness':
 \item{\code{\link{all_equal_linter}}}
 \item{\code{\link{backport_linter}}}
 \item{\code{\link{class_equals_linter}}}
+\item{\code{\link{decimal_fraction_linter}}}
 \item{\code{\link{download_file_linter}}}
 \item{\code{\link{equals_na_linter}}}
 \item{\code{\link{for_loop_index_linter}}}
 \item{\code{\link{missing_package_linter}}}
 \item{\code{\link{namespace_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
+\item{\code{\link{numerical_stability_linter}}}
 \item{\code{\link{object_overwrite_linter}}}
 \item{\code{\link{routine_registration_linter}}}
 \item{\code{\link{sample_int_linter}}}
