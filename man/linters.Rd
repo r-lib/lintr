@@ -17,8 +17,8 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (66 linters)}
-\item{\link[=common_mistakes_linters]{common_mistakes} (13 linters)}
+\item{\link[=best_practices_linters]{best_practices} (67 linters)}
+\item{\link[=common_mistakes_linters]{common_mistakes} (14 linters)}
 \item{\link[=configurable_linters]{configurable} (44 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
@@ -29,7 +29,7 @@ The following tags exist:
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (13 linters)}
 \item{\link[=readability_linters]{readability} (67 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
-\item{\link[=robustness_linters]{robustness} (19 linters)}
+\item{\link[=robustness_linters]{robustness} (20 linters)}
 \item{\link[=style_linters]{style} (40 linters)}
 \item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }
@@ -108,6 +108,7 @@ The following linters exist:
 \item{\code{\link{object_name_linter}} (tags: configurable, consistency, default, executing, style)}
 \item{\code{\link{object_overwrite_linter}} (tags: best_practices, configurable, executing, readability, robustness)}
 \item{\code{\link{object_usage_linter}} (tags: configurable, correctness, default, executing, readability, style)}
+\item{\code{\link{on_exit_linter}} (tags: best_practices, common_mistakes, robustness)}
 \item{\code{\link{one_call_pipe_linter}} (tags: readability, style)}
 \item{\code{\link{outer_negation_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{package_hooks_linter}} (tags: correctness, package_development, style)}
