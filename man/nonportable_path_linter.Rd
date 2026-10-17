@@ -38,5 +38,5 @@ lint(
 }
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=robustness_linters]{robustness}
+\link[=best_practices_linters]{best_practices}, \link[=configurable_linters]{configurable}, \link[=portability_linters]{portability}, \link[=robustness_linters]{robustness}
 }

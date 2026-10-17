@@ -45,5 +45,5 @@ lint(
 \link{linters} for a complete list of linters available in lintr.
 }
 \section{Tags}{
-\link[=best_practices_linters]{best_practices}, \link[=common_mistakes_linters]{common_mistakes}, \link[=robustness_linters]{robustness}
+\link[=best_practices_linters]{best_practices}, \link[=common_mistakes_linters]{common_mistakes}, \link[=portability_linters]{portability}, \link[=robustness_linters]{robustness}
 }
