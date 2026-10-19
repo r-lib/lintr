@@ -6,6 +6,7 @@
    + `get_source_expressions()` supports adjacent Sweave (`.Rnw`) code chunks (`<<...>>=`) without an intervening `@` documentation chunk (#2619, @MichaelChirico).
    + avoids spurious whitespace lints like `indentation_linter()` in chunks with leading prefixes/whitespace (such as `%` in `.Rtex`, `..` in `.Rrst`, and `//` in `.Rtxt`; #1043, @MichaelChirico).
    + no longer truncates backticked symbols/slots of 1000 or more characters or multiline strings of 1000 or more characters when the column difference between the last and first line equals 27, avoiding `unexpected '['` errors in linters inspecting string or symbol text (#2848, @MichaelChirico).
+   + no longer errors with "subscript out of bounds" on code containing a `#line` directive; such directives are now treated as comments (#3106, @youdie006).
 * `unnecessary_lambda_linter()` doesn't error when encountering multiple comparison-only lambdas like `\(x) x == 1` (#3116, @MichaelChirico).
 * `implicit_assignment_linter(allow_paren_print = TRUE)` correctly excludes lints for `(a <- 1)` when other true positives are _also_ present (#3117, @MichaelChirico).
 * `namespace_imports()` and the linters relying on it (e.g. `object_name_linter()`, `object_length_linter()`, `namespace_linter()`) now respect the `except=` argument of `import()` directives in `NAMESPACE`, instead of treating the excluded functions as the only imported ones (#1397, @taekop).
@@ -22,8 +23,6 @@
 * `lint()`:
    + gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content (including whether it ends with a terminal newline, e.g. `"x <- 1\n"` or `c("x <- 1", "")` vs. `"x <- 1"`), so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, REditorSupport/languageserver#772, @atusy and @MichaelChirico).
    + retains the correct `column_number` for lints found in indented .Rmd/.qmd chunks so that IDEs can land the cursor correctly (continuing #1949, @MichaelChirico).
-* `lint()` gains support for passing both `filename` and `text` simultaneously. The `filename` is used for file identity (settings discovery, exclusion handling, knitr detection, and display) while `text` provides the content, so the file need not exist on disk. This is useful for IDE/LSP integrations where the editor has unsaved changes (#3017, @atusy).
-* `get_source_expressions()` no longer errors with "subscript out of bounds" on code containing a `#line` directive; such directives are now treated as comments, matching the behavior of `getParseData()` in R >= 4.7.0 (#3106, @youdie006).
 * Non-R code chunks in R Markdown and Quarto documents (such as `{extendr}` or `{ojs}`) are no longer parsed and linted as R code (#1896, @MichaelChirico).
 * `get_r_string()` (and by extension `xml_find_function_calls()` in `get_source_expressions()`) now unquotes backtick-quoted symbols and slots (`SYMBOL*` and `SLOT` nodes) in addition to string constants (`STR_CONST`; #3156, @MichaelChirico).
 * `xml_find_function_calls()` (in `get_source_expressions()`) now resolves replacement function calls (e.g. `foo(x) <- y` and `x@bar(y) <- z` are indexed as `"foo<-"` and `"bar<-"`, respectively; #3157, @MichaelChirico).
