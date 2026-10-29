@@ -21,8 +21,10 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{conjunct_test_linter}}}
 \item{\code{\link{consecutive_mutate_linter}}}
 \item{\code{\link{cyclocomp_linter}}}
+\item{\code{\link{decimal_fraction_linter}}}
 \item{\code{\link{duplicate_argument_linter}}}
 \item{\code{\link{fixed_regex_linter}}}
+\item{\code{\link{float_comparison_linter}}}
 \item{\code{\link{if_not_else_linter}}}
 \item{\code{\link{if_switch_linter}}}
 \item{\code{\link{implicit_assignment_linter}}}
@@ -35,6 +37,7 @@ The following linters are tagged with 'configurable':
 \item{\code{\link{namespace_linter}}}
 \item{\code{\link{nested_pipe_linter}}}
 \item{\code{\link{nonportable_path_linter}}}
+\item{\code{\link{numerical_stability_linter}}}
 \item{\code{\link{object_length_linter}}}
 \item{\code{\link{object_name_linter}}}
 \item{\code{\link{object_overwrite_linter}}}
