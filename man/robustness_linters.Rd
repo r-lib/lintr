@@ -15,6 +15,7 @@ The following linters are tagged with 'robustness':
 \item{\code{\link{absolute_path_linter}}}
 \item{\code{\link{all_equal_linter}}}
 \item{\code{\link{backport_linter}}}
+\item{\code{\link{can_coerce_linter}}}
 \item{\code{\link{class_equals_linter}}}
 \item{\code{\link{download_file_linter}}}
 \item{\code{\link{equals_na_linter}}}

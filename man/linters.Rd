@@ -17,19 +17,19 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (68 linters)}
+\item{\link[=best_practices_linters]{best_practices} (69 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (13 linters)}
 \item{\link[=configurable_linters]{configurable} (45 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
 \item{\link[=default_linters]{default} (27 linters)}
-\item{\link[=efficiency_linters]{efficiency} (30 linters)}
+\item{\link[=efficiency_linters]{efficiency} (31 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (16 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (14 linters)}
 \item{\link[=readability_linters]{readability} (69 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
-\item{\link[=robustness_linters]{robustness} (20 linters)}
+\item{\link[=robustness_linters]{robustness} (21 linters)}
 \item{\link[=style_linters]{style} (41 linters)}
 \item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }
@@ -45,6 +45,7 @@ The following linters exist:
 \item{\code{\link{backport_linter}} (tags: configurable, package_development, robustness)}
 \item{\code{\link{boolean_arithmetic_linter}} (tags: best_practices, efficiency, readability)}
 \item{\code{\link{brace_linter}} (tags: configurable, default, readability, style)}
+\item{\code{\link{can_coerce_linter}} (tags: best_practices, efficiency, robustness)}
 \item{\code{\link{class_equals_linter}} (tags: best_practices, consistency, robustness)}
 \item{\code{\link{coalesce_linter}} (tags: best_practices, consistency, readability)}
 \item{\code{\link{commas_linter}} (tags: configurable, default, readability, style)}
