@@ -17,20 +17,20 @@ see also \code{\link[=available_tags]{available_tags()}}.
 \section{Tags}{
 The following tags exist:
 \itemize{
-\item{\link[=best_practices_linters]{best_practices} (67 linters)}
+\item{\link[=best_practices_linters]{best_practices} (68 linters)}
 \item{\link[=common_mistakes_linters]{common_mistakes} (13 linters)}
-\item{\link[=configurable_linters]{configurable} (44 linters)}
+\item{\link[=configurable_linters]{configurable} (45 linters)}
 \item{\link[=consistency_linters]{consistency} (33 linters)}
 \item{\link[=correctness_linters]{correctness} (7 linters)}
-\item{\link[=default_linters]{default} (26 linters)}
+\item{\link[=default_linters]{default} (27 linters)}
 \item{\link[=efficiency_linters]{efficiency} (30 linters)}
 \item{\link[=executing_linters]{executing} (6 linters)}
 \item{\link[=package_development_linters]{package_development} (16 linters)}
 \item{\link[=pkg_testthat_linters]{pkg_testthat} (14 linters)}
-\item{\link[=readability_linters]{readability} (68 linters)}
+\item{\link[=readability_linters]{readability} (69 linters)}
 \item{\link[=regex_linters]{regex} (4 linters)}
-\item{\link[=robustness_linters]{robustness} (19 linters)}
-\item{\link[=style_linters]{style} (40 linters)}
+\item{\link[=robustness_linters]{robustness} (20 linters)}
+\item{\link[=style_linters]{style} (41 linters)}
 \item{\link[=tidy_design_linters]{tidy_design} (1 linters)}
 }
 }
@@ -81,6 +81,7 @@ The following linters exist:
 \item{\code{\link{if_switch_linter}} (tags: best_practices, configurable, consistency, efficiency, readability)}
 \item{\code{\link{ifelse_censor_linter}} (tags: best_practices, efficiency)}
 \item{\code{\link{implicit_assignment_linter}} (tags: best_practices, configurable, readability, style)}
+\item{\code{\link{implicit_coercion_linter}} (tags: best_practices, configurable, default, readability, robustness, style)}
 \item{\code{\link{implicit_integer_linter}} (tags: best_practices, configurable, consistency, style)}
 \item{\code{\link{indentation_linter}} (tags: configurable, default, readability, style)}
 \item{\code{\link{infix_spaces_linter}} (tags: configurable, default, readability, style)}

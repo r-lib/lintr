@@ -19,6 +19,7 @@ default_linters <- modify_defaults(
   commented_code_linter(),
   equals_na_linter(),
   function_left_parentheses_linter(),
+  implicit_coercion_linter(),
   indentation_linter(),
   infix_spaces_linter(),
   line_length_linter(),
