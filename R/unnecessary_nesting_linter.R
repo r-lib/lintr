@@ -218,7 +218,7 @@ unnecessary_nesting_linter <- function(
   #          * DataTable[, col := { expr }] <- requires carve-out for `:=`
   #   - control flow or function definitions inside operator expressions or call heads,
   #     where braces are required for operator precedence (e.g. `p + { if (x) geom_point() } + geom_smooth()`, #2852)
-  # 'count(*) - ...' used to be just 'count(expr)', but that misses '=' assigments (exprlist).
+  # 'count(*) - ...' used to be just 'count(expr)', but that misses '=' assignments (exprlist).
   unnecessary_brace_xpath <- glue("
   //OP-LEFT-BRACE
     /parent::expr[
