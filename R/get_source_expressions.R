@@ -575,7 +575,7 @@ get_source_expression <- function(source_expression, error = identity) {
   }
 
   source_expression$parsed_content <- parsed_content
-  fix_token_text(fix_tab_indentations(source_expression), source_expression$lines)
+  fix_line_directives(fix_token_text(fix_tab_indentations(source_expression), source_expression$lines))
 }
 
 maybe_append_expression_xml <- function(expressions, xml_parsed_content) {
@@ -680,6 +680,47 @@ top_level_expressions <- function(pc) {
     return(integer(0L))
   }
   which(pc$parent <= 0L)
+}
+
+# `#line` directives are parser directives, not expressions, so treat them as comments.
+fix_line_directives <- function(pc) {
+  is_directive <- pc$token == "LINE_DIRECTIVE"
+  if (!any(is_directive)) {
+    return(pc)
+  }
+  pc <- fix_line_directive_parents(pc, is_directive)
+  pc$token[is_directive] <- "COMMENT"
+  pc
+}
+
+# Before r90434 (PR#19137), R does not treat LINE_DIRECTIVE as comment-like when assigning parents.
+#   A directive nested in a block is left an orphan (parent 0), and a comment whose next token is a
+#   directive is bound to that directive (parent -<directive id>). Either way a positionally nested
+#   node is reported with parent <= 0, so top_level_expressions() counts it while
+#   xmlparsedata::xml_parse_data(), which nests by source position, emits no matching /exprlist/*
+#   node, and zipping the two errors (#3106).
+# TODO(R>=4.7.0): remove this
+fix_line_directive_parents <- function(pc, is_directive) {
+  if (all(pc$parent[is_directive] > 0L)) {
+    return(pc)
+  }
+  # `<= 0`, not `== 0`, to catch comments bound to a directive. Comments bound to a real expression
+  #   are never positionally enclosed by one, so the loop below leaves them alone.
+  orphans <- which(pc$token %in% c("COMMENT", "LINE_DIRECTIVE") & pc$parent <= 0L)
+  # Encode positions exactly as xml_parse_data() does, so the parent assigned here always agrees
+  #   with where the node actually lands in the XML.
+  max_col <- max(pc$col1, pc$col2) + 1L
+  node_start <- pc$line1 * max_col + pc$col1
+  node_end <- pc$line2 * max_col + pc$col2
+  for (ii in orphans) {
+    encloses <- !pc$terminal & node_start <= node_start[ii] & node_end >= node_end[ii]
+    if (!any(encloses)) {
+      next
+    }
+    # innermost enclosing node, i.e. the one spanning the fewest characters
+    pc$parent[ii] <- pc$id[which(encloses)[which.min((node_end - node_start)[encloses])]]
+  }
+  pc
 }
 
 # workaround for bad parse data bug for octal escapes

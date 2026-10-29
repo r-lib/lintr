@@ -689,3 +689,88 @@ test_that("get_source_expressions() handles unmarked UTF-8 lines correctly", {
   expect_identical(str_const$col1, 6L)
   expect_identical(str_const$col2, 8L)
 })
+
+# NB: R < 4.4.0 drops the parse data of a file containing a `#line` directive, so lintr only sees the
+#   whole-file expression there and the structural expectations below are skipped.
+test_that("get_source_expressions() treats a #line directive as a comment (#3106)", {
+  tmp <- withr::local_tempfile(lines = c("{", '#line 1 "foo.R"', "1 + 1", "}"))
+  src_exprs <- get_source_expressions(tmp)
+  skip_unless_r(">= 4.4.0")
+
+  # the braced expression, plus the full-file expression
+  expect_length(src_exprs$expressions, 2L)
+
+  expr <- src_exprs$expressions[[length(src_exprs$expressions)]]
+  expect_false("LINE_DIRECTIVE" %in% expr$full_parsed_content$token)
+  expect_length(xml2::xml_find_all(expr$full_xml_parsed_content, "//LINE_DIRECTIVE"), 0L)
+  expect_identical(
+    xml2::xml_text(xml2::xml_find_all(expr$full_xml_parsed_content, "/exprlist/expr/COMMENT")),
+    '#line 1 "foo.R"'
+  )
+})
+
+test_that("#line directives at the top level stay top-level comments (#3106)", {
+  tmp <- withr::local_tempfile(lines = c('#line 10 "x.R"', "1 + 1", "2 + 2"))
+  src_exprs <- get_source_expressions(tmp)
+  skip_unless_r(">= 4.4.0")
+
+  # the directive (like any top-level comment), both expressions, plus the full-file expression
+  expect_length(src_exprs$expressions, 4L)
+
+  expr <- src_exprs$expressions[[length(src_exprs$expressions)]]
+  expect_identical(
+    xml2::xml_text(xml2::xml_find_all(expr$full_xml_parsed_content, "/exprlist/COMMENT")),
+    '#line 10 "x.R"'
+  )
+})
+
+test_that("get_source_expressions() handles #line directives nested several levels deep (#3106)", {
+  lines <- c(
+    "x <- function() {",
+    '#line 2 "b.R"',
+    "  identity({",
+    '#line 3 "c.R"',
+    "    1",
+    "  })",
+    "}"
+  )
+  tmp <- withr::local_tempfile(lines = lines)
+  src_exprs <- get_source_expressions(tmp)
+  skip_unless_r(">= 4.4.0")
+
+  # the assignment, plus the full-file expression
+  expect_length(src_exprs$expressions, 2L)
+
+  expr <- src_exprs$expressions[[length(src_exprs$expressions)]]
+  expect_length(xml2::xml_find_all(expr$full_xml_parsed_content, "/exprlist/COMMENT"), 0L)
+  expect_identical(
+    xml2::xml_text(xml2::xml_find_all(expr$full_xml_parsed_content, "//COMMENT")),
+    c('#line 2 "b.R"', '#line 3 "c.R"')
+  )
+})
+
+test_that("a comment preceding a #line directive keeps its enclosing parent (#3106)", {
+  # R binds a comment to the following token, and before r90434 does not skip a LINE_DIRECTIVE while
+  #   doing so, so '# there' is recorded as a child of the directive, not of the braced expression.
+  lines <- c('#line 1 "a.R"', "# hi", "1", "{", "# there", '#line 2 "b.R"', "2", "}")
+  tmp <- withr::local_tempfile(lines = lines)
+  src_exprs <- get_source_expressions(tmp)
+  skip_unless_r(">= 4.4.0")
+
+  # both top-level comments, both top-level expressions, plus the full-file expression
+  expect_length(src_exprs$expressions, 5L)
+
+  expr <- src_exprs$expressions[[length(src_exprs$expressions)]]
+  expect_identical(
+    xml2::xml_text(xml2::xml_find_all(expr$full_xml_parsed_content, "/exprlist/COMMENT")),
+    c('#line 1 "a.R"', "# hi")
+  )
+  expect_identical(
+    xml2::xml_text(xml2::xml_find_all(expr$full_xml_parsed_content, "/exprlist/expr/COMMENT")),
+    c("# there", '#line 2 "b.R"')
+  )
+})
+
+test_that("a #line directive attracts no lints (#3106)", {
+  expect_no_lint('#line 10 "x.R"\n1 + 1\n2 + 2', linters = default_linters)
+})
