@@ -30,6 +30,7 @@
 ### New linters
 
 * `expect_shape_linter()` recommends usage of `testthat::expect_shape(x, ...)` over `expect_equal(nrow(x), n)`, `expect_equal(ncol(x), n)`, and `expect_equal(dim(x), d)` (#2893, @MichaelChirico).
+* `on_exit_linter()` requires explicit `add = TRUE` or `add = FALSE` in subsequent calls to `on.exit()` in the same block to avoid accidentally overwriting earlier exit handlers (#2010, @MichaelChirico).
 
 ### Linter improvements
 
