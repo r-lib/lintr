@@ -16,6 +16,7 @@
    + reports the correct location for replacement function calls and backticked `` `foo<-` `` symbols rather than matching a getter or falling back to the outer expression (#2451, @MichaelChirico).
 * `object_name_linter()`, `object_length_linter()`, and `namespace_linter()` no longer fail when `lint("", text = ...)` is called with an empty `filename` (#3032, @MichaelChirico).
 * `absolute_path_linter()` and `nonportable_path_linter()` no longer emit `regexpr()` warnings when encountering string literals with non-UTF-8 byte escapes such as `'M\xfcller'` (#2836, @MichaelChirico).
+* `nzchar_linter()` no longer lints `nchar()` comparisons where `type = "width"` or `allowNA = TRUE` is passed positionally, e.g. `nchar(x, "width") == 0`, matching the existing behavior for the named forms (#ISSUE, @ShryukGrandhi).
 
 ## New and improved features
 

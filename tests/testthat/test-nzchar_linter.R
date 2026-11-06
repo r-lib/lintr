@@ -23,6 +23,10 @@ test_that("nzchar_linter skips as appropriate for other nchar args", {
   #   NA in each element with an invalid entry, while nzchar returns TRUE.
   expect_no_lint("nchar(x, allowNA=TRUE) == 0L", linter)
 
+  # same, but with type= and allowNA= passed positionally
+  expect_no_lint("nchar(x, 'width') == 0L", linter)
+  expect_no_lint("nchar(x, 'chars', TRUE) == 0L", linter)
+
   # nzchar also has keepNA argument so a drop-in switch is easy
   expect_lint(
     "nchar(x, keepNA=TRUE) == 0",
