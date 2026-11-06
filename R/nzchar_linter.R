@@ -76,18 +76,29 @@ nzchar_linter <- function() {
 
   # nchar(., type="width") not strictly compatible with nzchar
   # nchar(., allowNA=TRUE) neither
+  # also check the positional forms nchar(., "width") and nchar(., ., TRUE)
   nchar_xpath <- glue("
   parent::expr
     /parent::expr[
       ({ xp_or(comparator_nodes) })
-      and not(expr/SYMBOL_SUB[
-        (
-          text() = 'type'
-          and following-sibling::expr[1]/STR_CONST[contains(text(), 'width')]
-        ) or (
-          text() = 'allowNA'
-          and following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']
-        )
+      and not(expr[
+        SYMBOL_SUB[
+          (
+            text() = 'type'
+            and following-sibling::expr[1]/STR_CONST[contains(text(), 'width')]
+          ) or (
+            text() = 'allowNA'
+            and following-sibling::expr[1]/NUM_CONST[text() = 'TRUE']
+          )
+        ]
+        or expr[
+          count(preceding-sibling::OP-COMMA) = 1
+          and not(preceding-sibling::SYMBOL_SUB)
+        ]/STR_CONST[contains(text(), 'width')]
+        or expr[
+          count(preceding-sibling::OP-COMMA) = 2
+          and not(preceding-sibling::SYMBOL_SUB)
+        ]/NUM_CONST[text() = 'TRUE']
       ])
       and expr/NUM_CONST[text() = '0' or text() = '0L' or text() = '0.0']
     ]
