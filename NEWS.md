@@ -29,6 +29,7 @@
 
 ### New linters
 
+* `comment_spacing_linter()` requires a space after the comment marker, as in `# comment` rather than `#comment`. Use `default_style = "one"` to require exactly one space, or `overrides` to set the style per marker (#1132, @adityaruplaha).
 * `expect_shape_linter()` recommends usage of `testthat::expect_shape(x, ...)` over `expect_equal(nrow(x), n)`, `expect_equal(ncol(x), n)`, and `expect_equal(dim(x), d)` (#2893, @MichaelChirico).
 
 ### Linter improvements

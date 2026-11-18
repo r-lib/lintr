@@ -10,6 +10,7 @@ brace_linter,style readability default configurable
 class_equals_linter,best_practices robustness consistency
 coalesce_linter,readability consistency best_practices
 commas_linter,style readability default configurable
+comment_spacing_linter,style readability configurable
 commented_code_linter,style readability best_practices default
 comparison_negation_linter,readability consistency
 condition_call_linter,style tidy_design best_practices configurable

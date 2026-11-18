@@ -79,6 +79,7 @@ Collate:
     'class_equals_linter.R'
     'coalesce_linter.R'
     'commas_linter.R'
+    'comment_spacing_linter.R'
     'commented_code_linter.R'
     'comparison_negation_linter.R'
     'condition_call_linter.R'
