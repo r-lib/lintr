@@ -15,6 +15,7 @@ The following linters are tagged with 'style':
 \item{\code{\link{assignment_linter}}}
 \item{\code{\link{brace_linter}}}
 \item{\code{\link{commas_linter}}}
+\item{\code{\link{comment_spacing_linter}}}
 \item{\code{\link{commented_code_linter}}}
 \item{\code{\link{condition_call_linter}}}
 \item{\code{\link{consecutive_assertion_linter}}}
